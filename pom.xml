@@ -4,7 +4,7 @@
   <groupId>net.nikr</groupId>
   <artifactId>jeveassets</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.7.1-SNAPSHOT</version>
   <name>jeveassets</name>
   <url>http://maven.apache.org</url>
     <build>
@@ -52,12 +52,12 @@
     <dependency>
       <groupId>com.beimin</groupId>
       <artifactId>eveapi</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
         <groupId>net.nikr</groupId>
         <artifactId>log</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </dependency>
     <dependency>
         <groupId>net.java.dev.glazedlists</groupId>
