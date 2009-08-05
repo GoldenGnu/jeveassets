@@ -6,9 +6,21 @@
   <packaging>jar</packaging>
   <version>0.7.1-SNAPSHOT</version>
   <name>jeveassets</name>
-  <url>http://maven.apache.org</url>
+  <url>http://eve.nikr.net/?page=jeveasset</url>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>net.nikr.eve.jeveasset.Main</mainClass>
+                            <packageName>net.nikr.eve.jeveasset</packageName>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
