@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
 import net.nikr.eve.jeveasset.io.LocalConquerableStationsReader;
@@ -413,10 +412,10 @@ public class Settings {
 		return getLocalFile(Settings.PATH_SETTINGS);
 	}
 	public static String getPathItems(){
-		return getLocalFile(Settings.PATH_ITEMS);
+		return getLocalFile(Settings.PATH_ITEMS, false);
 	}
 	public static String getPathLocations(){
-		return getLocalFile(Settings.PATH_LOCATIONS);
+		return getLocalFile(Settings.PATH_LOCATIONS, false);
 	}
 	public static String getPathConquerableStations(){
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS);
@@ -438,15 +437,42 @@ public class Settings {
 	}
 
 	private static String getLocalFile(String filename){
-		try {
-			File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-			return file.getAbsolutePath()+File.separator+filename;
-		} catch (URISyntaxException ex) {
-			Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
-		}
-		return null;
+    return getLocalFile(filename, true);
+  }
+
+  /**
+   *
+   * @param filename the name of the data file to obtain
+   * @param dynamic true if the file is expecting to be written to, false for things like the items and locations.
+   * @return
+   */
+	private static String getLocalFile(String filename, boolean dynamic){
+    try {
+      File file = null;
+      File ret = null;
+      if (dynamic) {
+        File userDir = new File(System.getProperty("user.home", "."));
+        file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");
+        Log.debug("found user dir at " + userDir.getAbsolutePath());
+        ret = new File(file.getAbsolutePath()+File.separator+filename);
+        File parent = ret.getParentFile();
+        if (!parent.exists()) {
+          if (!parent.mkdirs()) {
+            Log.error("failed to create directories for " + parent.getAbsolutePath());
+          }
+        }
+      } else {
+        file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        ret = new File(file.getAbsolutePath()+File.separator+filename);
+      }
+      Log.debug("returning file at " + ret.getAbsolutePath());
+      return ret.getAbsolutePath();
+    } catch (URISyntaxException ex) {
+      Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
+    }
+    return null;
 	}
-	
+
 	public static Date getGmtNow() {
 		TimeZone tz = TimeZone.getDefault();
 		Date date = new Date();
