@@ -436,19 +436,17 @@ public class Settings {
 	public static String getProgramDirectory(){
 		return getLocalFile("");
 	}
+
 	private static String getLocalFile(String filename){
-		if (Program.DEBUG){
-			return Program.PATH_TEST_DIRECTORY+filename;
-		} else {
-			try {
-				File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-				return file.getAbsolutePath()+File.separator+filename;
-			} catch (URISyntaxException ex) {
-				Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
-			}
-			return null;
+		try {
+			File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+			return file.getAbsolutePath()+File.separator+filename;
+		} catch (URISyntaxException ex) {
+			Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
 		}
+		return null;
 	}
+	
 	public static Date getGmtNow() {
 		TimeZone tz = TimeZone.getDefault();
 		Date date = new Date();

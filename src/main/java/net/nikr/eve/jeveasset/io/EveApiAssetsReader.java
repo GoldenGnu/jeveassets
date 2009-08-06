@@ -146,7 +146,8 @@ public class EveApiAssetsReader {
 		int id = asset.getItemID(); //OK
 		int typeID = asset.getTypeID(); //OK
 		boolean corporationAsset = bCorp; //Semi-OK - OLD: (owner.equals(human.getCorporation()));
-		return new EveAsset(parentEveAsset, name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, asset.getLocationID());
+		boolean singleton  = (asset.getSingleton() > 0);
+		return new EveAsset(parentEveAsset, name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, asset.getLocationID(), singleton);
 	}
 	
 

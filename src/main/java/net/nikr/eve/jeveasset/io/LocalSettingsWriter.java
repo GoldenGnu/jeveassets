@@ -221,6 +221,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "volume", String.valueOf(eveAsset.getVolume()));
 			node.setAttributeNS(null, "region", eveAsset.getRegion());
 			node.setAttributeNS(null, "locationid", String.valueOf(eveAsset.getLocationID()));
+			node.setAttributeNS(null, "singleton", String.valueOf(eveAsset.isSingleton()));
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, eveAsset.getAssets());
 		}

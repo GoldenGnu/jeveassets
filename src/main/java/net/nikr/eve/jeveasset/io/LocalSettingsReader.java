@@ -358,6 +358,10 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "locationid")){
 			locationID = AttributeGetters.getAttributeInteger(node, "locationid");
 		}
-		return new EveAsset(parentEveAsset, name, group, category, owner, count, location, container, flag, price, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID);
+		boolean singleton = true;
+		if (AttributeGetters.haveAttribute(node, "singleton")){
+			singleton = AttributeGetters.getAttributeBoolean(node, "singleton");
+		}
+		return new EveAsset(parentEveAsset, name, group, category, owner, count, location, container, flag, price, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton);
 	}
 }

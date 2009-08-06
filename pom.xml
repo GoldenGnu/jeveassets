@@ -18,6 +18,9 @@
                             <mainClass>net.nikr.eve.jeveasset.Main</mainClass>
                             <packageName>net.nikr.eve.jeveasset</packageName>
                         </manifest>
+						<manifestEntries>
+							<SplashScreen-Image>splash.jpg</SplashScreen-Image>
+						</manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -64,12 +67,12 @@
     <dependency>
       <groupId>com.beimin</groupId>
       <artifactId>eveapi</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>net.nikr</groupId>
         <artifactId>log</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>net.java.dev.glazedlists</groupId>

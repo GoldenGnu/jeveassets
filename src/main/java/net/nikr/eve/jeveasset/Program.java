@@ -60,15 +60,14 @@ import org.apache.log4j.Logger;
 public class Program implements ActionListener {
 
 	//"Major.Minor.Bugfix [BETA n] [BUILD #n])";
-	public static final String PROGRAM_VERSION = "Release Candidate 7a";
+	public static final String PROGRAM_VERSION = "Release Candidate 8";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final boolean FORCE_UPDATE = (DEBUG && false);
 	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
-	public static final String PATH_TEST_DIRECTORY = "J:"+File.separator+"Files"+File.separator+"Documents"+File.separator+"Code"+File.separator+"Java"+File.separator+"MyProjects"+File.separator+"jEveAssets"+File.separator+"Release"+File.separator+"Latest Version"+File.separator;
 
 	//GUI
 	private Frame frame;
@@ -218,11 +217,15 @@ public class Program implements ActionListener {
 		//				NPC Stations (should work)
 		//				Offices (should work)
 
-		//[TODO] save settigns when they are changed (In thread)
+		//[TODO] Reprocessing Value
+
+		//[TODO] Industry Jobs (personal and corporate)
+		//			Need for the complete list of assets
+
+		//[TODO] Market Orders (personal and corporate)
+		//			Need for the complete list of assets
 		
 		//[TODO] Edit account
-
-		//[TODO] Reprocessing Value
 
 		//[TODO] Print function
 		
@@ -240,8 +243,6 @@ public class Program implements ActionListener {
 
 		//[TODO] Proxy Server
 
-		//[TODO] Research / copy / manufacture etc. jobs (personal AND corporate)
-
 		//[TODO] Cargo calc (how much of asset type can be in (user set) cargo hold)
 		//			Right click table to show (Only when one is selected)
 		
@@ -253,8 +254,6 @@ public class Program implements ActionListener {
 
 		//[TODO] POS Fuel
 		//			One click export
-
-		//[TODO] Market Orders
 
 		//[TODO] Wallet Journal
 
