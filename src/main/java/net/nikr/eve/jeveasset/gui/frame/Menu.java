@@ -46,6 +46,7 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_UPDATE_ASSETS = "ACTION_UPDATE_ASSETS";
 	public final static String ACTION_UPDATE_PRICES = "ACTION_UPDATE_PRICES";
 	public final static String ACTION_FILTER_ON_ENTER = "ACTION_FILTER_ON_ENTER";
+	public final static String ACTION_OPEN_PROXY_SETTINGS = "ACTION_OPEN_PROXY_SETTINGS";
 
 	public Menu(Program program) {
 		JMenu menu, submenu;
@@ -129,6 +130,13 @@ public class Menu extends JMenuBar {
 		jCheckBoxMenuItem.addActionListener(program);
 		jCheckBoxMenuItem.setSelected(program.getSettings().isFilterOnEnter());
 		menu.add(jCheckBoxMenuItem);
+
+		menuItem = new JMenuItem("Proxy Setting");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		//menuItem.setIcon( ImageGetter.getIcon("money.png") );
+		menuItem.setActionCommand(ACTION_OPEN_PROXY_SETTINGS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
 
 		menu.addSeparator();
 

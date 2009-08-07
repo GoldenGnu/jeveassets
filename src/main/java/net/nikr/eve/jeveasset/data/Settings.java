@@ -21,9 +21,15 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import com.beimin.eveapi.AbstractApiParser;
 import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +86,7 @@ public class Settings {
 	private List<Integer> bpos;
 	private boolean settingsLoaded;
 	private MarketstatSettings marketstatSettings;
+  private Proxy proxy;
 	//private boolean filterOnEnter;
 	
 	public Settings() {
@@ -381,6 +388,62 @@ public class Settings {
 	public Map<String, Boolean> getFlags() {
 		return flags;
 	}
+
+  public Proxy getProxy() {
+    return proxy;
+  }
+
+  /**
+   *
+   * @param proxy passing 'null' removes proxying.
+   */
+  public void setProxy(Proxy proxy) {
+    this.proxy = proxy;
+    // pass the new proxy onto the API framework.
+    AbstractApiParser.setHttpProxy(proxy);
+  }
+
+  /**
+   * handles converting "basic" types to a Proxy type.
+   * @param host
+   * @param port
+   * @param type
+   * @throws IllegalArgumentException
+   */
+  public void setProxy(String host, int port, String type) throws IllegalArgumentException {
+    // Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
+    Proxy.Type proxyType = Proxy.Type.DIRECT;
+    if ("http".equalsIgnoreCase(type)) {
+      proxyType = Proxy.Type.HTTP;
+    } else if ("socks".equalsIgnoreCase(type)) {
+      proxyType = Proxy.Type.SOCKS;
+    } else if ("direct".equalsIgnoreCase(type)) {
+      proxyType = Proxy.Type.DIRECT;
+    }
+
+    setProxy(host, port, proxyType);
+  }
+
+  /**
+   * handles converting "basic" types to a Proxy type.
+   * @param host
+   * @param port
+   * @param type
+   * @throws IllegalArgumentException
+   */
+  public void setProxy(String host, int port, Proxy.Type type) throws IllegalArgumentException {
+    // Convert it into something we can use.
+    InetAddress addr = null;
+    try {
+      addr = InetAddress.getByName(host);
+    } catch (UnknownHostException uhe) {
+      throw new IllegalArgumentException("unknown host: " + host, uhe);
+    }
+
+    SocketAddress proxyAddress = new InetSocketAddress(addr, port);
+
+    setProxy(new Proxy(type, proxyAddress));
+  }
 
 	public boolean isAutoResizeColumnsText() {
 		return flags.get(FLAG_AUTO_RESIZE_COLUMNS_TEXT);

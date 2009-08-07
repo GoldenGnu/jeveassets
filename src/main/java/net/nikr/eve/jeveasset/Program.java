@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.PriceSettingsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.ProxySettingsDialogue;
 import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
@@ -65,7 +66,7 @@ public class Program implements ActionListener {
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean FORCE_UPDATE = (DEBUG && false);
 	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
 
@@ -85,6 +86,7 @@ public class Program implements ActionListener {
 	private UpdateAssetsDialog updateAssetsDialog;
 	private UpdateEveCentralDialog updateEveCentralDialog;
 	private PriceSettingsDialog priceSettingsDialog;
+  private ProxySettingsDialogue proxySettingsDialogue;
 
 	//Panels
 	private TablePanel tablePanel;
@@ -330,6 +332,8 @@ public class Program implements ActionListener {
 		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
 		Log.info("	Eve-Central update Dialog");
 		updateEveCentralDialog = new UpdateEveCentralDialog(this, frame);
+		Log.info("	Proxy Settings Dialog");
+		proxySettingsDialogue = new ProxySettingsDialogue(this, ImageGetter.getImage("money.png")); // TODO find another image.
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
@@ -440,6 +444,9 @@ public class Program implements ActionListener {
 		if (Menu.ACTION_OPEN_USER_PRICE_SETTINGS.equals(e.getActionCommand())) {
 			priceSettingsDialog.setVisible(true);
 		}
+    if (Menu.ACTION_OPEN_PROXY_SETTINGS.equals(e.getActionCommand())) {
+      proxySettingsDialogue.setVisible(true);
+    }
 		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
 			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){

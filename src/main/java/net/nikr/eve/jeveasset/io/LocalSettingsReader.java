@@ -23,6 +23,11 @@ package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -119,9 +124,30 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		if (accountNodes.getLength() != 1){
 			throw new XmlException("Wrong accounts element count.");
 		}
+
 		Element accountsElement = (Element) accountNodes.item(0);
 		parseAccounts(accountsElement, settings.getAccounts());
+
+    // Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
+    NodeList proxyNodes = element.getElementsByTagName("proxy");
+    if (proxyNodes.getLength() == 1) {
+      Element proxyElement = (Element) proxyNodes.item(0);
+      parseProxy(proxyElement, settings);
+    } else if (proxyNodes.getLength() > 1) {
+			throw new XmlException("Wrong proxy element count.");
+    }
+    
 	}
+
+  private static void parseProxy(Element proxyElement, Settings settings) throws XmlException {
+    String addrName = AttributeGetters.getAttributeString(proxyElement, "address");
+    String proxyType = AttributeGetters.getAttributeString(proxyElement, "type");
+    Integer port = AttributeGetters.getAttributeInteger(proxyElement, "port");
+
+    // delegate to the utility method in the Settings.
+    settings.setProxy(addrName, port, proxyType);
+  }
+
 	private static void parseBposPrices(Element element, Settings settings){
 		NodeList userPriceNodes = element.getElementsByTagName("bpo");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){
