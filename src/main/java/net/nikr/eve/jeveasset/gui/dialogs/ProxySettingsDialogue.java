@@ -200,19 +200,18 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 	}
 
 	private void save() {
-    if (enableProxy.isSelected()) {
-      program.getSettings().setProxy(
-                proxyAddressField.getText()
-              , (Integer)proxyPortField.getValue()
-              , (Proxy.Type)proxyTypeField.getSelectedItem()
-              );
-    } else {
-      program.getSettings().setProxy(null);
-    }
-
-    // TODO set the API proxy.
-
-    setVisible(false);
+		if (enableProxy.isSelected()) {
+			program.getSettings().setProxy(
+					proxyAddressField.getText()
+					, (Integer)proxyPortField.getValue()
+					, (Proxy.Type)proxyTypeField.getSelectedItem()
+			);
+			//TODO catch IllegalArgumentException
+		} else {
+			program.getSettings().setProxy(null);
+		}
+		// TODO set the API proxy.
+		setVisible(false);
   }
 
   private void updateValues() {

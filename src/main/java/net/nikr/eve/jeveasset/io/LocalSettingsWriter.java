@@ -53,7 +53,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 			Log.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		writeBpos(xmldoc, settings.getBpos());
-    writeProxy(xmldoc, settings.getProxy());
+		writeProxy(xmldoc, settings.getProxy());
 		writeMarketstatSettings(xmldoc, settings.getMarketstatSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
@@ -251,16 +251,16 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-  private static void writeProxy(Document xmldoc, Proxy proxy) {
-    Element node = xmldoc.createElementNS(null, "proxy");
-    if (proxy != null) {
-      if (proxy.address() instanceof InetSocketAddress) {
-        InetSocketAddress addr = (InetSocketAddress)proxy.address();
-        node.setAttributeNS(null, "address", String.valueOf(addr.getHostName()));
-        node.setAttributeNS(null, "port", String.valueOf(addr.getPort()));
-        node.setAttributeNS(null, "type", String.valueOf(proxy.type()));
-      }
-    }
-    xmldoc.getDocumentElement().appendChild(node);
-  }
+	private static void writeProxy(Document xmldoc, Proxy proxy) {
+		if (proxy != null) { //Onlys add proxy tag if there is anything to save... (To prevent error when proxy tag don't have any attribute)
+			Element node = xmldoc.createElementNS(null, "proxy");
+			if (proxy.address() instanceof InetSocketAddress) {
+				InetSocketAddress addr = (InetSocketAddress)proxy.address();
+				node.setAttributeNS(null, "address", String.valueOf(addr.getHostName()));
+				node.setAttributeNS(null, "port", String.valueOf(addr.getPort()));
+				node.setAttributeNS(null, "type", String.valueOf(proxy.type()));
+			}
+			xmldoc.getDocumentElement().appendChild(node);
+		}
+	}
 }
