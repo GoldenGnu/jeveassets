@@ -286,7 +286,7 @@ public class Program implements ActionListener {
 		//		 it throws an unhandled exception when updating
 		//			Can't reproduce...
 		
-		Log.info("Starting "+PROGRAM_NAME+" version "+PROGRAM_VERSION);
+		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
 		
 		if(DEBUG){
 			Log.enableDebug();
