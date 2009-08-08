@@ -274,8 +274,6 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			parseHumans(currentNode, account);
 			accounts.add(account);
 		}
-
-
 	}
 
 	private static Account parseAccount(Node node){
@@ -347,7 +345,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < assetsNodes.getLength(); a++){
 			Node currentNode = assetsNodes.item(a);
 			if (currentNode.getNodeName().equals("asset")){
-				eveAsset = parseEveAsset(currentNode, parentEveAsset);
+				eveAsset = parseEveAsset(currentNode);
 				if (parentEveAsset == null){
 					assets.add(eveAsset);
 				} else {
@@ -357,7 +355,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static EveAsset parseEveAsset(Node node, EveAsset parentEveAsset){
+	private static EveAsset parseEveAsset(Node node){
 		String name = AttributeGetters.getAttributeString(node, "name");
 		String group = AttributeGetters.getAttributeString(node, "group");
 		String category = AttributeGetters.getAttributeString(node, "category");
@@ -372,22 +370,10 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		int typeID = AttributeGetters.getAttributeInteger(node, "typeid");
 		boolean marketGroup = AttributeGetters.getAttributeBoolean(node, "marketgroup");
 		boolean corporationAsset = AttributeGetters.getAttributeBoolean(node, "corporationasset");
-		float volume = -1;
-		if (AttributeGetters.haveAttribute(node, "volume")){
-			volume = AttributeGetters.getAttributeFloat(node, "volume");
-		}
-		String region = "";
-		if (AttributeGetters.haveAttribute(node, "region")){
-			region = AttributeGetters.getAttributeString(node, "region");
-		}
-		int locationID = -1;
-		if (AttributeGetters.haveAttribute(node, "locationid")){
-			locationID = AttributeGetters.getAttributeInteger(node, "locationid");
-		}
-		boolean singleton = true;
-		if (AttributeGetters.haveAttribute(node, "singleton")){
-			singleton = AttributeGetters.getAttributeBoolean(node, "singleton");
-		}
-		return new EveAsset(parentEveAsset, name, group, category, owner, count, location, container, flag, price, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton);
+		float volume = AttributeGetters.getAttributeFloat(node, "volume");
+		String region = AttributeGetters.getAttributeString(node, "region");
+		int locationID = AttributeGetters.getAttributeInteger(node, "locationid");
+		boolean singleton = AttributeGetters.getAttributeBoolean(node, "singleton");
+		return new EveAsset(name, group, category, owner, count, location, container, flag, price, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton);
 	}
 }
