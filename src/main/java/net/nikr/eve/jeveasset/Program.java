@@ -337,7 +337,7 @@ public class Program implements ActionListener {
 		Log.info("	Eve-Central update Dialog");
 		updateEveCentralDialog = new UpdateEveCentralDialog(this, frame);
 		Log.info("	Proxy Settings Dialog");
-		proxySettingsDialogue = new ProxySettingsDialogue(this, ImageGetter.getImage("money.png")); // TODO find another image.
+		proxySettingsDialogue = new ProxySettingsDialogue(this, ImageGetter.getImage("server_connect.png")); // TODO find another image.
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");

@@ -137,7 +137,7 @@ public class Menu extends JMenuBar {
 
 		menuItem = new JMenuItem("Proxy Setting");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		//menuItem.setIcon( ImageGetter.getIcon("money.png") );
+		menuItem.setIcon( ImageGetter.getIcon("server_connect.png") );
 		menuItem.setActionCommand(ACTION_OPEN_PROXY_SETTINGS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
