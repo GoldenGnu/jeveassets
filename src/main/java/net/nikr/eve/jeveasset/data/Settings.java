@@ -510,30 +510,28 @@ public class Settings {
    * @return
    */
 	private static String getLocalFile(String filename, boolean dynamic){
-    try {
-      File file = null;
-      File ret = null;
-      if (dynamic) {
-        File userDir = new File(System.getProperty("user.home", "."));
-        file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");
-        Log.debug("found user dir at " + userDir.getAbsolutePath());
-        ret = new File(file.getAbsolutePath()+File.separator+filename);
-        File parent = ret.getParentFile();
-        if (!parent.exists()) {
-          if (!parent.mkdirs()) {
-            Log.error("failed to create directories for " + parent.getAbsolutePath());
-          }
-        }
-      } else {
-        file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-        ret = new File(file.getAbsolutePath()+File.separator+filename);
-      }
-      Log.debug("returning file at " + ret.getAbsolutePath());
-      return ret.getAbsolutePath();
-    } catch (URISyntaxException ex) {
-      Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
-    }
-    return null;
+		try {
+			File file = null;
+			File ret = null;
+			if (dynamic) {
+				File userDir = new File(System.getProperty("user.home", "."));
+				file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");
+				ret = new File(file.getAbsolutePath()+File.separator+filename);
+				File parent = ret.getParentFile();
+				if (!parent.exists()) {
+					if (!parent.mkdirs()) {
+						Log.error("failed to create directories for " + parent.getAbsolutePath());
+					}
+				}
+			} else {
+				file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+				ret = new File(file.getAbsolutePath()+File.separator+filename);
+			}
+			return ret.getAbsolutePath();
+		} catch (URISyntaxException ex) {
+			Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
+		}
+		return null;
 	}
 
 	public static Date getGmtNow() {
