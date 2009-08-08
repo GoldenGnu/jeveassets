@@ -42,6 +42,8 @@ import java.util.TimeZone;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
+import net.nikr.eve.jeveasset.io.LocalAssetsReader;
+import net.nikr.eve.jeveasset.io.LocalAssetsWriter;
 import net.nikr.eve.jeveasset.io.LocalConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.LocalItemsReader;
 import net.nikr.eve.jeveasset.io.LocalSettingsReader;
@@ -57,6 +59,7 @@ public class Settings {
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
 	private final static String PATH_MARKETSTATS = "data"+File.separator+"marketstats.xml";
+	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
 	private final static String PATH_CONQUERABLE_STATIONS = "data"+File.separator+"conquerable_stations.xml";
 	private final static String PATH_README = "readme.txt";
 	private final static String PATH_LICENSE = "license.txt";
@@ -121,6 +124,7 @@ public class Settings {
 		//Load data and overwite default values
 		SplashUpdater.setProgress(20);
 		settingsLoaded = LocalSettingsReader.load(this);
+		LocalAssetsReader.load(this);
 		SplashUpdater.setProgress(30);
 		LocalItemsReader.load(this);
 		SplashUpdater.setProgress(40);
@@ -474,15 +478,10 @@ public class Settings {
 	}
 	public void saveSettings(){
 		LocalSettingsWriter.save(this);
+		LocalAssetsWriter.save(this);
 	}
 	public static String getPathSettings(){
 		return getLocalFile(Settings.PATH_SETTINGS);
-	}
-	public static String getPathItems(){
-		return getLocalFile(Settings.PATH_ITEMS, false);
-	}
-	public static String getPathLocations(){
-		return getLocalFile(Settings.PATH_LOCATIONS, false);
 	}
 	public static String getPathConquerableStations(){
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS);
@@ -490,14 +489,23 @@ public class Settings {
 	public static String getPathMarketstats(){
 		return getLocalFile(Settings.PATH_MARKETSTATS);
 	}
+	public static String getPathAssets(){
+		return getLocalFile(Settings.PATH_ASSETS);
+	}
+	public static String getPathItems(){
+		return getLocalFile(Settings.PATH_ITEMS, false);
+	}
+	public static String getPathLocations(){
+		return getLocalFile(Settings.PATH_LOCATIONS, false);
+	}
 	public static String getPathReadme(){
-		return getLocalFile(Settings.PATH_README);
+		return getLocalFile(Settings.PATH_README, false);
 	}
 	public static String getPathLicense(){
-		return getLocalFile(Settings.PATH_LICENSE);
+		return getLocalFile(Settings.PATH_LICENSE, false);
 	}
 	public static String getPathCredits(){
-		return getLocalFile(Settings.PATH_CREDITS);
+		return getLocalFile(Settings.PATH_CREDITS, false);
 	}
 	public static String getProgramDirectory(){
 		return getLocalFile("");
