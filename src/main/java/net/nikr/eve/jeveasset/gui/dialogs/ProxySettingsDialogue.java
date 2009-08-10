@@ -48,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 // </editor-fold>
 /**
  *
- * @author Andrew Wheat
+ * @author Flaming Candle
  */
 public class ProxySettingsDialogue extends JDialogCentered implements ActionListener {
 
