@@ -50,6 +50,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		}
 		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
+		writeApiProxy(xmldoc, settings.getApiProxy());
 		writeMarketstatSettings(xmldoc, settings.getMarketstatSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
@@ -166,10 +167,16 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	
+	private static void writeApiProxy(Document xmldoc, String apiProxy) {
+		if (apiProxy != null) {
+			Element node = xmldoc.createElementNS(null, "apiProxy");
+			node.setAttributeNS(null, "url", String.valueOf(apiProxy));
+			xmldoc.getDocumentElement().appendChild(node);
+		}
+	}
 
 	private static void writeProxy(Document xmldoc, Proxy proxy) {
-		if (proxy != null) { //Onlys add proxy tag if there is anything to save... (To prevent error when proxy tag don't have any attribute)
+		if (proxy != null) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
 			Element node = xmldoc.createElementNS(null, "proxy");
 			if (proxy.address() instanceof InetSocketAddress) {
 				InetSocketAddress addr = (InetSocketAddress)proxy.address();

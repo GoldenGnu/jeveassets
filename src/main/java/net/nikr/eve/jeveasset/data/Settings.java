@@ -94,6 +94,7 @@ public class Settings {
 	private boolean settingsLoaded;
 	private MarketstatSettings marketstatSettings;
   private Proxy proxy;
+	private String apiProxy;
 	//private boolean filterOnEnter;
 	
 	public Settings() {
@@ -452,6 +453,19 @@ public class Settings {
 
     setProxy(new Proxy(type, proxyAddress));
   }
+
+	public String getApiProxy() {
+		return apiProxy;
+	}
+
+	/**
+	 * 
+	 * @param apiProxy pass null to disable any API proxy, and use the default: http://api.eve-online.com
+	 */
+	public void setApiProxy(String apiProxy) {
+		AbstractApiParser.setEveApiURL(apiProxy);
+		this.apiProxy = apiProxy;
+	}
 
 	public boolean isAutoResizeColumnsText() {
 		return flags.get(FLAG_AUTO_RESIZE_COLUMNS_TEXT);

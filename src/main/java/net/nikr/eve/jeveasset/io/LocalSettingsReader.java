@@ -121,7 +121,19 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		} else if (proxyNodes.getLength() > 1) {
 			throw new XmlException("Wrong proxy element count.");
 		}
-    
+
+		// API Proxy; 0 or 1 elements.
+		NodeList apiProxyNodes = element.getElementsByTagName("apiProxy");
+		switch (apiProxyNodes.getLength()) { // I think the 'switch' is a lot neater then the if/elseif blocks. - Candle
+			case 0:
+				break;
+			case 1:
+				Element apiProxyElement = (Element) apiProxyNodes.item(0);
+				parseApiProxy(apiProxyElement, settings);
+				break;
+			default:
+				throw new XmlException("Wrong apiProxy element count.");
+		}
 	}
 
 	private static void parseProxy(Element proxyElement, Settings settings) throws XmlException {
@@ -170,7 +182,6 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		}
 	}
 
-
 	private static void parseColumns(Element element, Settings settings){
 		NodeList columnNodes = element.getElementsByTagName("column");
 		List<String> mainTableColumnNames = new Vector<String>();
@@ -190,7 +201,6 @@ public class LocalSettingsReader extends AbstractXmlReader {
 				mainTableColumnVisible.add(mainTableColumnNamesOriginal.get(a));
 			}
 		}
-
 
 		settings.setTableColumnNames(mainTableColumnNames);
 		settings.setTableColumnVisible(mainTableColumnVisible);
@@ -217,7 +227,6 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			settings.getCorporationsNextUpdate().put(corpid, nextUpdate);
 		}
 	}
-
 
 	private static void parseFilters(Element element, Map<String, List<AssetFilter>> assetFilters){
 		NodeList filterNodes = element.getElementsByTagName("filter");
@@ -249,5 +258,10 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		String mode = AttributeGetters.getAttributeString(element, "mode");
 		boolean and = AttributeGetters.getAttributeBoolean(element, "and");
 		return new AssetFilter(column, text, mode, and);
+	}
+
+	private static void parseApiProxy(Element apiProxyElement, Settings settings) {
+		String proxyURL = AttributeGetters.getAttributeString(apiProxyElement, "url");
+		settings.setApiProxy(proxyURL);
 	}
 }
