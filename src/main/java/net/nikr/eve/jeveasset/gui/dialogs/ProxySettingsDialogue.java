@@ -54,7 +54,6 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_SAVE = "ACTION_SAVE";
-	JCheckBox enableProxy;
 	JComboBox proxyTypeField;
 	JTextField proxyAddressField;
 	JSpinner proxyPortField;
@@ -64,7 +63,6 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 	public ProxySettingsDialogue(Program program, Image image) {
 		super(program, "Proxy Settings", image);
 
-		JLabel enableProxyLabel = new JLabel("Enable Proxy");
 		JLabel proxyTypeLabel = new JLabel("Proxy Type");
 		JLabel proxyAddressLabel = new JLabel("Proxy Address");
 		JLabel proxyPortLabel = new JLabel("Proxy Port");
@@ -80,17 +78,19 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		cancelButton.addActionListener(this);
 		cancelButton.setActionCommand(ACTION_CANCEL);
 
-		enableProxy = new JCheckBox();
-		enableProxy.addActionListener(new ActionListener() {
+		proxyTypeField = new JComboBox(new DefaultComboBoxModel(Proxy.Type.values()));
+		proxyTypeField.setEnabled(true);
+		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
+		proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
+		proxyTypeField.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				enableProxy(enableProxy.isSelected());
+				boolean enabled = !proxyTypeField.getSelectedItem().equals(Proxy.Type.DIRECT);
+				proxyAddressField.setEnabled(enabled);
+				proxyPortField.setEnabled(enabled);
 			}
 		});
-
-		proxyTypeField = new JComboBox(new DefaultComboBoxModel(Proxy.Type.values()));
-		proxyTypeField.setEnabled(false);
-		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
 
 		proxyAddressField = new JTextField();
 		proxyAddressField.setEnabled(false);
@@ -113,15 +113,64 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		// note: the layout is defined in the super class.
 		layout.setHorizontalGroup(
 						layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addGroup(
-						layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(enableProxyLabel).addComponent(proxyTypeLabel).addComponent(proxyAddressLabel).addComponent(proxyPortLabel).addComponent(enableApiLabel).addComponent(apiProxyLabel)).addGap(10).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(enableProxy).addComponent(proxyTypeField).addComponent(proxyAddressField).addComponent(proxyPortField).addComponent(enableApiProxy).addComponent(apiProxyField))).addGap(10).addGroup(layout.createSequentialGroup().addComponent(saveButton, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH).addComponent(cancelButton, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)));
+							layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+									.addComponent(proxyTypeLabel)
+									.addComponent(proxyAddressLabel)
+									.addComponent(proxyPortLabel)
+									.addComponent(enableApiLabel)
+									.addComponent(apiProxyLabel)
+								)
+								.addGap(10)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(proxyTypeField)
+									.addComponent(proxyAddressField)
+									.addComponent(proxyPortField)
+									.addComponent(enableApiProxy)
+									.addComponent(apiProxyField)
+								)
+						)
+						.addGap(10)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(saveButton, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+							.addComponent(cancelButton, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						)
+					);
 
 		layout.setVerticalGroup(
-						layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(enableProxyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(enableProxy, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(proxyTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(proxyTypeField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(proxyAddressLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(proxyAddressField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(proxyPortLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(proxyPortField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGap(10).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(enableApiLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(enableApiProxy, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(apiProxyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(apiProxyField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)).addGap(10).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(saveButton, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT).addComponent(cancelButton, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)));
+						layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(proxyTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(proxyTypeField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(proxyAddressLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(proxyAddressField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(proxyPortLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(proxyPortField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addGap(10)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(enableApiLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(enableApiProxy, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(apiProxyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(apiProxyField, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addGap(10)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(saveButton, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(cancelButton, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						);
 	}
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return enableProxy;
+		return proxyTypeField;
 	}
 
 	@Override
@@ -141,7 +190,7 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 	}
 
 	private void save() {
-		if (enableProxy.isSelected()) {
+		if (proxyTypeField.getSelectedItem() != Proxy.Type.DIRECT) {
 			try {
 				program.getSettings().setProxy(
 								proxyAddressField.getText(), (Integer) proxyPortField.getValue(), (Proxy.Type) proxyTypeField.getSelectedItem());
@@ -162,19 +211,16 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		setVisible(false);
 	}
 
-	private void enableProxy(boolean b){
-		proxyTypeField.setEnabled(b);
+	private void enableProxy(boolean b) {
 		proxyAddressField.setEnabled(b);
 		proxyPortField.setEnabled(b);
 	}
 
 	private void updateValues() {
 		Proxy proxy = program.getSettings().getProxy();
-		if (proxy == null) {
-			enableProxy.setSelected(false);
-			enableProxy(false);
+		if (proxy.type().equals(Proxy.Type.DIRECT)) {
+			proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
 		} else {
-			enableProxy.setSelected(true);
 			proxyTypeField.setSelectedItem(proxy.type());
 			if (proxy.address() instanceof InetSocketAddress) {
 				InetSocketAddress addr = (InetSocketAddress) proxy.address();
@@ -201,6 +247,5 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 			updateValues();
 		}
 		super.setVisible(b);
-
 	}
 }

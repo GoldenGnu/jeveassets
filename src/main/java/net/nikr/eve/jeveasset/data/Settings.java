@@ -398,8 +398,13 @@ public class Settings {
 		return flags;
 	}
 
+	//@NotNull
 	public Proxy getProxy() {
-		return proxy;
+		if (proxy == null) {
+			return Proxy.NO_PROXY;
+		} else {
+			return proxy;
+		}
 	}
 
   /**
@@ -427,7 +432,7 @@ public class Settings {
 		} else if ("socks".equalsIgnoreCase(type)) {
 			proxyType = Proxy.Type.SOCKS;
 		} else if ("direct".equalsIgnoreCase(type)) {
-			proxyType = Proxy.Type.DIRECT;
+			setProxy(Proxy.NO_PROXY);
 		}
 
 		setProxy(host, port, proxyType);

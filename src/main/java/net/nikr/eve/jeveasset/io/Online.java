@@ -27,14 +27,15 @@ package net.nikr.eve.jeveasset.io;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import net.nikr.eve.jeveasset.data.Settings;
 
 
 public class Online {
 
-	public static boolean isOnline(){
+	public static boolean isOnline(Settings settings){
 		try {
 			URL ourURL = new URL("http://www.google.com"); //Coding Forums RSS Feed
-			HttpURLConnection huc = (HttpURLConnection)ourURL.openConnection();
+			HttpURLConnection huc = (HttpURLConnection)ourURL.openConnection(settings.getProxy());
 			huc.setRequestMethod("GET");
 			huc.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; JVM)");
 			huc.setRequestProperty("Pragma", "no-cache");

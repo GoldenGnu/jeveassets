@@ -110,7 +110,7 @@ public class EveCentralMarketstatReader {
 	public static void loadEveCentralMarketstats(Settings settings, String data) throws XmlException, Exception  {
 		// Send data
 		URL url = new URL("http://api.eve-central.com/api/marketstat");
-		URLConnection conn = url.openConnection();
+		URLConnection conn = url.openConnection(settings.getProxy());
 		conn.setRequestProperty("USER-AGENT",Program.PROGRAM_NAME);
 		conn.setDoOutput(true);
 		OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());

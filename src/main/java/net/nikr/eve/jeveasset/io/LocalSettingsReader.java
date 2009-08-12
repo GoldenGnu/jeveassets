@@ -140,9 +140,14 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		String addrName = AttributeGetters.getAttributeString(proxyElement, "address");
 		String proxyType = AttributeGetters.getAttributeString(proxyElement, "type");
 		Integer port = AttributeGetters.getAttributeInteger(proxyElement, "port");
+		if (addrName.length() > 0
+						&& proxyType.length() > 0
+						&& port != null
+						&& port >= 0) { // check the proxy attributes are all there.
 
-		// delegate to the utility method in the Settings.
-		settings.setProxy(addrName, port, proxyType);
+			// delegate to the utility method in the Settings.
+			settings.setProxy(addrName, port, proxyType);
+		}
 	}
 
 	private static void parseBposPrices(Element element, Settings settings){

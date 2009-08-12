@@ -176,7 +176,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 	}
 
 	private static void writeProxy(Document xmldoc, Proxy proxy) {
-		if (proxy != null) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
+		if (proxy != null && !proxy.type().equals(Proxy.Type.DIRECT)) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
 			Element node = xmldoc.createElementNS(null, "proxy");
 			if (proxy.address() instanceof InetSocketAddress) {
 				InetSocketAddress addr = (InetSocketAddress)proxy.address();
