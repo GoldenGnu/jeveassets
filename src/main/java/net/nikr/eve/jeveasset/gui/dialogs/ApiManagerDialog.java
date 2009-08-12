@@ -357,7 +357,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					result = 10;
 					return null;
 				}
-				ok = Online.isOnline();
+				ok = Online.isOnline(program.getSettings());
 				if (!ok){
 					result = 20;
 					return null;

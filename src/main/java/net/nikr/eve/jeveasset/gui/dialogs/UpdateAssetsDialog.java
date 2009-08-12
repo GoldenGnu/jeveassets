@@ -141,7 +141,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 							if (returned){
 								updated = true;
 							} else {
-								isOnline = Online.isOnline();
+								isOnline = Online.isOnline(program.getSettings());
 								updateFailed = true;
 							}
 						}

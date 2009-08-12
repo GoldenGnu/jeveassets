@@ -105,7 +105,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 				program.getSettings().clearEveAssetList();
 				updated = EveCentralMarketstatReader.load(program.getSettings());
 				if (!updated){
-					isOnline = Online.isOnline();
+					isOnline = Online.isOnline(program.getSettings());
 				}
 			} catch (Throwable ex) {
 				throwable = ex;
