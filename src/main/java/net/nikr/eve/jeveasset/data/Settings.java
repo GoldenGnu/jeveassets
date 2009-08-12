@@ -93,7 +93,7 @@ public class Settings {
 	private List<Integer> bpos;
 	private boolean settingsLoaded;
 	private MarketstatSettings marketstatSettings;
-  private Proxy proxy;
+	private Proxy proxy;
 	private String apiProxy;
 	//private boolean filterOnEnter;
 	
@@ -398,19 +398,19 @@ public class Settings {
 		return flags;
 	}
 
-  public Proxy getProxy() {
-    return proxy;
-  }
+	public Proxy getProxy() {
+		return proxy;
+	}
 
   /**
    *
    * @param proxy passing 'null' removes proxying.
    */
-  public void setProxy(Proxy proxy) {
-    this.proxy = proxy;
-    // pass the new proxy onto the API framework.
-    AbstractApiParser.setHttpProxy(proxy);
-  }
+	public void setProxy(Proxy proxy) {
+		this.proxy = proxy;
+		// pass the new proxy onto the API framework.
+		AbstractApiParser.setHttpProxy(proxy);
+	}
 
   /**
    * handles converting "basic" types to a Proxy type.
@@ -419,19 +419,19 @@ public class Settings {
    * @param type
    * @throws IllegalArgumentException
    */
-  public void setProxy(String host, int port, String type) throws IllegalArgumentException {
-    // Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
-    Proxy.Type proxyType = Proxy.Type.DIRECT;
-    if ("http".equalsIgnoreCase(type)) {
-      proxyType = Proxy.Type.HTTP;
-    } else if ("socks".equalsIgnoreCase(type)) {
-      proxyType = Proxy.Type.SOCKS;
-    } else if ("direct".equalsIgnoreCase(type)) {
-      proxyType = Proxy.Type.DIRECT;
-    }
+	public void setProxy(String host, int port, String type) throws IllegalArgumentException {
+		// Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
+		Proxy.Type proxyType = Proxy.Type.DIRECT;
+		if ("http".equalsIgnoreCase(type)) {
+			proxyType = Proxy.Type.HTTP;
+		} else if ("socks".equalsIgnoreCase(type)) {
+			proxyType = Proxy.Type.SOCKS;
+		} else if ("direct".equalsIgnoreCase(type)) {
+			proxyType = Proxy.Type.DIRECT;
+		}
 
-    setProxy(host, port, proxyType);
-  }
+		setProxy(host, port, proxyType);
+	}
 
   /**
    * handles converting "basic" types to a Proxy type.
@@ -440,19 +440,19 @@ public class Settings {
    * @param type
    * @throws IllegalArgumentException
    */
-  public void setProxy(String host, int port, Proxy.Type type) throws IllegalArgumentException {
-    // Convert it into something we can use.
-    InetAddress addr = null;
-    try {
-      addr = InetAddress.getByName(host);
-    } catch (UnknownHostException uhe) {
-      throw new IllegalArgumentException("unknown host: " + host, uhe);
-    }
+	public void setProxy(String host, int port, Proxy.Type type) throws IllegalArgumentException {
+		// Convert it into something we can use.
+		InetAddress addr = null;
+		try {
+			addr = InetAddress.getByName(host);
+		} catch (UnknownHostException uhe) {
+			throw new IllegalArgumentException("unknown host: " + host, uhe);
+		}
 
-    SocketAddress proxyAddress = new InetSocketAddress(addr, port);
-
-    setProxy(new Proxy(type, proxyAddress));
-  }
+		SocketAddress proxyAddress = new InetSocketAddress(addr, port);
+		
+		setProxy(new Proxy(type, proxyAddress));
+	}
 
 	public String getApiProxy() {
 		return apiProxy;

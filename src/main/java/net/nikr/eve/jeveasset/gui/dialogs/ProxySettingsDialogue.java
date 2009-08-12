@@ -82,12 +82,9 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 
 		enableProxy = new JCheckBox();
 		enableProxy.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				proxyTypeField.setEnabled(enableProxy.isSelected());
-				proxyAddressField.setEnabled(enableProxy.isSelected());
-				proxyPortField.setEnabled(enableProxy.isSelected());
+				enableProxy(enableProxy.isSelected());
 			}
 		});
 
@@ -158,15 +155,24 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		// save the API proxy.
 		if (enableApiProxy.isSelected()) {
 			program.getSettings().setApiProxy(apiProxyField.getText());
+		} else {
+			program.getSettings().setApiProxy(null);
 		}
-
+		
 		setVisible(false);
+	}
+
+	private void enableProxy(boolean b){
+		proxyTypeField.setEnabled(b);
+		proxyAddressField.setEnabled(b);
+		proxyPortField.setEnabled(b);
 	}
 
 	private void updateValues() {
 		Proxy proxy = program.getSettings().getProxy();
 		if (proxy == null) {
 			enableProxy.setSelected(false);
+			enableProxy(false);
 		} else {
 			enableProxy.setSelected(true);
 			proxyTypeField.setSelectedItem(proxy.type());
@@ -175,9 +181,7 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 				proxyAddressField.setText(String.valueOf(addr.getHostName()));
 				proxyPortField.setValue(addr.getPort());
 			}
-			proxyTypeField.setEnabled(true);
-			proxyAddressField.setEnabled(true);
-			proxyPortField.setEnabled(true);
+			enableProxy(true);
 		}
 
 		// set the API Proxy fields
