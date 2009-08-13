@@ -24,10 +24,11 @@ My thanks goes out to all of the bellow!
 ________________________________________________________________________________
 _CONTRIBUTORS___________________________________________________________________
 
--Niklas K. Rasmussen AKA Golden Gnu* (Main programmer)
+-Niklas Kyster Rasmussen AKA Golden Gnu* (Programmer, original creator)
+-Flaming Candle* (Programmer)
 -Varo Jan* (Main tester)
 
-* In game name
+* In-game name
 
 ________________________________________________________________________________
 _EVE-ONLINE_____________________________________________________________________
@@ -150,7 +151,8 @@ License:
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright (C) 2009 Niklas K. Rasmussen
+Copyright 2009 Niklas Kyster Rasmussen, Flaming Candle
+
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

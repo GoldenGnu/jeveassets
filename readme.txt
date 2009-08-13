@@ -50,13 +50,18 @@ or
 ________________________________________________________________________________
 _KNOWN_ISSUES___________________________________________________________________
 
--When updating to from BETA 11 or earlier, saved filters column will be reset
+-Updating to from Release Candidate 7a or earlier will remove all your settings
 
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+Release Candidate 8
+-Now uses the user's home directory to store data and settings
+-Now support proxy servers
+
 Release Candidate 7a
 -Fixed price data bug, introduced in RC7
+
 
 Release Candidate 7
 -Ship Loadouts: Fixed bug that showed charges instead of modules

@@ -52,14 +52,12 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 
 		JEditorPane jAbout = new JEditorPane("text/html",
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+ "<font size=\"5\">"+Program.PROGRAM_NAME+"</font><br>"
-				+ Program.PROGRAM_VERSION+"<br>"
-				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
-				+ "Copyright &copy; 2009 Niklas Kyster Rasmussen<br>"
-				+ Program.PROGRAM_NAME + " License: "
-				+ "<a href=\"http://www.gnu.org/copyleft/gpl.html\">GNU General Public License</a><br>"
+				+ "<font size=\"5\">"+Program.PROGRAM_NAME+" </font>"+Program.PROGRAM_VERSION+"<br>"
+				+ "<b>Web:</b> <a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
+				+ "<b>License:</b> <a href=\"http://www.gnu.org/copyleft/gpl.html\">GNU General Public License</a><br>"
+				+ "<b>Copyright:</b> &copy; 2009 Niklas Kyster Rasmussen, Flaming Candle<br>"
 				+ "<br>"
-				+ "Credits:<br>"
+				+ "<b>Credits:</b><br>"
 				+ "<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<a href=\"http://eve-central.com/\">EVE-Central.com</a> (API)<br>"
 				+ "<a href=\"http://www.eveonline.com/\">EVE-Online</a> (API and Toolkit)<br> "
@@ -70,7 +68,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "<a href=\"http://commons.apache.org/digester/\">Apache Commons Digester</a> (Used by eveapi)<br> "
 				+ "<a href=\"http://commons.apache.org/beanutils/\">Apache Commons BeanUtils</a> (Used by eveapi)<br> "
 				+ "<a href=\"http://commons.apache.org/logging/\">Apache Commons Logging</a> (Used by eveapi)<br> "
-				+ "NiKR Log (Logging)<br> "
+				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (Logging)<br>"
 			);
 		jAbout.setEditable(false);
 		jAbout.setOpaque(false);
