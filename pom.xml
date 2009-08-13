@@ -4,7 +4,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.1-SNAPSHOT</version>
+	<version>0.8.0-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<url>http://eve.nikr.net/?page=jeveasset</url>
 	<build>
