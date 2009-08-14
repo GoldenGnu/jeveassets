@@ -213,7 +213,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 			//			should open: ~library/preferences/eve online preferences/p_drive/my documents/eve/overview
 			jXmlFileChooser.setCurrentDirectory( mac );
 		} else { //Others: use program directory is there is only Win & Mac clients
-			jXmlFileChooser.setCurrentDirectory( new File(Settings.getProgramDirectory()) );
+			jXmlFileChooser.setCurrentDirectory( new File(Settings.getUserDirectory()) );
 		}
 		int bFound = jXmlFileChooser.showSaveDialog(dialog); //.showDialog(this, "OK"); //.showOpenDialog(this);
 		if (bFound  == JFileChooser.APPROVE_OPTION){

@@ -234,7 +234,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	}
 
 	private String getDefaultPath(){
-		return Settings.getProgramDirectory();
+		return Settings.getUserDirectory();
 	}
 
 	private String getDefaultFilePath(){
@@ -255,12 +255,9 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		if (currentFile.exists()){
 			jCsvFileChooser.setCurrentDirectory( new File(current) );
 			jCsvFileChooser.setSelectedFile( new File(jPath.getText()));
-		} else if (defaulFile.exists()){
+		} else {
 			jCsvFileChooser.setCurrentDirectory( defaulFile );
 			jCsvFileChooser.setSelectedFile( new File(getDefaultFilePath()));
-		} else {
-			jCsvFileChooser.setCurrentDirectory( new File(Settings.getProgramDirectory()) );
-			jCsvFileChooser.setSelectedFile( new File(Settings.getProgramDirectory()+getDefaultFile()));
 		}
 		int bFound = jCsvFileChooser.showSaveDialog(dialog); //.showDialog(this, "OK"); //.showOpenDialog(this);
 		if (bFound  == JFileChooser.APPROVE_OPTION){

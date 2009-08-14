@@ -526,8 +526,9 @@ public class Settings {
 	public static String getPathCredits(){
 		return getLocalFile(Settings.PATH_CREDITS, false);
 	}
-	public static String getProgramDirectory(){
-		return getLocalFile("");
+	public static String getUserDirectory(){
+		File userDir = new File(System.getProperty("user.home", "."));
+		return userDir.getAbsolutePath()+File.separator;
 	}
 
 	private static String getLocalFile(String filename){
