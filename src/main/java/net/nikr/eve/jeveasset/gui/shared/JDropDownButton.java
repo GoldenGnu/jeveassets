@@ -130,7 +130,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		int verticalPosition = this.getHeight();
 		int horizontalPosition = 0;
 		Dimension popupMenuSize = jPopupMenu.getPreferredSize();
-		//[TODO] Auto position JDropDownButton: if possible, show popup inside frame
+		//TODO Auto position JDropDownButton: if possible, show popup inside frame
 		switch (popupHorizontalAlignment){
 		case LEFT: //OK
 			horizontalPosition = 0;

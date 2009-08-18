@@ -353,7 +353,6 @@ public class EveApiAssetsReader {
 		ApiStation apiStation = null;
 
 		//Offices
-		//[FIXME] Fix not confirmed...
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
 				locationID = locationID - 6000001;
@@ -390,7 +389,6 @@ public class EveApiAssetsReader {
 		ApiStation apiStation = null;
 
 		//Offices
-		//[FIXME] Fix not confirmed...
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
 				locationID = locationID - 6000001;

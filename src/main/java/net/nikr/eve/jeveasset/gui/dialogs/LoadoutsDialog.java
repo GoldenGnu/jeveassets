@@ -209,7 +209,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		if (windows.exists()){ //Windows
 			jXmlFileChooser.setCurrentDirectory( windows );
 		} else if(mac.exists()) { //Mac
-			//[PENDING] TEST if fittings path is set correct on mac
+			//PENDING TEST if fittings path is set correct on mac
 			//			should open: ~library/preferences/eve online preferences/p_drive/my documents/eve/overview
 			jXmlFileChooser.setCurrentDirectory( mac );
 		} else { //Others: use program directory is there is only Win & Mac clients
