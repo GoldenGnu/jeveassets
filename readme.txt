@@ -55,6 +55,9 @@ _KNOWN_ISSUES___________________________________________________________________
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.0.0
+-Fixed minor bug with CSV & Fittings export
+
 Release Candidate 8
 -Now uses the user's home directory to store data and settings
 -Now support proxy servers
