@@ -474,10 +474,12 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 		double total = 0;
 		long count = 0;
+		float volume = 0;
 		for (int a = 0; a < selectedRows.length; a++){
 			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
 			total = total + (eveAsset.getPrice() * eveAsset.getCount());
 			count = count + eveAsset.getCount();
+			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 		}
 
 		jMenuItem = new JMenuItem(Formater.isk(total));
@@ -496,6 +498,12 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		jMenuItem.setDisabledIcon( ImageGetter.getIcon("add.png") );
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Count of selected assets");
+		jTablePopupMenu.add(jMenuItem);
+
+		jMenuItem = new JMenuItem( Formater.number(volume));
+		jMenuItem.setDisabledIcon( ImageGetter.getIcon("volume.png") );
+		jMenuItem.setEnabled(false);
+		jMenuItem.setToolTipText("Volume of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
