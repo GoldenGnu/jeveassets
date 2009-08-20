@@ -46,11 +46,12 @@ public class StatusPanel extends JProgramPanel {
 
 	//GUI
 	private JLabel jTask;
-	private JLabel jShowingTotal;
-	private JLabel jShowingCount;
-	private JLabel jShowingAverage;
-	private JLabel jShowingAssetUpdate;
-	private JLabel jShowingEveCentralUpdate;
+	private JLabel jTotalValue;
+	private JLabel jCount;
+	private JLabel jAverage;
+	private JLabel jVolume;
+	private JLabel jAssetUpdate;
+	private JLabel jEveCentralUpdate;
 	private JToolBar jToolBar;
 
 
@@ -78,15 +79,17 @@ public class StatusPanel extends JProgramPanel {
 		jTask.setMaximumSize( new Dimension(Short.MAX_VALUE, 25));
 		jToolBar.add(jTask);
 
-		jShowingEveCentralUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
+		jEveCentralUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
 
-		jShowingAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
+		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
 
-		jShowingCount = createLabel(100, "Total number of shown assets", ImageGetter.getIcon("add.png"));
+		jVolume = createLabel(100, "Total volume of shown assets", ImageGetter.getIcon("volume.png"));
 
-		jShowingAverage = createLabel(100, "Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
+		jCount = createLabel(100, "Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
 
-		jShowingTotal = createLabel(120, "Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
+		jAverage = createLabel(100, "Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
+
+		jTotalValue = createLabel(120, "Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
 
 		addSpace(10);
 
@@ -102,15 +105,15 @@ public class StatusPanel extends JProgramPanel {
 	}
 
 
-	public void setShowingEveCentralUpdate(){
+	public void updateEveCentralDate(){
 		Date d = program.getSettings().getMarketstatsNextUpdate();
 		if (Settings.getGmtNow().after(d) || Settings.getGmtNow().equals(d)){
-			jShowingEveCentralUpdate.setText("Now");
+			jEveCentralUpdate.setText("Now");
 		} else {
-			jShowingEveCentralUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
+			jEveCentralUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
 		}
 	}
-	public void setShowingAssetUpdate(){
+	public void updateAssetDate(){
 		List<Account> accounts = program.getSettings().getAccounts();
 		Date nextUpdate = null;
 		for (int a = 0; a < accounts.size(); a++){
@@ -130,26 +133,29 @@ public class StatusPanel extends JProgramPanel {
 		}
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
 		if (Settings.getGmtNow().after(nextUpdate) || Settings.getGmtNow().equals(nextUpdate)){
-			jShowingAssetUpdate.setText("Now");
+			jAssetUpdate.setText("Now");
 		} else {
-			jShowingAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
+			jAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
 		}
 	}
-	public void setShowingAverage(double n){
-		jShowingAverage.setText(Formater.isk(n));
+	public void setAverage(double n){
+		jAverage.setText(Formater.isk(n));
 	}
-	public void setShowingTotal(double n){
-		jShowingTotal.setText(Formater.isk(n));
+	public void setTotalValue(double n){
+		jTotalValue.setText(Formater.isk(n));
 	}
-	public void setShowingCount(long n){
-		jShowingCount.setText(Formater.count(n));
+	public void setCount(long n){
+		jCount.setText(Formater.count(n));
+	}
+	public void setVolume(float n){
+		jVolume.setText(Formater.number(n));
 	}
 	private void update(){
-		setShowingEveCentralUpdate();
-		setShowingAssetUpdate();
-		setShowingAverage(0);
-		setShowingTotal(0);
-		setShowingCount(0);
+		updateEveCentralDate();
+		updateAssetDate();
+		setAverage(0);
+		setTotalValue(0);
+		setCount(0);
 		
 
 	}

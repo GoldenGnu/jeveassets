@@ -732,14 +732,17 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		double total = 0;
 		long count = 0;
 		double average = 0;
+		float volume = 0;
 		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
 			EveAsset eveAsset = eveAssetTableModel.getElementAt(a);
 			total = total + (eveAsset.getPrice() * eveAsset.getCount());
-			count = count + (eveAsset.getCount());
+			count = count + eveAsset.getCount();
+			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 		}
 		if (count > 0 && total > 0) average = total / count;
-		program.getStatusPanel().setShowingTotal(total);
-		program.getStatusPanel().setShowingCount(count);
-		program.getStatusPanel().setShowingAverage(average);
+		program.getStatusPanel().setTotalValue(total);
+		program.getStatusPanel().setCount(count);
+		program.getStatusPanel().setAverage(average);
+		program.getStatusPanel().setVolume(volume);
 	}
 }

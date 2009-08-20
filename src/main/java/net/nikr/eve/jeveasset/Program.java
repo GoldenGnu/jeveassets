@@ -230,7 +230,7 @@ public class Program implements ActionListener {
 	}
 
 	public void charactersChanged(){
-		statusPanel.setShowingAssetUpdate();
+		statusPanel.updateAssetDate();
 	}
 	
 	public void filtersChanged(){

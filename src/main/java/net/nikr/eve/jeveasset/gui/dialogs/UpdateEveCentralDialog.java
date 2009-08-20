@@ -64,7 +64,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 			if (updateEveCentralTask.updated){
 				program.assetsChanged();
 			}
-			program.getStatusPanel().setShowingEveCentralUpdate();
+			program.getStatusPanel().updateEveCentralDate();
 
 			jProgressBar.setValue(0);
 			jProgressBar.setIndeterminate(false);

@@ -69,8 +69,8 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			updateAssetsTask.done = false;
 			if (updateAssetsTask.updated){
 				program.assetsChanged();
-				program.getStatusPanel().setShowingAssetUpdate();
-				program.getStatusPanel().setShowingEveCentralUpdate();
+				program.getStatusPanel().updateAssetDate();
+				program.getStatusPanel().updateEveCentralDate();
 			}
 			jProgressBar.setValue(0);
 			jProgressBar.setIndeterminate(false);
