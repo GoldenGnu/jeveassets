@@ -67,12 +67,12 @@ public class LocalConquerableStationsReader extends AbstractXmlReader {
 	}
 	private static ApiStation parseStation(Element element, Settings settings){
 		ApiStation station = new ApiStation();
-		station.setCorporationID( AttributeGetters.getAttributeInteger(element, "corporationid"));
-		station.setCorporationName( AttributeGetters.getAttributeString(element, "corporationname"));
-		station.setSolarSystemID( AttributeGetters.getAttributeInteger(element, "solarsystemid"));
-		station.setStationID(AttributeGetters.getAttributeInteger(element, "stationid"));
-		station.setStationName(AttributeGetters.getAttributeString(element, "stationname"));
-		station.setStationTypeID( AttributeGetters.getAttributeInteger(element, "stationtypeid"));
+		station.setCorporationID( AttributeGetters.getInt(element, "corporationid"));
+		station.setCorporationName( AttributeGetters.getString(element, "corporationname"));
+		station.setSolarSystemID( AttributeGetters.getInt(element, "solarsystemid"));
+		station.setStationID(AttributeGetters.getInt(element, "stationid"));
+		station.setStationName(AttributeGetters.getString(element, "stationname"));
+		station.setStationTypeID( AttributeGetters.getInt(element, "stationtypeid"));
 		return station;
 
 	}

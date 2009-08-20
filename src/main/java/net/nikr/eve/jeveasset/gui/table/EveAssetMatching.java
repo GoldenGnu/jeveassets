@@ -63,6 +63,7 @@ public class EveAssetMatching {
 							+ item.getTypeId() + "\r\n"
 							+ item.getRegion() + "\r\n"
 							+ item.getTypeCount() + "\r\n"
+							+ item.getSecurity() + "\r\n"
 						;
 				value = -1;
 			} else if (column.equals("Name")){
@@ -113,16 +114,19 @@ public class EveAssetMatching {
 			} else if (column.equals("Volume")){
 				haystack = String.valueOf(item.getVolume());
 				value = item.getVolume();
-			}  else if (column.equals("Type ID")){
+			} else if (column.equals("Type ID")){
 				haystack = String.valueOf(item.getTypeId());
 				value = item.getTypeId();
-			}  else if (column.equals("Region")){
+			} else if (column.equals("Region")){
 				haystack = item.getRegion();
 				value = -1;
-			}  else if (column.equals("Type Count")){
+			} else if (column.equals("Type Count")){
 				haystack = String.valueOf(item.getTypeCount());
 				value = item.getTypeCount();
-			}    else {
+			} else if (column.equals("Security")){
+				haystack = item.getSecurity();
+				value = -1;
+			} else {
 				haystack = "";
 				value = -1;
 			}

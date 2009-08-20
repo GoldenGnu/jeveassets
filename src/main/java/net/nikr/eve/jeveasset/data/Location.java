@@ -30,11 +30,13 @@ public class Location {
 	private int id;
 	private String name;
 	private int region;
+	private String security;
 
-	public Location(int id, String name, int region) {
+	public Location(int id, String name, int region, String security) {
 		this.id = id;
 		this.name = name;
 		this.region = region;
+		this.security = security;
 	}
 
 	public int getId() {
@@ -47,6 +49,10 @@ public class Location {
 
 	public int getRegion() {
 		return region;
+	}
+
+	public String getSecurity() {
+		return security;
 	}
 
 	@Override

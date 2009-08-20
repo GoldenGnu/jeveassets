@@ -162,7 +162,7 @@ public class EveCentralMarketstatReader {
 		}
 	}
 	private static Marketstat parseTypeNode(Element element){
-		int id = AttributeGetters.getAttributeInteger(element, "id");
+		int id = AttributeGetters.getInt(element, "id");
 		return new Marketstat(id);
 	}
 	private static void parseAllNode(Element element, Marketstat marketstat){

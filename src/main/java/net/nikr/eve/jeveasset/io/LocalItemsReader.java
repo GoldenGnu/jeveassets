@@ -64,14 +64,14 @@ public class LocalItemsReader extends AbstractXmlReader {
 		}
 	}
 	private static Items parseItem(Node node){
-		int id = AttributeGetters.getAttributeInteger(node, "id");
-		String name = AttributeGetters.getAttributeString(node, "name");
-		String group = AttributeGetters.getAttributeString(node, "group");
-		String category = AttributeGetters.getAttributeString(node, "category");
-		long price = AttributeGetters.getAttributeLong(node, "price");
-		float volume = AttributeGetters.getAttributeFloat(node, "volume");
-		String meta = AttributeGetters.getAttributeString(node, "meta");
-		boolean marketGroup = AttributeGetters.getAttributeBoolean(node, "marketgroup");
+		int id = AttributeGetters.getInt(node, "id");
+		String name = AttributeGetters.getString(node, "name");
+		String group = AttributeGetters.getString(node, "group");
+		String category = AttributeGetters.getString(node, "category");
+		long price = AttributeGetters.getLong(node, "price");
+		float volume = AttributeGetters.getFloat(node, "volume");
+		String meta = AttributeGetters.getString(node, "meta");
+		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
 		return new Items(id, name, group, category, price, volume, meta, marketGroup);
 	}
 }

@@ -123,13 +123,13 @@ public class Settings {
 		marketstatSettings = new MarketstatSettings(0, 0, 0);
 
 		//Load data and overwite default values
-		SplashUpdater.setProgress(20);
 		settingsLoaded = LocalSettingsReader.load(this);
-		LocalAssetsReader.load(this);
-		SplashUpdater.setProgress(30);
+		SplashUpdater.setProgress(20);
 		LocalItemsReader.load(this);
-		SplashUpdater.setProgress(40);
+		SplashUpdater.setProgress(30);
 		LocalLocationReader.load(this);
+		SplashUpdater.setProgress(40);
+		LocalAssetsReader.load(this);
 		SplashUpdater.setProgress(50);
 		LocalConquerableStationsReader.load(this);
 		SplashUpdater.setProgress(60);
@@ -154,6 +154,7 @@ public class Settings {
 		tableColumnNames.add("Category");
 		tableColumnNames.add("Owner");
 		tableColumnNames.add("Location");
+		tableColumnNames.add("Security");
 		tableColumnNames.add("Region");
 		tableColumnNames.add("Container");
 		tableColumnNames.add("Flag");
@@ -176,6 +177,7 @@ public class Settings {
 		//tableColumnTooltips.put("Owner", "Owner");
 		//tableColumnTooltips.put("Location", "Station");
 		//tableColumnTooltips.put("Region", "Region");
+		tableColumnTooltips.put("Security", "System Security Status");
 		//tableColumnTooltips.put("Container", "Container");
 		//tableColumnTooltips.put("Flag", "Flag");
 		tableColumnTooltips.put("Price", "Median Sell Price (Eve-Central)");

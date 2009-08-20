@@ -190,12 +190,6 @@ A: Please send an email to niklaskr@gmail.com and include the following:
 
 ________________________________________________________________________________
 
-Q: Volume column display -1/Region column displays nothing
-
-A: You'll need to update your assets before the correct value is displayed
-
-________________________________________________________________________________
-
 Q: I can't sort columns
 
 A: You need to double click to sort a new column

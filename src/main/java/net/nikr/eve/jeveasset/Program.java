@@ -104,7 +104,7 @@ public class Program implements ActionListener {
 	public Program(){
 		//FIXME before release: Fix copyright in all source files before release
 		//FIXME before release: Update version number and splash screen
-		//FIXME before release: set DEBUG, FORCE_UPDATE, and FORCE_NO_UPDATE to false (and clean build)
+		//FIXME before release: set DEBUG to false (and clean build)
 		//FIXME before release: Write change log
 
 		//TEST converted locationIDs:

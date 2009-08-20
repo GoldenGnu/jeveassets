@@ -64,9 +64,10 @@ public class LocalLocationReader extends AbstractXmlReader {
 		}
 	}
 	private static Location parseLocation(Node node){
-		int id = AttributeGetters.getAttributeInteger(node, "id");
-		String name = AttributeGetters.getAttributeString(node, "name");
-		int region = AttributeGetters.getAttributeInteger(node, "region");
-		return new Location(id, name, region);
+		int id = AttributeGetters.getInt(node, "id");
+		String name = AttributeGetters.getString(node, "name");
+		int region = AttributeGetters.getInt(node, "region");
+		String security = AttributeGetters.getString(node, "security");
+		return new Location(id, name, region, security);
 	}
 }

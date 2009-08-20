@@ -53,8 +53,9 @@ public class EveAsset implements Comparable<EveAsset> {
 	private long typeCount = 0;
 	private boolean bpo;
 	private boolean singleton;
+	private String security;
 
-	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, int id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton) {
+	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, int id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
 		this.name = name;
 		this.group = group;
 		this.category = category;
@@ -74,6 +75,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.locationID = locationID;
 		this.bpo = false;
 		this.singleton = singleton;
+		this.security = security;
 	}
 
 	public void setMarketstat(Marketstat marketstat) {
@@ -142,6 +144,10 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public boolean isMarketGroup() {
 		return marketGroup;
+	}
+
+	public String getSecurity() {
+		return security;
 	}
 
 	public Marketstat getMarketstat() {

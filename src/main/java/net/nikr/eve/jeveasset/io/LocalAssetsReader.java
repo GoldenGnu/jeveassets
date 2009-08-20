@@ -61,48 +61,48 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		NodeList accountNodes = element.getElementsByTagName("accounts");
 		if (accountNodes.getLength() == 1){
 			Element accountsElement = (Element) accountNodes.item(0);
-			parseAccounts(accountsElement, settings.getAccounts());
+			parseAccounts(accountsElement, settings.getAccounts(), settings);
 		}
 		
 	}
-	private static void parseAccounts(Element element, List<Account> accounts){
+	private static void parseAccounts(Element element, List<Account> accounts, Settings settings){
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int a = 0; a < accountNodes.getLength(); a++){
 			Element currentNode = (Element) accountNodes.item(a);
 			Account account = parseAccount(currentNode);
-			parseHumans(currentNode, account);
+			parseHumans(currentNode, account, settings);
 			accounts.add(account);
 		}
 	}
 
 	private static Account parseAccount(Node node){
-		int userID = AttributeGetters.getAttributeInteger(node, "userid");
-		String apiKey = AttributeGetters.getAttributeString(node, "apikey");
-		Date nextUpdate = new Date( AttributeGetters.getAttributeLong(node, "charactersnextupdate") );
+		int userID = AttributeGetters.getInt(node, "userid");
+		String apiKey = AttributeGetters.getString(node, "apikey");
+		Date nextUpdate = new Date( AttributeGetters.getLong(node, "charactersnextupdate") );
 		return new Account(userID, apiKey, nextUpdate);
 	}
 
-	private static void parseHumans(Element element, Account account){
+	private static void parseHumans(Element element, Account account, Settings settings){
 		NodeList humanNodes =  element.getElementsByTagName("human");
 		for (int a = 0; a < humanNodes.getLength(); a++){
 			Element currentNode = (Element) humanNodes.item(a);
 			Human human = parseHuman(currentNode, account);
 			account.getHumans().add(human);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
-			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null);
+			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
 			parseBalances(currentNode, human);
 		}
 	}
 	private static Human parseHuman(Node node, Account account){
-		String name = AttributeGetters.getAttributeString(node, "name");
-		long characterID = AttributeGetters.getAttributeLong(node, "id");
-		String corporation = AttributeGetters.getAttributeString(node, "corporation");
-		boolean updateCorporationAssets = AttributeGetters.getAttributeBoolean(node, "corpassets");
-		Date assetsNextUpdate = new Date( AttributeGetters.getAttributeLong(node, "assetsnextupdate") );
-		Date balanceNextUpdate = new Date( AttributeGetters.getAttributeLong(node, "balancenextupdate") );
+		String name = AttributeGetters.getString(node, "name");
+		long characterID = AttributeGetters.getLong(node, "id");
+		String corporation = AttributeGetters.getString(node, "corporation");
+		boolean updateCorporationAssets = AttributeGetters.getBoolean(node, "corpassets");
+		Date assetsNextUpdate = new Date( AttributeGetters.getLong(node, "assetsnextupdate") );
+		Date balanceNextUpdate = new Date( AttributeGetters.getLong(node, "balancenextupdate") );
 		boolean showAssets = true;
 		if (AttributeGetters.haveAttribute(node, "show")){
-			showAssets = AttributeGetters.getAttributeBoolean(node, "show");
+			showAssets = AttributeGetters.getBoolean(node, "show");
 		}
 		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate);
 	}
@@ -111,7 +111,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++){
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
-			boolean bCorp = AttributeGetters.getAttributeBoolean(currentBalancesNode, "corp");
+			boolean bCorp = AttributeGetters.getBoolean(currentBalancesNode, "corp");
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 
 			for (int b = 0; b < balanceNodes.getLength(); b++){
@@ -128,9 +128,9 @@ public class LocalAssetsReader extends AbstractXmlReader {
 	}
 	private static ApiAccountBalance parseBalance(Element element){
 		ApiAccountBalance accountBalance = new ApiAccountBalance();
-		int accountID = AttributeGetters.getAttributeInteger(element, "accountid");
-		int accountKey = AttributeGetters.getAttributeInteger(element, "accountkey");
-		double balance = AttributeGetters.getAttributeDouble(element, "balance");
+		int accountID = AttributeGetters.getInt(element, "accountid");
+		int accountKey = AttributeGetters.getInt(element, "accountkey");
+		double balance = AttributeGetters.getDouble(element, "balance");
 		accountBalance.setAccountID(accountID);
 		accountBalance.setAccountKey(accountKey);
 		accountBalance.setBalance(balance);
@@ -138,41 +138,45 @@ public class LocalAssetsReader extends AbstractXmlReader {
 	}
 
 
-	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset){
+	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset, Settings settings){
 		NodeList assetsNodes = node.getChildNodes();
 		EveAsset eveAsset = null;
 		for (int a = 0; a < assetsNodes.getLength(); a++){
 			Node currentNode = assetsNodes.item(a);
 			if (currentNode.getNodeName().equals("asset")){
-				eveAsset = parseEveAsset(currentNode);
+				eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
 				if (parentEveAsset == null){
 					assets.add(eveAsset);
 				} else {
 					parentEveAsset.addEveAsset(eveAsset);
 				}
-				parseAssets(currentNode, assets, eveAsset);
+				parseAssets(currentNode, assets, eveAsset, settings);
 			}
 		}
 	}
-	private static EveAsset parseEveAsset(Node node){
-		String name = AttributeGetters.getAttributeString(node, "name");
-		String group = AttributeGetters.getAttributeString(node, "group");
-		String category = AttributeGetters.getAttributeString(node, "category");
-		String owner = AttributeGetters.getAttributeString(node, "owner");
-		long count = AttributeGetters.getAttributeLong(node, "count");
-		String location = AttributeGetters.getAttributeString(node, "location");
-		String container = AttributeGetters.getAttributeString(node, "container");
-		String flag = AttributeGetters.getAttributeString(node, "flag");
-		double price = AttributeGetters.getAttributeDouble(node, "price");
-		String meta = AttributeGetters.getAttributeString(node, "meta");
-		int id = AttributeGetters.getAttributeInteger(node, "id");
-		int typeID = AttributeGetters.getAttributeInteger(node, "typeid");
-		boolean marketGroup = AttributeGetters.getAttributeBoolean(node, "marketgroup");
-		boolean corporationAsset = AttributeGetters.getAttributeBoolean(node, "corporationasset");
-		float volume = AttributeGetters.getAttributeFloat(node, "volume");
-		String region = AttributeGetters.getAttributeString(node, "region");
-		int locationID = AttributeGetters.getAttributeInteger(node, "locationid");
-		boolean singleton = AttributeGetters.getAttributeBoolean(node, "singleton");
-		return new EveAsset(name, group, category, owner, count, location, container, flag, price, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton);
+	private static EveAsset parseEveAsset(Node node, EveAsset parentEveAsset, Settings settings){
+		long count = AttributeGetters.getLong(node, "count");
+		String flag = AttributeGetters.getString(node, "flag");
+		int id = AttributeGetters.getInt(node, "id");
+		int typeID = AttributeGetters.getInt(node, "typeid");
+		int locationID = AttributeGetters.getInt(node, "locationid");
+		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
+		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
+		String owner = AttributeGetters.getString(node, "owner");
+		
+		//Calculated:
+		String name = AssetConverter.name(typeID, settings);
+		String group = AssetConverter.group(typeID, settings);
+		String category = AssetConverter.category(typeID, settings);
+		double priceBase = AssetConverter.priceBase(typeID, settings);
+		String meta = AssetConverter.meta(typeID, settings);
+		boolean marketGroup = AssetConverter.marketGroup(typeID, settings);
+		float volume = AssetConverter.volume(typeID, settings);
+		String security = AssetConverter.security(locationID, parentEveAsset, settings);
+		String location = AssetConverter.location(locationID, parentEveAsset, settings);
+		String container = AssetConverter.container(locationID, parentEveAsset);
+		String region = AssetConverter.region(locationID, parentEveAsset, settings);
+		
+		return new EveAsset(name, group, category, owner, count, location, container, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
 	}
 }

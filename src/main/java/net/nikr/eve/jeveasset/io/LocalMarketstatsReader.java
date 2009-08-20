@@ -64,28 +64,28 @@ public class LocalMarketstatsReader extends AbstractXmlReader {
 		}
 	}
 	private static Marketstat parseMarketstatNode(Element element, Settings settings){
-		int id = AttributeGetters.getAttributeInteger(element, "id");
+		int id = AttributeGetters.getInt(element, "id");
 		Marketstat marketstat = new Marketstat(id);
-		marketstat.setAllVolume( AttributeGetters.getAttributeLong(element, "allvolume") );
-		marketstat.setAllAvg( AttributeGetters.getAttributeDouble(element, "allavg") );
-		marketstat.setAllMax( AttributeGetters.getAttributeDouble(element, "allmax") );
-		marketstat.setAllMin( AttributeGetters.getAttributeDouble(element, "allmin") );
-		marketstat.setAllStddev( AttributeGetters.getAttributeDouble(element, "allstddev") );
-		marketstat.setAllMedian( AttributeGetters.getAttributeDouble(element, "allmedian") );
+		marketstat.setAllVolume( AttributeGetters.getLong(element, "allvolume") );
+		marketstat.setAllAvg( AttributeGetters.getDouble(element, "allavg") );
+		marketstat.setAllMax( AttributeGetters.getDouble(element, "allmax") );
+		marketstat.setAllMin( AttributeGetters.getDouble(element, "allmin") );
+		marketstat.setAllStddev( AttributeGetters.getDouble(element, "allstddev") );
+		marketstat.setAllMedian( AttributeGetters.getDouble(element, "allmedian") );
 
-		marketstat.setBuyVolume( AttributeGetters.getAttributeLong(element, "buyvolume") );
-		marketstat.setBuyAvg( AttributeGetters.getAttributeDouble(element, "buyavg") );
-		marketstat.setBuyMax( AttributeGetters.getAttributeDouble(element, "buymax") );
-		marketstat.setBuyMin( AttributeGetters.getAttributeDouble(element, "buymin") );
-		marketstat.setBuyStddev( AttributeGetters.getAttributeDouble(element, "buystddev") );
-		marketstat.setBuyMedian( AttributeGetters.getAttributeDouble(element, "buymedian") );
+		marketstat.setBuyVolume( AttributeGetters.getLong(element, "buyvolume") );
+		marketstat.setBuyAvg( AttributeGetters.getDouble(element, "buyavg") );
+		marketstat.setBuyMax( AttributeGetters.getDouble(element, "buymax") );
+		marketstat.setBuyMin( AttributeGetters.getDouble(element, "buymin") );
+		marketstat.setBuyStddev( AttributeGetters.getDouble(element, "buystddev") );
+		marketstat.setBuyMedian( AttributeGetters.getDouble(element, "buymedian") );
 
-		marketstat.setSellVolume( AttributeGetters.getAttributeLong(element, "sellvolume") );
-		marketstat.setSellAvg( AttributeGetters.getAttributeDouble(element, "sellavg") );
-		marketstat.setSellMax( AttributeGetters.getAttributeDouble(element, "sellmax") );
-		marketstat.setSellMin( AttributeGetters.getAttributeDouble(element, "sellmin") );
-		marketstat.setSellStddev( AttributeGetters.getAttributeDouble(element, "sellstddev") );
-		marketstat.setSellMedian( AttributeGetters.getAttributeDouble(element, "sellmedian") );
+		marketstat.setSellVolume( AttributeGetters.getLong(element, "sellvolume") );
+		marketstat.setSellAvg( AttributeGetters.getDouble(element, "sellavg") );
+		marketstat.setSellMax( AttributeGetters.getDouble(element, "sellmax") );
+		marketstat.setSellMin( AttributeGetters.getDouble(element, "sellmin") );
+		marketstat.setSellStddev( AttributeGetters.getDouble(element, "sellstddev") );
+		marketstat.setSellMedian( AttributeGetters.getDouble(element, "sellmedian") );
 
 
 		return marketstat;

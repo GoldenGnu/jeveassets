@@ -22,6 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
@@ -92,22 +93,12 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 		for (int a = 0; a < assets.size(); a++){
 			EveAsset eveAsset = assets.get(a);
 			Element node = xmldoc.createElementNS(null, "asset");
-			node.setAttributeNS(null, "name", eveAsset.getName());
-			node.setAttributeNS(null, "group", eveAsset.getGroup());
-			node.setAttributeNS(null, "category", eveAsset.getCategory());
 			node.setAttributeNS(null, "owner", eveAsset.getOwner());
 			node.setAttributeNS(null, "count", String.valueOf(eveAsset.getCount()));
-			node.setAttributeNS(null, "location", eveAsset.getLocation());
-			node.setAttributeNS(null, "container", eveAsset.getContainer());
 			node.setAttributeNS(null, "flag", eveAsset.getFlag());
-			node.setAttributeNS(null, "price", String.valueOf(eveAsset.getPriceBase()));
-			node.setAttributeNS(null, "meta", eveAsset.getMeta());
 			node.setAttributeNS(null, "id", String.valueOf(eveAsset.getId()));
 			node.setAttributeNS(null, "typeid", String.valueOf(eveAsset.getTypeId()));
-			node.setAttributeNS(null, "marketgroup", String.valueOf(eveAsset.isMarketGroup()));
 			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporationAsset()));
-			node.setAttributeNS(null, "volume", String.valueOf(eveAsset.getVolume()));
-			node.setAttributeNS(null, "region", eveAsset.getRegion());
 			node.setAttributeNS(null, "locationid", String.valueOf(eveAsset.getLocationID()));
 			node.setAttributeNS(null, "singleton", String.valueOf(eveAsset.isSingleton()));
 			parentNode.appendChild(node);

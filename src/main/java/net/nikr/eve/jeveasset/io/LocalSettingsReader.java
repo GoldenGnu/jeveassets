@@ -137,9 +137,9 @@ public class LocalSettingsReader extends AbstractXmlReader {
 	}
 
 	private static void parseProxy(Element proxyElement, Settings settings) throws XmlException {
-		String addrName = AttributeGetters.getAttributeString(proxyElement, "address");
-		String proxyType = AttributeGetters.getAttributeString(proxyElement, "type");
-		Integer port = AttributeGetters.getAttributeInteger(proxyElement, "port");
+		String addrName = AttributeGetters.getString(proxyElement, "address");
+		String proxyType = AttributeGetters.getString(proxyElement, "type");
+		Integer port = AttributeGetters.getInt(proxyElement, "port");
 		if (addrName.length() > 0
 						&& proxyType.length() > 0
 						&& port != null
@@ -154,7 +154,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		NodeList userPriceNodes = element.getElementsByTagName("bpo");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){
 			Element currentNode = (Element) userPriceNodes.item(a);
-			int id = AttributeGetters.getAttributeInteger(currentNode, "id");
+			int id = AttributeGetters.getInt(currentNode, "id");
 			settings.getBpos().add(id);
 		}
 	}
@@ -162,18 +162,18 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){
 			Element currentNode = (Element) userPriceNodes.item(a);
-			String name = AttributeGetters.getAttributeString(currentNode, "name");
-			double price = AttributeGetters.getAttributeDouble(currentNode, "price");
-			int typeID = AttributeGetters.getAttributeInteger(currentNode, "typeid");
+			String name = AttributeGetters.getString(currentNode, "name");
+			double price = AttributeGetters.getDouble(currentNode, "price");
+			int typeID = AttributeGetters.getInt(currentNode, "typeid");
 			UserPrice userPrice = new UserPrice(price, typeID, name);
 			settings.getUserPrices().put(typeID, userPrice);
 		}
 	}
 
 	private static void parseMarketstatSettings(Element element, Settings settings){
-		int age = AttributeGetters.getAttributeInteger(element, "age");
-		int quantity = AttributeGetters.getAttributeInteger(element, "quantity");
-		int region = AttributeGetters.getAttributeInteger(element, "region");
+		int age = AttributeGetters.getInt(element, "age");
+		int quantity = AttributeGetters.getInt(element, "quantity");
+		int region = AttributeGetters.getInt(element, "region");
 		settings.setMarketstatSettings( new MarketstatSettings(region, age, quantity) );
 	}
 
@@ -181,8 +181,8 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		NodeList flagNodes = element.getElementsByTagName("flag");
 		for (int a = 0; a < flagNodes.getLength(); a++){
 			Element currentNode = (Element) flagNodes.item(a);
-			String key = AttributeGetters.getAttributeString(currentNode, "key");
-			boolean enabled = AttributeGetters.getAttributeBoolean(currentNode, "enabled");
+			String key = AttributeGetters.getString(currentNode, "key");
+			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
 			settings.getFlags().put(key, enabled);
 		}
 	}
@@ -193,8 +193,8 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		List<String> mainTableColumnVisible = new Vector<String>();
 		for (int a = 0; a < columnNodes.getLength(); a++){
 			Element currentNode = (Element) columnNodes.item(a);
-			String name = AttributeGetters.getAttributeString(currentNode, "name");
-			boolean visible = AttributeGetters.getAttributeBoolean(currentNode, "visible");
+			String name = AttributeGetters.getString(currentNode, "name");
+			boolean visible = AttributeGetters.getBoolean(currentNode, "visible");
 			mainTableColumnNames.add(name);
 			if (visible) mainTableColumnVisible.add(name);
 		}
@@ -219,8 +219,8 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		}
 	}
 	private static void parseUpdate(Element element, Settings settings){
-		String text = AttributeGetters.getAttributeString(element, "name");
-		Date nextUpdate = new Date( AttributeGetters.getAttributeLong(element, "nextupdate") );
+		String text = AttributeGetters.getString(element, "name");
+		Date nextUpdate = new Date( AttributeGetters.getLong(element, "nextupdate") );
 		if (text.equals("conquerable station")){
 			settings.setConquerableStationsNextUpdate(nextUpdate);
 		}
@@ -228,7 +228,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			settings.setMarketstatsNextUpdate(nextUpdate);
 		}
 		if (text.equals("corporation")){
-			long corpid = AttributeGetters.getAttributeLong(element, "corpid");
+			long corpid = AttributeGetters.getLong(element, "corpid");
 			settings.getCorporationsNextUpdate().put(corpid, nextUpdate);
 		}
 	}
@@ -243,7 +243,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 	}
 
 	private static String parseFilter(Element element){
-		return AttributeGetters.getAttributeString(element, "name");
+		return AttributeGetters.getString(element, "name");
 	}
 
 	private static List<AssetFilter> parseFilterRows(Element element){
@@ -258,15 +258,15 @@ public class LocalSettingsReader extends AbstractXmlReader {
 	}
 
 	private static AssetFilter parseAssetFilter(Element element){
-		String text = AttributeGetters.getAttributeString(element, "text");
-		String column = AttributeGetters.getAttributeString(element, "column");
-		String mode = AttributeGetters.getAttributeString(element, "mode");
-		boolean and = AttributeGetters.getAttributeBoolean(element, "and");
+		String text = AttributeGetters.getString(element, "text");
+		String column = AttributeGetters.getString(element, "column");
+		String mode = AttributeGetters.getString(element, "mode");
+		boolean and = AttributeGetters.getBoolean(element, "and");
 		return new AssetFilter(column, text, mode, and);
 	}
 
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {
-		String proxyURL = AttributeGetters.getAttributeString(apiProxyElement, "url");
+		String proxyURL = AttributeGetters.getString(apiProxyElement, "url");
 		settings.setApiProxy(proxyURL);
 	}
 }

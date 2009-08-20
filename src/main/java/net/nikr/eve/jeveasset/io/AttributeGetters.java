@@ -38,7 +38,8 @@ public class AttributeGetters {
 		}
 		return true;
 	}
-	public static String getAttributeString(Node node, String attributeName){
+
+	public static String getString(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
@@ -46,7 +47,8 @@ public class AttributeGetters {
 		}
 		return attributeNode.getNodeValue();
 	}
-	public static int getAttributeInteger(Node node, String attributeName){
+
+	public static int getInt(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
@@ -62,7 +64,8 @@ public class AttributeGetters {
 			return -1;
 		}
 	}
-	public static long getAttributeLong(Node node, String attributeName){
+
+	public static long getLong(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
@@ -78,7 +81,8 @@ public class AttributeGetters {
 			return -1;
 		}
 	}
-	public static double getAttributeDouble(Node node, String attributeName){
+
+	public static double getDouble(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
@@ -94,7 +98,8 @@ public class AttributeGetters {
 			return -1;
 		}
 	}
-	public static float getAttributeFloat(Node node, String attributeName){
+
+	public static float getFloat(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
@@ -110,7 +115,8 @@ public class AttributeGetters {
 			return -1;
 		}
 	}
-	public static boolean getAttributeBoolean(Node node, String attributeName){
+
+	public static boolean getBoolean(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
 			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
