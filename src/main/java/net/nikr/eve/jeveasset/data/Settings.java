@@ -68,6 +68,8 @@ public class Settings {
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
+
+	private static boolean portable = false;
 	
 	//Data
 	private List<Integer> uniqueIds = null;
@@ -209,6 +211,15 @@ public class Settings {
 		tableNumberColumns.add("Reprocessed");
 
 	}
+
+	public static void setPortable(boolean portable) {
+		Settings.portable = portable;
+	}
+
+	public static boolean isPortable() {
+		return portable;
+	}
+
 	public void clearEveAssetList(){
 		allAssets = null;
 		eventListAssets = null;
@@ -536,16 +547,16 @@ public class Settings {
 		LocalAssetsWriter.save(this);
 	}
 	public static String getPathSettings(){
-		return getLocalFile(Settings.PATH_SETTINGS);
+		return getLocalFile(Settings.PATH_SETTINGS, !portable);
 	}
 	public static String getPathConquerableStations(){
-		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS);
+		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
 	}
 	public static String getPathMarketstats(){
-		return getLocalFile(Settings.PATH_MARKETSTATS);
+		return getLocalFile(Settings.PATH_MARKETSTATS, !portable);
 	}
 	public static String getPathAssets(){
-		return getLocalFile(Settings.PATH_ASSETS);
+		return getLocalFile(Settings.PATH_ASSETS, !portable);
 	}
 	public static String getPathItems(){
 		return getLocalFile(Settings.PATH_ITEMS, false);

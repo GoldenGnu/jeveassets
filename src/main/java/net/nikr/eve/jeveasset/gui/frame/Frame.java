@@ -33,6 +33,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
@@ -52,7 +53,11 @@ public class Frame extends JFrame implements WindowListener  {
 		this.getContentPane().add(jMainPanel);
 
 		//Frame
-		this.setTitle(Program.PROGRAM_NAME);
+		if (Settings.isPortable()){
+			this.setTitle(Program.PROGRAM_NAME+" portable");
+		} else {
+			this.setTitle(Program.PROGRAM_NAME);
+		}
 		this.setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)); //800, 600
 		this.setIconImage( ImageGetter.getImage("safe16.png") );
 		this.addWindowListener(this);

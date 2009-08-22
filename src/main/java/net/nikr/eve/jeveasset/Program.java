@@ -101,7 +101,7 @@ public class Program implements ActionListener {
 	private Settings settings;
 	private EventList<EveAsset> eveAssetEventList;
 
-	public Program(){
+	public Program(String[] args){
 		//FIXME before release: Fix copyright in all source files before release
 		//FIXME before release: Update version number and splash screen
 		//FIXME before release: set DEBUG to false (and clean build)
@@ -160,6 +160,13 @@ public class Program implements ActionListener {
 		//Data
 		SplashUpdater.setText("Loading DATA");
 		Log.info("DATA Loading...");
+
+		//Arguments
+		for (int a = 0; a < args.length; a++){
+			if (args[a].toLowerCase().equals("-portable")){
+				Settings.setPortable(true);
+			}
+		}
 
 		settings = new Settings();
 		eveAssetEventList = new BasicEventList<EveAsset>();

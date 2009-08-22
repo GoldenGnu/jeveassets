@@ -42,7 +42,7 @@ import org.supercsv.cellprocessor.constraint.Unique;
 
 
 public class Main {
-	static String[] inputString;
+	static String[] args;
 	Program program;
 	//DataLoader dataLoader;
 	/** Creates a new instance of Main */
@@ -79,7 +79,7 @@ public class Main {
 				Log.error("The Commons Digester library is missing (lib\\lcommons-digester-2.0.jar)\nPlease see readme.txt for more information.", e);
 			}
 		}
-		program = new Program();
+		program = new Program(args);
 		
 	}
 	
@@ -87,7 +87,7 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-			inputString = args;
+			Main.args = args;
 			javax.swing.SwingUtilities.invokeLater(
 				new Runnable() {
 					@Override
@@ -120,7 +120,7 @@ public class Main {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
-		Main main = new Main(inputString);
+		Main main = new Main(args);
 	}
 	
 	private static void initLookAndFeel() {
