@@ -28,6 +28,7 @@ package net.nikr.eve.jeveasset.io;
 import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Items;
+import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
 import org.w3c.dom.Element;
@@ -50,16 +51,12 @@ public class LocalItemsReader extends AbstractXmlReader {
 	}
 
 	private static void parseItems(Element element, Map<Integer, Items> items){
-		/*
-		Map<Integer, Items> items;
-		items = new HashMap<Integer, Items>();
-		parseItemsNodes(element, items);
-		settings.setItems(items);
-		 */
 		NodeList nodes = element.getElementsByTagName("row");
 		Items item = null;
 		for (int a = 0; a < nodes.getLength(); a++){
-			item = parseItem(nodes.item(a));
+			Element itemElement = (Element) nodes.item(a);
+			item = parseItem(itemElement);
+			parseMaterials(itemElement, item);
 			items.put(item.getId(), item);
 		}
 	}
@@ -73,5 +70,17 @@ public class LocalItemsReader extends AbstractXmlReader {
 		String meta = AttributeGetters.getString(node, "meta");
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
 		return new Items(id, name, group, category, price, volume, meta, marketGroup);
+	}
+
+	private static void parseMaterials(Element element, Items item){
+		NodeList nodes = element.getElementsByTagName("material");
+		for (int a = 0; a < nodes.getLength(); a++){
+			parseMaterial(nodes.item(a), item);
+		}
+	}
+	private static void parseMaterial(Node node, Items item){
+		int id = AttributeGetters.getInt(node, "id");
+		int quantity = AttributeGetters.getInt(node, "quantity");
+		item.addMaterial( new Material(id, quantity));
 	}
 }

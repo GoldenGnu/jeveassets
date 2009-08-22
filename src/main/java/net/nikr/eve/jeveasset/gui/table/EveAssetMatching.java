@@ -64,6 +64,7 @@ public class EveAssetMatching {
 							+ item.getRegion() + "\r\n"
 							+ item.getTypeCount() + "\r\n"
 							+ item.getSecurity() + "\r\n"
+							+ item.getPriceReprocessed() + "\r\n"
 						;
 				value = -1;
 			} else if (column.equals("Name")){
@@ -126,6 +127,9 @@ public class EveAssetMatching {
 			} else if (column.equals("Security")){
 				haystack = item.getSecurity();
 				value = -1;
+			} else if (column.equals("Reprocessed")){
+				haystack = String.valueOf(item.getPriceReprocessed());
+				value = item.getPriceReprocessed();
 			} else {
 				haystack = "";
 				value = -1;

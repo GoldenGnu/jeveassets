@@ -70,7 +70,7 @@ public class Settings {
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	
 	//Data
-	private Map<String, EveAsset> uniqueAssets = null;
+	private List<Integer> uniqueIds = null;
 	private Map<String, List<EveAsset>> uniqueAssetsDuplicates = null;
 	private List<EveAsset> allAssets = null;
 	private List<EveAsset> eventListAssets = null;
@@ -113,7 +113,6 @@ public class Settings {
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_WINDOW, false);
 		flags.put(FLAG_FILTER_ON_ENTER, false);
-		//filterOnEnter = false;
 		
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 		marketstatsNextUpdate = Settings.getGmtNow();
@@ -161,6 +160,7 @@ public class Settings {
 		tableColumnNames.add("Price");
 		tableColumnNames.add("Sell Min");
 		tableColumnNames.add("Buy Max");
+		tableColumnNames.add("Reprocessed");
 		tableColumnNames.add("Base Price");
 		tableColumnNames.add("Value");
 		tableColumnNames.add("Count");
@@ -183,6 +183,7 @@ public class Settings {
 		tableColumnTooltips.put("Price", "Median Sell Price (Eve-Central)");
 		tableColumnTooltips.put("Sell Min", "Minimum Sell Price (Eve-Central)");
 		tableColumnTooltips.put("Buy Max", "Maximum Buy Price (Eve-Central)");
+		tableColumnTooltips.put("Reprocessed", "Reprocessed value");
 		//tableColumnTooltips.put("Base Price", "Base Price");
 		tableColumnTooltips.put("Value", "Value (Count*Price)");
 		//tableColumnTooltips.put("Count", "Count");
@@ -205,12 +206,13 @@ public class Settings {
 		tableNumberColumns.add("ID");
 		tableNumberColumns.add("Type ID");
 		tableNumberColumns.add("Type Count");
+		tableNumberColumns.add("Reprocessed");
 
 	}
 	public void clearEveAssetList(){
 		allAssets = null;
 		eventListAssets = null;
-		uniqueAssets = null;
+		uniqueIds = null;
 	}
 	public List<EveAsset> getEventListAssets(){
 		updateAssetLists(false);
@@ -220,18 +222,20 @@ public class Settings {
 		updateAssetLists(true);
 		return allAssets;
 	}
-	public Map<String, EveAsset> getUniqueAssets(){
+
+	public List<Integer> getUniqueIds(){
 		updateAssetLists(false);
-		return uniqueAssets;
+		return uniqueIds;
 	}
+	
 	public boolean hasAssets(){
 		updateAssetLists(false);
-		return !uniqueAssets.isEmpty();
+		return !uniqueIds.isEmpty();
 	}
 	private void updateAssetLists(boolean getAllAssets){
 		if ((allAssets == null && getAllAssets) ||  (eventListAssets == null && !getAllAssets) ){
 			List<EveAsset> assetList = new Vector<EveAsset>();
-			uniqueAssets = new HashMap<String, EveAsset>();
+			uniqueIds = new Vector<Integer>();
 			uniqueAssetsDuplicates = new HashMap<String, List<EveAsset>>();
 			for (int a = 0; a < accounts.size(); a++){
 				Account account = accounts.get(a);
@@ -251,24 +255,43 @@ public class Settings {
 	private void addAssets(List<EveAsset> currentAssets, List<EveAsset> assetList, boolean shouldShow, boolean shouldShowCorp){
 		for (int a = 0; a < currentAssets.size(); a++){
 			EveAsset eveAsset = currentAssets.get(a);
+			//User price
 			if (userPrices.containsKey(eveAsset.getTypeId())){ //Add User Price
 				eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeId()));
 			} else { //No user price, clear user price
 				eveAsset.setUserPrice(null);
 			}
+			//Eve-Central price
 			if (eveAsset.isMarketGroup()){ //Add Marketstarts
 				eveAsset.setMarketstat(getMarketstats().get(eveAsset.getTypeId()));
 			}
+			//Reprocessed price
+			if (!getItems().get(eveAsset.getTypeId()).getMaterials().isEmpty()){
+				List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
+				double priceReprocessed = 0;
+				for (int b = 0; b < materials.size(); b++){
+					//Calculate reprocessed price
+					Material material = materials.get(b);
+					if (getMarketstats().containsKey(material.getId())){
+						priceReprocessed = priceReprocessed + (getMarketstats().get(material.getId()).getSellMedian() * material.getQuantity());
+					}
+					//Unique Ids
+					if (!uniqueIds.contains(material.getId())){
+						uniqueIds.add(material.getId());
+					}
+				}
+				eveAsset.setPriceReprocessed(priceReprocessed);
+			} else {
+				eveAsset.setPriceReprocessed(0);
+			}
+			//Blueprint
 			if (eveAsset.isBlueprint()){
 				eveAsset.setBpo(bpos.contains(eveAsset.getId()));
 			} else {
 				eveAsset.setBpo(false);
 			}
-			if (shouldShow && (shouldShowCorp && eveAsset.isCorporationAsset()) || !eveAsset.isCorporationAsset()){
-				assetList.add(eveAsset);
-			}
-			if (!uniqueAssets.containsKey(eveAsset.getName())){
-				uniqueAssets.put(eveAsset.getName(), eveAsset);
+			//Type Count
+			if (!uniqueAssetsDuplicates.containsKey(eveAsset.getName())){
 				uniqueAssetsDuplicates.put(eveAsset.getName(), new Vector<EveAsset>());
 			}
 			if (shouldShow) {
@@ -282,6 +305,17 @@ public class Settings {
 					dup.get(b).setTypeCount(newCount);
 				}
 			}
+			//Unique Ids
+			if (eveAsset.isMarketGroup()){
+				if (!uniqueIds.contains(eveAsset.getTypeId())){
+					uniqueIds.add(eveAsset.getTypeId());
+				}
+			}
+			//Add asset
+			if (shouldShow && (shouldShowCorp && eveAsset.isCorporationAsset()) || !eveAsset.isCorporationAsset()){
+				assetList.add(eveAsset);
+			}
+			//Add sub-assets
 			addAssets(eveAsset.getAssets(), assetList, shouldShow, shouldShowCorp);
 		}
 	}

@@ -25,6 +25,9 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import java.util.List;
+import java.util.Vector;
+
 
 public class Items {
 
@@ -36,6 +39,7 @@ public class Items {
 	private float volume;
 	private String meta;
 	private boolean marketGroup;
+	private List<Material> materials;
 
 	public Items(int id, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
 		this.id = id;
@@ -46,6 +50,15 @@ public class Items {
 		this.volume = volume;
 		this.meta = meta;
 		this.marketGroup = marketGroup;
+		materials = new Vector<Material>();
+	}
+
+	public void addMaterial(Material material){
+		materials.add(material);
+	}
+
+	public List<Material> getMaterials() {
+		return materials;
 	}
 
 	public String getCategory() {

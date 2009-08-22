@@ -54,6 +54,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private boolean bpo;
 	private boolean singleton;
 	private String security;
+	private double priceReprocessed;
 
 	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, int id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
 		this.name = name;
@@ -233,6 +234,14 @@ public class EveAsset implements Comparable<EveAsset> {
 		}
 		//return basePrice;
 		return 0;
+	}
+
+	public double getPriceReprocessed() {
+		return priceReprocessed;
+	}
+
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
 	public double getValue() {

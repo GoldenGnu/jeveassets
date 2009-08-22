@@ -85,6 +85,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Region")) return String.class;
 		if (sColumn.equals("Type Count")) return Long.class;
 		if (sColumn.equals("Security")) return String.class;
+		if (sColumn.equals("Reprocessed")) return Double.class;
 
 		return Object.class;
 	}
@@ -112,6 +113,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Region")) return stringComparator;
 		if (sColumn.equals("Type Count")) return longComparator;
 		if (sColumn.equals("Security")) return stringComparator;
+		if (sColumn.equals("Reprocessed")) return doubleComparator;
 		return null;
 	}
 
@@ -138,6 +140,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Region")) return eveAsset.getRegion();
 		if (sColumn.equals("Type Count")) return eveAsset.getTypeCount();
 		if (sColumn.equals("Security")) return eveAsset.getSecurity();
+		if (sColumn.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		return new String();
 	}
 }

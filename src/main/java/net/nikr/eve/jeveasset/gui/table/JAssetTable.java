@@ -67,10 +67,10 @@ public class JAssetTable extends JTable {
         }
 
 		
-		String s = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		if (eveAssetTableModel.getRowCount() >= row){
 			EveAsset eveAsset = eveAssetTableModel.getElementAt(row);
-			if (eveAsset.isUserPrice() && (eveAsset.isBpo()|| !eveAsset.isBlueprint()) && s.equals("Price")){
+			if (eveAsset.isUserPrice() && (eveAsset.isBpo()|| !eveAsset.isBlueprint()) && columnName.equals("Price")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(230,230,230) );
@@ -81,12 +81,12 @@ public class JAssetTable extends JTable {
 			}
 			if (eveAsset.isBpo()
 					&& eveAsset.isBlueprint()
-					&& (s.equals("Price")
-					|| s.equals("Sell Min")
-					|| s.equals("Buy Max")
-					|| s.equals("Name"))){
+					&& (columnName.equals("Price")
+					|| columnName.equals("Sell Min")
+					|| columnName.equals("Buy Max")
+					|| columnName.equals("Name"))){
 				Component c;
-				if (s.equals("Name")){
+				if (columnName.equals("Name")){
 					c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				} else {
 					c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
@@ -98,8 +98,15 @@ public class JAssetTable extends JTable {
 				}
 				return c;
 			}
-			
-
+			if (eveAsset.getPriceReprocessed() > eveAsset.getPrice() && columnName.equals("Reprocessed")){
+				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (!isSelected){
+					c.setBackground( new Color(255,255,230) );
+				} else {
+					c.setBackground( this.getSelectionBackground().darker() );
+				}
+				return c;
+			}
 		}
 		return super.prepareRenderer(renderer, row, column);
 	}

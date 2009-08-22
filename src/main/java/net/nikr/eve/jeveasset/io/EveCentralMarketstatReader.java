@@ -32,12 +32,11 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import javax.management.timer.Timer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Marketstat;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
@@ -69,28 +68,25 @@ public class EveCentralMarketstatReader {
 
 				// Construct data
 				//Map<String, EveAsset> uniqueAssets = new HashMap<String,EveAsset>();
-				Map<String, EveAsset> uniqueAssets = settings.getUniqueAssets();
+				List<Integer> unique = settings.getUniqueIds();
 				
 				String data = settings.getMarketstatSettings().getOutput();
 				int count = 0;
 				int runs = 0;
-				for (Map.Entry<String, EveAsset> entry : uniqueAssets.entrySet()){
-					EveAsset eveAsset = entry.getValue();
-					if (eveAsset.isMarketGroup()){
-						if (count == ASSETS_PER_LOAD){
-							Log.info("	Loading: "+((runs*ASSETS_PER_LOAD)+1)+" to "+((runs+1)*ASSETS_PER_LOAD)+" of "+uniqueAssets.size() );
-							loadEveCentralMarketstats(settings, data);
-							count = 0;
-							runs++;
-							data = settings.getMarketstatSettings().getOutput();
+				for (int a = 0; a < unique.size(); a++){
+					if (count == ASSETS_PER_LOAD){
+						Log.info("	Loading: "+((runs*ASSETS_PER_LOAD)+1)+" to "+((runs+1)*ASSETS_PER_LOAD)+" of "+unique.size() );
+						loadEveCentralMarketstats(settings, data);
+						count = 0;
+						runs++;
+						data = settings.getMarketstatSettings().getOutput();
 
-						}
-						count++;
-						data += "&" + URLEncoder.encode("typeid", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(eveAsset.getTypeId()), "UTF-8");
 					}
+					count++;
+					data += "&" + URLEncoder.encode("typeid", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(unique.get(a)), "UTF-8");
 				}
-				if (uniqueAssets.size() != (runs*ASSETS_PER_LOAD)){
-					Log.info("	Loading: "+(((runs)*ASSETS_PER_LOAD)+1)+" to "+uniqueAssets.size()+" of "+uniqueAssets.size());
+				if (unique.size() != (runs*ASSETS_PER_LOAD)){
+					Log.info("	Loading: "+(((runs)*ASSETS_PER_LOAD)+1)+" to "+unique.size()+" of "+unique.size());
 					loadEveCentralMarketstats(settings, data);
 				}
 				// Send data
