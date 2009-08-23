@@ -27,6 +27,7 @@ package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.ApiAuthorization;
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.order.ApiMarketOrder;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -43,13 +44,15 @@ public class Human {
 	private boolean showAssets;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
+	private Date marketOrdersNextUpdate;
 	private Account parentAccount;
 	private List<ApiAccountBalance> accountBalances;
 	private List<ApiAccountBalance> corporationAccountBalances;
-	
+	private List<ApiMarketOrder> marketOrders;
+	private List<ApiMarketOrder> corporationMarketOrders;
 	private List<EveAsset> assets;
 
-	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date nextUpdate, Date balanceNextUpdate) {
+	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date nextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.characterID = characterID;
@@ -58,10 +61,13 @@ public class Human {
 		this.showAssets = showAssets;
 		this.assetNextUpdate = nextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
+		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 		//Default
 		assets = new Vector<EveAsset>();
 		accountBalances = new  Vector<ApiAccountBalance>();
 		corporationAccountBalances = new  Vector<ApiAccountBalance>();
+		marketOrders = new  Vector<ApiMarketOrder>();
+		corporationMarketOrders = new  Vector<ApiMarketOrder>();
 	}
 
 	public Human(Account parentAccount, String name, long characterID, String corporation) {
@@ -72,9 +78,12 @@ public class Human {
 		//Default
 		assetNextUpdate = Settings.getGmtNow();
 		balanceNextUpdate = Settings.getGmtNow();
+		marketOrdersNextUpdate = Settings.getGmtNow();
 		assets = new Vector<EveAsset>();
 		accountBalances = new  Vector<ApiAccountBalance>();
 		corporationAccountBalances = new  Vector<ApiAccountBalance>();
+		marketOrders = new  Vector<ApiMarketOrder>();
+		corporationMarketOrders = new  Vector<ApiMarketOrder>();
 		updateCorporationAssets = true;
 		showAssets = true;
 	}
@@ -103,14 +112,52 @@ public class Human {
 		this.corporationAccountBalances = corporationAccountBalances;
 	}
 
-	public void setUpdateCorporationAssets(boolean updateCorporationAssets) {
-		this.updateCorporationAssets = updateCorporationAssets;
+	public void setCorporationMarketOrders(List<ApiMarketOrder> corporationMarketOrders) {
+		this.corporationMarketOrders = corporationMarketOrders;
+	}
+
+	public void setMarketOrders(List<ApiMarketOrder> marketOrders) {
+		this.marketOrders = marketOrders;
+	}
+
+	public void setMarketOrdersNextUpdate(Date marketOrdersNextUpdate) {
+		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	public void setShowAssets(boolean showAssets) {
+		this.showAssets = showAssets;
+	}
+
+	public void setUpdateCorporationAssets(boolean updateCorporationAssets) {
+		this.updateCorporationAssets = updateCorporationAssets;
+	}
+
+	public boolean isAssetsUpdatable(){
+		return ((Settings.getGmtNow().after(this.getAssetNextUpdate())
+				|| Settings.getGmtNow().equals(this.getAssetNextUpdate())
+				|| Program.FORCE_UPDATE )
+				&& !Program.FORCE_NO_UPDATE);
+	}
+
+	public boolean isBalanceUpdatable(){
+		return Settings.isUpdatable(getBalanceNextUpdate());
+	}
+
+	public boolean isMarkerOrdersUpdatable(){
+		return Settings.isUpdatable(getMarketOrdersNextUpdate());
+	}
+
+	public boolean isShowAssets() {
+		return showAssets;
+	}
+
+	public boolean isUpdateCorporationAssets() {
+		return updateCorporationAssets;
+	}
 
 	public List<ApiAccountBalance> getAccountBalances() {
 		return accountBalances;
@@ -132,34 +179,24 @@ public class Human {
 		return characterID;
 	}
 
+	public String getCorporation() {
+		return corporation;
+	}
+
 	public List<ApiAccountBalance> getCorporationAccountBalances() {
 		return corporationAccountBalances;
 	}
 
-	public boolean isUpdateCorporationAssets() {
-		return updateCorporationAssets;
-	}
-	public boolean isAssetsUpdatable(){
-		return ((Settings.getGmtNow().after(this.getAssetNextUpdate())
-				|| Settings.getGmtNow().equals(this.getAssetNextUpdate())
-				|| Program.FORCE_UPDATE )
-				&& !Program.FORCE_NO_UPDATE);
-	}
-	public boolean isBalanceUpdatable(){
-		return (Settings.getGmtNow().after(this.getBalanceNextUpdate())
-				|| Settings.getGmtNow().equals(this.getBalanceNextUpdate()) );
+	public List<ApiMarketOrder> getCorporationMarketOrders() {
+		return corporationMarketOrders;
 	}
 
-	public boolean isShowAssets() {
-		return showAssets;
+	public List<ApiMarketOrder> getMarketOrders() {
+		return marketOrders;
 	}
 
-	public void setShowAssets(boolean showAssets) {
-		this.showAssets = showAssets;
-	}
-
-	public String getCorporation() {
-		return corporation;
+	public Date getMarketOrdersNextUpdate() {
+		return marketOrdersNextUpdate;
 	}
 
 	public String getName() {

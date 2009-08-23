@@ -41,7 +41,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.io.AssetConverter;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
+import net.nikr.eve.jeveasset.io.EveApiMarketOrdersReader;
 import net.nikr.eve.jeveasset.io.LocalAssetsReader;
 import net.nikr.eve.jeveasset.io.LocalAssetsWriter;
 import net.nikr.eve.jeveasset.io.LocalConquerableStationsReader;
@@ -137,6 +139,7 @@ public class Settings {
 		LocalMarketstatsReader.load(this);
 		SplashUpdater.setProgress(70);
 		EveApiHumansReader.load(this);
+		EveApiMarketOrdersReader.load(this);
 	}
 	public void resetMainTableColumns(){
 		//Also need to update:
@@ -253,7 +256,13 @@ public class Settings {
 				List<Human> humans = account.getHumans();
 				for (int b = 0; b < humans.size(); b++){
 					Human human = humans.get(b);
-					if (human.isShowAssets() || getAllAssets) addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+					if (human.isShowAssets() || getAllAssets){
+						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						List<EveAsset> marketOrdersAssets = AssetConverter.getEveAssets(human.getMarketOrders(), this, human, false);
+						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						List<EveAsset> corporationMarketOrdersAssets = AssetConverter.getEveAssets(human.getCorporationMarketOrders(), this, human, true);
+						addAssets(corporationMarketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+					}
 				}
 			}
 			if (getAllAssets){
@@ -629,5 +638,9 @@ public class Settings {
 			}
 		}
 		return ret;
+	}
+
+	public static boolean isUpdatable(Date date){
+		return (Settings.getGmtNow().after(date) || Settings.getGmtNow().equals(date) );
 	}
 }

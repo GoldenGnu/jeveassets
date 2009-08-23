@@ -25,7 +25,10 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import com.beimin.eveapi.order.ApiMarketOrder;
 import com.beimin.eveapi.utils.stationlist.ApiStation;
+import java.util.List;
+import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Items;
@@ -418,5 +421,46 @@ public class AssetConverter {
 
 
 		return sTemp;
+	}
+
+	public static List<EveAsset> getEveAssets(List<ApiMarketOrder> marketOrders, Settings settings, Human human, boolean bCorp){
+		List<EveAsset> eveAssets = new Vector<EveAsset>();
+		for (int a = 0; a < marketOrders.size(); a++){
+			ApiMarketOrder apiMarketOrder = marketOrders.get(a);
+			if (apiMarketOrder.getBid() == 0
+					&& apiMarketOrder.getOrderState() == 0
+					&& apiMarketOrder.getVolRemaining() > 0
+					){
+				EveAsset eveAsset = ApiMarketOrderToEveAsset(apiMarketOrder, settings, human, bCorp);
+				eveAssets.add(eveAsset);
+			}
+		}
+		return eveAssets;
+	}
+	private static EveAsset ApiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Settings settings, Human human, boolean bCorp){
+		int typeID = (int)apiMarketOrder.getTypeID();
+		int locationID = (int) apiMarketOrder.getStationID();
+		long count = apiMarketOrder.getVolRemaining();
+		int id = (int) apiMarketOrder.getOrderID();
+		String flag = "Market Order";
+		boolean corporationAsset = bCorp;
+		boolean singleton  = false;
+
+		String name = AssetConverter.name(typeID, settings);
+		String group = AssetConverter.group(typeID, settings);
+		String category = AssetConverter.category(typeID, settings);
+		double basePrice = AssetConverter.priceBase(typeID, settings);
+		boolean marketGroup = AssetConverter.marketGroup(typeID, settings);
+		float volume = AssetConverter.volume(typeID, settings);
+		String meta = AssetConverter.meta(typeID, settings);
+
+		String owner = AssetConverter.owner(human, bCorp);
+
+		String location = AssetConverter.location(locationID, null, settings);
+		String container = AssetConverter.container(locationID, null);
+		String region = AssetConverter.region(locationID, null, settings);
+		String security = AssetConverter.security(locationID, null, settings);
+
+		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
 	}
 }

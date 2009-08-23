@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class EveApiConquerableStationsReader {
 	public static boolean load(Settings settings){
-		if (Settings.getGmtNow().after(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
+		if (Settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
 			Parser stationParser = new Parser();
 			stationParser.setCachingEnabled(true);
 			Response stationResponse = null;

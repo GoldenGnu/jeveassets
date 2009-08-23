@@ -52,6 +52,7 @@ public class StatusPanel extends JProgramPanel {
 	private JLabel jVolume;
 	private JLabel jAssetUpdate;
 	private JLabel jEveCentralUpdate;
+	private JLabel jMarketOrdersUpdate;
 	private JToolBar jToolBar;
 
 
@@ -82,6 +83,8 @@ public class StatusPanel extends JProgramPanel {
 		jEveCentralUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
 
 		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
+
+		jMarketOrdersUpdate = new JLabel();// = createLabel(120, "Market orders next update", ImageGetter.getIcon("marketorders_update.png"));
 
 		jVolume = createLabel(100, "Total volume of shown assets", ImageGetter.getIcon("volume.png"));
 
@@ -138,6 +141,31 @@ public class StatusPanel extends JProgramPanel {
 			jAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
 		}
 	}
+	public void updateMarketOrdersDate(){
+		List<Account> accounts = program.getSettings().getAccounts();
+		Date nextUpdate = null;
+		for (int a = 0; a < accounts.size(); a++){
+			Account account = accounts.get(a);
+			List<Human> humans = account.getHumans();
+			for (int b = 0; b < humans.size(); b++){
+				Human human = humans.get(b);
+				if (human.isShowAssets()){
+					if (nextUpdate == null){
+						nextUpdate = human.getMarketOrdersNextUpdate();
+					}
+					if (human.getMarketOrdersNextUpdate().before(nextUpdate)){
+						nextUpdate = human.getMarketOrdersNextUpdate();
+					}
+				}
+			}
+		}
+		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
+		if (Settings.getGmtNow().after(nextUpdate) || Settings.getGmtNow().equals(nextUpdate)){
+			jMarketOrdersUpdate.setText("Now");
+		} else {
+			jMarketOrdersUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
+		}
+	}
 	public void setAverage(double n){
 		jAverage.setText(Formater.isk(n));
 	}
@@ -153,6 +181,7 @@ public class StatusPanel extends JProgramPanel {
 	private void update(){
 		updateEveCentralDate();
 		updateAssetDate();
+		updateMarketOrdersDate();
 		setAverage(0);
 		setTotalValue(0);
 		setCount(0);

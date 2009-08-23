@@ -26,6 +26,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.order.ApiMarketOrder;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -80,12 +81,15 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "show", String.valueOf(human.isShowAssets()));
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
+			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(human.getMarketOrdersNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
-			writeAccountBalances(xmldoc, node,human.getAccountBalances(), false);
-			writeAccountBalances(xmldoc, node,human.getCorporationAccountBalances(), true);
+			writeAccountBalances(xmldoc, node, human.getAccountBalances(), false);
+			writeAccountBalances(xmldoc, node, human.getCorporationAccountBalances(), true);
+			writeMarketOrders(xmldoc, node, human.getMarketOrders(), false);
+			writeMarketOrders(xmldoc, node, human.getCorporationMarketOrders(), true);
 		}
 	}
 
@@ -119,6 +123,33 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));
 			childNode.setAttributeNS(null, "accountkey", String.valueOf(accountBalance.getAccountKey()));
 			childNode.setAttributeNS(null, "balance", String.valueOf(accountBalance.getBalance()));
+			node.appendChild(childNode);
+		}
+	}
+	private static void writeMarketOrders(Document xmldoc, Element parentNode, List<ApiMarketOrder> marketOrders, boolean bCorp){
+		Element node = xmldoc.createElementNS(null, "markerorders");
+		if (!marketOrders.isEmpty()){
+			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			parentNode.appendChild(node);
+		}
+		for (int a = 0; a < marketOrders.size(); a++){
+			ApiMarketOrder apiMarketOrder = marketOrders.get(a);
+			Element childNode = xmldoc.createElementNS(null, "markerorder");
+			childNode.setAttributeNS(null, "orderid", String.valueOf(apiMarketOrder.getOrderID()));
+			childNode.setAttributeNS(null, "charid", String.valueOf(apiMarketOrder.getCharID()));
+			childNode.setAttributeNS(null, "stationid", String.valueOf(apiMarketOrder.getStationID()));
+			childNode.setAttributeNS(null, "volentered", String.valueOf(apiMarketOrder.getVolEntered()));
+			childNode.setAttributeNS(null, "volremaining", String.valueOf(apiMarketOrder.getVolRemaining()));
+			childNode.setAttributeNS(null, "minvolume", String.valueOf(apiMarketOrder.getMinVolume()));
+			childNode.setAttributeNS(null, "orderstate", String.valueOf(apiMarketOrder.getOrderState()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(apiMarketOrder.getTypeID()));
+			childNode.setAttributeNS(null, "range", String.valueOf(apiMarketOrder.getRange()));
+			childNode.setAttributeNS(null, "accountkey", String.valueOf(apiMarketOrder.getAccountKey()));
+			childNode.setAttributeNS(null, "duration", String.valueOf(apiMarketOrder.getDuration()));
+			childNode.setAttributeNS(null, "escrow", String.valueOf(apiMarketOrder.getEscrow()));
+			childNode.setAttributeNS(null, "price", String.valueOf(apiMarketOrder.getPrice()));
+			childNode.setAttributeNS(null, "bid", String.valueOf(apiMarketOrder.getBid()));
+			childNode.setAttributeNS(null, "issued", String.valueOf(apiMarketOrder.getIssued()));
 			node.appendChild(childNode);
 		}
 	}

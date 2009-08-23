@@ -26,6 +26,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.order.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +92,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
 			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
 			parseBalances(currentNode, human);
+			parseMarkerOrders(currentNode, human);
 		}
 	}
 	private static Human parseHuman(Node node, Account account){
@@ -104,7 +106,12 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "show")){
 			showAssets = AttributeGetters.getBoolean(node, "show");
 		}
-		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate);
+		Date marketOrdersNextUpdate = Settings.getGmtNow();
+		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")){
+			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
+		}
+
+		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate);
 	}
 
 	private static void parseBalances(Element element, Human human){
@@ -137,6 +144,57 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
+	private static void parseMarkerOrders(Element element, Human human){
+		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
+		for (int a = 0; a < markerOrdersNodes.getLength(); a++){
+			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
+			boolean bCorp = AttributeGetters.getBoolean(currentMarkerOrdersNode, "corp");
+			NodeList markerOrderNodes = currentMarkerOrdersNode.getElementsByTagName("markerorder");
+			for (int b = 0; b < markerOrderNodes.getLength(); b++){
+				Element currentNode = (Element) markerOrderNodes.item(b);
+				ApiMarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
+				if (bCorp){
+					human.getCorporationMarketOrders().add(apiMarketOrder);
+				} else {
+					human.getMarketOrders().add(apiMarketOrder);
+				}
+			}
+		}
+	}
+	private static ApiMarketOrder parseMarkerOrder(Element element){
+		ApiMarketOrder apiMarketOrder = new ApiMarketOrder();
+		long orderID = AttributeGetters.getLong(element, "orderid");
+		long charID = AttributeGetters.getLong(element, "charid");
+		long stationID = AttributeGetters.getLong(element, "stationid");
+		int volEntered = AttributeGetters.getInt(element, "volentered");
+		int volRemaining = AttributeGetters.getInt(element, "volremaining");
+		int minVolume = AttributeGetters.getInt(element, "minvolume");
+		int orderState = AttributeGetters.getInt(element, "orderstate");
+		long typeID = AttributeGetters.getLong(element, "typeid");
+		int range = AttributeGetters.getInt(element, "range");
+		int accountKey = AttributeGetters.getInt(element, "accountkey");
+		int duration = AttributeGetters.getInt(element, "duration");
+		double escrow = AttributeGetters.getDouble(element, "escrow");
+		double price = AttributeGetters.getDouble(element, "price");
+		int bid = AttributeGetters.getInt(element, "bid");
+		String issued = AttributeGetters.getString(element, "issued");
+		apiMarketOrder.setOrderID(orderID);
+		apiMarketOrder.setCharID(charID);
+		apiMarketOrder.setStationID(stationID);
+		apiMarketOrder.setVolEntered(volEntered);
+		apiMarketOrder.setVolRemaining(volRemaining);
+		apiMarketOrder.setMinVolume(minVolume);
+		apiMarketOrder.setOrderState(orderState);
+		apiMarketOrder.setTypeID(typeID);
+		apiMarketOrder.setRange(range);
+		apiMarketOrder.setAccountKey(accountKey);
+		apiMarketOrder.setDuration(duration);
+		apiMarketOrder.setEscrow(escrow);
+		apiMarketOrder.setPrice(price);
+		apiMarketOrder.setBid(bid);
+		apiMarketOrder.setIssued(issued);
+		return apiMarketOrder;
+	}
 
 	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset, Settings settings){
 		NodeList assetsNodes = node.getChildNodes();
