@@ -43,6 +43,7 @@ import java.util.Vector;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.AssetConverter;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
+import net.nikr.eve.jeveasset.io.EveApiIndustryJobsReader;
 import net.nikr.eve.jeveasset.io.EveApiMarketOrdersReader;
 import net.nikr.eve.jeveasset.io.LocalAssetsReader;
 import net.nikr.eve.jeveasset.io.LocalAssetsWriter;
@@ -138,8 +139,10 @@ public class Settings {
 		SplashUpdater.setProgress(60);
 		LocalMarketstatsReader.load(this);
 		SplashUpdater.setProgress(70);
+		//FIXME should be updatable from the menu
 		EveApiHumansReader.load(this);
 		EveApiMarketOrdersReader.load(this);
+		EveApiIndustryJobsReader.load(this);
 	}
 	public void resetMainTableColumns(){
 		//Also need to update:
@@ -258,10 +261,16 @@ public class Settings {
 					Human human = humans.get(b);
 					if (human.isShowAssets() || getAllAssets){
 						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> marketOrdersAssets = AssetConverter.getEveAssets(human.getMarketOrders(), this, human, false);
+						//Market Orders
+						List<EveAsset> marketOrdersAssets = AssetConverter.apiMarketOrder(human.getMarketOrders(), this, human, false);
 						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> corporationMarketOrdersAssets = AssetConverter.getEveAssets(human.getCorporationMarketOrders(), this, human, true);
-						addAssets(corporationMarketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						List<EveAsset> marketOrdersCorporationAssets = AssetConverter.apiMarketOrder(human.getMarketOrdersCorporation(), this, human, true);
+						addAssets(marketOrdersCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						//Industry Jobs
+						List<EveAsset> industryJobAssets = AssetConverter.apiIndustryJob(human.getIndustryJobs(), this, human, false);
+						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						List<EveAsset> industryJobCorporationAssets = AssetConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true);
+						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 					}
 				}
 			}

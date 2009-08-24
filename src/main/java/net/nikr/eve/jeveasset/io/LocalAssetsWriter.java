@@ -26,6 +26,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.order.ApiMarketOrder;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
@@ -82,14 +83,17 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(human.getMarketOrdersNextUpdate().getTime()));
+			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(human.getIndustryJobsNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
 			writeAccountBalances(xmldoc, node, human.getAccountBalances(), false);
-			writeAccountBalances(xmldoc, node, human.getCorporationAccountBalances(), true);
+			writeAccountBalances(xmldoc, node, human.getAccountBalancesCorporation(), true);
 			writeMarketOrders(xmldoc, node, human.getMarketOrders(), false);
-			writeMarketOrders(xmldoc, node, human.getCorporationMarketOrders(), true);
+			writeMarketOrders(xmldoc, node, human.getMarketOrdersCorporation(), true);
+			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), false);
+			writeIndustryJobs(xmldoc, node, human.getIndustryJobsCorporation(), true);
 		}
 	}
 
@@ -126,6 +130,7 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 			node.appendChild(childNode);
 		}
 	}
+
 	private static void writeMarketOrders(Document xmldoc, Element parentNode, List<ApiMarketOrder> marketOrders, boolean bCorp){
 		Element node = xmldoc.createElementNS(null, "markerorders");
 		if (!marketOrders.isEmpty()){
@@ -150,6 +155,52 @@ public class LocalAssetsWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "price", String.valueOf(apiMarketOrder.getPrice()));
 			childNode.setAttributeNS(null, "bid", String.valueOf(apiMarketOrder.getBid()));
 			childNode.setAttributeNS(null, "issued", String.valueOf(apiMarketOrder.getIssued()));
+			node.appendChild(childNode);
+		}
+	}
+
+	private static void writeIndustryJobs(Document xmldoc, Element parentNode, List<ApiIndustryJob> industryJobs, boolean bCorp){
+		Element node = xmldoc.createElementNS(null, "industryjobs");
+		if (!industryJobs.isEmpty()){
+			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			parentNode.appendChild(node);
+		}
+		for (int a = 0; a < industryJobs.size(); a++){
+			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
+			Element childNode = xmldoc.createElementNS(null, "industryjob");
+
+			childNode.setAttributeNS(null, "jobid", String.valueOf(apiIndustryJob.getJobID()));
+			childNode.setAttributeNS(null, "containerid", String.valueOf(apiIndustryJob.getContainerID()));
+			childNode.setAttributeNS(null, "installeditemid", String.valueOf(apiIndustryJob.getInstalledItemID()));
+			childNode.setAttributeNS(null, "installeditemlocationid", String.valueOf(apiIndustryJob.getInstalledItemLocationID()));
+			childNode.setAttributeNS(null, "installeditemquantity", String.valueOf(apiIndustryJob.getInstalledItemQuantity()));
+			childNode.setAttributeNS(null, "installeditemproductivitylevel", String.valueOf(apiIndustryJob.getInstalledItemProductivityLevel()));
+			childNode.setAttributeNS(null, "installeditemmateriallevel", String.valueOf(apiIndustryJob.getInstalledItemMaterialLevel()));
+			childNode.setAttributeNS(null, "installeditemlicensedproductionrunsremaining", String.valueOf(apiIndustryJob.getInstalledItemLicensedProductionRunsRemaining()));
+			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(apiIndustryJob.getOutputLocationID()));
+			childNode.setAttributeNS(null, "installerid", String.valueOf(apiIndustryJob.getInstallerID()));
+			childNode.setAttributeNS(null, "runs", String.valueOf(apiIndustryJob.getRuns()));
+			childNode.setAttributeNS(null, "licensedproductionruns", String.valueOf(apiIndustryJob.getLicensedProductionRuns()));
+			childNode.setAttributeNS(null, "installedinsolarsystemid", String.valueOf(apiIndustryJob.getInstalledInSolarSystemID()));
+			childNode.setAttributeNS(null, "containerlocationid", String.valueOf(apiIndustryJob.getContainerLocationID()));
+			childNode.setAttributeNS(null, "materialmultiplier", String.valueOf(apiIndustryJob.getMaterialMultiplier()));
+			childNode.setAttributeNS(null, "charmaterialmultiplier", String.valueOf(apiIndustryJob.getCharMaterialMultiplier()));
+			childNode.setAttributeNS(null, "timemultiplier", String.valueOf(apiIndustryJob.getTimeMultiplier()));
+			childNode.setAttributeNS(null, "chartimemultiplier", String.valueOf(apiIndustryJob.getCharTimeMultiplier()));
+			childNode.setAttributeNS(null, "installeditemtypeid", String.valueOf(apiIndustryJob.getInstalledItemTypeID()));
+			childNode.setAttributeNS(null, "outputtypeid", String.valueOf(apiIndustryJob.getOutputTypeID()));
+			childNode.setAttributeNS(null, "containertypeid", String.valueOf(apiIndustryJob.getContainerTypeID()));
+			childNode.setAttributeNS(null, "installeditemcopy", String.valueOf(apiIndustryJob.getInstalledItemCopy()));
+			childNode.setAttributeNS(null, "completed", String.valueOf(apiIndustryJob.getCompleted()));
+			childNode.setAttributeNS(null, "completedsuccessfully", String.valueOf(apiIndustryJob.getCompletedSuccessfully()));
+			childNode.setAttributeNS(null, "installeditemflag", String.valueOf(apiIndustryJob.getInstalledItemFlag()));
+			childNode.setAttributeNS(null, "outputflag", String.valueOf(apiIndustryJob.getOutputFlag()));
+			childNode.setAttributeNS(null, "activityid", String.valueOf(apiIndustryJob.getActivityID()));
+			childNode.setAttributeNS(null, "completedstatus", String.valueOf(apiIndustryJob.getCompletedStatus()));
+			childNode.setAttributeNS(null, "installtime", apiIndustryJob.getInstallTime());
+			childNode.setAttributeNS(null, "beginproductiontime", apiIndustryJob.getBeginProductionTime());
+			childNode.setAttributeNS(null, "endproductiontime", apiIndustryJob.getEndProductionTime());
+			childNode.setAttributeNS(null, "pauseproductiontime", apiIndustryJob.getPauseProductionTime());
 			node.appendChild(childNode);
 		}
 	}

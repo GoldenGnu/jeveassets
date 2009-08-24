@@ -447,7 +447,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 					}
 					if (human.isUpdateCorporationAssets() && !corps.contains(human.getCorporation())){
 						corps.add(human.getCorporation());
-						List<ApiAccountBalance> corpAccountBalances = human.getCorporationAccountBalances();
+						List<ApiAccountBalance> corpAccountBalances = human.getAccountBalancesCorporation();
 						double corpTotalAccountBalance = 0;
 						for (int c = 0; c < corpAccountBalances.size(); c++){
 							ApiAccountBalance accountBalance = corpAccountBalances.get(c);

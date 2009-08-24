@@ -26,6 +26,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.order.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
@@ -93,6 +94,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
 			parseBalances(currentNode, human);
 			parseMarkerOrders(currentNode, human);
+			parseIndustryJobs(currentNode, human);
 		}
 	}
 	private static Human parseHuman(Node node, Account account){
@@ -110,8 +112,12 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")){
 			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
 		}
+		Date industryJobsNextUpdate = Settings.getGmtNow();
+		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")){
+			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
+		}
 
-		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate);
+		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate);
 	}
 
 	private static void parseBalances(Element element, Human human){
@@ -125,7 +131,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 				Element currentNode = (Element) balanceNodes.item(b);
 				ApiAccountBalance AccountBalance = parseBalance(currentNode);
 				if (bCorp){
-					human.getCorporationAccountBalances().add(AccountBalance);
+					human.getAccountBalancesCorporation().add(AccountBalance);
 				} else {
 					human.getAccountBalances().add(AccountBalance);
 				}
@@ -154,7 +160,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 				Element currentNode = (Element) markerOrderNodes.item(b);
 				ApiMarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
 				if (bCorp){
-					human.getCorporationMarketOrders().add(apiMarketOrder);
+					human.getMarketOrdersCorporation().add(apiMarketOrder);
 				} else {
 					human.getMarketOrders().add(apiMarketOrder);
 				}
@@ -194,6 +200,95 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		apiMarketOrder.setBid(bid);
 		apiMarketOrder.setIssued(issued);
 		return apiMarketOrder;
+	}
+
+	private static void parseIndustryJobs(Element element, Human human){
+		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
+		for (int a = 0; a < industryJobsNodes.getLength(); a++){
+			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
+			boolean bCorp = AttributeGetters.getBoolean(currentIndustryJobsNode, "corp");
+			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
+			for (int b = 0; b < industryJobNodes.getLength(); b++){
+				Element currentNode = (Element) industryJobNodes.item(b);
+				ApiIndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
+				if (bCorp){
+					human.getIndustryJobsCorporation().add(apiIndustryJob);
+				} else {
+					human.getIndustryJobs().add(apiIndustryJob);
+				}
+			}
+		}
+	}
+	private static ApiIndustryJob parseIndustryJobs(Element element){
+		ApiIndustryJob apiIndustryJob = new ApiIndustryJob();
+
+		long jobID = AttributeGetters.getLong(element, "jobid");
+		long containerID = AttributeGetters.getLong(element, "containerid");
+		long installedItemID = AttributeGetters.getLong(element, "installeditemid");
+		long installedItemLocationID = AttributeGetters.getLong(element, "installeditemlocationid");
+		int installedItemQuantity = AttributeGetters.getInt(element, "installeditemquantity");
+		int installedItemProductivityLevel = AttributeGetters.getInt(element, "installeditemproductivitylevel");
+		int installedItemMaterialLevel = AttributeGetters.getInt(element, "installeditemmateriallevel");
+		int installedItemLicensedProductionRunsRemaining = AttributeGetters.getInt(element, "installeditemlicensedproductionrunsremaining");
+		long outputLocationID = AttributeGetters.getLong(element, "outputlocationid");
+		long installerID = AttributeGetters.getLong(element, "installerid");
+		int runs = AttributeGetters.getInt(element, "runs");
+		int licensedProductionRuns = AttributeGetters.getInt(element, "licensedproductionruns");
+		long installedInSolarSystemID = AttributeGetters.getLong(element, "installedinsolarsystemid");
+		long containerLocationID = AttributeGetters.getLong(element, "containerlocationid");
+		int materialMultiplier = AttributeGetters.getInt(element, "materialmultiplier");
+		int charMaterialMultiplier = AttributeGetters.getInt(element, "charmaterialmultiplier");
+		int timeMultiplier = AttributeGetters.getInt(element, "timemultiplier");
+		int charTimeMultiplier = AttributeGetters.getInt(element, "chartimemultiplier");
+		long installedItemTypeID = AttributeGetters.getLong(element, "installeditemtypeid");
+		long outputTypeID = AttributeGetters.getLong(element, "outputtypeid");
+		long containerTypeID = AttributeGetters.getLong(element, "containertypeid");
+		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
+		int completed = AttributeGetters.getInt(element, "completed");
+		int completedSuccessfully = AttributeGetters.getInt(element, "completedsuccessfully");
+		int installedItemFlag = AttributeGetters.getInt(element, "installeditemflag");
+		int outputFlag = AttributeGetters.getInt(element, "outputflag");
+		int activityID = AttributeGetters.getInt(element, "activityid");
+		int completedStatus = AttributeGetters.getInt(element, "completedstatus");
+		String installTime = AttributeGetters.getString(element, "installtime");
+		String beginProductionTime = AttributeGetters.getString(element, "beginproductiontime");
+		String endProductionTime = AttributeGetters.getString(element, "endproductiontime");
+		String pauseProductionTime = AttributeGetters.getString(element, "pauseproductiontime");
+
+		apiIndustryJob.setJobID(jobID);
+		apiIndustryJob.setContainerID(containerID);
+		apiIndustryJob.setInstalledItemID(installedItemID);
+		apiIndustryJob.setInstalledItemLocationID(installedItemLocationID);
+		apiIndustryJob.setInstalledItemQuantity(installedItemQuantity);
+		apiIndustryJob.setInstalledItemProductivityLevel(installedItemProductivityLevel);
+		apiIndustryJob.setInstalledItemMaterialLevel(installedItemMaterialLevel);
+		apiIndustryJob.setInstalledItemLicensedProductionRunsRemaining(installedItemLicensedProductionRunsRemaining);
+		apiIndustryJob.setOutputLocationID(outputLocationID);
+		apiIndustryJob.setInstallerID(installerID);
+		apiIndustryJob.setRuns(runs);
+		apiIndustryJob.setLicensedProductionRuns(licensedProductionRuns);
+		apiIndustryJob.setInstalledInSolarSystemID(installedInSolarSystemID);
+		apiIndustryJob.setContainerLocationID(containerLocationID);
+		apiIndustryJob.setMaterialMultiplier(materialMultiplier);
+		apiIndustryJob.setCharMaterialMultiplier(charMaterialMultiplier);
+		apiIndustryJob.setTimeMultiplier(timeMultiplier);
+		apiIndustryJob.setCharTimeMultiplier(charTimeMultiplier);
+		apiIndustryJob.setInstalledItemTypeID(installedItemTypeID);
+		apiIndustryJob.setOutputTypeID(outputTypeID);
+		apiIndustryJob.setContainerTypeID(containerTypeID);
+		apiIndustryJob.setInstalledItemCopy(installedItemCopy);
+		apiIndustryJob.setCompleted(completed);
+		apiIndustryJob.setCompletedSuccessfully(completedSuccessfully);
+		apiIndustryJob.setInstalledItemFlag(installedItemFlag);
+		apiIndustryJob.setOutputFlag(outputFlag);
+		apiIndustryJob.setActivityID(activityID);
+		apiIndustryJob.setCompletedStatus(completedStatus);
+		apiIndustryJob.setInstallTime(installTime);
+		apiIndustryJob.setBeginProductionTime(beginProductionTime);
+		apiIndustryJob.setEndProductionTime(endProductionTime);
+		apiIndustryJob.setPauseProductionTime(pauseProductionTime);
+
+		return apiIndustryJob;
 	}
 
 	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset, Settings settings){

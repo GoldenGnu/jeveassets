@@ -60,7 +60,7 @@ public class EveApiAccountBalanceReader {
 				if (!balanceResponse.hasError()){
 					List<ApiAccountBalance> accountBalances = new Vector<ApiAccountBalance>(balanceResponse.getAccountBalances());
 					if (bCorp){
-						human.setCorporationAccountBalances(accountBalances);
+						human.setAccountBalancesCorporation(accountBalances);
 					} else {
 						human.setAccountBalances(accountBalances);
 					}

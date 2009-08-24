@@ -25,9 +25,9 @@
 
 package net.nikr.eve.jeveasset.io;
 
-import com.beimin.eveapi.order.ApiMarketOrder;
-import com.beimin.eveapi.order.Parser;
-import com.beimin.eveapi.order.Response;
+import com.beimin.eveapi.industry.ApiIndustryJob;
+import com.beimin.eveapi.industry.Parser;
+import com.beimin.eveapi.industry.Response;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -38,12 +38,12 @@ import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiMarketOrdersReader {
+public class EveApiIndustryJobsReader {
 
-	private EveApiMarketOrdersReader() {}
+	private EveApiIndustryJobsReader() {}
 
 	public static void load(Settings settings){
-		Log.info("Market orders updating:");
+		Log.info("Industry jobs updating:");
 		boolean updated = false;
 		boolean updateFailed = false;
 		List<Account> accounts = settings.getAccounts();
@@ -60,45 +60,45 @@ public class EveApiMarketOrdersReader {
 			}
 		}
 		if (updated && !updateFailed){
-			Log.info("	Market orders updated (ALL)");
+			Log.info("	Industry jobs updated (ALL)");
 		} else if(updated && updateFailed) {
-			Log.info("	Market orders updated (SOME)");
+			Log.info("	Industry jobs updated (SOME)");
 		} else {
-			Log.info("	Market orders not updated (NONE)");
+			Log.info("	Industry jobs not updated (NONE)");
 		}
 	}
 
 	private static boolean load(Settings settings, Human human, boolean bCorp){
-		if (human.isMarkerOrdersUpdatable() || bCorp){
+		if (human.isIndustryJobsUpdatable() || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
 			}
-			Parser marketOrdersParser = new Parser();
-			Response marketOrdersResponse = null;
+			Parser industryJobsParser = new Parser();
+			Response industryJobsResponse = null;
 			try {
-				marketOrdersResponse = marketOrdersParser.getMarketOrders(Human.getApiAuthorization(human), bCorp);
-				human.setMarketOrdersNextUpdate(marketOrdersResponse.getCachedUntil());
-				if (!marketOrdersResponse.hasError()){
-					List<ApiMarketOrder> marketOrders = new Vector<ApiMarketOrder>(marketOrdersResponse.getMarketOrders());
+				industryJobsResponse = industryJobsParser.getInustryJobs(Human.getApiAuthorization(human), bCorp);
+				human.setIndustryJobsNextUpdate(industryJobsResponse.getCachedUntil());
+				if (!industryJobsResponse.hasError()){
+					List<ApiIndustryJob> industryJobs = new Vector<ApiIndustryJob>(industryJobsResponse.getIndustryJobs());
 					if (bCorp){
-						human.setMarketOrdersCorporation(marketOrders);
+						human.setIndustryJobsCorporation(industryJobs);
 					} else {
-						human.setMarketOrders(marketOrders);
+						human.setIndustryJobs(industryJobs);
 					}
 					if (bCorp) {
-						Log.info("	Corporation market orders updated for: "+human.getCorporation()+" by "+human.getName());
+						Log.info("	Corporation industry jobs updated for: "+human.getCorporation()+" by "+human.getName());
 					} else {
-						Log.info("	Market orders updated for: "+human.getName());
+						Log.info("	Industry jobs updated for: "+human.getName());
 					}
 					return true;
 				}
 			} catch (IOException ex) {
-				
+
 			} catch (SAXException ex) {
 				if (bCorp) {
-					Log.error("	Corporation market orders failed to update for: "+human.getCorporation()+" by "+human.getName()+" (PARSER ERROR)", ex);
+					Log.error("	Corporation industry jobs failed to update for: "+human.getCorporation()+" by "+human.getName()+" (PARSER ERROR)", ex);
 				} else {
-					Log.error("	Market orders failed to update for: "+human.getName()+" (PARSER ERROR)", ex);
+					Log.error("	Industry jobs failed to update for: "+human.getName()+" (PARSER ERROR)", ex);
 				}
 			}
 		}
