@@ -29,14 +29,20 @@ package net.nikr.eve.jeveasset.data;
 public class Material {
 	int id;
 	int quantity;
+	int portionSize;
 
-	public Material(int id, int quantity) {
+	public Material(int id, int quantity, int portionSize) {
 		this.id = id;
 		this.quantity = quantity;
+		this.portionSize = portionSize;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public int getPortionSize() {
+		return portionSize;
 	}
 
 	public int getQuantity() {

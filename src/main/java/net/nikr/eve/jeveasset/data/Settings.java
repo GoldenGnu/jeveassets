@@ -298,16 +298,22 @@ public class Settings {
 			if (!getItems().get(eveAsset.getTypeId()).getMaterials().isEmpty()){
 				List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
 				double priceReprocessed = 0;
+				int portionSize = 0;
 				for (int b = 0; b < materials.size(); b++){
 					//Calculate reprocessed price
 					Material material = materials.get(b);
+					portionSize = material.getPortionSize();
 					if (getMarketstats().containsKey(material.getId())){
 						priceReprocessed = priceReprocessed + (getMarketstats().get(material.getId()).getSellMedian() * material.getQuantity());
+						//priceReprocessed = priceReprocessed + (getMarketstats().get(material.getId()).getSellMedian() * (material.getQuantity() / portionSize));
 					}
 					//Unique Ids
 					if (!uniqueIds.contains(material.getId())){
 						uniqueIds.add(material.getId());
 					}
+				}
+				if (priceReprocessed > 0 && portionSize > 0){
+					priceReprocessed = priceReprocessed / portionSize;
 				}
 				eveAsset.setPriceReprocessed(priceReprocessed);
 			} else {

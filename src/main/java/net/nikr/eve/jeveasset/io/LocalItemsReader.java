@@ -81,6 +81,7 @@ public class LocalItemsReader extends AbstractXmlReader {
 	private static void parseMaterial(Node node, Items item){
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
-		item.addMaterial( new Material(id, quantity));
+		int portionSize = AttributeGetters.getInt(node, "portionsize");
+		item.addMaterial( new Material(id, quantity, portionSize));
 	}
 }
