@@ -147,15 +147,6 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 		);
 	}
 
-	private void save(){
-		updatePrice();
-		//Update Settings
-		program.getSettings().setUserPrices(userPrices);
-		//Update table
-		program.assetsChanged();
-		this.setVisible(false);
-	}
-
 	private void setEnabledAll(boolean b){
 		jAssets.setEnabled(b);
 		jPrice.setEnabled(b);
@@ -186,11 +177,10 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 		for (Map.Entry<Integer,UserPrice> entry : userPrices.entrySet()){
 			UserPrice userPrice = entry.getValue();
 			names.add(userPrice);
-			if (lastUserPrice == null) lastUserPrice = userPrice;
-
 		}
 		Collections.sort(names);
 		if (!userPrices.isEmpty()){
+			lastUserPrice = names.get(0);
 			jAssets.setModel( new DefaultComboBoxModel(names) );
 			jPrice.setText(String.valueOf(lastUserPrice.getPrice()));
 			setEnabledAll(true);
@@ -236,10 +226,25 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jSave;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		updatePrice();
+		//Update Settings
+		program.getSettings().setUserPrices(userPrices);
+		//Update table
+		program.assetsChanged();
+		this.setVisible(false);
+	}
 	
 	@Override
 	public void setVisible(boolean b) {

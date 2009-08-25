@@ -71,6 +71,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	private JButton jExportAll;
 	private LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
+	private JButton jClose;
 
 	//Data
 	private EventList<EveAsset> eveAssetEventList;
@@ -115,7 +116,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		JScrollPane jShipScrollPane = new JScrollPane(jShip);
 		jPanel.add(jShipScrollPane);
 
-		JButton jClose = new JButton("Close");
+		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_LOADOUTS_CLOSE);
 		jClose.addActionListener(this);
 		jPanel.add(jClose);
@@ -234,9 +235,32 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		return output;
 	}
 
+	public void export(){
+		String fitName = loadoutsExportDialog.getFittingName();
+		String fitDescription = loadoutsExportDialog.getFittingDescription();
+		if (!fitName.equals("")){
+			loadoutsExportDialog.setVisible(false);
+			String s = (String)jShips.getSelectedItem();
+			if (s == null || s.equals("") || ships == null || ships.isEmpty()){
+				return;
+			}
+			String filename = browse();
+			List<EveAsset> eveAssets = new ArrayList<EveAsset>();
+			eveAssets.add(ships.get(s));
+			if (filename != null) LocalEveFittingWriter.save(eveAssets, filename, fitName, fitDescription);
+		} else {
+			JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(), "Name can not be empty...", "Empty Name", JOptionPane.PLAIN_MESSAGE);
+		}
+	}
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jShips;
+	}
+
+	@Override
+	protected JButton getDefaultButton() {
+		return jClose;
 	}
 
 	@Override
@@ -246,6 +270,11 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	protected void windowActivated() {}
 
 	@Override
+	protected void save() {
+		this.setVisible(false);
+	}
+
+	@Override
 	public void listChanged(ListEvent<EveAsset> listChanges) {
 		update();
 	}
@@ -253,7 +282,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_LOADOUTS_CLOSE.equals(e.getActionCommand())) {
-			this.setVisible(false);
+			save();
 		}
 		if (ACTION_SHIP_SELECTED.equals(e.getActionCommand())) {
 			String s = (String)jShips.getSelectedItem();
@@ -391,24 +420,6 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 			if (filename != null) LocalEveFittingWriter.save(new ArrayList<EveAsset>(ships.values()), filename);
 
 		}
-		if (LoadoutsExportDialog.ACTION_EXPORT_OK.equals(e.getActionCommand())) {
-			String fitName = loadoutsExportDialog.getFittingName();
-			String fitDescription = loadoutsExportDialog.getFittingDescription();
-			if (!fitName.equals("")){
-				loadoutsExportDialog.setVisible(false);
-				String s = (String)jShips.getSelectedItem();
-				if (s == null || s.equals("") || ships == null || ships.isEmpty()){
-					return;
-				}
-				String filename = browse();
-				List<EveAsset> eveAssets = new ArrayList<EveAsset>();
-				eveAssets.add(ships.get(s));
-				if (filename != null) LocalEveFittingWriter.save(eveAssets, filename, fitName, fitDescription);
-			} else {
-				JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(), "Name can not be empty...", "Empty Name", JOptionPane.PLAIN_MESSAGE);
-			}
-		}
-
 	}
 	
 	private class Output {

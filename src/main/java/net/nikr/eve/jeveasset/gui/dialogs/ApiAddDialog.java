@@ -96,7 +96,7 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 
 		jOk = new JButton("OK");
 		jOk.setActionCommand(ACTION_ADD_KEY_OK);
-		jOk.addActionListener(apiManager);
+		jOk.addActionListener(this);
 		jPanel.add(jOk);
 
 		jCancel = new JButton("Cancel");
@@ -207,11 +207,22 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jOk;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {
 		getClipboardData();
+	}
+
+	@Override
+	protected void save() {
+		apiManager.saveApiKey();
+		setVisible(false);
 	}
 
 	@Override
@@ -242,5 +253,9 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 		if (ACTION_ADD_KEY_CANCEL.equals(e.getActionCommand())) {
 			setVisible(false);
 		}
+		if (ACTION_ADD_KEY_OK.equals(e.getActionCommand())) {
+			save();
+		}
+
 	}
 }

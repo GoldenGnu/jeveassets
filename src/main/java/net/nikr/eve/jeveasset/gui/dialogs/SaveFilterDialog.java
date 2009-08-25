@@ -53,6 +53,7 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	private EventList<String> filters;
 	private JComboBox jName;
 	private String returnValue = null;
+	private JButton jSave;
 
 	public SaveFilterDialog(Program program) {
 		super(program, "Save Filter");
@@ -64,7 +65,7 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		filters = new BasicEventList<String>();
 		AutoCompleteSupport support = AutoCompleteSupport.install(jName, filters);
 		
-		JButton jSave = new JButton("Save");
+		jSave = new JButton("Save");
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
 
@@ -106,19 +107,6 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		return returnValue;
 	}
 
-	private void save(){
-		returnValue = (String) jName.getSelectedItem();
-		if (returnValue == null){
-			canNotSave();
-			return;
-		}
-		if (returnValue.equals("")) {
-			canNotSave();
-			return;
-		}
-		this.setVisible(false);
-	}
-
 	private void canNotSave(){
 		returnValue = null;
 		jName.setSelectedItem("");
@@ -131,10 +119,29 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jSave;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		returnValue = (String) jName.getSelectedItem();
+		if (returnValue == null){
+			canNotSave();
+			return;
+		}
+		if (returnValue.equals("")) {
+			canNotSave();
+			return;
+		}
+		this.setVisible(false);
+	}
 
 	@Override
 	public void setVisible(boolean b) {

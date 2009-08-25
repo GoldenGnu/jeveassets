@@ -67,6 +67,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	private JTable jApiTable;
 	private JButton jRemove;
 	private JButton jAdd;
+	private JButton jDone;
 
 	private AddHumanTask addHumanTask;
 
@@ -113,7 +114,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		jPanel.add(jCharacterScrollPanel);
 
 		//Done Button
-		JButton jDone = new JButton("Done");
+		jDone = new JButton("Done");
 		jDone.setActionCommand(ACTION_DONE);
 		jDone.addActionListener(this);
 		jPanel.add(jDone);
@@ -169,9 +170,20 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 	}
 
+	public void saveApiKey(){
+		addHumanTask = new AddHumanTask();
+		addHumanTask.addPropertyChangeListener(this);
+		addHumanTask.execute();
+	}
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jAdd;
+	}
+
+	@Override
+	protected JButton getDefaultButton() {
+		return jDone;
 	}
 
 	@Override
@@ -182,6 +194,20 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		if (!shownAssetsCopy.equals(shownAssets)){
+			program.assetsChanged();
+			program.charactersChanged();
+		}
+		if (!corpAssetsCopy.equals(corpAssets)){
+			program.assetsChanged();
+			program.charactersChanged();
+			JOptionPane.showMessageDialog(program.getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+		}
+		this.setVisible(false);
+	}
 
 	@Override
 	public void setVisible(boolean b) {
@@ -211,16 +237,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			apiAddDialog.setVisible(true);
 		}
 		if (ACTION_DONE.equals(e.getActionCommand())) {
-			if (!shownAssetsCopy.equals(shownAssets)){
-				program.assetsChanged();
-				program.charactersChanged();
-			}
-			if (!corpAssetsCopy.equals(corpAssets)){
-				program.assetsChanged();
-				program.charactersChanged();
-				JOptionPane.showMessageDialog(program.getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
-			}
-			this.setVisible(false);
+			save();
 		}
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			int selectedRow = jApiTable.getSelectedRow();
@@ -264,12 +281,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				program.assetsChanged();
 			}
 		}
-		if (ApiAddDialog.ACTION_ADD_KEY_OK.equals(e.getActionCommand())) {
-			addHumanTask = new AddHumanTask();
-			addHumanTask.addPropertyChangeListener(this);
-			addHumanTask.execute();
-		}
-
 	}
 	
 	@Override

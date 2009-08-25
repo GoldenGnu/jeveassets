@@ -214,10 +214,20 @@ public class MaterialsDialog extends JDialogCentered implements ActionListener, 
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jClose;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		this.setVisible(false);
+	}
 
 	@Override
 	public void listChanged(ListEvent<EveAsset> listChanges) {
@@ -227,7 +237,7 @@ public class MaterialsDialog extends JDialogCentered implements ActionListener, 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_MATERIALS_CLOSE.equals(e.getActionCommand())){
-			this.setVisible(false);
+			save();
 		}
 	}
 

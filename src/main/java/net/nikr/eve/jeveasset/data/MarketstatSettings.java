@@ -113,6 +113,7 @@ public class MarketstatSettings {
 	public int getRegion() {
 		return region;
 	}
+
 	public String getOutput() throws UnsupportedEncodingException{
 		String data = "";
 		if ( getAge() > 0) data = data + "&" + URLEncoder.encode("hours", "UTF-8") + "=" + URLEncoder.encode(String.valueOf( (getAge()*24) ), "UTF-8");
@@ -325,5 +326,30 @@ public class MarketstatSettings {
 			data = data + "&" + URLEncoder.encode("regionlimit", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(10000049), "UTF-8");
 		}
 		return data;
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (obj instanceof MarketstatSettings){
+			return equals( (MarketstatSettings) obj);
+		}
+		return false;
+	}
+
+	public boolean equals(MarketstatSettings marketstatSettings){
+		if (marketstatSettings.getAge() == this.getAge()
+			&& marketstatSettings.getQuantity() == this.getQuantity()
+			&& marketstatSettings.getRegion() == this.getRegion()
+				) return true;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 83 * hash + this.region;
+		hash = 83 * hash + this.age;
+		hash = 83 * hash + this.quantity;
+		return hash;
 	}
 }

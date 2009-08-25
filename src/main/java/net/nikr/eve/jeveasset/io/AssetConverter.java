@@ -478,7 +478,9 @@ public class AssetConverter {
 		}
 		return eveAssets;
 	}
-	//FIXME - the output is not added to the asset list
+	//TODO - The output item is not added to the asset list
+	//			Could be added if job is completed after last asset update
+	//TODO - Could mark blueprints as Copy/Orifinal
 	private static EveAsset ApiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Settings settings, Human human, boolean bCorp){
 		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
 		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();

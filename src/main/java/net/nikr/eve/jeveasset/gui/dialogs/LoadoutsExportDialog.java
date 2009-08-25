@@ -51,9 +51,13 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 
 	private JTextField jName;
 	private JTextPane jDescription;
+	private JButton jOK;
+
+	private LoadoutsDialog loadoutsDialog;
 
 	public LoadoutsExportDialog(Program program, LoadoutsDialog loadoutsDialog) {
 		super(program, "Export Fitting", loadoutsDialog);
+		this.loadoutsDialog = loadoutsDialog;
 
 		JLabel jNameLabel = new JLabel("Name:");
 		jPanel.add(jNameLabel);
@@ -72,9 +76,9 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		JScrollPane jDescriptionScrollPane = new JScrollPane(jDescription);
 		jPanel.add(jDescriptionScrollPane);
 
-		JButton jOK = new JButton("OK");
+		jOK = new JButton("OK");
 		jOK.setActionCommand(ACTION_EXPORT_OK);
-		jOK.addActionListener(loadoutsDialog);
+		jOK.addActionListener(this);
 		jPanel.add(jOK);
 
 		JButton jCancel = new JButton("Cancel");
@@ -128,10 +132,20 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jOK;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		loadoutsDialog.export();
+	}
 
 	@Override
 	public void setVisible(boolean b) {
@@ -144,6 +158,9 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (ACTION_EXPORT_OK.equals(e.getActionCommand())) {
+			save();
+		}
 		if (ACTION_EXPORT_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
 		}

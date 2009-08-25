@@ -52,6 +52,7 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 	private JComboBox jRegions;
 	private JTextField jAge;
 	private JTextField jQuantity;
+	private JButton jSave;
 
 	public EveCentralOptionsDialog(Program program, Image image) {
 		super(program, "Eve-Central Options", image);
@@ -79,7 +80,7 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 
 		JLabel jAgeUnlimitedLabel = new JLabel("(Zero for unlimited)");
 
-		JButton jSave = new JButton("Save");
+		jSave = new JButton("Save");
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
 		jPanel.add(jSave);
@@ -140,26 +141,6 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 		);
 	}
 
-	private void save(){
-		int region = jRegions.getSelectedIndex();
-		int age = Integer.valueOf(jAge.getText());
-		int quantity = Integer.valueOf(jQuantity.getText());
-		program.getSettings().setMarketstatSettings( new MarketstatSettings(region, age, quantity) );
-
-		this.setVisible(false);
-		
-		String nextUpdate = Formater.weekdayAndTime(program.getSettings().getMarketstatsNextUpdate())+" GMT";
-		if (EveCentralMarketstatReader.isMarketstatUpdatable(program.getSettings())){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data from Eve-Central, with the new settings?", "Update prices", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.YES_OPTION){
-				program.updatePriceData();
-				return;
-			}
-			nextUpdate = "Now";
-		}
-		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data from EVE-Central\r\nbefore the new settings will in used\r\nNext update: "+nextUpdate, "Eve-Central Options", JOptionPane.PLAIN_MESSAGE);
-	}
-
 	private void updateValues(){
 		MarketstatSettings marketstatSettings = program.getSettings().getMarketstatSettings();
 		jRegions.setSelectedIndex(marketstatSettings.getRegion());
@@ -173,10 +154,40 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jSave;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		int region = jRegions.getSelectedIndex();
+		int age = Integer.valueOf(jAge.getText());
+		int quantity = Integer.valueOf(jQuantity.getText());
+		MarketstatSettings newMarketstatSettings = new MarketstatSettings(region, age, quantity);
+		MarketstatSettings oldMarketstatSettings = program.getSettings().getMarketstatSettings();
+		program.getSettings().setMarketstatSettings( newMarketstatSettings );
+
+		this.setVisible(false);
+
+		if (oldMarketstatSettings.equals(newMarketstatSettings)) return;
+
+		String nextUpdate = Formater.weekdayAndTime(program.getSettings().getMarketstatsNextUpdate())+" GMT";
+		if (EveCentralMarketstatReader.isMarketstatUpdatable(program.getSettings())){
+			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data from Eve-Central, with the new settings?", "Update prices", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.YES_OPTION){
+				program.updatePriceData();
+				return;
+			}
+			nextUpdate = "Now";
+		}
+		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data from EVE-Central\r\nbefore the new settings will in used\r\nNext update: "+nextUpdate, "Eve-Central Options", JOptionPane.PLAIN_MESSAGE);
+	}
 
 	@Override
 	public void setVisible(boolean b) {

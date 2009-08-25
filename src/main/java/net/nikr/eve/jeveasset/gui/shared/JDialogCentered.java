@@ -25,20 +25,32 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.log.Log;
 
 
 public abstract class JDialogCentered implements WindowListener {
+
+	private final static String ACTION_CANCEL = "ACTION_CANCEL";
+	private final static String ACTION_OK = "ACTION_OK";
+
 
 	protected Program program;
 	protected Window parent;
@@ -75,17 +87,18 @@ public abstract class JDialogCentered implements WindowListener {
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
-
 		dialog.add(jPanel);
-
-
-
-
+		
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), ACTION_CANCEL);
+		dialog.getRootPane().getActionMap().put(ACTION_CANCEL, new HideAction(ACTION_CANCEL));
+		dialog.getRootPane().getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(ACTION_OK));
 	}
 
 	protected abstract JComponent getDefaultFocus();
+	protected abstract JButton getDefaultButton();
 	protected abstract void windowShown();
 	protected abstract void windowActivated();
+	protected abstract void save();
 
 	public JDialog getDialog() {
 		return dialog;
@@ -102,7 +115,6 @@ public abstract class JDialogCentered implements WindowListener {
 			int y = (screenSize.height - dialog.getHeight()) / 2;
 
 			//Set the new frame location
-
 			dialog.setLocation(x, y);
 			dialog.setLocationRelativeTo(parent);
 
@@ -113,28 +125,41 @@ public abstract class JDialogCentered implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		
+		//Set default close button
+		if (dialog.getRootPane().getDefaultButton() == null){
+			dialog.getRootPane().setDefaultButton( getDefaultButton() );
+		}
+		//Fix none editable JTextComponent(s)
+		fixTextComponents(jPanel);
+	}
+
+	//Find JTextComponent(s) and overwrite the default enter action
+	private void fixTextComponents(JComponent jComponent){
+		for (int a = 0; a < jComponent.getComponentCount(); a++){
+			Component c = jComponent.getComponent(a);
+			if (c instanceof JTextComponent){
+				JTextComponent jTextComponent = (JTextComponent) c;
+				if (!jTextComponent.isEditable()){
+					jTextComponent.getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(ACTION_OK));
+				}
+			}
+			if (c instanceof JComponent){
+				fixTextComponents((JComponent) c);
+			}
+		}
 	}
 
 	@Override
-	public void windowClosing(WindowEvent e) {
-		
-	}
+	public void windowClosing(WindowEvent e) {}
 
 	@Override
-	public void windowClosed(WindowEvent e) {
-
-	}
+	public void windowClosed(WindowEvent e) {}
 
 	@Override
-	public void windowIconified(WindowEvent e) {
-
-	}
+	public void windowIconified(WindowEvent e) {}
 
 	@Override
-	public void windowDeiconified(WindowEvent e) {
-
-	}
+	public void windowDeiconified(WindowEvent e) {}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
@@ -143,7 +168,6 @@ public abstract class JDialogCentered implements WindowListener {
 			Log.warning("No default focus for: "+this.title);
 			return;
 		}
-
 		if (firstActivating){
 			firstActivating = false;
 			if (defaultFocus.isEnabled()){
@@ -155,7 +179,23 @@ public abstract class JDialogCentered implements WindowListener {
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {}
 
+	private class HideAction extends AbstractAction {
+
+		public HideAction(String actionCommand) {
+			this.putValue(Action.ACTION_COMMAND_KEY, actionCommand);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+				setVisible(false);
+			}
+			if (ACTION_OK.equals(e.getActionCommand())) {
+				save();
+			}
+
+		}
 	}
 }

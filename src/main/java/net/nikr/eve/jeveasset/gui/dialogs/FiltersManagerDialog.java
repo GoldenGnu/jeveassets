@@ -58,6 +58,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jDelete;
 	private JButton jLoad;
 	private JButton jRename;
+	private JButton jDone;
 	
 	public FiltersManagerDialog(Program program, Image image) {
 		super(program, "Filter Manager", image);
@@ -89,7 +90,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		jPanel.add(jScrollPanel);
 
 		//Done
-		JButton jDone = new JButton("Done");
+		jDone = new JButton("Done");
 		jDone.setActionCommand(ACTION_DONE);
 		jDone.addActionListener(this);
 		jPanel.add(jDone);
@@ -212,15 +213,25 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jDone;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
 
 	@Override
+	protected void save() {
+		this.setVisible(false);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_DONE.equals(e.getActionCommand())) {
-			this.setVisible(false);
+			save();
 		}
 		if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
 			loadFilter();

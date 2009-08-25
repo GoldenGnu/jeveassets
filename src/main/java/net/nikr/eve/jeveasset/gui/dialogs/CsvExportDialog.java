@@ -83,6 +83,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	private JComboBox jLineDelimiter;
 	private JComboBox jDecimalSeparator;
 	private JMultiSelectionList jColumnSelection;
+	private JButton jOK;
 
 	private static DecimalFormat DoubleEn  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("en")));
 	private static DecimalFormat DoubleEu  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("da")));
@@ -143,7 +144,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
 
-		JButton jOK = new JButton("OK");
+		jOK = new JButton("OK");
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 		jPanel.add(jOK);
@@ -266,9 +267,68 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		}
 	}
 
-	private void save(){
+	private HashMap<String, ? super Object> getLine(String[] header, EveAsset eveAsset, String lang){
+		HashMap<String, ? super Object> line = new HashMap<String, Object>();
+		for (int a = 0; a < header.length; a++){
+			String headerName = header[a];
+			if (headerName.equals("Name")) line.put(headerName, eveAsset.getName());
+			if (headerName.equals("Group")) line.put(headerName, eveAsset.getGroup());
+			if (headerName.equals("Category")) line.put(headerName, eveAsset.getCategory());
+			if (headerName.equals("Owner")) line.put(headerName, eveAsset.getOwner());
+			if (headerName.equals("Count")) line.put(headerName, getValue(eveAsset.getCount(), lang));
+			if (headerName.equals("Location")) line.put(headerName, eveAsset.getLocation());
+			if (headerName.equals("Container")) line.put(headerName, eveAsset.getContainer());
+			if (headerName.equals("Flag")) line.put(headerName, eveAsset.getFlag());
+			if (headerName.equals("Price")) line.put(headerName, getValue(eveAsset.getPrice(), lang));
+			if (headerName.equals("Sell Min")) line.put(headerName, getValue(eveAsset.getPriceSellMin(), lang));
+			if (headerName.equals("Buy Max")) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
+			if (headerName.equals("Value")) line.put(headerName, getValue(eveAsset.getValue(), lang));
+			if (headerName.equals("Meta")) line.put(headerName, eveAsset.getMeta());
+			if (headerName.equals("ID")) line.put(headerName, getValue(eveAsset.getId(), lang));
+			if (headerName.equals("Base Price")) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
+			if (headerName.equals("Volume")) line.put(headerName, getValue(eveAsset.getVolume(), lang));
+			if (headerName.equals("Type ID")) line.put(headerName, getValue(eveAsset.getTypeId(), lang));
+			if (headerName.equals("Region")) line.put(headerName, eveAsset.getRegion());
+			if (headerName.equals("Type Count")) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
+			if (headerName.equals("Security")) line.put(headerName, eveAsset.getSecurity());
+			if (headerName.equals("Reprocessed")) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
+		}
+		return line;
+	}
+
+	private String getValue(double number, String lang){
+		if (lang.equals("Dot")){
+			return DoubleEn.format(number);
+		}
+		return DoubleEu.format(number);
+	}
+	private String getValue(int number, String lang){
+		if (lang.equals("Dot")){
+			return IntegerEn.format(number);
+		}
+		return IntegerEu.format(number);
+	}
+
+	@Override
+	protected JComponent getDefaultFocus() {
+		return jPath;
+	}
+
+	@Override
+	protected JButton getDefaultButton() {
+		return jOK;
+	}
+
+	@Override
+	protected void windowShown() {}
+
+	@Override
+	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
 		List<HashMap<String, ? super Object>> data = new Vector<HashMap<String, ? super Object>>();
-		
+
 		Object[] columns = jColumnSelection.getSelectedValues();
 
 		if (columns.length == 0){
@@ -348,63 +408,9 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		if (!LocalCsvWriter.save(jPath.getText(), data, header, new CsvPreference('\"', fieldDelimiter, lineDelimiter))){
 			JOptionPane.showMessageDialog(dialog, "Failed to save CSV file", "Export CSV", JOptionPane.PLAIN_MESSAGE);
 		}
-		
+
 		this.setVisible(false);
 	}
-
-	private HashMap<String, ? super Object> getLine(String[] header, EveAsset eveAsset, String lang){
-		HashMap<String, ? super Object> line = new HashMap<String, Object>();
-		for (int a = 0; a < header.length; a++){
-			String headerName = header[a];
-			if (headerName.equals("Name")) line.put(headerName, eveAsset.getName());
-			if (headerName.equals("Group")) line.put(headerName, eveAsset.getGroup());
-			if (headerName.equals("Category")) line.put(headerName, eveAsset.getCategory());
-			if (headerName.equals("Owner")) line.put(headerName, eveAsset.getOwner());
-			if (headerName.equals("Count")) line.put(headerName, getValue(eveAsset.getCount(), lang));
-			if (headerName.equals("Location")) line.put(headerName, eveAsset.getLocation());
-			if (headerName.equals("Container")) line.put(headerName, eveAsset.getContainer());
-			if (headerName.equals("Flag")) line.put(headerName, eveAsset.getFlag());
-			if (headerName.equals("Price")) line.put(headerName, getValue(eveAsset.getPrice(), lang));
-			if (headerName.equals("Sell Min")) line.put(headerName, getValue(eveAsset.getPriceSellMin(), lang));
-			if (headerName.equals("Buy Max")) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
-			if (headerName.equals("Value")) line.put(headerName, getValue(eveAsset.getValue(), lang));
-			if (headerName.equals("Meta")) line.put(headerName, eveAsset.getMeta());
-			if (headerName.equals("ID")) line.put(headerName, getValue(eveAsset.getId(), lang));
-			if (headerName.equals("Base Price")) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
-			if (headerName.equals("Volume")) line.put(headerName, getValue(eveAsset.getVolume(), lang));
-			if (headerName.equals("Type ID")) line.put(headerName, getValue(eveAsset.getTypeId(), lang));
-			if (headerName.equals("Region")) line.put(headerName, eveAsset.getRegion());
-			if (headerName.equals("Type Count")) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
-			if (headerName.equals("Security")) line.put(headerName, eveAsset.getSecurity());
-			if (headerName.equals("Reprocessed")) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
-		}
-		return line;
-
-	}
-
-	private String getValue(double number, String lang){
-		if (lang.equals("Dot")){
-			return DoubleEn.format(number);
-		}
-		return DoubleEu.format(number);
-	}
-	private String getValue(int number, String lang){
-		if (lang.equals("Dot")){
-			return IntegerEn.format(number);
-		}
-		return IntegerEu.format(number);
-	}
-
-	@Override
-	protected JComponent getDefaultFocus() {
-		return jPath;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
 
 	@Override
 	public void setVisible(boolean b) {

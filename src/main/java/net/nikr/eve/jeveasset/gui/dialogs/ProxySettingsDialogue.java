@@ -54,11 +54,12 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_SAVE = "ACTION_SAVE";
-	JComboBox proxyTypeField;
-	JTextField proxyAddressField;
-	JSpinner proxyPortField;
-	JCheckBox enableApiProxy;
-	JTextField apiProxyField;
+	private JComboBox proxyTypeField;
+	private JTextField proxyAddressField;
+	private JSpinner proxyPortField;
+	private JCheckBox enableApiProxy;
+	private JTextField apiProxyField;
+	private JButton saveButton;
 
 	public ProxySettingsDialogue(Program program, Image image) {
 		super(program, "Proxy Settings", image);
@@ -70,7 +71,7 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		JLabel enableApiLabel = new JLabel("Enable API Proxy");
 		JLabel apiProxyLabel = new JLabel("API Proxy Address");
 
-		JButton saveButton = new JButton("Save");
+		saveButton = new JButton("Save");
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(ACTION_SAVE);
 
@@ -174,22 +175,18 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return saveButton;
+	}
+
+	@Override
 	protected void windowShown() { }
 
 	@Override
 	protected void windowActivated() { }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
-		}
-		if (ACTION_SAVE.equals(e.getActionCommand())) {
-			save();
-		}
-	}
-
-	private void save() {
+	protected void save() {
 		if (proxyTypeField.getSelectedItem() != Proxy.Type.DIRECT) {
 			try {
 				program.getSettings().setProxy(
@@ -207,8 +204,18 @@ public class ProxySettingsDialogue extends JDialogCentered implements ActionList
 		} else {
 			program.getSettings().setApiProxy(null);
 		}
-		
+
 		setVisible(false);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			this.setVisible(false);
+		}
+		if (ACTION_SAVE.equals(e.getActionCommand())) {
+			save();
+		}
 	}
 
 	private void enableProxy(boolean b) {

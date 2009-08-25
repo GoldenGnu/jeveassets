@@ -112,12 +112,6 @@ public class Program implements ActionListener {
 		//		POS (should work)
 		//		NPC Stations (should work)
 		//		Offices (should work)
-		
-		//Enter saves:
-		//		+Set Price
-		//		-Save Filter
-		//		-Add API Key
-		//		-Export CSV
 
 		//Item browser
 		

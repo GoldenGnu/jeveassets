@@ -75,6 +75,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	private JComboBox jCorps;
 	private JEditorPane jCorp;
 	private JEditorPane jAll;
+	private JButton jClose;
 
 	//Data
 	private List<String> owners;
@@ -142,7 +143,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 		jAll.setOpaque(false);
 		jPanel.add(jAll);
 
-		JButton jClose = new JButton("Close");
+		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_VALUES_CLOSE);
 		jClose.addActionListener(this);
 		jPanel.add(jClose);
@@ -468,10 +469,20 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	}
 
 	@Override
+	protected JButton getDefaultButton() {
+		return jClose;
+	}
+
+	@Override
 	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
+
+	@Override
+	protected void save() {
+		this.setVisible(false);
+	}
 
 	@Override
 	public void listChanged(ListEvent listChanges) {
@@ -481,7 +492,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_VALUES_CLOSE.equals(e.getActionCommand())) {
-			this.setVisible(false);
+			save();
 		}
 		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
 			String s = (String)jOwners.getSelectedItem();
