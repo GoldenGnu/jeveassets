@@ -31,11 +31,11 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.EveApiAssetsReader;
 import net.nikr.eve.jeveasset.io.EveApiConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
@@ -62,17 +62,17 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		int value = updateAssetsTask.getProgress();
-		if (updateAssetsTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateAssetsTask.throwable);
+		if (updateAssetsTask.getThrowable() != null){
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateAssetsTask.getThrowable());
 		}
-		if (value == 100 && updateAssetsTask.done){
-			updateAssetsTask.done = false;
+		if (value == 100 && updateAssetsTask.isTaskDone()){
+			updateAssetsTask.setTaskDone(false);
 			if (updateAssetsTask.updated){
 				program.assetsChanged();
 				program.getStatusPanel().updateAssetDate();
 				program.getStatusPanel().updateEveCentralDate();
 			}
-			jProgressBar.setValue(0);
+			jProgressBar.setValue(100);
 			jProgressBar.setIndeterminate(false);
 			setVisible(false);
 			if (updateAssetsTask.updated && !updateAssetsTask.updateFailed){ //All assets updated
@@ -94,73 +94,62 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 				Log.info("No assets updated");
 				JOptionPane.showMessageDialog(parent, "No assets updated (not allowed yet).\r\nCCP only allow you to update assets once a day...", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			}
+		} else if (value > 0){
+			jProgressBar.setIndeterminate(false);
+			jProgressBar.setValue(value);
 		} else {
-			jProgressBar.setValue(0);
 			jProgressBar.setIndeterminate(true);
 		}
 	}
 
-	class UpdateAssetsTask extends SwingWorker<Void, Void> {
+	class UpdateAssetsTask extends UpdateTask {
 
 		private boolean updated = false;
 		private boolean isShown = false;
 		private boolean updateFailed = false;
 		private boolean isOnline = true;
 		private boolean conquerableStationsUpdated = false;
-		private boolean done = false;
-		private Throwable throwable = null;
 
 		public UpdateAssetsTask() {
 			
 		}
 
 		@Override
-		public Void doInBackground() {
-			setProgress(0);
-			try {
-				List<Account> accounts = program.getSettings().getAccounts();
-				List<String> coporations = new Vector<String>();
-				for (int a = 0; a < accounts.size(); a++){
-					Account account = accounts.get(a);
-					List<Human> humans = account.getHumans();
-					for (int b = 0; b < humans.size(); b++){
-						Human human = humans.get(b);
-						if (human.isShowAssets()){
-							isShown = true;
-							if (human.isAssetsUpdatable() && !conquerableStationsUpdated){
-								EveApiConquerableStationsReader.load(program.getSettings());
-								conquerableStationsUpdated = true;
-							}
-							if (coporations.contains(human.getCorporation())){
-								human.setUpdateCorporationAssets(false);
-							}
-							boolean returned = EveApiAssetsReader.load(program, human);
-							if (human.isUpdateCorporationAssets()){
-								coporations.add(human.getCorporation());
-							}
-							if (returned){
-								updated = true;
-							} else {
-								isOnline = Online.isOnline(program.getSettings());
-								updateFailed = true;
-							}
+		public void update() throws Throwable {
+			List<Account> accounts = program.getSettings().getAccounts();
+			List<String> coporations = new Vector<String>();
+			for (int a = 0; a < accounts.size(); a++){
+				Account account = accounts.get(a);
+				List<Human> humans = account.getHumans();
+				for (int b = 0; b < humans.size(); b++){
+					setTaskProgress(accounts.size() * 3, (a*3)+b, 0, 20);
+					Human human = humans.get(b);
+					if (human.isShowAssets()){
+						isShown = true;
+						if (human.isAssetsUpdatable() && !conquerableStationsUpdated){
+							EveApiConquerableStationsReader.load(program.getSettings());
+							conquerableStationsUpdated = true;
+						}
+						if (coporations.contains(human.getCorporation())){
+							human.setUpdateCorporationAssets(false);
+						}
+						boolean returned = EveApiAssetsReader.load(program, human);
+						if (human.isUpdateCorporationAssets()){
+							coporations.add(human.getCorporation());
+						}
+						if (returned){
+							updated = true;
+						} else {
+							isOnline = Online.isOnline(program.getSettings());
+							updateFailed = true;
 						}
 					}
 				}
-				if (updated){
-					program.getSettings().clearEveAssetList();
-					EveCentralMarketstatReader.load(program.getSettings(), true);
-				}
-			} catch (Throwable ex) {
-				throwable = ex;
 			}
-			return null;
-        }
-
-		@Override
-		public void done() {
-			done = true;
-			setProgress(100);
+			if (updated){
+				program.getSettings().clearEveAssetList();
+				EveCentralMarketstatReader.load(program.getSettings(), this, true);
+			}
 		}
 
 	}

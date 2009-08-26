@@ -29,9 +29,9 @@ import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
 import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
@@ -56,17 +56,17 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		int value = updateEveCentralTask.getProgress();
-		if (updateEveCentralTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateEveCentralTask.throwable);
+		if (updateEveCentralTask.getThrowable() != null){
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateEveCentralTask.getThrowable());
 		}
-		if (value == 100 && updateEveCentralTask.done){
-			updateEveCentralTask.done = false;
+		if (value == 100 && updateEveCentralTask.isTaskDone()){
+			updateEveCentralTask.setTaskDone(false);
 			if (updateEveCentralTask.updated){
 				program.assetsChanged();
 			}
 			program.getStatusPanel().updateEveCentralDate();
 
-			jProgressBar.setValue(0);
+			jProgressBar.setValue(100);
 			jProgressBar.setIndeterminate(false);
 			setVisible(false);
 
@@ -82,41 +82,29 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 			} else { //No assets updated
 				JOptionPane.showMessageDialog(parent, "No price data updated (not allowed yet)\r\n", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			}
+		} else if (value > 0){
+			jProgressBar.setIndeterminate(false);
+			jProgressBar.setValue(value);
 		} else {
-			jProgressBar.setValue(0);
 			jProgressBar.setIndeterminate(true);
 		}
 
 	}
 
-	class UpdateEveCentralTask extends SwingWorker<Void, Void> {
+	public class UpdateEveCentralTask extends UpdateTask {
 
 		private boolean updated = false;
 		private boolean isOnline = true;
-		private boolean done = false;
-		private Throwable throwable = null;
 
 		public UpdateEveCentralTask() {}
-
+		
 		@Override
-		public Void doInBackground() {
-			setProgress(0);
-			try {
-				program.getSettings().clearEveAssetList();
-				updated = EveCentralMarketstatReader.load(program.getSettings());
-				if (!updated){
-					isOnline = Online.isOnline(program.getSettings());
-				}
-			} catch (Throwable ex) {
-				throwable = ex;
+		public void update() throws Throwable {
+			program.getSettings().clearEveAssetList();
+			updated = EveCentralMarketstatReader.load(program.getSettings(), this);
+			if (!updated){
+				isOnline = Online.isOnline(program.getSettings());
 			}
-			return null;
-        }
-
-		@Override
-		public void done() {
-			done = true;
-			setProgress(100);
 		}
 
 	}

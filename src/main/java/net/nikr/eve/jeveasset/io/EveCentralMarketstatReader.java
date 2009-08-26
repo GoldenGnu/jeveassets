@@ -39,6 +39,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Marketstat;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,27 +50,27 @@ public class EveCentralMarketstatReader {
 
 	private final static int ASSETS_PER_LOAD = 100;
 
-	public static boolean load(Settings settings) {
-		return load(settings, false);
+	public static boolean load(Settings settings, UpdateTask task) {
+		return load(settings, task, false);
 	}
 
 	public static boolean isMarketstatUpdatable(Settings settings){
-		return (Settings.getGmtNow().after(settings.getMarketstatsNextUpdate()) && settings.hasAssets());
+		return (Settings.isUpdatable(settings.getMarketstatsNextUpdate()) && settings.hasAssets());
 	}
 
-	public static boolean load(Settings settings, boolean bOverwrite) {
+	public static boolean load(Settings settings, UpdateTask task, boolean bOverwrite) {
 		if (isMarketstatUpdatable(settings) || bOverwrite){
 			try {
 				Log.info("Updating Eve-Central Marketstats:");
 				settings.setMarketstats(new HashMap<Integer, Marketstat>());
-				Date now = Settings.getGmtNow() ;
 				Date inOneHours = new Date(Settings.getGmtNow().getTime() + (1L * Timer.ONE_HOUR) );
 				settings.setMarketstatsNextUpdate(inOneHours);
-
 				// Construct data
 				//Map<String, EveAsset> uniqueAssets = new HashMap<String,EveAsset>();
 				List<Integer> unique = settings.getUniqueIds();
-				
+
+				int startProgress = task.getProgress();
+
 				String data = settings.getMarketstatSettings().getOutput();
 				int count = 0;
 				int runs = 0;
@@ -80,7 +81,7 @@ public class EveCentralMarketstatReader {
 						count = 0;
 						runs++;
 						data = settings.getMarketstatSettings().getOutput();
-
+						task.setTaskProgress(unique.size(), runs * ASSETS_PER_LOAD, startProgress, 100);
 					}
 					count++;
 					data += "&" + URLEncoder.encode("typeid", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(unique.get(a)), "UTF-8");
@@ -103,6 +104,7 @@ public class EveCentralMarketstatReader {
 		}
 		return false;
 	}
+
 	public static void loadEveCentralMarketstats(Settings settings, String data) throws XmlException, Exception  {
 		// Send data
 		URL url = new URL("http://api.eve-central.com/api/marketstat");

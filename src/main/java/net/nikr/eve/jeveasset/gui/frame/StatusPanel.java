@@ -110,7 +110,7 @@ public class StatusPanel extends JProgramPanel {
 
 	public void updateEveCentralDate(){
 		Date d = program.getSettings().getMarketstatsNextUpdate();
-		if (Settings.getGmtNow().after(d) || Settings.getGmtNow().equals(d)){
+		if (Settings.isUpdatable(d)){
 			jEveCentralUpdate.setText("Now");
 		} else {
 			jEveCentralUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
@@ -135,7 +135,7 @@ public class StatusPanel extends JProgramPanel {
 			}
 		}
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (Settings.getGmtNow().after(nextUpdate) || Settings.getGmtNow().equals(nextUpdate)){
+		if (Settings.isUpdatable(nextUpdate)){
 			jAssetUpdate.setText("Now");
 		} else {
 			jAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
@@ -160,7 +160,7 @@ public class StatusPanel extends JProgramPanel {
 			}
 		}
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (Settings.getGmtNow().after(nextUpdate) || Settings.getGmtNow().equals(nextUpdate)){
+		if (Settings.isUpdatable(nextUpdate)){
 			jMarketOrdersUpdate.setText("Now");
 		} else {
 			jMarketOrdersUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");

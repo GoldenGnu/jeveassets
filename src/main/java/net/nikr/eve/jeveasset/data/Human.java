@@ -32,7 +32,6 @@ import com.beimin.eveapi.order.ApiMarketOrder;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import net.nikr.eve.jeveasset.Program;
 
 
 public class Human {
@@ -157,10 +156,7 @@ public class Human {
 	}
 
 	public boolean isAssetsUpdatable(){
-		return ((Settings.getGmtNow().after(this.getAssetNextUpdate())
-				|| Settings.getGmtNow().equals(this.getAssetNextUpdate())
-				|| Program.FORCE_UPDATE )
-				&& !Program.FORCE_NO_UPDATE);
+		return Settings.isUpdatable(getAssetNextUpdate());
 	}
 
 	public boolean isBalanceUpdatable(){

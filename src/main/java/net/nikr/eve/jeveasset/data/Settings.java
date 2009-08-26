@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.AssetConverter;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
@@ -656,6 +657,9 @@ public class Settings {
 	}
 
 	public static boolean isUpdatable(Date date){
-		return (Settings.getGmtNow().after(date) || Settings.getGmtNow().equals(date) );
+		return ( (Settings.getGmtNow().after(date)
+				|| Settings.getGmtNow().equals(date)
+				|| Program.FORCE_UPDATE )
+				&& !Program.FORCE_NO_UPDATE);
 	}
 }

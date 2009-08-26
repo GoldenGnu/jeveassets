@@ -65,7 +65,7 @@ public class EveApiHumansReader {
 	}
 
 	public static boolean load(Settings settings, Account account, boolean apiKeyCheck){
-		if (Settings.getGmtNow().after(account.getCharactersNextUpdate()) || Settings.getGmtNow().equals(account.getCharactersNextUpdate()) || apiKeyCheck){
+		if (Settings.isUpdatable(account.getCharactersNextUpdate()) || apiKeyCheck){
 			Parser characterListParser = new Parser();
 			characterListParser.setCachingEnabled(true);
 			Response characterListResponse = null;

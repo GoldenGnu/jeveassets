@@ -50,7 +50,7 @@ public class EveApiCorporationReader {
 			nextUpdate = settings.getCorporationsNextUpdate().get(corporationID);
 		}
 
-		if (Settings.getGmtNow().after(nextUpdate) || Settings.getGmtNow().equals(nextUpdate)){
+		if (Settings.isUpdatable(nextUpdate)){
 			Parser corporationParser = new Parser();
 			corporationParser.setCachingEnabled(true);
 			Response corporationResponse = null;
