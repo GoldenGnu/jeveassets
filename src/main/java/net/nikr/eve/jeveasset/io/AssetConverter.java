@@ -485,8 +485,6 @@ public class AssetConverter {
 			if (!isCopy){
 				settings.getBpos().add(id);
 			}
-			Log.info("id: "+id+" isCopy: "+isCopy);
-			
 		}
 		return eveAssets;
 	}
