@@ -36,7 +36,6 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Items;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.log.Log;
 
 
 public class AssetConverter {
