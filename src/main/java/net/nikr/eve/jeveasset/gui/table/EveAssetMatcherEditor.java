@@ -35,6 +35,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
@@ -46,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> implements ActionListener, DocumentListener, KeyListener{
 
 	public final static String ACTION_COLUMN_SELECTED = "ACTION_COLUMN_SELECTED";
+	public final static String ACTION_TIMER = "ACTION_TIMER";
 
 	private JComboBox jAnd;
 	private JComboBox jColumn;
@@ -54,8 +56,13 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 	private Program program;
 	private EveAssetMatching eveAssetMatching = new EveAssetMatching();
 
+	private Timer timer;
+
 	public EveAssetMatcherEditor(Program program) {
 		this.program = program;
+
+		timer = new Timer(500, this);
+		timer.setActionCommand(ACTION_TIMER);
 
 		jAnd = new JComboBox(new Object[] {AssetFilter.AND, AssetFilter.OR});
 		jAnd.addActionListener(this);
@@ -138,27 +145,33 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 				}
 			}
 		}
+		if (ACTION_TIMER.equals(e.getActionCommand())){
+			timer.stop();
+		}
 		refilter();
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		if (!program.getSettings().isFilterOnEnter()){
-			refilter();
+			timer.stop();
+			timer.start();
 		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
 		if (!program.getSettings().isFilterOnEnter()){
-			refilter();
+			timer.stop();
+			timer.start();
 		}
 	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
 		if (!program.getSettings().isFilterOnEnter()){
-			refilter();
+			timer.stop();
+			timer.start();
 		}
 	}
 
