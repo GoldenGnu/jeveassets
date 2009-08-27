@@ -133,7 +133,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 						if (coporations.contains(human.getCorporation())){
 							human.setUpdateCorporationAssets(false);
 						}
-						boolean returned = EveApiAssetsReader.load(program, human);
+						boolean returned = EveApiAssetsReader.load(program.getSettings(), human);
 						if (human.isUpdateCorporationAssets()){
 							coporations.add(human.getCorporation());
 						}

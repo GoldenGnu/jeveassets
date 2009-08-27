@@ -25,6 +25,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import com.beimin.eveapi.asset.ApiAsset;
 import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.order.ApiMarketOrder;
 import com.beimin.eveapi.utils.stationlist.ApiStation;
@@ -432,14 +433,14 @@ public class AssetConverter {
 					&& apiMarketOrder.getOrderState() == 0
 					&& apiMarketOrder.getVolRemaining() > 0
 					){
-				EveAsset eveAsset = ApiMarketOrderToEveAsset(apiMarketOrder, settings, human, bCorp);
+				EveAsset eveAsset = apiMarketOrderToEveAsset(apiMarketOrder, settings, human, bCorp);
 				eveAssets.add(eveAsset);
 			}
 		}
 		return eveAssets;
 	}
 
-	private static EveAsset ApiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Settings settings, Human human, boolean bCorp){
+	private static EveAsset apiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Settings settings, Human human, boolean bCorp){
 		int typeID = (int)apiMarketOrder.getTypeID();
 		int locationID = (int) apiMarketOrder.getStationID();
 		long count = apiMarketOrder.getVolRemaining();
@@ -471,7 +472,7 @@ public class AssetConverter {
 		for (int a = 0; a < industryJobs.size(); a++){
 			ApiIndustryJob industryJob = industryJobs.get(a);
 			if (industryJob.getCompleted() == 0){
-				EveAsset eveAsset = ApiIndustryJobToEveAsset(industryJob, settings, human, bCorp);
+				EveAsset eveAsset = apiIndustryJobToEveAsset(industryJob, settings, human, bCorp);
 				eveAssets.add(eveAsset);
 			}
 			
@@ -480,8 +481,8 @@ public class AssetConverter {
 	}
 	//TODO - The output item is not added to the asset list
 	//			Could be added if job is completed after last asset update
-	//TODO - Could mark blueprints as Copy/Orifinal
-	private static EveAsset ApiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Settings settings, Human human, boolean bCorp){
+	//TODO - Could mark blueprints as Copy/Original
+	private static EveAsset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Settings settings, Human human, boolean bCorp){
 		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
 		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();
 		long count = apiIndustryJob.getInstalledItemQuantity();
@@ -508,5 +509,45 @@ public class AssetConverter {
 		String security = AssetConverter.security(locationID, null, settings);
 
 		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+	}
+
+	public static List<EveAsset> apiAsset(Settings setttings, Human human, List<ApiAsset> assets, boolean bCorp){
+		List<EveAsset> eveAssets = new Vector<EveAsset>();
+		apiAsset(setttings, human, assets, eveAssets, null, bCorp);
+		return eveAssets;
+	}
+	private static void apiAsset(Settings setttings, Human human, List<ApiAsset> assets, List<EveAsset> eveAssets, EveAsset parentEveAsset, boolean bCorp){
+		for (int a = 0; a < assets.size(); a++){
+			ApiAsset asset = assets.get(a);
+			EveAsset eveAsset = apiAssetsToEveAsset(setttings, human, asset, parentEveAsset, bCorp);
+			if (parentEveAsset == null){
+				eveAssets.add(eveAsset);
+			} else {
+				parentEveAsset.addEveAsset(eveAsset);
+			}
+			apiAsset(setttings, human, new Vector<ApiAsset>(asset.getAssets()), eveAssets, eveAsset, bCorp);
+		}
+	}
+	private static EveAsset apiAssetsToEveAsset(Settings settings, Human human, ApiAsset apiAsset, EveAsset parentEveAsset, boolean bCorp){
+		String name = AssetConverter.name(apiAsset.getTypeID(), settings); //OK
+		String group = AssetConverter.group(apiAsset.getTypeID(), settings); //OK
+		String category = AssetConverter.category(apiAsset.getTypeID(), settings); //OK
+		String owner = AssetConverter.owner(human, bCorp); //Semi-OK (Fix not confirmed)
+		long count = apiAsset.getQuantity(); //OK
+		String location = AssetConverter.location(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
+		String container = AssetConverter.container(apiAsset.getLocationID(), parentEveAsset); //Should be okay
+		String flag = AssetConverter.flag(apiAsset.getFlag()); //should be okay
+		double basePrice = AssetConverter.priceBase(apiAsset.getTypeID(), settings); //OK
+		String meta = AssetConverter.meta(apiAsset.getTypeID(), settings); //OK - but some is missiong from data export
+		boolean marketGroup = AssetConverter.marketGroup(apiAsset.getTypeID(), settings); //OK
+		float volume = AssetConverter.volume(apiAsset.getTypeID(), settings);
+		String region = AssetConverter.region(apiAsset.getLocationID(), parentEveAsset, settings);
+		int id = apiAsset.getItemID(); //OK
+		int typeID = apiAsset.getTypeID(); //OK
+		boolean corporationAsset = bCorp; //Semi-OK - OLD: (owner.equals(human.getCorporation()));
+		boolean singleton  = (apiAsset.getSingleton() > 0);
+		String security = AssetConverter.security(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
+
+		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, apiAsset.getLocationID(), singleton, security);
 	}
 }
