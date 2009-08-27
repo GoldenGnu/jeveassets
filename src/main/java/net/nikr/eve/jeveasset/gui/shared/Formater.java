@@ -60,7 +60,6 @@ public class Formater {
 	public static String number(Double number){
 		return standard.format(number);
 	}
-	//FIXME this conversion might not be optimal...
 	public static double numberDouble(Double number){
 		return Double.valueOf(twoDigs.format(number));
 	}

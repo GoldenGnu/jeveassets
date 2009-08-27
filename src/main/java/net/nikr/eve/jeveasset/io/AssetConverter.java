@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Items;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.log.Log;
 
 
 public class AssetConverter {
@@ -470,18 +471,26 @@ public class AssetConverter {
 	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Settings settings, Human human, boolean bCorp){
 		List<EveAsset> eveAssets = new Vector<EveAsset>();
 		for (int a = 0; a < industryJobs.size(); a++){
-			ApiIndustryJob industryJob = industryJobs.get(a);
-			if (industryJob.getCompleted() == 0){
-				EveAsset eveAsset = apiIndustryJobToEveAsset(industryJob, settings, human, bCorp);
+			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
+			int id = (int) apiIndustryJob.getInstalledItemID();
+			if (apiIndustryJob.getCompleted() == 0){
+				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, settings, human, bCorp);
 				eveAssets.add(eveAsset);
 			}
+			//Mark original blueprints
+			boolean isCopy = (apiIndustryJob.getInstalledItemCopy() > 0);
+			if (settings.getBpos().contains(id)){
+				settings.getBpos().remove(settings.getBpos().indexOf(id));
+			}
+			if (!isCopy){
+				settings.getBpos().add(id);
+			}
+			Log.info("id: "+id+" isCopy: "+isCopy);
 			
 		}
 		return eveAssets;
 	}
-	//TODO - The output item is not added to the asset list
-	//			Could be added if job is completed after last asset update
-	//TODO - Could mark blueprints as Copy/Original
+	
 	private static EveAsset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Settings settings, Human human, boolean bCorp){
 		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
 		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();

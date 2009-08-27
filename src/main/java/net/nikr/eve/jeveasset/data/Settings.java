@@ -261,7 +261,6 @@ public class Settings {
 				for (int b = 0; b < humans.size(); b++){
 					Human human = humans.get(b);
 					if (human.isShowAssets() || getAllAssets){
-						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Market Orders
 						List<EveAsset> marketOrdersAssets = AssetConverter.apiMarketOrder(human.getMarketOrders(), this, human, false);
 						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
@@ -272,6 +271,8 @@ public class Settings {
 						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						List<EveAsset> industryJobCorporationAssets = AssetConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true);
 						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						//Assets (Must be afte Industry Jobs, for bpos to be marked)
+						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 					}
 				}
 			}
