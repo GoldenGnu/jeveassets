@@ -43,13 +43,15 @@ import net.nikr.eve.jeveasset.gui.dialogs.ApiManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateAssetsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateEveCentralDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.EveCentralOptionsDialog;
+import net.nikr.eve.jeveasset.gui.settings.EveCentralSettings;
+import net.nikr.eve.jeveasset.gui.settings.FilterSettings;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.PriceSettingsDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.ProxySettingsDialogue;
+import net.nikr.eve.jeveasset.gui.settings.PriceSettings;
+import net.nikr.eve.jeveasset.gui.settings.ProxySettings;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
@@ -86,11 +88,15 @@ public class Program implements ActionListener {
 	private MaterialsDialog materialsDialog;
 	private LoadoutsDialog loadoutsDialog;
 	private CsvExportDialog csvExportDialog;
-	private EveCentralOptionsDialog eveCentralOptionsDialog;
+	private SettingsDialog settingsDialog;
+	private FilterSettings filterSettings;
+	private EveCentralSettings eveCentralSettings;
+	private ProxySettings proxySettings;
+	private PriceSettings priceSettings;
+
+
 	private UpdateAssetsDialog updateAssetsDialog;
 	private UpdateEveCentralDialog updateEveCentralDialog;
-	private PriceSettingsDialog priceSettingsDialog;
-  private ProxySettingsDialogue proxySettingsDialogue;
 
 	//Panels
 	private TablePanel tablePanel;
@@ -175,7 +181,7 @@ public class Program implements ActionListener {
 		Log.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
 		Log.info("	API Key Manager Dialog ");
-		apiManagerDialog = new ApiManagerDialog(this, ImageGetter.getImage("cog.png"));
+		apiManagerDialog = new ApiManagerDialog(this, ImageGetter.getImage("key.png"));
 		Log.info("	Values Dialog");
 		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
 		Log.info("	Ship Loadouts Dialog");
@@ -186,16 +192,24 @@ public class Program implements ActionListener {
 		materialsDialog = new MaterialsDialog(this, ImageGetter.getImage("icon23_16.png"));
 		Log.info("	Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
-		Log.info("	EVE-Central Options Dialog");
-		eveCentralOptionsDialog = new EveCentralOptionsDialog(this, ImageGetter.getImage("evecentral.png"));
-		Log.info("	User Price Settings Dialog");
-		priceSettingsDialog = new PriceSettingsDialog(this, ImageGetter.getImage("money.png"));
+		Log.info("	Settings Dialog");
+		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
+		Log.info("		Filter");
+		filterSettings = new FilterSettings(this, settingsDialog);
+		settingsDialog.add(filterSettings, ImageGetter.getIcon("folder_magnify.png"));
+		Log.info("		Eve-Central");
+		eveCentralSettings = new EveCentralSettings(this, settingsDialog);
+		settingsDialog.add(eveCentralSettings, ImageGetter.getIcon("evecentral.png"));
+		Log.info("		Proxy");
+		proxySettings = new ProxySettings(this, settingsDialog);
+		settingsDialog.add(proxySettings, ImageGetter.getIcon("server_connect.png"));
+		Log.info("		Price");
+		priceSettings = new PriceSettings(this, settingsDialog);
+		settingsDialog.add(priceSettings, ImageGetter.getIcon("money.png"));
 		Log.info("	Assets update Dialog");
 		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
 		Log.info("	Eve-Central update Dialog");
 		updateEveCentralDialog = new UpdateEveCentralDialog(this, frame);
-		Log.info("	Proxy Settings Dialog");
-		proxySettingsDialogue = new ProxySettingsDialogue(this, ImageGetter.getImage("server_connect.png"));
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
@@ -300,15 +314,9 @@ public class Program implements ActionListener {
 		if (Menu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
 			csvExportDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_EVE_CENTRAL_OPTIONS.equals(e.getActionCommand())) {
-			eveCentralOptionsDialog.setVisible(true);
+		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
+			settingsDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_USER_PRICE_SETTINGS.equals(e.getActionCommand())) {
-			priceSettingsDialog.setVisible(true);
-		}
-    if (Menu.ACTION_OPEN_PROXY_SETTINGS.equals(e.getActionCommand())) {
-      proxySettingsDialogue.setVisible(true);
-    }
 		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
 			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
@@ -317,7 +325,8 @@ public class Program implements ActionListener {
 						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			priceSettingsDialog.setVisible(true, new UserPrice(eveAsset));
+			priceSettings.setNewPrice(new UserPrice(eveAsset));
+			settingsDialog.setVisible(priceSettings.getPanel());
 		}
 		if (Menu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
@@ -358,9 +367,5 @@ public class Program implements ActionListener {
 		if (Menu.ACTION_UPDATE_PRICES.equals(e.getActionCommand())) {
 			updatePriceData();
 		}
-		if (Menu.ACTION_FILTER_ON_ENTER.equals(e.getActionCommand())) {
-			settings.setFilterOnEnter(!settings.isFilterOnEnter());
-		}
-
 	}
 }

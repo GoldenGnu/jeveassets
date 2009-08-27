@@ -35,22 +35,19 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 public class Menu extends JMenuBar {
 
-	public final static String ACTION_OPEN_API_MANAGER = "ACTION_OPEN_API_MANAGER";
+	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
 	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
-	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
 	public final static String ACTION_OPEN_METERIALS = "ACTION_OPEN_METERIALS";
-	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
-	public final static String ACTION_OPEN_EVE_CENTRAL_OPTIONS = "ACTION_OPEN_EVE_CENTRAL_OPTIONS";
-	public final static String ACTION_OPEN_USER_PRICE_SETTINGS = "ACTION_OPEN_USER_PRICE_SETTINGS";
+	public final static String ACTION_OPEN_API_MANAGER = "ACTION_OPEN_API_MANAGER";
+	public final static String ACTION_OPEN_SETTINGS = "ACTION_OPEN_SETTINGS";
+	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
 	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
 	public final static String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
 	public final static String ACTION_OPEN_README = "ACTION_OPEN_FAQ";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 	public final static String ACTION_UPDATE_ASSETS = "ACTION_UPDATE_ASSETS";
 	public final static String ACTION_UPDATE_PRICES = "ACTION_UPDATE_PRICES";
-	public final static String ACTION_FILTER_ON_ENTER = "ACTION_FILTER_ON_ENTER";
-	public final static String ACTION_OPEN_PROXY_SETTINGS = "ACTION_OPEN_PROXY_SETTINGS";
 
 	public Menu(Program program) {
 		JMenu menu, submenu;
@@ -106,39 +103,17 @@ public class Menu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		menuItem = new JMenuItem("Manage API Keys");
+		menuItem = new JMenuItem("Settings");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
+		menuItem.setActionCommand(ACTION_OPEN_SETTINGS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Manage API Keys");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("key.png") );
 		menuItem.setActionCommand(ACTION_OPEN_API_MANAGER);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Eve-Central Options");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("evecentral.png") );
-		menuItem.setActionCommand(ACTION_OPEN_EVE_CENTRAL_OPTIONS);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Price Setting");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("money.png") );
-		menuItem.setActionCommand(ACTION_OPEN_USER_PRICE_SETTINGS);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-		
-		jCheckBoxMenuItem = new JCheckBoxMenuItem("Enter Filters");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jCheckBoxMenuItem.setIcon( ImageGetter.getIcon("folder_magnify.png") );
-		jCheckBoxMenuItem.setActionCommand(ACTION_FILTER_ON_ENTER);
-		jCheckBoxMenuItem.addActionListener(program);
-		jCheckBoxMenuItem.setSelected(program.getSettings().isFilterOnEnter());
-		menu.add(jCheckBoxMenuItem);
-
-		menuItem = new JMenuItem("Proxy Setting");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("server_connect.png") );
-		menuItem.setActionCommand(ACTION_OPEN_PROXY_SETTINGS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

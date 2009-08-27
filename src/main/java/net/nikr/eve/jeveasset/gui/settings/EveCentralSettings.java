@@ -23,15 +23,10 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.settings;
 
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -40,22 +35,21 @@ import net.nikr.eve.jeveasset.data.MarketstatSettings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.NumberPlainDocument;
 import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
 
 
-public class EveCentralOptionsDialog extends JDialogCentered implements ActionListener {
-
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_SAVE = "ACTION_SAVE";
-
+public class EveCentralSettings extends JSettingsPanel {
+	
 	private JComboBox jRegions;
 	private JTextField jAge;
 	private JTextField jQuantity;
-	private JButton jSave;
 
-	public EveCentralOptionsDialog(Program program, Image image) {
-		super(program, "Eve-Central Options", image);
+	private MarketstatSettings oldMarketstatSettings;
+	
+	public EveCentralSettings(Program program, JDialogCentered jDialogCentered) {
+		super(program, jDialogCentered.getDialog(), "Eve-Central");
 
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
 
@@ -80,16 +74,6 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 
 		JLabel jAgeUnlimitedLabel = new JLabel("(Zero for unlimited)");
 
-		jSave = new JButton("Save");
-		jSave.setActionCommand(ACTION_SAVE);
-		jSave.addActionListener(this);
-		jPanel.add(jSave);
-
-		JButton jCancel = new JButton("Cancel");
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
-		jPanel.add(jCancel);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -112,10 +96,6 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 						)
 					)
 				)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jSave, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
 
 		);
 		layout.setVerticalGroup(
@@ -134,47 +114,22 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 					.addComponent(jQuantity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jQuantityUnlimitedLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jSave, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
 		);
 	}
 
-	private void updateValues(){
-		MarketstatSettings marketstatSettings = program.getSettings().getMarketstatSettings();
-		jRegions.setSelectedIndex(marketstatSettings.getRegion());
-		jAge.setText(String.valueOf(marketstatSettings.getAge()) );
-		jQuantity.setText(String.valueOf(marketstatSettings.getQuantity()));
-	}
-
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jRegions;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jSave;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {
+	public void save() {
 		int region = jRegions.getSelectedIndex();
 		int age = Integer.valueOf(jAge.getText());
 		int quantity = Integer.valueOf(jQuantity.getText());
 		MarketstatSettings newMarketstatSettings = new MarketstatSettings(region, age, quantity);
-		MarketstatSettings oldMarketstatSettings = program.getSettings().getMarketstatSettings();
+		oldMarketstatSettings = program.getSettings().getMarketstatSettings();
 		program.getSettings().setMarketstatSettings( newMarketstatSettings );
+	}
 
-		this.setVisible(false);
-
+	@Override
+	public void closed() {
+		MarketstatSettings newMarketstatSettings = program.getSettings().getMarketstatSettings();
 		if (oldMarketstatSettings.equals(newMarketstatSettings)) return;
 
 		String nextUpdate = Formater.weekdayAndTime(program.getSettings().getMarketstatsNextUpdate())+" GMT";
@@ -190,24 +145,10 @@ public class EveCentralOptionsDialog extends JDialogCentered implements ActionLi
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
-			updateValues();
-		}
-		super.setVisible(b);
-
+	public void load(){
+		MarketstatSettings marketstatSettings = program.getSettings().getMarketstatSettings();
+		jRegions.setSelectedIndex(marketstatSettings.getRegion());
+		jAge.setText(String.valueOf(marketstatSettings.getAge()) );
+		jQuantity.setText(String.valueOf(marketstatSettings.getQuantity()));
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			this.setVisible(false);
-		}
-		if (ACTION_SAVE.equals(e.getActionCommand())){
-			save();
-		}
-	}
-
-
-
 }

@@ -23,9 +23,8 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.settings;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -39,7 +38,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
@@ -47,12 +45,11 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class PriceSettingsDialog extends JDialogCentered implements ActionListener, FocusListener {
+public class PriceSettings extends JSettingsPanel implements ActionListener, FocusListener {
 
-	public final static String ACTION_SAVE = "ACTION_SAVE";
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_DEFAULT = "ACTION_DEFAULT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
 	public final static String ACTION_SELECTED = "ACTION_SELECTED";
@@ -60,14 +57,15 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 	private JComboBox jAssets;
 	private JTextField jPrice;
 	private JButton jDefault;
-	private JButton jSave;
 	private JButton jDelete;
 
 	private Map<Integer, UserPrice> userPrices;
 	private UserPrice lastUserPrice = null;
 
-	public PriceSettingsDialog(Program program, Image image) {
-		super(program, "Price Settings", image);
+	private UserPrice newUserPrice = null;
+
+	public PriceSettings(Program program, JDialogCentered jDialogCentered) {
+		super(program, jDialogCentered.getDialog(), "Price");
 
 		JLabel jSetPriceLable = new JLabel("Assets:");
 
@@ -81,8 +79,6 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 
 		jPrice = new JTextField();
 		JCopyPopup.install(jPrice);
-		jPrice.setActionCommand(ACTION_SAVE);
-		jPrice.addActionListener(this);
 		jPrice.addFocusListener(this);
 		jPanel.add(jPrice);
 
@@ -95,16 +91,6 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 		jDefault.setActionCommand(ACTION_DEFAULT);
 		jDefault.addActionListener(this);
 		jPanel.add(jDefault);
-
-		jSave = new JButton("Save");
-		jSave.setActionCommand(ACTION_SAVE);
-		jSave.addActionListener(this);
-		jPanel.add(jSave);
-
-		JButton jCancel = new JButton("Cancel");
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
-		jPanel.add(jCancel);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -123,10 +109,6 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 
 					)
 				)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jSave, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -139,10 +121,6 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 					.addComponent(jPriceLable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jSave, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
 	}
@@ -190,75 +168,47 @@ public class PriceSettingsDialog extends JDialogCentered implements ActionListen
 			jPrice.setText("");
 			setEnabledAll(false);
 		}
-		if (program.getSettings().getUserPrices().isEmpty()){
-			jSave.setEnabled(false);
-		} else {
-			jSave.setEnabled(true);
-		}
 	}
 
-	public void setVisible(boolean b, UserPrice addedUserPrice) {
-		if (b){
-			userPrices = new HashMap<Integer, UserPrice>();
-			if (addedUserPrice != null){
-				if (!program.getSettings().getUserPrices().containsKey(addedUserPrice.getTypeID())){
-					userPrices.put(addedUserPrice.getTypeID(), addedUserPrice);
-				}
-				
-			}
-			for (Map.Entry<Integer,UserPrice> entry : program.getSettings().getUserPrices().entrySet()){
-				UserPrice userPrice = new UserPrice(entry.getValue());
-				userPrices.put(userPrice.getTypeID(), userPrice);
-			}
-			update();
-			if (addedUserPrice != null){
-				jAssets.setSelectedItem(addedUserPrice);
-				jSave.setEnabled(true);
-			}
-		}
-		super.setVisible(b);
-		
+	public void setNewPrice(UserPrice newUserPrice){
+		this.newUserPrice = newUserPrice;
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jPrice;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jSave;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {
+	public void save() {
 		updatePrice();
 		//Update Settings
 		program.getSettings().setUserPrices(userPrices);
 		//Update table
 		program.assetsChanged();
-		this.setVisible(false);
-	}
-	
-	@Override
-	public void setVisible(boolean b) {
-		setVisible(b, null);
+		this.newUserPrice = null;
 	}
 
 	@Override
+	public void load(){
+		//Clear temp settings
+		userPrices = new HashMap<Integer, UserPrice>();
+		if (newUserPrice != null){
+			if (!program.getSettings().getUserPrices().containsKey(newUserPrice.getTypeID())){
+				userPrices.put(newUserPrice.getTypeID(), newUserPrice);
+			}
+
+		}
+		for (Map.Entry<Integer,UserPrice> entry : program.getSettings().getUserPrices().entrySet()){
+			UserPrice userPrice = new UserPrice(entry.getValue());
+			userPrices.put(userPrice.getTypeID(), userPrice);
+		}
+		update();
+		if (newUserPrice != null){
+			jAssets.setSelectedItem(newUserPrice);
+		}
+	}
+
+	@Override
+	public void closed() {}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			this.setVisible(false);
-		}
-		if (ACTION_SAVE.equals(e.getActionCommand())){
-			save();
-		}
 		if (ACTION_DEFAULT.equals(e.getActionCommand())){
 			Object o = jAssets.getSelectedItem();
 			if (o instanceof UserPrice){
