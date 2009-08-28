@@ -55,14 +55,15 @@ public class Human {
 	private List<ApiIndustryJob> industryJobsCorporation;
 	private List<EveAsset> assets;
 
-	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date nextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
+	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.characterID = characterID;
 		this.corporation = corporation;
 		this.updateCorporationAssets = bCorporationAssets;
 		this.showAssets = showAssets;
-		this.assetNextUpdate = nextUpdate;
+
+		this.assetNextUpdate = assetNextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
@@ -77,11 +78,13 @@ public class Human {
 	}
 
 	public Human(Account parentAccount, String name, long characterID, String corporation) {
+		this.parentAccount = parentAccount;
 		this.name = name;
 		this.characterID = characterID;
 		this.corporation = corporation;
-		this.parentAccount = parentAccount;
 		//Default
+		updateCorporationAssets = true;
+		showAssets = true;
 		assetNextUpdate = Settings.getGmtNow();
 		balanceNextUpdate = Settings.getGmtNow();
 		marketOrdersNextUpdate = Settings.getGmtNow();
@@ -91,8 +94,8 @@ public class Human {
 		accountBalancesCorporation = new  Vector<ApiAccountBalance>();
 		marketOrders = new  Vector<ApiMarketOrder>();
 		marketOrdersCorporation = new  Vector<ApiMarketOrder>();
-		updateCorporationAssets = true;
-		showAssets = true;
+		industryJobs = new  Vector<ApiIndustryJob>();
+		industryJobsCorporation = new  Vector<ApiIndustryJob>();
 	}
 
 	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {
