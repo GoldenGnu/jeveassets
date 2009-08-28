@@ -71,6 +71,10 @@ public class Account {
 		return humans;
 	}
 
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
 	public void setHumans(List<Human> humans) {
 		this.humans = humans;
 	}

@@ -53,11 +53,12 @@ import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
 
 
-public class ApiManagerDialog extends JDialogCentered implements ActionListener, TableModelListener, PropertyChangeListener  {
+public class ApiManagerDialog extends JDialogCentered implements ActionListener, TableModelListener  {
 
 	public final static String ACTION_ADD = "ACTION_ADD";
 	public final static String ACTION_DONE = "ACTION_DONE";
 	public final static String ACTION_REMOVE = "ACTION_REMOVE";
+	public final static String ACTION_EDIT = "ACTION_EDIT";
 
 	//GUI
 	private ApiAddDialog apiAddDialog;
@@ -66,10 +67,11 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	private DefaultTableModel humansTableModel;
 	private JTable jApiTable;
 	private JButton jRemove;
+	private JButton jEdit;
 	private JButton jAdd;
 	private JButton jDone;
 
-	private AddHumanTask addHumanTask;
+	private CheckHumanTask checkHumanTask;
 
 	private Map<Long, Boolean> shownAssets;
 	private Map<Long, Boolean> shownAssetsCopy;
@@ -98,6 +100,12 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		jPanel.add(jAdd);
 
 		//Remove Button
+		jEdit = new JButton("Edit");
+		jEdit.setActionCommand(ACTION_EDIT);
+		jEdit.addActionListener(this);
+		jPanel.add(jEdit);
+
+		//Remove Button
 		jRemove = new JButton("Remove");
 		jRemove.setActionCommand(ACTION_REMOVE);
 		jRemove.addActionListener(this);
@@ -108,9 +116,9 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		String[] characterColumnNames = {"User", "Name", "Corporation", "Corporation Assets", "Show Assets"};
 		humansTableModel = new JUneditableTableModel(characterColumnNames);
 		humansTableModel.addTableModelListener(this);
-		JTable jCharacterTable = new JTable( humansTableModel );
-		jCharacterTable.getTableHeader().setReorderingAllowed(false);
-		JScrollPane jCharacterScrollPanel = new JScrollPane(jCharacterTable);
+		JTable jHumanTable = new JTable( humansTableModel );
+		jHumanTable.getTableHeader().setReorderingAllowed(false);
+		JScrollPane jCharacterScrollPanel = new JScrollPane(jHumanTable);
 		jPanel.add(jCharacterScrollPanel);
 
 		//Done Button
@@ -126,6 +134,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					.addComponent(jApiScrollPanel, 550, 550, 550)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+						.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 						.addComponent(jRemove, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					)
 				)
@@ -134,13 +143,13 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					.addComponent(jDone, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 			)
-
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jApiScrollPanel, 142, 142, 142)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jCharacterScrollPanel, 142, 142, 142)
@@ -165,15 +174,17 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		if (jApiTable.getRowCount() > 0){
 			jApiTable.setRowSelectionInterval(0, 0);
 			jRemove.setEnabled(true);
+			jEdit.setEnabled(true);
 		} else {
 			jRemove.setEnabled(false);
+			jEdit.setEnabled(false);
 		}
 	}
 
 	public void saveApiKey(){
-		addHumanTask = new AddHumanTask();
-		addHumanTask.addPropertyChangeListener(this);
-		addHumanTask.execute();
+		checkHumanTask = new CheckHumanTask(apiAddDialog.getUserId(), apiAddDialog.getApiKey());
+		checkHumanTask.addPropertyChangeListener( new addApiKey());
+		checkHumanTask.execute();
 	}
 
 	@Override
@@ -238,6 +249,20 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 		if (ACTION_DONE.equals(e.getActionCommand())) {
 			save();
+		}
+		if (ACTION_EDIT.equals(e.getActionCommand())) {
+			int row = jApiTable.getSelectedRow();
+			int userID = Integer.valueOf( (String) jApiTable.getValueAt(row, 0));
+			String oldApiKey = (String) jApiTable.getValueAt(row, 1);
+			String newApiKey = (String) JOptionPane.showInputDialog(this.getDialog(), "Enter new api key", "Edit API Key", JOptionPane.PLAIN_MESSAGE, null, null, oldApiKey);
+			if (newApiKey == null){ //Cancel - do nothing
+				return;
+			}
+			this.getDialog().setEnabled(false);
+			checkHumanTask = new CheckHumanTask(userID, newApiKey);
+			checkHumanTask.addPropertyChangeListener( new updateApiKey() );
+			checkHumanTask.execute();
+			
 		}
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			int selectedRow = jApiTable.getSelectedRow();
@@ -314,54 +339,102 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		apiAddDialog.setEnabledAll(false);
-		if (addHumanTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", addHumanTask.throwable);
+	class updateApiKey implements PropertyChangeListener{
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			apiAddDialog.setEnabledAll(false);
+
+			if (checkHumanTask.throwable != null){
+				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
+			}
+			if (checkHumanTask.result == 10 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				getDialog().setEnabled(true);
+				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nThe API Key already exist...", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 20 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				getDialog().setEnabled(true);
+				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nPlease connect to the internet and try again...", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 30 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				getDialog().setEnabled(true);
+				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 100 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				List<Account> accounts = program.getSettings().getAccounts();
+				for (int a = 0; a < accounts.size(); a++){
+					Account account = accounts.get(a);
+					if (account.getUserID() == checkHumanTask.userID){
+						account.setApiKey(checkHumanTask.apiKey);
+						break;
+					}
+				}
+				getDialog().setEnabled(true);
+				updateTable();
+				program.charactersChanged();
+				JOptionPane.showMessageDialog(dialog, "API Key updated", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+			}
 		}
-		if (addHumanTask.result == 10 && addHumanTask.done){
-			addHumanTask.done = false;
-			apiAddDialog.setVisible(false);
-			JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe API Key has already been added...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-		}
-		if (addHumanTask.result == 20 && addHumanTask.done){
-			addHumanTask.done = false;
-			apiAddDialog.setVisible(false);
-			JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nPlease connect to the internet and try again...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-		}
-		if (addHumanTask.result == 30 && addHumanTask.done){
-			addHumanTask.done = false;
-			apiAddDialog.setVisible(false);
-			JOptionPane.showMessageDialog(dialog, "The entered API Key is not a valid Full Access API Key", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-		}
-		if (addHumanTask.result == 100 && addHumanTask.done){
-			addHumanTask.done = false;
-			program.getSettings().getAccounts().add(addHumanTask.account);
-			updateTable();
-			program.charactersChanged();
-			apiAddDialog.setVisible(false);
-			JOptionPane.showMessageDialog(dialog, "API Key added\r\nTo update assets select:\r\nOptions > Update Assets", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-		}
+
 	}
 
-	class AddHumanTask extends SwingWorker<Void, Void> {
+	class addApiKey implements PropertyChangeListener{
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			apiAddDialog.setEnabledAll(false);
+			if (checkHumanTask.throwable != null){
+				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
+			}
+			if (checkHumanTask.result == 10 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				apiAddDialog.setVisible(false);
+				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe API Key already exist...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 20 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				apiAddDialog.setVisible(false);
+				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nPlease connect to the internet and try again...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 30 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				apiAddDialog.setVisible(false);
+				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Add API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 100 && checkHumanTask.done){
+				checkHumanTask.done = false;
+				program.getSettings().getAccounts().add(checkHumanTask.account);
+				updateTable();
+				program.charactersChanged();
+				apiAddDialog.setVisible(false);
+				JOptionPane.showMessageDialog(dialog, "API Key added\r\nTo update assets select:\r\nOptions > Update Assets", "Add API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+		}
+
+	}
+
+	class CheckHumanTask extends SwingWorker<Void, Void> {
 
 		private int result = 0;
 		private boolean done = false;
 		private Account account;
 		private Throwable throwable = null;
+		private int userID;
+		private String apiKey;
 
-		public AddHumanTask() {
-
+		public CheckHumanTask(int userID, String apiKey) {
+			this.userID = userID;
+			this.apiKey = apiKey;
 		}
 
 		@Override
 		public Void doInBackground() {
 			setProgress(0);
 			try {
-				int userID = apiAddDialog.getUserId();
-				String apiKey = apiAddDialog.getApiKey();
 				account = new Account(userID, apiKey);
 				boolean ok = !program.getSettings().getAccounts().contains( account );
 				if (!ok){
