@@ -80,7 +80,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 			} else if (!program.getSettings().hasAssets()) {
 				JOptionPane.showMessageDialog(parent, "No price data updated\r\nYou need to update your assets:\r\nOptions > Update Asset", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			} else { //No assets updated
-				JOptionPane.showMessageDialog(parent, "No price data updated (not allowed yet)\r\n", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "No price data updated (not allowed yet)\r\nYou can only update price data once every hour", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			}
 		} else if (value > 0){
 			jProgressBar.setIndeterminate(false);

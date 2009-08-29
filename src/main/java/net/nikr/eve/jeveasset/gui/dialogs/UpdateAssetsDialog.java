@@ -77,12 +77,12 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			setVisible(false);
 			if (updateAssetsTask.updated && !updateAssetsTask.updateFailed){ //All assets updated
 				Log.info("All assets updated");
-				JOptionPane.showMessageDialog(parent, "All assets updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "All assets and the price data was updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if(updateAssetsTask.updated && updateAssetsTask.updateFailed) { //Some assets updated
 				Log.info("Some assets updated");
-				JOptionPane.showMessageDialog(parent, "Some assets updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "Some assets and the price data was updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (!updateAssetsTask.isOnline) { //No assets updated
-				Log.info("No assets updated (NO CONNECTION)");
+				Log.info("No assets updated (no connection)");
 				JOptionPane.showMessageDialog(parent, "Could not update assets.\r\nPlease connect to the internet and try again...", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (program.getSettings().getAccounts().isEmpty()) {
 				Log.info("No assets updated");
