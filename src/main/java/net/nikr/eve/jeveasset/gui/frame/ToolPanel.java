@@ -136,7 +136,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 		List<AssetFilter> assetFilters = new Vector<AssetFilter>();
 		for (int a = 0; a < filters.size(); a++){
 			AssetFilter assetFilter = filters.get(a).getAssetFilter();
-			if (!assetFilter.getText().equals("")){
+			if (!assetFilter.isEmpty()){
 				assetFilters.add(assetFilter);
 			}
 			
@@ -160,7 +160,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 		FilterPanel filterPanel = new FilterPanel(program, matcherEditorManager, this);
 		filterPanel.setAssetFilter(assetFilter);
 		if (filters.size() == 1){
-			if (filters.get(0).getAssetFilter().getText().equals("")){
+			if (filters.get(0).getAssetFilter().isEmpty()){
 				removeFilter( filters.get(0) );
 			}
 		}

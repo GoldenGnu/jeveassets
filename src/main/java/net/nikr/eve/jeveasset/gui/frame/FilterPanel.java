@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
@@ -44,7 +45,9 @@ public class FilterPanel extends JProgramPanel {
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
+	private JComboBox jMatchColumn;
 	private JTextField jText;
+	private JPanel space;
 	private JButton jRemove;
 
 	private EveAssetMatcherEditor eveAssetMatcherEditor;
@@ -55,7 +58,9 @@ public class FilterPanel extends JProgramPanel {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
-		eveAssetMatcherEditor = new EveAssetMatcherEditor(program);
+		space = new JPanel();
+
+		eveAssetMatcherEditor = new EveAssetMatcherEditor(program, this);
 		matcherEditorManager.add(eveAssetMatcherEditor);
 
 		jAnd = eveAssetMatcherEditor.getAnd();
@@ -67,6 +72,9 @@ public class FilterPanel extends JProgramPanel {
 		jMode = eveAssetMatcherEditor.getMode();
 		this.getPanel().add(jMode);
 
+		jMatchColumn = eveAssetMatcherEditor.getMatchColumn();
+		this.getPanel().add(jMatchColumn);
+
 		jText = eveAssetMatcherEditor.getText();
 		this.getPanel().add(jText);
 		
@@ -76,6 +84,82 @@ public class FilterPanel extends JProgramPanel {
 		jRemove.addActionListener(filtersPanel);
 		this.getPanel().add(jRemove);
 
+		this.textCompareLayout();
+	}
+
+	public void columnCompare(boolean b){
+		if (b){
+			this.columnCompareLayout();
+		} else {
+			this.textCompareLayout();
+		}
+	}
+
+	public void hideButton(){
+		jRemove.setEnabled(false);
+	}
+	public void showButton(){
+		jRemove.setEnabled(true);
+	}
+	public AssetFilter getAssetFilter(){
+		String column = (String)jColumn.getSelectedItem();
+		String text = jText.getText();
+		String mode = (String) jMode.getSelectedItem();
+		String sAnd = (String)jAnd.getSelectedItem();
+		boolean and = (sAnd.equals(AssetFilter.AND));
+		String columnMatch = null;
+		if (AssetFilter.MODE_GREATER_THAN_COLUMN.equals(mode) || AssetFilter.MODE_LESS_THAN_COLUMN.equals(mode)){
+			columnMatch = (String) jMatchColumn.getSelectedItem();
+		}
+		return new AssetFilter(column, text, mode, and, columnMatch);
+	}
+	public void setAssetFilter(AssetFilter assetFilter){
+		jText.setText(assetFilter.getText());
+		jColumn.setSelectedItem(assetFilter.getColumn());
+		jMode.setSelectedItem(assetFilter.getMode());
+		if (assetFilter.isAnd()){
+			jAnd.setSelectedItem(AssetFilter.AND);
+		} else {
+			jAnd.setSelectedItem(AssetFilter.OR);
+		}
+		jMatchColumn.setSelectedItem(assetFilter.getColumnMatch());
+	}
+
+	public EveAssetMatcherEditor getEveAssetMatcherEditor() {
+		return eveAssetMatcherEditor;
+	}
+
+	@Override
+	protected JProgramPanel getThis(){
+		return this;
+	}
+
+	private void columnCompareLayout(){
+		this.getPanel().remove(jText);
+		layout.setHorizontalGroup(
+			layout.createSequentialGroup()
+				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jMatchColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(space, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(jRemove, 30, 30, 30)
+		);
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(jAnd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jMatchColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(space, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+			)
+		);
+	}
+	private void textCompareLayout(){
+		this.getPanel().remove(jMatchColumn);
+		this.getPanel().remove(space);
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -94,40 +178,5 @@ public class FilterPanel extends JProgramPanel {
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 			)
 		);
-	}
-
-	public void hideButton(){
-		jRemove.setEnabled(false);
-	}
-	public void showButton(){
-		jRemove.setEnabled(true);
-	}
-	public AssetFilter getAssetFilter(){
-		String column = (String)jColumn.getSelectedItem();
-		String text = jText.getText();
-		String mode = (String) jMode.getSelectedItem();
-		String sAnd = (String)jAnd.getSelectedItem();
-		boolean and = (sAnd.equals(AssetFilter.AND));
-		
-		return new AssetFilter(column, text, mode, and);
-	}
-	public void setAssetFilter(AssetFilter assetFilter){
-		jText.setText(assetFilter.getText());
-		jColumn.setSelectedItem(assetFilter.getColumn());
-		jMode.setSelectedItem(assetFilter.getMode());
-		if (assetFilter.isAnd()){
-			jAnd.setSelectedItem(AssetFilter.AND);
-		} else {
-			jAnd.setSelectedItem(AssetFilter.OR);
-		}
-	}
-
-	public EveAssetMatcherEditor getEveAssetMatcherEditor() {
-		return eveAssetMatcherEditor;
-	}
-
-	@Override
-	protected JProgramPanel getThis(){
-		return this;
 	}
 }

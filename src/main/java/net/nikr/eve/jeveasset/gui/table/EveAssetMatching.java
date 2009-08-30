@@ -36,106 +36,15 @@ public class EveAssetMatching {
 	}
 
 	public boolean matches(EveAsset item, AssetFilter assetFilter) {
-		return matches(item, assetFilter.getColumn(), assetFilter.getMode(), assetFilter.getText());
-
+		return matches(item, assetFilter.getColumn(), assetFilter.getMode(), assetFilter.getText(), assetFilter.getColumnMatch());
 	}
-	public boolean matches(EveAsset item, String column, String mode, String text) {
-			final String haystack;
-			final double value;
-			if (column.equals("All")){
-				haystack =  "\r\n"
-							+ item.getCategory() + "\r\n"
-							+ item.getContainer() + "\r\n"
-							+ item.getFlag() + "\r\n"
-							+ item.getGroup() + "\r\n"
-							+ item.getLocation() + "\r\n"
-							+ item.getMeta() + "\r\n"
-							+ item.getName() + "\r\n"
-							+ item.getOwner() + "\r\n"
-							+ item.getCount() + "\r\n"
-							+ item.getId() + "\r\n"
-							+ item.getPrice() + "\r\n"
-							+ item.getPriceSellMin() + "\r\n"
-							+ item.getPriceBuyMax() + "\r\n"
-							+ item.getValue() + "\r\n"
-							+ item.getPriceBase() + "\r\n"
-							+ item.getVolume() + "\r\n"
-							+ item.getTypeId() + "\r\n"
-							+ item.getRegion() + "\r\n"
-							+ item.getTypeCount() + "\r\n"
-							+ item.getSecurity() + "\r\n"
-							+ item.getPriceReprocessed() + "\r\n"
-						;
-				value = -1;
-			} else if (column.equals("Name")){
-				haystack = item.getName();
-				value = -1;
-			} else if (column.equals("Group")){
-				haystack = item.getGroup();
-				value = -1;
-			} else if (column.equals("Category")){
-				haystack = item.getCategory();
-				value = -1;
-			} else if (column.equals("Owner")){
-				haystack = item.getOwner();
-				value = -1;
-			} else if (column.equals("Count")){
-				haystack = String.valueOf(item.getCount());
-				value = item.getCount();
-			} else if (column.equals("Location")){
-				haystack = item.getLocation();
-				value = -1;
-			} else if (column.equals("Container")){
-				haystack = item.getContainer();
-				value = -1;
-			} else if (column.equals("Flag")){
-				haystack = item.getFlag();
-				value = -1;
-			} else if (column.equals("Price")){
-				haystack = String.valueOf(item.getPrice());
-				value = item.getPrice();
-			} else if (column.equals("Meta")){
-				haystack = item.getMeta();
-				value = -1;
-			} else if (column.equals("ID")){
-				haystack = String.valueOf(item.getId());
-				value = item.getId();
-			} else if (column.equals("Sell Min")){
-				haystack = String.valueOf(item.getPriceSellMin());
-				value = item.getPriceSellMin();
-			} else if (column.equals("Buy Max")){
-				haystack = String.valueOf(item.getPriceBuyMax());
-				value = item.getPriceBuyMax();
-			} else if (column.equals("Value")){
-				haystack = String.valueOf(item.getValue());
-				value = item.getValue();
-			} else if (column.equals("Base Price")){
-				haystack = String.valueOf(item.getPriceBase());
-				value = item.getPriceBase();
-			} else if (column.equals("Volume")){
-				haystack = String.valueOf(item.getVolume());
-				value = item.getVolume();
-			} else if (column.equals("Type ID")){
-				haystack = String.valueOf(item.getTypeId());
-				value = item.getTypeId();
-			} else if (column.equals("Region")){
-				haystack = item.getRegion();
-				value = -1;
-			} else if (column.equals("Type Count")){
-				haystack = String.valueOf(item.getTypeCount());
-				value = item.getTypeCount();
-			} else if (column.equals("Security")){
-				haystack = item.getSecurity();
-				value = -1;
-			} else if (column.equals("Reprocessed")){
-				haystack = String.valueOf(item.getPriceReprocessed());
-				value = item.getPriceReprocessed();
-			} else {
-				haystack = "";
-				value = -1;
+	public boolean matches(EveAsset eveAsset, String column, String mode, String text, String columnMatch) {
+			final String haystack = getString(eveAsset, column);
+			final double value = getDouble(eveAsset, column);
+			if (columnMatch != null){
+				text = getString(eveAsset, columnMatch);
 			}
-
-			if (mode.equals(AssetFilter.MODE_GREATER_THAN)){
+			if (mode.equals(AssetFilter.MODE_GREATER_THAN) || mode.equals(AssetFilter.MODE_GREATER_THAN_COLUMN)){
 				double number;
 				try{
 					number = Double.valueOf(text);
@@ -144,7 +53,7 @@ public class EveAssetMatching {
 				}
 				return (value > number);
 			}
-			if (mode.equals(AssetFilter.MODE_LESS_THAN)){
+			if (mode.equals(AssetFilter.MODE_LESS_THAN) || mode.equals(AssetFilter.MODE_LESS_THAN_COLUMN)){
 				double number;
 				try{
 					number = Double.valueOf(text);
@@ -196,6 +105,81 @@ public class EveAssetMatching {
 				}
 			}
 			return false;
+	}
+
+	public String getString(EveAsset eveAsset, String column){
+		if (column.equals("All")){
+			return "\r\n"
+						+ eveAsset.getCategory() + "\r\n"
+						+ eveAsset.getContainer() + "\r\n"
+						+ eveAsset.getFlag() + "\r\n"
+						+ eveAsset.getGroup() + "\r\n"
+						+ eveAsset.getLocation() + "\r\n"
+						+ eveAsset.getMeta() + "\r\n"
+						+ eveAsset.getName() + "\r\n"
+						+ eveAsset.getOwner() + "\r\n"
+						+ eveAsset.getCount() + "\r\n"
+						+ eveAsset.getId() + "\r\n"
+						+ eveAsset.getPrice() + "\r\n"
+						+ eveAsset.getPriceSellMin() + "\r\n"
+						+ eveAsset.getPriceBuyMax() + "\r\n"
+						+ eveAsset.getValue() + "\r\n"
+						+ eveAsset.getPriceBase() + "\r\n"
+						+ eveAsset.getVolume() + "\r\n"
+						+ eveAsset.getTypeId() + "\r\n"
+						+ eveAsset.getRegion() + "\r\n"
+						+ eveAsset.getTypeCount() + "\r\n"
+						+ eveAsset.getSecurity() + "\r\n"
+						+ eveAsset.getPriceReprocessed() + "\r\n"
+					;
+		}
+		if (column.equals("Name")) return eveAsset.getName();
+		if (column.equals("Group")) return eveAsset.getGroup();
+		if (column.equals("Category")) return eveAsset.getCategory();
+		if (column.equals("Owner")) return eveAsset.getOwner();
+		if (column.equals("Count")) return String.valueOf(eveAsset.getCount());
+		if (column.equals("Location")) return eveAsset.getLocation();
+		if (column.equals("Container")) return eveAsset.getContainer();
+		if (column.equals("Flag")) return eveAsset.getFlag();
+		if (column.equals("Price")) return String.valueOf(eveAsset.getPrice());
+		if (column.equals("Meta")) return eveAsset.getMeta();
+		if (column.equals("ID")) return String.valueOf(eveAsset.getId());
+		if (column.equals("Sell Min")) return String.valueOf(eveAsset.getPriceSellMin());
+		if (column.equals("Buy Max")) return String.valueOf(eveAsset.getPriceBuyMax());
+		if (column.equals("Value")) return String.valueOf(eveAsset.getValue());
+		if (column.equals("Base Price")) return String.valueOf(eveAsset.getPriceBase());
+		if (column.equals("Volume")) return String.valueOf(eveAsset.getVolume());
+		if (column.equals("Type ID")) return String.valueOf(eveAsset.getTypeId());
+		if (column.equals("Region")) return eveAsset.getRegion();
+		if (column.equals("Type Count")) return String.valueOf(eveAsset.getTypeCount());
+		if (column.equals("Security")) return eveAsset.getSecurity();
+		if (column.equals("Reprocessed")) return String.valueOf(eveAsset.getPriceReprocessed());
+		return "";
+	}
+	public double getDouble(EveAsset eveAsset, String column){
+		if (column.equals("All")) return -1;
+		if (column.equals("Name")) return -1;
+		if (column.equals("Group")) return -1;
+		if (column.equals("Category")) return -1;
+		if (column.equals("Owner")) return -1;
+		if (column.equals("Count")) return eveAsset.getCount();
+		if (column.equals("Location")) return -1;
+		if (column.equals("Container")) return -1;
+		if (column.equals("Flag")) return -1;
+		if (column.equals("Price")) return eveAsset.getPrice();
+		if (column.equals("Meta")) return -1;
+		if (column.equals("ID")) return eveAsset.getId();
+		if (column.equals("Sell Min")) return eveAsset.getPriceSellMin();
+		if (column.equals("Buy Max")) return eveAsset.getPriceBuyMax();
+		if (column.equals("Value")) return eveAsset.getValue();
+		if (column.equals("Base Price")) return eveAsset.getPriceBase();
+		if (column.equals("Volume")) return eveAsset.getVolume();
+		if (column.equals("Type ID")) return eveAsset.getTypeId();
+		if (column.equals("Region")) return -1;
+		if (column.equals("Type Count")) return eveAsset.getTypeCount();
+		if (column.equals("Security")) return -1;
+		if (column.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
+		return -1;
 	}
 
 }

@@ -95,8 +95,10 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";
 	public final static String ACTION_ADD_FILTER_EQUALS_NOT = "ACTION_ADD_FILTER_EQUALS_NOT";
-	public final static String ACTION_ADD_FILTER_ABOVE = "ACTION_ADD_FILTER_ABOVE";
-	public final static String ACTION_ADD_FILTER_BELOW = "ACTION_ADD_FILTER_BELOW";
+	public final static String ACTION_ADD_FILTER_GREATER_THEN = "ACTION_ADD_FILTER_GREATER_THEN";
+	public final static String ACTION_ADD_FILTER_LESS_THEN = "ACTION_ADD_FILTER_LESS_THEN";
+	public final static String ACTION_ADD_FILTER_GREATER_THEN_COLUMN = "ACTION_ADD_FILTER_GREATER_THEN_COLUMN";
+	public final static String ACTION_ADD_FILTER_LESS_THEN_COLUMN = "ACTION_ADD_FILTER_LESS_THEN_COLUMN";
 
 	//GUI
 	private ToolPanel toolPanel;
@@ -447,13 +449,25 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			if (program.getSettings().getTableNumberColumns().contains(column)){
 				jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN);
 				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_ABOVE);
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 
 				jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN);
 				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_BELOW);
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
+				jMenuItem.addActionListener(this);
+				jSubMenu.add(jMenuItem);
+
+				jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN_COLUMN);
+				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
+				jMenuItem.addActionListener(this);
+				jSubMenu.add(jMenuItem);
+
+				jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN_COLUMN);
+				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
@@ -581,32 +595,38 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		if (ACTION_ADD_FILTER_CONTAIN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN, true, null));
 		}
 		if (ACTION_ADD_FILTER_CONTAIN_NOT.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN_NOT, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN_NOT, true, null));
 		}
 		if (ACTION_ADD_FILTER_EQUALS.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS, true, null));
 		}
 		if (ACTION_ADD_FILTER_EQUALS_NOT.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS_NOT, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS_NOT, true, null));
 		}
-		if (ACTION_ADD_FILTER_ABOVE.equals(e.getActionCommand())){
+		if (ACTION_ADD_FILTER_GREATER_THEN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_GREATER_THAN, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_GREATER_THAN, true, null));
 		}
-		if (ACTION_ADD_FILTER_BELOW.equals(e.getActionCommand())){
+		if (ACTION_ADD_FILTER_LESS_THEN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_LESS_THAN, true));
+			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_LESS_THAN, true, null));
+		}
+		if (ACTION_ADD_FILTER_GREATER_THEN_COLUMN.equals(e.getActionCommand())){
+			//FIXME - do stuff here
+		}
+		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
+			//FIXME - do stuff here
 		}
 
 		if (ACTION_BLUEPRINT_ORIGINAL.equals(e.getActionCommand())){

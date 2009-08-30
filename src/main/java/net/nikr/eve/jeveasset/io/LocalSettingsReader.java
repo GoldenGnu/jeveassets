@@ -262,7 +262,11 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		String column = AttributeGetters.getString(element, "column");
 		String mode = AttributeGetters.getString(element, "mode");
 		boolean and = AttributeGetters.getBoolean(element, "and");
-		return new AssetFilter(column, text, mode, and);
+		String columnMatch = null;
+		if (AttributeGetters.haveAttribute(element, "columnmatch")){
+			columnMatch = AttributeGetters.getString(element, "columnmatch");
+		}
+		return new AssetFilter(column, text, mode, and, columnMatch);
 	}
 
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {

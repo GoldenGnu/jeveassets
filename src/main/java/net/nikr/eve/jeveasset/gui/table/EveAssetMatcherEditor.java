@@ -41,25 +41,32 @@ import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.gui.frame.FilterPanel;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 
 
 public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> implements ActionListener, DocumentListener, KeyListener{
 
 	public final static String ACTION_COLUMN_SELECTED = "ACTION_COLUMN_SELECTED";
+	public final static String ACTION_MODE_SELECTED = "ACTION_MODE_SELECTED";
 	public final static String ACTION_TIMER = "ACTION_TIMER";
 
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
+	private JComboBox jMatchColumn;
 	private JTextField jText;
 	private Program program;
+	private FilterPanel filterPanel;
 	private EveAssetMatching eveAssetMatching = new EveAssetMatching();
+	private boolean columnCompare = false;
+
 
 	private Timer timer;
 
-	public EveAssetMatcherEditor(Program program) {
+	public EveAssetMatcherEditor(Program program, FilterPanel filterPanel) {
 		this.program = program;
+		this.filterPanel = filterPanel;
 
 		timer = new Timer(500, this);
 		timer.setActionCommand(ACTION_TIMER);
@@ -74,11 +81,16 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		jColumn.setActionCommand(ACTION_COLUMN_SELECTED);
 		jColumn.addActionListener(this);
 
+		jMatchColumn = new JComboBox( new Vector<String>(program.getSettings().getTableNumberColumns()) );
+		jMatchColumn.addActionListener(this);
+
 		jMode = new JComboBox(new Object[] {AssetFilter.MODE_CONTAIN,
 											AssetFilter.MODE_CONTAIN_NOT,
 											AssetFilter.MODE_EQUALS,
 											AssetFilter.MODE_EQUALS_NOT
 											});
+
+		jMode.setActionCommand(ACTION_MODE_SELECTED);
 		jMode.addActionListener(this);
 
 		jText = new JTextField();
@@ -93,7 +105,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 	}
 
 	public boolean isEmpty(){
-		return jText.getText().equals("");
+		return jText.getText().equals("") && !columnCompare;
 	}
 
 	public JComboBox getAnd() {
@@ -108,12 +120,20 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		return jColumn;
 	}
 
+	public JComboBox getMatchColumn() {
+		return jMatchColumn;
+	}
+
 	public JTextField getText() {
 		return jText;
 	}
 
 	public void refilter(){
-		this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (String) jMode.getSelectedItem(), jText.getText()));
+		if (columnCompare){
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (String) jMode.getSelectedItem(), "", (String) jMatchColumn.getSelectedItem()));
+		} else {
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (String) jMode.getSelectedItem(), jText.getText(), null));
+		}
 	}
 
 	@Override
@@ -128,7 +148,9 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 									  AssetFilter.MODE_EQUALS,
 									  AssetFilter.MODE_EQUALS_NOT,
 									  AssetFilter.MODE_GREATER_THAN,
-									  AssetFilter.MODE_LESS_THAN
+									  AssetFilter.MODE_LESS_THAN,
+									  AssetFilter.MODE_GREATER_THAN_COLUMN,
+									  AssetFilter.MODE_LESS_THAN_COLUMN
 				}) );
 				jMode.setSelectedIndex(index);
 			} else {
@@ -144,6 +166,16 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 					jMode.setSelectedIndex(index);
 				}
 			}
+		}
+		if (ACTION_MODE_SELECTED.equals(e.getActionCommand())){
+			String column = (String) jMode.getSelectedItem();
+			if (column.equals(AssetFilter.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.MODE_LESS_THAN_COLUMN) ){
+				columnCompare = true;
+				
+			} else {
+				columnCompare = false;
+			}
+			filterPanel.columnCompare(columnCompare);
 		}
 		if (ACTION_TIMER.equals(e.getActionCommand())){
 			timer.stop();
@@ -196,16 +228,18 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		private final String column;
 		private final String mode;
 		private final String text;
+		private String columnMatch;
 
-		public EveAssetMatcher(String column, String mode, String text) {
+		public EveAssetMatcher(String column, String mode, String text, String columnMatch) {
 			this.column = column;
 			this.mode = mode;
 			this.text = text;
+			this.columnMatch = columnMatch;
 		}
 
 		@Override
 		public boolean matches(EveAsset item) {
-			return eveAssetMatching.matches(item, column, mode, text);
+			return eveAssetMatching.matches(item, column, mode, text, columnMatch);
 		}
 	}
 }

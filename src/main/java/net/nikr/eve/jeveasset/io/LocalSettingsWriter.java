@@ -162,6 +162,9 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 				childNode.setAttributeNS(null, "column", assetFilter.getColumn());
 				childNode.setAttributeNS(null, "mode", assetFilter.getMode());
 				childNode.setAttributeNS(null, "and", String.valueOf(assetFilter.isAnd()));
+				if (assetFilter.getColumnMatch() != null){
+					childNode.setAttributeNS(null, "columnmatch", assetFilter.getColumnMatch());
+				}
 				node.appendChild(childNode);
 			}
 		}
