@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.MarketstatSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
@@ -174,7 +175,11 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		int age = AttributeGetters.getInt(element, "age");
 		int quantity = AttributeGetters.getInt(element, "quantity");
 		int region = AttributeGetters.getInt(element, "region");
-		settings.setMarketstatSettings( new MarketstatSettings(region, age, quantity) );
+		String defaultPrice = EveAsset.PRICE_SELL_MEDIAN;
+		if (AttributeGetters.haveAttribute(element, "defaultprice")){
+			defaultPrice = AttributeGetters.getString(element, "defaultprice");
+		}
+		settings.setMarketstatSettings( new MarketstatSettings(region, age, quantity, defaultPrice) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.MarketstatSettings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
@@ -45,6 +46,7 @@ public class EveCentralSettings extends JSettingsPanel {
 	private JComboBox jRegions;
 	private JTextField jAge;
 	private JTextField jQuantity;
+	private JComboBox jDefaultPrice;
 
 	private MarketstatSettings oldMarketstatSettings;
 	
@@ -54,14 +56,12 @@ public class EveCentralSettings extends JSettingsPanel {
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
 
 		jRegions = new JComboBox(MarketstatSettings.REGIONS);
-		jPanel.add(jRegions);
 
 		JLabel jQuantityLabel = new JLabel("Minimum quantity of orders:");
 
 		jQuantity = new JTextField();
 		JCopyPopup.install(jQuantity);
 		jQuantity.setDocument( new NumberPlainDocument() );
-		jPanel.add(jQuantity);
 
 		JLabel jQuantityUnlimitedLabel = new JLabel("(Zero for no limit)");
 
@@ -70,7 +70,10 @@ public class EveCentralSettings extends JSettingsPanel {
 		jAge = new JTextField();
 		JCopyPopup.install(jAge);
 		jAge.setDocument( new NumberPlainDocument() );
-		jPanel.add(jAge);
+
+		JLabel jDefaultPriceLabel = new JLabel("Price to use:");
+		jDefaultPrice = new JComboBox(EveAsset.PRICE_SOURCES);
+
 
 		JLabel jAgeUnlimitedLabel = new JLabel("(Zero for unlimited)");
 
@@ -81,9 +84,11 @@ public class EveCentralSettings extends JSettingsPanel {
 						.addComponent(jRegionsLabel)
 						.addComponent(jAgeLabel)
 						.addComponent(jQuantityLabel)
+						.addComponent(jDefaultPriceLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jRegions)
+						.addComponent(jDefaultPrice)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								.addComponent(jQuantity, 70, 70, 70)
@@ -94,6 +99,8 @@ public class EveCentralSettings extends JSettingsPanel {
 								.addComponent(jAgeUnlimitedLabel)
 							)
 						)
+
+
 					)
 				)
 
@@ -114,6 +121,11 @@ public class EveCentralSettings extends JSettingsPanel {
 					.addComponent(jQuantity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jQuantityUnlimitedLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jDefaultPriceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jDefaultPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+
 		);
 	}
 
@@ -122,9 +134,20 @@ public class EveCentralSettings extends JSettingsPanel {
 		int region = jRegions.getSelectedIndex();
 		int age = Integer.valueOf(jAge.getText());
 		int quantity = Integer.valueOf(jQuantity.getText());
-		MarketstatSettings newMarketstatSettings = new MarketstatSettings(region, age, quantity);
+		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
+		if (!defaultPrice.equals(EveAsset.getPriceSource())) program.assetsChanged();
+		MarketstatSettings newMarketstatSettings = new MarketstatSettings(region, age, quantity, defaultPrice);
 		oldMarketstatSettings = program.getSettings().getMarketstatSettings();
 		program.getSettings().setMarketstatSettings( newMarketstatSettings );
+	}
+
+	@Override
+	public void load(){
+		MarketstatSettings marketstatSettings = program.getSettings().getMarketstatSettings();
+		jRegions.setSelectedIndex(marketstatSettings.getRegion());
+		jAge.setText(String.valueOf(marketstatSettings.getAge()) );
+		jQuantity.setText(String.valueOf(marketstatSettings.getQuantity()));
+		jDefaultPrice.setSelectedItem(EveAsset.getPriceSource());
 	}
 
 	@Override
@@ -142,13 +165,5 @@ public class EveCentralSettings extends JSettingsPanel {
 			nextUpdate = "Now";
 		}
 		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data from EVE-Central\r\nbefore the new settings will in used\r\nNext update: "+nextUpdate, "Eve-Central Options", JOptionPane.PLAIN_MESSAGE);
-	}
-
-	@Override
-	public void load(){
-		MarketstatSettings marketstatSettings = program.getSettings().getMarketstatSettings();
-		jRegions.setSelectedIndex(marketstatSettings.getRegion());
-		jAge.setText(String.valueOf(marketstatSettings.getAge()) );
-		jQuantity.setText(String.valueOf(marketstatSettings.getQuantity()));
 	}
 }

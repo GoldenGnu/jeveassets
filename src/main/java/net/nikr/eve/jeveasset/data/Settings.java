@@ -125,7 +125,7 @@ public class Settings {
 		corporationsNextUpdate =  new HashMap<Long, Date>();  //Settings.cvtToGmt( new Date() );
 		resetMainTableColumns();
 
-		marketstatSettings = new MarketstatSettings(0, 0, 0);
+		marketstatSettings = new MarketstatSettings(0, 0, 0, EveAsset.PRICE_SELL_MEDIAN);
 
 		//Load data and overwite default values
 		settingsLoaded = LocalSettingsReader.load(this);
@@ -370,6 +370,7 @@ public class Settings {
 	}
 	public void setMarketstatSettings(MarketstatSettings marketstatSettings) {
 		this.marketstatSettings = marketstatSettings;
+		EveAsset.setPriceSource(marketstatSettings.getPriceSource());
 	}
 	public Map<Long, String> getCorporations() {
 		return corporations;

@@ -95,15 +95,21 @@ public class MarketstatSettings {
 	private int region;
 	private int age;
 	private int quantity;
+	private String priceSource;
 
-	public MarketstatSettings(int region, int age, int quantity) {
+	public MarketstatSettings(int region, int age, int quantity, String priceSource) {
 		this.region = region;
 		this.age = age;
 		this.quantity = quantity;
+		this.priceSource = priceSource;
 	}
 
 	public int getAge() {
 		return age;
+	}
+
+	public String getPriceSource() {
+		return priceSource;
 	}
 
 	public int getQuantity() {
