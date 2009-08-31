@@ -103,17 +103,17 @@ public class Menu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		menuItem = new JMenuItem("Settings");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
-		menuItem.setActionCommand(ACTION_OPEN_SETTINGS);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
 		menuItem = new JMenuItem("Manage API Keys");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("key.png") );
 		menuItem.setActionCommand(ACTION_OPEN_API_MANAGER);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Settings");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
+		menuItem.setActionCommand(ACTION_OPEN_SETTINGS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
