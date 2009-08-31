@@ -39,6 +39,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -92,6 +93,11 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 		jDefault.addActionListener(this);
 		jPanel.add(jDefault);
 
+		JTextArea jHelp = new JTextArea("\r\nTo add new price:\r\n1. Right click a row in the table\r\n2. Select \"Set Price...\" in the popup menu");
+		jHelp.setEditable(false);
+		jHelp.setOpaque(false);
+		jHelp.setFont(jSetPriceLable.getFont() );
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -109,6 +115,8 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 
 					)
 				)
+				.addComponent(jHelp)
+
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -122,6 +130,7 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 					.addComponent(jPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addComponent(jHelp)
 		);
 	}
 
