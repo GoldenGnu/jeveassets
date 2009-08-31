@@ -108,10 +108,11 @@ public class Program implements ActionListener {
 	private EventList<EveAsset> eveAssetEventList;
 
 	public Program(String[] args){
-		//FIXME before release: Fix copyright in all source files before release
-		//FIXME before release: Update version number and splash screen
-		//FIXME before release: set DEBUG to false (and clean build)
-		//FIXME before release: Write change log
+		//FIXME before release:
+		//		Fix copyright in all source files before release
+		//		Update version number and splash screen
+		//		set DEBUG to false (and clean build)
+		//		Write change log
 
 		//TEST converted locationIDs:
 		//		Items in space AKA secure container (should work)

@@ -140,7 +140,7 @@ public class Settings {
 		SplashUpdater.setProgress(60);
 		LocalMarketstatsReader.load(this);
 		SplashUpdater.setProgress(70);
-		//FIXME should be updatable from the menu
+		//TODO should be updatable from the menu
 		EveApiHumansReader.load(this);
 		EveApiMarketOrdersReader.load(this);
 		EveApiIndustryJobsReader.load(this);

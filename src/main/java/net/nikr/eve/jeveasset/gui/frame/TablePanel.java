@@ -97,6 +97,8 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 	public final static String ACTION_ADD_FILTER_EQUALS_NOT = "ACTION_ADD_FILTER_EQUALS_NOT";
 	public final static String ACTION_ADD_FILTER_GREATER_THEN = "ACTION_ADD_FILTER_GREATER_THEN";
 	public final static String ACTION_ADD_FILTER_LESS_THEN = "ACTION_ADD_FILTER_LESS_THEN";
+	public final static String ACTION_ADD_FILTER_GREATER_THEN_COLUMN = "ACTION_ADD_FILTER_GREATER_THEN_COLUMN";
+	public final static String ACTION_ADD_FILTER_LESS_THEN_COLUMN = "ACTION_ADD_FILTER_LESS_THEN_COLUMN";
 
 	//GUI
 	private ToolPanel toolPanel;
@@ -457,6 +459,18 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 
+				jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN_COLUMN);
+				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
+				jMenuItem.addActionListener(this);
+				jSubMenu.add(jMenuItem);
+
+				jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN_COLUMN);
+				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
+				jMenuItem.addActionListener(this);
+				jSubMenu.add(jMenuItem);
+
 				//FIXME Add greater/less then column
 			}
 		}
@@ -610,7 +624,15 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
 			toolPanel.addFilter( new AssetFilter(column, text, AssetFilter.MODE_LESS_THAN, true, null));
 		}
-
+		if (ACTION_ADD_FILTER_GREATER_THEN_COLUMN.equals(e.getActionCommand())){
+			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
+			toolPanel.addFilter( new AssetFilter(column, "", AssetFilter.MODE_GREATER_THAN_COLUMN, true, column));
+		}
+		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
+			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
+			toolPanel.addFilter( new AssetFilter(column, "", AssetFilter.MODE_LESS_THAN_COLUMN, true, column));
+		}
+		
 		if (ACTION_BLUEPRINT_ORIGINAL.equals(e.getActionCommand())){
 			JCheckBoxMenuItem jCheckBoxMenuItem = (JCheckBoxMenuItem) e.getSource();
 			boolean bpo = jCheckBoxMenuItem.isSelected();
