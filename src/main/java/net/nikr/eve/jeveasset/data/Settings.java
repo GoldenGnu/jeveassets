@@ -306,8 +306,26 @@ public class Settings {
 					Material material = materials.get(b);
 					portionSize = material.getPortionSize();
 					if (getMarketstats().containsKey(material.getId())){
-						priceReprocessed = priceReprocessed + (getMarketstats().get(material.getId()).getSellMedian() * material.getQuantity());
-						//priceReprocessed = priceReprocessed + (getMarketstats().get(material.getId()).getSellMedian() * (material.getQuantity() / portionSize));
+						Marketstat marketstat = getMarketstats().get(material.getId());
+						String priceSource = EveAsset.getPriceSource();
+						double price = 0;
+						if (userPrices.containsKey(material.getId())){
+							price = userPrices.get(material.getId()).getPrice();
+						} else {
+							if (priceSource.equals(EveAsset.PRICE_ALL_AVG)) price = marketstat.getAllAvg();
+							if (priceSource.equals(EveAsset.PRICE_ALL_MAX)) price = marketstat.getAllMax();
+							if (priceSource.equals(EveAsset.PRICE_ALL_MIN)) price = marketstat.getAllMin();
+							if (priceSource.equals(EveAsset.PRICE_ALL_MEDIAN)) price = marketstat.getAllMedian();
+							if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) price = marketstat.getBuyAvg();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) price = marketstat.getBuyMax();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) price = marketstat.getBuyMin();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) price = marketstat.getBuyMedian();
+							if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) price = marketstat.getSellAvg();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) price = marketstat.getSellMax();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) price = marketstat.getSellMin();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) price = marketstat.getSellMedian();
+						}
+						priceReprocessed = priceReprocessed + (price * material.getQuantity());
 					}
 					//Unique Ids
 					if (!uniqueIds.contains(material.getId())){
