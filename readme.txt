@@ -55,53 +55,69 @@ _KNOWN_ISSUES___________________________________________________________________
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.1.0 BETA 1
+-The default eve-central price can now be changed
+-Added new filter modes: Greater/Less then column (compare two columns)
+-API keys can now be changed after they have been added
+-Filtering is now only triggered when no keys have been pressed for 500ms
+-Now automatically mark blueprints that have been used as copy/original 
+-All settings are now in the same dialog
+-Improved the way progress is showed when updating assets and price data
+-New dialog key bindings: Escape cancel and enter saves
+-Industry jobs: Now adds blueprints in use to the asset list
+-Market orders: now adds remaining items from sell orders to the assets list
+-Portable setting: save all files in program directory (see FAQ)
+-New Column: Reprocessed value
+-New Column: System security status
+-Added volume to statusbar and table popup menu
+
 1.0.0
 -Fixed minor bug with CSV & Fittings export
 
-Release Candidate 8
+1.0.0 Release Candidate 8
 -Now uses the user's home directory to store data and settings
 -Now support proxy servers
 
-Release Candidate 7a
+1.0.0 Release Candidate 7a
 -Fixed price data bug, introduced in RC7
 
 
-Release Candidate 7
+1.0.0 Release Candidate 7
 -Ship Loadouts: Fixed bug that showed charges instead of modules
 -Fix bug that prevented the price data from being updated
 -Updated eveapi library to version 1.0.0
 -Updated nikr log library
 
-Release Candidate 6
+1.0.0 Release Candidate 6
 -Compiled with Java 6, again...
 -It's now possible to mark multiple items as BPOs
 -Better exit progress
 
-Release Candidate 5
+1.0.0 Release Candidate 5
 -Now use Java 5, instead of Java 6 (To enable mac compatibility)
 
-Release Candidate 4
+1.0.0 Release Candidate 4
 -Corrected contact information, in readme file
 -Fixed hidden characters being shown in the values tool
 -Ship Loadouts now show all ships
 
-Release Candidate 3
+1.0.0 Release Candidate 3
 -fixed bug that would make some buttons to small
 -CSV Export: Added more options
 -blueprints can now be marked as BPO or BPC
 -Added option to only filter when enter is pressed
 
-Release Candidate 2
+1.0.0 Release Candidate 2
 -Fixed bug that would make some dialogs to small
 
-Release Candidate 1b
+1.0.0 Release Candidate 1b
 -New column: Type Count (Total count of this type of asset)
 -Apocrypha 1.3.1 data update
 
-Release Candidate 1a
+1.0.0 Release Candidate 1a
 -Fixed bug in the save filter dialog
 
-Release Candidate 1
+1.0.0 Release Candidate 1
 -Fixed values grand total wallet balance
 -Fixed bug with filter mode combobox
 -Added popup-menu with copy and paste to all text components
@@ -109,33 +125,33 @@ Release Candidate 1
 -Meta column: Fixed a display issue with trailing zero...
 -Now search clipboard for API user id & key, when adding API Key
 
-BETA 12
+1.0.0 BETA 12
 -New column: Region
 -Offices should now always show the right location
 -Fixed minor filtering bug
 
-BETA 11
+1.0.0 BETA 11
 -Added more regions to the Eve-Central options
 -Save filter dialog, now have auto-complete
 -The Set Price Dialog now focus the price field when shown
 -Made option in API Manger to show/hide character assets
 -New columns: TypeID & Volume
 
-BETA 10
+1.0.0 BETA 10
 -Fixed "Equals" and "Does not equal" modes for number columns
 -Asset prices can now be set manually (set price from the table popup-menu)
 -Added more info to the statusbar
 
-BETA 9a
+1.0.0 BETA 9a
 -Fixed program update
 
-BETA 9
+1.0.0 BETA 9
 -New update mechanism for assets and price data
 -Price data from Eve-Central can now be updated manually
 -Added options for EVE-Central price data
 -Fixed a bug that made the program crash, if not connected to the Internet...
 
-BETA 8
+1.0.0 BETA 8
 -Spelling corrected in the filter modes ComboBox
 -Added thousands separator in the count column
 -Added price column, and totals to loadout dialog
@@ -143,33 +159,33 @@ BETA 8
 -Owner column, should now always show the correct owner (fix not confirmed)
 -Tried to fix the Location bug, again (fix not confirmed)
 
-BETA 7
+1.0.0 BETA 7
 -Table pop-up: Add to filter
 -Columns fixed (should now filter as intented)
 -CSV export
 
-BETA 6a
+1.0.0 BETA 6a
 -Fixed a bug with the shown update time
 
-BETA 6
+1.0.0 BETA 6
 -Fixed bug that hid new columns
 -Now shows when the assets can be updated again
 
-BETA 5
+1.0.0 BETA 5
 -New columns: Highest buy price and Lowest sell price
 -Better support for T3 Ships 
 -Minor adjustments to the Materials and Values dialogs...
 
-BETA 4
+1.0.0 BETA 4
 -Tried to fix the location bug (Fix not confirmed)
 
-BETA 3
+1.0.0 BETA 3
 -Fixed bug, that make the program crash (Location bug still pressent)
 
-BETA 2
+1.0.0 BETA 2
 -Fixed bug, that prevented users to enter API Key and updating assets
 
-BETA 1
+1.0.0 BETA 1
 -First version
 
 ________________________________________________________________________________
@@ -215,6 +231,11 @@ Q: The [...] library is missing
 
 A: Please re-download jEveAssets from http://eve.nikr.net/?page=jeveasset
    And leave the unzipped folder intact 
+________________________________________________________________________________
+
+Q: How do I use portable settings?
+
+A: Add the command line argument: -portable
 
 ________________________________________________________________________________
 _CONTACT________________________________________________________________________
