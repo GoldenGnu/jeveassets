@@ -510,6 +510,13 @@ public class AssetConverter {
 		String owner = AssetConverter.owner(human, bCorp);
 
 		String location = AssetConverter.location(locationID, null, settings);
+		if (location.contains("Error !")){
+			locationID = (int) apiIndustryJob.getContainerLocationID();
+			location = AssetConverter.location(locationID, null, settings);
+		}
+		if (location.contains("Error !")){
+			location = "Unknown";
+		}
 		String container = AssetConverter.container(locationID, null);
 		String region = AssetConverter.region(locationID, null, settings);
 		String security = AssetConverter.security(locationID, null, settings);
