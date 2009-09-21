@@ -147,7 +147,12 @@ public class LocalSettingsReader extends AbstractXmlReader {
 						&& port >= 0) { // check the proxy attributes are all there.
 
 			// delegate to the utility method in the Settings.
-			settings.setProxy(addrName, port, proxyType);
+			try {
+				settings.setProxy(addrName, port, proxyType);
+			} catch (IllegalArgumentException iae) { //catch none valid proxt settings
+				settings.setProxy(null);
+			}
+			
 		}
 	}
 
