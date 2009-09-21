@@ -37,9 +37,11 @@ import java.net.URISyntaxException;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
@@ -49,48 +51,70 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	
 	public AboutDialog(Program program, Image image) {
 		super(program, "About", image);
+		JLabel jIcon = new JLabel();
+		jIcon.setIcon( ImageGetter.getIcon("icon07_13.png") );
 
-		JEditorPane jAbout = new JEditorPane("text/html",
+		JEditorPane jProgram = new JEditorPane("text/html",
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+ "<font size=\"5\">"+Program.PROGRAM_NAME+" </font>"+Program.PROGRAM_VERSION+"<br>"
-				+ "<b>Web:</b> <a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
-				+ "<b>License:</b> <a href=\"http://www.gnu.org/copyleft/gpl.html\">GNU General Public License</a><br>"
-				+ "<b>Copyright:</b> &copy; 2009 Niklas Kyster Rasmussen, Flaming Candle<br>"
-				+ "<br>"
-				+ "<b>Credits:</b><br>"
-				+ "<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
-				+ "<a href=\"http://eve-central.com/\">EVE-Central.com</a> (API)<br>"
-				+ "<a href=\"http://www.eveonline.com/\">EVE-Online</a> (API and Toolkit)<br> "
-				+ "<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (Table sorting and filtering)<br> "
-				+ "<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (CSV Export)<br> "
-				+ "<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (Parsing EVE-Online API)<br> "
-				+ "<a href=\"http://logging.apache.org/log4j/\">log4j</a> (Used by eveapi)<br> "
-				+ "<a href=\"http://commons.apache.org/digester/\">Apache Commons Digester</a> (Used by eveapi)<br> "
-				+ "<a href=\"http://commons.apache.org/beanutils/\">Apache Commons BeanUtils</a> (Used by eveapi)<br> "
-				+ "<a href=\"http://commons.apache.org/logging/\">Apache Commons Logging</a> (Used by eveapi)<br> "
-				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (Logging)<br>"
+				+ "<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
+				+ "Version "+Program.PROGRAM_VERSION+"<br>"
+				+ "Copyright &copy; 2009 Contributors<i> (see below)</i><br><div>"
+				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
 			);
-		jAbout.setEditable(false);
-		jAbout.setOpaque(false);
-		jAbout.addHyperlinkListener(this);
-		jPanel.add(jAbout);
+		jProgram.addHyperlinkListener(this);
+		jProgram.setEditable(false);
+		jProgram.setOpaque(false);
+
+		JEditorPane jCredits = new JEditorPane("text/html",
+				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				+ "<b>Contributors</b><br>"
+				+ "&nbsp;Niklas Kyster Rasmussen (Original creator)<br>"
+				+ "&nbsp;Flaming Candle (Developer)<br>"
+				+ "<br>"
+				+ "<b>License</b><br>"
+				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
+				+ "<br>"
+				+ "<b>Libraries & Content</b><br>"
+				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (Icons)<br>"
+				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (API and Toolkit)<br> "
+				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (API)<br>"
+				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (Table sorting and filtering)<br> "
+				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (CSV Export)<br> "
+				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (Parsing EVE-Online API)<br> "
+				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/\">log4j</a> (Used by eveapi)<br> "
+				+ "&nbsp;<a href=\"http://commons.apache.org/digester/\">Apache Commons Digester</a> (Used by eveapi)<br> "
+				+ "&nbsp;<a href=\"http://commons.apache.org/beanutils/\">Apache Commons BeanUtils</a> (Used by eveapi)<br> "
+				+ "&nbsp;<a href=\"http://commons.apache.org/logging/\">Apache Commons Logging</a> (Used by eveapi)<br> "
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (Logging)<br>"
+
+			);
+		jCredits.setEditable(false);
+		jCredits.setOpaque(false);
+		jCredits.addHyperlinkListener(this);
 
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
-		jPanel.add(jClose);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(jAbout)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jIcon)
+					.addComponent(jProgram)
+				)
+				.addComponent(jCredits)
 				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 			)
 
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jAbout)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jIcon)
+					.addComponent(jProgram)
+				)
+				.addComponent(jCredits)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
