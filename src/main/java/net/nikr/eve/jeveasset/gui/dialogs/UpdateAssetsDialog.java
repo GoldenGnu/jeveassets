@@ -90,6 +90,9 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			} else if (!updateAssetsTask.isShown) {
 				Log.info("No assets updated");
 				JOptionPane.showMessageDialog(parent, "No assets updated (none selected)\r\nAll characters are hidden", "Update Assets", JOptionPane.PLAIN_MESSAGE);
+			} else if (updateAssetsTask.error != null) {
+				Log.info("No assets updated");
+				JOptionPane.showMessageDialog(parent, "No assets updated.\r\n"+updateAssetsTask.error, "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else {
 				Log.info("No assets updated");
 				JOptionPane.showMessageDialog(parent, "No assets updated (not allowed yet).\r\nCCP only allow you to update assets once a day...", "Update Assets", JOptionPane.PLAIN_MESSAGE);
@@ -109,6 +112,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 		private boolean updateFailed = false;
 		private boolean isOnline = true;
 		private boolean conquerableStationsUpdated = false;
+		private String error = null;
 
 		public UpdateAssetsTask() {
 			
@@ -140,6 +144,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 						if (returned){
 							updated = true;
 						} else {
+							error = EveApiAssetsReader.getError();
 							isOnline = Online.isOnline(program.getSettings());
 							updateFailed = true;
 						}

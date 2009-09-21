@@ -40,6 +40,8 @@ import org.xml.sax.SAXException;
 
 public class EveApiAssetsReader {
 
+	private static String error;
+
 	private EveApiAssetsReader() {}
 
 	public static boolean load(Settings settings, Human human){
@@ -47,6 +49,7 @@ public class EveApiAssetsReader {
 	}
 	
 	private static boolean load(Settings settings, Human human, boolean bCorp){
+		error = null;
 		if (human.isAssetsUpdatable() || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
@@ -69,24 +72,23 @@ public class EveApiAssetsReader {
 					} else {
 						Log.info("Updated assets for: "+human.getName());
 					}
+					return true;
 				} else {
-					ApiError error = assetResponse.getError();
+					ApiError apiError = assetResponse.getError();
 					//Not Director or CEO
-					if (error.getCode() == 209){ 
+					if (apiError.getCode() == 209){
 						human.setUpdateCorporationAssets(false);
 						if (bCorp) {
-							Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+							Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 						} else {
-							Log.info("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+							Log.info("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 						}
-						return false;
 					}
 					if (bCorp) {
-						Log.warning("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+						Log.warning("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					} else {
-						Log.warning("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+						Log.warning("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
-					return false;
 				}
 			} catch (IOException ex) {
 				if (bCorp) {
@@ -94,23 +96,24 @@ public class EveApiAssetsReader {
 				} else {
 					Log.info("Failed to update assets for: "+human.getName()+" (NOT FOUND)");
 				}
-				return false;
 			} catch (SAXException ex) {
 				if (bCorp) {
 					Log.error("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (PARSER ERROR)", ex);
 				} else {
 					Log.error("Failed to update assets for: "+human.getName()+" (PARSER ERROR)", ex);
 				}
-				return false;
 			}
-			return true;
 		} else {
 			if (bCorp) {
 				Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT ALLOWED YET)");
 			} else {
 				Log.info("Failed to update assets for: "+human.getName()+" (NOT ALLOWED YET)");
 			}
-			return false;
 		}
+		return false;
+	}
+
+	public static String getError() {
+		return error;
 	}
 }
