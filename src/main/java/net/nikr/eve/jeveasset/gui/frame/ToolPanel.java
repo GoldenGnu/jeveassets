@@ -247,7 +247,6 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 	}
 
 	private void saveFilter(){
-		Boolean bOverwrite = true;
 		//Tell there is nothing to save
 		if (getAssetFilters().isEmpty()){
 			JOptionPane.showMessageDialog(program.getFrame(), "Nothing to save...", "Save Filter", JOptionPane.PLAIN_MESSAGE);
@@ -256,28 +255,6 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 		//Ask for filter name
 		SaveFilterDialog saveFilterDialog = program.getSaveFilterDialog();
 		saveFilterDialog.setVisible(true);
-		String s = saveFilterDialog.getSelectedName(); //JOptionPane.showInputDialog(program.getFrame(), "Enter filter name:", "Save Filter", JOptionPane.PLAIN_MESSAGE);
-		//Canceled
-		if (s == null){
-			return;
-		}
-		//No filter name, ask for name again...
-		if (s.equals("")){
-			saveFilter();
-			return;
-		}
-		//Ask to overwrite...
-		if (program.getSettings().getAssetFilters().containsKey(s)){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION){
-				bOverwrite = false;
-			}
-		}
-		//Update filters
-		if (bOverwrite){
-			program.getSettings().getAssetFilters().put(s, getAssetFilters());
-		}
-		program.filtersChanged();
 	}
 
 	public void filtersChanged(){

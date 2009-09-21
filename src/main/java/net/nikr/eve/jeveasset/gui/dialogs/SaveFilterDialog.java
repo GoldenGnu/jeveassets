@@ -27,6 +27,7 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,10 +50,10 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 
 	public final static String ACTION_SAVE = "ACTION_SAVE";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
+	public final static String ACTION_SELECTED = "ACTION_SELECTED";
 
 	private EventList<String> filters;
 	private JComboBox jName;
-	private String returnValue = null;
 	private JButton jSave;
 
 	public SaveFilterDialog(Program program) {
@@ -61,9 +62,11 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		JLabel jText = new JLabel("Enter filter name:");
 
 		jName = new JComboBox();
+		jName.setActionCommand(ACTION_SELECTED);
+		jName.addActionListener(this);
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new BasicEventList<String>();
-		AutoCompleteSupport support = AutoCompleteSupport.install(jName, filters);
+		AutoCompleteSupport support = AutoCompleteSupport.install(jName, filters, new Filterator());
 		
 		jSave = new JButton("Save");
 		jSave.setActionCommand(ACTION_SAVE);
@@ -102,17 +105,6 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		filters.clear();
 		filters.addAll(list);
 	}
-	
-	public String getSelectedName(){
-		return returnValue;
-	}
-
-	private void canNotSave(){
-		returnValue = null;
-		jName.setSelectedItem("");
-		JOptionPane.showMessageDialog(program.getFrame(), "You need to enter a name for the filter.", "Save Filter", JOptionPane.PLAIN_MESSAGE);
-	}
-
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jName;
@@ -131,23 +123,33 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 
 	@Override
 	protected void save() {
-		returnValue = (String) jName.getSelectedItem();
+		String returnValue = (String) jName.getSelectedItem();
 		if (returnValue == null){
-			canNotSave();
+			JOptionPane.showMessageDialog(this.getDialog(), "You need to enter a name for the filter.", "Save Filter", JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		if (returnValue.equals("")) {
-			canNotSave();
+			JOptionPane.showMessageDialog(this.getDialog(), "You need to enter a name for the filter.", "Save Filter", JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
+		
+		//Ask to overwrite...
+		if (program.getSettings().getAssetFilters().containsKey(returnValue)){
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION){
+				return;
+			}
+		}
 		this.setVisible(false);
+		//Update filters
+		program.getSettings().getAssetFilters().put(returnValue, program.getToolPanel().getAssetFilters());
+		program.filtersChanged();
 	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			returnValue = null;
-			jName.setSelectedItem("");
+			jName.getModel().setSelectedItem("");
 		}
 		super.setVisible(b);
 	}
@@ -159,6 +161,16 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			this.setVisible(false);
+		}
+		if (ACTION_SELECTED.equals(e.getActionCommand())){
+			if (jName.getSelectedItem() == null) jName.getModel().setSelectedItem("");
+		}
+	}
+
+	class Filterator implements TextFilterator<String>{
+		@Override
+		public void getFilterStrings(List<String> baseList, String element) {
+			if (!element.equals("")) baseList.add(element);
 		}
 	}
 }
