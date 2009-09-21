@@ -40,7 +40,10 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 public class Frame extends JFrame implements WindowListener  {
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
-	
+
+	//GUI
+	Menu menu;
+
 	//Data
 	Program program;
 	
@@ -62,9 +65,13 @@ public class Frame extends JFrame implements WindowListener  {
 		this.setIconImage( ImageGetter.getImage("safe16.png") );
 		this.addWindowListener(this);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setJMenuBar( new Menu(program) );
+		menu = new Menu(program);
+		this.setJMenuBar( menu );
 	}
 
+	public Menu getMenu() {
+		return menu;
+	}
 
 	@Override
 	public void setEnabled(boolean b) {

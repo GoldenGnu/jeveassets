@@ -25,15 +25,21 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
+import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
 public class Menu extends JMenuBar {
+
+	JMenu jColumnMenu;
+	Program program;
 
 	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
@@ -50,9 +56,10 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_UPDATE_PRICES = "ACTION_UPDATE_PRICES";
 
 	public Menu(Program program) {
-		JMenu menu, submenu;
+		this.program = program;
+		
+		JMenu menu;
 		JMenuItem menuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
 
 		menu = new JMenu("File");
 		//menu.setActionCommand("Something");
@@ -117,6 +124,12 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+		jColumnMenu = new JMenu("Columns");
+		jColumnMenu.setIcon( ImageGetter.getIcon("application_view_columns.png") );
+		menu.add(jColumnMenu);
+
+		updateColumnSelectionMenu();
+
 		menu.addSeparator();
 
 		menuItem = new JMenuItem("Update Price Data (EVE-Central)");
@@ -166,9 +179,59 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(menuItem);
+	}
 
+	public void updateColumnSelectionMenu(){
+		JMenuItem jMenuItem;
+		JCheckBoxMenuItem jCheckBoxMenuItem;
+		JRadioButtonMenuItem jRadioButtonMenuItem;
 
+		jColumnMenu.removeAll();
 
+		jMenuItem = new JMenuItem("Reset columns to default");
+		jMenuItem.setActionCommand(TablePanel.ACTION_RESET_COLUMNS_TO_DEFAULT);
+		jMenuItem.addActionListener(program.getTablePanel());
+		jColumnMenu.add(jMenuItem);
+
+		jColumnMenu.addSeparator();
+
+		ButtonGroup group = new ButtonGroup();
+
+		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
+		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_AUTO_RESIZING_COLUMNS_TEXT);
+		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
+		group.add(jRadioButtonMenuItem);
+		jColumnMenu.add(jRadioButtonMenuItem);
+
+		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
+		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
+		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
+		group.add(jRadioButtonMenuItem);
+		jColumnMenu.add(jRadioButtonMenuItem);
+
+		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
+		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
+		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
+		group.add(jRadioButtonMenuItem);
+		jColumnMenu.add(jRadioButtonMenuItem);
+
+		jColumnMenu.addSeparator();
+
+		List<String> columns = program.getSettings().getTableColumnNames();
+		for (int a = 0; a < columns.size(); a++){
+			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
+			jCheckBoxMenuItem.setActionCommand(columns.get(a));
+			jCheckBoxMenuItem.addActionListener(program.getTablePanel());
+			jCheckBoxMenuItem.setIcon( ImageGetter.getIcon("application_view_columns.png") );
+			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
+			jColumnMenu.add(jCheckBoxMenuItem);
+		}
 	}
 
 }

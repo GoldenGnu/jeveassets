@@ -175,7 +175,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 		statusPanel = new StatusPanel(program);
 
-		updateColumnSelectionPopup();
+		updateColumnPopup();
 		
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -284,7 +284,12 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		}
 		column.setPreferredWidth(maxWidth+4);
 	}
-	private void updateColumnSelectionPopup(){
+	private void updateShownColumns(){
+		program.getFrame().getMenu().updateColumnSelectionMenu();
+		updateColumnPopup();
+	}
+
+	private void updateColumnPopup(){
 		jColumnsSelection.clearMenu();
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JRadioButtonMenuItem jRadioButtonMenuItem;
@@ -551,7 +556,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		if (ACTION_RESET_COLUMNS_TO_DEFAULT.equals(e.getActionCommand())){
 			program.getSettings().resetMainTableColumns();
 			updateTableStructure();
-			updateColumnSelectionPopup();
+			updateShownColumns();
 			if (program.getSettings().isAutoResizeColumnsWindow()){
 				for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
 					jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
@@ -563,6 +568,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			program.getSettings().setAutoResizeColumnsText(true);
 			program.getSettings().setAutoResizeColumnsWindow(false);
 			updateAutoCoulmnsSize();
+			updateShownColumns();
 		}
 		if (ACTION_AUTO_RESIZING_COLUMNS_WINDOW.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(false);
@@ -571,6 +577,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
 			}
 			updateAutoCoulmnsSize();
+			updateShownColumns();
 		}
 		if (ACTION_DISABLE_AUTO_RESIZING_COLUMNS.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(false);
@@ -580,6 +587,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				jTable.getColumnModel().getColumn(a).setPreferredWidth(width);
 			}
 			updateAutoCoulmnsSize();
+			updateShownColumns();
 		}
 		if (ACTION_COPY_TABLE_SELECTED_CELLS.equals(e.getActionCommand())){
 			String s = "";
@@ -674,6 +682,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				program.getSettings().setTableColumnVisible(mainTableColumnVisible);
 			}
 			updateTableStructure();
+			updateShownColumns();
 		}
 	}
 
@@ -699,7 +708,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			program.getSettings().setTableColumnNames(tempMainTableColumnNames);
 			program.getSettings().setTableColumnVisible(tempMainTableColumnVisible);
 			updateTableStructure();
-			updateColumnSelectionPopup();
+			updateShownColumns();
 		}
 		if (e.getSource().equals(jTable) && e.isPopupTrigger()){
 			showTablePopup(e);
