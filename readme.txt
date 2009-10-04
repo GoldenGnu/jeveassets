@@ -55,15 +55,13 @@ _KNOWN_ISSUES___________________________________________________________________
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
-1.1.0 Release Candidate 1
+1.1.0
 -Fixed bug with invalid proxy settings
 -Fixed bug with pos and industry jobs
 -Added hide/show columns to the main menu
 -Fixed bug in save filter dialog
 -Better error messages when Updating assets
 -New layout for about dialog
-
-1.1.0 BETA 1
 -The default eve-central price can now be changed
 -Added new filter modes: Greater/Less then column (compare two columns)
 -API keys can now be changed after they have been added
