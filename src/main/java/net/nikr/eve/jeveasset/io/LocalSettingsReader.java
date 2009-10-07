@@ -25,6 +25,8 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +62,14 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
+		//Window
+		NodeList windowNodes = element.getElementsByTagName("window");
+		if (windowNodes.getLength() == 1){
+			Element windowElement = (Element) windowNodes.item(0);
+			parseWindow(windowElement, settings);
+		}
+
+
 		//BPOs
 		NodeList bposNodes = element.getElementsByTagName("bpos");
 		if (bposNodes.getLength() == 1){
@@ -135,6 +145,19 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
 		}
+	}
+
+	private static void parseWindow(Element windowElement, Settings settings) throws XmlException {
+		int x = AttributeGetters.getInt(windowElement, "x");
+		int y = AttributeGetters.getInt(windowElement, "y");
+		int height = AttributeGetters.getInt(windowElement, "height");
+		int width = AttributeGetters.getInt(windowElement, "width");
+		boolean maximized = AttributeGetters.getBoolean(windowElement, "maximized");
+		boolean autosave = AttributeGetters.getBoolean(windowElement, "autosave");
+		settings.setWindowLocation( new Point(x, y));
+		settings.setWindowSize( new Dimension(width, height));
+		settings.setWindowMaximized(maximized);
+		settings.setWindowAutoSave(autosave);
 	}
 
 	private static void parseProxy(Element proxyElement, Settings settings) throws XmlException {

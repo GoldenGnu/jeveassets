@@ -26,9 +26,11 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,9 +39,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
-public class Frame extends JFrame implements WindowListener  {
-	public static final int WINDOW_WIDTH = 800;
-	public static final int WINDOW_HEIGHT = 600;
+public class Frame extends JFrame implements WindowListener, WindowStateListener, ComponentListener  {
 
 	//GUI
 	Menu menu;
@@ -61,9 +61,13 @@ public class Frame extends JFrame implements WindowListener  {
 		} else {
 			this.setTitle(Program.PROGRAM_NAME);
 		}
-		this.setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT)); //800, 600
+		this.setSize( program.getSettings().getWindowSize() ); //800, 600
+		this.setLocation( program.getSettings().getWindowLocation() );
+		if ( program.getSettings().isWindowMaximized() ) this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setIconImage( ImageGetter.getImage("safe16.png") );
 		this.addWindowListener(this);
+		this.addWindowStateListener(this);
+		this.addComponentListener(this);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		menu = new Menu(program);
 		this.setJMenuBar( menu );
@@ -106,5 +110,36 @@ public class Frame extends JFrame implements WindowListener  {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
+
+	@Override
+	public void windowStateChanged(WindowEvent e) {
+		if (program.getSettings().isWindowAutoSave()) {
+			program.getSettings().setWindowMaximized( (e.getNewState() == JFrame.MAXIMIZED_BOTH) );
+		}
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH && program.getSettings().isWindowAutoSave()){
+			program.getSettings().setWindowSize(e.getComponent().getSize());
+		}
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		if (this.getExtendedState() != JFrame.MAXIMIZED_BOTH && program.getSettings().isWindowAutoSave()){
+			program.getSettings().setWindowLocation(e.getComponent().getLocation());
+		}
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+
+	}
 
 }

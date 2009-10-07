@@ -27,6 +27,8 @@ package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.AbstractApiParser;
 import com.beimin.eveapi.utils.stationlist.ApiStation;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -101,7 +103,10 @@ public class Settings {
 	private MarketstatSettings marketstatSettings;
 	private Proxy proxy;
 	private String apiProxy;
-	//private boolean filterOnEnter;
+	private Point windowLocation;
+	private Dimension windowSize;
+	private boolean windowMaximized;
+	private boolean windowAutoSave;
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
@@ -126,6 +131,11 @@ public class Settings {
 		resetMainTableColumns();
 
 		marketstatSettings = new MarketstatSettings(0, 0, 0, EveAsset.PRICE_SELL_MEDIAN);
+
+		windowLocation = new Point(0, 0);
+		windowSize = new Dimension(800, 600);
+		windowMaximized = false;
+		windowAutoSave = true;
 
 		//Load data and overwite default values
 		settingsLoaded = LocalSettingsReader.load(this);
@@ -583,7 +593,39 @@ public class Settings {
 	public void setFilterOnEnter(boolean filterOnEnter) {
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter);
 	}
+	//Window
+	public Point getWindowLocation() {
+		return windowLocation;
+	}
 
+	public void setWindowLocation(Point windowLocation) {
+		this.windowLocation = windowLocation;
+	}
+
+	public boolean isWindowMaximized() {
+		return windowMaximized;
+	}
+
+	public void setWindowMaximized(boolean windowMaximized) {
+		this.windowMaximized = windowMaximized;
+	}
+
+	public Dimension getWindowSize() {
+		return windowSize;
+	}
+
+	public void setWindowSize(Dimension windowSize) {
+		this.windowSize = windowSize;
+	}
+
+	public boolean isWindowAutoSave() {
+		return windowAutoSave;
+	}
+
+	public void setWindowAutoSave(boolean windowAutoSave) {
+		this.windowAutoSave = windowAutoSave;
+	}
+	
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
 	}

@@ -48,6 +48,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		} catch (XmlException ex) {
 			Log.error("Settings not saved "+ex.getMessage(), ex);
 		}
+		writeWindow(xmldoc, settings);
 		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
 		writeApiProxy(xmldoc, settings.getApiProxy());
@@ -63,6 +64,16 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 			Log.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		Log.info("Settings saved");
+	}
+	private static void writeWindow(Document xmldoc, Settings settings){
+		Element parentNode = xmldoc.createElementNS(null, "window");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		parentNode.setAttributeNS(null, "x", String.valueOf(settings.getWindowLocation().x));
+		parentNode.setAttributeNS(null, "y", String.valueOf(settings.getWindowLocation().y));
+		parentNode.setAttributeNS(null, "height", String.valueOf(settings.getWindowSize().height));
+		parentNode.setAttributeNS(null, "width", String.valueOf(settings.getWindowSize().width));
+		parentNode.setAttributeNS(null, "maximized", String.valueOf(settings.isWindowMaximized()));
+		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
 	}
 	private static void writeBpos(Document xmldoc, List<Integer> bpos){
 		Element parentNode = xmldoc.createElementNS(null, "bpos");

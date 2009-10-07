@@ -57,6 +57,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.settings.WindowSettings;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.log.Log;
 import org.apache.log4j.BasicConfigurator;
@@ -93,6 +94,7 @@ public class Program implements ActionListener {
 	private EveCentralSettings eveCentralSettings;
 	private ProxySettings proxySettings;
 	private PriceSettings priceSettings;
+	private WindowSettings windowSettings;
 
 
 	private UpdateAssetsDialog updateAssetsDialog;
@@ -207,6 +209,9 @@ public class Program implements ActionListener {
 		Log.info("		Price");
 		priceSettings = new PriceSettings(this, settingsDialog);
 		settingsDialog.add(priceSettings, ImageGetter.getIcon("money.png"));
+		Log.info("		Window");
+		windowSettings = new WindowSettings(this, settingsDialog);
+		settingsDialog.add(windowSettings, ImageGetter.getIcon("application.png"));
 		Log.info("	Assets update Dialog");
 		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
 		Log.info("	Eve-Central update Dialog");
