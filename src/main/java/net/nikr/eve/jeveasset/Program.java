@@ -242,7 +242,6 @@ public class Program implements ActionListener {
 		}
 	}
 
-
 	public void updatePriceData(){
 		updateEveCentralDialog.startUpdate();
 	}
@@ -261,6 +260,7 @@ public class Program implements ActionListener {
 	}
 	public void shownAssetsChanged(){
 		tablePanel.shownAssetsChanged();
+		toolPanel.shownAssetsChanged();
 	}
 	public void assetsChanged(){
 		settings.clearEveAssetList();

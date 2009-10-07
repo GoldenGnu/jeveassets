@@ -77,4 +77,44 @@ public class AssetFilter {
 	public boolean isEmpty(){
 		return (text.equals("") && columnMatch == null);
 	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 59 * hash + (this.column != null ? this.column.hashCode() : 0);
+		hash = 59 * hash + (this.text != null ? this.text.hashCode() : 0);
+		hash = 59 * hash + (this.mode != null ? this.mode.hashCode() : 0);
+		hash = 59 * hash + (this.and ? 1 : 0);
+		hash = 59 * hash + (this.columnMatch != null ? this.columnMatch.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final AssetFilter other = (AssetFilter) obj;
+		if ((this.column == null) ? (other.column != null) : !this.column.equals(other.column)) {
+			return false;
+		}
+		if ((this.text == null) ? (other.text != null) : !this.text.equals(other.text)) {
+			return false;
+		}
+		if ((this.mode == null) ? (other.mode != null) : !this.mode.equals(other.mode)) {
+			return false;
+		}
+		if (this.and != other.and) {
+			return false;
+		}
+		if ((this.columnMatch == null) ? (other.columnMatch != null) : !this.columnMatch.equals(other.columnMatch)) {
+			return false;
+		}
+		return true;
+	}
+
+
 }

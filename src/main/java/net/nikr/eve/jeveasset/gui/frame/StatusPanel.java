@@ -185,8 +185,6 @@ public class StatusPanel extends JProgramPanel {
 		setAverage(0);
 		setTotalValue(0);
 		setCount(0);
-		
-
 	}
 	private void addIcon(Icon icon){
 		JLabel jLabel = new JLabel();

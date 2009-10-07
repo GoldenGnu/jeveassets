@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
@@ -61,6 +62,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 	//Data
 	private Vector<FilterPanel> filters;
 	private MatcherEditorManager matcherEditorManager;
+	int rowCount;
 
 	//GUI
 	private JButton jAddField;
@@ -322,7 +324,21 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		EventTableModel eventTableModel = (EventTableModel) e.getSource();
-		int rowCount = eventTableModel.getRowCount();
-		jRows.setText("Showing "+rowCount+" of "+program.getEveAssetEventList().size()+" assets");
+		rowCount = eventTableModel.getRowCount();
+	}
+	public void shownAssetsChanged(){
+		String filter = "<i>Untitled</i>";
+		if (program.getSettings().getAssetFilters().containsValue(program.getToolPanel().getAssetFilters())){
+			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
+				if (entry.getValue().equals(program.getToolPanel().getAssetFilters())){
+					filter = entry.getKey();
+					break;
+				}
+			}
+		}
+		jRows.setText(
+				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				+"Showing "+rowCount+" of "+program.getEveAssetEventList().size()+" assets"
+				+" ("+filter+")");
 	}
 }
