@@ -226,6 +226,7 @@ public class Settings {
 		tableNumberColumns.add("Type ID");
 		tableNumberColumns.add("Type Count");
 		tableNumberColumns.add("Reprocessed");
+		tableNumberColumns.add("Security");
 
 	}
 

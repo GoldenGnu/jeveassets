@@ -177,7 +177,13 @@ public class EveAssetMatching {
 		if (column.equals("Type ID")) return eveAsset.getTypeId();
 		if (column.equals("Region")) return -1;
 		if (column.equals("Type Count")) return eveAsset.getTypeCount();
-		if (column.equals("Security")) return -1;
+		if (column.equals("Security")){
+			try {
+				return Double.valueOf( eveAsset.getSecurity());
+			} catch (NumberFormatException ex){
+				return -1;
+			}
+		}
 		if (column.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		return -1;
 	}
