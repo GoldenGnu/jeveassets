@@ -76,9 +76,7 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.table.JAssetTable;
-import net.nikr.eve.jeveasset.gui.table.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.table.EveAssetTableHeader;
-import net.nikr.eve.jeveasset.gui.table.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
 
 
@@ -147,8 +145,6 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		jTable.getTableHeader().addMouseListener(this);
 		jTable.getColumnModel().addColumnModelListener(this);
 		jTable.addMouseListener(this);
-		jTable.setDefaultRenderer(Double.class, new DoubleCellRenderer());
-		jTable.setDefaultRenderer(Long.class, new LongCellRenderer());
 		//install the sorting/filtering
 		TableComparatorChooser<EveAsset> eveAssetSorter =
 				TableComparatorChooser.install(jTable, eveAssetSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);

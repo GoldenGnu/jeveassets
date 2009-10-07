@@ -32,6 +32,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class JAssetTable extends JTable {
@@ -45,6 +46,8 @@ public class JAssetTable extends JTable {
 		this.setModel(eveAssetTableModel);
 		doubleCellRenderer = new DoubleCellRenderer();
 		tableCellRenderer = new DefaultTableCellRenderer();
+		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
+		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 	}
 
 	@Override
@@ -110,4 +113,26 @@ public class JAssetTable extends JTable {
 		}
 		return super.prepareRenderer(renderer, row, column);
 	}
+
+	public class LongCellRenderer extends DefaultTableCellRenderer {
+		public LongCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : Formater.integer(value));
+		}
+	}
+
+	public class DoubleCellRenderer extends DefaultTableCellRenderer {
+		public DoubleCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(Object value) {
+				setText((value == null) ? "" : Formater.number(value));
+			}
+		}
 }
