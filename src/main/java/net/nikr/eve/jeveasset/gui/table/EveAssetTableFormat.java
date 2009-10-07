@@ -143,4 +143,29 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		return new String();
 	}
+
+	public class LongComparator implements Comparator<Long>{
+		@Override
+		public int compare(Long o1, Long o2) {
+			return o1.compareTo(o2);
+		}
+	}
+	public class IntegerComparator implements Comparator<Integer> {
+		@Override
+		public int compare(Integer o1, Integer o2) {
+			return o1.compareTo(o2);
+		}
+	}
+	public class FloatComparator implements Comparator<Float> {
+		@Override
+		public int compare(Float o1, Float o2) {
+			return o1.compareTo(o2);
+		}
+	}
+	public class DoubleComparator implements Comparator<Double> {
+		@Override
+		public int compare(Double o1, Double o2) {
+			return o1.compareTo(o2);
+		}
+	}
 }
