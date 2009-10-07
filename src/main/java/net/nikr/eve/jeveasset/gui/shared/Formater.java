@@ -61,7 +61,11 @@ public class Formater {
 		return standard.format(number);
 	}
 	public static double numberDouble(Double number){
-		return Double.valueOf(twoDigs.format(number));
+		try {
+			return Double.valueOf(twoDigs.format(number));
+		} catch (NumberFormatException ex){
+			return -1;
+		}
 	}
 	public static String integer(Object obj){
 		return standardInteger.format(obj);
