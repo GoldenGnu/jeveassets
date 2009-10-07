@@ -47,7 +47,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
-import net.nikr.eve.jeveasset.gui.shared.NumberPlainDocument;
+import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 
 
 public class ApiAddDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
@@ -72,9 +72,8 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 		jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 		jPanel.add(jUserIdLabel);
 
-		jUserId = new JTextField();
+		jUserId = new JNumberField("");
 		JCopyPopup.install(jUserId);
-		jUserId.setDocument( new NumberPlainDocument() );
 		jPanel.add(jUserId);
 
 		JLabel jApiKeyLabel = new JLabel("API Key (Full)");

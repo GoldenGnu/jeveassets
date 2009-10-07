@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
-import net.nikr.eve.jeveasset.gui.shared.NumberPlainDocument;
+import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
 
 
@@ -59,17 +59,15 @@ public class EveCentralSettings extends JSettingsPanel {
 
 		JLabel jQuantityLabel = new JLabel("Minimum quantity of orders:");
 
-		jQuantity = new JTextField();
+		jQuantity = new JNumberField();
 		JCopyPopup.install(jQuantity);
-		jQuantity.setDocument( new NumberPlainDocument() );
 
 		JLabel jQuantityUnlimitedLabel = new JLabel("(Zero for no limit)");
 
 		JLabel jAgeLabel = new JLabel("Maximum age of orders (in days):");
 
-		jAge = new JTextField();
+		jAge = new JNumberField();
 		JCopyPopup.install(jAge);
-		jAge.setDocument( new NumberPlainDocument() );
 
 		JLabel jDefaultPriceLabel = new JLabel("Price to use:");
 		jDefaultPrice = new JComboBox(EveAsset.PRICE_SOURCES);
