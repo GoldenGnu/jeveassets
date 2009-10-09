@@ -26,6 +26,8 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
@@ -34,6 +36,7 @@ import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -42,7 +45,9 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class StatusPanel extends JProgramPanel {
+public class StatusPanel extends JProgramPanel implements ActionListener {
+
+	public final static String ACTION_TIMER = "ACTION_TIMER";
 
 	//GUI
 	private JLabel jTask;
@@ -53,11 +58,15 @@ public class StatusPanel extends JProgramPanel {
 	private JLabel jAssetUpdate;
 	private JLabel jEveCentralUpdate;
 	private JLabel jMarketOrdersUpdate;
+	private JLabel jEveTime;
+	private Timer timer;
 	private JToolBar jToolBar;
 
 
 	public StatusPanel(Program program) {
 		super(program);
+
+
 
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
@@ -80,6 +89,8 @@ public class StatusPanel extends JProgramPanel {
 		jTask.setMaximumSize( new Dimension(Short.MAX_VALUE, 25));
 		jToolBar.add(jTask);
 
+		jEveTime = createLabel(120, "Eve Server Time", ImageGetter.getIcon("eve.png"));
+
 		jEveCentralUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
 
 		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
@@ -95,6 +106,9 @@ public class StatusPanel extends JProgramPanel {
 		jTotalValue = createLabel(120, "Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
 
 		addSpace(10);
+
+		timer = new Timer(5000, this);
+		timer.setActionCommand(ACTION_TIMER);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -166,6 +180,13 @@ public class StatusPanel extends JProgramPanel {
 			jMarketOrdersUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
 		}
 	}
+	public void updateEveTime(){
+		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow()) );
+		if (!timer.isRunning()){
+			timer.start();
+		}
+	}
+
 	public void setAverage(double n){
 		jAverage.setText(Formater.isk(n));
 	}
@@ -185,6 +206,7 @@ public class StatusPanel extends JProgramPanel {
 		setAverage(0);
 		setTotalValue(0);
 		setCount(0);
+		updateEveTime();
 	}
 	private void addIcon(Icon icon){
 		JLabel jLabel = new JLabel();
@@ -220,5 +242,12 @@ public class StatusPanel extends JProgramPanel {
 	@Override
 	protected JProgramPanel getThis(){
 		return this;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (ACTION_TIMER.equals(e.getActionCommand())){
+			updateEveTime();
+		}
 	}
 }

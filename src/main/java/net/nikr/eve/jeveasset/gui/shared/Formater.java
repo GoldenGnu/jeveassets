@@ -87,6 +87,9 @@ public class Formater {
 			return weekdayTime.format(date);
 		}
 	}
+	public static String timeOnly(Date date){
+		return timeonly.format(date);
+	}
 	public static String simpleDate(Date date){
 		return simpleDate.format(date);
 	}
