@@ -68,7 +68,7 @@ import org.apache.log4j.Logger;
 public class Program implements ActionListener {
 
 	//"Major.Minor.Bugfix [BETA n] [BUILD #n])";
-	public static final String PROGRAM_VERSION = "1.1.0";
+	public static final String PROGRAM_VERSION = "1.2.0 DEV";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
@@ -110,41 +110,6 @@ public class Program implements ActionListener {
 	private EventList<EveAsset> eveAssetEventList;
 
 	public Program(String[] args){
-		//FIXME before release:
-		//		Fix copyright in all source files before release
-		//		Update version number and splash screen
-		//		set DEBUG to false (and clean build)
-		//		Write change log
-
-		//TEST converted locationIDs:
-		//		Items in space AKA secure container (should work)
-		//		POS (should work)
-		//		NPC Stations (should work)
-		//		Offices (should work)
-
-		//Item browser
-		
-		//Auto Complete for FilterPanel
-
-		//Wallet Journal
-
-		//Wallet Transactions
-		
-		//Custom price report, with price data from multiple regions
-
-		/*Category report
-					1. Sorts as per the main page. In my case that would allow me to run
-					   reports for various combinations of characters. Eve Assets does it by
-					   allowing you to choose saved filters, from memory.
-					2. Sub totals for group and category.
-					3. Variable columns allowing the user to choose different price/value
-					   options and compare them on one page.
-					4. A csv export function
-		 */
-
-		//it seems when i activate a filter and afterwards add another char/api
-		//		it throws an unhandled exception when updating
-		//			Can't reproduce...
 		
 		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
 		
@@ -152,8 +117,6 @@ public class Program implements ActionListener {
 			Log.enableDebug();
 			Log.debug("FORCE_UPDATE: "+FORCE_UPDATE+" FORCE_NO_UPDATE: "+FORCE_NO_UPDATE);
 		}
-		
-
 
 		//Config log4j
 		BasicConfigurator.configure();
