@@ -34,9 +34,11 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,6 +49,8 @@ import javax.swing.table.DefaultTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JUneditableTableModel;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
 import net.nikr.eve.jeveasset.io.Online;
@@ -59,16 +63,27 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	public final static String ACTION_DONE = "ACTION_DONE";
 	public final static String ACTION_REMOVE = "ACTION_REMOVE";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
+	public final static String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
+	public final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
+	public final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
+	public final static String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
+	public final static String ACTION_CORPORATION_CHECK_ALL = "ACTION_CORPORATION_CHECK_ALL";
+	public final static String ACTION_CORPORATION_UNCHECK_ALL = "ACTION_CORPORATION_UNCHECK_ALL";
+	public final static String ACTION_CORPORATION_CHECK_SELECTED = "ACTION_CORPORATION_CHECK_SELECTED";
+	public final static String ACTION_CORPORATION_UNCHECK_SELECTED = "ACTION_CORPORATION_UNCHECK_SELECTED";
 
 	//GUI
 	private ApiAddDialog apiAddDialog;
-	private DefaultTableModel usersTableModel;
-	private JScrollPane jApiScrollPanel;
-	private DefaultTableModel humansTableModel;
-	private JTable jApiTable;
+	private DefaultTableModel accountTableModel;
+	private JScrollPane jAccountScrollPanel;
+	private DefaultTableModel humanTableModel;
+	private JTable jHumanTable;
+	private JTable jAccountTable;
 	private JButton jRemove;
 	private JButton jEdit;
 	private JButton jAdd;
+	private JDropDownButton jAssets;
+	private JDropDownButton jCorporation;
 	private JButton jDone;
 
 	private CheckHumanTask checkHumanTask;
@@ -85,13 +100,13 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 
 		//Api Table
 		String[] columnNames = {"User", "Full API Key"};
-		usersTableModel = new JUneditableTableModel(columnNames);
-		jApiTable = new JTable( usersTableModel );
-		jApiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		jApiTable.getTableHeader().setReorderingAllowed(false);
-		jApiTable.getTableHeader().setResizingAllowed(false);
-		jApiScrollPanel = new JScrollPane(jApiTable);
-		jPanel.add(jApiScrollPanel);
+		accountTableModel = new JUneditableTableModel(columnNames);
+		jAccountTable = new JTable( accountTableModel );
+		jAccountTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		jAccountTable.getTableHeader().setReorderingAllowed(false);
+		jAccountTable.getTableHeader().setResizingAllowed(false);
+		jAccountScrollPanel = new JScrollPane(jAccountTable);
+		jPanel.add(jAccountScrollPanel);
 
 		//Add Button
 		jAdd = new JButton("Add");
@@ -99,7 +114,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		jAdd.addActionListener(this);
 		jPanel.add(jAdd);
 
-		//Remove Button
+		//Edit Button
 		jEdit = new JButton("Edit");
 		jEdit.setActionCommand(ACTION_EDIT);
 		jEdit.addActionListener(this);
@@ -111,12 +126,66 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		jRemove.addActionListener(this);
 		jPanel.add(jRemove);
 
+		jAssets = new JDropDownButton("Edit");
+		jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
+		jPanel.add(jAssets);
+
+		JMenuItem menuItem;
+
+		menuItem = new JMenuItem("Check All Asssets");
+		menuItem.setActionCommand(ACTION_ASSETS_CHECK_ALL);
+		menuItem.addActionListener(this);
+		jAssets.add(menuItem);
+		
+		menuItem = new JMenuItem("Uncheck All Asssets");
+		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_ALL);
+		menuItem.addActionListener(this);
+		jAssets.add(menuItem);
+		
+		jAssets.addSeparator();
+
+		menuItem = new JMenuItem("Check Selected Asssets");
+		menuItem.setActionCommand(ACTION_ASSETS_CHECK_SELECTED);
+		menuItem.addActionListener(this);
+		jAssets.add(menuItem);
+
+		menuItem = new JMenuItem("Uncheck Selected Asssets");
+		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_SELECTED);
+		menuItem.addActionListener(this);
+		jAssets.add(menuItem);
+		
+		jCorporation = new JDropDownButton("Edit");
+		jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
+
+		menuItem = new JMenuItem("Check All Corporations");
+		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_ALL);
+		menuItem.addActionListener(this);
+		jCorporation.add(menuItem);
+
+		menuItem = new JMenuItem("Uncheck All Corporations");
+		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_ALL);
+		menuItem.addActionListener(this);
+		jCorporation.add(menuItem);
+
+		jCorporation.addSeparator();
+
+		menuItem = new JMenuItem("Check Selected Corporations");
+		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_SELECTED);
+		menuItem.addActionListener(this);
+		jCorporation.add(menuItem);
+
+		menuItem = new JMenuItem("Uncheck Selected Corporations");
+		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_SELECTED);
+		menuItem.addActionListener(this);
+		jCorporation.add(menuItem);
+
+		jPanel.add(jCorporation);
 
 		//Human/Characters Table
 		String[] characterColumnNames = {"User", "Name", "Corporation", "Corporation Assets", "Show Assets"};
-		humansTableModel = new JUneditableTableModel(characterColumnNames);
-		humansTableModel.addTableModelListener(this);
-		JTable jHumanTable = new JTable( humansTableModel );
+		humanTableModel = new JUneditableTableModel(characterColumnNames);
+		humanTableModel.addTableModelListener(this);
+		jHumanTable = new JTable( humanTableModel );
 		jHumanTable.getTableHeader().setReorderingAllowed(false);
 		JScrollPane jCharacterScrollPanel = new JScrollPane(jHumanTable);
 		jPanel.add(jCharacterScrollPanel);
@@ -130,54 +199,80 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 			.addGroup(layout.createParallelGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jApiScrollPanel, 550, 550, 550)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jRemove, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
-				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jCharacterScrollPanel, 550, 550, 550)
-					.addComponent(jDone, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
+				.addComponent(jAccountScrollPanel, 550, 550, 550)
+				.addComponent(jCharacterScrollPanel, 550, 550, 550)
+			)
+			.addGroup(layout.createParallelGroup()
+				.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jRemove, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jAssets, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jCorporation, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jDone, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 			)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jApiScrollPanel, 142, 142, 142)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAccountScrollPanel, 142, 142, 142)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					)
 				)
-				.addComponent(jCharacterScrollPanel, 142, 142, 142)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jCharacterScrollPanel, 142, 142, 142)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					)
+				)
 				.addComponent(jDone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 		updateTable();
 	}
 
 	public void updateTable(){
+		
+
+		//Save HumanTable selected rows
+		List<Long> humanSelectedIds = new Vector<Long>();
+		for (int a = 0; a < humanTableModel.getRowCount(); a++){
+			if (jHumanTable.getSelectionModel().isSelectedIndex(a)){
+				humanSelectedIds.add( Long.valueOf( (String) jHumanTable.getValueAt(a, 0) ) );
+			}
+		}
+		//Clear rows
+		accountTableModel.setRowCount(0);
+		humanTableModel.setRowCount(0);
+
+		//Update rows (Add all rows)
 		List<Account> accounts = program.getSettings().getAccounts();
-		usersTableModel.setRowCount(0);
-		humansTableModel.setRowCount(0);
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
-			usersTableModel.addRow( new String[] {String.valueOf(account.getUserID() ), account.getApiKey()});
+			accountTableModel.addRow( new String[] {String.valueOf(account.getUserID() ), account.getApiKey()});
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++){
 				Human human = humans.get(b);
-				humansTableModel.addRow( new Object[] {String.valueOf(human.getCharacterID()), human.getName(), human.getCorporation(), human.isUpdateCorporationAssets(), human.isShowAssets()} );
+				humanTableModel.addRow( new Object[] {String.valueOf(human.getCharacterID()), human.getName(), human.getCorporation(), human.isUpdateCorporationAssets(), human.isShowAssets()} );
+				if (humanSelectedIds.contains(human.getCharacterID())){ //Restore selection
+					jHumanTable.getSelectionModel().addSelectionInterval(humanTableModel.getRowCount()-1, humanTableModel.getRowCount()-1);
+				}
+
 			}
 		}
-		if (jApiTable.getRowCount() > 0){
-			jApiTable.setRowSelectionInterval(0, 0);
+		if (jAccountTable.getRowCount() > 0){
+			jAccountTable.setRowSelectionInterval(0, 0);
 			jRemove.setEnabled(true);
 			jEdit.setEnabled(true);
+			jAssets.setEnabled(true);
+			jCorporation.setEnabled(true);
 		} else {
 			jRemove.setEnabled(false);
 			jEdit.setEnabled(false);
+			jAssets.setEnabled(false);
+			jCorporation.setEnabled(false);
 		}
 	}
 
@@ -185,6 +280,35 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		checkHumanTask = new CheckHumanTask(apiAddDialog.getUserId(), apiAddDialog.getApiKey());
 		checkHumanTask.addPropertyChangeListener( new addApiKey());
 		checkHumanTask.execute();
+	}
+
+	private void checkAssets(boolean selected, boolean check, boolean assets){
+		List<Long> ids = new Vector<Long>();
+		if (selected){
+			int[] selectedRows = jHumanTable.getSelectedRows();
+			for (int a = 0; a < selectedRows.length; a++){
+				String s = (String) jHumanTable.getValueAt(selectedRows[a], 0);
+				ids.add( Long.valueOf(s) );
+			}
+		}
+		List<Account> accounts = program.getSettings().getAccounts();
+		for (int b = 0; b < accounts.size(); b++){
+			Account account = accounts.get(b);
+			List<Human> humans = account.getHumans();
+			for (int c = 0; c < humans.size(); c++){
+				Human human = humans.get(c);
+				if (ids.contains(human.getCharacterID()) || !selected){
+					if (assets){
+						shownAssetsCopy.put(human.getCharacterID(), check);
+						human.setShowAssets(check);
+					} else {
+						corpAssetsCopy.put(human.getCharacterID(), check);
+						human.setUpdateCorporationAssets(check);
+					}
+				}
+			}
+		}
+		updateTable();
 	}
 
 	@Override
@@ -199,8 +323,8 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 
 	@Override
 	protected void windowShown() {
-		jApiTable.getColumnModel().getColumn(0).setPreferredWidth(65);
-		jApiTable.getColumnModel().getColumn(1).setPreferredWidth(jApiScrollPanel.getViewportBorderBounds().width - 65); //455
+		jAccountTable.getColumnModel().getColumn(0).setPreferredWidth(65);
+		jAccountTable.getColumnModel().getColumn(1).setPreferredWidth(jAccountScrollPanel.getViewportBorderBounds().width - 65); //455
 	}
 
 	@Override
@@ -251,9 +375,9 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			save();
 		}
 		if (ACTION_EDIT.equals(e.getActionCommand())) {
-			int row = jApiTable.getSelectedRow();
-			int userID = Integer.valueOf( (String) jApiTable.getValueAt(row, 0));
-			String oldApiKey = (String) jApiTable.getValueAt(row, 1);
+			int row = jAccountTable.getSelectedRow();
+			int userID = Integer.valueOf( (String) jAccountTable.getValueAt(row, 0));
+			String oldApiKey = (String) jAccountTable.getValueAt(row, 1);
 			String newApiKey = (String) JOptionPane.showInputDialog(this.getDialog(), "Enter new api key", "Edit API Key", JOptionPane.PLAIN_MESSAGE, null, null, oldApiKey);
 			if (newApiKey == null){ //Cancel - do nothing
 				return;
@@ -265,13 +389,13 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			
 		}
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
-			int selectedRow = jApiTable.getSelectedRow();
+			int selectedRow = jAccountTable.getSelectedRow();
 			if (selectedRow == -1){
 				JOptionPane.showMessageDialog(program.getFrame(), "Nothing to remove...", "Remove Api Key", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			int userID = Integer.parseInt((String)usersTableModel.getValueAt(selectedRow, 0));
-			String apiKey = (String) usersTableModel.getValueAt(selectedRow, 1);
+			int userID = Integer.parseInt((String)accountTableModel.getValueAt(selectedRow, 0));
+			String apiKey = (String) accountTableModel.getValueAt(selectedRow, 1);
 
 			List<Account> accounts =  program.getSettings().getAccounts();
 
@@ -294,17 +418,49 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 							users = users + human.getName()+"\r\n";
 						}
 					}
-					
 				}
 			}
 
 			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Remove API Key: "+userID+"?\r\n"+users, "Remove Api Key", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
-				usersTableModel.removeRow(selectedRow);
+				accountTableModel.removeRow(selectedRow);
 				program.getSettings().getAccounts().remove( tempAccount );
 				updateTable();
 				program.assetsChanged();
 			}
+		}
+		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())){
+			checkAssets(false, true, true);
+		}
+
+		if (ACTION_ASSETS_UNCHECK_ALL.equals(e.getActionCommand())){
+			checkAssets(false, false, true);
+		}
+
+		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())){
+			
+			checkAssets(true, true, true);
+
+		}
+
+		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())){
+			checkAssets(true, false, true);
+		}
+
+		if (ACTION_CORPORATION_CHECK_ALL.equals(e.getActionCommand())){
+			checkAssets(false, true, false);
+		}
+
+		if (ACTION_CORPORATION_UNCHECK_ALL.equals(e.getActionCommand())){
+			checkAssets(false, false, false);
+		}
+
+		if (ACTION_CORPORATION_CHECK_SELECTED.equals(e.getActionCommand())){
+			checkAssets(true, true, false);
+		}
+
+		if (ACTION_CORPORATION_UNCHECK_SELECTED.equals(e.getActionCommand())){
+			checkAssets(true, false, false);
 		}
 	}
 	
@@ -315,8 +471,8 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			int rowEnd = e.getLastRow();
 			int column = e.getColumn();
 			for (int a = rowStart; a <= rowEnd; a++){
-				boolean booleanColumn = (Boolean) humansTableModel.getValueAt(a, column);
-				String characterID = (String) humansTableModel.getValueAt(a, 0);
+				boolean booleanColumn = (Boolean) humanTableModel.getValueAt(a, column);
+				String characterID = (String) humanTableModel.getValueAt(a, 0);
 				List<Account> accounts = program.getSettings().getAccounts();
 				for (int b = 0; b < accounts.size(); b++){
 					Account account = accounts.get(b);
