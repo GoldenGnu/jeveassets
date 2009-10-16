@@ -140,7 +140,7 @@ public class TablePanel extends JProgramPanel
 		eveAssetTableModel.addTableModelListener(this);
 
 		//Table
-		jTable = new JAssetTable(eveAssetTableModel);
+		jTable = new JAssetTable(program, eveAssetTableModel);
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
 		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.getTableHeader().setResizingAllowed(true);

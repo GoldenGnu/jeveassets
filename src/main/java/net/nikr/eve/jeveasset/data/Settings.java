@@ -74,6 +74,7 @@ public class Settings {
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
+	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
 
 	private static boolean portable = false;
 	
@@ -124,6 +125,8 @@ public class Settings {
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_WINDOW, false);
 		flags.put(FLAG_FILTER_ON_ENTER, false);
+		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
+
 		
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 		marketstatsNextUpdate = Settings.getGmtNow();
@@ -589,10 +592,15 @@ public class Settings {
 	}
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
-		//return filterOnEnter;
 	}
 	public void setFilterOnEnter(boolean filterOnEnter) {
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter);
+	}
+	public boolean isHighlightSelectedRows() {
+		return flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+	}
+	public void setHighlightSelectedRows(boolean filterOnEnter) {
+		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, filterOnEnter);
 	}
 	//Window
 	public Point getWindowLocation() {

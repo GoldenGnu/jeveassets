@@ -32,36 +32,41 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class FilterSettings extends JSettingsPanel {
+public class TableSettings extends JSettingsPanel {
 
 	private JCheckBox jEnterFilters;
+	private JCheckBox jMarkSelectedRow;
 
 
-	public FilterSettings(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Filter");
+	public TableSettings(Program program, JDialogCentered jDialogCentered) {
+		super(program, jDialogCentered.getDialog(), "Table");
 
 		jEnterFilters = new JCheckBox("Only filter when enter is pressed");
+
+		jMarkSelectedRow = new JCheckBox("Highlight selected row(s)");
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
+				.addComponent(jMarkSelectedRow)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnterFilters)
+				.addComponent(jMarkSelectedRow)
 		);
-
-
 	}
 
 	@Override
 	public void save() {
 		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
+		program.getSettings().setHighlightSelectedRows(jMarkSelectedRow.isSelected());
 	}
 
 	@Override
 	public void load() {
 		jEnterFilters.setSelected(program.getSettings().isFilterOnEnter());
+		jMarkSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
 	}
 
 	@Override

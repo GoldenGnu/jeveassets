@@ -31,6 +31,7 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
@@ -39,12 +40,17 @@ public class JAssetTable extends JTable {
 
 	private EventTableModel<EveAsset> eveAssetTableModel;
 	private DoubleCellRenderer doubleCellRenderer;
+	private LongCellRenderer longCellRenderer;
 	private TableCellRenderer tableCellRenderer;
 
-	public JAssetTable(EventTableModel<EveAsset> eveAssetTableModel) {
+	private Program program;
+
+	public JAssetTable(Program program, EventTableModel<EveAsset> eveAssetTableModel) {
+		this.program = program;
 		this.eveAssetTableModel = eveAssetTableModel;
 		this.setModel(eveAssetTableModel);
 		doubleCellRenderer = new DoubleCellRenderer();
+		longCellRenderer = new LongCellRenderer();
 		tableCellRenderer = new DefaultTableCellRenderer();
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
@@ -73,6 +79,7 @@ public class JAssetTable extends JTable {
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		if (eveAssetTableModel.getRowCount() >= row){
 			EveAsset eveAsset = eveAssetTableModel.getElementAt(row);
+			//User set price
 			if (eveAsset.isUserPrice() && (eveAsset.isBpo()|| !eveAsset.isBlueprint()) && columnName.equals("Price")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
@@ -82,6 +89,7 @@ public class JAssetTable extends JTable {
 				}
 				return c;
 			}
+			//Blueprint Original
 			if (eveAsset.isBpo()
 					&& eveAsset.isBlueprint()
 					&& (columnName.equals("Price")
@@ -101,6 +109,7 @@ public class JAssetTable extends JTable {
 				}
 				return c;
 			}
+			//Reproccessed is greater then price
 			if (eveAsset.getPriceReprocessed() > eveAsset.getPrice() && columnName.equals("Reprocessed")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
@@ -108,6 +117,14 @@ public class JAssetTable extends JTable {
 				} else {
 					c.setBackground( this.getSelectionBackground().darker() );
 				}
+				return c;
+			}
+			//Selected row highlighting
+			if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
+				Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				c.setBackground( new Color(230,230,255) );
 				return c;
 			}
 		}
