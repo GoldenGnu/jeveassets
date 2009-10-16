@@ -30,17 +30,14 @@ import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 
 
 public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<EveAsset> implements Listener<EveAsset> {
 
 	private EventList<EveAssetMatcherEditor> matcherEditors;
-	private Program program;
 
-	public EveAssetLogicalMatcherEditor(Program program, EventList<EveAssetMatcherEditor> matcherEditors) {
-		this.program = program;
+	public EveAssetLogicalMatcherEditor(EventList<EveAssetMatcherEditor> matcherEditors) {
 		this.matcherEditors = matcherEditors;
 		for (int a = 0; a < matcherEditors.size(); a++){
 			matcherEditors.get(a).addMatcherEditorListener(this);
@@ -51,7 +48,6 @@ public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<EveAsset
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {
 		this.fireChanged(new EveAssetLogicalMatcher(matcherEditors));
-		program.shownAssetsChanged();
 	}
 
 	private static class EveAssetLogicalMatcher implements Matcher<EveAsset> {

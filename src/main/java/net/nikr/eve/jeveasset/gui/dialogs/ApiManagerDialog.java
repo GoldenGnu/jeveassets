@@ -333,11 +333,11 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	@Override
 	protected void save() {
 		if (!shownAssetsCopy.equals(shownAssets)){
-			program.assetsChanged();
+			program.updateEventList();
 			program.charactersChanged();
 		}
 		if (!corpAssetsCopy.equals(corpAssets)){
-			program.assetsChanged();
+			program.updateEventList();
 			program.charactersChanged();
 			JOptionPane.showMessageDialog(program.getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
@@ -426,7 +426,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				accountTableModel.removeRow(selectedRow);
 				program.getSettings().getAccounts().remove( tempAccount );
 				updateTable();
-				program.assetsChanged();
+				program.updateEventList();
 			}
 		}
 		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())){

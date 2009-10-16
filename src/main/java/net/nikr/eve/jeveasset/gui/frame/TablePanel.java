@@ -36,7 +36,9 @@ import javax.swing.event.TableColumnModelEvent;
 import net.nikr.eve.jeveasset.gui.table.EveAssetTableFormat;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Component;
@@ -80,7 +82,9 @@ import net.nikr.eve.jeveasset.gui.table.EveAssetTableHeader;
 import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
 
 
-public class TablePanel extends JProgramPanel implements MouseListener, ActionListener, TableColumnModelListener, ClipboardOwner, TableModelListener {
+public class TablePanel extends JProgramPanel
+		implements MouseListener, ActionListener, TableColumnModelListener,
+		ClipboardOwner, TableModelListener {
 
 	public final static String ACTION_AUTO_RESIZING_COLUMNS_TEXT = "ACTION_AUTO_RESIZING_COLUMNS_TEXT";
 	public final static String ACTION_AUTO_RESIZING_COLUMNS_WINDOW = "ACTION_AUTO_RESIZING_COLUMNS_WINDOW";
@@ -107,15 +111,16 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 
 	//Table Data
-	private EveAssetTableFormat eveAssetTableFormat;
 	private EventTableModel<EveAsset> eveAssetTableModel;
-	private FilterList<EveAsset> eveAssetTextFiltered;
 	private EventList<EveAsset> eveAssetEventList;
+	private EventSelectionModel selectionModel;
 	
 	//Data
 	private boolean columnMoved = false;
 	private List<String> tempMainTableColumnNames;
 	private List<String> tempMainTableColumnVisible;
+	private int rowsLastTime = 0;
+	private int rowsCount = 0;
 	
 	public TablePanel(Program program) {
 		super(program);
@@ -125,16 +130,16 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 		eveAssetEventList = program.getEveAssetEventList();
 		//For soring the table
-		SortedList<EveAsset> eveAssetSortedList = new SortedList<EveAsset>(eveAssetEventList);
-		eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
+		SortedList<EveAsset> sortedList = new SortedList<EveAsset>(eveAssetEventList);
+		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
-		eveAssetTextFiltered = new FilterList<EveAsset>(eveAssetSortedList);
-		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(program, eveAssetTextFiltered);
-
-		//Table
-		eveAssetTableModel = new EventTableModel<EveAsset>(eveAssetTextFiltered, eveAssetTableFormat);
+		FilterList<EveAsset> textFilteredList = new FilterList<EveAsset>(sortedList);
+		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(textFilteredList);
+		//Table Model
+		eveAssetTableModel = new EventTableModel<EveAsset>(textFilteredList, eveAssetTableFormat);
 		eveAssetTableModel.addTableModelListener(this);
 
+		//Table
 		jTable = new JAssetTable(eveAssetTableModel);
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -147,16 +152,21 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		jTable.addMouseListener(this);
 		//install the sorting/filtering
 		TableComparatorChooser<EveAsset> eveAssetSorter =
-				TableComparatorChooser.install(jTable, eveAssetSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+				TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 
-		//Table Scrollpanel
+		//Table Selection
+		selectionModel = new EventSelectionModel(textFilteredList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
 
+		//Table Button
 		jColumnsSelection = new JDropDownButton(JDropDownButton.RIGHT);
 		jColumnsSelection.setIcon( ImageGetter.getIcon("bullet_arrow_down.png") );
 		jColumnsSelection.setHorizontalAlignment(SwingConstants.RIGHT);
 		jColumnsSelection.setBorder(null);
 		jColumnsSelection.addMouseListener(this);
 
+		//Table Scrollpanel
 		JScrollPane jTableSPanel = new JScrollPane(jTable);
 		jTableSPanel.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, jColumnsSelection);
 		jTableSPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -166,12 +176,11 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 		//Filter panel(s)
 		toolPanel = new ToolPanel(program, matcherEditorManager);
-		eveAssetTableModel.addTableModelListener(toolPanel);
 		this.getPanel().add(toolPanel.getPanel());
 
 		statusPanel = new StatusPanel(program);
 
-		updateColumnPopup();
+		updateColumnPopupMenu();
 		
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -197,15 +206,45 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		
 	}
 
+	private void updateStatusbar(){
+		double total = 0;
+		long count = 0;
+		double average = 0;
+		float volume = 0;
+		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
+			EveAsset eveAsset = eveAssetTableModel.getElementAt(a);
+			total = total + (eveAsset.getPrice() * eveAsset.getCount());
+			count = count + eveAsset.getCount();
+			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
+		}
+		if (count > 0 && total > 0) average = total / count;
+		program.getStatusPanel().setTotalValue(total);
+		program.getStatusPanel().setCount(count);
+		program.getStatusPanel().setAverage(average);
+		program.getStatusPanel().setVolume(volume);
+	}
+
+	private void updateToolPanel(){
+		String filter = "<i>Untitled</i>";
+		if (program.getSettings().getAssetFilters().containsValue(program.getToolPanel().getAssetFilters())){
+			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
+				if (entry.getValue().equals(program.getToolPanel().getAssetFilters())){
+					filter = entry.getKey();
+					break;
+				}
+			}
+		}
+		toolPanel.setToolbarText(
+				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				+"Showing "+jTable.getRowCount()+" of "+program.getEveAssetEventList().size()+" assets"
+				+" ("+filter+")");
+	}
+
 	public EveAsset getSelectedAsset(){
 		return eveAssetTableModel.getElementAt(jTable.getSelectedRow());
 	}
 
-	public void shownAssetsChanged(){
-		updateAutoCoulmnsSize();
-	}
-
-	private void updateAutoCoulmnsSize(){
+	private void updateCoulmnsSize(){
 		if (program.getSettings().isAutoResizeColumnsText()){
 			autoResizeColumns();
 		}
@@ -217,23 +256,13 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		}
 	}
 
-	private void resetSelection(){
-		jTable.clearSelection();
-		if (jTable.getModel().getRowCount() >  0){
-			jTable.setRowSelectionInterval(0, 0);
-			jTable.setColumnSelectionInterval(0, 0);
-			
-		}
-	}
-
 	private void updateTableStructure(){
 		if (program.getSettings().isAutoResizeColumnsText()){
 			eveAssetTableModel.fireTableStructureChanged();
-			updateAutoCoulmnsSize();
+			updateCoulmnsSize();
 		} else {
 			Map<String, Integer> widths = new HashMap<String, Integer>();
 			for (int a = 0; a < jTable.getColumnCount(); a++){
-				//int width = jTable.getColumnModel().getColumn(a).getWidth();
 				int width = jTable.getColumnModel().getColumn(a).getPreferredWidth();
 				String name = (String)jTable.getColumnModel().getColumn(a).getHeaderValue();
 				widths.put(name, width);
@@ -250,7 +279,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			}
 		}
 	}
-
+	
 	private void autoResizeColumns() {
 		if (!eveAssetEventList.isEmpty()){
 			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -280,12 +309,12 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		}
 		column.setPreferredWidth(maxWidth+4);
 	}
-	private void updateShownColumns(){
+	private void updateColumnMenus(){
 		program.getFrame().getMenu().updateColumnSelectionMenu();
-		updateColumnPopup();
+		updateColumnPopupMenu();
 	}
 
-	private void updateColumnPopup(){
+	private void updateColumnPopupMenu(){
 		jColumnsSelection.clearMenu();
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JRadioButtonMenuItem jRadioButtonMenuItem;
@@ -471,8 +500,6 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
-
-				//FIXME Add greater/less then column
 			}
 		}
 		
@@ -552,19 +579,19 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 		if (ACTION_RESET_COLUMNS_TO_DEFAULT.equals(e.getActionCommand())){
 			program.getSettings().resetMainTableColumns();
 			updateTableStructure();
-			updateShownColumns();
+			updateColumnMenus();
 			if (program.getSettings().isAutoResizeColumnsWindow()){
 				for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
 					jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
 				}
 			}
-			updateAutoCoulmnsSize();
+			updateCoulmnsSize();
 		}
 		if (ACTION_AUTO_RESIZING_COLUMNS_TEXT.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(true);
 			program.getSettings().setAutoResizeColumnsWindow(false);
-			updateAutoCoulmnsSize();
-			updateShownColumns();
+			updateCoulmnsSize();
+			updateColumnMenus();
 		}
 		if (ACTION_AUTO_RESIZING_COLUMNS_WINDOW.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(false);
@@ -572,8 +599,8 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
 				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
 			}
-			updateAutoCoulmnsSize();
-			updateShownColumns();
+			updateCoulmnsSize();
+			updateColumnMenus();
 		}
 		if (ACTION_DISABLE_AUTO_RESIZING_COLUMNS.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(false);
@@ -582,8 +609,8 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				int width = jTable.getColumnModel().getColumn(a).getWidth();
 				jTable.getColumnModel().getColumn(a).setPreferredWidth(width);
 			}
-			updateAutoCoulmnsSize();
-			updateShownColumns();
+			updateCoulmnsSize();
+			updateColumnMenus();
 		}
 		if (ACTION_COPY_TABLE_SELECTED_CELLS.equals(e.getActionCommand())){
 			String s = "";
@@ -654,11 +681,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 					}
 				}
 			}
-
-
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(jTable.getSelectedRows()[0]);
-			
-			program.assetsChanged();
+			program.updateEventList();
 			return;
 		}
 
@@ -678,7 +701,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 				program.getSettings().setTableColumnVisible(mainTableColumnVisible);
 			}
 			updateTableStructure();
-			updateShownColumns();
+			updateColumnMenus();
 		}
 	}
 
@@ -704,7 +727,7 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 			program.getSettings().setTableColumnNames(tempMainTableColumnNames);
 			program.getSettings().setTableColumnVisible(tempMainTableColumnVisible);
 			updateTableStructure();
-			updateShownColumns();
+			updateColumnMenus();
 		}
 		if (e.getSource().equals(jTable) && e.isPopupTrigger()){
 			showTablePopup(e);
@@ -762,24 +785,17 @@ public class TablePanel extends JProgramPanel implements MouseListener, ActionLi
 
 	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-
+	
 	@Override
-	public void tableChanged(TableModelEvent e) {
-		resetSelection();
-		double total = 0;
-		long count = 0;
-		double average = 0;
-		float volume = 0;
-		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(a);
-			total = total + (eveAsset.getPrice() * eveAsset.getCount());
-			count = count + eveAsset.getCount();
-			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
+	public void tableChanged(TableModelEvent e) { //Filter
+		if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
+		if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
+		if (Math.abs(rowsLastTime + rowsCount) == jTable.getRowCount()){ //Last Table Update
+			rowsLastTime = jTable.getRowCount();
+			rowsCount = 0;
+			updateCoulmnsSize();
+			updateStatusbar();
+			updateToolPanel();
 		}
-		if (count > 0 && total > 0) average = total / count;
-		program.getStatusPanel().setTotalValue(total);
-		program.getStatusPanel().setCount(count);
-		program.getStatusPanel().setAverage(average);
-		program.getStatusPanel().setVolume(volume);
 	}
 }

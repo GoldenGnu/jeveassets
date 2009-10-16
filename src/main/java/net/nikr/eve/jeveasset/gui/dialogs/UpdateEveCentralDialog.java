@@ -62,7 +62,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 		if (value == 100 && updateEveCentralTask.isTaskDone()){
 			updateEveCentralTask.setTaskDone(false);
 			if (updateEveCentralTask.updated){
-				program.assetsChanged();
+				program.updateEventList();
 			}
 			program.getStatusPanel().updateEveCentralDate();
 

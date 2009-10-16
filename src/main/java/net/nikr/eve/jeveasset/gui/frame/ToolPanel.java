@@ -26,13 +26,11 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
-import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
@@ -42,8 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
@@ -52,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
 
 
-public class ToolPanel extends JProgramPanel implements ActionListener, TableModelListener {
+public class ToolPanel extends JProgramPanel implements ActionListener {
 	
 	public final static String ACTION_ADD_FIELD = "ACTION_ADD_FILTER";
 	public final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
@@ -196,7 +192,6 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 		if (filters.size() == 1){
 			filters.get(0).hideButton();
 		}
-		program.shownAssetsChanged();
 		this.updateLayout();
 	}
 	private void resetFilters(){
@@ -285,6 +280,10 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 		jLoadFilter.add(jMenuItem);
 	}
 
+	public void setToolbarText(String text){
+		jRows.setText(text);
+	}
+
 	@Override
 	protected JProgramPanel getThis(){
 		return this;
@@ -319,26 +318,5 @@ public class ToolPanel extends JProgramPanel implements ActionListener, TableMod
 			return;
 		}
 		loadFilter(e.getActionCommand());
-	}
-
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		EventTableModel eventTableModel = (EventTableModel) e.getSource();
-		rowCount = eventTableModel.getRowCount();
-	}
-	public void shownAssetsChanged(){
-		String filter = "<i>Untitled</i>";
-		if (program.getSettings().getAssetFilters().containsValue(program.getToolPanel().getAssetFilters())){
-			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
-				if (entry.getValue().equals(program.getToolPanel().getAssetFilters())){
-					filter = entry.getKey();
-					break;
-				}
-			}
-		}
-		jRows.setText(
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+"Showing "+rowCount+" of "+program.getEveAssetEventList().size()+" assets"
-				+" ("+filter+")");
 	}
 }

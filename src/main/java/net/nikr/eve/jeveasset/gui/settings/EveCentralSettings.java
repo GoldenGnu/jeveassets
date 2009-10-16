@@ -133,7 +133,7 @@ public class EveCentralSettings extends JSettingsPanel {
 		int age = Integer.valueOf(jAge.getText());
 		int quantity = Integer.valueOf(jQuantity.getText());
 		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
-		if (!defaultPrice.equals(EveAsset.getPriceSource())) program.assetsChanged();
+		if (!defaultPrice.equals(EveAsset.getPriceSource())) program.updateEventList();
 		MarketstatSettings newMarketstatSettings = new MarketstatSettings(region, age, quantity, defaultPrice);
 		oldMarketstatSettings = program.getSettings().getMarketstatSettings();
 		program.getSettings().setMarketstatSettings( newMarketstatSettings );

@@ -68,7 +68,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 		if (value == 100 && updateAssetsTask.isTaskDone()){
 			updateAssetsTask.setTaskDone(false);
 			if (updateAssetsTask.updated){
-				program.assetsChanged();
+				program.updateEventList();
 				program.getStatusPanel().updateAssetDate();
 				program.getStatusPanel().updateEveCentralDate();
 			}

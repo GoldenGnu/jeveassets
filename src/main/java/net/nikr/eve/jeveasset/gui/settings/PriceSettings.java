@@ -189,7 +189,7 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 		//Update Settings
 		program.getSettings().setUserPrices(userPrices);
 		//Update table
-		program.assetsChanged();
+		program.updateEventList();
 		this.newUserPrice = null;
 	}
 

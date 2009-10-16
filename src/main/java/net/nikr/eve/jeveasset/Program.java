@@ -182,7 +182,7 @@ public class Program implements ActionListener {
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
-		assetsChanged();
+		updateEventList();
 		SplashUpdater.setProgress(100);
 		Log.info("Showing GUI");
 		frame.setVisible(true);
@@ -221,18 +221,15 @@ public class Program implements ActionListener {
 		this.getSaveFilterDialog().filtersChanged();
 		this.getToolPanel().filtersChanged();
 	}
-	public void shownAssetsChanged(){
-		tablePanel.shownAssetsChanged();
-		toolPanel.shownAssetsChanged();
-	}
-	public void assetsChanged(){
+	
+	public void updateEventList(){
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
 		eveAssetEventList.addAll( settings.getEventListAssets() );
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
-		shownAssetsChanged();
 	}
+	
 	public void exit(){
 		settings.saveSettings();
 		Log.info("Exiting...");
