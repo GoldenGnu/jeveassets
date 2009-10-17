@@ -195,81 +195,72 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	}
 
 	public void update() {
-		if (calcTotal()){
-			jOwners.removeAllItems();
-			for (int a = 0; a < owners.size(); a++){
-				jOwners.addItem(owners.get(a));
-			}
-			if (jOwners.getModel().getSize() > 0){
-				jOwners.setSelectedIndex(0);
-				jOwners.setEnabled(true);
-			} else {
-				jOwners.addItem("No character found");
-				jOwners.setEnabled(false);
-			}
-			
-			jCorps.removeAllItems();
-			for (int a = 0; a < corps.size(); a++){
-				jCorps.addItem(corps.get(a));
-			}
-			if (jCorps.getModel().getSize() > 0){
-				jCorps.setSelectedIndex(0);
-				jCorps.setEnabled(true);
-			} else {
-				jCorps.addItem("No corporation found");
-				jCorps.setEnabled(false);
-			}
-
-			Output output = new Output("Grand Total");
-			output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
-			output.addValue(Formater.isk(totalAccountBalance+totalItemsValue));
-			output.addNone();
-			output.addHeading(NAME_WALLET_BALANCE);
-			output.addValue(Formater.isk(totalAccountBalance));
-			output.addNone();
-			output.addHeading(NAME_ASSETS_VALUE);
-			output.addValue(Formater.isk(totalItemsValue));
-			output.addNone();
-
-			output.addHeading(NAME_BEST_ASSET);
-			if (bestItem != null){
-				output.addValue(bestItem.getName()+"<br/>"+Formater.isk(bestItem.getPrice()));
-			}
-			output.addNone();
-
-			output.addHeading(NAME_BEST_SHIP);
-			if (bestShip != null){
-				output.addValue(bestShip.getName()+"<br/>"+Formater.isk(bestShip.getPrice()));
-			}
-			output.addNone();
-
-			output.addHeading(NAME_BEST_MODULE);
-			if (bestModule != null){
-				output.addValue(bestModule.getName()+"<br/>"+Formater.isk(bestModule.getPrice()));
-			}
-			output.addNone();
-
-			jAll.setText(output.getOutput());
+		calcTotal();
+		jOwners.removeAllItems();
+		for (int a = 0; a < owners.size(); a++){
+			jOwners.addItem(owners.get(a));
+		}
+		if (jOwners.getModel().getSize() > 0){
+			jOwners.setEnabled(true);
 		} else {
 			jOwners.addItem("No character found");
 			jOwners.setEnabled(false);
+		}
+		jOwners.setSelectedIndex(0);
+
+		jCorps.removeAllItems();
+		for (int a = 0; a < corps.size(); a++){
+			jCorps.addItem(corps.get(a));
+		}
+		if (jCorps.getModel().getSize() > 0){
+			jCorps.setEnabled(true);
+		} else {
 			jCorps.addItem("No corporation found");
 			jCorps.setEnabled(false);
-			Output output = new Output("Grand Total");
-			output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
-			output.addNone();
-			output.addHeading(NAME_WALLET_BALANCE);
-			output.addNone();
-			output.addHeading(NAME_ASSETS_VALUE);
-			output.addNone();
-			output.addHeading(NAME_BEST_ASSET);
-			output.addNone(2);
-			output.addHeading(NAME_BEST_SHIP);
-			output.addNone(2);
-			output.addHeading(NAME_BEST_MODULE);
-			output.addNone(2);
-			jAll.setText(output.getOutput());
 		}
+		jCorps.setSelectedIndex(0);
+
+		Output output = new Output("Grand Total");
+		output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
+		if (totalAccountBalance != 0 || totalItemsValue != 0) output.addValue(Formater.isk(totalAccountBalance+totalItemsValue));
+		output.addNone();
+
+		output.addHeading(NAME_WALLET_BALANCE);
+		if (totalAccountBalance != 0) output.addValue(Formater.isk(totalAccountBalance));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_VALUE);
+		if (totalItemsValue != 0) output.addValue(Formater.isk(totalItemsValue));
+		output.addNone();
+
+		output.addHeading(NAME_BEST_ASSET);
+		if (bestItem != null){
+			output.addValue(bestItem.getName()+"<br/>"+Formater.isk(bestItem.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+		
+
+		output.addHeading(NAME_BEST_SHIP);
+		if (bestShip != null){
+			output.addValue(bestShip.getName()+"<br/>"+Formater.isk(bestShip.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+		
+
+		output.addHeading(NAME_BEST_MODULE);
+		if (bestModule != null){
+			output.addValue(bestModule.getName()+"<br/>"+Formater.isk(bestModule.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+		
+
+		jAll.setText(output.getOutput());
 	}
 
 	private boolean calcTotal(){
