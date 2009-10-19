@@ -113,7 +113,7 @@ public class TablePanel extends JProgramPanel
 	//Table Data
 	private EventTableModel<EveAsset> eveAssetTableModel;
 	private EventList<EveAsset> eveAssetEventList;
-	private EventSelectionModel selectionModel;
+	private EventSelectionModel<EveAsset> selectionModel;
 	
 	//Data
 	private boolean columnMoved = false;
@@ -155,7 +155,7 @@ public class TablePanel extends JProgramPanel
 				TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 
 		//Table Selection
-		selectionModel = new EventSelectionModel(textFilteredList);
+		selectionModel = new EventSelectionModel<EveAsset>(textFilteredList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 

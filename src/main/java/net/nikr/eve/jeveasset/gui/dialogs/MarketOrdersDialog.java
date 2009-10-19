@@ -65,8 +65,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 	private JButton jClose;
 	private JComboBox jCharacters;
 	private JComboBox jState;
-	private EventList sellOrdersEventList;
-	private EventList buyOrdersEventList;
+	private EventList<MarketOrder> sellOrdersEventList;
+	private EventList<MarketOrder> buyOrdersEventList;
 
 	private List<MarketOrder> all;
 	private Map<String, List<MarketOrder>> orders;
@@ -96,8 +96,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 		MarketOrderTableFormat sellTableFormat = new MarketOrderTableFormat();
 		MarketOrderTableFormat buyTableFormat = new MarketOrderTableFormat();
 		//Backend
-		sellOrdersEventList = new BasicEventList();
-		buyOrdersEventList = new BasicEventList();
+		sellOrdersEventList = new BasicEventList<MarketOrder>();
+		buyOrdersEventList = new BasicEventList<MarketOrder>();
 		//For soring the table
 		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(sellOrdersEventList);
 		SortedList<MarketOrder> buyOrdersSortedList = new SortedList<MarketOrder>(buyOrdersEventList);
