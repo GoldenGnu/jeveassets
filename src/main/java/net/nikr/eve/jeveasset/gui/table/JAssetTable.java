@@ -33,7 +33,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.table.CellRenderers.DoubleCellRenderer;
+import net.nikr.eve.jeveasset.gui.table.CellRenderers.LongCellRenderer;
 
 
 public class JAssetTable extends JTable {
@@ -131,25 +132,5 @@ public class JAssetTable extends JTable {
 		return super.prepareRenderer(renderer, row, column);
 	}
 
-	public class LongCellRenderer extends DefaultTableCellRenderer {
-		public LongCellRenderer() {
-			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
-			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-		}
-		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.integer(value));
-		}
-	}
-
-	public class DoubleCellRenderer extends DefaultTableCellRenderer {
-		public DoubleCellRenderer() {
-			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
-			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-		}
-		@Override
-		public void setValue(Object value) {
-				setText((value == null) ? "" : Formater.number(value));
-			}
-		}
+	
 }

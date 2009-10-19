@@ -44,6 +44,7 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
 	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
+	public final static String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
 	public final static String ACTION_OPEN_METERIALS = "ACTION_OPEN_METERIALS";
 	public final static String ACTION_OPEN_API_MANAGER = "ACTION_OPEN_API_MANAGER";
 	public final static String ACTION_OPEN_SETTINGS = "ACTION_OPEN_SETTINGS";
@@ -103,6 +104,13 @@ public class Menu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("icon26_02.png") );
 		menuItem.setActionCommand(ACTION_OPEN_LOADOUTS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Market Orders");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("icon07_12.png") );
+		menuItem.setActionCommand(ACTION_OPEN_MARKET_ORDERS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

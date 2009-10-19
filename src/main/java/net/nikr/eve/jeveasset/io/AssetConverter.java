@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Items;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
 
 
@@ -562,5 +563,10 @@ public class AssetConverter {
 		String security = AssetConverter.security(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
 
 		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, apiAsset.getLocationID(), singleton, security);
+	}
+	public static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
+		String name = AssetConverter.name((int)apiMarketOrder.getTypeID(), settings);
+		String location = AssetConverter.location((int)apiMarketOrder.getStationID(), null, settings);
+		return new MarketOrder(apiMarketOrder, name, location);
 	}
 }

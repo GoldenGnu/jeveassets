@@ -32,12 +32,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 
 
 public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
-	private Comparator integerComparator;
-	private Comparator stringComparator;
-	private Comparator longComparator;
-	private Comparator doubleComparator;
-	private Comparator floatComparator;
-
 
 	private Settings settings;
 
@@ -45,11 +39,6 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 	public EveAssetTableFormat(Settings settings) {
 		super();
 		this.settings = settings;
-		integerComparator = new IntegerComparator();
-		stringComparator = new StringComparator();
-		longComparator = new LongComparator();
-		doubleComparator = new DoubleComparator();
-		floatComparator = new FloatComparator();
 	}
 
 	@Override
@@ -93,27 +82,27 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 	@Override
 	public Comparator getColumnComparator(int i) {
 		String sColumn = settings.getTableColumnVisible().get(i);
-		if (sColumn.equals("Name")) return stringComparator;
-		if (sColumn.equals("Group")) return stringComparator;
-		if (sColumn.equals("Category")) return stringComparator;
-		if (sColumn.equals("Owner")) return stringComparator;
-		if (sColumn.equals("Count")) return longComparator;
-		if (sColumn.equals("Location")) return stringComparator;
-		if (sColumn.equals("Container")) return stringComparator;
-		if (sColumn.equals("Flag")) return stringComparator;
-		if (sColumn.equals("Price")) return doubleComparator;
-		if (sColumn.equals("Sell Min")) return doubleComparator;
-		if (sColumn.equals("Buy Max")) return doubleComparator;
-		if (sColumn.equals("Base Price")) return doubleComparator;
-		if (sColumn.equals("Value")) return doubleComparator;
-		if (sColumn.equals("Meta")) return stringComparator;
-		if (sColumn.equals("ID")) return integerComparator;
-		if (sColumn.equals("Volume")) return floatComparator;
-		if (sColumn.equals("Type ID")) return integerComparator;
-		if (sColumn.equals("Region")) return stringComparator;
-		if (sColumn.equals("Type Count")) return longComparator;
-		if (sColumn.equals("Security")) return stringComparator;
-		if (sColumn.equals("Reprocessed")) return doubleComparator;
+		if (sColumn.equals("Name")) return TableComparators.stringComparator();
+		if (sColumn.equals("Group")) return TableComparators.stringComparator();
+		if (sColumn.equals("Category")) return TableComparators.stringComparator();
+		if (sColumn.equals("Owner")) return TableComparators.stringComparator();
+		if (sColumn.equals("Count")) return TableComparators.longComparator();
+		if (sColumn.equals("Location")) return TableComparators.stringComparator();
+		if (sColumn.equals("Container")) return TableComparators.stringComparator();
+		if (sColumn.equals("Flag")) return TableComparators.stringComparator();
+		if (sColumn.equals("Price")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Sell Min")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Buy Max")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Base Price")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Value")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Meta")) return TableComparators.stringComparator();
+		if (sColumn.equals("ID")) return TableComparators.integerComparator();
+		if (sColumn.equals("Volume")) return TableComparators.floatComparator();
+		if (sColumn.equals("Type ID")) return TableComparators.integerComparator();
+		if (sColumn.equals("Region")) return TableComparators.stringComparator();
+		if (sColumn.equals("Type Count")) return TableComparators.longComparator();
+		if (sColumn.equals("Security")) return TableComparators.stringComparator();
+		if (sColumn.equals("Reprocessed")) return TableComparators.doubleComparator();
 		return null;
 	}
 
@@ -142,30 +131,5 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Security")) return eveAsset.getSecurity();
 		if (sColumn.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		return new String();
-	}
-
-	public class LongComparator implements Comparator<Long>{
-		@Override
-		public int compare(Long o1, Long o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public class IntegerComparator implements Comparator<Integer> {
-		@Override
-		public int compare(Integer o1, Integer o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public class FloatComparator implements Comparator<Float> {
-		@Override
-		public int compare(Float o1, Float o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public class DoubleComparator implements Comparator<Double> {
-		@Override
-		public int compare(Double o1, Double o2) {
-			return o1.compareTo(o2);
-		}
 	}
 }
