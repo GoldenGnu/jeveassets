@@ -30,10 +30,10 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.order.ApiMarketOrder;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,7 +176,6 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 	@Override
 	protected void windowShown() {
 		characters = new Vector<String>();
-		characters.add("All");
 		orders = new HashMap<String, List<MarketOrder>>();
 		all = new Vector<MarketOrder>();
 		List<Account> accounts = program.getSettings().getAccounts();
@@ -188,12 +187,15 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
 					characters.add(human.getName());
-					List<ApiMarketOrder> apiMarketOrders = human.getMarketOrders();
-					for (int c = 0; c < apiMarketOrders.size(); c++){
-						ApiMarketOrder apiMarketOrder = apiMarketOrders.get(c);
-						MarketOrder marketOrder = AssetConverter.apiMarketOrderToMarketOrder(apiMarketOrder, program.getSettings());
-						marketOrders.add(marketOrder);
-						all.add(marketOrder);
+					List<MarketOrder> characterMarketOrders = AssetConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+					orders.put(human.getName(), characterMarketOrders);
+					all.addAll(characterMarketOrders);
+					if (human.isUpdateCorporationAssets()){
+						String corpKey = "["+human.getCorporation()+"]";
+						characters.add(corpKey);
+						List<MarketOrder> corporationMarketOrders = AssetConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings());
+						orders.put(corpKey, corporationMarketOrders);
+						all.addAll(corporationMarketOrders);
 					}
 				}
 			}
@@ -203,6 +205,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 			jState.setEnabled(true);
 			jSellOrders.setEnabled(true);
 			jBuyOrders.setEnabled(true);
+			Collections.sort(characters);
+			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
 			jState.setModel( new DefaultComboBoxModel(orderStates));
 			jCharacters.setSelectedIndex(0);

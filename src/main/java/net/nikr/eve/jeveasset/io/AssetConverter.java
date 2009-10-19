@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Items;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketOrder;
@@ -564,9 +565,29 @@ public class AssetConverter {
 
 		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, apiAsset.getLocationID(), singleton, security);
 	}
-	public static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
+	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
+		List<MarketOrder> marketOrders = new Vector<MarketOrder>();
+		for (int a = 0; a < apiMarketOrders.size(); a++){
+			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrders.get(a), settings));
+		}
+		return marketOrders;
+	}
+	private static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
 		String name = AssetConverter.name((int)apiMarketOrder.getTypeID(), settings);
 		String location = AssetConverter.location((int)apiMarketOrder.getStationID(), null, settings);
 		return new MarketOrder(apiMarketOrder, name, location);
+	}
+	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, Settings settings, String owner){
+		List<IndustryJob> industryJobs = new Vector<IndustryJob>();
+		for (int a = 0; a < apiIndustryJobs.size(); a++){
+			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJobs.get(a), settings, owner));
+		}
+		return industryJobs;
+	}
+
+	private static IndustryJob apiIndustryJobToIndustryJob(ApiIndustryJob apiIndustryJob, Settings settings, String owner){
+		String name = AssetConverter.name((int)apiIndustryJob.getInstalledItemTypeID(), settings);
+		String location = AssetConverter.location((int)apiIndustryJob.getInstalledItemLocationID(), null, settings);
+		return new IndustryJob(apiIndustryJob, name, location, owner);
 	}
 }

@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.UpdateEveCentralDialog;
 import net.nikr.eve.jeveasset.gui.settings.EveCentralSettings;
 import net.nikr.eve.jeveasset.gui.settings.TableSettings;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MarketOrdersDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
@@ -90,6 +91,7 @@ public class Program implements ActionListener {
 	private MaterialsDialog materialsDialog;
 	private LoadoutsDialog loadoutsDialog;
 	private MarketOrdersDialog marketOrdersDialog;
+	private IndustryJobsDialog industryJobsDialog;
 	private CsvExportDialog csvExportDialog;
 	private SettingsDialog settingsDialog;
 	private TableSettings tableSettings;
@@ -156,6 +158,8 @@ public class Program implements ActionListener {
 		loadoutsDialog = new LoadoutsDialog(this, ImageGetter.getImage("icon26_02.png"));
 		Log.info("	Market Orders Dialog");
 		marketOrdersDialog = new MarketOrdersDialog(this, ImageGetter.getImage("icon07_12.png"));
+		Log.info("	Industry Jobs Dialog");
+		industryJobsDialog = new IndustryJobsDialog(this, ImageGetter.getImage("icon33_02.png"));
 		Log.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
 		Log.info("	Materials Dialog");
@@ -283,6 +287,9 @@ public class Program implements ActionListener {
 		}
 		if (Menu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			marketOrdersDialog.setVisible(true);
+		}
+		if (Menu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
+			industryJobsDialog.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
 			csvExportDialog.setVisible(true);
