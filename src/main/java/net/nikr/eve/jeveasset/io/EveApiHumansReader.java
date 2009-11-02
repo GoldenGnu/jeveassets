@@ -41,6 +41,8 @@ import org.xml.sax.SAXException;
 
 public class EveApiHumansReader {
 
+	private static String error;
+
 	public static void load(Settings settings){
 		Log.info("Updating characters:");
 		boolean updated = false;
@@ -94,12 +96,13 @@ public class EveApiHumansReader {
 						}
 					}
 				} else {
-					ApiError error = characterListResponse.getError();
-					if (error.getCode() == 516 || error.getCode() == 203){
+					ApiError apiError = characterListResponse.getError();
+					error = apiError.getError();
+					if (apiError.getCode() == 516 || apiError.getCode() == 203){
 						Log.info("Characters update failed (Not a valid API Key)");
 						return false;
 					}
-					Log.info("	Characters update failed (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+					Log.info("	Characters update failed (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					return false;
 				}
 			} catch (IOException ex) {
@@ -126,5 +129,9 @@ public class EveApiHumansReader {
 				}
 			}
 		}
+	}
+
+	public static String getError() {
+		return error;
 	}
 }

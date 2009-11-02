@@ -30,10 +30,6 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 public class EveAsset implements Comparable<EveAsset> {
 	
-	public final static String PRICE_ALL_AVG = "All Average";
-	public final static String PRICE_ALL_MAX = "All Maximum";
-	public final static String PRICE_ALL_MIN = "All Minimum";
-	public final static String PRICE_ALL_MEDIAN = "All Median";
 	public final static String PRICE_BUY_AVG = "Buy Average";
 	public final static String PRICE_BUY_MAX = "Buy Maximum";
 	public final static String PRICE_BUY_MIN = "Buy Minimum";
@@ -42,21 +38,6 @@ public class EveAsset implements Comparable<EveAsset> {
 	public final static String PRICE_SELL_MAX = "Sell Maximum";
 	public final static String PRICE_SELL_MIN = "Sell Minimum";
 	public final static String PRICE_SELL_MEDIAN = "Sell Median";
-
-	public final static String[] PRICE_SOURCES = {
-		PRICE_SELL_MEDIAN,
-		PRICE_SELL_MIN,
-		PRICE_SELL_MAX,
-		PRICE_SELL_AVG,
-		PRICE_BUY_MEDIAN,
-		PRICE_BUY_MIN,
-		PRICE_BUY_MAX,
-		PRICE_BUY_AVG,
-		PRICE_ALL_MEDIAN,
-		PRICE_ALL_MIN,
-		PRICE_ALL_MAX,
-		PRICE_ALL_AVG
-	};
 
 	private static String priceSource = PRICE_SELL_MEDIAN;
 
@@ -75,7 +56,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private int id;
 	private int typeId;
 	private boolean marketGroup;
-	private Marketstat marketstat;
+	private PriceData priceData;
 	private UserPrice userPrice;
 	private boolean corporationAsset;
 	private float volume;
@@ -109,8 +90,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.security = security;
 	}
 
-	public void setMarketstat(Marketstat marketstat) {
-		this.marketstat = marketstat;
+	public void setPriceData(PriceData priceData) {
+		this.priceData = priceData;
 	}
 
 	public void setUserPrice(UserPrice userPrice) {
@@ -181,8 +162,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		return security;
 	}
 
-	public Marketstat getMarketstat() {
-		return marketstat;
+	public PriceData getPriceData() {
+		return priceData;
 	}
 
 	public UserPrice getUserPrice() {
@@ -217,19 +198,15 @@ public class EveAsset implements Comparable<EveAsset> {
 			}
 		}
 
-		if (this.isMarketGroup() && this.getMarketstat() != null) {
-			if (priceSource.equals(PRICE_ALL_AVG)) return getMarketstat().getAllAvg();
-			if (priceSource.equals(PRICE_ALL_MAX)) return getMarketstat().getAllMax();
-			if (priceSource.equals(PRICE_ALL_MIN)) return getMarketstat().getAllMin();
-			if (priceSource.equals(PRICE_ALL_MEDIAN)) return getMarketstat().getAllMedian();
-			if (priceSource.equals(PRICE_BUY_AVG)) return getMarketstat().getBuyAvg();
-			if (priceSource.equals(PRICE_BUY_MAX)) return getMarketstat().getBuyMax();
-			if (priceSource.equals(PRICE_BUY_MIN)) return getMarketstat().getBuyMin();
-			if (priceSource.equals(PRICE_BUY_MEDIAN)) return getMarketstat().getBuyMedian();
-			if (priceSource.equals(PRICE_SELL_AVG)) return getMarketstat().getSellAvg();
-			if (priceSource.equals(PRICE_SELL_MAX)) return getMarketstat().getSellMax();
-			if (priceSource.equals(PRICE_SELL_MIN)) return getMarketstat().getSellMin();
-			if (priceSource.equals(PRICE_SELL_MEDIAN)) return getMarketstat().getSellMedian();
+		if (this.isMarketGroup() && this.getPriceData() != null) {
+			if (priceSource.equals(PRICE_BUY_AVG)) return getPriceData().getBuyAvg();
+			if (priceSource.equals(PRICE_BUY_MAX)) return getPriceData().getBuyMax();
+			if (priceSource.equals(PRICE_BUY_MIN)) return getPriceData().getBuyMin();
+			if (priceSource.equals(PRICE_BUY_MEDIAN)) return getPriceData().getBuyMedian();
+			if (priceSource.equals(PRICE_SELL_AVG)) return getPriceData().getSellAvg();
+			if (priceSource.equals(PRICE_SELL_MAX)) return getPriceData().getSellMax();
+			if (priceSource.equals(PRICE_SELL_MIN)) return getPriceData().getSellMin();
+			if (priceSource.equals(PRICE_SELL_MEDIAN)) return getPriceData().getSellMedian();
 		}
 		
 		return 0;
@@ -239,12 +216,16 @@ public class EveAsset implements Comparable<EveAsset> {
 		return (this.getUserPrice() != null);
 	}
 
-	public double getPriceSellMedian() {
-		if (this.isMarketGroup() && this.getMarketstat() != null) {
-			double d = this.getMarketstat().getSellMedian();
-			if (d != 0) {
-				return d;
-			}
+	public double getDefaultPrice() {
+		if (this.isMarketGroup() && this.getPriceData() != null) {
+			if (priceSource.equals(PRICE_BUY_AVG)) return getPriceData().getBuyAvg();
+			if (priceSource.equals(PRICE_BUY_MAX)) return getPriceData().getBuyMax();
+			if (priceSource.equals(PRICE_BUY_MIN)) return getPriceData().getBuyMin();
+			if (priceSource.equals(PRICE_BUY_MEDIAN)) return getPriceData().getBuyMedian();
+			if (priceSource.equals(PRICE_SELL_AVG)) return getPriceData().getSellAvg();
+			if (priceSource.equals(PRICE_SELL_MAX)) return getPriceData().getSellMax();
+			if (priceSource.equals(PRICE_SELL_MIN)) return getPriceData().getSellMin();
+			if (priceSource.equals(PRICE_SELL_MEDIAN)) return getPriceData().getSellMedian();
 		}
 		return 0;
 	}
@@ -253,13 +234,9 @@ public class EveAsset implements Comparable<EveAsset> {
 		if (isBlueprint() && !isBpo()) {
 			return 0;
 		}
-		if (this.isMarketGroup() && this.getMarketstat() != null) {
-			double d = this.getMarketstat().getSellMin();
-			if (d != 0) {
-				return d;
-			}
+		if (this.isMarketGroup() && this.getPriceData() != null) {
+			return this.getPriceData().getSellMin();
 		}
-		//return basePrice;
 		return 0;
 	}
 
@@ -267,13 +244,9 @@ public class EveAsset implements Comparable<EveAsset> {
 		if (isBlueprint() && !isBpo()) {
 			return 0;
 		}
-		if (this.isMarketGroup() && this.getMarketstat() != null) {
-			double d = this.getMarketstat().getBuyMax();
-			if (d != 0) {
-				return d;
-			}
+		if (this.isMarketGroup() && this.getPriceData() != null) {
+			return this.getPriceData().getBuyMax();
 		}
-		//return basePrice;
 		return 0;
 	}
 
@@ -348,5 +321,18 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public static void setPriceSource(String priceSource) {
 		EveAsset.priceSource = priceSource;
+	}
+
+	public static Vector<String> getPriceSources(){
+		Vector<String> priceSources = new Vector<String>();
+		priceSources.add(PRICE_SELL_MEDIAN);
+		priceSources.add(PRICE_SELL_MIN);
+		priceSources.add(PRICE_SELL_MAX);
+		priceSources.add(PRICE_SELL_AVG);
+		priceSources.add(PRICE_BUY_MEDIAN);
+		priceSources.add(PRICE_BUY_MIN);
+		priceSources.add(PRICE_BUY_MAX);
+		priceSources.add(PRICE_BUY_AVG);
+		return priceSources;
 	}
 }

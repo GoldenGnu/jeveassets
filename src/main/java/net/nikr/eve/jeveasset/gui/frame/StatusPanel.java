@@ -56,7 +56,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	private JLabel jAverage;
 	private JLabel jVolume;
 	private JLabel jAssetUpdate;
-	private JLabel jEveCentralUpdate;
+	private JLabel jPriceDataUpdate;
 	private JLabel jMarketOrdersUpdate;
 	private JLabel jEveTime;
 	private Timer timer;
@@ -91,7 +91,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 		jEveTime = createLabel(120, "Eve Server Time", ImageGetter.getIcon("eve.png"));
 
-		jEveCentralUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
+		jPriceDataUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
 
 		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
 
@@ -122,12 +122,13 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	}
 
 
-	public void updateEveCentralDate(){
-		Date d = program.getSettings().getMarketstatsNextUpdate();
+	public void updatePriceDataDate(){
+		//FIXME price data: when can we update again?
+		Date d = Settings.getGmtNow(); //program.getSettings().getMarketstatsNextUpdate();
 		if (Settings.isUpdatable(d)){
-			jEveCentralUpdate.setText("Now");
+			jPriceDataUpdate.setText("Now");
 		} else {
-			jEveCentralUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
+			jPriceDataUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
 		}
 	}
 	public void updateAssetDate(){
@@ -200,7 +201,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 		jVolume.setText(Formater.number(n));
 	}
 	private void update(){
-		updateEveCentralDate();
+		updatePriceDataDate();
 		updateAssetDate();
 		updateMarketOrdersDate();
 		setAverage(0);

@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.MarketstatSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.log.Log;
@@ -52,7 +52,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
 		writeApiProxy(xmldoc, settings.getApiProxy());
-		writeMarketstatSettings(xmldoc, settings.getMarketstatSettings());
+		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeColumns(xmldoc, settings.getTableColumnNames(), settings.getTableColumnVisible());
@@ -98,12 +98,10 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		}
 
 	}
-	private static void writeMarketstatSettings(Document xmldoc, MarketstatSettings marketstatSettings){
+	private static void writePriceDataSettings(Document xmldoc, PriceDataSettings priceDataSettings){
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
-		parentNode.setAttributeNS(null, "age", String.valueOf(marketstatSettings.getAge()));
-		parentNode.setAttributeNS(null, "quantity", String.valueOf(marketstatSettings.getQuantity()));
-		parentNode.setAttributeNS(null, "region", String.valueOf(marketstatSettings.getRegion()));
-		parentNode.setAttributeNS(null, "defaultprice", marketstatSettings.getPriceSource());
+		parentNode.setAttributeNS(null, "region", String.valueOf(priceDataSettings.getRegion()));
+		parentNode.setAttributeNS(null, "defaultprice", priceDataSettings.getPriceSource());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
@@ -136,11 +134,6 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 
 		Element node;
-
-		node = xmldoc.createElementNS(null, "update");
-		node.setAttributeNS(null, "name", "marketstats");
-		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getMarketstatsNextUpdate().getTime()));
-		parentNode.appendChild(node);
 
 		node = xmldoc.createElementNS(null, "update");
 		node.setAttributeNS(null, "name", "conquerable station");

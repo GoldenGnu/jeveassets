@@ -32,48 +32,47 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
 import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
 
 
-public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyChangeListener {
+public class UpdatePriceDataDialog extends JUpdateWindow implements PropertyChangeListener {
 
-	private UpdateEveCentralTask updateEveCentralTask;
+	private UpdatePriceDataTask updatePriceDataTask;
 
-	public UpdateEveCentralDialog(Program program, Window parent) {
-		super(program, parent, "Updating price data from EVE-Central...");
+	public UpdatePriceDataDialog(Program program, Window parent) {
+		super(program, parent, "Updating price data...");
 	}
 
 	@Override
 	public void startUpdate() {
 		setVisible(true);
-		updateEveCentralTask = new UpdateEveCentralTask();
-		updateEveCentralTask.addPropertyChangeListener(this);
-		updateEveCentralTask.execute();
+		updatePriceDataTask = new UpdatePriceDataTask();
+		updatePriceDataTask.addPropertyChangeListener(this);
+		updatePriceDataTask.execute();
 	}
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		int value = updateEveCentralTask.getProgress();
-		if (updateEveCentralTask.getThrowable() != null){
-			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateEveCentralTask.getThrowable());
+		int value = updatePriceDataTask.getProgress();
+		if (updatePriceDataTask.getThrowable() != null){
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updatePriceDataTask.getThrowable());
 		}
-		if (value == 100 && updateEveCentralTask.isTaskDone()){
-			updateEveCentralTask.setTaskDone(false);
-			if (updateEveCentralTask.updated){
+		if (value == 100 && updatePriceDataTask.isTaskDone()){
+			updatePriceDataTask.setTaskDone(false);
+			if (updatePriceDataTask.updated){
 				program.updateEventList();
 			}
-			program.getStatusPanel().updateEveCentralDate();
+			program.getStatusPanel().updatePriceDataDate();
 
 			jProgressBar.setValue(100);
 			jProgressBar.setIndeterminate(false);
 			setVisible(false);
 
 
-			if (updateEveCentralTask.updated){ //All assets updated
+			if (updatePriceDataTask.updated){ //All assets updated
 				JOptionPane.showMessageDialog(parent, "Price data updated...", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
-			} else if (!updateEveCentralTask.isOnline){ //No assets updated
+			} else if (!updatePriceDataTask.isOnline){ //No assets updated
 				JOptionPane.showMessageDialog(parent, "Could not update price data.\r\nPlease connect to the internet and try again...", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			} else if (program.getSettings().getAccounts().isEmpty()) {
 				JOptionPane.showMessageDialog(parent, "No price data updated\r\nYou need to add your API Key:\r\nOptions > Manage API Keys > Add.", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
@@ -91,17 +90,18 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 
 	}
 
-	public class UpdateEveCentralTask extends UpdateTask {
+	public class UpdatePriceDataTask extends UpdateTask {
 
 		private boolean updated = false;
 		private boolean isOnline = true;
 
-		public UpdateEveCentralTask() {}
+		public UpdatePriceDataTask() {}
 		
 		@Override
 		public void update() throws Throwable {
 			program.getSettings().clearEveAssetList();
-			updated = EveCentralMarketstatReader.load(program.getSettings(), this);
+			//FIXME price data: should not force update...
+			updated = program.getSettings().updatePriceData(this, true);
 			if (!updated){
 				isOnline = Online.isOnline(program.getSettings());
 			}

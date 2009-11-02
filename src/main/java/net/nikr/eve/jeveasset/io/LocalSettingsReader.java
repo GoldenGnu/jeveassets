@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.data.MarketstatSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.log.Log;
@@ -84,11 +84,11 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			parseUserPrices(userPriceElement, settings);
 		}
 
-		//MarketstatSettings
-		NodeList marketstatSettingsNodes = element.getElementsByTagName("marketstat");
-		if (marketstatSettingsNodes.getLength() == 1){
-			Element marketstatSettingsElement = (Element) marketstatSettingsNodes.item(0);
-			parseMarketstatSettings(marketstatSettingsElement, settings);
+		//PriceDataSettings
+		NodeList priceDataSettingsNodes = element.getElementsByTagName("marketstat");
+		if (priceDataSettingsNodes.getLength() == 1){
+			Element priceDataSettingsElement = (Element) priceDataSettingsNodes.item(0);
+			parsePriceDataSettings(priceDataSettingsElement, settings);
 		}
 		
 
@@ -199,15 +199,13 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseMarketstatSettings(Element element, Settings settings){
-		int age = AttributeGetters.getInt(element, "age");
-		int quantity = AttributeGetters.getInt(element, "quantity");
+	private static void parsePriceDataSettings(Element element, Settings settings){
 		int region = AttributeGetters.getInt(element, "region");
 		String defaultPrice = EveAsset.PRICE_SELL_MEDIAN;
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
 			defaultPrice = AttributeGetters.getString(element, "defaultprice");
 		}
-		settings.setMarketstatSettings( new MarketstatSettings(region, age, quantity, defaultPrice) );
+		settings.setPriceDataSettings( new PriceDataSettings(region, defaultPrice) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){
@@ -256,9 +254,6 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		Date nextUpdate = new Date( AttributeGetters.getLong(element, "nextupdate") );
 		if (text.equals("conquerable station")){
 			settings.setConquerableStationsNextUpdate(nextUpdate);
-		}
-		if (text.equals("marketstats")){
-			settings.setMarketstatsNextUpdate(nextUpdate);
 		}
 		if (text.equals("corporation")){
 			long corpid = AttributeGetters.getLong(element, "corpid");

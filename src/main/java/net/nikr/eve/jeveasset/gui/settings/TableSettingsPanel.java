@@ -32,13 +32,13 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class TableSettings extends JSettingsPanel {
+public class TableSettingsPanel extends JSettingsPanel {
 
 	private JCheckBox jEnterFilters;
 	private JCheckBox jMarkSelectedRow;
 
 
-	public TableSettings(Program program, JDialogCentered jDialogCentered) {
+	public TableSettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Table");
 
 		jEnterFilters = new JCheckBox("Only filter when enter is pressed");

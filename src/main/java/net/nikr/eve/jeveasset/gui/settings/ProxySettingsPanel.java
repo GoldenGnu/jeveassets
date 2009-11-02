@@ -48,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
  *
  * @author Flaming Candle
  */
-public class ProxySettings extends JSettingsPanel {
+public class ProxySettingsPanel extends JSettingsPanel {
 
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_SAVE = "ACTION_SAVE";
@@ -58,7 +58,7 @@ public class ProxySettings extends JSettingsPanel {
 	private JCheckBox enableApiProxy;
 	private JTextField apiProxyField;
 
-	public ProxySettings(Program program, JDialogCentered jDialogCentered) {
+	public ProxySettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Proxy");
 
 		JLabel proxyTypeLabel = new JLabel("Proxy Type");

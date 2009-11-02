@@ -42,24 +42,24 @@ import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ApiManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateAssetsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdateEveCentralDialog;
-import net.nikr.eve.jeveasset.gui.settings.EveCentralSettings;
-import net.nikr.eve.jeveasset.gui.settings.TableSettings;
+import net.nikr.eve.jeveasset.gui.dialogs.UpdatePriceDataDialog;
+import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MarketOrdersDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.settings.PriceSettings;
-import net.nikr.eve.jeveasset.gui.settings.ProxySettings;
+import net.nikr.eve.jeveasset.gui.settings.PriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
-import net.nikr.eve.jeveasset.gui.settings.WindowSettings;
+import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.log.Log;
 import org.apache.log4j.BasicConfigurator;
@@ -94,15 +94,15 @@ public class Program implements ActionListener {
 	private IndustryJobsDialog industryJobsDialog;
 	private CsvExportDialog csvExportDialog;
 	private SettingsDialog settingsDialog;
-	private TableSettings tableSettings;
-	private EveCentralSettings eveCentralSettings;
-	private ProxySettings proxySettings;
-	private PriceSettings priceSettings;
-	private WindowSettings windowSettings;
+	private TableSettingsPanel tableSettings;
+	private PriceDataSettingsPanel priceDataSettingsPanel;
+	private ProxySettingsPanel proxySettings;
+	private PriceSettingsPanel priceSettings;
+	private WindowSettingsPanel windowSettings;
 
 
 	private UpdateAssetsDialog updateAssetsDialog;
-	private UpdateEveCentralDialog updateEveCentralDialog;
+	private UpdatePriceDataDialog updatePriceDataDialog;
 
 	//Panels
 	private TablePanel tablePanel;
@@ -125,6 +125,7 @@ public class Program implements ActionListener {
 		//Config log4j
 		BasicConfigurator.configure();
 		Logger.getLogger("com.beimin.eveapi").setLevel(Level.INFO);
+		Logger.getLogger("uk.me.candle").setLevel(Level.INFO);
 		Logger.getLogger("org.apache.commons").setLevel(Level.INFO);
 
 		//Data
@@ -169,24 +170,24 @@ public class Program implements ActionListener {
 		Log.info("	Settings Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		Log.info("		Table");
-		tableSettings = new TableSettings(this, settingsDialog);
+		tableSettings = new TableSettingsPanel(this, settingsDialog);
 		settingsDialog.add(tableSettings, ImageGetter.getIcon("application_view_columns.png"));
-		Log.info("		Eve-Central");
-		eveCentralSettings = new EveCentralSettings(this, settingsDialog);
-		settingsDialog.add(eveCentralSettings, ImageGetter.getIcon("evecentral.png"));
+		Log.info("		Price Data");
+		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
+		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
 		Log.info("		Proxy");
-		proxySettings = new ProxySettings(this, settingsDialog);
+		proxySettings = new ProxySettingsPanel(this, settingsDialog);
 		settingsDialog.add(proxySettings, ImageGetter.getIcon("server_connect.png"));
 		Log.info("		Price");
-		priceSettings = new PriceSettings(this, settingsDialog);
+		priceSettings = new PriceSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceSettings, ImageGetter.getIcon("money.png"));
 		Log.info("		Window");
-		windowSettings = new WindowSettings(this, settingsDialog);
+		windowSettings = new WindowSettingsPanel(this, settingsDialog);
 		settingsDialog.add(windowSettings, ImageGetter.getIcon("application.png"));
-		Log.info("	Assets update Dialog");
+		Log.info("	Assets Update Dialog");
 		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
-		Log.info("	Eve-Central update Dialog");
-		updateEveCentralDialog = new UpdateEveCentralDialog(this, frame);
+		Log.info("	Price Data Update Dialog");
+		updatePriceDataDialog = new UpdatePriceDataDialog(this, frame);
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
@@ -214,7 +215,7 @@ public class Program implements ActionListener {
 	}
 
 	public void updatePriceData(){
-		updateEveCentralDialog.startUpdate();
+		updatePriceDataDialog.startUpdate();
 	}
 	public void updateAssets(){
 		updateAssetsDialog.startUpdate();

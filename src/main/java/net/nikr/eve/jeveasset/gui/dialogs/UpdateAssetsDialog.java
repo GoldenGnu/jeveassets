@@ -38,7 +38,6 @@ import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.EveApiAssetsReader;
 import net.nikr.eve.jeveasset.io.EveApiConquerableStationsReader;
-import net.nikr.eve.jeveasset.io.EveCentralMarketstatReader;
 import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
 
@@ -70,7 +69,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			if (updateAssetsTask.updated){
 				program.updateEventList();
 				program.getStatusPanel().updateAssetDate();
-				program.getStatusPanel().updateEveCentralDate();
+				program.getStatusPanel().updatePriceDataDate();
 			}
 			jProgressBar.setValue(100);
 			jProgressBar.setIndeterminate(false);
@@ -153,7 +152,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			}
 			if (updated){
 				program.getSettings().clearEveAssetList();
-				EveCentralMarketstatReader.load(program.getSettings(), this, true);
+				program.getSettings().updatePriceData(this);
 			}
 		}
 

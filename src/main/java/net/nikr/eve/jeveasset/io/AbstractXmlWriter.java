@@ -66,19 +66,17 @@ public abstract class AbstractXmlWriter {
 		try {
 			File outputFile = new File(filename);
 			FileOutputStream outputStream = new FileOutputStream(outputFile);
-			OutputStreamWriter outputStreamWriter;
-			outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
 			// result
 			Result result = new StreamResult(outputStreamWriter);
 
 			TransformerFactory factory = TransformerFactory.newInstance();
-			factory.setAttribute("indent-number", 4);
-
 			Transformer transformer;
 			transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
 			transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
 			transformer.transform(source, result);
 		} catch (FileNotFoundException ex) {

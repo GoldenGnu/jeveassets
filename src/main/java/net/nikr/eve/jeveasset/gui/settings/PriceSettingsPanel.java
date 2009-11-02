@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class PriceSettings extends JSettingsPanel implements ActionListener, FocusListener {
+public class PriceSettingsPanel extends JSettingsPanel implements ActionListener, FocusListener {
 
 	public final static String ACTION_DEFAULT = "ACTION_DEFAULT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
@@ -65,7 +65,7 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 
 	private UserPrice newUserPrice = null;
 
-	public PriceSettings(Program program, JDialogCentered jDialogCentered) {
+	public PriceSettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Price");
 
 		JLabel jSetPriceLable = new JLabel("Assets:");
@@ -225,7 +225,7 @@ public class PriceSettings extends JSettingsPanel implements ActionListener, Foc
 				UserPrice userPrice = (UserPrice) o;
 				for (int a = 0; a < assets.size(); a++){
 					if (assets.get(a).getTypeId() == userPrice.getTypeID()){
-						jPrice.setText(String.valueOf(assets.get(a).getPriceSellMedian()) );
+						jPrice.setText(String.valueOf(assets.get(a).getDefaultPrice()) );
 						break;
 					}
 				}

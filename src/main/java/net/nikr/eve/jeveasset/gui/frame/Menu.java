@@ -148,7 +148,7 @@ public class Menu extends JMenuBar {
 
 		menu.addSeparator();
 
-		menuItem = new JMenuItem("Update Price Data (EVE-Central)");
+		menuItem = new JMenuItem("Update Price Data");
 		menuItem.setIcon( ImageGetter.getIcon("price_data_update.png") );
 		menuItem.setActionCommand(ACTION_UPDATE_PRICES);
 		menuItem.addActionListener(program);

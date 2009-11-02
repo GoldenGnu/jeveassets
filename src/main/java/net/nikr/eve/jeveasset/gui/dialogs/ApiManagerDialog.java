@@ -556,7 +556,12 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				apiAddDialog.setVisible(false);
 				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nPlease connect to the internet and try again...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
 			}
-			if (checkHumanTask.result == 30 && checkHumanTask.done){
+			if (checkHumanTask.result == 30 && checkHumanTask.error != null && checkHumanTask.done){
+				checkHumanTask.done = false;
+				apiAddDialog.setVisible(false);
+				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\n"+checkHumanTask.error, "Add API Key", JOptionPane.PLAIN_MESSAGE);
+			}
+			if (checkHumanTask.result == 30 && checkHumanTask.error == null &&checkHumanTask.done){
 				checkHumanTask.done = false;
 				apiAddDialog.setVisible(false);
 				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Add API Key", JOptionPane.PLAIN_MESSAGE);
@@ -581,6 +586,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		private Throwable throwable = null;
 		private int userID;
 		private String apiKey;
+		private String error = null;
 
 		public CheckHumanTask(int userID, String apiKey) {
 			this.userID = userID;
@@ -605,6 +611,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				ok = EveApiHumansReader.load(program.getSettings(), account, true);
 				if (!ok){
 					result = 30;
+					error = EveApiHumansReader.getError();
 					return null;
 				}
 				result = 100;

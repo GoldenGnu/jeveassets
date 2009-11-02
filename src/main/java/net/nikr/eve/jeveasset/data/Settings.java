@@ -44,6 +44,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.AssetConverter;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
 import net.nikr.eve.jeveasset.io.EveApiIndustryJobsReader;
@@ -54,8 +55,8 @@ import net.nikr.eve.jeveasset.io.LocalConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.LocalItemsReader;
 import net.nikr.eve.jeveasset.io.LocalSettingsReader;
 import net.nikr.eve.jeveasset.io.LocalLocationReader;
-import net.nikr.eve.jeveasset.io.LocalMarketstatsReader;
 import net.nikr.eve.jeveasset.io.LocalSettingsWriter;
+import net.nikr.eve.jeveasset.io.PriceDataGetter;
 import net.nikr.log.Log;
 
 
@@ -64,7 +65,7 @@ public class Settings {
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
-	private final static String PATH_MARKETSTATS = "data"+File.separator+"marketstats.xml";
+	private final static String PATH_PRICE_DATA = "data"+File.separator+"pricedata.dat";
 	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
 	private final static String PATH_CONQUERABLE_STATIONS = "data"+File.separator+"conquerable_stations.xml";
 	private final static String PATH_README = "readme.txt";
@@ -85,7 +86,7 @@ public class Settings {
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private Map<Integer, Items> items;
-	private Map<Integer, Marketstat> marketstats;
+	private Map<Integer, PriceData> priceData;
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
 	private Map<Long, String> corporations;
@@ -95,25 +96,26 @@ public class Settings {
 	private Map<String, String> tableColumnTooltips;
 	private List<String> tableNumberColumns;
 	private List<String> tableColumnVisible;
-	private Date marketstatsNextUpdate;
 	private Date conquerableStationsNextUpdate;
 	private Map<Long, Date> corporationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private List<Integer> bpos;
 	private boolean settingsLoaded;
-	private MarketstatSettings marketstatSettings;
+	private PriceDataSettings priceDataSettings;
 	private Proxy proxy;
 	private String apiProxy;
 	private Point windowLocation;
 	private Dimension windowSize;
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
+
+	PriceDataGetter priceDataGetter;
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
 		items = new HashMap<Integer, Items>();
 		locations = new HashMap<Integer, Location>();
-		marketstats = new HashMap<Integer, Marketstat>();
+		priceData = new HashMap<Integer, PriceData>();
 		conquerableStations = new HashMap<Integer, ApiStation>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new Vector<Account>();
@@ -129,11 +131,10 @@ public class Settings {
 
 		
 		conquerableStationsNextUpdate = Settings.getGmtNow();
-		marketstatsNextUpdate = Settings.getGmtNow();
 		corporationsNextUpdate =  new HashMap<Long, Date>();  //Settings.cvtToGmt( new Date() );
 		resetMainTableColumns();
 
-		marketstatSettings = new MarketstatSettings(0, 0, 0, EveAsset.PRICE_SELL_MEDIAN);
+		priceDataSettings = new PriceDataSettings(0, EveAsset.PRICE_SELL_MEDIAN);
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -151,7 +152,7 @@ public class Settings {
 		SplashUpdater.setProgress(50);
 		LocalConquerableStationsReader.load(this);
 		SplashUpdater.setProgress(60);
-		LocalMarketstatsReader.load(this);
+		priceDataGetter = new PriceDataGetter(this);
 		SplashUpdater.setProgress(70);
 		//TODO should be updatable from the menu
 		EveApiHumansReader.load(this);
@@ -202,9 +203,9 @@ public class Settings {
 		tableColumnTooltips.put("Security", "System Security Status");
 		//tableColumnTooltips.put("Container", "Container");
 		//tableColumnTooltips.put("Flag", "Flag");
-		tableColumnTooltips.put("Price", "Median Sell Price (Eve-Central)");
-		tableColumnTooltips.put("Sell Min", "Minimum Sell Price (Eve-Central)");
-		tableColumnTooltips.put("Buy Max", "Maximum Buy Price (Eve-Central)");
+		tableColumnTooltips.put("Price", "Default Price");
+		tableColumnTooltips.put("Sell Min", "Minimum Sell Price");
+		tableColumnTooltips.put("Buy Max", "Maximum Buy Price");
 		tableColumnTooltips.put("Reprocessed", "Reprocessed value");
 		//tableColumnTooltips.put("Base Price", "Base Price");
 		tableColumnTooltips.put("Value", "Value (Count*Price)");
@@ -231,6 +232,14 @@ public class Settings {
 		tableNumberColumns.add("Reprocessed");
 		tableNumberColumns.add("Security");
 
+	}
+
+	public boolean updatePriceData(UpdateTask task){
+		return priceDataGetter.updatePriceData(task);
+	}
+
+	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
+		return priceDataGetter.updatePriceData(task, forceUpdate);
 	}
 
 	public static void setPortable(boolean portable) {
@@ -306,9 +315,9 @@ public class Settings {
 			} else { //No user price, clear user price
 				eveAsset.setUserPrice(null);
 			}
-			//Eve-Central price
-			if (eveAsset.isMarketGroup()){ //Add Marketstarts
-				eveAsset.setMarketstat(getMarketstats().get(eveAsset.getTypeId()));
+			//Price data
+			if (eveAsset.isMarketGroup()){ //Add price data
+				eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
 			}
 			//Reprocessed price
 			if (!getItems().get(eveAsset.getTypeId()).getMaterials().isEmpty()){
@@ -319,25 +328,21 @@ public class Settings {
 					//Calculate reprocessed price
 					Material material = materials.get(b);
 					portionSize = material.getPortionSize();
-					if (getMarketstats().containsKey(material.getId())){
-						Marketstat marketstat = getMarketstats().get(material.getId());
+					if (priceData.containsKey(material.getId())){
+						PriceData priceDatum = priceData.get(material.getId());
 						String priceSource = EveAsset.getPriceSource();
 						double price = 0;
 						if (userPrices.containsKey(material.getId())){
 							price = userPrices.get(material.getId()).getPrice();
 						} else {
-							if (priceSource.equals(EveAsset.PRICE_ALL_AVG)) price = marketstat.getAllAvg();
-							if (priceSource.equals(EveAsset.PRICE_ALL_MAX)) price = marketstat.getAllMax();
-							if (priceSource.equals(EveAsset.PRICE_ALL_MIN)) price = marketstat.getAllMin();
-							if (priceSource.equals(EveAsset.PRICE_ALL_MEDIAN)) price = marketstat.getAllMedian();
-							if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) price = marketstat.getBuyAvg();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) price = marketstat.getBuyMax();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) price = marketstat.getBuyMin();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) price = marketstat.getBuyMedian();
-							if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) price = marketstat.getSellAvg();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) price = marketstat.getSellMax();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) price = marketstat.getSellMin();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) price = marketstat.getSellMedian();
+							if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) price = priceDatum.getBuyAvg();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) price = priceDatum.getBuyMax();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) price = priceDatum.getBuyMin();
+							if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) price = priceDatum.getBuyMedian();
+							if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) price = priceDatum.getSellAvg();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) price = priceDatum.getSellMax();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) price = priceDatum.getSellMin();
+							if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) price = priceDatum.getSellMedian();
 						}
 						priceReprocessed = priceReprocessed + (price * material.getQuantity());
 					}
@@ -397,12 +402,12 @@ public class Settings {
 	public void setConquerableStationsNextUpdate(Date conquerableStationNextUpdate) {
 		this.conquerableStationsNextUpdate = conquerableStationNextUpdate;
 	}
-	public MarketstatSettings getMarketstatSettings() {
-		return marketstatSettings;
+	public PriceDataSettings getPriceDataSettings() {
+		return priceDataSettings;
 	}
-	public void setMarketstatSettings(MarketstatSettings marketstatSettings) {
-		this.marketstatSettings = marketstatSettings;
-		EveAsset.setPriceSource(marketstatSettings.getPriceSource());
+	public void setPriceDataSettings(PriceDataSettings priceDataSettings) {
+		this.priceDataSettings = priceDataSettings;
+		EveAsset.setPriceSource(priceDataSettings.getPriceSource());
 	}
 	public Map<Long, String> getCorporations() {
 		return corporations;
@@ -421,12 +426,6 @@ public class Settings {
 	}
 	public void setUserPrices(Map<Integer, UserPrice> userPrices) {
 		this.userPrices = userPrices;
-	}
-	public Date getMarketstatsNextUpdate() {
-		return marketstatsNextUpdate;
-	}
-	public void setMarketstatsNextUpdate(Date marketstatsNextUpdate) {
-		this.marketstatsNextUpdate = marketstatsNextUpdate;
 	}
 	public List<Account> getAccounts() {
 		return accounts;
@@ -452,12 +451,12 @@ public class Settings {
 		this.locations = locations;
 	}
 
-	public Map<Integer, Marketstat> getMarketstats() {
-		return marketstats;
+	public Map<Integer, PriceData> getPriceData() {
+		return priceData;
 	}
 
-	public void setMarketstats(Map<Integer, Marketstat> marketstats) {
-		this.marketstats = marketstats;
+	public void setPriceData(Map<Integer, PriceData> priceData) {
+		this.priceData = priceData;
 	}
 
 	public Map<Integer, ApiStation> getConquerableStations() {
@@ -648,8 +647,8 @@ public class Settings {
 	public static String getPathConquerableStations(){
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
 	}
-	public static String getPathMarketstats(){
-		return getLocalFile(Settings.PATH_MARKETSTATS, !portable);
+	public static String getPathPriceData(){
+		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
 	}
 	public static String getPathAssets(){
 		return getLocalFile(Settings.PATH_ASSETS, !portable);

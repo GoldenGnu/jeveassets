@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class WindowSettings extends JSettingsPanel implements ActionListener {
+public class WindowSettingsPanel extends JSettingsPanel implements ActionListener {
 
 	private final static String ACTION_AUTO_SAVE = "ACTION_AUTO_SAVE";
 	private final static String ACTION_FIXED = "ACTION_FIXED";
@@ -62,7 +62,7 @@ public class WindowSettings extends JSettingsPanel implements ActionListener {
 	JCheckBox jMaximized;
 	JButton jDefault;
 
-	public WindowSettings(Program program, JDialogCentered jDialogCentered) {
+	public WindowSettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Window");
 
 		jAutoSave = new JRadioButton("Save size on exit");

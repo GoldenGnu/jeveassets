@@ -78,7 +78,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeArtifactIds>logkit,servlet-api,avalon-framework</excludeArtifactIds>
+							<excludeArtifactIds>logkit,servlet-api,avalon-framework,icu4j,jdom,xalan,xercesImpl,xml-apis,xmlParserAPIs,xom</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
@@ -110,6 +110,11 @@
 			<groupId>org.supercsv</groupId>
 			<artifactId>supercsv</artifactId>
 			<version>1.52</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.me.candle</groupId>
+			<artifactId>pricing</artifactId>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<properties>

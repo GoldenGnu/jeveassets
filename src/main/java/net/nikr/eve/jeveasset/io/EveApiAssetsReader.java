@@ -75,6 +75,7 @@ public class EveApiAssetsReader {
 					return true;
 				} else {
 					ApiError apiError = assetResponse.getError();
+					error = apiError.getError();
 					//Not Director or CEO
 					if (apiError.getCode() == 209){
 						human.setUpdateCorporationAssets(false);
