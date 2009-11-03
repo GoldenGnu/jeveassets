@@ -49,7 +49,6 @@ import javax.swing.table.DefaultTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JUneditableTableModel;
 import net.nikr.eve.jeveasset.io.EveApiHumansReader;
@@ -126,8 +125,8 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		jRemove.addActionListener(this);
 		jPanel.add(jRemove);
 
-		jAssets = new JDropDownButton("Edit");
-		jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
+		jAssets = new JDropDownButton("Personal");
+		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
 		jPanel.add(jAssets);
 
 		JMenuItem menuItem;
@@ -154,8 +153,8 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
-		jCorporation = new JDropDownButton("Edit");
-		jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
+		jCorporation = new JDropDownButton("Corp.");
+		//jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
 
 		menuItem = new JMenuItem("Check All Corporations");
 		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_ALL);

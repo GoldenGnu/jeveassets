@@ -25,12 +25,16 @@
 
 package net.nikr.eve.jeveasset.gui.settings;
 
+import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
@@ -101,19 +105,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	public void closed() {
 		PriceDataSettings newPriceDataSettings = program.getSettings().getPriceDataSettings();
 		if (oldPriceDataSettings.equals(newPriceDataSettings)) return;
-
-		//FIXME price data: when can we update again?
-		/*
-		String nextUpdate = Formater.weekdayAndTime(program.getSettings().getMarketstatsNextUpdate())+" GMT";
-		if (EveCentralMarketstatReader.isMarketstatUpdatable(program.getSettings())){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data from Eve-Central, with the new settings?", "Update prices", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		Date date = program.getSettings().getPriceDataNextUpdate();
+		String nextUpdate = Formater.weekdayAndTime(date)+" GMT";
+		if (Settings.isUpdatable(date)){
+			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
 				program.updatePriceData();
 				return;
 			}
 			nextUpdate = "Now";
 		}
-		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data from EVE-Central\r\nbefore the new settings will in used\r\nNext update: "+nextUpdate, "Eve-Central Options", JOptionPane.PLAIN_MESSAGE);
-		 */
+		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
 	}
 }

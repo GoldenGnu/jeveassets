@@ -87,7 +87,6 @@ public class UpdatePriceDataDialog extends JUpdateWindow implements PropertyChan
 		} else {
 			jProgressBar.setIndeterminate(true);
 		}
-
 	}
 
 	public class UpdatePriceDataTask extends UpdateTask {
@@ -100,8 +99,7 @@ public class UpdatePriceDataDialog extends JUpdateWindow implements PropertyChan
 		@Override
 		public void update() throws Throwable {
 			program.getSettings().clearEveAssetList();
-			//FIXME price data: should not force update...
-			updated = program.getSettings().updatePriceData(this, true);
+			updated = program.getSettings().updatePriceData(this);
 			if (!updated){
 				isOnline = Online.isOnline(program.getSettings());
 			}

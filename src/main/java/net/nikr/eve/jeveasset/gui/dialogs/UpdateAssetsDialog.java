@@ -152,7 +152,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			}
 			if (updated){
 				program.getSettings().clearEveAssetList();
-				program.getSettings().updatePriceData(this);
+				program.getSettings().updatePriceData(this, true);
 			}
 		}
 

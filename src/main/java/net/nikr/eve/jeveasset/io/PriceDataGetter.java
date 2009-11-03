@@ -65,11 +65,14 @@ public class PriceDataGetter implements PricingListener {
 
 	public boolean updatePriceData(){
 		return updatePriceData(null);
-		
 	}
 
 	public boolean updatePriceData(UpdateTask task){
 		return updatePriceData(null, false);
+	}
+
+	public boolean updatePriceData(boolean forceUpdate){
+		return updatePriceData(null, forceUpdate);
 	}
 
 	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
@@ -85,12 +88,20 @@ public class PriceDataGetter implements PricingListener {
 		//Reset price data
 		settings.setPriceData( new HashMap<Integer, PriceData>() );
 
+		//Get all price ids
 		List<Integer> ids = settings.getUniqueIds();
-		for (int a = 0; a < ids.size(); a++){
-			int typeID = ids.get(a);
-			if (forceUpdate) pricing.setPrice(typeID, -1.0);
-			createPriceData(typeID, pricing);
+
+		//Reset cache timers...
+		if (forceUpdate){
+			for (int a = 0; a < ids.size(); a++){
+				pricing.setPrice(ids.get(a), -1.0);
+			}
 		}
+		//Load price data (Update as needed)
+		for (int a = 0; a < ids.size(); a++){
+			createPriceData(ids.get(a), pricing);
+		}
+		//Wait to complete
 		while (settings.getUniqueIds().size() !=  settings.getPriceData().size()){
 			try {
 				synchronized(this) {
@@ -101,8 +112,11 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		Log.info("	Price data loaded/updated");
-		Log.info("		Next update: "+new Date(nextUpdate) );
 		return updated;
+	}
+
+	public Date getNextUpdate() {
+		return Settings.getGmt( new Date(nextUpdate+priceCacheTimer) );
 	}
 
 	@Override
@@ -146,7 +160,7 @@ public class PriceDataGetter implements PricingListener {
 			settings.getPriceData().put(typeID, priceData);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-		if (nextUpdateTemp >= 0 && (nextUpdateTemp < nextUpdate || nextUpdate == 0) ){
+		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate ){
 			nextUpdate = nextUpdateTemp;
 		}
 
@@ -162,8 +176,8 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getPricingFetchImplementation() {
-			return "eve-metrics";
-			//return "eve-central";
+			//return "eve-metrics";
+			return "eve-central";
 		}
 
 		@Override

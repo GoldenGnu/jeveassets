@@ -109,7 +109,7 @@ public class Settings {
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
 
-	PriceDataGetter priceDataGetter;
+	private PriceDataGetter priceDataGetter;
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
@@ -421,6 +421,9 @@ public class Settings {
 	public void setCorporationsNextUpdate(Map<Long, Date> corporationNextUpdate) {
 		this.corporationsNextUpdate = corporationNextUpdate;
 	}
+	public Date getPriceDataNextUpdate(){
+		return priceDataGetter.getNextUpdate();
+	}
 	public Map<Integer, UserPrice> getUserPrices() {
 		return userPrices;
 	}
@@ -709,8 +712,11 @@ public class Settings {
 	}
 
 	public static Date getGmtNow() {
+		return getGmt( new Date() );
+	}
+
+	public static Date getGmt(Date date) {
 		TimeZone tz = TimeZone.getDefault();
-		Date date = new Date();
 		Date ret = new Date( date.getTime() - tz.getRawOffset() );
 
 		// if we are now in DST, back off by the delta.  Note that we are checking the GMT date, this is the KEY.

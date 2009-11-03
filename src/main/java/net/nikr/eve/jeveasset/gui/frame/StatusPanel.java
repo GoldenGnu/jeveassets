@@ -107,7 +107,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 		addSpace(10);
 
-		timer = new Timer(5000, this);
+		timer = new Timer(1000, this);
 		timer.setActionCommand(ACTION_TIMER);
 
 		layout.setHorizontalGroup(
@@ -123,8 +123,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 
 	public void updatePriceDataDate(){
-		//FIXME price data: when can we update again?
-		Date d = Settings.getGmtNow(); //program.getSettings().getMarketstatsNextUpdate();
+		Date d = program.getSettings().getPriceDataNextUpdate();
 		if (Settings.isUpdatable(d)){
 			jPriceDataUpdate.setText("Now");
 		} else {
@@ -183,6 +182,9 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	}
 	public void updateEveTime(){
 		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow()) );
+		updatePriceDataDate();
+		updateAssetDate();
+		updateMarketOrdersDate();
 		if (!timer.isRunning()){
 			timer.start();
 		}
