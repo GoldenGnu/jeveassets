@@ -144,15 +144,15 @@ public class Settings {
 		//Load data and overwite default values
 		settingsLoaded = LocalSettingsReader.load(this);
 		SplashUpdater.setProgress(20);
-		LocalItemsReader.load(this);
+		LocalItemsReader.load(this); //Must be loaded before Assets
 		SplashUpdater.setProgress(30);
-		LocalLocationReader.load(this);
+		LocalLocationReader.load(this); //Must be loaded before Assets
 		SplashUpdater.setProgress(40);
-		LocalAssetsReader.load(this);
+		LocalConquerableStationsReader.load(this); //Must be loaded before Assets
 		SplashUpdater.setProgress(50);
-		LocalConquerableStationsReader.load(this);
+		LocalAssetsReader.load(this); //Assets
 		SplashUpdater.setProgress(60);
-		priceDataGetter = new PriceDataGetter(this);
+		priceDataGetter = new PriceDataGetter(this); //Price Data
 		SplashUpdater.setProgress(70);
 		//TODO should be updatable from the menu
 		EveApiHumansReader.load(this);
