@@ -147,48 +147,42 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 			removeFilter( filters.get(0) );
 		}
 		for (int a = 0; a < assetFilters.size(); a++){
-			addFilter();
-			FilterPanel filterPanel = filters.get(filters.size()-1);
+			FilterPanel filterPanel = new FilterPanel(program, this);
 			filterPanel.setAssetFilter( assetFilters.get(a) );
+			addFilter(filterPanel);
 		}
 		this.updateLayout();
 	}
 
 	public void addFilter(AssetFilter assetFilter){
-		FilterPanel filterPanel = new FilterPanel(program, matcherEditorManager, this);
+		FilterPanel filterPanel = new FilterPanel(program, this);
 		filterPanel.setAssetFilter(assetFilter);
-		if (filters.size() == 1){
-			if (filters.get(0).getAssetFilter().isEmpty()){
-				removeFilter( filters.get(0) );
-			}
+		//Remove single empty filter...
+		if (filters.size() == 1 && filters.get(0).getAssetFilter().isEmpty()){
+			removeFilter( filters.get(0) );
 		}
-		this.getPanel().add(filterPanel.getPanel());
-		filters.add(filterPanel);
-		if (filters.size() > 1){
-			filters.get(0).showButton();
-		}
-		if (filters.size() == 1){
-			filters.get(0).hideButton();
-		}
-		this.updateLayout();
+		addFilter(filterPanel);
 	}
 
 	private void addFilter(){
-		FilterPanel filterPanel = new FilterPanel(program, matcherEditorManager, this);
-		this.getPanel().add(filterPanel.getPanel());
-		filters.add(filterPanel);
-		if (filters.size() > 1){
+		addFilter(new FilterPanel(program, this));
+	}
+	private void addFilter(FilterPanel filterPanel){
+		this.getPanel().add(filterPanel.getPanel()); //Must be done before filtering
+		filters.add(filterPanel); //Must be done before filtering
+		matcherEditorManager.add(filterPanel.getEveAssetMatcherEditor()); //Tricker refiltering
+		if (filters.size() > 1){ //Show remove buttons
 			filters.get(0).showButton();
 		}
-		if (filters.size() == 1){
+		if (filters.size() == 1){ //Hide remove button
 			filters.get(0).hideButton();
 		}
 		this.updateLayout();
 	}
 	private void removeFilter(FilterPanel filterPanel){
-		matcherEditorManager.remove(filterPanel.getEveAssetMatcherEditor());
 		this.getPanel().remove(filterPanel.getPanel());
 		filters.remove(filterPanel);
+		matcherEditorManager.remove(filterPanel.getEveAssetMatcherEditor());
 		if (filters.size() == 1){
 			filters.get(0).hideButton();
 		}

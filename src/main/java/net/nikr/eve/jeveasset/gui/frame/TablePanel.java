@@ -279,6 +279,10 @@ public class TablePanel extends JProgramPanel
 			}
 		}
 	}
+
+	public void filtersChanged(){
+		updateToolPanel();
+	}
 	
 	private void autoResizeColumns() {
 		if (!eveAssetEventList.isEmpty()){

@@ -229,6 +229,7 @@ public class Program implements ActionListener {
 		this.getFiltersManagerDialog().filtersChanged();
 		this.getSaveFilterDialog().filtersChanged();
 		this.getToolPanel().filtersChanged();
+		this.getTablePanel().filtersChanged();
 	}
 	
 	public void updateEventList(){

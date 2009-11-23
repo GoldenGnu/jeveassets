@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.table.EveAssetMatcherEditor;
-import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
 
 
 public class FilterPanel extends JProgramPanel {
@@ -52,7 +51,7 @@ public class FilterPanel extends JProgramPanel {
 
 	private EveAssetMatcherEditor eveAssetMatcherEditor;
 	
-	public FilterPanel(Program program, MatcherEditorManager matcherEditorManager, ToolPanel filtersPanel) {
+	public FilterPanel(Program program, ToolPanel filtersPanel) {
 		super(program);
 
 		layout.setAutoCreateGaps(true);
@@ -61,7 +60,6 @@ public class FilterPanel extends JProgramPanel {
 		space = new JPanel();
 
 		eveAssetMatcherEditor = new EveAssetMatcherEditor(program, this);
-		matcherEditorManager.add(eveAssetMatcherEditor);
 
 		jAnd = eveAssetMatcherEditor.getAnd();
 		this.getPanel().add(jAnd);
