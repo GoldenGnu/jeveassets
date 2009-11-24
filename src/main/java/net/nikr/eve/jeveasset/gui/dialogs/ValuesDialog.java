@@ -30,6 +30,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import com.beimin.eveapi.balance.ApiAccountBalance;
+import com.beimin.eveapi.order.ApiMarketOrder;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,9 +57,11 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	public final static String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
 	public final static String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
 
-	private final String NAME_ASSETS_AND_WALLET_TOTAL = "Total";
+	private final String NAME_TOTAL = "Total";
 	private final String NAME_WALLET_BALANCE = "Wallet balance";
 	private final String NAME_ASSETS_VALUE = "Assets";
+	private final String NAME_ASSETS_SELL_ORDERS = "Sell Orders";
+	private final String NAME_ASSETS_ESCROWS = "Escrows";
 	private final String NAME_BEST_ASSET = "Best asset";
 	private final String NAME_BEST_SHIP = "Best ship";
 	private final String NAME_BEST_MODULE = "Best module";
@@ -84,19 +87,26 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	private Map<String, Double> ownersTotalAccountBalance;
 	private Map<String, Double> ownersTotalItemsValue;
 	private Map<String, Long> ownersTotalItemsCount;
+	private Map<String, Double> ownersTotalSellOrders;
+	private Map<String, Double> ownersTotalBuyOrders;
 	private Map<String, EveAsset> ownersBestItem;
 	private Map<String, EveAsset> ownersBestModule;
 	private Map<String, EveAsset> ownersBestShip;
 	private Map<String, Double> corpsTotalAccountBalance;
 	private Map<String, Double> corpsTotalItemsValue;
 	private Map<String, Long> corpsTotalItemsCount;
+	private Map<String, Double> corpsTotalSellOrders;
+	private Map<String, Double> corpsTotalBuyOrders;
 	private Map<String, EveAsset> corpsBestItem;
 	private Map<String, EveAsset> corpsBestModule;
 	private Map<String, EveAsset> corpsBestShip;
 
+
 	private double totalItemsValue = 0;
 	private long totalItemsCount = 0;
 	private double totalAccountBalance = 0;
+	private double totalSellOrders = 0;
+	private double totalBuyOrders = 0;
 	private EveAsset bestItem = null;
 	private EveAsset bestModule = null;
 	private EveAsset bestShip = null;
@@ -181,9 +191,9 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 				)
 				
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAll, 350, 350, 350)
-					.addComponent(jOwner, 350, 350, 350)
-					.addComponent(jCorp, 350, 350, 350)
+					.addComponent(jAll, 450, 450, 450)
+					.addComponent(jOwner, 450, 450, 450)
+					.addComponent(jCorp, 450, 450, 450)
 				)
 				
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -221,8 +231,17 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 		jCorps.setSelectedIndex(0);
 
 		Output output = new Output("Grand Total");
-		output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
-		if (totalAccountBalance != 0 || totalItemsValue != 0) output.addValue(Formater.isk(totalAccountBalance+totalItemsValue));
+		output.addHeading(NAME_TOTAL);
+		if (totalAccountBalance != 0
+				|| totalItemsValue != 0
+				|| totalSellOrders != 0
+				|| totalBuyOrders != 0
+				){
+			output.addValue(Formater.isk(totalAccountBalance
+					+totalItemsValue
+					+totalSellOrders
+					+totalBuyOrders));
+		}
 		output.addNone();
 
 		output.addHeading(NAME_WALLET_BALANCE);
@@ -231,6 +250,14 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 
 		output.addHeading(NAME_ASSETS_VALUE);
 		if (totalItemsValue != 0) output.addValue(Formater.isk(totalItemsValue));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_SELL_ORDERS);
+		if (totalSellOrders != 0) output.addValue(Formater.isk(totalSellOrders));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_ESCROWS);
+		if (totalBuyOrders != 0) output.addValue(Formater.isk(totalBuyOrders));
 		output.addNone();
 
 		output.addHeading(NAME_BEST_ASSET);
@@ -269,12 +296,16 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 		ownersTotalAccountBalance = new HashMap<String, Double>();
 		ownersTotalItemsValue = new HashMap<String, Double>();
 		ownersTotalItemsCount = new HashMap<String, Long>();
+		ownersTotalSellOrders = new HashMap<String, Double>();
+		ownersTotalBuyOrders = new HashMap<String, Double>();
 		ownersBestItem = new HashMap<String, EveAsset>();
 		ownersBestModule = new HashMap<String, EveAsset>();
 		ownersBestShip = new HashMap<String, EveAsset>();
 		corpsTotalAccountBalance = new HashMap<String, Double>();
 		corpsTotalItemsValue = new HashMap<String, Double>();
 		corpsTotalItemsCount = new HashMap<String, Long>();
+		corpsTotalSellOrders = new HashMap<String, Double>();
+		corpsTotalBuyOrders = new HashMap<String, Double>();
 		corpsBestItem = new HashMap<String, EveAsset>();
 		corpsBestModule = new HashMap<String, EveAsset>();
 		corpsBestShip = new HashMap<String, EveAsset>();
@@ -282,14 +313,18 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 		totalItemsCount = 0;
 		totalItemsValue = 0;
 		totalAccountBalance = 0;
+		totalSellOrders = 0;
+		totalBuyOrders = 0;
 		bestItem = null;
 		bestShip = null;
 		bestModule = null;
 		for (int a = 0; a < eveAssetEventList.size(); a++){
 			EveAsset eveAsset = eveAssetEventList.get(a);
-			
 
-			if (eveAsset.isCorporationAsset()){
+			//Skip market orders
+			if (eveAsset.getFlag().equals("Market Order"))	continue;
+			
+			if (eveAsset.isCorporationAsset()){ //Corp Asset
 				//Corp Total Value
 				String corp = eveAsset.getOwner();
 				double corpTotalValue = 0;
@@ -341,9 +376,9 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 						corpsBestShip.put(corp, eveAsset);
 					}
 				}
-			} else {
+			} else { //User Asset
 				String owner = eveAsset.getOwner();
-				//Owner Total Value
+				//Owner Total Item Value
 				double ownerTotalValue = 0;
 				if (ownersTotalItemsValue.containsKey(owner)){
 					ownerTotalValue = ownersTotalItemsValue.get(owner);
@@ -381,7 +416,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 					}
 				}
 
-				//Owner Best Module
+				//Owner Best Ship
 				EveAsset ownerBestShip = ownersBestShip.get(owner);
 				if (ownerBestShip == null && eveAsset.getCategory().equals("Ship")) ownerBestShip = eveAsset;
 
@@ -411,7 +446,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 					bestModule = eveAsset;
 				}
 			}
-			
+
 			//Best Ship
 			if (bestShip == null && eveAsset.getCategory().equals("Ship")) bestShip = eveAsset;
 			if (bestShip != null) {
@@ -428,6 +463,8 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 				if (human.isShowAssets()){
 					if (!owners.contains(human.getName())){
 						owners.add(human.getName());
+
+						//Account Balance
 						List<ApiAccountBalance> accountBalances = human.getAccountBalances();
 						double ownerTotalAccountBalance = 0;
 						for (int c = 0; c < accountBalances.size(); c++){
@@ -436,9 +473,36 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 							ownerTotalAccountBalance = ownerTotalAccountBalance + accountBalance.getBalance();
 						}
 						ownersTotalAccountBalance.put(human.getName(), ownerTotalAccountBalance);
+
+						//Orders
+						List<ApiMarketOrder> marketOrders = human.getMarketOrders();
+						double ownerTotalSellOrders = 0;
+						double ownerTotalBuyOrders = 0;
+						for (int c = 0; c < marketOrders.size(); c++){
+							ApiMarketOrder apiMarketOrder = marketOrders.get(c);
+							if (apiMarketOrder.getOrderState() == 0){
+								if (apiMarketOrder.getBid() < 1){ //Sell Orders
+									ownerTotalSellOrders = ownerTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+								} else { //Buy Orders
+									//ownerTotalBuyOrders = ownerTotalBuyOrders + (-apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+									ownerTotalBuyOrders = ownerTotalBuyOrders + apiMarketOrder.getEscrow();
+								}
+							}
+						}
+						if (ownerTotalSellOrders != 0){
+							ownersTotalSellOrders.put(human.getName(), ownerTotalSellOrders);
+						}
+						if (ownerTotalBuyOrders != 0){
+							ownersTotalBuyOrders.put(human.getName(), ownerTotalBuyOrders);
+						}
+						totalSellOrders = totalSellOrders + ownerTotalSellOrders;
+						totalBuyOrders = totalBuyOrders + ownerTotalBuyOrders;
+						
 					}
 					if (human.isUpdateCorporationAssets() && !corps.contains(human.getCorporation())){
 						corps.add(human.getCorporation());
+
+						//Account Balance
 						List<ApiAccountBalance> corpAccountBalances = human.getAccountBalancesCorporation();
 						double corpTotalAccountBalance = 0;
 						for (int c = 0; c < corpAccountBalances.size(); c++){
@@ -447,6 +511,30 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
 						}
 						corpsTotalAccountBalance.put(human.getCorporation(), corpTotalAccountBalance);
+
+						//Orders
+						List<ApiMarketOrder> marketOrders = human.getMarketOrdersCorporation();
+						double corpTotalSellOrders = 0;
+						double corpTotalBuyOrders = 0;
+						for (int c = 0; c < marketOrders.size(); c++){
+							ApiMarketOrder apiMarketOrder = marketOrders.get(c);
+							if (apiMarketOrder.getOrderState() == 0){
+								if (apiMarketOrder.getBid() < 1){ //Sell Orders
+									corpTotalSellOrders = corpTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+								} else { //Buy Orders
+									//corpTotalBuyOrders = corpTotalBuyOrders + (-apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+									corpTotalBuyOrders = corpTotalBuyOrders + apiMarketOrder.getEscrow();
+								}
+							}
+						}
+						if (corpTotalSellOrders != 0){
+							corpsTotalSellOrders.put(human.getCorporation(), corpTotalSellOrders);
+						}
+						if (corpTotalBuyOrders  != 0){
+							corpsTotalBuyOrders.put(human.getCorporation(), corpTotalBuyOrders);
+						}
+						totalSellOrders = totalSellOrders + corpTotalSellOrders;
+						totalBuyOrders = totalBuyOrders + corpTotalBuyOrders;
 					}
 				}
 			}
@@ -494,13 +582,21 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 			
 			Output output = new Output("Character");
 
-			output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
-			if (ownersTotalAccountBalance.containsKey(s) && ownersTotalItemsValue.containsKey(s)){
-				double l = ownersTotalAccountBalance.get(s) + ownersTotalItemsValue.get(s);
-				output.addValue(Formater.isk(l));
+			output.addHeading(NAME_TOTAL);
+			double total = 0;
+			//Account Balance
+			if (ownersTotalAccountBalance.containsKey(s)) total = total + ownersTotalAccountBalance.get(s);
+			//Items Value
+			if (ownersTotalItemsValue.containsKey(s)) total = total + ownersTotalItemsValue.get(s);
+			//Sell Orders
+			if (ownersTotalSellOrders.containsKey(s)) total = total + ownersTotalSellOrders.get(s);
+			//Buy Orders
+			if (ownersTotalBuyOrders.containsKey(s)) total = total + ownersTotalBuyOrders.get(s);
+			if (total != 0){
+				output.addValue(Formater.isk(total));
 			}
 			output.addNone();
-			
+
 			output.addHeading(NAME_WALLET_BALANCE);
 			if (ownersTotalAccountBalance.containsKey(s)){
 				double l = ownersTotalAccountBalance.get(s);
@@ -511,6 +607,20 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 			output.addHeading(NAME_ASSETS_VALUE);
 			if (ownersTotalItemsValue.containsKey(s)){
 				double l = ownersTotalItemsValue.get(s);
+				output.addValue(Formater.isk(l));
+			}
+			output.addNone();
+
+			output.addHeading(NAME_ASSETS_SELL_ORDERS);
+			if (ownersTotalSellOrders.containsKey(s)){
+				double l = ownersTotalSellOrders.get(s);
+				output.addValue(Formater.isk(l));
+			}
+			output.addNone();
+
+			output.addHeading(NAME_ASSETS_ESCROWS);
+			if (ownersTotalBuyOrders.containsKey(s)){
+				double l = ownersTotalBuyOrders.get(s);
 				output.addValue(Formater.isk(l));
 			}
 			output.addNone();
@@ -547,10 +657,18 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 			}
 			Output output = new Output("Corporation");
 
-			output.addHeading(NAME_ASSETS_AND_WALLET_TOTAL);
-			if (corpsTotalAccountBalance.containsKey(s) && corpsTotalItemsValue.containsKey(s)){
-				double l = corpsTotalAccountBalance.get(s) + corpsTotalItemsValue.get(s);
-				output.addValue(Formater.isk(l));
+			output.addHeading(NAME_TOTAL);
+			double total = 0;
+			//Account Balance
+			if (corpsTotalAccountBalance.containsKey(s)) total = total + corpsTotalAccountBalance.get(s);
+			//Items Value
+			if (corpsTotalItemsValue.containsKey(s)) total = total + corpsTotalItemsValue.get(s);
+			//Sell Orders
+			if (corpsTotalSellOrders.containsKey(s)) total = total + corpsTotalSellOrders.get(s);
+			//Buy Orders
+			if (corpsTotalBuyOrders.containsKey(s)) total = total + corpsTotalBuyOrders.get(s);
+			if (total != 0){
+				output.addValue(Formater.isk(total));
 			}
 			output.addNone();
 
@@ -564,6 +682,20 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 			output.addHeading(NAME_ASSETS_VALUE);
 			if (corpsTotalItemsValue.containsKey(s)){
 				double l = corpsTotalItemsValue.get(s);
+				output.addValue(Formater.isk(l));
+			}
+			output.addNone();
+
+			output.addHeading(NAME_ASSETS_SELL_ORDERS);
+			if (corpsTotalSellOrders.containsKey(s)){
+				double l = corpsTotalSellOrders.get(s);
+				output.addValue(Formater.isk(l));
+			}
+			output.addNone();
+
+			output.addHeading(NAME_ASSETS_ESCROWS);
+			if (corpsTotalBuyOrders.containsKey(s)){
+				double l = corpsTotalBuyOrders.get(s);
 				output.addValue(Formater.isk(l));
 			}
 			output.addNone();
