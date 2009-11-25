@@ -205,7 +205,12 @@ public class LocalSettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
 			defaultPrice = AttributeGetters.getString(element, "defaultprice");
 		}
-		settings.setPriceDataSettings( new PriceDataSettings(region, defaultPrice) );
+		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
+		if (AttributeGetters.haveAttribute(element, "source")){
+			source = AttributeGetters.getString(element, "source");
+		}
+
+		settings.setPriceDataSettings( new PriceDataSettings(region, defaultPrice, source) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

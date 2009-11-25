@@ -43,6 +43,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	
 	private JComboBox jRegions;
 	private JComboBox jDefaultPrice;
+	private JComboBox jSource;
 
 	private PriceDataSettings oldPriceDataSettings;
 	
@@ -50,11 +51,15 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		super(program, jDialogCentered.getDialog(), "Price Data");
 
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
-
 		jRegions = new JComboBox(PriceDataSettings.REGIONS);
 
 		JLabel jDefaultPriceLabel = new JLabel("Price to use:");
 		jDefaultPrice = new JComboBox(EveAsset.getPriceSources());
+
+		JLabel jSourceLabel = new JLabel("Source to use:");
+		jSource = new JComboBox(PriceDataSettings.SOURCE);
+
+
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -62,16 +67,22 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jRegionsLabel)
 						.addComponent(jDefaultPriceLabel)
+						.addComponent(jSourceLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jRegions)
 						.addComponent(jDefaultPrice)
+						.addComponent(jSource)
 					)
-				)
 
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jRegionsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -80,7 +91,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addComponent(jDefaultPriceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefaultPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-
 		);
 	}
 
@@ -88,8 +98,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	public void save() {
 		int region = jRegions.getSelectedIndex();
 		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
-		if (!defaultPrice.equals(EveAsset.getPriceSource())) program.updateEventList();
-		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice);
+		String source = (String) jSource.getSelectedItem();
+		if (!defaultPrice.equals(EveAsset.getPriceSource())){
+			program.updateEventList();
+		}
+		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
 		oldPriceDataSettings = program.getSettings().getPriceDataSettings();
 		program.getSettings().setPriceDataSettings( newPriceDataSettings );
 	}
@@ -99,6 +112,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
 		jDefaultPrice.setSelectedItem(EveAsset.getPriceSource());
+		jSource.setSelectedItem(priceDataSettings.getSource());
 	}
 
 	@Override

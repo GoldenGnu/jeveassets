@@ -55,7 +55,7 @@ public class PriceDataGetter implements PricingListener {
 	private boolean updated;
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 60*60*1000l; // 1 hour
-	private boolean enableCacheTimers = true; // 1 hour;
+	private boolean enableCacheTimers = true;
 
 	final PriceDataGetter lock = this;
 
@@ -118,12 +118,15 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		if (enableCacheTimers){
-			Log.info("	Price data loaded/updated");
-		}
-		try {
-			pricing.writeCache();
-		} catch (IOException ex) {
-			Log.error("Failed to write price data cache", ex);
+			Log.info("	Price data updated");
+			try {
+				pricing.writeCache();
+				Log.info("	Price data cached saved");
+			} catch (IOException ex) {
+				Log.error("Failed to write price data cache", ex);
+			}
+		} else {
+			Log.info("Price data loaded");
 		}
 		return updated;
 	}
@@ -190,7 +193,7 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public String getPricingFetchImplementation() {
 			//return "eve-metrics";
-			return "eve-central";
+			return settings.getPriceDataSettings().getSource();
 		}
 
 		@Override

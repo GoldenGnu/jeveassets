@@ -33,6 +33,11 @@ import uk.me.candle.eve.pricing.options.PricingType;
 
 public class PriceDataSettings {
 
+	public final static String SOURCE_EVE_CENTRAL = "eve-central";
+	public final static String SOURCE_EVE_METRICS = "eve-metrics";
+
+	public final static String[] SOURCE = {SOURCE_EVE_CENTRAL, SOURCE_EVE_METRICS};
+
 	public final static String REGION_EMPIRE = "Empire";
 	public final static String REGION_MARKET_HUBS = "Main Market Hubs";
 	public final static String REGION_ALL_AMARR = "All Amarr";
@@ -96,10 +101,12 @@ public class PriceDataSettings {
 
 	private int region;
 	private String priceSource;
+	private String source;
 
-	public PriceDataSettings(int region, String priceSource) {
+	public PriceDataSettings(int region, String priceSource, String source) {
 		this.region = region;
 		this.priceSource = priceSource;
+		this.source = source;
 	}
 
 	public String getPriceSource() {
@@ -110,6 +117,10 @@ public class PriceDataSettings {
 	public int getRegion() {
 		if (region >= REGIONS.length) return 0;
 		return region;
+	}
+
+	public String getSource(){
+		return source;
 	}
 
 	public PricingType getDefaultPricingType(){
@@ -286,15 +297,16 @@ public class PriceDataSettings {
 		return false;
 	}
 
-	public boolean equals(PriceDataSettings priceDataSettings){
-		if (priceDataSettings.getRegion() == this.getRegion()) return true;
-		return false;
-	}
-
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 83 * hash + this.region;
+		hash = 79 * hash + this.region;
+		hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
 		return hash;
+	}
+
+	public boolean equals(PriceDataSettings priceDataSettings){
+		if (priceDataSettings.getRegion() == this.getRegion() && priceDataSettings.getSource().equals(this.source) ) return true;
+		return false;
 	}
 }

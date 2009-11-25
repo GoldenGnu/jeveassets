@@ -134,7 +134,7 @@ public class Settings {
 		corporationsNextUpdate =  new HashMap<Long, Date>();  //Settings.cvtToGmt( new Date() );
 		resetMainTableColumns();
 
-		priceDataSettings = new PriceDataSettings(0, EveAsset.PRICE_SELL_MEDIAN);
+		priceDataSettings = new PriceDataSettings(0, EveAsset.PRICE_SELL_MEDIAN, PriceDataSettings.SOURCE_EVE_CENTRAL);
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);

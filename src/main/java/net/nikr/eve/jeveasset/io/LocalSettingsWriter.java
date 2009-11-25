@@ -102,6 +102,7 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "region", String.valueOf(priceDataSettings.getRegion()));
 		parentNode.setAttributeNS(null, "defaultprice", priceDataSettings.getPriceSource());
+		parentNode.setAttributeNS(null, "source", priceDataSettings.getSource());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
