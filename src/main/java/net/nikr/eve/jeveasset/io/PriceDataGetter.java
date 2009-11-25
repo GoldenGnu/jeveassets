@@ -55,12 +55,13 @@ public class PriceDataGetter implements PricingListener {
 	private boolean updated;
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 60*60*1000l; // 1 hour
+	private boolean enableCacheTimers = true; // 1 hour;
 
 	final PriceDataGetter lock = this;
 
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
-		updatePriceData();
+		updatePriceData(null, false, false);
 	}
 
 	public boolean updatePriceData(){
@@ -68,23 +69,28 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public boolean updatePriceData(UpdateTask task){
-		return updatePriceData(null, false);
+		return updatePriceData(null, false, true);
 	}
 
 	public boolean updatePriceData(boolean forceUpdate){
-		return updatePriceData(null, forceUpdate);
+		return updatePriceData(null, forceUpdate, true);
 	}
 
 	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
+		return updatePriceData(null, forceUpdate, true);
+	}
+
+	public boolean updatePriceData(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
 		this.task = task;
+		this.enableCacheTimers = enableCacheTimers;
 		if (task != null) progress = task.getProgress();
 		updated = false;
 
-		Log.info("Price data...");
+		if (enableCacheTimers) Log.info("Updating price data...");
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
-
+		
 		//Reset price data
 		settings.setPriceData( new HashMap<Integer, PriceData>() );
 
@@ -111,7 +117,14 @@ public class PriceDataGetter implements PricingListener {
 				Log.error("Failed to update price", ex);
 			}
 		}
-		Log.info("	Price data loaded/updated");
+		if (enableCacheTimers){
+			Log.info("	Price data loaded/updated");
+		}
+		try {
+			pricing.writeCache();
+		} catch (IOException ex) {
+			Log.error("Failed to write price data cache", ex);
+		}
 		return updated;
 	}
 
@@ -207,6 +220,11 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public OutputStream getCacheOutputStream() throws IOException {
 			return new FileOutputStream(Settings.getPathPriceData());
+		}
+
+		@Override
+		public boolean getCacheTimersEnabled() {
+			return enableCacheTimers;
 		}
 
 	}
