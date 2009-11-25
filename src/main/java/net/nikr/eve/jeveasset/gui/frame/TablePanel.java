@@ -134,7 +134,7 @@ public class TablePanel extends JProgramPanel
 		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
 		FilterList<EveAsset> textFilteredList = new FilterList<EveAsset>(sortedList);
-		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(textFilteredList);
+		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(textFilteredList, program);
 		//Table Model
 		eveAssetTableModel = new EventTableModel<EveAsset>(textFilteredList, eveAssetTableFormat);
 		eveAssetTableModel.addTableModelListener(this);
@@ -224,8 +224,11 @@ public class TablePanel extends JProgramPanel
 		program.getStatusPanel().setVolume(volume);
 	}
 
-	private void updateToolPanel(){
+	public void updateToolPanel(){
 		String filter = "<i>Untitled</i>";
+		if (program.getToolPanel().getAssetFilters().isEmpty()){
+			filter = "<i>Empty</i>";
+		}
 		if (program.getSettings().getAssetFilters().containsValue(program.getToolPanel().getAssetFilters())){
 			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
 				if (entry.getValue().equals(program.getToolPanel().getAssetFilters())){

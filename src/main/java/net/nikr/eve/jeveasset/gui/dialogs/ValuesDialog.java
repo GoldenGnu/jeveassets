@@ -484,7 +484,6 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 								if (apiMarketOrder.getBid() < 1){ //Sell Orders
 									ownerTotalSellOrders = ownerTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
-									//ownerTotalBuyOrders = ownerTotalBuyOrders + (-apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 									ownerTotalBuyOrders = ownerTotalBuyOrders + apiMarketOrder.getEscrow();
 								}
 							}
@@ -522,7 +521,6 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 								if (apiMarketOrder.getBid() < 1){ //Sell Orders
 									corpTotalSellOrders = corpTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
-									//corpTotalBuyOrders = corpTotalBuyOrders + (-apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 									corpTotalBuyOrders = corpTotalBuyOrders + apiMarketOrder.getEscrow();
 								}
 							}

@@ -30,6 +30,7 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 
 
@@ -37,10 +38,13 @@ public class MatcherEditorManager {
 
 	private List<EveAssetMatcherEditor> tcmes;
 	private FilterList<EveAsset> eveAssetTextFiltered;
+	private Program program;
 
-	public MatcherEditorManager(FilterList<EveAsset> eveAssetTextFiltered) {
+	public MatcherEditorManager(FilterList<EveAsset> eveAssetTextFiltered, Program program) {
 		this.eveAssetTextFiltered = eveAssetTextFiltered;
+		this.program = program;
 		tcmes = new ArrayList<EveAssetMatcherEditor>();
+
 	}
 	
 	public void add(EveAssetMatcherEditor eveAssetMatcherEditor){
@@ -56,6 +60,7 @@ public class MatcherEditorManager {
 	public void update(){
 		EventList<EveAssetMatcherEditor> allTCMEs = GlazedLists.eventList(tcmes);
 		EveAssetLogicalMatcherEditor cme = new EveAssetLogicalMatcherEditor(allTCMEs);
+		cme.addMatcherEditorListener(program);
 		eveAssetTextFiltered.setMatcherEditor(cme);
 	}
 }

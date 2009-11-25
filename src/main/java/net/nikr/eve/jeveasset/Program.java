@@ -27,6 +27,8 @@ package net.nikr.eve.jeveasset;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.matchers.MatcherEditor.Event;
+import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Desktop;
 import java.io.IOException;
 import net.nikr.eve.jeveasset.gui.frame.Frame;
@@ -67,7 +69,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
-public class Program implements ActionListener {
+public class Program implements ActionListener, Listener<EveAsset> {
 
 	//"Major.Minor.Bugfix [BETA n] [BUILD #n])";
 	public static final String PROGRAM_VERSION = "1.2.0 DEV";
@@ -231,6 +233,10 @@ public class Program implements ActionListener {
 		this.getToolPanel().filtersChanged();
 		this.getTablePanel().filtersChanged();
 	}
+
+	public void tableUpdated(){
+
+	}
 	
 	public void updateEventList(){
 		settings.clearEveAssetList();
@@ -268,6 +274,11 @@ public class Program implements ActionListener {
 	}
 	public EventList<EveAsset> getEveAssetEventList() {
 		return eveAssetEventList;
+	}
+
+	@Override
+	public void changedMatcher(Event<EveAsset> matcherEvent) {
+		this.getTablePanel().updateToolPanel();
 	}
 
 	@Override

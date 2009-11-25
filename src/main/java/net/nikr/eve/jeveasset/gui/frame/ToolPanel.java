@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
+import net.nikr.log.Log;
 
 
 public class ToolPanel extends JProgramPanel implements ActionListener {
@@ -137,7 +138,6 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 			if (!assetFilter.isEmpty()){
 				assetFilters.add(assetFilter);
 			}
-			
 		}
 
 		return assetFilters;
