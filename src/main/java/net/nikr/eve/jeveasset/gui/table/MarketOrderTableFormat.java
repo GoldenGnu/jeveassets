@@ -80,11 +80,11 @@ public class MarketOrderTableFormat implements AdvancedTableFormat<MarketOrder> 
 		String columnName = columnNames.get(column);
 		if (columnName.equals("Name")) return TableComparators.stringComparator();
 		if (columnName.equals("Quantity")) return TableComparators.quantityComparator();
-		if (columnName.equals("Price")) return TableComparators.doubleComparator();
+		if (columnName.equals("Price")) return TableComparators.numberComparator();
 		if (columnName.equals("Expire In")) return TableComparators.stringComparator();
 		if (columnName.equals("Location")) return TableComparators.stringComparator();
 		if (columnName.equals("Range")) return TableComparators.stringComparator();
-		if (columnName.equals("Min. Volume")) return TableComparators.integerComparator();
+		if (columnName.equals("Min. Volume")) return TableComparators.numberComparator();
 		if (columnName.equals("Status")) return TableComparators.stringComparator();
 		return null;
 	}

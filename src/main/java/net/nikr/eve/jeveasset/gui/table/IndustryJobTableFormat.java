@@ -85,8 +85,8 @@ public class IndustryJobTableFormat implements AdvancedTableFormat<IndustryJob> 
 		if (columnName.equals("Owner")) return TableComparators.stringComparator();
 		if (columnName.equals("Install Date")) return TableComparators.stringComparator();
 		if (columnName.equals("End Date")) return TableComparators.stringComparator();
-		if (columnName.equals("BP ME")) return TableComparators.integerComparator();
-		if (columnName.equals("BP PE")) return TableComparators.integerComparator();
+		if (columnName.equals("BP ME")) return TableComparators.numberComparator();
+		if (columnName.equals("BP PE")) return TableComparators.numberComparator();
 		return null;
 	}
 

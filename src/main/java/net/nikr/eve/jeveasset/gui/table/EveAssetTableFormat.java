@@ -86,23 +86,23 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Group")) return TableComparators.stringComparator();
 		if (sColumn.equals("Category")) return TableComparators.stringComparator();
 		if (sColumn.equals("Owner")) return TableComparators.stringComparator();
-		if (sColumn.equals("Count")) return TableComparators.longComparator();
+		if (sColumn.equals("Count")) return TableComparators.numberComparator();
 		if (sColumn.equals("Location")) return TableComparators.stringComparator();
 		if (sColumn.equals("Container")) return TableComparators.stringComparator();
 		if (sColumn.equals("Flag")) return TableComparators.stringComparator();
-		if (sColumn.equals("Price")) return TableComparators.doubleComparator();
-		if (sColumn.equals("Sell Min")) return TableComparators.doubleComparator();
-		if (sColumn.equals("Buy Max")) return TableComparators.doubleComparator();
-		if (sColumn.equals("Base Price")) return TableComparators.doubleComparator();
-		if (sColumn.equals("Value")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Price")) return TableComparators.numberComparator();
+		if (sColumn.equals("Sell Min")) return TableComparators.numberComparator();
+		if (sColumn.equals("Buy Max")) return TableComparators.numberComparator();
+		if (sColumn.equals("Base Price")) return TableComparators.numberComparator();
+		if (sColumn.equals("Value")) return TableComparators.numberComparator();
 		if (sColumn.equals("Meta")) return TableComparators.stringComparator();
-		if (sColumn.equals("ID")) return TableComparators.integerComparator();
-		if (sColumn.equals("Volume")) return TableComparators.floatComparator();
-		if (sColumn.equals("Type ID")) return TableComparators.integerComparator();
+		if (sColumn.equals("ID")) return TableComparators.numberComparator();
+		if (sColumn.equals("Volume")) return TableComparators.numberComparator();
+		if (sColumn.equals("Type ID")) return TableComparators.numberComparator();
 		if (sColumn.equals("Region")) return TableComparators.stringComparator();
-		if (sColumn.equals("Type Count")) return TableComparators.longComparator();
+		if (sColumn.equals("Type Count")) return TableComparators.numberComparator();
 		if (sColumn.equals("Security")) return TableComparators.stringComparator();
-		if (sColumn.equals("Reprocessed")) return TableComparators.doubleComparator();
+		if (sColumn.equals("Reprocessed")) return TableComparators.numberComparator();
 		return null;
 	}
 

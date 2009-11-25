@@ -31,30 +31,15 @@ import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 
 public class TableComparators {
 
-	private static IntegerComparator integerComparator = new IntegerComparator();
 	private static Comparator stringComparator = new StringComparator();
-	private static Comparator longComparator = new LongComparator();
-	private static Comparator doubleComparator = new DoubleComparator();
-	private static Comparator floatComparator = new FloatComparator();
 	private static Comparator quantityComparator = new QuantityComparator();
+	private static Comparator numberComparator = new NumberComparator();
 
 	private TableComparators() {
 	}
 
-	public static Comparator doubleComparator() {
-		return doubleComparator;
-	}
-
-	public static Comparator floatComparator() {
-		return floatComparator;
-	}
-
-	public static IntegerComparator integerComparator() {
-		return integerComparator;
-	}
-
-	public static Comparator longComparator() {
-		return longComparator;
+	public static Comparator numberComparator() {
+		return numberComparator;
 	}
 
 	public static Comparator stringComparator() {
@@ -65,35 +50,17 @@ public class TableComparators {
 		return quantityComparator;
 	}
 
-	public static class LongComparator implements Comparator<Long>{
-		@Override
-		public int compare(Long o1, Long o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public static class IntegerComparator implements Comparator<Integer> {
-		@Override
-		public int compare(Integer o1, Integer o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public static class FloatComparator implements Comparator<Float> {
-		@Override
-		public int compare(Float o1, Float o2) {
-			return o1.compareTo(o2);
-		}
-	}
-	public static class DoubleComparator implements Comparator<Double> {
-		@Override
-		public int compare(Double o1, Double o2) {
-			return o1.compareTo(o2);
-		}
-	}
-
 	public static class StringComparator implements Comparator<String>{
 		@Override
 		public int compare(String o1, String o2) {
 			return o1.compareTo(o2);
+		}
+	}
+
+	public static class NumberComparator implements Comparator<Number>{
+		@Override
+		public int compare(Number o1, Number o2) {
+			return Double.compare(o1.doubleValue(), o2.doubleValue());
 		}
 	}
 
