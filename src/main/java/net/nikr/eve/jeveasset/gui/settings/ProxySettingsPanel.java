@@ -34,6 +34,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
@@ -202,4 +203,9 @@ public class ProxySettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void closed() {}
+
+	@Override
+	public JComponent getDefaultFocus() {
+		return null;
+	}
 }

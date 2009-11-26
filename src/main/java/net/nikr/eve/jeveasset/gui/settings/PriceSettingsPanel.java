@@ -38,6 +38,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -69,15 +70,11 @@ public class PriceSettingsPanel extends JSettingsPanel implements ActionListener
 		super(program, jDialogCentered.getDialog(), "Price");
 
 		JLabel jSetPriceLable = new JLabel("Assets:");
-
 		jAssets = new JComboBox();
 		jAssets.setActionCommand(ACTION_SELECTED);
 		jAssets.addActionListener(this);
-		jPanel.add(jAssets);
 
 		JLabel jPriceLable = new JLabel("Price:");
-		jPanel.add(jPriceLable);
-
 		jPrice = new JTextField();
 		JCopyPopup.install(jPrice);
 		jPrice.addFocusListener(this);
@@ -215,6 +212,11 @@ public class PriceSettingsPanel extends JSettingsPanel implements ActionListener
 
 	@Override
 	public void closed() {}
+
+	@Override
+	public JComponent getDefaultFocus() {
+		return jPrice;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

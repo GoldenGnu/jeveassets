@@ -27,6 +27,7 @@ package net.nikr.eve.jeveasset.gui.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
@@ -72,6 +73,11 @@ public class TableSettingsPanel extends JSettingsPanel {
 	@Override
 	public void closed() {
 
+	}
+
+	@Override
+	public JComponent getDefaultFocus() {
+		return null;
 	}
 
 }

@@ -102,7 +102,12 @@ public class SettingsDialog extends JDialogCentered implements ActionListener {
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() {
+		JComponent jComponent = jSettingsPanels.get(jTabbedPane.getSelectedIndex()).getDefaultFocus();
+		if (jComponent != null){
+			jComponent.requestFocus();
+		}
+	}
 
 	@Override
 	protected void windowActivated() {}

@@ -28,6 +28,7 @@ package net.nikr.eve.jeveasset.gui.settings;
 import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
@@ -130,5 +131,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			nextUpdate = "Now";
 		}
 		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	@Override
+	public JComponent getDefaultFocus() {
+		return null;
 	}
 }
