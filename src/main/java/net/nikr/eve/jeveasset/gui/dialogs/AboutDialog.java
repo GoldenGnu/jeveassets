@@ -87,6 +87,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://commons.apache.org/beanutils/\">Apache Commons BeanUtils</a> (Used by eveapi)<br> "
 				+ "&nbsp;<a href=\"http://commons.apache.org/logging/\">Apache Commons Logging</a> (Used by eveapi)<br> "
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (Logging)<br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (Price Data)<br>"
 
 			);
 		jCredits.setEditable(false);

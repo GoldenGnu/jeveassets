@@ -119,14 +119,14 @@ public class PriceDataGetter implements PricingListener {
 		}
 		if (enableCacheTimers){
 			Log.info("	Price data updated");
-			try {
-				pricing.writeCache();
-				Log.info("	Price data cached saved");
-			} catch (IOException ex) {
-				Log.error("Failed to write price data cache", ex);
-			}
 		} else {
 			Log.info("Price data loaded");
+		}
+		try {
+			pricing.writeCache();
+			Log.info("	Price data cached saved");
+		} catch (IOException ex) {
+			Log.error("Failed to write price data cache", ex);
 		}
 		return updated;
 	}
