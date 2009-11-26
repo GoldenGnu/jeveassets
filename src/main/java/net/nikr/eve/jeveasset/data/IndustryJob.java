@@ -26,9 +26,57 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.industry.ApiIndustryJob;
+import java.text.ParseException;
+import java.util.Date;
 
 
 public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob> {
+
+	public static final String ALL = "All";
+	public static final String STATE_DELIVERED = "Delivered";
+	public static final String STATE_FAILED = "Failed";
+	public static final String STATE_READY = "Ready";
+	public static final String STATE_ACTIVE = "Active";
+	public static final String STATE_PENDING = "Pending";
+	public static final String STATE_ABORTED = "Aborted";
+	public static final String STATE_GM_ABORTED = "GM aborted";
+	public static final String STATE_IN_FLIGHT = "Inflight unanchored";
+	public static final String STATE_DESTROYED = "Destroyed";
+
+	public static final String[] STATES = {ALL
+											,STATE_DELIVERED
+											,STATE_FAILED
+											,STATE_READY
+											,STATE_ACTIVE
+											,STATE_PENDING
+											,STATE_ABORTED
+											,STATE_GM_ABORTED
+											,STATE_IN_FLIGHT
+											,STATE_DESTROYED
+											};
+
+
+	public static final String ACTIVITY_NONE = "None";
+	public static final String ACTIVITY_MANUFACTURING = "Manufacturing";
+	public static final String ACTIVITY_RESEARCHING_TECHNOLOGY = "Researching Technology";
+	public static final String ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY = "Researching Time Productivity";
+	public static final String ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY = "Researching Material Productivity";
+	public static final String ACTIVITY_COPYING = "Copying";
+	public static final String ACTIVITY_DUPLICATING = "Duplicating";
+	public static final String ACTIVITY_REVERSE_ENGINEERING = "Reverse Engineering";
+	public static final String ACTIVITY_REVERSE_INVENTION = "Invention";
+
+	public static final String[] ACTIVITIES = {ALL
+												,ACTIVITY_MANUFACTURING
+												,ACTIVITY_RESEARCHING_TECHNOLOGY
+												,ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY
+												,ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY
+												,ACTIVITY_COPYING
+												,ACTIVITY_DUPLICATING
+												,ACTIVITY_REVERSE_ENGINEERING
+												,ACTIVITY_REVERSE_INVENTION
+												,ACTIVITY_NONE
+												};
 
 	private String activity = "";
 	private String state = "";
@@ -75,55 +123,71 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 		switch (this.getActivityID()){
 			case 0:
-				activity = "None";
+				activity = ACTIVITY_NONE;
 				break;
 			case 1:
-				activity = "Manufacturing";
+				activity = ACTIVITY_MANUFACTURING;
 				break;
 			case 2:
-				activity = "Researching Technology";
+				activity = ACTIVITY_RESEARCHING_TECHNOLOGY;
 				break;
 			case 3:
-				activity = "Researching Time Productivity";
+				activity = ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY;
 				break;
 			case 4:
-				activity = "Researching Material Productivity";
+				activity = ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY;
 				break;
 			case 5:
-				activity = "Copying";
+				activity = ACTIVITY_COPYING;
 				break;
 			case 6:
-				activity = "Duplicating";
+				activity = ACTIVITY_DUPLICATING;
 				break;
 			case 7:
-				activity = "Reverse Engineering";
+				activity = ACTIVITY_REVERSE_ENGINEERING;
 				break;
 			case 8:
-				activity = "Invention";
+				activity = ACTIVITY_REVERSE_INVENTION;
 				break;
 		}
+		Date start;
+		Date end;
+		try {
+			start = this.getBeginProductionTimeDate();
+			end = this.getEndProductionTimeDate();
+		} catch (ParseException ex) {
+			start = Settings.getGmtNow();
+			end = Settings.getGmtNow();
+		}
+
 		switch (this.getCompletedStatus()){
 			case 0:
 				if (this.getCompleted() > 0){
-					state = "Failed";
+					state = STATE_FAILED;
+				} else if (start.before(Settings.getGmtNow())){
+					if (end.before(Settings.getGmtNow())){
+						state = STATE_READY;
+					} else {
+						state = STATE_ACTIVE;
+					}
 				} else {
-					state = "Pending";
+					state = STATE_PENDING;
 				}
 				break;
 			case 1:
-				state = "Delivered";
+				state = STATE_DELIVERED;
 				break;
 			case 2:
-				state = "Aborted";
+				state = STATE_ABORTED;
 				break;
 			case 3:
-				state = "GM aborted";
+				state = STATE_GM_ABORTED;
 				break;
 			case 4:
-				state = "Inflight unanchored";
+				state = STATE_IN_FLIGHT;
 				break;
 			case 5:
-				state = "Destroyed";
+				state = STATE_DESTROYED;
 				break;
 		}
 	}

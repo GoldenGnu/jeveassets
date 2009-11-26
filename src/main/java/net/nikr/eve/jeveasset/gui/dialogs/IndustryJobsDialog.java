@@ -72,9 +72,6 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 	private Map<String, List<IndustryJob>> jobs;
 	private Vector<String> characters;
 
-	private String[] jobsActivity = new String[]{"All", "Manufacturing", "Researching Technology", "Researching Time Productivity", "Researching Material Productivity", "Copying", "Duplicating", "Reverse Engineering", "Invention", "None"};
-	private String[] jobsState = new String[]{"All", "Delivered", "Failed", "Pending", "Aborted", "GM aborted", "Inflight unanchored", "Destroyed"};
-
 	public IndustryJobsDialog(Program program, Image image) {
 		super(program, "Industry Jobs", image);
 
@@ -185,8 +182,8 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 			Collections.sort(characters);
 			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
-			jActivity.setModel( new DefaultComboBoxModel(jobsActivity));
-			jState.setModel( new DefaultComboBoxModel(jobsState));
+			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.ACTIVITIES));
+			jState.setModel( new DefaultComboBoxModel(IndustryJob.STATES));
 			jCharacters.setSelectedIndex(0);
 			jActivity.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
@@ -231,44 +228,16 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 				}
 				//State
 				String sState = (String) jState.getSelectedItem();
-				int state = 0;
-				if (sState.equals("All")) state = -1;
-				if (sState.equals("Failed")) state = 0;
-				if (sState.equals("Pending")) state = 0;
-				if (sState.equals("Delivered")) state = 1;
-				if (sState.equals("Aborted")) state = 2;
-				if (sState.equals("GM aborted")) state = 3;
-				if (sState.equals("Inflight unanchored")) state = 4;
+				//Activity
 				String sActivity = (String) jActivity.getSelectedItem();
-				int activity = 0;
-				if (sActivity.equals("All")) activity = -1;
-				if (sActivity.equals("None")) activity = 0;
-				if (sActivity.equals("Manufacturing")) activity = 1;
-				if (sActivity.equals("Researching Technology")) activity = 2;
-				if (sActivity.equals("Researching Time Productivity")) activity = 3;
-				if (sActivity.equals("Researching Material Productivity")) activity = 4;
-				if (sActivity.equals("Copying")) activity = 5;
-				if (sActivity.equals("Duplicating")) activity = 6;
-				if (sActivity.equals("Reverse Engineering")) activity = 7;
-				if (sActivity.equals("Invention")) activity = 8;
-
 				for (int a = 0; a < industryJobsInput.size(); a++){
 					IndustryJob industryJob = industryJobsInput.get(a);
-					boolean bState  = (industryJob.getCompletedStatus() == state || state < 0);
-					if (state == 0){
-						if (sState.equals("Failed") && industryJob.getCompleted() < 1){
-							bState = false;
-						}
-						if (sState.equals("Pending") && industryJob.getCompleted() > 0){
-							bState = false;
-						}
-					}
-					boolean bActivity = (industryJob.getActivityID() == activity || activity < 0);
+					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.ALL));
+					boolean bActivity = (industryJob.getActivity().equals(sActivity) || sActivity.equals(IndustryJob.ALL));
 					if (bState && bActivity){
 						industryJobsOutput.add(industryJob);
 					}
 				}
-				//
 				jobsEventList.clear();
 				jobsEventList.addAll( industryJobsOutput );
 			}
