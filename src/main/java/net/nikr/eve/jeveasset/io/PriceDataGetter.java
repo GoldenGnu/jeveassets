@@ -86,7 +86,7 @@ public class PriceDataGetter implements PricingListener {
 		if (task != null) progress = task.getProgress();
 		updated = false;
 
-		if (enableCacheTimers) Log.info("Updating price data...");
+		Log.info("Loading price data...");
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
@@ -117,10 +117,12 @@ public class PriceDataGetter implements PricingListener {
 				Log.error("Failed to update price", ex);
 			}
 		}
-		if (enableCacheTimers){
+		if (!enableCacheTimers && updated){
+			Log.info("	Price data loaded and updated");
+		} else if (!enableCacheTimers) {
+			Log.info("	Price data loaded");
+		} else if (updated){
 			Log.info("	Price data updated");
-		} else {
-			Log.info("Price data loaded");
 		}
 		try {
 			pricing.writeCache();

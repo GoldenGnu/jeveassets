@@ -143,21 +143,24 @@ public class Settings {
 
 		//Load data and overwite default values
 		settingsLoaded = LocalSettingsReader.load(this);
+	//Load from file
 		SplashUpdater.setProgress(20);
-		LocalItemsReader.load(this); //Must be loaded before Assets
+		LocalItemsReader.load(this); //Items (Must be loaded before Assets)
 		SplashUpdater.setProgress(30);
-		LocalLocationReader.load(this); //Must be loaded before Assets
+		LocalLocationReader.load(this); //Locations (Must be loaded before Assets)
 		SplashUpdater.setProgress(40);
-		LocalConquerableStationsReader.load(this); //Must be loaded before Assets
+		LocalConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
 		SplashUpdater.setProgress(50);
-		LocalAssetsReader.load(this); //Assets
-		SplashUpdater.setProgress(60);
-		priceDataGetter = new PriceDataGetter(this); //Price Data
-		SplashUpdater.setProgress(70);
-		//TODO should be updatable from the menu
+		LocalAssetsReader.load(this); //Assets (Must be loaded before the price data)
+	//Update from eve api
+		EveApiMarketOrdersReader.load(this); //Orders (Must be loaded before the price data)
+		EveApiIndustryJobsReader.load(this); //Jobs (Must be loaded before the price data)
 		EveApiHumansReader.load(this);
-		EveApiMarketOrdersReader.load(this);
-		EveApiIndustryJobsReader.load(this);
+		SplashUpdater.setProgress(60);
+	//Price data (update as needed)
+		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
+		SplashUpdater.setProgress(70);
+		
 	}
 	public void resetMainTableColumns(){
 		//Also need to update:
@@ -294,7 +297,7 @@ public class Settings {
 						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						List<EveAsset> industryJobCorporationAssets = AssetConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true);
 						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						//Assets (Must be afte Industry Jobs, for bpos to be marked)
+						//Assets (Must be after Industry Jobs, for bpos to be marked)
 						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 					}
 				}
