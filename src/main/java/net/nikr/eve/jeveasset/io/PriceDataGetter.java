@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -194,7 +195,6 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getPricingFetchImplementation() {
-			//return "eve-metrics";
 			return settings.getPriceDataSettings().getSource();
 		}
 
@@ -232,8 +232,9 @@ public class PriceDataGetter implements PricingListener {
 			return enableCacheTimers;
 		}
 
+		@Override
+		public Proxy getProxy() {
+			return settings.getProxy();
+		}
 	}
-
-
-
 }
