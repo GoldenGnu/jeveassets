@@ -69,7 +69,7 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public boolean updatePriceData(UpdateTask task){
-		return updatePriceData(null, false, true);
+		return updatePriceData(task, false, true);
 	}
 
 	public boolean updatePriceData(boolean forceUpdate){
@@ -77,7 +77,7 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
-		return updatePriceData(null, forceUpdate, true);
+		return updatePriceData(task, forceUpdate, true);
 	}
 
 	public boolean updatePriceData(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){

@@ -25,7 +25,10 @@
 
 package net.nikr.eve.jeveasset.gui.settings;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -40,8 +43,10 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class PriceDataSettingsPanel extends JSettingsPanel {
-	
+public class PriceDataSettingsPanel extends JSettingsPanel implements ActionListener {
+
+	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
+
 	private JComboBox jRegions;
 	private JComboBox jDefaultPrice;
 	private JComboBox jSource;
@@ -52,13 +57,15 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		super(program, jDialogCentered.getDialog(), "Price Data");
 
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
-		jRegions = new JComboBox(PriceDataSettings.REGIONS);
+		jRegions = new JComboBox();
 
 		JLabel jDefaultPriceLabel = new JLabel("Price to use:");
 		jDefaultPrice = new JComboBox(EveAsset.getPriceSources());
 
 		JLabel jSourceLabel = new JLabel("Source to use:");
-		jSource = new JComboBox(PriceDataSettings.SOURCE);
+		jSource = new JComboBox(PriceDataSettings.SOURCES);
+		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
+		jSource.addActionListener(this);
 
 
 
@@ -111,9 +118,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load(){
 		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
+		jSource.setSelectedItem(priceDataSettings.getSource());
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
 		jDefaultPrice.setSelectedItem(EveAsset.getPriceSource());
-		jSource.setSelectedItem(priceDataSettings.getSource());
+		
 	}
 
 	@Override
@@ -136,5 +144,20 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public JComponent getDefaultFocus() {
 		return null;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
+			String source = (String) jSource.getSelectedItem();
+			String region = (String) jRegions.getSelectedItem();
+			if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
+				jRegions.setModel( new DefaultComboBoxModel(PriceDataSettings.REGIONS_EVE_CENTRAL));
+			}
+			if (source.equals(PriceDataSettings.SOURCE_EVE_METRICS)){
+				jRegions.setModel( new DefaultComboBoxModel(PriceDataSettings.REGIONS_EVE_METRICS));
+			}
+			jRegions.setSelectedItem(region);
+		}
 	}
 }
