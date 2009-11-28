@@ -96,11 +96,11 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	private IndustryJobsDialog industryJobsDialog;
 	private CsvExportDialog csvExportDialog;
 	private SettingsDialog settingsDialog;
-	private TableSettingsPanel tableSettings;
+	private TableSettingsPanel tableSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
-	private ProxySettingsPanel proxySettings;
-	private PriceSettingsPanel priceSettings;
-	private WindowSettingsPanel windowSettings;
+	private ProxySettingsPanel proxySettingsPanel;
+	private PriceSettingsPanel priceSettingsPanel;
+	private WindowSettingsPanel windowSettingsPanel;
 
 
 	private UpdateAssetsDialog updateAssetsDialog;
@@ -172,20 +172,20 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		Log.info("	Settings Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		Log.info("		Table");
-		tableSettings = new TableSettingsPanel(this, settingsDialog);
-		settingsDialog.add(tableSettings, ImageGetter.getIcon("application_view_columns.png"));
+		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog);
+		settingsDialog.add(tableSettingsPanel, ImageGetter.getIcon("application_view_columns.png"));
 		Log.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
-		Log.info("		Proxy");
-		proxySettings = new ProxySettingsPanel(this, settingsDialog);
-		settingsDialog.add(proxySettings, ImageGetter.getIcon("server_connect.png"));
 		Log.info("		Price");
-		priceSettings = new PriceSettingsPanel(this, settingsDialog);
-		settingsDialog.add(priceSettings, ImageGetter.getIcon("money.png"));
+		priceSettingsPanel = new PriceSettingsPanel(this, settingsDialog);
+		settingsDialog.add(priceSettingsPanel, ImageGetter.getIcon("money.png"));
+		Log.info("		Proxy");
+		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
+		settingsDialog.add(proxySettingsPanel, ImageGetter.getIcon("server_connect.png"));
 		Log.info("		Window");
-		windowSettings = new WindowSettingsPanel(this, settingsDialog);
-		settingsDialog.add(windowSettings, ImageGetter.getIcon("application.png"));
+		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
+		settingsDialog.add(windowSettingsPanel, ImageGetter.getIcon("application.png"));
 		Log.info("	Assets Update Dialog");
 		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
 		Log.info("	Price Data Update Dialog");
@@ -318,8 +318,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			priceSettings.setNewPrice(new UserPrice(eveAsset));
-			settingsDialog.setVisible(priceSettings.getPanel());
+			priceSettingsPanel.setNewPrice(new UserPrice(eveAsset));
+			settingsDialog.setVisible(priceSettingsPanel.getPanel());
 		}
 		if (Menu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
