@@ -149,6 +149,17 @@ License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 
 ________________________________________________________________________________
+_PRICING________________________________________________________________________
+
+jEveAssets use the Pricing library to get price data
+
+Link:
+  http://eve.nikr.net/?page=jeveasset
+
+License:
+  GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
 Copyright 2009 Niklas Kyster Rasmussen, Flaming Candle

@@ -55,6 +55,26 @@ _KNOWN_ISSUES___________________________________________________________________
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.2.0
+Bug fixes:
+-JTextField swing bug (workaround)
+-New assets have no price (from Market Orders/Industry Jobs)
+-Conquerable Stations locations get error string
+
+New Features:
+-Added market orders tool
+-Added industry jobs tool
+-Now retain window position/size on restart
+-Added a label to the toolbar that show the current filter
+-Now show the eve server time on the statusbar
+-The security column now have the filter modes: "Great than" and "Less than"
+-Price data from both eve-metrics and eve-central (Candles pricing library)
+-Added more options to the API Manager
+-The table now save the selection on update
+-Added the ability highlight the selected row
+-The price field in price settings, now have focus when adding a new price
+
+
 1.1.0
 -Fixed bug with invalid proxy settings
 -Fixed bug with pos and industry jobs
