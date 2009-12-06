@@ -31,6 +31,7 @@ import com.beimin.eveapi.order.Response;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -51,11 +52,14 @@ public class EveApiMarketOrdersReader {
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++){
-				boolean returned = load(settings, humans.get(b), false);
-				if (returned){
-					updated = true;
-				} else {
-					updateFailed = true;
+				boolean returned;
+				if (!Program.FORCE_NO_UPDATE) {
+					returned = load(settings, humans.get(b), false);
+					if (returned){
+						updated = true;
+					} else {
+						updateFailed = true;
+					}
 				}
 			}
 		}

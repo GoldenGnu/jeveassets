@@ -31,6 +31,7 @@ import com.beimin.eveapi.industry.Response;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -50,8 +51,9 @@ public class EveApiIndustryJobsReader {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++){
-				boolean returned = load(settings, humans.get(b), false);
+			boolean returned;
+			if (!Program.FORCE_NO_UPDATE) {
+				returned = load(settings, humans.get(a), false);
 				if (returned){
 					updated = true;
 				} else {
