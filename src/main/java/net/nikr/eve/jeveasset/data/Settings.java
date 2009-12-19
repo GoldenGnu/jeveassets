@@ -323,7 +323,8 @@ public class Settings {
 				eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
 			}
 			//Reprocessed price
-			if (!getItems().get(eveAsset.getTypeId()).getMaterials().isEmpty()){
+			eveAsset.setPriceReprocessed(0);
+			if (getItems().containsKey(eveAsset.getTypeId())){
 				List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
 				double priceReprocessed = 0;
 				int portionSize = 0;
@@ -358,9 +359,8 @@ public class Settings {
 					priceReprocessed = priceReprocessed / portionSize;
 				}
 				eveAsset.setPriceReprocessed(priceReprocessed);
-			} else {
-				eveAsset.setPriceReprocessed(0);
 			}
+
 			//Blueprint
 			if (eveAsset.isBlueprint()){
 				eveAsset.setBpo(bpos.contains(eveAsset.getId()));
