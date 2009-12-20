@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import net.nikr.log.Log;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -64,6 +65,7 @@ public abstract class AbstractXmlWriter {
 	protected static void writeXmlFile(Document doc, String filename, String encoding) throws XmlException  {
 		DOMSource source = new DOMSource(doc);
 		try {
+			backupFile(filename);
 			File outputFile = new File(filename);
 			FileOutputStream outputStream = new FileOutputStream(outputFile);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
@@ -87,6 +89,23 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (UnsupportedEncodingException ex) {
 			throw new XmlException(ex.getMessage(), ex);
+		}
+	}
+
+	private static void backupFile(String filename){
+		File outputFile = new File(filename);
+		int end = filename.lastIndexOf(".");
+		String backup = filename.substring(0, end)+".bac";
+		File backupFile = new File(backup);
+		if (backupFile.exists()){
+			if (!backupFile.delete()){
+				Log.warning("Was not able to delete previous backup file: "+backup);
+			}
+		}
+		if (outputFile.exists()){
+			if (!outputFile.renameTo(backupFile)){
+				Log.warning("Was not able to make backup of: "+filename);
+			}
 		}
 	}
 }
