@@ -38,6 +38,7 @@ public class Formater {
 	private static DecimalFormat isk  = new DecimalFormat("#,##0.00 isk");
 	private static DecimalFormat standard  = new DecimalFormat("#,##0.00");
 	private static DecimalFormat standardInteger  = new DecimalFormat("#,##0");
+	private static DecimalFormat standardFloat  = new DecimalFormat("##0.###");
 	private static DecimalFormat twoDigs = new DecimalFormat("#.##", new DecimalFormatSymbols(new Locale("en")));
 	private static DecimalFormat count  = new DecimalFormat("#,##0 items");
 	private static DateFormat todaysdate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
@@ -66,6 +67,9 @@ public class Formater {
 		} catch (NumberFormatException ex){
 			return -1;
 		}
+	}
+	public static String numberFloat(Object obj){
+		return standardFloat.format(obj);
 	}
 	public static String integer(Object obj){
 		return standardInteger.format(obj);
