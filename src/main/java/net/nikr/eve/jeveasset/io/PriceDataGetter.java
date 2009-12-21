@@ -216,7 +216,6 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public InputStream getCacheInputStream() throws IOException {
 			File file = new File(Settings.getPathPriceData());
-			Log.info("file.exists(): "+file.exists());
 			if (file.exists()){
 				return new FileInputStream(file);
 			}

@@ -25,6 +25,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.industry.Parser;
 import com.beimin.eveapi.industry.Response;
@@ -93,6 +94,13 @@ public class EveApiIndustryJobsReader {
 						Log.info("	Industry jobs updated for: "+human.getName());
 					}
 					return true;
+				} else {
+					ApiError apiError = industryJobsResponse.getError();
+					if (bCorp) {
+						Log.info("	Failed to update corporation industry jobs for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					} else {
+						Log.info("	Failed to update industry jobs for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					}
 				}
 			} catch (IOException ex) {
 

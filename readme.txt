@@ -20,7 +20,6 @@ _INDEX__________________________________________________________________________
 -About
 -Requierments
 -Run
--Known Issues
 -Change log
 -FAQ
 -Contact
@@ -48,12 +47,18 @@ or
 -cd to jEveAssets directory and run "java -jar jEveAssets.jar"
 
 ________________________________________________________________________________
-_KNOWN_ISSUES___________________________________________________________________
-
--Updating to from Release Candidate 7a or earlier will remove all your settings
-
-________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
+
+1.2.1
+Bug fixes:
+-Fix bug that would sometimes hide industry jobs and market orders
+-Fixed bug that would crash jEveAssets when updating assets (holiday gift bug)
+
+New Features:
+-Now backup settings files (on save)
+
+Known Issues:
+-The holiday gift show up as !XXXX
 
 1.2.0
 Bug fixes:
@@ -227,7 +232,7 @@ ________________________________________________________________________________
 Q: jEveAssets crashed/does not work as intended
 
 A: Please send an email to niklaskr@gmail.com and include the following:
-   1.) the log.txt file, found in the jEveAsset directory
+   1.) The latest error.txt in the logs directory
    2.) Instructions on how to reproduce the bug
 
 ________________________________________________________________________________
@@ -262,6 +267,26 @@ ________________________________________________________________________________
 Q: How do I use portable settings?
 
 A: Add the command line argument: -portable
+
+________________________________________________________________________________
+
+Q: Where is the user files?
+
+A:
+
+   Windows XP:
+   C:\Documents and Settings\[USERNAME]\.jeveassets\
+
+   Windows Vista:
+   C:\Users\[USERNAME]\.jeveassets\
+
+   Linux:
+   Send me an email if you know (niklaskr@gmail.com)
+
+   Mac:
+   Send me an email if you know (niklaskr@gmail.com)
+
+   Replace [USERNAME] with your username
 
 ________________________________________________________________________________
 _CONTACT________________________________________________________________________
