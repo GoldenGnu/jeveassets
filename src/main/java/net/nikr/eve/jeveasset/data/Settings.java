@@ -237,6 +237,11 @@ public class Settings {
 
 	}
 
+	public void updateOrdersAndJobs(){
+		EveApiMarketOrdersReader.load(this);
+		EveApiIndustryJobsReader.load(this);
+	}
+
 	public boolean updatePriceData(UpdateTask task){
 		return priceDataGetter.updatePriceData(task);
 	}

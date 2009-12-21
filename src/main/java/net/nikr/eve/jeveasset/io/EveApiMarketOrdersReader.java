@@ -25,6 +25,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.order.ApiMarketOrder;
 import com.beimin.eveapi.order.Parser;
 import com.beimin.eveapi.order.Response;
@@ -73,6 +74,7 @@ public class EveApiMarketOrdersReader {
 	}
 
 	private static boolean load(Settings settings, Human human, boolean bCorp){
+		System.out.println("human.isMarkerOrdersUpdatable(): "+human.isMarkerOrdersUpdatable());
 		if (human.isMarkerOrdersUpdatable() || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
@@ -95,6 +97,13 @@ public class EveApiMarketOrdersReader {
 						Log.info("	Market orders updated for: "+human.getName());
 					}
 					return true;
+				} else {
+					ApiError apiError = marketOrdersResponse.getError();
+					if (bCorp) {
+						Log.info("	Failed to update corporation market orders for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					} else {
+						Log.info("	Failed to update market orders for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					}
 				}
 			} catch (IOException ex) {
 				
