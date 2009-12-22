@@ -52,13 +52,15 @@ public class EveApiIndustryJobsReader {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
-			boolean returned;
-			if (!Program.FORCE_NO_UPDATE) {
-				returned = load(settings, humans.get(a), false);
-				if (returned){
-					updated = true;
-				} else {
-					updateFailed = true;
+			for (int b = 0; b < humans.size(); b++){
+				boolean returned;
+				if (!Program.FORCE_NO_UPDATE) {
+					returned = load(settings, humans.get(b), false);
+					if (returned){
+						updated = true;
+					} else {
+						updateFailed = true;
+					}
 				}
 			}
 		}
