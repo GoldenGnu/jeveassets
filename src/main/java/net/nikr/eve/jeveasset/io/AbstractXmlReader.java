@@ -31,14 +31,19 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 
 public abstract class AbstractXmlReader {
-	
+
 	protected static Element getDocumentElement(String filename) throws XmlException, IOException {
+		return getDocumentElement(filename, false);
+	}
+	
+	private static Element getDocumentElement(String filename, boolean usingBackupFile) throws XmlException, IOException {
 		DocumentBuilderFactory factory = null;
 		DocumentBuilder builder = null;
 		
@@ -52,10 +57,38 @@ public abstract class AbstractXmlReader {
 			is.close();
 			return doc.getDocumentElement();
 		} catch (SAXException ex) {
+			if (!usingBackupFile){
+				if (restoreBackupFile(filename)){
+					return getDocumentElement(filename, true);
+				}
+			}
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		}
-		
+	}
+
+	private static boolean restoreBackupFile(String filename){
+		int end = filename.lastIndexOf(".");
+		String backup = filename.substring(0, end)+".bac";
+		File backupFile = new File(backup);
+		File inputFile = new File(filename);
+		if (!backupFile.exists()){
+			Log.warning("No backup file found: "+backup);
+			return false;
+		}
+		if (inputFile.exists() ){
+			if (!inputFile.delete()){
+				Log.warning("Was not able to delete buggy inputfile: "+filename);
+				return false;
+			}
+		}
+		if (backupFile.renameTo(inputFile)){
+			Log.warning("Backup file restored: "+backup);
+			return true;
+		} else {
+			Log.warning("Was not able to restore backup: "+backup);
+		}
+		return false;
 	}
 }

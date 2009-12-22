@@ -75,7 +75,7 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 	private JTable jSellOrders;
 	private JTable jBuyOrders;
 
-	private String[] orderStates = new String[]{"Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending", "All"};
+	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
 	public MarketOrdersDialog(Program program, Image image) {
 		super(program, "Market Orders", image);
@@ -200,7 +200,7 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 				}
 			}
 		}
-		if (characters.size() > 1){
+		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			jState.setEnabled(true);
 			jSellOrders.setEnabled(true);

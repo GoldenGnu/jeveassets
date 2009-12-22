@@ -347,7 +347,7 @@ public class AssetConverter {
 		if (item != null) {
 			return item.getVolume();
 		}
-		return -typeID;
+		return -1;
 	}
 
 	public static String name(int typeID, Settings settings) {
@@ -363,7 +363,7 @@ public class AssetConverter {
 		if (item != null) {
 			return item.getPrice();
 		}
-		return -typeID;
+		return -1;
 	}
 
 	public static String category(int typeID, Settings settings) {
@@ -407,8 +407,8 @@ public class AssetConverter {
 	}
 
 	public static String container(int locationID, EveAsset parentAsset) {
-
 		String sTemp = "";
+	
 		if (locationID >= 66000000 && locationID < 68000000) {
 			sTemp = "Office";
 		}
@@ -422,8 +422,6 @@ public class AssetConverter {
 				sTemp = parentContainer + " - " + sTemp;
 			}
 		}
-
-
 		return sTemp;
 	}
 

@@ -56,12 +56,20 @@ on or functioning of this website, nor can it be liable for any damage arising
 from the use of this website.
 
 ________________________________________________________________________________
-_EVE-CENTRAL.com________________________________________________________________
+_EVE-CENTRAL____________________________________________________________________
 
 jEveAssets use Eve-Central.com API to get price data
 
 Link:
   http://eve-central.com/
+
+________________________________________________________________________________
+_EVE-METRICS____________________________________________________________________
+
+jEveAssets use eve-metrics API to get price data
+
+Link:
+  http://www.eve-metrics.com/
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________

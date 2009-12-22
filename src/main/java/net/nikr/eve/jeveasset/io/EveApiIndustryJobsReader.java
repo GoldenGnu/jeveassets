@@ -25,6 +25,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
+import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.industry.Parser;
 import com.beimin.eveapi.industry.Response;
@@ -51,13 +52,15 @@ public class EveApiIndustryJobsReader {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
-			boolean returned;
-			if (!Program.FORCE_NO_UPDATE) {
-				returned = load(settings, humans.get(a), false);
-				if (returned){
-					updated = true;
-				} else {
-					updateFailed = true;
+			for (int b = 0; b < humans.size(); b++){
+				boolean returned;
+				if (!Program.FORCE_NO_UPDATE) {
+					returned = load(settings, humans.get(b), false);
+					if (returned){
+						updated = true;
+					} else {
+						updateFailed = true;
+					}
 				}
 			}
 		}
@@ -93,6 +96,13 @@ public class EveApiIndustryJobsReader {
 						Log.info("	Industry jobs updated for: "+human.getName());
 					}
 					return true;
+				} else {
+					ApiError apiError = industryJobsResponse.getError();
+					if (bCorp) {
+						Log.info("	Failed to update corporation industry jobs for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					} else {
+						Log.info("	Failed to update industry jobs for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+					}
 				}
 			} catch (IOException ex) {
 
