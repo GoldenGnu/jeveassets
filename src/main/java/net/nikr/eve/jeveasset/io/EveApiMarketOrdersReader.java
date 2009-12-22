@@ -74,7 +74,6 @@ public class EveApiMarketOrdersReader {
 	}
 
 	private static boolean load(Settings settings, Human human, boolean bCorp){
-		System.out.println("human.isMarkerOrdersUpdatable(): "+human.isMarkerOrdersUpdatable());
 		if (human.isMarkerOrdersUpdatable() || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
