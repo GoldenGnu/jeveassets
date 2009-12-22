@@ -87,7 +87,13 @@ public class PriceDataGetter implements PricingListener {
 		if (task != null) progress = task.getProgress();
 		updated = false;
 
-		Log.info("Loading price data...");
+		if (forceUpdate){
+			Log.info("Price data updating:");
+		} else if (!enableCacheTimers) {
+			Log.info("Price data loading:");
+		} else {
+			Log.info("Price data loading (updating as needed):");
+		}
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
@@ -119,7 +125,7 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		if (!enableCacheTimers && updated){
-			Log.info("	Price data loaded and updated");
+			Log.info("	Price data loaded (updated as needed)");
 		} else if (!enableCacheTimers) {
 			Log.info("	Price data loaded");
 		} else if (updated){

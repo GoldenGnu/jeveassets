@@ -68,9 +68,9 @@ public class EveApiAssetsReader {
 						human.getAssets().addAll( AssetConverter.apiAsset(settings, human, assets, bCorp) );
 					}
 					if (bCorp) {
-						Log.info("Updated corporation assets for: "+human.getCorporation()+" by "+human.getName());
+						Log.info("	Updated corporation assets for: "+human.getCorporation()+" by "+human.getName());
 					} else {
-						Log.info("Updated assets for: "+human.getName());
+						Log.info("	Updated assets for: "+human.getName());
 					}
 					return true;
 				} else {
@@ -80,22 +80,22 @@ public class EveApiAssetsReader {
 					if (apiError.getCode() == 209){
 						human.setUpdateCorporationAssets(false);
 						if (bCorp) {
-							Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+							Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 						} else {
-							Log.info("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+							Log.info("	Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 						}
 					}
 					if (bCorp) {
-						Log.warning("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+						Log.warning("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					} else {
-						Log.warning("Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+						Log.warning("	Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
 				}
 			} catch (IOException ex) {
 				if (bCorp) {
-					Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT FOUND)");
+					Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT FOUND)");
 				} else {
-					Log.info("Failed to update assets for: "+human.getName()+" (NOT FOUND)");
+					Log.info("	Failed to update assets for: "+human.getName()+" (NOT FOUND)");
 				}
 			} catch (SAXException ex) {
 				if (bCorp) {
@@ -106,9 +106,9 @@ public class EveApiAssetsReader {
 			}
 		} else {
 			if (bCorp) {
-				Log.info("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT ALLOWED YET)");
+				Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT ALLOWED YET)");
 			} else {
-				Log.info("Failed to update assets for: "+human.getName()+" (NOT ALLOWED YET)");
+				Log.info("	Failed to update assets for: "+human.getName()+" (NOT ALLOWED YET)");
 			}
 		}
 		return false;

@@ -44,7 +44,7 @@ public class EveApiHumansReader {
 	private static String error;
 
 	public static void load(Settings settings){
-		Log.info("Updating characters:");
+		Log.info("Characters updating:");
 		boolean updated = false;
 		boolean updateFailed = false;
 		List<Account> accounts = settings.getAccounts();
@@ -78,7 +78,7 @@ public class EveApiHumansReader {
 					List<ApiCharacter> characters = new Vector<ApiCharacter>(characterListResponse.getEveCharacters());
 					for (int a = 0; a < characters.size(); a++){
 						ApiCharacter eveCharacter = characters.get(a);
-						Log.info("	Updating: "+eveCharacter.getName()+":");
+						Log.info("	Updating \""+eveCharacter.getName()+"\":");
 						Human human = new Human(
 												account
 												,eveCharacter.getName()

@@ -36,6 +36,7 @@ import org.xml.sax.SAXException;
 
 public class EveApiConquerableStationsReader {
 	public static boolean load(Settings settings){
+		Log.info("Conquerable stations updating:");
 		if (Settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
 			Parser stationParser = new Parser();
 			stationParser.setCachingEnabled(true);
@@ -48,16 +49,16 @@ public class EveApiConquerableStationsReader {
 					
 				} else {
 					ApiError error = stationResponse.getError();
-					Log.info("Conquerable stations update failed (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
+					Log.info("	Conquerable stations update failed (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
 				}
 			} catch (IOException ex) {
-				Log.info("Conquerable stations update failed (NOT FOUND)");
+				Log.info("	Conquerable stations update failed (NOT FOUND)");
 				return false;
 			} catch (SAXException ex) {
-				Log.error("Conquerable stations update failed (PARSER ERROR)", ex);
+				Log.error("	Conquerable stations update failed (PARSER ERROR)", ex);
 			}
 		}
-		Log.info("Conquerable stations updated (API)");
+		Log.info("	Conquerable stations updated (API)");
 		LocalConquerableStationsWriter.save(settings);
 		return true;
 	}

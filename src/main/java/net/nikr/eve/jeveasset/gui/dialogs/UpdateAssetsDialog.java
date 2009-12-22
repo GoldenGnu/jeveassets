@@ -75,23 +75,17 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 			jProgressBar.setIndeterminate(false);
 			setVisible(false);
 			if (updateAssetsTask.updated && !updateAssetsTask.updateFailed){ //All assets updated
-				Log.info("All assets updated");
 				JOptionPane.showMessageDialog(parent, "All assets and the price data was updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if(updateAssetsTask.updated && updateAssetsTask.updateFailed) { //Some assets updated
-				Log.info("Some assets updated");
 				JOptionPane.showMessageDialog(parent, "Some assets and the price data was updated.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (!updateAssetsTask.isOnline) { //No assets updated
-				Log.info("No assets updated (no connection)");
 				JOptionPane.showMessageDialog(parent, "Could not update assets.\r\nPlease connect to the internet and try again...", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (program.getSettings().getAccounts().isEmpty()) {
-				Log.info("No assets updated");
 				JOptionPane.showMessageDialog(parent, "No assets updated\r\nYou need to add your API Key:\r\nOptions > Manage API Keys > Add.", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (!updateAssetsTask.isShown) {
-				Log.info("No assets updated");
-				JOptionPane.showMessageDialog(parent, "No assets updated (none selected)\r\nAll characters are hidden", "Update Assets", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "No assets updated\r\nAll characters are hidden in API Manager", "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else if (updateAssetsTask.error != null) {
-				Log.info("No assets updated");
-				JOptionPane.showMessageDialog(parent, "No assets updated.\r\n"+updateAssetsTask.error, "Update Assets", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "No assets updated.\r\nAPI Error: "+updateAssetsTask.error, "Update Assets", JOptionPane.PLAIN_MESSAGE);
 			} else {
 				Log.info("No assets updated");
 				JOptionPane.showMessageDialog(parent, "No assets updated (not allowed yet).\r\nCCP only allow you to update assets once a day...", "Update Assets", JOptionPane.PLAIN_MESSAGE);
@@ -110,7 +104,6 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 		private boolean isShown = false;
 		private boolean updateFailed = false;
 		private boolean isOnline = true;
-		private boolean conquerableStationsUpdated = false;
 		private String error = null;
 
 		public UpdateAssetsTask() {
@@ -119,8 +112,11 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 
 		@Override
 		public void update() throws Throwable {
-			List<Account> accounts = program.getSettings().getAccounts();
+			EveApiConquerableStationsReader.load(program.getSettings());
+
 			List<String> coporations = new Vector<String>();
+			List<Account> accounts = program.getSettings().getAccounts();
+			Log.info("Assets updating:");
 			for (int a = 0; a < accounts.size(); a++){
 				Account account = accounts.get(a);
 				List<Human> humans = account.getHumans();
@@ -129,10 +125,6 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 					Human human = humans.get(b);
 					if (human.isShowAssets()){
 						isShown = true;
-						if (human.isAssetsUpdatable() && !conquerableStationsUpdated){
-							EveApiConquerableStationsReader.load(program.getSettings());
-							conquerableStationsUpdated = true;
-						}
 						if (coporations.contains(human.getCorporation())){
 							human.setUpdateCorporationAssets(false);
 						}
@@ -150,6 +142,22 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 					}
 				}
 			}
+			if (updated && !updateFailed){
+				Log.info("	Assets updated (ALL)");
+			} else if (updated && updateFailed){
+				Log.info("	Assets updated (SOME)");
+			} else if (!isOnline) {
+				Log.info("	Assets not updated (NOT ONLINE)");
+			} else if(accounts.isEmpty()) {
+				Log.info("	Assets not updated (NO ACCOUNTS)");
+			} else if(!isShown){
+				Log.info("	Assets not updated (ALL ACCOUNTS HIDDEN)");
+			} else if(error != null) {
+				Log.info("	Assets not updated (API ERROR)");
+			} else {
+				Log.info("	Assets not updated (NOT ALLOWED YET)");
+			}
+
 			program.getSettings().updateOrdersAndJobs();
 			if (updated){
 				program.getSettings().clearEveAssetList();
