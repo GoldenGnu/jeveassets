@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 public class EveApiConquerableStationsReader {
 	public static boolean load(Settings settings){
 		Log.info("Conquerable stations updating:");
-		if (Settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
+		if (settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
 			Parser stationParser = new Parser();
 			stationParser.setCachingEnabled(true);
 			Response stationResponse = null;

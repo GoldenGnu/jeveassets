@@ -740,10 +740,11 @@ public class Settings {
 		return ret;
 	}
 
-	public static boolean isUpdatable(Date date){
+	public boolean isUpdatable(Date date){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
-				|| Program.FORCE_UPDATE )
+				|| Program.FORCE_UPDATE
+				|| getApiProxy() != null)
 				&& !Program.FORCE_NO_UPDATE);
 	}
 }

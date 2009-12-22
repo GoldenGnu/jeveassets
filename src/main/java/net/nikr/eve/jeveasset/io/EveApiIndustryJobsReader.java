@@ -74,7 +74,7 @@ public class EveApiIndustryJobsReader {
 	}
 
 	private static boolean load(Settings settings, Human human, boolean bCorp){
-		if (human.isIndustryJobsUpdatable() || bCorp){
+		if (settings.isUpdatable(human.getIndustryJobsNextUpdate()) || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
 			}

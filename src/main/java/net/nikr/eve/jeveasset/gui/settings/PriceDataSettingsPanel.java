@@ -130,7 +130,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		if (oldPriceDataSettings.equals(newPriceDataSettings)) return;
 		Date date = program.getSettings().getPriceDataNextUpdate();
 		String nextUpdate = Formater.weekdayAndTime(date)+" GMT";
-		if (Settings.isUpdatable(date)){
+		if (program.getSettings().isUpdatable(date)){
 			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
 				program.updatePriceData();

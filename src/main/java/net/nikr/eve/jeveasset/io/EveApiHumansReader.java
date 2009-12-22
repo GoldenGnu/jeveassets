@@ -67,7 +67,7 @@ public class EveApiHumansReader {
 	}
 
 	public static boolean load(Settings settings, Account account, boolean apiKeyCheck){
-		if (Settings.isUpdatable(account.getCharactersNextUpdate()) || apiKeyCheck){
+		if (settings.isUpdatable(account.getCharactersNextUpdate()) || apiKeyCheck){
 			Parser characterListParser = new Parser();
 			characterListParser.setCachingEnabled(true);
 			Response characterListResponse = null;
@@ -87,12 +87,12 @@ public class EveApiHumansReader {
 												);
 						
 						if (!account.getHumans().contains(human)){
-							if (!EveApiAccountBalanceReader.load(human, apiKeyCheck) && apiKeyCheck){
+							if (!EveApiAccountBalanceReader.load(settings, human, apiKeyCheck) && apiKeyCheck){
 								return false;
 							}
 							account.getHumans().add(human);
 						} else {
-							updateHuman(account, human);
+							updateHuman(settings, account, human);
 						}
 					}
 				} else {
@@ -117,13 +117,13 @@ public class EveApiHumansReader {
 		}
 		
 	}
-	private static void updateHuman(Account account, Human human){
+	private static void updateHuman(Settings settings, Account account, Human human){
 		if (account.getHumans().contains(human)){
 			List<Human> humans = account.getHumans();
 			for (int a = 0; a < humans.size(); a++){
 				Human currentHuman = humans.get(a);
 				if (currentHuman.getCharacterID() == human.getCharacterID()){
-					EveApiAccountBalanceReader.load(currentHuman);
+					EveApiAccountBalanceReader.load(settings, currentHuman);
 					currentHuman.setName(human.getName());
 					if (!human.getCorporation().equals("")) currentHuman.setCorporation(human.getCorporation());
 				}
