@@ -34,7 +34,7 @@ import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.Items;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -343,7 +343,7 @@ public class AssetConverter {
 	}
 
 	public static float volume(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getVolume();
 		}
@@ -351,7 +351,7 @@ public class AssetConverter {
 	}
 
 	public static String name(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getName();
 		}
@@ -359,7 +359,7 @@ public class AssetConverter {
 	}
 
 	public static double priceBase(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getPrice();
 		}
@@ -367,7 +367,7 @@ public class AssetConverter {
 	}
 
 	public static String category(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getCategory();
 		}
@@ -383,7 +383,7 @@ public class AssetConverter {
 	}
 
 	public static String group(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getGroup();
 		}
@@ -391,7 +391,7 @@ public class AssetConverter {
 	}
 
 	public static String meta(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getMeta();
 		}
@@ -399,7 +399,7 @@ public class AssetConverter {
 	}
 
 	public static boolean marketGroup(int typeID, Settings settings) {
-		Items item = settings.getItems().get(typeID);
+		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.isMarketGroup();
 		}

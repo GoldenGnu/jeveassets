@@ -85,7 +85,7 @@ public class Settings {
 	private List<EveAsset> allAssets = null;
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
-	private Map<Integer, Items> items;
+	private Map<Integer, Item> items;
 	private Map<Integer, PriceData> priceData;
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
@@ -113,7 +113,7 @@ public class Settings {
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
-		items = new HashMap<Integer, Items>();
+		items = new HashMap<Integer, Item>();
 		locations = new HashMap<Integer, Location>();
 		priceData = new HashMap<Integer, PriceData>();
 		conquerableStations = new HashMap<Integer, ApiStation>();
@@ -446,11 +446,11 @@ public class Settings {
 		this.accounts = accounts;
 	}
 	
-	public Map<Integer, Items> getItems() {
+	public Map<Integer, Item> getItems() {
 		return items;
 	}
 
-	public void setItems(Map<Integer, Items> items) {
+	public void setItems(Map<Integer, Item> items) {
 		this.items = items;
 	}
 

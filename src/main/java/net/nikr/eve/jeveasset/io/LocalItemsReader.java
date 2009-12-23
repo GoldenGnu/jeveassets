@@ -27,7 +27,7 @@ package net.nikr.eve.jeveasset.io;
 
 import java.io.IOException;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Items;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
@@ -50,9 +50,9 @@ public class LocalItemsReader extends AbstractXmlReader {
 		Log.info("Items loaded");
 	}
 
-	private static void parseItems(Element element, Map<Integer, Items> items){
+	private static void parseItems(Element element, Map<Integer, Item> items){
 		NodeList nodes = element.getElementsByTagName("row");
-		Items item = null;
+		Item item = null;
 		for (int a = 0; a < nodes.getLength(); a++){
 			Element itemElement = (Element) nodes.item(a);
 			item = parseItem(itemElement);
@@ -60,7 +60,7 @@ public class LocalItemsReader extends AbstractXmlReader {
 			items.put(item.getId(), item);
 		}
 	}
-	private static Items parseItem(Node node){
+	private static Item parseItem(Node node){
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		String group = AttributeGetters.getString(node, "group");
@@ -69,16 +69,16 @@ public class LocalItemsReader extends AbstractXmlReader {
 		float volume = AttributeGetters.getFloat(node, "volume");
 		String meta = AttributeGetters.getString(node, "meta");
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
-		return new Items(id, name, group, category, price, volume, meta, marketGroup);
+		return new Item(id, name, group, category, price, volume, meta, marketGroup);
 	}
 
-	private static void parseMaterials(Element element, Items item){
+	private static void parseMaterials(Element element, Item item){
 		NodeList nodes = element.getElementsByTagName("material");
 		for (int a = 0; a < nodes.getLength(); a++){
 			parseMaterial(nodes.item(a), item);
 		}
 	}
-	private static void parseMaterial(Node node, Items item){
+	private static void parseMaterial(Node node, Item item){
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int portionSize = AttributeGetters.getInt(node, "portionsize");
