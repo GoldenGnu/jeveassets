@@ -58,7 +58,7 @@ public class EveApiConquerableStationsReader {
 				Log.error("	Conquerable stations update failed (PARSER ERROR)", ex);
 			}
 		}
-		Log.info("	Conquerable stations updated (API)");
+		Log.info("	Conquerable stations updated");
 		LocalConquerableStationsWriter.save(settings);
 		return true;
 	}
