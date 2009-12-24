@@ -2898,6 +2898,8 @@
     <row category="Infrastructure Upgrades" group="Military Upgrades" id="2062" marketgroup="true" meta="" name="Quantum Flux Generator 5" price="250000000" volume="500000.0"/>
     <row category="Celestial" group="Planet" id="2063" marketgroup="false" meta="" name="Planet (Plasma)" price="0" volume="1.0"/>
     <row category="Celestial" group="Secondary Sun" id="2064" marketgroup="false" meta="" name="EVE Gate" price="0" volume="1.0"/>
+    <row category="Ship" group="Prototype Exploration Ship" id="2078" marketgroup="false" meta="" name="Zephyr" price="5000" volume="5000.0"/>
+    <row category="Module" group="Scan Probe Launcher" id="2083" marketgroup="false" meta="4" name="Prototype Iris Probe Launcher" price="2" volume="5.0"/>
     <row category="Module" group="Tracking Link" id="2103" marketgroup="true" meta="" name="Tracking Link I" price="23900" volume="25.0">
         <material id="34" portionsize="1" quantity="2746"/>
         <material id="35" portionsize="1" quantity="2277"/>
@@ -19133,7 +19135,7 @@
     <row category="Celestial" group="Cloud" id="19755" marketgroup="false" meta="" name="Turbulent Storm Environment" price="0" volume="0.0"/>
     <row category="Celestial" group="Cloud" id="19756" marketgroup="false" meta="" name="Xenon Gas Environment" price="0" volume="0.0"/>
     <row category="Station" group="Station" id="19757" marketgroup="false" meta="" name="Research Outpost" price="0" volume="1.0"/>
-    <row category="Celestial" group="Construction Platform" id="19758" marketgroup="false" meta="" name="Caldari Research Outpost Platform" price="24500000000" volume="750000.0"/>
+    <row category="Celestial" group="Construction Platform" id="19758" marketgroup="false" meta="" name="Caldari Research Outpost Platform" price="25343750000" volume="750000.0"/>
     <row category="Skill" group="Electronics" id="19759" marketgroup="true" meta="" name="Long Distance Jamming" price="200000" volume="0.01"/>
     <row category="Skill" group="Electronics" id="19760" marketgroup="true" meta="" name="Frequency Modulation" price="160000" volume="0.01"/>
     <row category="Skill" group="Electronics" id="19761" marketgroup="true" meta="" name="Signal Dispersion" price="1000000" volume="0.01"/>
@@ -24630,7 +24632,7 @@
     <row category="Commodity" group="Livestock" id="22847" marketgroup="false" meta="" name="Minmatar Civilians" price="0" volume="5.0"/>
     <row category="Entity" group="Destructible Sentry Gun" id="22848" marketgroup="false" meta="" name="Gallente Sentry Gun - Training" price="0" volume="1000.0"/>
     <row category="Entity" group="Spawn Container" id="22849" marketgroup="false" meta="" name="Drifting Cask - Minmatar Training Facility" price="0" volume="1200.0"/>
-    <row category="Ship" group="Mothership" id="22852" marketgroup="true" meta="" name="Hel" price="14331507600" volume="5.1E7">
+    <row category="Ship" group="Mothership" id="22852" marketgroup="true" meta="" name="Hel" price="12648089200" volume="5.1E7">
         <material id="21009" portionsize="1" quantity="200"/>
         <material id="21013" portionsize="1" quantity="100"/>
         <material id="21017" portionsize="1" quantity="100"/>
@@ -24641,7 +24643,6 @@
         <material id="21029" portionsize="1" quantity="450"/>
         <material id="21035" portionsize="1" quantity="100"/>
         <material id="21037" portionsize="1" quantity="50"/>
-        <material id="24547" portionsize="1" quantity="200"/>
         <material id="24558" portionsize="1" quantity="200"/>
         <material id="24560" portionsize="1" quantity="200"/>
     </row>
@@ -25897,7 +25898,7 @@
         <material id="37" portionsize="1" quantity="104"/>
         <material id="38" portionsize="1" quantity="6"/>
     </row>
-    <row category="Blueprint" group="Combat Drone Blueprint" id="23718" marketgroup="true" meta="" name="Medium Shield Maintenance Bot I Blueprint" price="300000000" volume="0.01"/>
+    <row category="Blueprint" group="Combat Drone Blueprint" id="23718" marketgroup="true" meta="" name="Medium Shield Maintenance Bot I Blueprint" price="2500000" volume="0.01"/>
     <row category="Drone" group="Logistic Drone" id="23719" marketgroup="true" meta="" name="Light Shield Maintenance Bot I" price="5000" volume="5.0">
         <material id="34" portionsize="1" quantity="340"/>
         <material id="35" portionsize="1" quantity="56"/>
@@ -26159,7 +26160,7 @@
         <material id="24560" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Carrier Blueprint" id="23912" marketgroup="true" meta="" name="Thanatos Blueprint" price="1250000000" volume="0.01"/>
-    <row category="Ship" group="Mothership" id="23913" marketgroup="true" meta="" name="Nyx" price="15827570900" volume="5.82E7">
+    <row category="Ship" group="Mothership" id="23913" marketgroup="true" meta="" name="Nyx" price="14144152500" volume="5.82E7">
         <material id="21009" portionsize="1" quantity="150"/>
         <material id="21013" portionsize="1" quantity="150"/>
         <material id="21017" portionsize="1" quantity="150"/>
@@ -26170,7 +26171,6 @@
         <material id="21029" portionsize="1" quantity="500"/>
         <material id="21035" portionsize="1" quantity="150"/>
         <material id="21037" portionsize="1" quantity="200"/>
-        <material id="24547" portionsize="1" quantity="200"/>
         <material id="24558" portionsize="1" quantity="200"/>
         <material id="24560" portionsize="1" quantity="200"/>
     </row>
@@ -26190,7 +26190,7 @@
         <material id="24560" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Carrier Blueprint" id="23916" marketgroup="true" meta="" name="Chimera Blueprint" price="1050000000" volume="0.01"/>
-    <row category="Ship" group="Mothership" id="23917" marketgroup="true" meta="" name="Wyvern" price="14032432500" volume="5.3E7">
+    <row category="Ship" group="Mothership" id="23917" marketgroup="true" meta="" name="Wyvern" price="12349014100" volume="5.3E7">
         <material id="21009" portionsize="1" quantity="50"/>
         <material id="21013" portionsize="1" quantity="200"/>
         <material id="21017" portionsize="1" quantity="50"/>
@@ -26201,12 +26201,11 @@
         <material id="21029" portionsize="1" quantity="350"/>
         <material id="21035" portionsize="1" quantity="200"/>
         <material id="21037" portionsize="1" quantity="100"/>
-        <material id="24547" portionsize="1" quantity="200"/>
         <material id="24558" portionsize="1" quantity="200"/>
         <material id="24560" portionsize="1" quantity="200"/>
     </row>
     <row category="Blueprint" group="Mothership Blueprints" id="23918" marketgroup="true" meta="" name="Wyvern Blueprint" price="18000000000" volume="0.01"/>
-    <row category="Ship" group="Mothership" id="23919" marketgroup="true" meta="" name="Aeon" price="14573872400" volume="6.2E7">
+    <row category="Ship" group="Mothership" id="23919" marketgroup="true" meta="" name="Aeon" price="12890454000" volume="6.2E7">
         <material id="21009" portionsize="1" quantity="100"/>
         <material id="21013" portionsize="1" quantity="50"/>
         <material id="21017" portionsize="1" quantity="200"/>
@@ -26217,7 +26216,6 @@
         <material id="21029" portionsize="1" quantity="400"/>
         <material id="21035" portionsize="1" quantity="50"/>
         <material id="21037" portionsize="1" quantity="150"/>
-        <material id="24547" portionsize="1" quantity="200"/>
         <material id="24558" portionsize="1" quantity="200"/>
         <material id="24560" portionsize="1" quantity="200"/>
     </row>
@@ -32281,7 +32279,7 @@
         <material id="37" portionsize="1" quantity="104"/>
         <material id="38" portionsize="1" quantity="6"/>
     </row>
-    <row category="Blueprint" group="Combat Drone Blueprint" id="28208" marketgroup="true" meta="" name="Medium Shield Maintenance Bot II Blueprint" price="300000000" volume="0.01"/>
+    <row category="Blueprint" group="Combat Drone Blueprint" id="28208" marketgroup="true" meta="" name="Medium Shield Maintenance Bot II Blueprint" price="2500000" volume="0.01"/>
     <row category="Drone" group="Combat Drone" id="28209" marketgroup="true" meta="5 (Tech II)" name="Warden II" price="140000" volume="25.0">
         <material id="34" portionsize="1" quantity="464"/>
         <material id="35" portionsize="1" quantity="8936"/>
@@ -35766,6 +35764,7 @@
     <row category="Blueprint" group="Rig Blueprint" id="31092" marketgroup="false" meta="" name="Medium Salvage Tackle II Blueprint" price="750000" volume="0.01"/>
     <row category="Module" group="Rig Armor" id="31093" marketgroup="false" meta="5" name="Capital Salvage Tackle II" price="0" volume="1000.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31094" marketgroup="false" meta="" name="Capital Salvage Tackle II Blueprint" price="125000" volume="0.01"/>
+    <row category="Blueprint" group="Rig Blueprint" id="31096" marketgroup="false" meta="" name="Small Test Rig Blueprint" price="125000" volume="0.01"/>
     <row category="Blueprint" group="Rig Blueprint" id="31098" marketgroup="false" meta="" name="Medium Test Rig I Blueprint" price="750000" volume="0.01"/>
     <row category="Blueprint" group="Rig Blueprint" id="31100" marketgroup="false" meta="" name="Large Test Rig Blueprint" price="1250000" volume="0.01"/>
     <row category="Blueprint" group="Rig Blueprint" id="31102" marketgroup="false" meta="" name="Capital Test Rig Blueprint" price="125000" volume="0.01"/>
