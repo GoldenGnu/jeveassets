@@ -49,6 +49,17 @@ or
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.2.3
+New Features:
+-Now ignore update timer if the Api Proxy is set
+
+Bug fixes:
+-Possible fix for crash bug in JCustomFileChooser (Java Bug)
+-Better memory management
+-Fix minor display bug
+-Better log output
+________________________________________________________________________________
+
 1.2.2
 Bug fixes:
 -Fixed bug that would crash jEveAssets when updating assets (industry jobs)
