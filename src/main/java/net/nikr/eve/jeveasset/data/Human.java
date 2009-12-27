@@ -158,22 +158,6 @@ public class Human {
 		this.updateCorporationAssets = updateCorporationAssets;
 	}
 
-	public boolean isAssetsUpdatable(){
-		return Settings.isUpdatable(getAssetNextUpdate());
-	}
-
-	public boolean isBalanceUpdatable(){
-		return Settings.isUpdatable(getBalanceNextUpdate());
-	}
-
-	public boolean isIndustryJobsUpdatable(){
-		return Settings.isUpdatable(getIndustryJobsNextUpdate());
-	}
-
-	public boolean isMarkerOrdersUpdatable(){
-		return Settings.isUpdatable(getMarketOrdersNextUpdate());
-	}
-
 	public boolean isShowAssets() {
 		return showAssets;
 	}

@@ -53,6 +53,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -95,7 +96,21 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	public CsvExportDialog(Program program, Image image) {
 		super(program, "CSV Export", image);
 
-		jCsvFileChooser = new JCustomFileChooser(program, "csv");
+		try {
+			jCsvFileChooser = new JCustomFileChooser(program, "csv");
+		} catch (RuntimeException e) {
+			// Workaround for JRE bug 4711700. A NullPointer is thrown
+			// sometimes on the first construction under XP look and feel,
+			// but construction succeeds on successive attempts.
+			try {
+				jCsvFileChooser = new JCustomFileChooser(program, "csv");
+			} catch (RuntimeException npe) {
+				// ok, now we use the metal file chooser, takes a long time to load
+				// but the user can still use the program
+				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
+				jCsvFileChooser = new JCustomFileChooser(program, "csv");
+			}
+		}
 
 		jPath = new JTextField();
 		JCopyPopup.install(jPath);

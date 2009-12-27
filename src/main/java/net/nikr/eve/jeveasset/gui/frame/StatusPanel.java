@@ -50,14 +50,12 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	public final static String ACTION_TIMER = "ACTION_TIMER";
 
 	//GUI
-	private JLabel jTask;
 	private JLabel jTotalValue;
 	private JLabel jCount;
 	private JLabel jAverage;
 	private JLabel jVolume;
 	private JLabel jAssetUpdate;
 	private JLabel jPriceDataUpdate;
-	private JLabel jMarketOrdersUpdate;
 	private JLabel jEveTime;
 	private Timer timer;
 	private JToolBar jToolBar;
@@ -65,8 +63,6 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 	public StatusPanel(Program program) {
 		super(program);
-
-
 
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
@@ -82,20 +78,11 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 		addSpace(5);
 
-		jTask = new JLabel();
-		jTask.setForeground(jTask.getBackground().darker().darker().darker());
-		jTask.setMinimumSize( new Dimension(0, 25) );
-		jTask.setPreferredSize( new Dimension(Short.MAX_VALUE, 25));
-		jTask.setMaximumSize( new Dimension(Short.MAX_VALUE, 25));
-		jToolBar.add(jTask);
-
 		jEveTime = createLabel(120, "Eve Server Time", ImageGetter.getIcon("eve.png"));
 
 		jPriceDataUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
 
 		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
-
-		jMarketOrdersUpdate = new JLabel();// = createLabel(120, "Market orders next update", ImageGetter.getIcon("marketorders_update.png"));
 
 		jVolume = createLabel(100, "Total volume of shown assets", ImageGetter.getIcon("volume.png"));
 
@@ -112,7 +99,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jToolBar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(jToolBar, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -124,7 +111,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 
 	public void updatePriceDataDate(){
 		Date d = program.getSettings().getPriceDataNextUpdate();
-		if (Settings.isUpdatable(d)){
+		if (program.getSettings().isUpdatable(d)){
 			jPriceDataUpdate.setText("Now");
 		} else {
 			jPriceDataUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
@@ -149,42 +136,16 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 			}
 		}
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (Settings.isUpdatable(nextUpdate)){
+		if (program.getSettings().isUpdatable(nextUpdate)){
 			jAssetUpdate.setText("Now");
 		} else {
 			jAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
-		}
-	}
-	public void updateMarketOrdersDate(){
-		List<Account> accounts = program.getSettings().getAccounts();
-		Date nextUpdate = null;
-		for (int a = 0; a < accounts.size(); a++){
-			Account account = accounts.get(a);
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++){
-				Human human = humans.get(b);
-				if (human.isShowAssets()){
-					if (nextUpdate == null){
-						nextUpdate = human.getMarketOrdersNextUpdate();
-					}
-					if (human.getMarketOrdersNextUpdate().before(nextUpdate)){
-						nextUpdate = human.getMarketOrdersNextUpdate();
-					}
-				}
-			}
-		}
-		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (Settings.isUpdatable(nextUpdate)){
-			jMarketOrdersUpdate.setText("Now");
-		} else {
-			jMarketOrdersUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
 		}
 	}
 	public void updateEveTime(){
 		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow()) );
 		updatePriceDataDate();
 		updateAssetDate();
-		updateMarketOrdersDate();
 		if (!timer.isRunning()){
 			timer.start();
 		}
@@ -205,7 +166,6 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	private void update(){
 		updatePriceDataDate();
 		updateAssetDate();
-		updateMarketOrdersDate();
 		setAverage(0);
 		setTotalValue(0);
 		setCount(0);
@@ -214,7 +174,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	private void addIcon(Icon icon){
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
-		jLabel.setForeground(jTask.getBackground().darker().darker().darker());
+		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
 		jLabel.setMinimumSize( new Dimension(25, 25) );
 		jLabel.setPreferredSize( new Dimension(25, 25));
 		jLabel.setMaximumSize( new Dimension(25, 25));
@@ -224,9 +184,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	private JLabel createLabel(int width, String toolTip, Icon icon){
 		addIcon(icon);
 		JLabel jLabel = new JLabel();
-		jLabel.setForeground(jTask.getBackground().darker().darker().darker());
-		//jLabel.setMinimumSize( new Dimension(width, 25) );
-		//jLabel.setPreferredSize( new Dimension(width, 25));
+		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
 		jLabel.setMaximumSize( new Dimension(width, 25));
 		jLabel.setToolTipText(toolTip);
 		jLabel.setHorizontalAlignment(JLabel.LEFT);

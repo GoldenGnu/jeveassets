@@ -174,7 +174,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 				}
 			}
 		}
-		if (characters.size() > 1){
+		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			jJobs.setEnabled(true);
 			jActivity.setEnabled(true);

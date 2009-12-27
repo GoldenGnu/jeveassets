@@ -63,6 +63,22 @@ public class CellRenderers {
 			setText((value == null) ? "" : Formater.number(value));
 		}
 	}
+	public static class IntegerCellRenderer extends DefaultTableCellRenderer {
+		public IntegerCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+	}
+	public static class FloatCellRenderer extends DefaultTableCellRenderer {
+		public FloatCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : Formater.numberFloat(value));
+		}
+	}
 	public static class QuantityCellRenderer extends DefaultTableCellRenderer {
 		public QuantityCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);

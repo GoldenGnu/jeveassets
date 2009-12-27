@@ -50,7 +50,7 @@ public class EveApiCorporationReader {
 			nextUpdate = settings.getCorporationsNextUpdate().get(corporationID);
 		}
 
-		if (Settings.isUpdatable(nextUpdate)){
+		if (settings.isUpdatable(nextUpdate)){
 			Parser corporationParser = new Parser();
 			corporationParser.setCachingEnabled(true);
 			Response corporationResponse = null;

@@ -20,7 +20,6 @@ _INDEX__________________________________________________________________________
 -About
 -Requierments
 -Run
--Known Issues
 -Change log
 -FAQ
 -Contact
@@ -48,12 +47,39 @@ or
 -cd to jEveAssets directory and run "java -jar jEveAssets.jar"
 
 ________________________________________________________________________________
-_KNOWN_ISSUES___________________________________________________________________
-
--Updating to from Release Candidate 7a or earlier will remove all your settings
-
-________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
+
+1.2.3
+New Features:
+-Now ignore update timer if the Api Proxy is set
+
+Bug fixes:
+-Possible fix for crash bug in JCustomFileChooser (Java Bug)
+-Better memory management
+-Fix minor display bug
+-Better log output
+________________________________________________________________________________
+
+1.2.2
+Bug fixes:
+-Fixed bug that would crash jEveAssets when updating assets (industry jobs)
+-Fixed bug that ignored the update timer for industry jobs
+
+Known Issues:
+-The holiday gift show up as !XXXX
+________________________________________________________________________________
+
+1.2.1
+Bug fixes:
+-Fix bug that would sometimes hide industry jobs and market orders
+-Fixed bug that would crash jEveAssets when updating assets (holiday gift bug)
+
+New Features:
+-Now backup settings files (on save)
+
+Known Issues:
+-The holiday gift show up as !XXXX
+________________________________________________________________________________
 
 1.2.0
 Bug fixes:
@@ -73,7 +99,7 @@ New Features:
 -The table now save the selection on update
 -Added the ability highlight the selected row
 -The price field in price settings, now have focus when adding a new price
-
+________________________________________________________________________________
 
 1.1.0
 -Fixed bug with invalid proxy settings
@@ -96,52 +122,63 @@ New Features:
 -New Column: Reprocessed value
 -New Column: System security status
 -Added volume to statusbar and table popup menu
+________________________________________________________________________________
 
 1.0.0
 -Fixed minor bug with CSV & Fittings export
+________________________________________________________________________________
 
 1.0.0 Release Candidate 8
 -Now uses the user's home directory to store data and settings
 -Now support proxy servers
+________________________________________________________________________________
 
 1.0.0 Release Candidate 7a
 -Fixed price data bug, introduced in RC7
-
+________________________________________________________________________________
 
 1.0.0 Release Candidate 7
 -Ship Loadouts: Fixed bug that showed charges instead of modules
 -Fix bug that prevented the price data from being updated
 -Updated eveapi library to version 1.0.0
 -Updated nikr log library
+________________________________________________________________________________
 
 1.0.0 Release Candidate 6
 -Compiled with Java 6, again...
 -It's now possible to mark multiple items as BPOs
 -Better exit progress
+________________________________________________________________________________
 
 1.0.0 Release Candidate 5
 -Now use Java 5, instead of Java 6 (To enable mac compatibility)
+________________________________________________________________________________
 
 1.0.0 Release Candidate 4
 -Corrected contact information, in readme file
 -Fixed hidden characters being shown in the values tool
 -Ship Loadouts now show all ships
+________________________________________________________________________________
 
 1.0.0 Release Candidate 3
 -fixed bug that would make some buttons to small
 -CSV Export: Added more options
 -blueprints can now be marked as BPO or BPC
 -Added option to only filter when enter is pressed
+________________________________________________________________________________
 
 1.0.0 Release Candidate 2
 -Fixed bug that would make some dialogs to small
+________________________________________________________________________________
 
 1.0.0 Release Candidate 1b
 -New column: Type Count (Total count of this type of asset)
 -Apocrypha 1.3.1 data update
+________________________________________________________________________________
 
 1.0.0 Release Candidate 1a
 -Fixed bug in the save filter dialog
+________________________________________________________________________________
 
 1.0.0 Release Candidate 1
 -Fixed values grand total wallet balance
@@ -150,11 +187,13 @@ New Features:
 -Price column: Now have gray background if the price was set manually
 -Meta column: Fixed a display issue with trailing zero...
 -Now search clipboard for API user id & key, when adding API Key
+________________________________________________________________________________
 
 1.0.0 BETA 12
 -New column: Region
 -Offices should now always show the right location
 -Fixed minor filtering bug
+________________________________________________________________________________
 
 1.0.0 BETA 11
 -Added more regions to the Eve-Central options
@@ -162,20 +201,24 @@ New Features:
 -The Set Price Dialog now focus the price field when shown
 -Made option in API Manger to show/hide character assets
 -New columns: TypeID & Volume
+________________________________________________________________________________
 
 1.0.0 BETA 10
 -Fixed "Equals" and "Does not equal" modes for number columns
 -Asset prices can now be set manually (set price from the table popup-menu)
 -Added more info to the statusbar
+________________________________________________________________________________
 
 1.0.0 BETA 9a
 -Fixed program update
+________________________________________________________________________________
 
 1.0.0 BETA 9
 -New update mechanism for assets and price data
 -Price data from Eve-Central can now be updated manually
 -Added options for EVE-Central price data
 -Fixed a bug that made the program crash, if not connected to the Internet...
+________________________________________________________________________________
 
 1.0.0 BETA 8
 -Spelling corrected in the filter modes ComboBox
@@ -184,32 +227,40 @@ New Features:
 -Added Above & Below filter modes, for number columns
 -Owner column, should now always show the correct owner (fix not confirmed)
 -Tried to fix the Location bug, again (fix not confirmed)
+________________________________________________________________________________
 
 1.0.0 BETA 7
 -Table pop-up: Add to filter
 -Columns fixed (should now filter as intented)
 -CSV export
+________________________________________________________________________________
 
 1.0.0 BETA 6a
 -Fixed a bug with the shown update time
+________________________________________________________________________________
 
 1.0.0 BETA 6
 -Fixed bug that hid new columns
 -Now shows when the assets can be updated again
+________________________________________________________________________________
 
 1.0.0 BETA 5
 -New columns: Highest buy price and Lowest sell price
 -Better support for T3 Ships 
 -Minor adjustments to the Materials and Values dialogs...
+________________________________________________________________________________
 
 1.0.0 BETA 4
 -Tried to fix the location bug (Fix not confirmed)
+________________________________________________________________________________
 
 1.0.0 BETA 3
 -Fixed bug, that make the program crash (Location bug still pressent)
+________________________________________________________________________________
 
 1.0.0 BETA 2
 -Fixed bug, that prevented users to enter API Key and updating assets
+________________________________________________________________________________
 
 1.0.0 BETA 1
 -First version
@@ -227,7 +278,7 @@ ________________________________________________________________________________
 Q: jEveAssets crashed/does not work as intended
 
 A: Please send an email to niklaskr@gmail.com and include the following:
-   1.) the log.txt file, found in the jEveAsset directory
+   1.) The latest error.txt in the logs directory
    2.) Instructions on how to reproduce the bug
 
 ________________________________________________________________________________
@@ -262,6 +313,26 @@ ________________________________________________________________________________
 Q: How do I use portable settings?
 
 A: Add the command line argument: -portable
+
+________________________________________________________________________________
+
+Q: Where is the user files?
+
+A:
+
+   Windows XP:
+   C:\Documents and Settings\[USERNAME]\.jeveassets\
+
+   Windows Vista:
+   C:\Users\[USERNAME]\.jeveassets\
+
+   Linux:
+   Send me an email if you know (niklaskr@gmail.com)
+
+   Mac:
+   Send me an email if you know (niklaskr@gmail.com)
+
+   Replace [USERNAME] with your username
 
 ________________________________________________________________________________
 _CONTACT________________________________________________________________________

@@ -33,24 +33,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
 public class EveApiAccountBalanceReader {
 
-	public static boolean load(Human human){
-		return load(human, false);
+	public static boolean load(Settings settings, Human human){
+		return load(settings, human, false);
 	}
 
-	public static boolean load(Human human, boolean apiKeyCheck){
-		return load(human, apiKeyCheck, false);
+	public static boolean load(Settings settings, Human human, boolean apiKeyCheck){
+		return load(settings, human, apiKeyCheck, false);
 	}
 
-	private static boolean load(Human human, boolean apiKeyCheck, boolean bCorp){
-		if (human.isBalanceUpdatable() || bCorp || apiKeyCheck){
+	private static boolean load(Settings settings, Human human, boolean apiKeyCheck, boolean bCorp){
+		if (settings.isUpdatable(human.getBalanceNextUpdate()) || bCorp || apiKeyCheck){
 			if (human.isUpdateCorporationAssets() && !bCorp){
-				load(human, false, true);
+				load(settings, human, false, true);
 			}
 			Parser balanceParser = new Parser();
 			Response balanceResponse = null;

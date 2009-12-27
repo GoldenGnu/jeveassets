@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Vector;
 
 
-public class Items {
+public class Item {
 
 	private int id;
 	private String name;
@@ -41,7 +41,7 @@ public class Items {
 	private boolean marketGroup;
 	private List<Material> materials;
 
-	public Items(int id, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
+	public Item(int id, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
 		this.id = id;
 		this.name = name;
 		this.group = group;

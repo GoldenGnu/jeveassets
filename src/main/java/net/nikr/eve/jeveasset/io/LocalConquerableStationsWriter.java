@@ -50,7 +50,7 @@ public class LocalConquerableStationsWriter extends AbstractXmlWriter {
 		} catch (XmlException ex) {
 			Log.error("Conquerable stations not saved "+ex.getMessage(), ex);
 		}
-		Log.info("Conquerable stations saved");
+		Log.info("	Conquerable stations saved");
 	}
 	private static void writeConquerableStations(Document xmldoc, Map<Integer, ApiStation> conquerableStations){
 		Element parentNode = xmldoc.getDocumentElement();

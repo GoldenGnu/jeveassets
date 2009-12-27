@@ -85,7 +85,7 @@ public class Settings {
 	private List<EveAsset> allAssets = null;
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
-	private Map<Integer, Items> items;
+	private Map<Integer, Item> items;
 	private Map<Integer, PriceData> priceData;
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
@@ -113,7 +113,7 @@ public class Settings {
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
-		items = new HashMap<Integer, Items>();
+		items = new HashMap<Integer, Item>();
 		locations = new HashMap<Integer, Location>();
 		priceData = new HashMap<Integer, PriceData>();
 		conquerableStations = new HashMap<Integer, ApiStation>();
@@ -237,6 +237,11 @@ public class Settings {
 
 	}
 
+	public void updateOrdersAndJobs(){
+		EveApiMarketOrdersReader.load(this);
+		EveApiIndustryJobsReader.load(this);
+	}
+
 	public boolean updatePriceData(UpdateTask task){
 		return priceDataGetter.updatePriceData(task);
 	}
@@ -323,7 +328,8 @@ public class Settings {
 				eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
 			}
 			//Reprocessed price
-			if (!getItems().get(eveAsset.getTypeId()).getMaterials().isEmpty()){
+			eveAsset.setPriceReprocessed(0);
+			if (getItems().containsKey(eveAsset.getTypeId())){
 				List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
 				double priceReprocessed = 0;
 				int portionSize = 0;
@@ -358,9 +364,8 @@ public class Settings {
 					priceReprocessed = priceReprocessed / portionSize;
 				}
 				eveAsset.setPriceReprocessed(priceReprocessed);
-			} else {
-				eveAsset.setPriceReprocessed(0);
 			}
+
 			//Blueprint
 			if (eveAsset.isBlueprint()){
 				eveAsset.setBpo(bpos.contains(eveAsset.getId()));
@@ -441,11 +446,11 @@ public class Settings {
 		this.accounts = accounts;
 	}
 	
-	public Map<Integer, Items> getItems() {
+	public Map<Integer, Item> getItems() {
 		return items;
 	}
 
-	public void setItems(Map<Integer, Items> items) {
+	public void setItems(Map<Integer, Item> items) {
 		this.items = items;
 	}
 
@@ -735,10 +740,11 @@ public class Settings {
 		return ret;
 	}
 
-	public static boolean isUpdatable(Date date){
+	public boolean isUpdatable(Date date){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
-				|| Program.FORCE_UPDATE )
+				|| Program.FORCE_UPDATE
+				|| getApiProxy() != null)
 				&& !Program.FORCE_NO_UPDATE);
 	}
 }

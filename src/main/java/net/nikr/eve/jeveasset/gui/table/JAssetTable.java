@@ -34,7 +34,9 @@ import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.table.CellRenderers.DoubleCellRenderer;
+import net.nikr.eve.jeveasset.gui.table.CellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.table.CellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.table.CellRenderers.IntegerCellRenderer;
 
 
 public class JAssetTable extends JTable {
@@ -43,6 +45,8 @@ public class JAssetTable extends JTable {
 	private DoubleCellRenderer doubleCellRenderer;
 	private LongCellRenderer longCellRenderer;
 	private TableCellRenderer tableCellRenderer;
+	private IntegerCellRenderer integerCellRenderer;
+	private FloatCellRenderer floatCellRenderer;
 
 	private Program program;
 
@@ -52,6 +56,8 @@ public class JAssetTable extends JTable {
 		this.setModel(eveAssetTableModel);
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();
+		integerCellRenderer = new IntegerCellRenderer();
+		floatCellRenderer = new FloatCellRenderer();
 		tableCellRenderer = new DefaultTableCellRenderer();
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
@@ -125,6 +131,8 @@ public class JAssetTable extends JTable {
 				Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				c.setBackground( new Color(230,230,255) );
 				return c;
 			}

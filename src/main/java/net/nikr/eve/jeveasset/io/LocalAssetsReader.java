@@ -114,7 +114,7 @@ public class LocalAssetsReader extends AbstractXmlReader {
 		}
 		Date industryJobsNextUpdate = Settings.getGmtNow();
 		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")){
-			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
+			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
 		}
 
 		return new Human(account, name, characterID, corporation, updateCorporationAssets, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate);
