@@ -48,6 +48,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -92,7 +93,22 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
-		jXmlFileChooser = new JCustomFileChooser(program, "xml");
+
+		try {
+			jXmlFileChooser = new JCustomFileChooser(program, "xml");
+		} catch (RuntimeException e) {
+			// Workaround for JRE bug 4711700. A NullPointer is thrown
+			// sometimes on the first construction under XP look and feel,
+			// but construction succeeds on successive attempts.
+			try {
+				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+			} catch (RuntimeException npe) {
+				// ok, now we use the metal file chooser, takes a long time to load
+				// but the user can still use the program
+				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
+				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+			}
+		}
 
 		jShips = new JComboBox();
 		jShips.setActionCommand(ACTION_SHIP_SELECTED);
