@@ -13,6 +13,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
+					<finalName>jeveassets</finalName>
 					<archive>
 						<manifest>
 							<mainClass>net.nikr.eve.jeveasset.Main</mainClass>
