@@ -244,6 +244,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		eveAssetEventList.clear();
 		eveAssetEventList.addAll( settings.getEventListAssets() );
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
+		System.gc(); //clean post-update mess :)
 	}
 	
 	public void exit(){
