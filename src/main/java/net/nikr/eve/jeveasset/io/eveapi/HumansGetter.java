@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.character.list.ApiCharacter;
@@ -39,7 +39,7 @@ import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiHumansReader {
+public class HumansGetter {
 
 	private static String error;
 
@@ -83,11 +83,11 @@ public class EveApiHumansReader {
 												account
 												,eveCharacter.getName()
 												,eveCharacter.getCharacterID()
-												,EveApiCorporationReader.load(settings, account,(int) eveCharacter.getCharacterID(), eveCharacter.getCorporationID())
+												,CorporationGetter.load(settings, account,(int) eveCharacter.getCharacterID(), eveCharacter.getCorporationID())
 												);
 						
 						if (!account.getHumans().contains(human)){
-							if (!EveApiAccountBalanceReader.load(settings, human, apiKeyCheck) && apiKeyCheck){
+							if (!AccountBalanceGetter.load(settings, human, apiKeyCheck) && apiKeyCheck){
 								return false;
 							}
 							account.getHumans().add(human);
@@ -123,7 +123,7 @@ public class EveApiHumansReader {
 			for (int a = 0; a < humans.size(); a++){
 				Human currentHuman = humans.get(a);
 				if (currentHuman.getCharacterID() == human.getCharacterID()){
-					EveApiAccountBalanceReader.load(settings, currentHuman);
+					AccountBalanceGetter.load(settings, currentHuman);
 					currentHuman.setName(human.getName());
 					if (!human.getCorporation().equals("")) currentHuman.setCorporation(human.getCorporation());
 				}

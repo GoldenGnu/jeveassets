@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.shared;
 
 
 import net.nikr.log.Log;

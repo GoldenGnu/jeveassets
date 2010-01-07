@@ -23,17 +23,19 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class LocalConquerableStationsWriter extends AbstractXmlWriter {
+public class ConquerableStationsWriter extends AbstractXmlWriter {
 
 	public static void save(Settings settings){
 		Document xmldoc = null;

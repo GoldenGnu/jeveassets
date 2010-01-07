@@ -54,7 +54,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
-import net.nikr.eve.jeveasset.io.LocalEveFittingWriter;
+import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import net.nikr.log.Log;
 
 
@@ -263,7 +263,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 			String filename = browse();
 			List<EveAsset> eveAssets = new ArrayList<EveAsset>();
 			eveAssets.add(ships.get(s));
-			if (filename != null) LocalEveFittingWriter.save(eveAssets, filename, fitName, fitDescription);
+			if (filename != null) EveFittingWriter.save(eveAssets, filename, fitName, fitDescription);
 		} else {
 			JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(), "Name can not be empty...", "Empty Name", JOptionPane.PLAIN_MESSAGE);
 		}
@@ -433,7 +433,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		}
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
-			if (filename != null) LocalEveFittingWriter.save(new ArrayList<EveAsset>(ships.values()), filename);
+			if (filename != null) EveFittingWriter.save(new ArrayList<EveAsset>(ships.values()), filename);
 
 		}
 	}

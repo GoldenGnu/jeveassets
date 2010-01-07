@@ -52,7 +52,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.table.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
-import net.nikr.eve.jeveasset.io.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.AssetConverter;
 
 
 public class IndustryJobsDialog extends JDialogCentered implements ActionListener {

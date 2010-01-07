@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.industry.ApiIndustryJob;
@@ -40,9 +40,9 @@ import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiIndustryJobsReader {
+public class IndustryJobsGetter {
 
-	private EveApiIndustryJobsReader() {}
+	private IndustryJobsGetter() {}
 
 	public static void load(Settings settings){
 		Log.info("Industry jobs updating:");

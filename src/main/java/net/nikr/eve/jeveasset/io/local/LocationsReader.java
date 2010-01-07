@@ -23,19 +23,22 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class LocalLocationReader extends AbstractXmlReader {
+public class LocationsReader extends AbstractXmlReader {
 
 	public static void load(Settings settings){
 		try {

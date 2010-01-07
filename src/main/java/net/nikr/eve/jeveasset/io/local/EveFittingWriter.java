@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +31,14 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class LocalEveFittingWriter extends AbstractXmlWriter {
+public class EveFittingWriter extends AbstractXmlWriter {
 	public static void save(List<EveAsset> eveassets, String filename){
 		save(eveassets, filename, null, null);
 	}

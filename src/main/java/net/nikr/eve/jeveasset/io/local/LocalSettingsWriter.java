@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -34,6 +34,8 @@ import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -51,7 +51,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JUneditableTableModel;
-import net.nikr.eve.jeveasset.io.EveApiHumansReader;
+import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
 
@@ -607,10 +607,10 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					result = 20;
 					return null;
 				}
-				ok = EveApiHumansReader.load(program.getSettings(), account, true);
+				ok = HumansGetter.load(program.getSettings(), account, true);
 				if (!ok){
 					result = 30;
-					error = EveApiHumansReader.getError();
+					error = HumansGetter.getError();
 					return null;
 				}
 				result = 100;

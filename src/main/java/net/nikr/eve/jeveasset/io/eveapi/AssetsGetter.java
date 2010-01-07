@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.asset.ApiAsset;
@@ -34,15 +34,16 @@ import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AssetConverter;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiAssetsReader {
+public class AssetsGetter {
 
 	private static String error;
 
-	private EveApiAssetsReader() {}
+	private AssetsGetter() {}
 
 	public static boolean load(Settings settings, Human human){
 		return load(settings, human, false);

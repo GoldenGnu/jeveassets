@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.balance.ApiAccountBalance;
@@ -38,7 +38,7 @@ import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiAccountBalanceReader {
+public class AccountBalanceGetter {
 
 	public static boolean load(Settings settings, Human human){
 		return load(settings, human, false);

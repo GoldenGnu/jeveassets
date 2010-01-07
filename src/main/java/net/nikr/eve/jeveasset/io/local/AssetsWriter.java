@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
 import com.beimin.eveapi.industry.ApiIndustryJob;
@@ -33,12 +33,14 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class LocalAssetsWriter extends AbstractXmlWriter {
+public class AssetsWriter extends AbstractXmlWriter {
 	public static void save(Settings settings){
 		Document xmldoc = null;
 		try {

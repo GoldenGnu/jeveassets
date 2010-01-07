@@ -23,18 +23,19 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.utils.stationlist.Parser;
 import com.beimin.eveapi.utils.stationlist.Response;
 import java.io.IOException;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiConquerableStationsReader {
+public class ConquerableStationsGetter {
 	public static boolean load(Settings settings){
 		Log.info("Conquerable stations updating:");
 		if (settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
@@ -59,7 +60,7 @@ public class EveApiConquerableStationsReader {
 			}
 		}
 		Log.info("	Conquerable stations updated");
-		LocalConquerableStationsWriter.save(settings);
+		ConquerableStationsWriter.save(settings);
 		return true;
 	}
 }

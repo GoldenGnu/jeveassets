@@ -62,7 +62,7 @@ import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.table.AssetFilterLogicalMatcher;
-import net.nikr.eve.jeveasset.io.LocalCsvWriter;
+import net.nikr.eve.jeveasset.io.local.CsvWriter;
 import org.supercsv.prefs.CsvPreference;
 
 
@@ -420,7 +420,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 				data.add(getLine(header, eveAsset, lang));
 			}
 		}
-		if (!LocalCsvWriter.save(jPath.getText(), data, header, new CsvPreference('\"', fieldDelimiter, lineDelimiter))){
+		if (!CsvWriter.save(jPath.getText(), data, header, new CsvPreference('\"', fieldDelimiter, lineDelimiter))){
 			JOptionPane.showMessageDialog(dialog, "Failed to save CSV file", "Export CSV", JOptionPane.PLAIN_MESSAGE);
 		}
 

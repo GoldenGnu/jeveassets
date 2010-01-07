@@ -36,8 +36,8 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.eve.jeveasset.io.EveApiAssetsReader;
-import net.nikr.eve.jeveasset.io.EveApiConquerableStationsReader;
+import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
 import net.nikr.eve.jeveasset.io.Online;
 import net.nikr.log.Log;
 
@@ -112,7 +112,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 
 		@Override
 		public void update() throws Throwable {
-			EveApiConquerableStationsReader.load(program.getSettings());
+			ConquerableStationsGetter.load(program.getSettings());
 
 			List<String> coporations = new Vector<String>();
 			List<Account> accounts = program.getSettings().getAccounts();
@@ -128,14 +128,14 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 						if (coporations.contains(human.getCorporation())){
 							human.setUpdateCorporationAssets(false);
 						}
-						boolean returned = EveApiAssetsReader.load(program.getSettings(), human);
+						boolean returned = AssetsGetter.load(program.getSettings(), human);
 						if (human.isUpdateCorporationAssets()){
 							coporations.add(human.getCorporation());
 						}
 						if (returned){
 							updated = true;
 						} else {
-							error = EveApiAssetsReader.getError();
+							error = AssetsGetter.getError();
 							isOnline = Online.isOnline(program.getSettings());
 							updateFailed = true;
 						}

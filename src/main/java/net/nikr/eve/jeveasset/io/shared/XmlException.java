@@ -23,33 +23,20 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import net.nikr.log.Log;
-import org.supercsv.io.*;
-import org.supercsv.prefs.CsvPreference;
+package net.nikr.eve.jeveasset.io.shared;
 
 
-public class LocalCsvWriter {
-
-	public static boolean save(String filename, List<HashMap<String, ? super Object>> data, String[] header, CsvPreference csvPreference) {
-		ICsvMapWriter writer;
-		try {
-			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);
-			writer.writeHeader(header);
-			for (int a = 0; a < data.size(); a++){
-				writer.write(data.get(a), header);
-			}
-			writer.close();
-		} catch (IOException ex){
-			Log.warning("CSV file saving failed");
-			return false;
-		}
-		Log.info("CSV file saved");
-		return true;
+public class XmlException extends Exception {
+	public XmlException(String message) {
+		super(message);
 	}
+
+	public XmlException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public XmlException(Throwable cause) {
+		super(cause);
+	}
+
 }

@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.table.MarketOrderTableFormat;
-import net.nikr.eve.jeveasset.io.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.AssetConverter;
 
 
 public class MarketOrdersDialog extends JDialogCentered implements ActionListener {

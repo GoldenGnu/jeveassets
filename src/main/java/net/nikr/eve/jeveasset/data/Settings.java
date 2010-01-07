@@ -45,17 +45,17 @@ import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.eve.jeveasset.io.AssetConverter;
-import net.nikr.eve.jeveasset.io.EveApiHumansReader;
-import net.nikr.eve.jeveasset.io.EveApiIndustryJobsReader;
-import net.nikr.eve.jeveasset.io.EveApiMarketOrdersReader;
-import net.nikr.eve.jeveasset.io.LocalAssetsReader;
-import net.nikr.eve.jeveasset.io.LocalAssetsWriter;
-import net.nikr.eve.jeveasset.io.LocalConquerableStationsReader;
-import net.nikr.eve.jeveasset.io.LocalItemsReader;
-import net.nikr.eve.jeveasset.io.LocalSettingsReader;
-import net.nikr.eve.jeveasset.io.LocalLocationReader;
-import net.nikr.eve.jeveasset.io.LocalSettingsWriter;
+import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
+import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
+import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.local.AssetsReader;
+import net.nikr.eve.jeveasset.io.local.AssetsWriter;
+import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
+import net.nikr.eve.jeveasset.io.local.ItemsReader;
+import net.nikr.eve.jeveasset.io.local.LocalSettingsReader;
+import net.nikr.eve.jeveasset.io.local.LocationsReader;
+import net.nikr.eve.jeveasset.io.local.LocalSettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
 import net.nikr.log.Log;
 
@@ -145,17 +145,17 @@ public class Settings {
 		settingsLoaded = LocalSettingsReader.load(this);
 	//Load from file
 		SplashUpdater.setProgress(20);
-		LocalItemsReader.load(this); //Items (Must be loaded before Assets)
+		ItemsReader.load(this); //Items (Must be loaded before Assets)
 		SplashUpdater.setProgress(30);
-		LocalLocationReader.load(this); //Locations (Must be loaded before Assets)
+		LocationsReader.load(this); //Locations (Must be loaded before Assets)
 		SplashUpdater.setProgress(40);
-		LocalConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
+		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
 		SplashUpdater.setProgress(50);
-		LocalAssetsReader.load(this); //Assets (Must be loaded before the price data)
+		AssetsReader.load(this); //Assets (Must be loaded before the price data)
 	//Update from eve api
-		EveApiMarketOrdersReader.load(this); //Orders (Must be loaded before the price data)
-		EveApiIndustryJobsReader.load(this); //Jobs (Must be loaded before the price data)
-		EveApiHumansReader.load(this);
+		MarketOrdersGetter.load(this); //Orders (Must be loaded before the price data)
+		IndustryJobsGetter.load(this); //Jobs (Must be loaded before the price data)
+		HumansGetter.load(this);
 		SplashUpdater.setProgress(60);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
@@ -238,8 +238,8 @@ public class Settings {
 	}
 
 	public void updateOrdersAndJobs(){
-		EveApiMarketOrdersReader.load(this);
-		EveApiIndustryJobsReader.load(this);
+		MarketOrdersGetter.load(this);
+		IndustryJobsGetter.load(this);
 	}
 
 	public boolean updatePriceData(UpdateTask task){
@@ -650,7 +650,7 @@ public class Settings {
 	}
 	public void saveSettings(){
 		LocalSettingsWriter.save(this);
-		LocalAssetsWriter.save(this);
+		AssetsWriter.save(this);
 	}
 	public static String getPathSettings(){
 		return getLocalFile(Settings.PATH_SETTINGS, !portable);

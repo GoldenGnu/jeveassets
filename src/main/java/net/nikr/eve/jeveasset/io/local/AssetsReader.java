@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.balance.ApiAccountBalance;
 import com.beimin.eveapi.industry.ApiIndustryJob;
@@ -35,13 +35,17 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class LocalAssetsReader extends AbstractXmlReader {
+public class AssetsReader extends AbstractXmlReader {
 	public static boolean load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathAssets());

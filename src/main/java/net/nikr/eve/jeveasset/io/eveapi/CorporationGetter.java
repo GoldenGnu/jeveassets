@@ -23,7 +23,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.corpsheet.Parser;
@@ -37,7 +37,7 @@ import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class EveApiCorporationReader {
+public class CorporationGetter {
 	public static String load(Settings settings, Account account, int characterID, long corporationID){
 		if (settings.getCorporations().containsKey(corporationID)){
 			Log.info("		Corporation not updated (ALREADY DONE)");
