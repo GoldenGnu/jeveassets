@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public class LocalSettingsReader extends AbstractXmlReader {
+public class SettingsReader extends AbstractXmlReader {
 
 	public static boolean load(Settings settings){
 		try {

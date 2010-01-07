@@ -53,9 +53,9 @@ import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
-import net.nikr.eve.jeveasset.io.local.LocalSettingsReader;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
-import net.nikr.eve.jeveasset.io.local.LocalSettingsWriter;
+import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
 import net.nikr.log.Log;
 
@@ -142,7 +142,7 @@ public class Settings {
 		windowAutoSave = true;
 
 		//Load data and overwite default values
-		settingsLoaded = LocalSettingsReader.load(this);
+		settingsLoaded = SettingsReader.load(this);
 	//Load from file
 		SplashUpdater.setProgress(20);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
@@ -649,7 +649,7 @@ public class Settings {
 		return settingsLoaded;
 	}
 	public void saveSettings(){
-		LocalSettingsWriter.save(this);
+		SettingsWriter.save(this);
 		AssetsWriter.save(this);
 	}
 	public static String getPathSettings(){

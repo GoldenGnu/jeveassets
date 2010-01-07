@@ -41,7 +41,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class LocalSettingsWriter extends AbstractXmlWriter {
+public class SettingsWriter extends AbstractXmlWriter {
 
 	public static void save(Settings settings){
 		Document xmldoc = null;
