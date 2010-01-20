@@ -25,31 +25,70 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.asset.ApiAsset;
 import com.beimin.eveapi.asset.Parser;
 import com.beimin.eveapi.asset.Response;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.io.shared.AssetConverter;
-import net.nikr.log.Log;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class AssetsGetter {
+public class AssetsGetter extends AbstractApiGetter<Response> {
 
-	private static String error;
+	private Human human;
+	private List<ApiAsset> assets;
+	private List<ApiAsset> corpAssets;
+	
 
-	private AssetsGetter() {}
+	public AssetsGetter() {
+		
+	}
 
-	public static boolean load(Settings settings, Human human){
+	public void load(Human human, boolean forceUpdate){
+		this.human = human;
+		Date nextUpdate = human.getAssetNextUpdate();
+		load(nextUpdate, forceUpdate, false, "Assets", human.getName());
+		if (human.isUpdateCorporationAssets()){
+			load(nextUpdate, forceUpdate, true, "Corporation assets", human.getCorporation()+" by "+human.getName());
+		}
+	}
+
+	@Override
+	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
+		Parser parser = new Parser();
+		Response response = parser.getAssets(Human.getApiAuthorization(human), bCorp);
+		human.setAssetNextUpdate( response.getCachedUntil() );
+		return response;
+	}
+
+	@Override
+	protected void ok(Response response, boolean bCorp) {
+		if (bCorp){
+			corpAssets = new Vector<ApiAsset>(response.getAssets());
+		} else {
+			assets = new Vector<ApiAsset>(response.getAssets());
+		}
+	}
+
+	public List<ApiAsset> getAssets() {
+		return assets;
+	}
+
+	public List<ApiAsset> getCorpAssets() {
+		return corpAssets;
+	}
+
+	/*
+	 *
+	public static boolean load(SettingsInterface settings, Human human){
 		return load(settings, human, false);
 	}
 	
-	private static boolean load(Settings settings, Human human, boolean bCorp){
+	private static boolean load(SettingsInterface settings, Human human, boolean bCorp){
 		error = null;
 		if (settings.isUpdatable(human.getAssetNextUpdate()) || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
@@ -64,9 +103,9 @@ public class AssetsGetter {
 					List<ApiAsset> assets = new Vector<ApiAsset>(assetResponse.getAssets());
 					//overwrite assets (if we are parsing the corp asset or will not parse the corp assets)
 					if (bCorp || !human.isUpdateCorporationAssets()){
-						human.setAssets( AssetConverter.apiAsset(settings, human, assets, bCorp) );
+						human.setAssets( ApiConverter.apiAsset(settings, human, assets, bCorp) );
 					} else { //Add to assets (if we just parsed the corp asset, so they are not overwriten)
-						human.getAssets().addAll( AssetConverter.apiAsset(settings, human, assets, bCorp) );
+						human.getAssets().addAll( ApiConverter.apiAsset(settings, human, assets, bCorp) );
 					}
 					if (bCorp) {
 						Log.info("	Updated corporation assets for: "+human.getCorporation()+" by "+human.getName());
@@ -118,4 +157,6 @@ public class AssetsGetter {
 	public static String getError() {
 		return error;
 	}
+	 * 
+	 */
 }

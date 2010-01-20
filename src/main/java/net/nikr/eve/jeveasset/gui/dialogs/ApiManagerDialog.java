@@ -586,6 +586,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		private int userID;
 		private String apiKey;
 		private String error = null;
+		private HumansGetter humansGetter = new HumansGetter();
 
 		public CheckHumanTask(int userID, String apiKey) {
 			this.userID = userID;
@@ -607,10 +608,10 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					result = 20;
 					return null;
 				}
-				ok = HumansGetter.load(program.getSettings(), account, true);
-				if (!ok){
+				humansGetter.load(account, true);
+				if (humansGetter.isCharacterUpdated()){
 					result = 30;
-					error = HumansGetter.getError();
+					error = humansGetter.getError();
 					return null;
 				}
 				result = 100;

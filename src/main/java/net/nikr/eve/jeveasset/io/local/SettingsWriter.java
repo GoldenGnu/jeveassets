@@ -27,7 +27,6 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
@@ -142,15 +141,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		node.setAttributeNS(null, "name", "conquerable station");
 		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getConquerableStationsNextUpdate().getTime()));
 		parentNode.appendChild(node);
-
-		Map<Long, Date> corporationNextUpdate = settings.getCorporationsNextUpdate();
-		for (Map.Entry<Long, Date> entry : corporationNextUpdate.entrySet()){
-			node = xmldoc.createElementNS(null, "update");
-			node.setAttributeNS(null, "name", "corporation");
-			node.setAttributeNS(null, "corpid", String.valueOf(entry.getKey()));
-			node.setAttributeNS(null, "nextupdate", String.valueOf(entry.getValue().getTime()));
-			parentNode.appendChild(node);
-		}
 	}
 
 	private static void writeFilters(Document xmldoc, Map<String, List<AssetFilter>> assetFilters){

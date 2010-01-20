@@ -263,10 +263,6 @@ public class SettingsReader extends AbstractXmlReader {
 		if (text.equals("conquerable station")){
 			settings.setConquerableStationsNextUpdate(nextUpdate);
 		}
-		if (text.equals("corporation")){
-			long corpid = AttributeGetters.getLong(element, "corpid");
-			settings.getCorporationsNextUpdate().put(corpid, nextUpdate);
-		}
 	}
 
 	private static void parseFilters(Element element, Map<String, List<AssetFilter>> assetFilters){

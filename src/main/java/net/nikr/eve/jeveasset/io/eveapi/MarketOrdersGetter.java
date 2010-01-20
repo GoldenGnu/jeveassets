@@ -25,38 +25,36 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.order.ApiMarketOrder;
 import com.beimin.eveapi.order.Parser;
 import com.beimin.eveapi.order.Response;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class MarketOrdersGetter {
+public class MarketOrdersGetter extends AbstractApiGetter<Response> {
 
-	private MarketOrdersGetter() {}
+	private Human human;
 
-	public static void load(Settings settings){
+	public void load(List<Account> accounts, boolean forceUpdate){
 		Log.info("Market orders updating:");
 		boolean updated = false;
 		boolean updateFailed = false;
-		List<Account> accounts = settings.getAccounts();
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++){
-				boolean returned;
 				if (!Program.FORCE_NO_UPDATE) {
-					returned = load(settings, humans.get(b), false);
-					if (returned){
+					load(humans.get(b), forceUpdate);
+					if (isCharacterUpdated() || isCorporationUpdated()){
 						updated = true;
 					} else {
 						updateFailed = true;
@@ -73,7 +71,40 @@ public class MarketOrdersGetter {
 		}
 	}
 
-	private static boolean load(Settings settings, Human human, boolean bCorp){
+	public void load(Human human, boolean forceUpdate){
+		this.human = human;
+		Date nextUpdate = human.getMarketOrdersNextUpdate();
+		load(nextUpdate, forceUpdate, false, "Market orders", human.getName());
+		if (human.isUpdateCorporationAssets()){
+			load(nextUpdate, forceUpdate, true, "Corporation market orders", human.getCorporation()+" by "+human.getName());
+		}
+	}
+
+	@Override
+	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
+		Parser parser = new Parser();
+		Response response = parser.getMarketOrders(Human.getApiAuthorization(human), bCorp);
+		human.setMarketOrdersNextUpdate(response.getCachedUntil());
+		return response;
+	}
+
+	@Override
+	protected void ok(Response response, boolean bCorp) {
+		List<ApiMarketOrder> marketOrders = new Vector<ApiMarketOrder>(response.getMarketOrders());
+		if (bCorp){
+			human.setMarketOrdersCorporation(marketOrders);
+		} else {
+			human.setMarketOrders(marketOrders);
+		}
+	}
+
+
+	/*
+	private MarketOrdersGetter() {}
+
+	
+
+	private static boolean load(SettingsInterface settings, Human human, boolean bCorp){
 		if (settings.isUpdatable(human.getMarketOrdersNextUpdate()) || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
@@ -116,4 +147,6 @@ public class MarketOrdersGetter {
 		}
 		return false;
 	}
+	 * 
+	 */
 }

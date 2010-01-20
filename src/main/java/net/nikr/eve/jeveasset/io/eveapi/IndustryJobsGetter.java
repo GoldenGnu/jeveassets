@@ -25,30 +25,90 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.industry.ApiIndustryJob;
 import com.beimin.eveapi.industry.Parser;
 import com.beimin.eveapi.industry.Response;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class IndustryJobsGetter {
+public class IndustryJobsGetter extends AbstractApiGetter<Response> {
 
-	private IndustryJobsGetter() {}
+	private Human human;
 
-	public static void load(Settings settings){
+	public void load(List<Account> accounts, boolean forceUpdate){
 		Log.info("Industry jobs updating:");
 		boolean updated = false;
 		boolean updateFailed = false;
-		List<Account> accounts = settings.getAccounts();
+		for (int a = 0; a < accounts.size(); a++){
+			Account account = accounts.get(a);
+			List<Human> humans = account.getHumans();
+			for (int b = 0; b < humans.size(); b++){
+				if (!Program.FORCE_NO_UPDATE) {
+					load(humans.get(b), forceUpdate);
+					if (isCharacterUpdated() || isCorporationUpdated()){
+						updated = true;
+					} else {
+						updateFailed = true;
+					}
+				}
+			}
+		}
+		if (updated && !updateFailed){
+			Log.info("	Industry jobs updated (ALL)");
+		} else if(updated && updateFailed) {
+			Log.info("	Industry jobs updated (SOME)");
+		} else {
+			Log.info("	Industry jobs not updated (NONE)");
+		}
+	}
+
+
+	public void load(Human human, boolean forceUpdate){
+		this.human = human;
+		Date nextUpdate = human.getIndustryJobsNextUpdate();
+		load(nextUpdate, forceUpdate, false, "Industry jobs", human.getName());
+		if (human.isUpdateCorporationAssets()){
+			load(nextUpdate, forceUpdate, true, "Corporation industry jobs", human.getCorporation()+" by "+human.getName());
+		}
+	}
+
+
+	@Override
+	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
+		Parser parser = new Parser();
+		Response response = parser.getInustryJobs(Human.getApiAuthorization(human), bCorp);
+		human.setIndustryJobsNextUpdate(response.getCachedUntil());
+		return response;
+	}
+
+	@Override
+	protected void ok(Response response, boolean bCorp) {
+		List<ApiIndustryJob> industryJobs = new Vector<ApiIndustryJob>(response.getIndustryJobs());
+		if (bCorp){
+			human.setIndustryJobsCorporation(industryJobs);
+		} else {
+			human.setIndustryJobs(industryJobs);
+		}
+	}
+
+
+
+	/*
+	private IndustryJobsGetter() {}
+
+	public static void load(SettingsInterface settings, List<Account> accounts){
+		Log.info("Industry jobs updating:");
+		boolean updated = false;
+		boolean updateFailed = false;
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			List<Human> humans = account.getHumans();
@@ -73,7 +133,7 @@ public class IndustryJobsGetter {
 		}
 	}
 
-	private static boolean load(Settings settings, Human human, boolean bCorp){
+	private static boolean load(SettingsInterface settings, Human human, boolean bCorp){
 		if (settings.isUpdatable(human.getIndustryJobsNextUpdate()) || bCorp){
 			if (human.isUpdateCorporationAssets() && !bCorp){
 				load(settings, human, true);
@@ -116,4 +176,6 @@ public class IndustryJobsGetter {
 		}
 		return false;
 	}
+	 *
+	 */
 }

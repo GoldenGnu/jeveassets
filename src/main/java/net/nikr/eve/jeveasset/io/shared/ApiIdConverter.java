@@ -25,23 +25,20 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.asset.ApiAsset;
-import com.beimin.eveapi.industry.ApiIndustryJob;
-import com.beimin.eveapi.order.ApiMarketOrder;
 import com.beimin.eveapi.utils.stationlist.ApiStation;
-import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.SettingsInterface;
 
 
-public class AssetConverter {
-	
+public class ApiIdConverter {
+
+	private ApiIdConverter() {
+	}
+
+
 	public static String flag(int theFlag) {
 		switch (theFlag) {
 			case 0:
@@ -233,7 +230,7 @@ public class AssetConverter {
 		}
 	}
 
-	public static String location(int locationID, EveAsset parentAsset, Settings settings) {
+	public static String location(int locationID, EveAsset parentAsset, SettingsInterface settings) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -269,7 +266,7 @@ public class AssetConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String region(int locationID, EveAsset parentAsset, Settings settings) {
+	public static String region(int locationID, EveAsset parentAsset, SettingsInterface settings) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -308,7 +305,7 @@ public class AssetConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(int locationID, EveAsset parentAsset, Settings settings) {
+	public static String security(int locationID, EveAsset parentAsset, SettingsInterface settings) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -342,7 +339,7 @@ public class AssetConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static float volume(int typeID, Settings settings) {
+	public static float volume(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getVolume();
@@ -350,7 +347,7 @@ public class AssetConverter {
 		return -1;
 	}
 
-	public static String name(int typeID, Settings settings) {
+	public static String name(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getName();
@@ -358,7 +355,7 @@ public class AssetConverter {
 		return "!" + String.valueOf(typeID);
 	}
 
-	public static double priceBase(int typeID, Settings settings) {
+	public static double priceBase(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getPrice();
@@ -366,7 +363,7 @@ public class AssetConverter {
 		return -1;
 	}
 
-	public static String category(int typeID, Settings settings) {
+	public static String category(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getCategory();
@@ -382,7 +379,7 @@ public class AssetConverter {
 		}
 	}
 
-	public static String group(int typeID, Settings settings) {
+	public static String group(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getGroup();
@@ -390,7 +387,7 @@ public class AssetConverter {
 		return "";
 	}
 
-	public static String meta(int typeID, Settings settings) {
+	public static String meta(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.getMeta();
@@ -398,7 +395,7 @@ public class AssetConverter {
 		return "";
 	}
 
-	public static boolean marketGroup(int typeID, Settings settings) {
+	public static boolean marketGroup(int typeID, SettingsInterface settings) {
 		Item item = settings.getItems().get(typeID);
 		if (item != null) {
 			return item.isMarketGroup();
@@ -408,7 +405,7 @@ public class AssetConverter {
 
 	public static String container(int locationID, EveAsset parentAsset) {
 		String sTemp = "";
-	
+
 		if (locationID >= 66000000 && locationID < 68000000) {
 			sTemp = "Office";
 		}
@@ -423,169 +420,5 @@ public class AssetConverter {
 			}
 		}
 		return sTemp;
-	}
-
-	public static List<EveAsset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Settings settings, Human human, boolean bCorp){
-		List<EveAsset> eveAssets = new Vector<EveAsset>();
-		for (int a = 0; a < marketOrders.size(); a++){
-			ApiMarketOrder apiMarketOrder = marketOrders.get(a);
-			if (apiMarketOrder.getBid() == 0
-					&& apiMarketOrder.getOrderState() == 0
-					&& apiMarketOrder.getVolRemaining() > 0
-					){
-				EveAsset eveAsset = apiMarketOrderToEveAsset(apiMarketOrder, settings, human, bCorp);
-				eveAssets.add(eveAsset);
-			}
-		}
-		return eveAssets;
-	}
-
-	private static EveAsset apiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Settings settings, Human human, boolean bCorp){
-		int typeID = (int)apiMarketOrder.getTypeID();
-		int locationID = (int) apiMarketOrder.getStationID();
-		long count = apiMarketOrder.getVolRemaining();
-		int id = (int) apiMarketOrder.getOrderID();
-		String flag = "Market Order";
-		boolean corporationAsset = bCorp;
-		boolean singleton  = false;
-
-		String name = AssetConverter.name(typeID, settings);
-		String group = AssetConverter.group(typeID, settings);
-		String category = AssetConverter.category(typeID, settings);
-		double basePrice = AssetConverter.priceBase(typeID, settings);
-		boolean marketGroup = AssetConverter.marketGroup(typeID, settings);
-		float volume = AssetConverter.volume(typeID, settings);
-		String meta = AssetConverter.meta(typeID, settings);
-
-		String owner = AssetConverter.owner(human, bCorp);
-
-		String location = AssetConverter.location(locationID, null, settings);
-		String container = AssetConverter.container(locationID, null);
-		String region = AssetConverter.region(locationID, null, settings);
-		String security = AssetConverter.security(locationID, null, settings);
-
-		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
-	}
-
-	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Settings settings, Human human, boolean bCorp){
-		List<EveAsset> eveAssets = new Vector<EveAsset>();
-		for (int a = 0; a < industryJobs.size(); a++){
-			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
-			int id = (int) apiIndustryJob.getInstalledItemID();
-			if (apiIndustryJob.getCompleted() == 0){
-				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, settings, human, bCorp);
-				eveAssets.add(eveAsset);
-			}
-			//Mark original blueprints
-			boolean isCopy = (apiIndustryJob.getInstalledItemCopy() > 0);
-			if (settings.getBpos().contains(id)){
-				settings.getBpos().remove(settings.getBpos().indexOf(id));
-			}
-			if (!isCopy){
-				settings.getBpos().add(id);
-			}
-		}
-		return eveAssets;
-	}
-	
-	private static EveAsset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Settings settings, Human human, boolean bCorp){
-		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
-		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();
-		long count = apiIndustryJob.getInstalledItemQuantity();
-		int id = (int) apiIndustryJob.getInstalledItemID();
-		int nFlag = apiIndustryJob.getInstalledItemFlag();
-		boolean corporationAsset = bCorp;
-		boolean singleton  = false;
-
-		String flag = AssetConverter.flag(nFlag);
-
-		String name = AssetConverter.name(typeID, settings);
-		String group = AssetConverter.group(typeID, settings);
-		String category = AssetConverter.category(typeID, settings);
-		double basePrice = AssetConverter.priceBase(typeID, settings);
-		boolean marketGroup = AssetConverter.marketGroup(typeID, settings);
-		float volume = AssetConverter.volume(typeID, settings);
-		String meta = AssetConverter.meta(typeID, settings);
-
-		String owner = AssetConverter.owner(human, bCorp);
-
-		String location = AssetConverter.location(locationID, null, settings);
-		if (location.contains("Error !")){
-			locationID = (int) apiIndustryJob.getContainerLocationID();
-			location = AssetConverter.location(locationID, null, settings);
-		}
-		if (location.contains("Error !")){
-			location = "Unknown";
-		}
-		String container = AssetConverter.container(locationID, null);
-		String region = AssetConverter.region(locationID, null, settings);
-		String security = AssetConverter.security(locationID, null, settings);
-
-		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
-	}
-
-	public static List<EveAsset> apiAsset(Settings setttings, Human human, List<ApiAsset> assets, boolean bCorp){
-		List<EveAsset> eveAssets = new Vector<EveAsset>();
-		apiAsset(setttings, human, assets, eveAssets, null, bCorp);
-		return eveAssets;
-	}
-	private static void apiAsset(Settings setttings, Human human, List<ApiAsset> assets, List<EveAsset> eveAssets, EveAsset parentEveAsset, boolean bCorp){
-		for (int a = 0; a < assets.size(); a++){
-			ApiAsset asset = assets.get(a);
-			EveAsset eveAsset = apiAssetsToEveAsset(setttings, human, asset, parentEveAsset, bCorp);
-			if (parentEveAsset == null){
-				eveAssets.add(eveAsset);
-			} else {
-				parentEveAsset.addEveAsset(eveAsset);
-			}
-			apiAsset(setttings, human, new Vector<ApiAsset>(asset.getAssets()), eveAssets, eveAsset, bCorp);
-		}
-	}
-	private static EveAsset apiAssetsToEveAsset(Settings settings, Human human, ApiAsset apiAsset, EveAsset parentEveAsset, boolean bCorp){
-		String name = AssetConverter.name(apiAsset.getTypeID(), settings); //OK
-		String group = AssetConverter.group(apiAsset.getTypeID(), settings); //OK
-		String category = AssetConverter.category(apiAsset.getTypeID(), settings); //OK
-		String owner = AssetConverter.owner(human, bCorp); //Semi-OK (Fix not confirmed)
-		long count = apiAsset.getQuantity(); //OK
-		String location = AssetConverter.location(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
-		String container = AssetConverter.container(apiAsset.getLocationID(), parentEveAsset); //Should be okay
-		String flag = AssetConverter.flag(apiAsset.getFlag()); //should be okay
-		double basePrice = AssetConverter.priceBase(apiAsset.getTypeID(), settings); //OK
-		String meta = AssetConverter.meta(apiAsset.getTypeID(), settings); //OK - but some is missiong from data export
-		boolean marketGroup = AssetConverter.marketGroup(apiAsset.getTypeID(), settings); //OK
-		float volume = AssetConverter.volume(apiAsset.getTypeID(), settings);
-		String region = AssetConverter.region(apiAsset.getLocationID(), parentEveAsset, settings);
-		int id = apiAsset.getItemID(); //OK
-		int typeID = apiAsset.getTypeID(); //OK
-		boolean corporationAsset = bCorp; //Semi-OK - OLD: (owner.equals(human.getCorporation()));
-		boolean singleton  = (apiAsset.getSingleton() > 0);
-		String security = AssetConverter.security(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
-
-		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, apiAsset.getLocationID(), singleton, security);
-	}
-	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
-		List<MarketOrder> marketOrders = new Vector<MarketOrder>();
-		for (int a = 0; a < apiMarketOrders.size(); a++){
-			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrders.get(a), settings));
-		}
-		return marketOrders;
-	}
-	private static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
-		String name = AssetConverter.name((int)apiMarketOrder.getTypeID(), settings);
-		String location = AssetConverter.location((int)apiMarketOrder.getStationID(), null, settings);
-		return new MarketOrder(apiMarketOrder, name, location);
-	}
-	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, Settings settings, String owner){
-		List<IndustryJob> industryJobs = new Vector<IndustryJob>();
-		for (int a = 0; a < apiIndustryJobs.size(); a++){
-			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJobs.get(a), settings, owner));
-		}
-		return industryJobs;
-	}
-
-	private static IndustryJob apiIndustryJobToIndustryJob(ApiIndustryJob apiIndustryJob, Settings settings, String owner){
-		String name = AssetConverter.name((int)apiIndustryJob.getInstalledItemTypeID(), settings);
-		String location = AssetConverter.location((int)apiIndustryJob.getInstalledItemLocationID(), null, settings);
-		return new IndustryJob(apiIndustryJob, name, location, owner);
 	}
 }

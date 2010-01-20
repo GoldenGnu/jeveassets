@@ -52,7 +52,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.table.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
-import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class IndustryJobsDialog extends JDialogCentered implements ActionListener {
@@ -161,13 +161,13 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 				Human human = tempHumans.get(b);
 				if (human.isShowAssets()){
 					characters.add(human.getName());
-					List<IndustryJob> characterIndustryJobs = AssetConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), program.getSettings(), human.getName());
+					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), program.getSettings(), human.getName());
 					jobs.put(human.getName(), characterIndustryJobs);
 					all.addAll(characterIndustryJobs);
 					if (human.isUpdateCorporationAssets()){
 						String corpKey = "["+human.getCorporation()+"]";
 						characters.add(corpKey);
-						List<IndustryJob> corporationIndustryJobs = AssetConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), program.getSettings(), human.getCorporation());
+						List<IndustryJob> corporationIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), program.getSettings(), human.getCorporation());
 						jobs.put(corpKey, corporationIndustryJobs);
 						all.addAll(corporationIndustryJobs);
 					}

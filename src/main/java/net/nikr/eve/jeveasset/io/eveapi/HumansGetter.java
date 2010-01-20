@@ -25,7 +25,6 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.ApiError;
 import com.beimin.eveapi.character.list.ApiCharacter;
 import com.beimin.eveapi.character.list.Parser;
 import com.beimin.eveapi.character.list.Response;
@@ -34,20 +33,93 @@ import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
-public class HumansGetter {
+public class HumansGetter extends AbstractApiGetter<Response> {
 
-	private static String error;
+	private AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
 
-	public static void load(Settings settings){
+	private Account account;
+	private boolean forceUpdate;
+
+	public void load(List<Account> accounts, boolean forceUpdate){
 		Log.info("Characters updating:");
 		boolean updated = false;
 		boolean updateFailed = false;
-		List<Account> accounts = settings.getAccounts();
+		for (int a = 0; a < accounts.size(); a++){
+			load( accounts.get(a), forceUpdate);
+			if (isCharacterUpdated()){
+				updated = true;
+			} else {
+				updateFailed = true;
+			}
+		}
+		if (updated && !updateFailed){
+			Log.info("	Characters updated (ALL)");
+		} else if(updated && updateFailed) {
+			Log.info("	Characters updated (SOME)");
+		} else {
+			Log.info("	Characters not updated (NONE)");
+		}
+	}
+
+	public void load(Account account, boolean forceUpdate){
+		this.account = account;
+		this.forceUpdate = forceUpdate;
+		load(account.getCharactersNextUpdate(), forceUpdate, false, "Characters", "account "+account.getUserID());
+	}
+
+	@Override
+	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
+		Parser parser = new Parser();
+		Response response = parser.getEveCharacters(Human.getApiAuthorization(account));
+		account.setCharactersNextUpdate(response.getCachedUntil());
+		return response;
+	}
+
+	@Override
+	protected void ok(Response response, boolean bCorp) {
+		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
+		for (int a = 0; a < characters.size(); a++){
+			ApiCharacter apiCharacter = characters.get(a);
+			Human human = new Human(
+									account
+									,apiCharacter.getName()
+									,apiCharacter.getCharacterID()
+									,apiCharacter.getCorporationName()
+									);
+
+			if (!account.getHumans().contains(human)){ //Add new account
+				if (forceUpdate){
+					accountBalanceGetter.load(human, forceUpdate);
+					if (!accountBalanceGetter.isCharacterUpdated()){
+						return;
+					}
+				}
+				account.getHumans().add(human);
+			} else { //Update existing account
+				List<Human> humans = account.getHumans();
+				for (int b = 0; b < humans.size(); b++){
+					Human currentHuman = humans.get(b);
+					if (currentHuman.getCharacterID() == human.getCharacterID()){
+						currentHuman.setName(human.getName());
+						currentHuman.setCorporation(human.getCorporation());
+					}
+				}
+			}
+		}
+	}
+
+	/*
+	private static String error;
+
+	public static void load(SettingsInterface settings, List<Account> accounts){
+		Log.info("Characters updating:");
+		boolean updated = false;
+		boolean updateFailed = false;
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			boolean returned = load(settings, account, false);
@@ -66,7 +138,7 @@ public class HumansGetter {
 		}
 	}
 
-	public static boolean load(Settings settings, Account account, boolean apiKeyCheck){
+	public static boolean load(SettingsInterface settings, Account account, boolean apiKeyCheck){
 		if (settings.isUpdatable(account.getCharactersNextUpdate()) || apiKeyCheck){
 			Parser characterListParser = new Parser();
 			characterListParser.setCachingEnabled(true);
@@ -78,21 +150,31 @@ public class HumansGetter {
 					List<ApiCharacter> characters = new Vector<ApiCharacter>(characterListResponse.getEveCharacters());
 					for (int a = 0; a < characters.size(); a++){
 						ApiCharacter eveCharacter = characters.get(a);
-						Log.info("	Updating \""+eveCharacter.getName()+"\":");
+						Log.info("	Character updated for: "+eveCharacter.getName()+" ("+eveCharacter.getCorporationName()+")");
 						Human human = new Human(
 												account
 												,eveCharacter.getName()
 												,eveCharacter.getCharacterID()
-												,CorporationGetter.load(settings, account,(int) eveCharacter.getCharacterID(), eveCharacter.getCorporationID())
+												,eveCharacter.getCorporationName()
 												);
 						
-						if (!account.getHumans().contains(human)){
-							if (!AccountBalanceGetter.load(settings, human, apiKeyCheck) && apiKeyCheck){
-								return false;
+						if (!account.getHumans().contains(human)){ //Add new account
+							AccountBalanceGetter.load(human, apiKeyCheck);
+							if (apiKeyCheck){
+								if (!){
+									return false;
+								}
 							}
 							account.getHumans().add(human);
-						} else {
-							updateHuman(settings, account, human);
+						} else { //Update existing account
+							List<Human> humans = account.getHumans();
+							for (int b = 0; b < humans.size(); b++){
+								Human currentHuman = humans.get(b);
+								if (currentHuman.getCharacterID() == human.getCharacterID()){
+									currentHuman.setName(human.getName());
+									currentHuman.setCorporation(human.getCorporation());
+								}
+							}
 						}
 					}
 				} else {
@@ -117,21 +199,10 @@ public class HumansGetter {
 		}
 		
 	}
-	private static void updateHuman(Settings settings, Account account, Human human){
-		if (account.getHumans().contains(human)){
-			List<Human> humans = account.getHumans();
-			for (int a = 0; a < humans.size(); a++){
-				Human currentHuman = humans.get(a);
-				if (currentHuman.getCharacterID() == human.getCharacterID()){
-					AccountBalanceGetter.load(settings, currentHuman);
-					currentHuman.setName(human.getName());
-					if (!human.getCorporation().equals("")) currentHuman.setCorporation(human.getCorporation());
-				}
-			}
-		}
-	}
 
 	public static String getError() {
 		return error;
 	}
+	 *
+	 */
 }

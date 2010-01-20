@@ -45,7 +45,7 @@ import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
@@ -57,10 +57,11 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
+import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.log.Log;
 
 
-public class Settings {
+public class Settings implements SettingsInterface{
 
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
@@ -89,7 +90,6 @@ public class Settings {
 	private Map<Integer, PriceData> priceData;
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
-	private Map<Long, String> corporations;
 	private Map<Integer, UserPrice> userPrices;
 	private List<Account> accounts;
 	private List<String> tableColumnNames;
@@ -97,7 +97,6 @@ public class Settings {
 	private List<String> tableNumberColumns;
 	private List<String> tableColumnVisible;
 	private Date conquerableStationsNextUpdate;
-	private Map<Long, Date> corporationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private List<Integer> bpos;
 	private boolean settingsLoaded;
@@ -110,6 +109,10 @@ public class Settings {
 	private boolean windowAutoSave;
 
 	private PriceDataGetter priceDataGetter;
+	private AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
+	private MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
+	private IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
+	private HumansGetter humansGetter = new HumansGetter();
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
@@ -119,7 +122,6 @@ public class Settings {
 		conquerableStations = new HashMap<Integer, ApiStation>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new Vector<Account>();
-		corporations = new HashMap<Long, String>();
 		userPrices = new HashMap<Integer, UserPrice>();
 		bpos = new Vector<Integer>();
 		
@@ -131,7 +133,6 @@ public class Settings {
 
 		
 		conquerableStationsNextUpdate = Settings.getGmtNow();
-		corporationsNextUpdate =  new HashMap<Long, Date>();  //Settings.cvtToGmt( new Date() );
 		resetMainTableColumns();
 
 		priceDataSettings = new PriceDataSettings(0, EveAsset.PRICE_SELL_MEDIAN, PriceDataSettings.SOURCE_EVE_CENTRAL);
@@ -153,9 +154,10 @@ public class Settings {
 		SplashUpdater.setProgress(50);
 		AssetsReader.load(this); //Assets (Must be loaded before the price data)
 	//Update from eve api
-		MarketOrdersGetter.load(this); //Orders (Must be loaded before the price data)
-		IndustryJobsGetter.load(this); //Jobs (Must be loaded before the price data)
-		HumansGetter.load(this);
+		marketOrdersGetter.load(accounts, this.isForceUpdate()); //Orders (Must be loaded before the price data)
+		industryJobsGetter.load(accounts, this.isForceUpdate()); //Jobs (Must be loaded before the price data)
+		humansGetter.load(accounts, this.isForceUpdate());
+		accountBalanceGetter.load(accounts, this.isForceUpdate());
 		SplashUpdater.setProgress(60);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
@@ -234,12 +236,11 @@ public class Settings {
 		tableNumberColumns.add("Type Count");
 		tableNumberColumns.add("Reprocessed");
 		tableNumberColumns.add("Security");
-
 	}
 
 	public void updateOrdersAndJobs(){
-		MarketOrdersGetter.load(this);
-		IndustryJobsGetter.load(this);
+		marketOrdersGetter.load(accounts, this.isForceUpdate());
+		industryJobsGetter.load(accounts, this.isForceUpdate());
 	}
 
 	public boolean updatePriceData(UpdateTask task){
@@ -293,14 +294,14 @@ public class Settings {
 					Human human = humans.get(b);
 					if (human.isShowAssets() || getAllAssets){
 						//Market Orders
-						List<EveAsset> marketOrdersAssets = AssetConverter.apiMarketOrder(human.getMarketOrders(), this, human, false);
+						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), this, human, false);
 						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> marketOrdersCorporationAssets = AssetConverter.apiMarketOrder(human.getMarketOrdersCorporation(), this, human, true);
+						List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), this, human, true);
 						addAssets(marketOrdersCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Industry Jobs
-						List<EveAsset> industryJobAssets = AssetConverter.apiIndustryJob(human.getIndustryJobs(), this, human, false);
+						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), this, human, false, bpos);
 						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> industryJobCorporationAssets = AssetConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true);
+						List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true, bpos);
 						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Assets (Must be after Industry Jobs, for bpos to be marked)
 						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
@@ -417,18 +418,6 @@ public class Settings {
 		this.priceDataSettings = priceDataSettings;
 		EveAsset.setPriceSource(priceDataSettings.getPriceSource());
 	}
-	public Map<Long, String> getCorporations() {
-		return corporations;
-	}
-	public void setCorporations(Map<Long, String> corporations) {
-		this.corporations = corporations;
-	}
-	public Map<Long, Date> getCorporationsNextUpdate() {
-		return corporationsNextUpdate;
-	}
-	public void setCorporationsNextUpdate(Map<Long, Date> corporationNextUpdate) {
-		this.corporationsNextUpdate = corporationNextUpdate;
-	}
 	public Date getPriceDataNextUpdate(){
 		return priceDataGetter.getNextUpdate();
 	}
@@ -445,7 +434,7 @@ public class Settings {
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
 	}
-	
+	@Override
 	public Map<Integer, Item> getItems() {
 		return items;
 	}
@@ -453,7 +442,7 @@ public class Settings {
 	public void setItems(Map<Integer, Item> items) {
 		this.items = items;
 	}
-
+	@Override
 	public Map<Integer, Location> getLocations() {
 		return locations;
 	}
@@ -469,7 +458,7 @@ public class Settings {
 	public void setPriceData(Map<Integer, PriceData> priceData) {
 		this.priceData = priceData;
 	}
-
+	@Override
 	public Map<Integer, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
@@ -573,6 +562,10 @@ public class Settings {
 		SocketAddress proxyAddress = new InetSocketAddress(addr, port);
 		
 		setProxy(new Proxy(type, proxyAddress));
+	}
+
+	public boolean isForceUpdate(){
+		return (apiProxy != null);
 	}
 
 	public String getApiProxy() {
@@ -740,6 +733,7 @@ public class Settings {
 		return ret;
 	}
 
+	@Override
 	public boolean isUpdatable(Date date){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)

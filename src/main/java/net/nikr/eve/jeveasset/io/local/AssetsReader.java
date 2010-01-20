@@ -36,7 +36,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
-import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import net.nikr.log.Log;
@@ -322,17 +322,17 @@ public class AssetsReader extends AbstractXmlReader {
 		String owner = AttributeGetters.getString(node, "owner");
 		
 		//Calculated:
-		String name = AssetConverter.name(typeID, settings);
-		String group = AssetConverter.group(typeID, settings);
-		String category = AssetConverter.category(typeID, settings);
-		double priceBase = AssetConverter.priceBase(typeID, settings);
-		String meta = AssetConverter.meta(typeID, settings);
-		boolean marketGroup = AssetConverter.marketGroup(typeID, settings);
-		float volume = AssetConverter.volume(typeID, settings);
-		String security = AssetConverter.security(locationID, parentEveAsset, settings);
-		String location = AssetConverter.location(locationID, parentEveAsset, settings);
-		String container = AssetConverter.container(locationID, parentEveAsset);
-		String region = AssetConverter.region(locationID, parentEveAsset, settings);
+		String name = ApiIdConverter.name(typeID, settings);
+		String group = ApiIdConverter.group(typeID, settings);
+		String category = ApiIdConverter.category(typeID, settings);
+		double priceBase = ApiIdConverter.priceBase(typeID, settings);
+		String meta = ApiIdConverter.meta(typeID, settings);
+		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings);
+		float volume = ApiIdConverter.volume(typeID, settings);
+		String security = ApiIdConverter.security(locationID, parentEveAsset, settings);
+		String location = ApiIdConverter.location(locationID, parentEveAsset, settings);
+		String container = ApiIdConverter.container(locationID, parentEveAsset);
+		String region = ApiIdConverter.region(locationID, parentEveAsset, settings);
 		
 		return new EveAsset(name, group, category, owner, count, location, container, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
 	}

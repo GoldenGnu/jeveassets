@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.table.MarketOrderTableFormat;
-import net.nikr.eve.jeveasset.io.shared.AssetConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class MarketOrdersDialog extends JDialogCentered implements ActionListener {
@@ -187,13 +187,13 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
 					characters.add(human.getName());
-					List<MarketOrder> characterMarketOrders = AssetConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
 					orders.put(human.getName(), characterMarketOrders);
 					all.addAll(characterMarketOrders);
 					if (human.isUpdateCorporationAssets()){
 						String corpKey = "["+human.getCorporation()+"]";
 						characters.add(corpKey);
-						List<MarketOrder> corporationMarketOrders = AssetConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings());
+						List<MarketOrder> corporationMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings());
 						orders.put(corpKey, corporationMarketOrders);
 						all.addAll(corporationMarketOrders);
 					}

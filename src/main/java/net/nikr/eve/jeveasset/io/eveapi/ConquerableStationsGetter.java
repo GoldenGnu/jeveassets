@@ -25,17 +25,51 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.ApiError;
+import com.beimin.eveapi.utils.stationlist.ApiStation;
 import com.beimin.eveapi.utils.stationlist.Parser;
 import com.beimin.eveapi.utils.stationlist.Response;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
-import net.nikr.log.Log;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class ConquerableStationsGetter {
+public class ConquerableStationsGetter extends AbstractApiGetter<Response> {
+
+	private Date nextUpdate;
+	private Map<Integer, ApiStation> conquerableStations;
+
+	public void load(Date nextUpdate, boolean forceUpdate){
+		conquerableStations = new HashMap<Integer, ApiStation>();
+		load(nextUpdate, forceUpdate, false, "Conquerable stations", "All");
+	}
+
+	@Override
+	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
+		Parser parser = new Parser();
+		Response response = parser.getStationList();
+		nextUpdate = response.getCachedUntil();
+		return response;
+	}
+
+	@Override
+	protected void ok(Response response, boolean bCorp) {
+		conquerableStations = response.getStations();
+	}
+
+	public Map<Integer, ApiStation> getConquerableStations() {
+		return conquerableStations;
+	}
+
+	public Date getNextUpdate() {
+		return nextUpdate;
+	}
+
+
+	/*
+
 	public static boolean load(Settings settings){
 		Log.info("Conquerable stations updating:");
 		if (settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
@@ -63,4 +97,6 @@ public class ConquerableStationsGetter {
 		ConquerableStationsWriter.save(settings);
 		return true;
 	}
+	 * 
+	 */
 }

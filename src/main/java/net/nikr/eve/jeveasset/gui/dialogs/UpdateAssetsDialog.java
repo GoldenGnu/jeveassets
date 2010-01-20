@@ -33,12 +33,14 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JUpdateWindow;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
 import net.nikr.eve.jeveasset.io.Online;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.log.Log;
 
 
@@ -105,6 +107,8 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 		private boolean updateFailed = false;
 		private boolean isOnline = true;
 		private String error = null;
+		private AssetsGetter assetsGetter = new AssetsGetter();
+		private ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 
 		public UpdateAssetsTask() {
 			
@@ -112,7 +116,11 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 
 		@Override
 		public void update() throws Throwable {
-			ConquerableStationsGetter.load(program.getSettings());
+			conquerableStationsGetter.load(program.getSettings().getConquerableStationsNextUpdate(), false);
+			if (conquerableStationsGetter.isCharacterUpdated()){
+				program.getSettings().setConquerableStations(conquerableStationsGetter.getConquerableStations());
+				program.getSettings().setConquerableStationsNextUpdate(conquerableStationsGetter.getNextUpdate());
+			}
 
 			List<String> coporations = new Vector<String>();
 			List<Account> accounts = program.getSettings().getAccounts();
@@ -128,14 +136,23 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 						if (coporations.contains(human.getCorporation())){
 							human.setUpdateCorporationAssets(false);
 						}
-						boolean returned = AssetsGetter.load(program.getSettings(), human);
+						boolean forceUpdate = program.getSettings().getApiProxy() != null;
+						List<EveAsset> eveAssets = new Vector<EveAsset>();
+						assetsGetter.load(human, forceUpdate);
+						if (assetsGetter.isCharacterUpdated()){
+							eveAssets.addAll( ApiConverter.apiAsset(program.getSettings(), human, assetsGetter.getAssets(), false) );
+						}
+						if (assetsGetter.isCorporationUpdated()){
+							eveAssets.addAll( ApiConverter.apiAsset(program.getSettings(), human, assetsGetter.getCorpAssets(), true) );
+						}
 						if (human.isUpdateCorporationAssets()){
 							coporations.add(human.getCorporation());
 						}
-						if (returned){
+						if (assetsGetter.isCharacterUpdated() || assetsGetter.isCorporationUpdated()){
+							human.setAssets(eveAssets);
 							updated = true;
 						} else {
-							error = AssetsGetter.getError();
+							error = assetsGetter.getError();
 							isOnline = Online.isOnline(program.getSettings());
 							updateFailed = true;
 						}
