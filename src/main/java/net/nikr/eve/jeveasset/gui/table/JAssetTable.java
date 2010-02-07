@@ -128,9 +128,10 @@ public class JAssetTable extends JTable {
 			}
 			//Selected row highlighting
 			if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
-				Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				//Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				//if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				//if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = getCellRenderer(row, column).getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				c.setBackground( new Color(230,230,255) );

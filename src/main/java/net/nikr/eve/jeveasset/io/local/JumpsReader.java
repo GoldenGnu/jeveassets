@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010
+ * Copyright 2009
  *    Niklas Kyster Rasmussen
  *    Flaming Candle*
  *
@@ -26,7 +26,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -38,21 +40,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class LocationsReader extends AbstractXmlReader {
+public class JumpsReader extends AbstractXmlReader {
 
 	public static void load(Settings settings){
 		try {
-			Element element = getDocumentElement(Settings.getPathLocations());
-			parseLocations(element, settings.getLocations());
+			Element element = getDocumentElement(Settings.getPathJumps());
+			parseJumps(element, settings.getLocations(), settings.getJumps());
 		} catch (IOException ex) {
-			Log.error("Locations not loaded: "+ex.getMessage(), ex);
+			Log.error("Jumps not loaded: "+ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			Log.error("Locations not loaded: "+ex.getMessage(), ex);
+			Log.error("Jumps not loaded: "+ex.getMessage(), ex);
 		}
-		Log.info("Locations loaded");
+		Log.info("Jumps loaded");
 	}
 
-	private static void parseLocations(Element element, Map<Integer, Location> locations){
+	private static void parseJumps(Element element, Map<Integer, Location> locations, List<Jump> jumps){
 		/*
 		Map<Integer, Location> locations;
 		locations = new HashMap<Integer, Location>();
@@ -60,18 +62,17 @@ public class LocationsReader extends AbstractXmlReader {
 		settings.setLocations(locations);
 		 */
 		NodeList nodes = element.getElementsByTagName("row");
-		Location location = null;
+		Jump jump = null;
 		for (int a = 0; a < nodes.getLength(); a++){
-			location = parseLocation(nodes.item(a));
-			locations.put(location.getId(), location);
+			jump = parseEdge(nodes.item(a), locations);
+			jumps.add(jump);
 		}
 	}
-	private static Location parseLocation(Node node){
-		int id = AttributeGetters.getInt(node, "id");
-		String name = AttributeGetters.getString(node, "name");
-		int region = AttributeGetters.getInt(node, "region");
-		String security = AttributeGetters.getString(node, "security");
-		int system = AttributeGetters.getInt(node, "solarsystem");
-		return new Location(id, name, region, security, system);
+
+	private static Jump parseEdge(Node node, Map<Integer, Location> locations){
+		int from = AttributeGetters.getInt(node, "from");
+		int to = AttributeGetters.getInt(node, "to");
+		Jump j = new Jump(locations.get(from), locations.get(to));
+		return j;
 	}
 }

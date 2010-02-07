@@ -317,6 +317,7 @@ public class AssetsReader extends AbstractXmlReader {
 		int id = AttributeGetters.getInt(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		int locationID = AttributeGetters.getInt(node, "locationid");
+		if (locationID == 0 && parentEveAsset != null) locationID = parentEveAsset.getLocationID();
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
 		String owner = AttributeGetters.getString(node, "owner");

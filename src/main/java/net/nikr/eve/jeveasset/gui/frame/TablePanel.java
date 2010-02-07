@@ -49,6 +49,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,6 +246,18 @@ public class TablePanel extends JProgramPanel
 
 	public EveAsset getSelectedAsset(){
 		return eveAssetTableModel.getElementAt(jTable.getSelectedRow());
+	}
+
+	/**
+	 * returns a new list of the filtered assets, thus the list is modifiable.
+	 * @return a list of the filtered assets.
+	 */
+	public List<EveAsset> getFilteredAssets() {
+		List<EveAsset> ret = new ArrayList<EveAsset>();
+		for (int i = 0; i < eveAssetTableModel.getRowCount(); ++i) {
+			ret.add(eveAssetTableModel.getElementAt(i));
+		}
+		return ret;
 	}
 
 	private void updateCoulmnsSize(){

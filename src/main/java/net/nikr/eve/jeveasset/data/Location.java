@@ -31,12 +31,14 @@ public class Location {
 	private String name;
 	private int region;
 	private String security;
+	private int solarSystemID;
 
-	public Location(int id, String name, int region, String security) {
+	public Location(int id, String name, int region, String security, int solarSystemID) {
 		this.id = id;
 		this.name = name;
 		this.region = region;
 		this.security = security;
+		this.solarSystemID = solarSystemID;
 	}
 
 	public int getId() {
@@ -60,4 +62,37 @@ public class Location {
 		return name;
 	}
 
+	public int getSolarSystemID() {
+		return solarSystemID == 0 ? id : solarSystemID;
+	}
+
+	public void setSolarSystemID(int solarSystemID) {
+		this.solarSystemID = solarSystemID;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Location other = (Location) obj;
+		if (this.id != other.id) {
+			return false;
+		}
+		if (this.solarSystemID != other.solarSystemID) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 29 * hash + this.id;
+		hash = 29 * hash + this.solarSystemID;
+		return hash;
+	}
 }

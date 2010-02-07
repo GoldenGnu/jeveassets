@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
 public class Menu extends JMenuBar {
+	private static final long serialVersionUID = 1l;
 
 	JMenu jColumnMenu;
 	Program program;
@@ -56,6 +57,7 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 	public final static String ACTION_UPDATE_ASSETS = "ACTION_UPDATE_ASSETS";
 	public final static String ACTION_UPDATE_PRICES = "ACTION_UPDATE_PRICES";
+	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
 
 	public Menu(Program program) {
 		this.program = program;
@@ -119,6 +121,13 @@ public class Menu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("icon33_02.png") );
 		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_JOBS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Routing");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
+		menuItem.setActionCommand(ACTION_OPEN_ROUTING);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
