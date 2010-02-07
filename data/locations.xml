@@ -9499,15 +9499,15 @@
     <row id="60004414" name="Oshaima VII - Moon 1 - Corporate Police Force Assembly Plant" region="10000033" security="0.5"/>
     <row id="60004417" name="Oisio VI - Moon 1 - Corporate Police Force Assembly Plant" region="10000033" security="0.5"/>
     <row id="60004420" name="Todaki VI - Moon 1 - School of Applied Knowledge" region="10000016" security="1.0"/>
-    <row id="60004423" name="Jita IV - Moon 6 - Caldari Provisions" region="10000002" security="0.9"/>
+    <row id="60004423" name="Jita IV - Moon 6 - Caldari Provisions School" region="10000002" security="0.9"/>
     <row id="60004426" name="Uchoshi XI - Moon 14 - School of Applied Knowledge" region="10000002" security="0.5"/>
     <row id="60004429" name="Uesuro VI - Moon 1 - School of Applied Knowledge" region="10000016" security="0.5"/>
-    <row id="60004432" name="Isanamo XIV - Moon 9 - Caldari Provisions" region="10000016" security="0.6"/>
+    <row id="60004432" name="Isanamo XIV - Moon 9 - Caldari Provisions School" region="10000016" security="0.6"/>
     <row id="60004435" name="Sakkikainen VI - Moon 8 - School of Applied Knowledge" region="10000002" security="0.6"/>
     <row id="60004438" name="Paara VI - Moon 2 - School of Applied Knowledge" region="10000033" security="0.8"/>
     <row id="60004441" name="Kulelen V - Moon 4 - School of Applied Knowledge" region="10000033" security="0.5"/>
     <row id="60004444" name="Korsiki II - Moon 7 - School of Applied Knowledge" region="10000002" security="0.6"/>
-    <row id="60004447" name="Vuorrassi V - Moon 9 - Caldari Provisions" region="10000016" security="0.5"/>
+    <row id="60004447" name="Vuorrassi V - Moon 9 - Caldari Provisions School" region="10000016" security="0.5"/>
     <row id="60004450" name="Amsen VI - Moon 1 - Science and Trade Institute School" region="10000016" security="1.0"/>
     <row id="60004453" name="Isaziwa X - Science and Trade Institute School" region="10000033" security="0.7"/>
     <row id="60004456" name="Sankkasen VII - Moon 6 - Science and Trade Institute School" region="10000033" security="0.7"/>
@@ -10551,7 +10551,7 @@
     <row id="60007570" name="Akeva III - Moon 10 - Nurtura Plantation" region="10000001" security="0.7"/>
     <row id="60007573" name="Mohas I - Nurtura Plantation" region="10000001" security="0.7"/>
     <row id="60007576" name="Alkez VI - Moon 1 - Nurtura Plantation" region="10000001" security="0.8"/>
-    <row id="60007579" name="Uplingur IV - Moon 16 - Nurtura Plantation" region="10000001" security="0.4"/>
+    <row id="60007579" name="Uplingur IV (Ndoria) - Moon 16 - Nurtura Plantation" region="10000001" security="0.4"/>
     <row id="60007582" name="Uplingur III - Moon 8 - Nurtura Plantation" region="10000001" security="0.4"/>
     <row id="60007585" name="Otsela VI - Moon 10 - Nurtura Plantation" region="10000002" security="0.4"/>
     <row id="60007588" name="Hentogaira II - Moon 10 - Nurtura Food Packaging" region="10000002" security="0.6"/>
@@ -11660,7 +11660,7 @@
     <row id="60010897" name="Grispire V - Duvolle Laboratories Factory" region="10000048" security="0.2"/>
     <row id="60010900" name="Vivanier V - Moon 3 - Duvolle Laboratories Factory" region="10000048" security="0.5"/>
     <row id="60010903" name="Pelille V - Moon 14 - Duvolle Laboratories Factory" region="10000048" security="0.2"/>
-    <row id="60010906" name="Luminaire III - Moon 1 - Duvolle Laboratories Factory" region="10000064" security="1.0"/>
+    <row id="60010906" name="Luminaire III (Astrin) - Moon 1 - Duvolle Laboratories Factory" region="10000064" security="1.0"/>
     <row id="60010909" name="Oursulaert VII - Moon 3 - Duvolle Laboratories Research Center" region="10000064" security="0.9"/>
     <row id="60010912" name="Mies VII - Moon 3 - Duvolle Laboratories Factory" region="10000064" security="0.9"/>
     <row id="60010915" name="Maire IV - Moon 4 - Duvolle Laboratories Factory" region="10000044" security="0.7"/>
@@ -11883,7 +11883,7 @@
     <row id="60011566" name="Bourynes VII - Moon 2 - University of Caille School" region="10000032" security="1.0"/>
     <row id="60011569" name="Bille X - Moon 1 - University of Caille School" region="10000037" security="0.5"/>
     <row id="60011572" name="Osmeden IX - Moon 6 - University of Caille School" region="10000048" security="0.7"/>
-    <row id="60011575" name="Alenia IV - Moon 3 - Quafe Company" region="10000068" security="0.9"/>
+    <row id="60011575" name="Alenia IV - Moon 3 - Quafe Company School" region="10000068" security="0.9"/>
     <row id="60011578" name="Egghelende V - Moon 13 - University of Caille School" region="10000032" security="0.4"/>
     <row id="60011581" name="Eletta VIII - Moon 19 - University of Caille School" region="10000068" security="0.9"/>
     <row id="60011584" name="Ney IV - University of Caille School" region="10000032" security="0.5"/>
@@ -11899,7 +11899,7 @@
     <row id="60011614" name="Algogille IX - Moon 3 - Federal Administration Information Center" region="10000064" security="0.9"/>
     <row id="60011617" name="Luminaire VII (Caldari Prime) - Federal Administration Information Center" region="10000064" security="1.0"/>
     <row id="60011620" name="Mies V - Moon 17 - Federal Administration Information Center" region="10000064" security="0.9"/>
-    <row id="60011623" name="Luminaire VII - Moon 4 - Federal Administration Bureau Offices" region="10000064" security="1.0"/>
+    <row id="60011623" name="Luminaire VII (Caldari Prime) - Moon 4 - Federal Administration Bureau Offices" region="10000064" security="1.0"/>
     <row id="60011626" name="Halle VII - Federal Administration Bureau Offices" region="10000037" security="0.7"/>
     <row id="60011629" name="Mormoen VI - Moon 2 - Federal Administration Archives" region="10000037" security="0.7"/>
     <row id="60011632" name="Jurlesel VI - Moon 20 - Federal Administration Information Center" region="10000037" security="0.6"/>
@@ -11941,7 +11941,7 @@
     <row id="60011740" name="Oursulaert III - Federation Navy Testing Facilities" region="10000064" security="0.9"/>
     <row id="60011743" name="Oursulaert IV - Federation Navy Testing Facilities" region="10000064" security="0.9"/>
     <row id="60011746" name="Mies V - Moon 3 - Federation Navy Assembly Plant" region="10000064" security="0.9"/>
-    <row id="60011749" name="Luminaire VII - Moon 6 - Federation Navy Assembly Plant" region="10000064" security="1.0"/>
+    <row id="60011749" name="Luminaire VII (Caldari Prime) - Moon 6 - Federation Navy Assembly Plant" region="10000064" security="1.0"/>
     <row id="60011752" name="Niballe V - Moon 1 - Federation Navy Testing Facilities" region="10000044" security="0.6"/>
     <row id="60011755" name="Sarline VII - Moon 18 - Federation Navy Assembly Plant" region="10000044" security="0.4"/>
     <row id="60011758" name="Aeter VI - Moon 23 - Federation Navy Testing Facilities" region="10000044" security="0.3"/>
@@ -12026,8 +12026,8 @@
     <row id="60011995" name="Bereye VI - Federal Intelligence Office Assembly Plant" region="10000037" security="0.7"/>
     <row id="60011998" name="Halle VII - Moon 6 - Federal Intelligence Office Assembly Plant" region="10000037" security="0.7"/>
     <row id="60012001" name="Junsoraert VI - Moon 1 - Federal Intelligence Office Assembly Plant" region="10000037" security="0.5"/>
-    <row id="60012004" name="Luminaire VII - Moon 1 - Federation Customs Testing Facilities" region="10000064" security="1.0"/>
-    <row id="60012007" name="Luminaire VII - Moon 5 - Federation Customs Assembly Plant" region="10000064" security="1.0"/>
+    <row id="60012004" name="Luminaire VII (Caldari Prime) - Moon 1 - Federation Customs Testing Facilities" region="10000064" security="1.0"/>
+    <row id="60012007" name="Luminaire VII (Caldari Prime) - Moon 5 - Federation Customs Assembly Plant" region="10000064" security="1.0"/>
     <row id="60012010" name="Renyn IX - Federation Customs Assembly Plant" region="10000064" security="0.9"/>
     <row id="60012013" name="Oursulaert IX - Federation Customs Testing Facilities" region="10000064" security="0.9"/>
     <row id="60012016" name="Aunsou II - Moon 1 - Federation Customs Assembly Plant" region="10000048" security="0.2"/>
@@ -12270,8 +12270,8 @@
     <row id="60012727" name="Rens VII - Moon 19 - Sisters of EVE Bureau" region="10000030" security="0.9"/>
     <row id="60012730" name="FDZ4-A VIII - Moon 3 - Society of Conscious Thought School" region="10000029" security="0.0"/>
     <row id="60012733" name="FDZ4-A IX - Moon 6 - Society of Conscious Thought School" region="10000029" security="0.0"/>
-    <row id="60012736" name="Yulai III - Moon 1 - Secure Commerce Commision Investment Bank" region="10000067" security="1.0"/>
-    <row id="60012739" name="Tar III - Secure Commerce Commision Investment Bank" region="10000067" security="0.8"/>
+    <row id="60012736" name="Yulai III - Moon 1 - Secure Commerce Commission Investment Bank" region="10000067" security="1.0"/>
+    <row id="60012739" name="Tar III - Secure Commerce Commission Investment Bank" region="10000067" security="0.8"/>
     <row id="60012742" name="H-ADOC VII - Moon 12 - Salvation Angels Warehouse" region="10000012" security="0.0"/>
     <row id="60012745" name="G-G78S VII - Salvation Angels Chemical Refinery" region="10000012" security="0.0"/>
     <row id="60012748" name="V-IUEL VII - Moon 15 - Salvation Angels Warehouse" region="10000012" security="0.0"/>
@@ -12914,7 +12914,7 @@
     <row id="60014659" name="Kisogo VII - State War Academy School" region="10000002" security="1.0"/>
     <row id="60014662" name="Piekura VIII - Moon 11 - State War Academy School" region="10000016" security="0.5"/>
     <row id="60014665" name="Eitu VI - Moon 3 - State War Academy School" region="10000033" security="0.5"/>
-    <row id="60014668" name="Irjunen IV - House of Records" region="10000033" security="0.5"/>
+    <row id="60014668" name="Irjunen IV - House of Records School" region="10000033" security="0.5"/>
     <row id="60014671" name="Uosusuokko VII - Moon 1 - State War Academy School" region="10000016" security="0.7"/>
     <row id="60014674" name="Uesuro IV - State War Academy School" region="10000016" security="0.5"/>
     <row id="60014677" name="Usi VI - Moon 23 - State War Academy School" region="10000033" security="0.5"/>
@@ -12942,7 +12942,7 @@
     <row id="60014743" name="Ardene VIII - Moon 11 - Center for Advanced Studies School" region="10000032" security="0.6"/>
     <row id="60014746" name="Olide IV - Moon 4 - Center for Advanced Studies School" region="10000037" security="0.7"/>
     <row id="60014749" name="Ammold V - Republic Military School" region="10000030" security="1.0"/>
-    <row id="60014752" name="Gelfiven IX - Moon 4 - Native Freshfood" region="10000028" security="0.6"/>
+    <row id="60014752" name="Gelfiven IX - Moon 4 - Native Freshfood School" region="10000028" security="0.6"/>
     <row id="60014755" name="Dumkirinur V - Republic Military School" region="10000030" security="0.7"/>
     <row id="60014758" name="Dudreda VI - Moon 4 - Republic Military School" region="10000042" security="0.3"/>
     <row id="60014761" name="Aedald VIII - Moon 5 - Republic Military School" region="10000028" security="0.3"/>
