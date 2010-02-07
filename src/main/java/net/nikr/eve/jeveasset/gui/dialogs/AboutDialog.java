@@ -1,5 +1,5 @@
 /*
- * Copyright 2009
+ * Copyright 2009, 2010
  *    Niklas Kyster Rasmussen
  *    Flaming Candle*
  *
@@ -58,7 +58,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
 				+ "<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
 				+ "Version "+Program.PROGRAM_VERSION+"<br>"
-				+ "Copyright &copy; 2009 Contributors<i> (see below)</i><br><div>"
+				+ "Copyright &copy; 2009, 2010 Contributors<br><div>"
 				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
 			);
 		jProgram.addHyperlinkListener(this);

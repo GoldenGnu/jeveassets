@@ -1,5 +1,5 @@
 /* 
- * Copyright 2009
+ * Copyright 2009, 2010
  *    Niklas Kyster Rasmussen
  *    Flaming Candle*
  *
