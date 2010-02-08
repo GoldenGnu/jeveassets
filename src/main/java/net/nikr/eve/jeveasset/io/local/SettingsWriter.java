@@ -76,11 +76,11 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "maximized", String.valueOf(settings.isWindowMaximized()));
 		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
 	}
-	private static void writeBpos(Document xmldoc, List<Integer> bpos){
+	private static void writeBpos(Document xmldoc, List<Long> bpos){
 		Element parentNode = xmldoc.createElementNS(null, "bpos");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (int a = 0; a < bpos.size(); a++){
-			int id = bpos.get(a);
+			long id = bpos.get(a);
 			Element node = xmldoc.createElementNS(null, "bpo");
 			node.setAttributeNS(null, "id", String.valueOf(id));
 			parentNode.appendChild(node);

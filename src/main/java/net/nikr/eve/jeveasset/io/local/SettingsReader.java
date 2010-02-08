@@ -186,7 +186,7 @@ public class SettingsReader extends AbstractXmlReader {
 		NodeList userPriceNodes = element.getElementsByTagName("bpo");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){
 			Element currentNode = (Element) userPriceNodes.item(a);
-			int id = AttributeGetters.getInt(currentNode, "id");
+			long id = AttributeGetters.getLong(currentNode, "id");
 			settings.getBpos().add(id);
 		}
 	}

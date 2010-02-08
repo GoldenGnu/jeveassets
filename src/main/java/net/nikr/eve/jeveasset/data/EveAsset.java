@@ -53,7 +53,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String flag;
 	private double priceBase;
 	private String meta;
-	private int id;
+	private long id;
 	private int typeId;
 	private boolean marketGroup;
 	private PriceData priceData;
@@ -67,7 +67,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String security;
 	private double priceReprocessed;
 
-	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, int id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
+	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, long id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
 		this.name = name;
 		this.group = group;
 		this.category = category;
@@ -142,7 +142,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		return group;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

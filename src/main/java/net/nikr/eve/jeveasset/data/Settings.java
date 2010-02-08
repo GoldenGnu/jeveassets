@@ -101,7 +101,7 @@ public class Settings implements SettingsInterface{
 	private List<String> tableColumnVisible;
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
-	private List<Integer> bpos;
+	private List<Long> bpos;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings;
 	private Proxy proxy;
@@ -127,7 +127,7 @@ public class Settings implements SettingsInterface{
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new Vector<Account>();
 		userPrices = new HashMap<Integer, UserPrice>();
-		bpos = new Vector<Integer>();
+		bpos = new Vector<Long>();
 		jumps = new ArrayList<Jump>();
 		
 		flags = new HashMap<String, Boolean>();
@@ -408,7 +408,7 @@ public class Settings implements SettingsInterface{
 			addAssets(eveAsset.getAssets(), assetList, shouldShow, shouldShowCorp);
 		}
 	}
-	public List<Integer> getBpos() {
+	public List<Long> getBpos() {
 		return bpos;
 	}
 	public Date getConquerableStationsNextUpdate() {

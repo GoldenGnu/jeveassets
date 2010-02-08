@@ -314,7 +314,7 @@ public class AssetsReader extends AbstractXmlReader {
 	private static EveAsset parseEveAsset(Node node, EveAsset parentEveAsset, Settings settings){
 		long count = AttributeGetters.getLong(node, "count");
 		String flag = AttributeGetters.getString(node, "flag");
-		int id = AttributeGetters.getInt(node, "id");
+		long id = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		int locationID = AttributeGetters.getInt(node, "locationid");
 		if (locationID == 0 && parentEveAsset != null) locationID = parentEveAsset.getLocationID();

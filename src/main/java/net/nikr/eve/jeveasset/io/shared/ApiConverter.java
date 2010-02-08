@@ -57,7 +57,7 @@ public class ApiConverter {
 		int typeID = (int)apiMarketOrder.getTypeID();
 		int locationID = (int) apiMarketOrder.getStationID();
 		long count = apiMarketOrder.getVolRemaining();
-		int id = (int) apiMarketOrder.getOrderID();
+		long id = apiMarketOrder.getOrderID();
 		String flag = "Market Order";
 		boolean corporationAsset = bCorp;
 		boolean singleton  = false;
@@ -80,11 +80,11 @@ public class ApiConverter {
 		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
 	}
 
-	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, SettingsInterface settings, Human human, boolean bCorp, List<Integer> bpos){
+	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, SettingsInterface settings, Human human, boolean bCorp, List<Long> bpos){
 		List<EveAsset> eveAssets = new Vector<EveAsset>();
 		for (int a = 0; a < industryJobs.size(); a++){
 			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
-			int id = (int) apiIndustryJob.getInstalledItemID();
+			long id = apiIndustryJob.getInstalledItemID();
 			if (apiIndustryJob.getCompleted() == 0){
 				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, settings, human, bCorp);
 				eveAssets.add(eveAsset);
@@ -105,7 +105,7 @@ public class ApiConverter {
 		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
 		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();
 		long count = apiIndustryJob.getInstalledItemQuantity();
-		int id = (int) apiIndustryJob.getInstalledItemID();
+		long id = apiIndustryJob.getInstalledItemID();
 		int nFlag = apiIndustryJob.getInstalledItemFlag();
 		boolean corporationAsset = bCorp;
 		boolean singleton  = false;
@@ -168,10 +168,10 @@ public class ApiConverter {
 		boolean marketGroup = ApiIdConverter.marketGroup(apiAsset.getTypeID(), settings); //OK
 		float volume = ApiIdConverter.volume(apiAsset.getTypeID(), settings);
 		String region = ApiIdConverter.region(apiAsset.getLocationID(), parentEveAsset, settings);
-		int id = apiAsset.getItemID(); //OK
+		long id = apiAsset.getItemID(); //OK
 		int typeID = apiAsset.getTypeID(); //OK
 		boolean corporationAsset = bCorp; //Semi-OK - OLD: (owner.equals(human.getCorporation()));
-		boolean singleton  = (apiAsset.getSingleton() > 0);
+		boolean singleton  = apiAsset.getSingleton();
 		String security = ApiIdConverter.security(apiAsset.getLocationID(), parentEveAsset, settings); //NOT OKAY!
 
 		return new EveAsset(name, group, category, owner, count, location, container, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, apiAsset.getLocationID(), singleton, security);
