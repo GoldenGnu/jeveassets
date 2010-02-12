@@ -1,5 +1,5 @@
 /*
- * Copyright 2009
+ * Copyright 2009, 2010
  *    Niklas Kyster Rasmussen
  *    Flaming Candle*
  *
@@ -24,6 +24,8 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs;
 
+import net.nikr.eve.jeveasset.gui.shared.EditableListModel;
+import net.nikr.eve.jeveasset.gui.shared.MoveJList;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
