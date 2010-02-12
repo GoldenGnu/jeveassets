@@ -49,6 +49,12 @@ or
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.3.0
+New Features:
+-New Tool: Routing - Find the shortest route between multiple asset locations
+
+________________________________________________________________________________
+
 1.2.3
 New Features:
 -Now ignore update timer if the Api Proxy is set

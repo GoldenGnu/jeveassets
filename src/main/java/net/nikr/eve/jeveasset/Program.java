@@ -72,8 +72,8 @@ import org.apache.log4j.Logger;
 
 public class Program implements ActionListener, Listener<EveAsset> {
 
-	//"Major.Minor.Bugfix [BETA n] [BUILD #n])";
-	public static final String PROGRAM_VERSION = "1.2.4 DEV";
+	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV] [BUILD #n];
+	public static final String PROGRAM_VERSION = "1.3.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;

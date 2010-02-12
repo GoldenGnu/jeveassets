@@ -58,8 +58,9 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
 				+ "<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
 				+ "Version "+Program.PROGRAM_VERSION+"<br>"
-				+ "Copyright &copy; 2009, 2010 Contributors<br><div>"
+				+ "Copyright &copy; 2009, 2010 Contributors<br>"
 				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
+				+ "</div>"
 			);
 		jProgram.addHyperlinkListener(this);
 		jProgram.setEditable(false);
@@ -74,21 +75,22 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
-				+ "<b>Libraries & Content</b><br>"
-				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (Icons)<br>"
-				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (API and Toolkit)<br> "
-				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (API)<br>"
-				+ "&nbsp;<a href=\"http://www.eve-metrics.com\">EVE-Metrics.com</a> (API)<br>"
-				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (Table sorting and filtering)<br> "
-				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (CSV Export)<br> "
-				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (Parsing EVE-Online API)<br> "
-				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/\">log4j</a> (Used by eveapi)<br> "
-				+ "&nbsp;<a href=\"http://commons.apache.org/digester/\">Apache Commons Digester</a> (Used by eveapi)<br> "
-				+ "&nbsp;<a href=\"http://commons.apache.org/beanutils/\">Apache Commons BeanUtils</a> (Used by eveapi)<br> "
-				+ "&nbsp;<a href=\"http://commons.apache.org/logging/\">Apache Commons Logging</a> (Used by eveapi)<br> "
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (Logging)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (Price Data)<br>"
-
+				+ "<b>Content</b><br>"
+				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
+				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
+				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"http://www.eve-metrics.com\">EVE-Metrics.com</a> (price data api)<br>"
+				+ "<br>"
+				+ "<b>Libraries</b><br>"
+				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
+				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (csv export)<br> "
+				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (parsing eve-online api)<br> "
+				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit tesing)<br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (logging)<br>"
+				+ "</div>"
+				
 			);
 		jCredits.setEditable(false);
 		jCredits.setOpaque(false);

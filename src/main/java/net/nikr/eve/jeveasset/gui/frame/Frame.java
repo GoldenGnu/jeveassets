@@ -57,9 +57,9 @@ public class Frame extends JFrame implements WindowListener, WindowStateListener
 
 		//Frame
 		if (Settings.isPortable()){
-			this.setTitle(Program.PROGRAM_NAME+" portable");
+			this.setTitle(Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION+" portable");
 		} else {
-			this.setTitle(Program.PROGRAM_NAME);
+			this.setTitle(Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION);
 		}
 		this.setSize( program.getSettings().getWindowSize() ); //800, 600
 		this.setLocation( program.getSettings().getWindowLocation() );

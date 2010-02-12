@@ -96,7 +96,6 @@ Link:
 
 License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
-  and
   Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)
 
 ________________________________________________________________________________
@@ -122,30 +121,6 @@ License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
 
 ________________________________________________________________________________
-_LOG4J__________________________________________________________________________
-
-jEveAssets use log4j for eveapi
-
-Link:
-  http://logging.apache.org/log4j/
-
-License:
-  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
-
-________________________________________________________________________________
-_APACHE_COMMONS_________________________________________________________________
-
-jEveAssets use Apache Commons; Digester, Logging, and BeanUtils, for eveapi
-
-Link:
-  Digester: http://commons.apache.org/digester/
-  Logging: http://commons.apache.org/logging/
-  BeanUtils: http://commons.apache.org/beanutils/
-
-License:
-  Apache License (http://www.apache.org/licenses/LICENSE-2.0)
-
-________________________________________________________________________________
 _NIKR_LOG_______________________________________________________________________
 
 jEveAssets use NiKR Log to log events and errors
@@ -168,9 +143,20 @@ License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 
 ________________________________________________________________________________
+_ROUTING________________________________________________________________________
+
+jEveAssets use the Routing library in the routing tool
+
+Link:
+  http://eve.nikr.net/?page=jeveasset
+
+License:
+  GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009 Niklas Kyster Rasmussen, Flaming Candle
+Copyright 2009, 2010 Niklas Kyster Rasmussen, Flaming Candle
 
 
 jEveAssets is free software; you can redistribute it and/or
