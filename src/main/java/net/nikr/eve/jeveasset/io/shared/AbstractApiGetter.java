@@ -60,7 +60,7 @@ abstract public class AbstractApiGetter<T> {
 						} else {
 							characterUpdated = true;
 						}
-						Log.info("	"+updateName+" update for: "+characterName);
+						Log.info("	"+updateName+" updated for: "+characterName);
 					} else {
 						ApiError apiError = apiResponse.getError();
 						error = apiError.getError();

@@ -609,7 +609,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					return null;
 				}
 				humansGetter.load(account, true);
-				if (humansGetter.isCharacterUpdated()){
+				if (!humansGetter.isCharacterUpdated()){
 					result = 30;
 					error = humansGetter.getError();
 					return null;
