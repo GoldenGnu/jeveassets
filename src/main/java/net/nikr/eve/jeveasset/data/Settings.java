@@ -63,7 +63,7 @@ import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.log.Log;
 
 
-public class Settings implements SettingsInterface{
+public class Settings{
 
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
@@ -300,14 +300,14 @@ public class Settings implements SettingsInterface{
 					Human human = humans.get(b);
 					if (human.isShowAssets() || getAllAssets){
 						//Market Orders
-						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), this, human, false);
+						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, conquerableStations, locations, items);
 						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), this, human, true);
+						List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, conquerableStations, locations, items);
 						addAssets(marketOrdersCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Industry Jobs
-						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), this, human, false, bpos);
+						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, bpos, conquerableStations, locations, items);
 						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), this, human, true, bpos);
+						List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, bpos, conquerableStations, locations, items);
 						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Assets (Must be after Industry Jobs, for bpos to be marked)
 						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
@@ -440,7 +440,7 @@ public class Settings implements SettingsInterface{
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
 	}
-	@Override
+
 	public Map<Integer, Item> getItems() {
 		return items;
 	}
@@ -448,7 +448,7 @@ public class Settings implements SettingsInterface{
 	public void setItems(Map<Integer, Item> items) {
 		this.items = items;
 	}
-	@Override
+
 	public Map<Integer, Location> getLocations() {
 		return locations;
 	}
@@ -464,7 +464,7 @@ public class Settings implements SettingsInterface{
 	public void setPriceData(Map<Integer, PriceData> priceData) {
 		this.priceData = priceData;
 	}
-	@Override
+
 	public Map<Integer, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
@@ -750,7 +750,6 @@ public class Settings implements SettingsInterface{
 		return ret;
 	}
 
-	@Override
 	public boolean isUpdatable(Date date){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)

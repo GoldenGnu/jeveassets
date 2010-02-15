@@ -140,10 +140,10 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 						List<EveAsset> eveAssets = new Vector<EveAsset>();
 						assetsGetter.load(human, forceUpdate);
 						if (assetsGetter.isCharacterUpdated()){
-							eveAssets.addAll( ApiConverter.apiAsset(program.getSettings(), human, assetsGetter.getAssets(), false) );
+							eveAssets.addAll( ApiConverter.apiAsset(human, assetsGetter.getAssets(), false, program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems()) );
 						}
 						if (assetsGetter.isCorporationUpdated()){
-							eveAssets.addAll( ApiConverter.apiAsset(program.getSettings(), human, assetsGetter.getCorpAssets(), true) );
+							eveAssets.addAll( ApiConverter.apiAsset(human, assetsGetter.getCorpAssets(), true, program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems()) );
 						}
 						if (human.isUpdateCorporationAssets()){
 							coporations.add(human.getCorporation());

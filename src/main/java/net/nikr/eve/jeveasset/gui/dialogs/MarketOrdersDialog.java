@@ -187,13 +187,13 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
 					characters.add(human.getName());
-					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems());
 					orders.put(human.getName(), characterMarketOrders);
 					all.addAll(characterMarketOrders);
 					if (human.isUpdateCorporationAssets()){
 						String corpKey = "["+human.getCorporation()+"]";
 						characters.add(corpKey);
-						List<MarketOrder> corporationMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings());
+						List<MarketOrder> corporationMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems());
 						orders.put(corpKey, corporationMarketOrders);
 						all.addAll(corporationMarketOrders);
 					}

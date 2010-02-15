@@ -26,11 +26,11 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.utils.stationlist.ApiStation;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.SettingsInterface;
 
 
 public class ApiIdConverter {
@@ -230,7 +230,7 @@ public class ApiIdConverter {
 		}
 	}
 
-	public static String location(int locationID, EveAsset parentAsset, SettingsInterface settings) {
+	public static String location(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -244,9 +244,9 @@ public class ApiIdConverter {
 		}
 
 		//Conquerable Stations
-		apiStation = settings.getConquerableStations().get(locationID);
+		apiStation = conquerableStations.get(locationID);
 		if (apiStation != null) {
-			location = settings.getLocations().get(apiStation.getSolarSystemID());
+			location = locations.get(apiStation.getSolarSystemID());
 			if (location != null) {
 				return location.getName() + " - " + apiStation.getStationName();
 			} else {
@@ -255,7 +255,7 @@ public class ApiIdConverter {
 		}
 
 		//locations.xml (staStations && mapDenormalize)
-		location = settings.getLocations().get(locationID);
+		location = locations.get(locationID);
 		if (location != null) {
 			return location.getName();
 		}
@@ -266,7 +266,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String region(int locationID, EveAsset parentAsset, SettingsInterface settings) {
+	public static String region(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -280,11 +280,11 @@ public class ApiIdConverter {
 		}
 
 		//Conquerable Stations
-		apiStation = settings.getConquerableStations().get(locationID);
+		apiStation = conquerableStations.get(locationID);
 		if (apiStation != null) {
-			location = settings.getLocations().get(apiStation.getSolarSystemID());
+			location = locations.get(apiStation.getSolarSystemID());
 			if (location != null) {
-				location = settings.getLocations().get(location.getRegion());
+				location = locations.get(location.getRegion());
 				if (location != null) {
 					return location.getName();
 				}
@@ -292,9 +292,9 @@ public class ApiIdConverter {
 		}
 
 		//locations.xml (staStations && mapDenormalize)
-		location = settings.getLocations().get(locationID);
+		location = locations.get(locationID);
 		if (location != null) {
-			location = settings.getLocations().get(location.getRegion());
+			location = locations.get(location.getRegion());
 			if (location != null) {
 				return location.getName();
 			}
@@ -305,7 +305,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(int locationID, EveAsset parentAsset, SettingsInterface settings) {
+	public static String security(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -319,16 +319,16 @@ public class ApiIdConverter {
 		}
 
 		//Conquerable Stations
-		apiStation = settings.getConquerableStations().get(locationID);
+		apiStation = conquerableStations.get(locationID);
 		if (apiStation != null) {
-			location = settings.getLocations().get(apiStation.getSolarSystemID());
+			location = locations.get(apiStation.getSolarSystemID());
 			if (location != null) {
 				return location.getSecurity();
 			}
 		}
 
 		//locations.xml (staStations && mapDenormalize)
-		location = settings.getLocations().get(locationID);
+		location = locations.get(locationID);
 		if (location != null) {
 			return location.getSecurity();
 		}
@@ -339,32 +339,32 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static float volume(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static float volume(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getVolume();
 		}
 		return -1;
 	}
 
-	public static String name(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static String name(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getName();
 		}
 		return "!" + String.valueOf(typeID);
 	}
 
-	public static double priceBase(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static double priceBase(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getPrice();
 		}
 		return -1;
 	}
 
-	public static String category(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static String category(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getCategory();
 		}
@@ -379,24 +379,24 @@ public class ApiIdConverter {
 		}
 	}
 
-	public static String group(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static String group(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getGroup();
 		}
 		return "";
 	}
 
-	public static String meta(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static String meta(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getMeta();
 		}
 		return "";
 	}
 
-	public static boolean marketGroup(int typeID, SettingsInterface settings) {
-		Item item = settings.getItems().get(typeID);
+	public static boolean marketGroup(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
 		if (item != null) {
 			return item.isMarketGroup();
 		}
