@@ -133,7 +133,7 @@ public class JAssetTable extends JTable {
 				if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				c.setBackground( new Color(230,230,255) );
+				c.setBackground( new Color(220,240,255) );
 				return c;
 			}
 		}
