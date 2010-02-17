@@ -146,7 +146,14 @@ public class Settings{
 		windowSize = new Dimension(800, 600);
 		windowMaximized = false;
 		windowAutoSave = true;
+	}
 
+	public void saveSettings(){
+		SettingsWriter.save(this);
+		AssetsWriter.save(this);
+	}
+
+	public void loadSettings(){
 		//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 	//Load from file
@@ -168,8 +175,8 @@ public class Settings{
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(70);
-		
 	}
+
 	public void resetMainTableColumns(){
 		//Also need to update:
 		//		gui.table.EveAssetTableFormat.getColumnClass()
@@ -655,10 +662,7 @@ public class Settings{
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
 	}
-	public void saveSettings(){
-		SettingsWriter.save(this);
-		AssetsWriter.save(this);
-	}
+
 	public static String getPathSettings(){
 		return getLocalFile(Settings.PATH_SETTINGS, !portable);
 	}

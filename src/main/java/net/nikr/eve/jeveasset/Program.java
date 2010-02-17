@@ -144,6 +144,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		}
 
 		settings = new Settings();
+		settings.loadSettings();
 		eveAssetEventList = new BasicEventList<EveAsset>();
 
 		SplashUpdater.setText("Loading GUI");
