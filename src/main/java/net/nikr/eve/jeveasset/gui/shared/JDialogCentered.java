@@ -51,6 +51,13 @@ public abstract class JDialogCentered implements WindowListener {
 	private final static String ACTION_CANCEL = "ACTION_CANCEL";
 	private final static String ACTION_OK = "ACTION_OK";
 
+	public final static int NO_RESTRICTIONS = 0;
+	public final static int WORDS_ONLY = 1;
+	public final static int NUMBERS_ONLY = 2;
+
+	private JValidatedInputDialog jValidatedInputDialog;
+	private JConfirmDialog jConfirmDialog;
+	private JMessageDialog jMessageDialog;
 
 	protected Program program;
 	protected Window parent;
@@ -61,6 +68,7 @@ public abstract class JDialogCentered implements WindowListener {
 	private String title;
 	private boolean firstActivating = false;
 
+
 	public JDialogCentered(Program program, String title) {
 		this(program, title, program.getFrame(), null);
 	}
@@ -69,6 +77,9 @@ public abstract class JDialogCentered implements WindowListener {
 	}
 	public JDialogCentered(Program program, String title, Image image) {
 		this(program, title, program.getFrame(), image);
+	}
+	public JDialogCentered(Program program, String title, Window parent) {
+		this(program, title, parent, null);
 	}
 	public JDialogCentered(Program program, String title, Window parent, Image image) {
 		this.program = program;
@@ -81,6 +92,14 @@ public abstract class JDialogCentered implements WindowListener {
 		dialog.addWindowListener(this);
 		if (image != null) dialog.setIconImage(image);
 
+		if (!(this instanceof JValidatedInputDialog)
+				&& !(this instanceof JConfirmDialog)
+				&& !(this instanceof JMessageDialog)){
+			jValidatedInputDialog = new JValidatedInputDialog(program, parent);
+			jConfirmDialog = new JConfirmDialog(program, parent);
+			jMessageDialog = new JMessageDialog(program, parent);
+		}
+		
 		jPanel = new JPanel();
 
 		layout = new GroupLayout(jPanel);
@@ -102,6 +121,18 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public JDialog getDialog() {
 		return dialog;
+	}
+
+	public String showValidatedInputDialog(String title, String message, String defaultValue, int restrictions){
+		return jValidatedInputDialog.show(title, message, defaultValue, restrictions);
+	}
+
+	public boolean showConfirmDialog(String title, String message){
+		return jConfirmDialog.show(title, message);
+	}
+
+	public void showMessageDialog(String title, String message){
+		jMessageDialog.show(title, message);
 	}
 
 	public void setVisible(boolean b) {

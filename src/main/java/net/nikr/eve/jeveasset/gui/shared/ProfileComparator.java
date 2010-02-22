@@ -25,42 +25,18 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import javax.swing.JTextField;
+import java.util.Comparator;
+import net.nikr.eve.jeveasset.data.Profile;
 
-
-public class JNumberField extends JTextField implements FocusListener{
-
-	private String defaultValue;
-
-	public JNumberField() {
-		this("0");
-	}
-
-	public JNumberField(String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.addFocusListener(this);
-		this.setDocument( DocumentFactory.getNumberPlainDocument() );
-	}
+/**
+ *
+ * @author Niklas
+ */
+public class ProfileComparator implements Comparator<Profile> {
 
 	@Override
-	public void focusGained(FocusEvent e) {
-
+	public int compare(Profile o1, Profile o2) {
+		return o1.getName().compareTo(o2.getName());
 	}
 
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (super.getText().equals("")){
-			super.setText(defaultValue);
-		}
-	}
-
-	@Override
-	public String getText() {
-		if (super.getText().equals("")) super.setText(defaultValue);
-		return super.getText();
-	}
-
-	
 }

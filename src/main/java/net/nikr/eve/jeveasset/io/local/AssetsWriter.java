@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
 
 
 public class AssetsWriter extends AbstractXmlWriter {
-	public static void save(Settings settings){
+	public static void save(Settings settings, String filename){
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("assets");
@@ -50,7 +50,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 		writeAccounts(xmldoc, settings.getAccounts());
 		try {
-			writeXmlFile(xmldoc, Settings.getPathAssets());
+			writeXmlFile(xmldoc, filename);
 		} catch (XmlException ex) {
 			Log.error("Assets not saved "+ex.getMessage(), ex);
 		}

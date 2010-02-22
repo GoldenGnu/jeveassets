@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
+import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.log.Log;
 
 
@@ -75,6 +76,7 @@ public class Settings{
 	private final static String PATH_README = "readme.txt";
 	private final static String PATH_LICENSE = "license.txt";
 	private final static String PATH_CREDITS = "credits.txt";
+	private final static String PATH_PROFILES = "profiles";
 
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
@@ -102,6 +104,7 @@ public class Settings{
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private List<Long> bpos;
+	private List<Profile> profiles;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings;
 	private Proxy proxy;
@@ -110,7 +113,8 @@ public class Settings{
 	private Dimension windowSize;
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
-	List<Jump> jumps;
+	private Profile activeProfile;
+	private List<Jump> jumps;
 
 	private PriceDataGetter priceDataGetter;
 	private AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
@@ -129,6 +133,7 @@ public class Settings{
 		userPrices = new HashMap<Integer, UserPrice>();
 		bpos = new Vector<Long>();
 		jumps = new ArrayList<Jump>();
+		profiles = new ArrayList<Profile>();
 		
 		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
@@ -136,7 +141,9 @@ public class Settings{
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 
-		
+		activeProfile = new Profile("Default", true, true);
+		profiles.add(activeProfile);
+
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 		resetMainTableColumns();
 
@@ -150,13 +157,13 @@ public class Settings{
 
 	public void saveSettings(){
 		SettingsWriter.save(this);
-		AssetsWriter.save(this);
+		saveAssets();
 	}
 
 	public void loadSettings(){
-		//Load data and overwite default values
+	//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
-	//Load from file
+	//Load static data
 		SplashUpdater.setProgress(20);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
 		SplashUpdater.setProgress(30);
@@ -164,17 +171,30 @@ public class Settings{
 		SplashUpdater.setProgress(40);
 		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
 		SplashUpdater.setProgress(50);
-		AssetsReader.load(this); //Assets (Must be loaded before the price data)
-	//Update from eve api
+		JumpsReader.load(this); //Jumps
+	//Find profiles
+		ProfileReader.load(this);
+		loadAssets();
+	}
+
+	public void loadAssets(){
+	//Load Assets
+		Log.info("Loading profile: "+activeProfile.getName());
+		accounts = new Vector<Account>();
+		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
+	//Update as needed from eve api
 		marketOrdersGetter.load(accounts, this.isForceUpdate()); //Orders (Must be loaded before the price data)
 		industryJobsGetter.load(accounts, this.isForceUpdate()); //Jobs (Must be loaded before the price data)
 		humansGetter.load(accounts, this.isForceUpdate());
 		accountBalanceGetter.load(accounts, this.isForceUpdate());
 		SplashUpdater.setProgress(60);
-		JumpsReader.load(this);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(70);
+	}
+
+	public void saveAssets(){
+		AssetsWriter.save(this, activeProfile.getFilename());
 	}
 
 	public void resetMainTableColumns(){
@@ -276,6 +296,7 @@ public class Settings{
 		allAssets = null;
 		eventListAssets = null;
 		uniqueIds = null;
+		uniqueAssetsDuplicates = null;
 	}
 	public List<EveAsset> getEventListAssets(){
 		updateAssetLists(false);
@@ -516,6 +537,18 @@ public class Settings{
 		return flags;
 	}
 
+	public List<Profile> getProfiles() {
+		return profiles;
+	}
+
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
+	}
+
+	public void setActiveProfile(Profile activeProfile) {
+		this.activeProfile = activeProfile;
+	}
+
 	//@NotNull
 	public Proxy getProxy() {
 		if (proxy == null) {
@@ -675,8 +708,11 @@ public class Settings{
 	public static String getPathPriceData(){
 		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
 	}
-	public static String getPathAssets(){
+	public static String getPathAssetsOld(){
 		return getLocalFile(Settings.PATH_ASSETS, !portable);
+	}
+	public static String getPathProfilesDirectory(){
+		return getLocalFile(Settings.PATH_PROFILES, !portable);
 	}
 	public static String getPathItems(){
 		return getLocalFile(Settings.PATH_ITEMS, false);

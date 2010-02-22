@@ -46,15 +46,15 @@ import org.w3c.dom.NodeList;
 
 
 public class AssetsReader extends AbstractXmlReader {
-	public static boolean load(Settings settings){
+	public static boolean load(Settings settings, String filename){
 		try {
-			Element element = getDocumentElement(Settings.getPathAssets());
+			Element element = getDocumentElement(filename);
 			parseSettings(element, settings);
 		} catch (IOException ex) {
 			Log.info("Assets not loaded");
 			return false;
 		} catch (XmlException ex) {
-			Log.error("Assets not loaded: ("+Settings.getPathAssets()+")"+ex.getMessage(), ex);
+			Log.error("Assets not loaded: ("+filename+")"+ex.getMessage(), ex);
 		}
 		Log.info("Assets loaded");
 		return true;

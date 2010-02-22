@@ -25,42 +25,26 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import javax.swing.JTextField;
+import java.awt.Component;
+import java.awt.Font;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import net.nikr.eve.jeveasset.data.Profile;
 
 
-public class JNumberField extends JTextField implements FocusListener{
-
-	private String defaultValue;
-
-	public JNumberField() {
-		this("0");
-	}
-
-	public JNumberField(String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.addFocusListener(this);
-		this.setDocument( DocumentFactory.getNumberPlainDocument() );
-	}
+public class JProfileListRenderer extends DefaultListCellRenderer {
 
 	@Override
-	public void focusGained(FocusEvent e) {
-
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (super.getText().equals("")){
-			super.setText(defaultValue);
+	public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected, boolean cellHasFocus) {
+		Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		if (value instanceof Profile){
+			Profile profile = (Profile) value;
+			if (profile.isActiveProfile()){
+				Font font = component.getFont();
+				component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
+			}
 		}
+		return component;
 	}
 
-	@Override
-	public String getText() {
-		if (super.getText().equals("")) super.setText(defaultValue);
-		return super.getText();
-	}
-
-	
 }

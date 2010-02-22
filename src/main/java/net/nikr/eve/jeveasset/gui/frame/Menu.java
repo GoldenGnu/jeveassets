@@ -49,6 +49,7 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
 	public final static String ACTION_OPEN_METERIALS = "ACTION_OPEN_METERIALS";
 	public final static String ACTION_OPEN_API_MANAGER = "ACTION_OPEN_API_MANAGER";
+	public final static String ACTION_OPEN_PROFILES = "ACTION_OPEN_PROFILES";
 	public final static String ACTION_OPEN_SETTINGS = "ACTION_OPEN_SETTINGS";
 	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
 	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
@@ -134,6 +135,15 @@ public class Menu extends JMenuBar {
 		menu = new JMenu("Options");
 		//menu.setActionCommand("Something");
 		this.add(menu);
+
+
+		menuItem = new JMenuItem("Profiels");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("profile.png") );
+		menuItem.setActionCommand(ACTION_OPEN_PROFILES);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
 
 		menuItem = new JMenuItem("Manage API Keys");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));

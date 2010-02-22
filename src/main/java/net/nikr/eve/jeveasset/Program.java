@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MarketOrdersDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.RoutingDialogue;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceSettingsPanel;
@@ -97,6 +98,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	private MarketOrdersDialog marketOrdersDialog;
 	private IndustryJobsDialog industryJobsDialog;
 	private CsvExportDialog csvExportDialog;
+	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private TableSettingsPanel tableSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
@@ -174,6 +176,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		materialsDialog = new MaterialsDialog(this, ImageGetter.getImage("icon23_16.png"));
 		Log.info("	Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
+		Log.info("	Profiles Dialog");
+		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
 		Log.info("	Settings Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		Log.info("		Table");
@@ -318,6 +322,9 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
 			routingDialogue.setVisible(true);
+		}
+		if (Menu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
+			profileDialog.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
 			settingsDialog.setVisible(true);
