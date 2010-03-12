@@ -95,7 +95,7 @@ public class AssetsReader extends AbstractXmlReader {
 			Human human = parseHuman(currentNode, account);
 			account.getHumans().add(human);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
-			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
+			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), human.getAssetsCorporation(), null, settings);
 			parseBalances(currentNode, human);
 			parseMarkerOrders(currentNode, human);
 			parseIndustryJobs(currentNode, human);
@@ -295,7 +295,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset, Settings settings){
+	private static void parseAssets(Node node, List<EveAsset> assets, List<EveAsset> assetsCorporation, EveAsset parentEveAsset, Settings settings){
 		NodeList assetsNodes = node.getChildNodes();
 		EveAsset eveAsset = null;
 		for (int a = 0; a < assetsNodes.getLength(); a++){
@@ -303,11 +303,15 @@ public class AssetsReader extends AbstractXmlReader {
 			if (currentNode.getNodeName().equals("asset")){
 				eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
 				if (parentEveAsset == null){
-					assets.add(eveAsset);
+					if (eveAsset.isCorporationAsset()){
+						assetsCorporation.add(eveAsset);
+					} else {
+						assets.add(eveAsset);
+					}
 				} else {
 					parentEveAsset.addEveAsset(eveAsset);
 				}
-				parseAssets(currentNode, assets, eveAsset, settings);
+				parseAssets(currentNode, assets, assetsCorporation, eveAsset, settings);
 			}
 		}
 	}

@@ -36,15 +36,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.gui.frame.Menu;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ApiManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdateAssetsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdatePriceDataDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
@@ -78,6 +79,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
+
+	private final static String ACTION_TIMER = "ACTION_TIMER";
 
 	public static final boolean DEBUG = false;
 	public static final boolean FORCE_UPDATE = (DEBUG && false);
@@ -106,9 +109,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	private PriceSettingsPanel priceSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
 
+	private UpdateDialog updateDialog;
 
-	private UpdateAssetsDialog updateAssetsDialog;
-	private UpdatePriceDataDialog updatePriceDataDialog;
+	private Timer timer;
+	private Updatable updatable;
 
 	//Panels
 	private TablePanel tablePanel;
@@ -149,6 +153,11 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		settings.loadSettings();
 		eveAssetEventList = new BasicEventList<EveAsset>();
 
+		timer = new Timer(1000, this);
+		timer.setActionCommand(ACTION_TIMER);
+
+		updatable = new Updatable(settings);
+		
 		SplashUpdater.setText("Loading GUI");
 		Log.info("GUI Loading:");
 		Log.info("	Frame");
@@ -195,10 +204,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		Log.info("		Window");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		settingsDialog.add(windowSettingsPanel, ImageGetter.getIcon("application.png"));
-		Log.info("	Assets Update Dialog");
-		updateAssetsDialog = new UpdateAssetsDialog(this, frame);
-		Log.info("	Price Data Update Dialog");
-		updatePriceDataDialog = new UpdatePriceDataDialog(this, frame);
+		Log.info("	Update Dialog");
+		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
 		Log.info("	GUI loaded");
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
@@ -206,6 +213,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		SplashUpdater.setProgress(100);
 		Log.info("Showing GUI");
 		frame.setVisible(true);
+		//Start timer
+		timerTicked();
 		if(DEBUG){
 			Log.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(frame, "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
@@ -213,6 +222,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		if (settings.getAccounts().isEmpty()){
 			apiManagerDialog.setVisible(true);
 		}
+
 		Log.info("Startup Done");
 	}
 	public void addPanel(JProgramPanel jProgramPanel){
@@ -224,17 +234,6 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			toolPanel = (ToolPanel) jProgramPanel;
 		}
 	}
-
-	public void updatePriceData(){
-		updatePriceDataDialog.startUpdate();
-	}
-	public void updateAssets(){
-		updateAssetsDialog.startUpdate();
-	}
-
-	public void charactersChanged(){
-		statusPanel.updateAssetDate();
-	}
 	
 	public void filtersChanged(){
 		this.getFiltersManagerDialog().filtersChanged();
@@ -245,6 +244,14 @@ public class Program implements ActionListener, Listener<EveAsset> {
 
 	public void tableUpdated(){
 
+	}
+
+	private void timerTicked(){
+		if (!timer.isRunning()){
+			timer.start();
+		}
+		this.getStatusPanel().timerTicked(updatable.isUpdatable());
+		this.getFrame().getMenu().timerTicked(updatable.isUpdatable());
 	}
 	
 	public void updateEventList(){
@@ -318,7 +325,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			csvExportDialog.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
+			routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("routing.png"));
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
 			routingDialogue.setVisible(true);
@@ -328,6 +335,9 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		}
 		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
 			settingsDialog.setVisible(true);
+		}
+		if (Menu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
+			updateDialog.setVisible(true);
 		}
 		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
@@ -373,11 +383,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		if (Menu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();
 		}
-		if (Menu.ACTION_UPDATE_ASSETS.equals(e.getActionCommand())) {
-			updateAssets();
-		}
-		if (Menu.ACTION_UPDATE_PRICES.equals(e.getActionCommand())) {
-			updatePriceData();
+		if (ACTION_TIMER.equals(e.getActionCommand())) {
+			timerTicked();
 		}
 	}
 }

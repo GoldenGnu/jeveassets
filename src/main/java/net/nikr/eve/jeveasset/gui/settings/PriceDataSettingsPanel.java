@@ -37,7 +37,6 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
@@ -133,7 +132,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		if (program.getSettings().isUpdatable(date)){
 			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
-				program.updatePriceData();
+				//FIXME find a solution to update price data here
+				//program.updatePriceData();
 				return;
 			}
 			nextUpdate = "Now";

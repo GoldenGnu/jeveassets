@@ -47,9 +47,6 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
-import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
@@ -58,7 +55,6 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.log.Log;
@@ -117,10 +113,6 @@ public class Settings{
 	private List<Jump> jumps;
 
 	private PriceDataGetter priceDataGetter;
-	private AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
-	private MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-	private IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-	private HumansGetter humansGetter = new HumansGetter();
 	
 	public Settings() {
 		SplashUpdater.setProgress(10);
@@ -182,11 +174,6 @@ public class Settings{
 		Log.info("Loading profile: "+activeProfile.getName());
 		accounts = new Vector<Account>();
 		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
-	//Update as needed from eve api
-		marketOrdersGetter.load(accounts, this.isForceUpdate()); //Orders (Must be loaded before the price data)
-		industryJobsGetter.load(accounts, this.isForceUpdate()); //Jobs (Must be loaded before the price data)
-		humansGetter.load(accounts, this.isForceUpdate());
-		accountBalanceGetter.load(accounts, this.isForceUpdate());
 		SplashUpdater.setProgress(60);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
@@ -271,11 +258,6 @@ public class Settings{
 		tableNumberColumns.add("Security");
 	}
 
-	public void updateOrdersAndJobs(){
-		marketOrdersGetter.load(accounts, this.isForceUpdate());
-		industryJobsGetter.load(accounts, this.isForceUpdate());
-	}
-
 	public boolean updatePriceData(UpdateTask task){
 		return priceDataGetter.updatePriceData(task);
 	}
@@ -339,6 +321,7 @@ public class Settings{
 						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 						//Assets (Must be after Industry Jobs, for bpos to be marked)
 						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
+						addAssets(human.getAssetsCorporation(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
 					}
 				}
 			}
@@ -791,10 +774,14 @@ public class Settings{
 	}
 
 	public boolean isUpdatable(Date date){
+		return isUpdatable(date, true);
+	}
+
+	public boolean isUpdatable(Date date, boolean ignoreOnProxy){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
 				|| Program.FORCE_UPDATE
-				|| getApiProxy() != null)
+				|| (getApiProxy() != null && ignoreOnProxy) )
 				&& !Program.FORCE_NO_UPDATE);
 	}
 }

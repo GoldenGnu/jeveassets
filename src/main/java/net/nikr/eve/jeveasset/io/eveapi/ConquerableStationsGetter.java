@@ -25,78 +25,46 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.utils.stationlist.ApiStation;
 import com.beimin.eveapi.utils.stationlist.Parser;
 import com.beimin.eveapi.utils.stationlist.Response;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
 public class ConquerableStationsGetter extends AbstractApiGetter<Response> {
 
-	private Date nextUpdate;
-	private Map<Integer, ApiStation> conquerableStations;
+	private Settings settings;
 
-	public void load(Date nextUpdate, boolean forceUpdate){
-		conquerableStations = new HashMap<Integer, ApiStation>();
-		load(nextUpdate, forceUpdate, false, "Conquerable stations", "All");
+	public ConquerableStationsGetter() {
+		super("Conquerable Stations");
+	}
+
+	public void load(Settings settings){
+		this.settings = settings;
+		load("jEveAssets");
 	}
 
 	@Override
 	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
 		Parser parser = new Parser();
-		Response response = parser.getStationList();
-		nextUpdate = response.getCachedUntil();
-		return response;
+		return parser.getStationList();
 	}
 
 	@Override
-	protected void ok(Response response, boolean bCorp) {
-		conquerableStations = response.getStations();
+	protected Date getNextUpdate() {
+		return settings.getConquerableStationsNextUpdate();
 	}
 
-	public Map<Integer, ApiStation> getConquerableStations() {
-		return conquerableStations;
+	@Override
+	protected void setNextUpdate(Date nextUpdate) {
+		settings.setConquerableStationsNextUpdate(nextUpdate);
 	}
 
-	public Date getNextUpdate() {
-		return nextUpdate;
+	@Override
+	protected void setData(Response response, boolean bCorp) {
+		settings.setConquerableStations( response.getStations() );
 	}
-
-
-	/*
-
-	public static boolean load(Settings settings){
-		Log.info("Conquerable stations updating:");
-		if (settings.isUpdatable(settings.getConquerableStationsNextUpdate()) || settings.getConquerableStations().isEmpty()){
-			Parser stationParser = new Parser();
-			stationParser.setCachingEnabled(true);
-			Response stationResponse = null;
-			try {
-				stationResponse = stationParser.getStationList();
-				settings.setConquerableStationsNextUpdate(stationResponse.getCachedUntil());
-				if (!stationResponse.hasError()){
-					settings.setConquerableStations( stationResponse.getStations() );
-					
-				} else {
-					ApiError error = stationResponse.getError();
-					Log.info("	Conquerable stations update failed (API ERROR: code: "+error.getCode()+" :: "+error.getError()+")");
-				}
-			} catch (IOException ex) {
-				Log.info("	Conquerable stations update failed (NOT FOUND)");
-				return false;
-			} catch (SAXException ex) {
-				Log.error("	Conquerable stations update failed (PARSER ERROR)", ex);
-			}
-		}
-		Log.info("	Conquerable stations updated");
-		ConquerableStationsWriter.save(settings);
-		return true;
-	}
-	 * 
-	 */
 }

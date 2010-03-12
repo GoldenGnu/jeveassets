@@ -33,130 +33,49 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import org.xml.sax.SAXException;
 
 
 public class AssetsGetter extends AbstractApiGetter<Response> {
 
-	private Human human;
-	private List<ApiAsset> assets;
-	private List<ApiAsset> corpAssets;
-	
+	private Settings settings;
 
 	public AssetsGetter() {
-		
+		super("Assets", true, false);
 	}
 
-	public void load(Human human, boolean forceUpdate){
-		this.human = human;
-		Date nextUpdate = human.getAssetNextUpdate();
-		load(nextUpdate, forceUpdate, false, "Assets", human.getName());
-		if (human.isUpdateCorporationAssets()){
-			load(nextUpdate, forceUpdate, true, "Corporation assets", human.getCorporation()+" by "+human.getName());
-		}
+	public void load(UpdateTask updateTask, Settings settings) {
+		this.settings = settings;
+		super.load(updateTask, settings.isForceUpdate(), settings.getAccounts());
 	}
 
 	@Override
 	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
 		Parser parser = new Parser();
-		Response response = parser.getAssets(Human.getApiAuthorization(human), bCorp);
-		human.setAssetNextUpdate( response.getCachedUntil() );
-		return response;
+		return parser.getAssets(Human.getApiAuthorization(getHuman()), bCorp);
 	}
 
 	@Override
-	protected void ok(Response response, boolean bCorp) {
+	protected Date getNextUpdate() {
+		return getHuman().getAssetNextUpdate();
+	}
+
+	@Override
+	protected void setNextUpdate(Date nextUpdate) {
+		getHuman().setAssetNextUpdate(nextUpdate);
+	}
+
+	@Override
+	protected void setData(Response response, boolean bCorp) {
+		List<ApiAsset> apiAssets = new Vector<ApiAsset>(response.getAssets());
 		if (bCorp){
-			corpAssets = new Vector<ApiAsset>(response.getAssets());
+			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
 		} else {
-			assets = new Vector<ApiAsset>(response.getAssets());
+			getHuman().setAssets(ApiConverter.apiAsset(getHuman(), apiAssets, false, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
 		}
 	}
-
-	public List<ApiAsset> getAssets() {
-		return assets;
-	}
-
-	public List<ApiAsset> getCorpAssets() {
-		return corpAssets;
-	}
-
-	/*
-	 *
-	public static boolean load(SettingsInterface settings, Human human){
-		return load(settings, human, false);
-	}
-	
-	private static boolean load(SettingsInterface settings, Human human, boolean bCorp){
-		error = null;
-		if (settings.isUpdatable(human.getAssetNextUpdate()) || bCorp){
-			if (human.isUpdateCorporationAssets() && !bCorp){
-				load(settings, human, true);
-			}
-			Parser assetParser = new Parser();
-			Response assetResponse = null;
-			try {
-				assetResponse = assetParser.getAssets(Human.getApiAuthorization(human), bCorp);
-				human.setAssetNextUpdate( assetResponse.getCachedUntil() );
-				if (!assetResponse.hasError()){
-					List<ApiAsset> assets = new Vector<ApiAsset>(assetResponse.getAssets());
-					//overwrite assets (if we are parsing the corp asset or will not parse the corp assets)
-					if (bCorp || !human.isUpdateCorporationAssets()){
-						human.setAssets( ApiConverter.apiAsset(settings, human, assets, bCorp) );
-					} else { //Add to assets (if we just parsed the corp asset, so they are not overwriten)
-						human.getAssets().addAll( ApiConverter.apiAsset(settings, human, assets, bCorp) );
-					}
-					if (bCorp) {
-						Log.info("	Updated corporation assets for: "+human.getCorporation()+" by "+human.getName());
-					} else {
-						Log.info("	Updated assets for: "+human.getName());
-					}
-					return true;
-				} else {
-					ApiError apiError = assetResponse.getError();
-					error = apiError.getError();
-					//Not Director or CEO
-					if (apiError.getCode() == 209){
-						human.setUpdateCorporationAssets(false);
-						if (bCorp) {
-							Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
-						} else {
-							Log.info("	Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
-						}
-					}
-					if (bCorp) {
-						Log.warning("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
-					} else {
-						Log.warning("	Failed to update assets for: "+human.getName()+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
-					}
-				}
-			} catch (IOException ex) {
-				if (bCorp) {
-					Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT FOUND)");
-				} else {
-					Log.info("	Failed to update assets for: "+human.getName()+" (NOT FOUND)");
-				}
-			} catch (SAXException ex) {
-				if (bCorp) {
-					Log.error("Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (PARSER ERROR)", ex);
-				} else {
-					Log.error("Failed to update assets for: "+human.getName()+" (PARSER ERROR)", ex);
-				}
-			}
-		} else {
-			if (bCorp) {
-				Log.info("	Failed to update corporation assets for: "+human.getCorporation()+" by "+human.getName()+" (NOT ALLOWED YET)");
-			} else {
-				Log.info("	Failed to update assets for: "+human.getName()+" (NOT ALLOWED YET)");
-			}
-		}
-		return false;
-	}
-
-	public static String getError() {
-		return error;
-	}
-	 * 
-	 */
 }

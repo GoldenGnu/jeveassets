@@ -26,38 +26,27 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Date;
-import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
-import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class StatusPanel extends JProgramPanel implements ActionListener {
-
-	public final static String ACTION_TIMER = "ACTION_TIMER";
-
+public class StatusPanel extends JProgramPanel {
+	
 	//GUI
 	private JLabel jTotalValue;
 	private JLabel jCount;
 	private JLabel jAverage;
 	private JLabel jVolume;
-	private JLabel jAssetUpdate;
-	private JLabel jPriceDataUpdate;
 	private JLabel jEveTime;
-	private Timer timer;
+	private JLabel jUpdatable;
 	private JToolBar jToolBar;
 
 
@@ -75,27 +64,21 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 				BorderFactory.createMatteBorder(1, 0, 0, 0, this.getPanel().getBackground().darker()),
 				BorderFactory.createMatteBorder(1, 0, 0, 0, this.getPanel().getBackground().brighter())
 				));
-
 		addSpace(5);
 
-		jEveTime = createLabel(120, "Eve Server Time", ImageGetter.getIcon("eve.png"));
+		jUpdatable = addIcon(ImageGetter.getIcon("update.png"), "Updatable");
 
-		jPriceDataUpdate = createLabel(120, "Price data next update", ImageGetter.getIcon("price_data_update.png"));
+		jEveTime = createLabel("Eve Server Time", ImageGetter.getIcon("eve.png"));
 
-		jAssetUpdate = createLabel(120, "Assets next update", ImageGetter.getIcon("assets_update.png"));
+		jVolume = createLabel("Total volume of shown assets", ImageGetter.getIcon("volume.png"));
 
-		jVolume = createLabel(100, "Total volume of shown assets", ImageGetter.getIcon("volume.png"));
+		jCount = createLabel("Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
 
-		jCount = createLabel(100, "Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
+		jAverage = createLabel("Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
 
-		jAverage = createLabel(100, "Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
-
-		jTotalValue = createLabel(120, "Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
+		jTotalValue = createLabel("Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
 
 		addSpace(10);
-
-		timer = new Timer(1000, this);
-		timer.setActionCommand(ACTION_TIMER);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -105,51 +88,22 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 			layout.createSequentialGroup()
 				.addComponent(jToolBar, 25, 25, 25)
 		);
-		update();
+		setAverage(0);
+		setTotalValue(0);
+		setCount(0);
+		timerTicked(true);
 	}
 
-
-	public void updatePriceDataDate(){
-		Date d = program.getSettings().getPriceDataNextUpdate();
-		if (program.getSettings().isUpdatable(d)){
-			jPriceDataUpdate.setText("Now");
+	public void timerTicked(boolean updatable){
+		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow())+" GMT" );
+		jUpdatable.setEnabled(updatable);
+		if (updatable){
+			jUpdatable.setToolTipText("Updatable");
 		} else {
-			jPriceDataUpdate.setText(Formater.weekdayAndTime(d)+" GMT");
+			jUpdatable.setToolTipText("Not Updatable");
 		}
 	}
-	public void updateAssetDate(){
-		List<Account> accounts = program.getSettings().getAccounts();
-		Date nextUpdate = null;
-		for (int a = 0; a < accounts.size(); a++){
-			Account account = accounts.get(a);
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++){
-				Human human = humans.get(b);
-				if (human.isShowAssets()){
-					if (nextUpdate == null){
-						nextUpdate = human.getAssetNextUpdate();
-					}
-					if (human.getAssetNextUpdate().before(nextUpdate)){
-						nextUpdate = human.getAssetNextUpdate();
-					}
-				}
-			}
-		}
-		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (program.getSettings().isUpdatable(nextUpdate)){
-			jAssetUpdate.setText("Now");
-		} else {
-			jAssetUpdate.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
-		}
-	}
-	public void updateEveTime(){
-		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow()) );
-		updatePriceDataDate();
-		updateAssetDate();
-		if (!timer.isRunning()){
-			timer.start();
-		}
-	}
+	
 
 	public void setAverage(double n){
 		jAverage.setText(Formater.isk(n));
@@ -163,15 +117,7 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	public void setVolume(float n){
 		jVolume.setText(Formater.number(n));
 	}
-	private void update(){
-		updatePriceDataDate();
-		updateAssetDate();
-		setAverage(0);
-		setTotalValue(0);
-		setCount(0);
-		updateEveTime();
-	}
-	private void addIcon(Icon icon){
+	private JLabel addIcon(Icon icon, String toolTip){
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
 		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
@@ -179,13 +125,14 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 		jLabel.setPreferredSize( new Dimension(25, 25));
 		jLabel.setMaximumSize( new Dimension(25, 25));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
+		jLabel.setToolTipText(toolTip);
 		jToolBar.add(jLabel);
+		return jLabel;
 	}
-	private JLabel createLabel(int width, String toolTip, Icon icon){
-		addIcon(icon);
+	private JLabel createLabel(String toolTip, Icon icon){
+		addIcon(icon, toolTip);
 		JLabel jLabel = new JLabel();
 		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
-		jLabel.setMaximumSize( new Dimension(width, 25));
 		jLabel.setToolTipText(toolTip);
 		jLabel.setHorizontalAlignment(JLabel.LEFT);
 		jToolBar.add(jLabel);
@@ -203,12 +150,5 @@ public class StatusPanel extends JProgramPanel implements ActionListener {
 	@Override
 	protected JProgramPanel getThis(){
 		return this;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_TIMER.equals(e.getActionCommand())){
-			updateEveTime();
-		}
 	}
 }

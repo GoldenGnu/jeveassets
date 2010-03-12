@@ -36,6 +36,7 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -51,12 +52,12 @@ import uk.me.candle.eve.pricing.options.PricingType;
 public class PriceDataGetter implements PricingListener {
 
 	private Settings settings;
-	private int progress;
-	private UpdateTask task;
+	private UpdateTask updateTask;
 	private boolean updated;
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 60*60*1000l; // 1 hour
 	private boolean enableCacheTimers = true;
+	private Map<Integer, PriceData> priceDataList;
 
 	final PriceDataGetter lock = this;
 
@@ -82,9 +83,8 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public boolean updatePriceData(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
-		this.task = task;
+		this.updateTask = task;
 		this.enableCacheTimers = enableCacheTimers;
-		if (task != null) progress = task.getProgress();
 		updated = false;
 
 		if (forceUpdate){
@@ -94,15 +94,15 @@ public class PriceDataGetter implements PricingListener {
 		} else {
 			Log.info("Price data loading (updating as needed):");
 		}
-		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
-		Pricing pricing = PricingFactory.getPricing();
-		pricing.addPricingListener(this);
-		
-		//Reset price data
-		settings.setPriceData( new HashMap<Integer, PriceData>() );
+		//Create new price data map (Will only be used if task complete)
+		priceDataList = new HashMap<Integer, PriceData>();
 
 		//Get all price ids
 		List<Integer> ids = settings.getUniqueIds();
+
+		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
+		Pricing pricing = PricingFactory.getPricing();
+		pricing.addPricingListener(this);
 
 		//Reset cache timers...
 		if (forceUpdate){
@@ -110,20 +110,27 @@ public class PriceDataGetter implements PricingListener {
 				pricing.setPrice(ids.get(a), -1.0);
 			}
 		}
+		
 		//Load price data (Update as needed)
 		for (int a = 0; a < ids.size(); a++){
 			createPriceData(ids.get(a), pricing);
 		}
 		//Wait to complete
-		while (settings.getUniqueIds().size() !=  settings.getPriceData().size()){
+		//while (settings.getUniqueIds().size() !=  settings.getPriceData().size()){
+		while (settings.getUniqueIds().size() >  priceDataList.size()){
 			try {
 				synchronized(this) {
                     wait();
                 }
 			} catch (InterruptedException ex) {
-				Log.error("Failed to update price", ex);
+				Log.info("Failed to update price");
+				this.updateTask.addError("Price data (Cancelled)");
+				this.updateTask.setTaskProgress(100, 100, 0, 100);
+				this.updateTask = null;
+				return false;
 			}
 		}
+		settings.setPriceData( priceDataList );
 		if (!enableCacheTimers && updated){
 			Log.info("	Price data loaded (updated as needed)");
 		} else if (!enableCacheTimers) {
@@ -182,14 +189,13 @@ public class PriceDataGetter implements PricingListener {
 			priceData.setSellMin(sellMin);
 			priceData.setSellMedian(sellMedian);
 			priceData.setBuyMax(buyMax);
-			settings.getPriceData().put(typeID, priceData);
+			priceDataList.put(typeID, priceData);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate ){
 			nextUpdate = nextUpdateTemp;
 		}
-
-		if (task != null) task.setTaskProgress(settings.getUniqueIds().size(), settings.getPriceData().size(), progress, 100);
+		if (updateTask != null) updateTask.setTaskProgress(settings.getUniqueIds().size(), priceDataList.size(), 0, 100);
 	}
 
 	class EveAssetPricingOptions implements PricingOptions {

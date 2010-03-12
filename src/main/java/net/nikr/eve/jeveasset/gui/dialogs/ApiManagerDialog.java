@@ -333,11 +333,9 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	protected void save() {
 		if (!shownAssetsCopy.equals(shownAssets)){
 			program.updateEventList();
-			program.charactersChanged();
 		}
 		if (!corpAssetsCopy.equals(corpAssets)){
 			program.updateEventList();
-			program.charactersChanged();
 			JOptionPane.showMessageDialog(program.getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
@@ -530,7 +528,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				}
 				getDialog().setEnabled(true);
 				updateTable();
-				program.charactersChanged();
 				JOptionPane.showMessageDialog(dialog, "API Key updated", "Update API Key", JOptionPane.PLAIN_MESSAGE);
 			}
 		}
@@ -555,12 +552,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				apiAddDialog.setVisible(false);
 				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nPlease connect to the internet and try again...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
 			}
-			if (checkHumanTask.result == 30 && checkHumanTask.error != null && checkHumanTask.done){
-				checkHumanTask.done = false;
-				apiAddDialog.setVisible(false);
-				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\n"+checkHumanTask.error, "Add API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 30 && checkHumanTask.error == null &&checkHumanTask.done){
+			if (checkHumanTask.result == 30 && checkHumanTask.hasError &&checkHumanTask.done){
 				checkHumanTask.done = false;
 				apiAddDialog.setVisible(false);
 				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Add API Key", JOptionPane.PLAIN_MESSAGE);
@@ -569,7 +561,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				checkHumanTask.done = false;
 				program.getSettings().getAccounts().add(checkHumanTask.account);
 				updateTable();
-				program.charactersChanged();
 				apiAddDialog.setVisible(false);
 				JOptionPane.showMessageDialog(dialog, "API Key added\r\nTo update assets select:\r\nOptions > Update Assets", "Add API Key", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -585,7 +576,8 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		private Throwable throwable = null;
 		private int userID;
 		private String apiKey;
-		private String error = null;
+		//private String error = null;
+		private boolean hasError = false;
 		private HumansGetter humansGetter = new HumansGetter();
 
 		public CheckHumanTask(int userID, String apiKey) {
@@ -608,10 +600,10 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					result = 20;
 					return null;
 				}
-				humansGetter.load(account, true);
-				if (!humansGetter.isCharacterUpdated()){
+				humansGetter.load(null, true, account);
+				if (humansGetter.hasError()){
+					hasError = true;
 					result = 30;
-					error = humansGetter.getError();
 					return null;
 				}
 				result = 100;

@@ -90,6 +90,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
+			writeAssets(xmldoc, childNode, human.getAssetsCorporation());
 			writeAccountBalances(xmldoc, node, human.getAccountBalances(), false);
 			writeAccountBalances(xmldoc, node, human.getAccountBalancesCorporation(), true);
 			writeMarketOrders(xmldoc, node, human.getMarketOrders(), false);

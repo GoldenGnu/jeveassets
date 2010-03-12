@@ -37,10 +37,12 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
 public class Menu extends JMenuBar {
+	
 	private static final long serialVersionUID = 1l;
 
-	JMenu jColumnMenu;
-	Program program;
+	private JMenu jColumnMenu;
+	private JMenuItem jUpdatable;
+	private Program program;
 
 	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
@@ -55,10 +57,11 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
 	public final static String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
 	public final static String ACTION_OPEN_README = "ACTION_OPEN_FAQ";
-	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
-	public final static String ACTION_UPDATE_ASSETS = "ACTION_UPDATE_ASSETS";
-	public final static String ACTION_UPDATE_PRICES = "ACTION_UPDATE_PRICES";
 	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
+	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
+	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
+	
+	
 
 	public Menu(Program program) {
 		this.program = program;
@@ -127,7 +130,7 @@ public class Menu extends JMenuBar {
 
 		menuItem = new JMenuItem("Routing");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
+		menuItem.setIcon( ImageGetter.getIcon("routing.png") );
 		menuItem.setActionCommand(ACTION_OPEN_ROUTING);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
@@ -164,22 +167,15 @@ public class Menu extends JMenuBar {
 		menu.add(jColumnMenu);
 
 		updateColumnSelectionMenu();
-
+		
 		menu.addSeparator();
 
-		menuItem = new JMenuItem("Update Price Data");
-		menuItem.setIcon( ImageGetter.getIcon("price_data_update.png") );
-		menuItem.setActionCommand(ACTION_UPDATE_PRICES);
-		menuItem.addActionListener(program);
+		jUpdatable = new JMenuItem("Update");
+		jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
+		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
+		jUpdatable.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem("Update Assets");
-		menuItem.setIcon( ImageGetter.getIcon("assets_update.png") );
-		menuItem.setActionCommand(ACTION_UPDATE_ASSETS);
-		menuItem.addActionListener(program);
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menu.add(menuItem);
+		menu.add(jUpdatable);
 		
 		menu = new JMenu("Help");
 		//menu.setActionCommand("Something");
@@ -269,4 +265,13 @@ public class Menu extends JMenuBar {
 		}
 	}
 
+	public void timerTicked(boolean updatable){
+		if (updatable){
+			jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
+			jUpdatable.setToolTipText("Updatable");
+		} else {
+			jUpdatable.setIcon( jUpdatable.getDisabledIcon() );
+			jUpdatable.setToolTipText("Not Updatable");
+		}
+	}
 }

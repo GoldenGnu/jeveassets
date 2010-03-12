@@ -29,79 +29,72 @@ import com.beimin.eveapi.character.list.ApiCharacter;
 import com.beimin.eveapi.character.list.Parser;
 import com.beimin.eveapi.character.list.Response;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
-import net.nikr.log.Log;
 import org.xml.sax.SAXException;
 
 
 public class HumansGetter extends AbstractApiGetter<Response> {
 
-	private AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
+	private AccountBalanceGetter accountBalanceGetter;
 
-	private Account account;
-	private boolean forceUpdate;
-
-	public void load(List<Account> accounts, boolean forceUpdate){
-		Log.info("Characters updating:");
-		boolean updated = false;
-		boolean updateFailed = false;
-		for (int a = 0; a < accounts.size(); a++){
-			load( accounts.get(a), forceUpdate);
-			if (isCharacterUpdated()){
-				updated = true;
-			} else {
-				updateFailed = true;
-			}
-		}
-		if (updated && !updateFailed){
-			Log.info("	Characters updated (ALL)");
-		} else if(updated && updateFailed) {
-			Log.info("	Characters updated (SOME)");
-		} else {
-			Log.info("	Characters not updated (NONE)");
-		}
+	public HumansGetter() {
+		super("Accounts", false, true);
+		accountBalanceGetter = new AccountBalanceGetter();
 	}
 
-	public void load(Account account, boolean forceUpdate){
-		this.account = account;
-		this.forceUpdate = forceUpdate;
-		load(account.getCharactersNextUpdate(), forceUpdate, false, "Characters", "account "+account.getUserID());
+	@Override
+	public void load(UpdateTask updateTask, boolean forceUpdate, Account account) {
+		super.load(updateTask, forceUpdate, account);
+	}
+
+	@Override
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+		super.load(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
 		Parser parser = new Parser();
-		Response response = parser.getEveCharacters(Human.getApiAuthorization(account));
-		account.setCharactersNextUpdate(response.getCachedUntil());
-		return response;
+		return parser.getEveCharacters(Human.getApiAuthorization(getAccount()));
 	}
 
 	@Override
-	protected void ok(Response response, boolean bCorp) {
+	protected Date getNextUpdate() {
+		return getAccount().getCharactersNextUpdate();
+	}
+
+	@Override
+	protected void setNextUpdate(Date nextUpdate) {
+		getAccount().setCharactersNextUpdate(nextUpdate);
+	}
+
+	@Override
+	protected void setData(Response response, boolean bCorp) {
 		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
 		for (int a = 0; a < characters.size(); a++){
 			ApiCharacter apiCharacter = characters.get(a);
-			Human human = new Human(
-									account
+			Human human = new Human(getAccount()
 									,apiCharacter.getName()
 									,apiCharacter.getCharacterID()
 									,apiCharacter.getCorporationName()
 									);
 
-			if (!account.getHumans().contains(human)){ //Add new account
-				if (forceUpdate){
-					accountBalanceGetter.load(human, forceUpdate);
-					if (!accountBalanceGetter.isCharacterUpdated()){
+			if (!getAccount().getHumans().contains(human)){ //Add new account
+				if (isForceUpdate()){
+					accountBalanceGetter.load(null, true, human);
+					if (accountBalanceGetter.hasError()){
 						return;
 					}
 				}
-				account.getHumans().add(human);
+				getAccount().getHumans().add(human);
 			} else { //Update existing account
-				List<Human> humans = account.getHumans();
+				List<Human> humans = getAccount().getHumans();
 				for (int b = 0; b < humans.size(); b++){
 					Human currentHuman = humans.get(b);
 					if (currentHuman.getCharacterID() == human.getCharacterID()){
@@ -112,97 +105,4 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 			}
 		}
 	}
-
-	/*
-	private static String error;
-
-	public static void load(SettingsInterface settings, List<Account> accounts){
-		Log.info("Characters updating:");
-		boolean updated = false;
-		boolean updateFailed = false;
-		for (int a = 0; a < accounts.size(); a++){
-			Account account = accounts.get(a);
-			boolean returned = load(settings, account, false);
-			if (returned){
-				updated = true;
-			} else {
-				updateFailed = true;
-			}
-		}
-		if (updated && !updateFailed){
-			Log.info("	Characters updated (ALL)");
-		} else if(updated && updateFailed) {
-			Log.info("	Characters updated (SOME)");
-		} else {
-			Log.info("	Characters not updated (NONE)");
-		}
-	}
-
-	public static boolean load(SettingsInterface settings, Account account, boolean apiKeyCheck){
-		if (settings.isUpdatable(account.getCharactersNextUpdate()) || apiKeyCheck){
-			Parser characterListParser = new Parser();
-			characterListParser.setCachingEnabled(true);
-			Response characterListResponse = null;
-			try {
-				characterListResponse = characterListParser.getEveCharacters(Human.getApiAuthorization(account));
-				account.setCharactersNextUpdate(characterListResponse.getCachedUntil());
-				if (!characterListResponse.hasError()){
-					List<ApiCharacter> characters = new Vector<ApiCharacter>(characterListResponse.getEveCharacters());
-					for (int a = 0; a < characters.size(); a++){
-						ApiCharacter eveCharacter = characters.get(a);
-						Log.info("	Character updated for: "+eveCharacter.getName()+" ("+eveCharacter.getCorporationName()+")");
-						Human human = new Human(
-												account
-												,eveCharacter.getName()
-												,eveCharacter.getCharacterID()
-												,eveCharacter.getCorporationName()
-												);
-						
-						if (!account.getHumans().contains(human)){ //Add new account
-							AccountBalanceGetter.load(human, apiKeyCheck);
-							if (apiKeyCheck){
-								if (!){
-									return false;
-								}
-							}
-							account.getHumans().add(human);
-						} else { //Update existing account
-							List<Human> humans = account.getHumans();
-							for (int b = 0; b < humans.size(); b++){
-								Human currentHuman = humans.get(b);
-								if (currentHuman.getCharacterID() == human.getCharacterID()){
-									currentHuman.setName(human.getName());
-									currentHuman.setCorporation(human.getCorporation());
-								}
-							}
-						}
-					}
-				} else {
-					ApiError apiError = characterListResponse.getError();
-					error = apiError.getError();
-					if (apiError.getCode() == 516 || apiError.getCode() == 203){
-						Log.info("Characters update failed (Not a valid API Key)");
-						return false;
-					}
-					Log.info("	Characters update failed (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
-					return false;
-				}
-			} catch (IOException ex) {
-				Log.info("Characters update failed");
-				return false;
-			} catch (SAXException ex) {
-				Log.error("Characters update failed (PARSER ERROR)", ex);
-			}
-			return true;
-		} else {
-			return false;
-		}
-		
-	}
-
-	public static String getError() {
-		return error;
-	}
-	 *
-	 */
 }
