@@ -239,6 +239,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private void setAlgorithmDescriptionText() {
 		RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) algorithm.getSelectedItem());
 		description.setText(rac.getBasicDescription() + "\n\n" + rac.getTechnicalDescription());
+		description.setCaretPosition(0); //This should work
 //		description.scrollRectToVisible(new Rectangle(1,1,1,1)); This has no effect. WHY?!
 	}
 
