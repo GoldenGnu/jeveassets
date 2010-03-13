@@ -193,7 +193,10 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			if (profile != null && profile.isActiveProfile()){
 				showMessageDialog("Delete Profile", "You can not delete the active profile");
 			}
-			if (profile != null && !profile.isActiveProfile()){
+			if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()){
+				showMessageDialog("Delete Profile", "You can not delete the default profile");
+			}
+			if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()){
 				boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
 				if (value){
 					program.getSettings().getProfiles().remove(profile);
