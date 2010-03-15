@@ -141,7 +141,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		if (filterName == null) return;
 		List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get(filterName);
 		String s = (String)JOptionPane.showInputDialog(
-					program.getFrame(),
+					program.getMainWindow().getFrame(),
 					"Enter filter name:",
 					"Rename Filter",
 					JOptionPane.PLAIN_MESSAGE,
@@ -157,7 +157,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 			return;
 		}
 		if (program.getSettings().getAssetFilters().containsKey(s) && !s.equals(filterName)){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.NO_OPTION){
 				bOverwrite = false;
 			}
@@ -173,7 +173,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private void deleteFilter(){
 		String filterName = getSelectedString();
 		if (filterName == null) return;
-		int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Delete filter:\r\n\""+filterName+"\"?", "Delete Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete filter:\r\n\""+filterName+"\"?", "Delete Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (nReturn == JOptionPane.YES_OPTION){
 			program.getSettings().getAssetFilters().remove(filterName);
 			program.filtersChanged();

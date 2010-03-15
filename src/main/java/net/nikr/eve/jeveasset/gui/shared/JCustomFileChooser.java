@@ -60,7 +60,7 @@ public class JCustomFileChooser extends JFileChooser {
 		}
 		if (selectedFile != null){
 			if (selectedFile.exists()){
-				int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Overwrite?", "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (nReturn == JOptionPane.NO_OPTION){
 					return;
 				}

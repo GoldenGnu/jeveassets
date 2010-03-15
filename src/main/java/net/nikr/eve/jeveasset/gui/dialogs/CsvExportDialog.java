@@ -386,7 +386,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		String lang = (String) jDecimalSeparator.getSelectedItem();
 
 		if (lang.equals("Comma") && fieldDelimiter == ','){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(),
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(),
 					"Both the field terminator and the decimal separator is set to comma\r\n" +
 					"With those settings it could be difficult to import the CSV file in other programs\r\n" +
 					"Continue anyway?", "CSV Export", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);

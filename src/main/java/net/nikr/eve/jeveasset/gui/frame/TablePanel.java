@@ -330,7 +330,7 @@ public class TablePanel extends JProgramPanel
 		column.setPreferredWidth(maxWidth+4);
 	}
 	private void updateColumnMenus(){
-		program.getFrame().getMenu().updateColumnSelectionMenu();
+		program.getMainWindow().getMenu().updateColumnSelectionMenu();
 		updateColumnPopupMenu();
 	}
 

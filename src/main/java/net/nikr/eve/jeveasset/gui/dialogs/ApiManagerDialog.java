@@ -336,7 +336,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 		if (!corpAssetsCopy.equals(corpAssets)){
 			program.updateEventList();
-			JOptionPane.showMessageDialog(program.getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
 	}
@@ -388,7 +388,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			int selectedRow = jAccountTable.getSelectedRow();
 			if (selectedRow == -1){
-				JOptionPane.showMessageDialog(program.getFrame(), "Nothing to remove...", "Remove Api Key", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Nothing to remove...", "Remove Api Key", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
 			int userID = Integer.parseInt((String)accountTableModel.getValueAt(selectedRow, 0));
@@ -418,7 +418,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				}
 			}
 
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Remove API Key: "+userID+"?\r\n"+users, "Remove Api Key", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Remove API Key: "+userID+"?\r\n"+users, "Remove Api Key", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
 				accountTableModel.removeRow(selectedRow);
 				program.getSettings().getAccounts().remove( tempAccount );

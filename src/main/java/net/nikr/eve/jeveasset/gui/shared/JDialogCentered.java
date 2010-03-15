@@ -70,13 +70,13 @@ public abstract class JDialogCentered implements WindowListener {
 
 
 	public JDialogCentered(Program program, String title) {
-		this(program, title, program.getFrame(), null);
+		this(program, title, program.getMainWindow().getFrame(), null);
 	}
 	public JDialogCentered(Program program, String title, JDialogCentered jDialogCentered) {
 		this(program, title, jDialogCentered.getDialog(), null);
 	}
 	public JDialogCentered(Program program, String title, Image image) {
-		this(program, title, program.getFrame(), image);
+		this(program, title, program.getMainWindow().getFrame(), image);
 	}
 	public JDialogCentered(Program program, String title, Window parent) {
 		this(program, title, parent, null);

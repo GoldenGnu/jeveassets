@@ -31,7 +31,7 @@ import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Desktop;
 import java.io.IOException;
-import net.nikr.eve.jeveasset.gui.frame.Frame;
+import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -87,7 +87,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
 
 	//GUI
-	private Frame frame;
+	private MainWindow mainWindow;
 	
 	//Dialogs
 	private ApiManagerDialog apiManagerDialog;
@@ -161,7 +161,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		SplashUpdater.setText("Loading GUI");
 		Log.info("GUI Loading:");
 		Log.info("	Frame");
-		frame = new Frame(this);
+		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(80);
 		Log.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
@@ -212,12 +212,12 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		updateEventList();
 		SplashUpdater.setProgress(100);
 		Log.info("Showing GUI");
-		frame.setVisible(true);
+		mainWindow.show();
 		//Start timer
 		timerTicked();
 		if(DEBUG){
 			Log.info("Show Debug Warning");
-			JOptionPane.showMessageDialog(frame, "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		if (settings.getAccounts().isEmpty()){
 			apiManagerDialog.setVisible(true);
@@ -251,7 +251,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			timer.start();
 		}
 		this.getStatusPanel().timerTicked(updatable.isUpdatable());
-		this.getFrame().getMenu().timerTicked(updatable.isUpdatable());
+		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
 	}
 	
 	public void updateEventList(){
@@ -264,6 +264,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	}
 	
 	public void exit(){
+		mainWindow.updateSettings();
 		settings.saveSettings();
 		Log.info("Exiting...");
 		System.exit(0);
@@ -271,8 +272,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	public Settings getSettings(){
 		return settings;
 	}
-	public Frame getFrame(){
-		return frame;
+	public MainWindow getMainWindow(){
+		return mainWindow;
 	}
 	public FiltersManagerDialog getFiltersManagerDialog(){
 		return filtersManagerDialog;
@@ -342,7 +343,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
 			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
-				JOptionPane.showMessageDialog(frame, 
+				JOptionPane.showMessageDialog(mainWindow.getFrame(),
 						"You can not set price for Blueprint Copies.\r\n" +
 						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
 				return;
@@ -356,7 +357,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 				try {
 					desktop.open(new File(Settings.getPathReadme()));
 				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(frame, "Could not open readme.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open readme.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 		}
@@ -366,7 +367,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 				try {
 					desktop.open(new File(Settings.getPathLicense()));
 				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(frame, "Could not open license.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open license.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 		}
@@ -376,7 +377,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 				try {
 					desktop.open(new File(Settings.getPathCredits()));
 				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(frame, "Could not open credits.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open credits.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 		}

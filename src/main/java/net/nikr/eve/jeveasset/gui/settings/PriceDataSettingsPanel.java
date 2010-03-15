@@ -130,7 +130,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		Date date = program.getSettings().getPriceDataNextUpdate();
 		String nextUpdate = Formater.weekdayAndTime(date)+" GMT";
 		if (program.getSettings().isUpdatable(date)){
-			int nReturn = JOptionPane.showConfirmDialog(program.getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
 				//FIXME find a solution to update price data here
 				//program.updatePriceData();
@@ -138,7 +138,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 			}
 			nextUpdate = "Now";
 		}
-		JOptionPane.showMessageDialog(program.getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	@Override

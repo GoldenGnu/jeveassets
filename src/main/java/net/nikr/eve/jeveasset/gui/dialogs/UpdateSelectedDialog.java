@@ -70,7 +70,7 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 		this.program = program;
 		this.updateTasks = updateTasks;
 
-		jWindow = new JWindow(program.getFrame());
+		jWindow = new JWindow(program.getMainWindow().getFrame());
 
 		jWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -146,7 +146,7 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 	}
 
 	private void setVisible(boolean b) {
-		program.getFrame().setEnabled(!b);
+		program.getMainWindow().setEnabled(!b);
 		if (b){
 			//Get the parent size
 			Dimension screenSize = jWindow.getParent().getSize();

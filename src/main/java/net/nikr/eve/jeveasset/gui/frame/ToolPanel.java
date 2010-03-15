@@ -239,7 +239,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 	private void saveFilter(){
 		//Tell there is nothing to save
 		if (getAssetFilters().isEmpty()){
-			JOptionPane.showMessageDialog(program.getFrame(), "Nothing to save...", "Save Filter", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Nothing to save...", "Save Filter", JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		//Ask for filter name

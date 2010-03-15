@@ -152,6 +152,22 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		);
 	}
 
+	private void setValuesFromSettings(){
+		jWidth.setText( String.valueOf(program.getMainWindow().getFrame().getSize().width));
+		jHeight.setText( String.valueOf(program.getMainWindow().getFrame().getSize().height));
+		jX.setText( String.valueOf(program.getMainWindow().getFrame().getLocation().x));
+		jY.setText( String.valueOf(program.getMainWindow().getFrame().getLocation().y));
+		jMaximized.setSelected( program.getMainWindow().getFrame().getState() == JFrame.MAXIMIZED_BOTH );
+	}
+
+	private void setValuesFromWindow(){
+		jWidth.setText( String.valueOf(program.getSettings().getWindowSize().width));
+		jHeight.setText( String.valueOf(program.getSettings().getWindowSize().height));
+		jX.setText( String.valueOf(program.getSettings().getWindowLocation().x));
+		jY.setText( String.valueOf(program.getSettings().getWindowLocation().y));
+		jMaximized.setSelected( program.getSettings().isWindowMaximized() );
+	}
+
 	private int validate(String s){
 		int n;
 		try {
@@ -184,34 +200,33 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			boolean maximized = jMaximized.isSelected();
 			Dimension d = new Dimension(width, height);
 			Point p = new Point(x, y);
-
-			program.getSettings().setWindowSize( d );
-			program.getSettings().setWindowLocation( p );
-			program.getSettings().setWindowMaximized(maximized);
+			boolean first = program.getSettings().isWindowAutoSave();
 			program.getSettings().setWindowAutoSave(false);
 
-			program.getFrame().setSize( d );
-			program.getFrame().setLocation( p );
-			if (maximized){
-				program.getFrame().setExtendedState(JFrame.MAXIMIZED_BOTH);
-			} else {
-				program.getFrame().setExtendedState(JFrame.NORMAL);
+			//if changed...
+			if ((program.getSettings().getWindowSize().height != d.height) 
+					|| (program.getSettings().getWindowSize().width != d.width)
+					|| (program.getSettings().getWindowLocation().x != p.x)
+					|| (program.getSettings().getWindowLocation().y != p.y)
+					|| (program.getSettings().isWindowMaximized() != maximized)
+					|| first){
+				program.getSettings().setWindowSize( d );
+				program.getSettings().setWindowLocation( p );
+				program.getSettings().setWindowMaximized(maximized);
+				program.getMainWindow().setSizeAndLocation(d, p, maximized);
 			}
 		}
 	}
 
 	@Override
 	public void load() {
-		jWidth.setText( String.valueOf(program.getSettings().getWindowSize().width));
-		jHeight.setText( String.valueOf(program.getSettings().getWindowSize().height));
-		jX.setText( String.valueOf(program.getSettings().getWindowLocation().x));
-		jY.setText( String.valueOf(program.getSettings().getWindowLocation().y));
-		jMaximized.setSelected( program.getSettings().isWindowMaximized() );
 		if (program.getSettings().isWindowAutoSave()){
 			jAutoSave.setSelected(true);
+			setValuesFromSettings();
 			setInputEnabled(false);
 		} else {
 			jFixed.setSelected(true);
+			setValuesFromWindow();
 			setInputEnabled(true);
 		}
 	}
