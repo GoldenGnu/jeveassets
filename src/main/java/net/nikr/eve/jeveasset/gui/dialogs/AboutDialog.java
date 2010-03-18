@@ -86,6 +86,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (csv export)<br> "
 				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (parsing eve-online api)<br> "
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit tesing)<br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">OSXAdapter</a> (native mac os x support)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (logging)<br>"

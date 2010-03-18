@@ -25,6 +25,7 @@
 
 package net.nikr.eve.jeveasset;
 
+import apple.dts.samplecode.osxadapter.OSXAdapter;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;
@@ -72,7 +73,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
-public class Program implements ActionListener, Listener<EveAsset> {
+public class Program implements ActionListener, Listener<EveAsset>{
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV] [BUILD #n];
 	public static final String PROGRAM_VERSION = "1.3.0";
@@ -210,11 +211,13 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
 		updateEventList();
+		macOsxCode();
 		SplashUpdater.setProgress(100);
 		Log.info("Showing GUI");
 		mainWindow.show();
 		//Start timer
 		timerTicked();
+
 		if(DEBUG){
 			Log.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
@@ -262,13 +265,41 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
 	}
-	
-	public void exit(){
+
+	public void saveSettings(){
+		Log.info("Saving...");
 		mainWindow.updateSettings();
 		settings.saveSettings();
+	}
+	
+	public void exit(){
+		saveSettings();
 		Log.info("Exiting...");
 		System.exit(0);
 	}
+
+	public void showAbout(){
+		aboutDialog.setVisible(true);
+	}
+
+	public void showSettings(){
+		settingsDialog.setVisible(true);
+	}
+
+	private void macOsxCode(){
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {
+			try {
+				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
+				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[])null));
+				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[])null));
+			} catch (NoSuchMethodException ex) {
+				Log.error("NoSuchMethodException: "+ex.getMessage(), ex);
+			} catch (SecurityException ex) {
+				Log.error("SecurityException: "+ex.getMessage(), ex);
+			}
+		}
+	}
+
 	public Settings getSettings(){
 		return settings;
 	}
@@ -305,7 +336,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			apiManagerDialog.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
-			aboutDialog.setVisible(true);
+			showAbout();
 		}
 		if (Menu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			valuesDialog.setVisible(true);
@@ -335,7 +366,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			profileDialog.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
-			settingsDialog.setVisible(true);
+			showSettings();
 		}
 		if (Menu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);

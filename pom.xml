@@ -147,6 +147,11 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
+			<groupId>apple.dts.samplecode</groupId>
+			<artifactId>osxadapter</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
