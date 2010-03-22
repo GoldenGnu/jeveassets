@@ -275,9 +275,21 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 	}
 
+	private void enableAll(boolean b){
+		jRemove.setEnabled(b);
+		jEdit.setEnabled(b);
+		jAdd.setEnabled(b);
+		jAssets.setEnabled(b);
+		jCorporation.setEnabled(b);
+		jDone.setEnabled(b);
+		jHumanTable.setEnabled(b);
+		jAccountTable.setEnabled(b);
+
+	}
+
 	public void saveApiKey(){
 		checkHumanTask = new CheckHumanTask(apiAddDialog.getUserId(), apiAddDialog.getApiKey());
-		checkHumanTask.addPropertyChangeListener( new addApiKey());
+		checkHumanTask.addPropertyChangeListener( new AddApiKey());
 		checkHumanTask.execute();
 	}
 
@@ -336,7 +348,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 		if (!corpAssetsCopy.equals(corpAssets)){
 			program.updateEventList();
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update Assets", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
 	}
@@ -379,9 +391,9 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			if (newApiKey == null){ //Cancel - do nothing
 				return;
 			}
-			this.getDialog().setEnabled(false);
+			enableAll(false);
 			checkHumanTask = new CheckHumanTask(userID, newApiKey);
-			checkHumanTask.addPropertyChangeListener( new updateApiKey() );
+			checkHumanTask.addPropertyChangeListener( new UpdateApiKey() );
 			checkHumanTask.execute();
 			
 		}
@@ -492,77 +504,70 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 	}
 
-	class updateApiKey implements PropertyChangeListener{
+	class UpdateApiKey implements PropertyChangeListener{
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			apiAddDialog.setEnabledAll(false);
-
 			if (checkHumanTask.throwable != null){
 				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
 			}
-			if (checkHumanTask.result == 10 && checkHumanTask.done){
+			if (checkHumanTask.done){
 				checkHumanTask.done = false;
-				getDialog().setEnabled(true);
-				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nThe API Key already exist...", "Update API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 20 && checkHumanTask.done){
-				checkHumanTask.done = false;
-				getDialog().setEnabled(true);
-				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nPlease connect to the internet and try again...", "Update API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 30 && checkHumanTask.done){
-				checkHumanTask.done = false;
-				getDialog().setEnabled(true);
-				JOptionPane.showMessageDialog(dialog, "Could not update API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Update API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 100 && checkHumanTask.done){
-				checkHumanTask.done = false;
-				List<Account> accounts = program.getSettings().getAccounts();
-				for (int a = 0; a < accounts.size(); a++){
-					Account account = accounts.get(a);
-					if (account.getUserID() == checkHumanTask.userID){
-						account.setApiKey(checkHumanTask.apiKey);
-						break;
-					}
+				if (checkHumanTask.result == 10){
+					JOptionPane.showMessageDialog(dialog, "API Key already exist", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
 				}
-				getDialog().setEnabled(true);
-				updateTable();
-				JOptionPane.showMessageDialog(dialog, "API Key updated", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+				if (checkHumanTask.result == 20){
+					JOptionPane.showMessageDialog(dialog, "Please connect to the internet and try again.", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
+				}
+				if (checkHumanTask.result == 30){
+					JOptionPane.showMessageDialog(dialog, "The entered api key is not valid.", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
+				}
+				if (checkHumanTask.result == 100){
+					List<Account> accounts = program.getSettings().getAccounts();
+					for (int a = 0; a < accounts.size(); a++){
+						Account account = accounts.get(a);
+						if (account.getUserID() == checkHumanTask.userID){
+							account.setApiKey(checkHumanTask.apiKey);
+							break;
+						}
+					}
+					updateTable();
+					JOptionPane.showMessageDialog(dialog, "API Key updated", "Update API Key", JOptionPane.PLAIN_MESSAGE);
+				}
+				enableAll(true);
 			}
 		}
 
 	}
 
-	class addApiKey implements PropertyChangeListener{
+	class AddApiKey implements PropertyChangeListener{
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			apiAddDialog.setEnabledAll(false);
 			if (checkHumanTask.throwable != null){
 				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
 			}
-			if (checkHumanTask.result == 10 && checkHumanTask.done){
+			if (checkHumanTask.done){
 				checkHumanTask.done = false;
-				apiAddDialog.setVisible(false);
-				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe API Key already exist...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 20 && checkHumanTask.done){
-				checkHumanTask.done = false;
-				apiAddDialog.setVisible(false);
-				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nPlease connect to the internet and try again...", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 30 && checkHumanTask.hasError &&checkHumanTask.done){
-				checkHumanTask.done = false;
-				apiAddDialog.setVisible(false);
-				JOptionPane.showMessageDialog(dialog, "Could not add API Key.\r\nThe entered API Key is not a valid Full Access API Key", "Add API Key", JOptionPane.PLAIN_MESSAGE);
-			}
-			if (checkHumanTask.result == 100 && checkHumanTask.done){
-				checkHumanTask.done = false;
-				program.getSettings().getAccounts().add(checkHumanTask.account);
-				updateTable();
-				apiAddDialog.setVisible(false);
-				JOptionPane.showMessageDialog(dialog, "API Key added\r\nTo update assets select:\r\nOptions > Update Assets", "Add API Key", JOptionPane.PLAIN_MESSAGE);
+				if (checkHumanTask.result == 10){
+					JOptionPane.showMessageDialog(dialog, "API Key already added", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
+					apiAddDialog.setEnabledAll(true);
+				}
+				if (checkHumanTask.result == 20){
+					JOptionPane.showMessageDialog(dialog, "Please connect to the internet and try again.", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
+					apiAddDialog.setEnabledAll(true);
+				}
+				if (checkHumanTask.result == 30){
+					JOptionPane.showMessageDialog(dialog, "The entered api key is not valid.", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
+					apiAddDialog.setEnabledAll(true);
+				}
+				if (checkHumanTask.result == 100){
+					program.getSettings().getAccounts().add(checkHumanTask.account);
+					updateTable();
+					apiAddDialog.setVisible(false);
+					JOptionPane.showMessageDialog(dialog, "API Key Added.\r\n\r\nTo update assets select: Options > Update", "Api key added", JOptionPane.PLAIN_MESSAGE);
+				}
 			}
 		}
 
@@ -576,8 +581,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		private Throwable throwable = null;
 		private int userID;
 		private String apiKey;
-		//private String error = null;
-		private boolean hasError = false;
 		private HumansGetter humansGetter = new HumansGetter();
 
 		public CheckHumanTask(int userID, String apiKey) {
@@ -602,7 +605,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 				}
 				humansGetter.load(null, true, account);
 				if (humansGetter.hasError()){
-					hasError = true;
 					result = 30;
 					return null;
 				}

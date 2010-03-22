@@ -76,18 +76,21 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 		JCopyPopup.install(jUserId);
 		jPanel.add(jUserId);
 
-		JLabel jApiKeyLabel = new JLabel("API Key (Full)");
+		JLabel jApiKeyLabel = new JLabel("API Key");
 		jPanel.add(jApiKeyLabel);
 
 		jApiKey = new JTextField();
 		JCopyPopup.install(jApiKey);
 		jPanel.add(jApiKey);
 		JEditorPane jHelp = new JEditorPane(
-				"text/html",
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+ "You need to enter the FULL API Key<br>"
-				+ "You can find your API Key at: <a href=\"http://www.eveonline.com/api/default.asp\">http://www.eveonline.com/api/default.asp</a><br>"
-				+ "</div>");
+				"text/html", "<html>"
+				+ "<div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				+ "Enter Full Access API Key.<br>"
+				+ "You can find your api key at: <a href=\"http://www.eveonline.com/api/default.asp\">http://www.eveonline.com/api/default.asp</a><br>"
+				+ "Note: jEveAssets will not work with a Limited Access API Key.<br>"
+				+ "</div>"
+				);
+		jHelp.setFont( this.getDialog().getFont() );
 		jHelp.setEditable(false);
 		jHelp.setOpaque(false);
 		jHelp.addHyperlinkListener(this);
@@ -220,8 +223,9 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 
 	@Override
 	protected void save() {
+		setEnabledAll(false);
 		apiManager.saveApiKey();
-		setVisible(false);
+		//setVisible(false);
 	}
 
 	@Override

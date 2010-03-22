@@ -201,6 +201,10 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return hasError;
 	}
 
+	public void error(){
+		hasError = true;
+	}
+
 	private void addError(String human, String error){
 		if (updateTask != null) updateTask.addError(human, error);
 		hasError = true;

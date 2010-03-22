@@ -89,6 +89,7 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 				if (isForceUpdate()){
 					accountBalanceGetter.load(null, true, human);
 					if (accountBalanceGetter.hasError()){
+						this.error();
 						return;
 					}
 				}
