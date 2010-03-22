@@ -29,8 +29,14 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -48,7 +54,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	private Throwable throwable = null;
 	private JLabel jText;
 	private JTextPane jError;
-	private List<String> errors;
+	private Map<String, String> errors;
 	private String name;
 
 	public UpdateTask(String name) {
@@ -62,7 +68,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		jError.setFocusable(false);
 		jError.setVisible(false);
 
-		errors = new ArrayList<String>();
+		errors = new HashMap<String, String>();
 	}
 
 	public JLabel getTextLabel(){
@@ -72,8 +78,8 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		return jError;
 	}
 
-	public void addError(String error){
-		errors.add(error);
+	public void addError(String human, String error){
+		errors.put(human, error);
 	}
 
 	public boolean hasError(){
@@ -146,24 +152,24 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jText.setText(name+" (click for more information)");
 			StyledDocument doc = new DefaultStyledDocument();
-			SimpleAttributeSet italic = new SimpleAttributeSet();
-			italic.addAttribute(StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-			italic.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-			SimpleAttributeSet bold = new SimpleAttributeSet();
-			bold.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+			SimpleAttributeSet detailsAttributeSet = new SimpleAttributeSet();
+			detailsAttributeSet.addAttribute(StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+			detailsAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
+			SimpleAttributeSet headlineAttributeSet = new SimpleAttributeSet();
+			headlineAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+
+			SimpleAttributeSet nameAttributeSet = new SimpleAttributeSet();
+			nameAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+			nameAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(187, 32, 32));
 			try {
-				doc.insertString(doc.getLength(), "Failed to update:", bold);
-				for (int a = 0; a < errors.size(); a++){
-					String error = errors.get(a);
-					if (error.contains("(")){
-						doc.insertString(doc.getLength(), "\r\n  ", null);
-						doc.insertString(doc.getLength(), error.substring(0, error.indexOf("(")), bold);
-						doc.insertString(doc.getLength(), error.substring(error.indexOf("(")), null);
-					} else {
-						doc.insertString(doc.getLength(), "\r\n  " + error, bold);
-					}
+				doc.insertString(doc.getLength(), "Failed to update:", headlineAttributeSet);
+				for (Map.Entry<String, String> entry : errors.entrySet()){
+					String error = processError(entry.getValue());
+					doc.insertString(doc.getLength(), "\r\n", null);
+					doc.insertString(doc.getLength(), entry.getKey(), nameAttributeSet);
+					doc.insertString(doc.getLength(), "\r\n"+error, null);
 				}
-				doc.insertString(doc.getLength(), "\r\n(see log.txt for details)", italic);
+				doc.insertString(doc.getLength(), "\r\n(see log.txt for details)", detailsAttributeSet);
 			} catch (BadLocationException badLocationException) {
 
 			}
@@ -172,5 +178,25 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			jError.setForeground(jText.getForeground());
 			jError.setFont(jText.getFont());
 		}
+	}
+
+	private String processError(String error){
+		Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Matcher m = p.matcher(error);
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+			String time = error.substring(start, end);
+			try {
+				Date date = df.parse(time);
+				time = Formater.weekdayAndTime(date);
+			} catch (ParseException ex) {
+				time = error.substring(start, end);
+			}
+			error = error.substring(0, start)+time+" GMT"+error.substring(end);
+			error = error.replace("retry after", "\r\nNext Update:");
+		}
+		return error;
 	}
 }

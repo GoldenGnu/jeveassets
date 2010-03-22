@@ -102,7 +102,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			if (updateAccount){
 				if (updateTask != null){
 					if (updateTask.isCancelled()){
-						addError(account.getUserID()+" (Cancelled)");
+						addError(String.valueOf(account.getUserID()), "Cancelled");
 					} else {
 						loadAccount();
 					}
@@ -117,7 +117,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 					human = humans.get(b);
 					if (updateTask != null){
 						if (updateTask.isCancelled()){
-							addError(human.getName()+" (Cancelled)");
+							addError(human.getName(), "Cancelled");
 						} else {
 							loadHuman();
 						}
@@ -169,19 +169,19 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 						setData(response, bCorp);
 					} else {
 						ApiError apiError = apiResponse.getError();
-						addError(characterName+" (Api error: "+apiError.getError()+")");
+						addError(characterName, apiError.getError());
 						Log.info("	"+name+" failed to update for: "+characterName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
 				}
 			} catch (IOException ex) {
-				addError(characterName+" (Not found)");
+				addError(characterName, "Not found");
 				Log.info("	"+name+" failed to update for: "+characterName+" (NOT FOUND)");
 			} catch (SAXException ex) {
-				addError(characterName+" (Parser error)");
+				addError(characterName, "Parser error");
 				Log.info("	"+name+" failed to update for: "+characterName+" (PARSER ERROR)");
 			}
 		} else {
-			addError(characterName+" (Not allowed yet)");
+			addError(characterName, "Not allowed yet");
 			Log.info("	"+name+" failed to update for: "+characterName+" (NOT ALLOWED YET)");
 		}
 	}
@@ -201,8 +201,8 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return hasError;
 	}
 
-	private void addError(String error){
-		if (updateTask != null) updateTask.addError(error);
+	private void addError(String human, String error){
+		if (updateTask != null) updateTask.addError(human, error);
 		hasError = true;
 	}
 	

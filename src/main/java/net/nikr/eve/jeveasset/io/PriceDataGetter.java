@@ -124,7 +124,7 @@ public class PriceDataGetter implements PricingListener {
                 }
 			} catch (InterruptedException ex) {
 				Log.info("Failed to update price");
-				this.updateTask.addError("Price data (Cancelled)");
+				this.updateTask.addError("Price data", "Cancelled");
 				this.updateTask.setTaskProgress(100, 100, 0, 100);
 				this.updateTask = null;
 				return false;
