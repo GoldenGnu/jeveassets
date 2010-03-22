@@ -27,7 +27,9 @@ package net.nikr.eve.jeveasset.gui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -37,9 +39,12 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog.PriceDataTask;
+import net.nikr.eve.jeveasset.gui.dialogs.UpdateSelectedDialog;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 
 
 public class PriceDataSettingsPanel extends JSettingsPanel implements ActionListener {
@@ -103,15 +108,21 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 
 	@Override
 	public void save() {
+		//Get data for GUI
 		int region = jRegions.getSelectedIndex();
 		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
-		if (!defaultPrice.equals(EveAsset.getPriceSource())){
+		boolean updateEventList = !defaultPrice.equals(EveAsset.getPriceSource());
+		//Create new settings
+		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
+		//Get old settings
+		oldPriceDataSettings = program.getSettings().getPriceDataSettings();
+		//Set new settings
+		program.getSettings().setPriceDataSettings( newPriceDataSettings );
+		//Update table if needed
+		if (updateEventList){
 			program.updateEventList();
 		}
-		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
-		oldPriceDataSettings = program.getSettings().getPriceDataSettings();
-		program.getSettings().setPriceDataSettings( newPriceDataSettings );
 	}
 
 	@Override
@@ -132,13 +143,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		if (program.getSettings().isUpdatable(date)){
 			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.YES_OPTION){
-				//FIXME find a solution to update price data here
-				//program.updatePriceData();
+				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
+				updateTasks.add(new PriceDataTask(false, program));
+				UpdateSelectedDialog updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
 				return;
 			}
 			nextUpdate = "Now";
 		}
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will be in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	@Override

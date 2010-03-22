@@ -302,7 +302,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					|| jIndustryJobs.isSelected()
 					|| jAssets.isSelected()
 					){
-				updateTasks.add( new PriceDataTask(jAssets.isSelected()) );
+				updateTasks.add( new PriceDataTask(jAssets.isSelected(), program) );
 			}
 			if (!updateTasks.isEmpty())
 				updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
@@ -380,11 +380,13 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 	}
 
-	public class PriceDataTask extends UpdateTask {
+	public static class PriceDataTask extends UpdateTask {
 		private boolean forceUpdate;
+		private Program program;
 
-		public PriceDataTask(boolean forceUpdate) {
+		public PriceDataTask(boolean forceUpdate, Program program) {
 			super("Price Data");
+			this.program = program;
 			this.forceUpdate = forceUpdate;
 		}
 

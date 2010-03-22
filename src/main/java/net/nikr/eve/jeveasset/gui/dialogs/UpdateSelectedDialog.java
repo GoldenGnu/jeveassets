@@ -25,7 +25,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -71,8 +70,6 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 		this.updateTasks = updateTasks;
 
 		jWindow = new JWindow(program.getMainWindow().getFrame());
-
-		jWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		JPanel jPanel = new JPanel();
 		jPanel.setBorder( BorderFactory.createRaisedBevelBorder() );
@@ -139,7 +136,6 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 			updateTask.execute();
 		} else {
 			program.updateEventList();
-			jWindow.setCursor(null);
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
 		}
