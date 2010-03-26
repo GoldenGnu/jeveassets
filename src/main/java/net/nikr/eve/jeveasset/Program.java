@@ -31,6 +31,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.IOException;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import java.awt.event.ActionEvent;
@@ -47,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ApiManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.GeneralSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
@@ -67,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
+import net.nikr.eve.jeveasset.io.ProgramUpdateChecker;
 import net.nikr.log.Log;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -78,6 +80,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV] [BUILD #n];
 	public static final String PROGRAM_VERSION = "1.3.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
+	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
+	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/?page=jeveasset";
+
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
@@ -104,11 +109,12 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private CsvExportDialog csvExportDialog;
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
-	private TableSettingsPanel tableSettingsPanel;
+	private GeneralSettingsPanel generalSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
 	private PriceSettingsPanel priceSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
+	private ProgramUpdateChecker programUpdateChecker;
 
 	private UpdateDialog updateDialog;
 
@@ -149,10 +155,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				Settings.setPortable(true);
 			}
 		}
-
 		settings = new Settings();
 		settings.loadSettings();
 		eveAssetEventList = new BasicEventList<EveAsset>();
+		programUpdateChecker = new ProgramUpdateChecker(this);
 
 		timer = new Timer(1000, this);
 		timer.setActionCommand(ACTION_TIMER);
@@ -190,9 +196,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
 		Log.info("	Settings Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
-		Log.info("		Table");
-		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog);
-		settingsDialog.add(tableSettingsPanel, ImageGetter.getIcon("application_view_columns.png"));
+		Log.info("		General");
+		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
+		settingsDialog.add(generalSettingsPanel, ImageGetter.getIcon("cog.png"));
 		Log.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
@@ -225,6 +231,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (settings.getAccounts().isEmpty()){
 			apiManagerDialog.setVisible(true);
 		}
+		programUpdateChecker.showMessages();
 
 		Log.info("Startup Done");
 	}
@@ -284,6 +291,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	public void showSettings(){
 		settingsDialog.setVisible(true);
+	}
+
+	public void checkForProgramUpdates(Window parent){
+		programUpdateChecker.showMessages(true, parent);
 	}
 
 	private void macOsxCode(){

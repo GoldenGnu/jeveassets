@@ -46,8 +46,11 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
 
-	public final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
+	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
+	private final static String ACTION_UPDATE = "ACTION_UPDATE";
+
 	private JButton jClose;
+	private JButton jCheckUpdates;
 	
 	public AboutDialog(Program program, Image image) {
 		super(program, "About", image);
@@ -101,17 +104,21 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
 
+		jCheckUpdates = new JButton("Check for updates");
+		jCheckUpdates.setActionCommand(ACTION_UPDATE);
+		jCheckUpdates.addActionListener(this);
+
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jIcon)
-					.addComponent(jProgram)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jProgram)
+						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					)
 				)
 				.addComponent(jCredits)
-				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-			)
-
+				.addComponent(jCheckUpdates)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -120,7 +127,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 					.addComponent(jProgram)
 				)
 				.addComponent(jCredits)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCheckUpdates, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
 		);
 	}
 
@@ -147,6 +157,9 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ABOUT_CLOSE.equals(e.getActionCommand())) {
 			dialog.setVisible(false);
+		}
+		if (ACTION_UPDATE.equals(e.getActionCommand())){
+			program.checkForProgramUpdates(this.getDialog());
 		}
 	}
 	

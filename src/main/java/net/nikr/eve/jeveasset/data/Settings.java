@@ -66,6 +66,7 @@ public class Settings{
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
 	private final static String PATH_JUMPS = "data"+File.separator+"jumps.xml";
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
+	private final static String PATH_DATA_VERSION = "data"+File.separator+"data.xml";
 	private final static String PATH_PRICE_DATA = "data"+File.separator+"pricedata.dat";
 	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
 	private final static String PATH_CONQUERABLE_STATIONS = "data"+File.separator+"conquerable_stations.xml";
@@ -78,6 +79,8 @@ public class Settings{
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
+	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
+	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
 
 	private static boolean portable = false;
 	
@@ -132,6 +135,8 @@ public class Settings{
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_WINDOW, false);
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
+		flags.put(FLAG_AUTO_UPDATE, true);
+		flags.put(FLAG_UPDATE_DEV, false);
 
 		activeProfile = new Profile("Default", true, true);
 		profiles.add(activeProfile);
@@ -642,6 +647,21 @@ public class Settings{
 	public void setHighlightSelectedRows(boolean filterOnEnter) {
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, filterOnEnter);
 	}
+
+	public boolean isAutoUpdate() {
+		return flags.get(FLAG_AUTO_UPDATE);
+	}
+	public void setAutoUpdate(boolean updateStable) {
+		flags.put(FLAG_AUTO_UPDATE, updateStable);
+	}
+	public boolean isUpdateDev() {
+		return flags.get(FLAG_UPDATE_DEV);
+	}
+	public void setUpdateDev(boolean updateDev) {
+		flags.put(FLAG_UPDATE_DEV, updateDev);
+	}
+
+
 	//Window
 	public Point getWindowLocation() {
 		return windowLocation;
@@ -702,6 +722,9 @@ public class Settings{
 	}
 	public static String getPathLocations(){
 		return getLocalFile(Settings.PATH_LOCATIONS, false);
+	}
+	public static String getPathDataVersion(){
+		return getLocalFile(Settings.PATH_DATA_VERSION, false);
 	}
 	public static String getPathReadme(){
 		return getLocalFile(Settings.PATH_README, false);
