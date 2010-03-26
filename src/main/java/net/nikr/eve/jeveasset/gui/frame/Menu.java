@@ -135,9 +135,25 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+		menu.addSeparator();
+
+		jUpdatable = new JMenuItem("Update");
+		jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
+		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
+		jUpdatable.addActionListener(program);
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menu.add(jUpdatable);
+
 		menu = new JMenu("Options");
 		//menu.setActionCommand("Something");
 		this.add(menu);
+
+		menuItem = new JMenuItem("Manage API Keys");
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon( ImageGetter.getIcon("key.png") );
+		menuItem.setActionCommand(ACTION_OPEN_API_MANAGER);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
 
 
 		menuItem = new JMenuItem("Profiels");
@@ -147,13 +163,12 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+		jColumnMenu = new JMenu("Columns");
+		jColumnMenu.setIcon( ImageGetter.getIcon("application_view_columns.png") );
+		menu.add(jColumnMenu);
+		updateColumnSelectionMenu();
 
-		menuItem = new JMenuItem("Manage API Keys");
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon( ImageGetter.getIcon("key.png") );
-		menuItem.setActionCommand(ACTION_OPEN_API_MANAGER);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
+		menu.addSeparator();
 
 		menuItem = new JMenuItem("Settings");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
@@ -162,20 +177,9 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		jColumnMenu = new JMenu("Columns");
-		jColumnMenu.setIcon( ImageGetter.getIcon("application_view_columns.png") );
-		menu.add(jColumnMenu);
-
-		updateColumnSelectionMenu();
 		
-		menu.addSeparator();
-
-		jUpdatable = new JMenuItem("Update");
-		jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
-		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
-		jUpdatable.addActionListener(program);
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menu.add(jUpdatable);
+		
+		
 		
 		menu = new JMenu("Help");
 		//menu.setActionCommand("Something");
