@@ -32,45 +32,39 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class GeneralSettingsPanel extends JSettingsPanel {
+public class TableSettingsPanel extends JSettingsPanel {
+		private JCheckBox jEnterFilters;
+		private JCheckBox jMarkSelectedRow;
 
-	private JCheckBox jStable;
-	private JCheckBox jDev;
+	public TableSettingsPanel(Program program, JDialogCentered jDialogCentered) {
+		super(program, jDialogCentered.getDialog(), "Table");
 
+		jEnterFilters = new JCheckBox("Only filter when enter is pressed");
 
-	public GeneralSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "General");
-
-		jStable = new JCheckBox("Automatically search for new "+Program.PROGRAM_NAME+" versions");
-
-		jDev = new JCheckBox("Include beta releases");
+		jMarkSelectedRow = new JCheckBox("Highlight selected row(s)");
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jStable)
-				.addGroup(layout.createSequentialGroup()
-					.addGap(20)
-					.addComponent(jDev)
-				)
+				.addComponent(jEnterFilters)
+				.addComponent(jMarkSelectedRow)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jStable)
-				.addComponent(jDev)
-				.addGap(10)
+				.addComponent(jEnterFilters)
+				.addComponent(jMarkSelectedRow)
 		);
 	}
 
 	@Override
 	public void save() {
-		
-		program.getSettings().setAutoUpdate(jStable.isSelected());
-		program.getSettings().setUpdateDev(jDev.isSelected());
+		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
+		program.getSettings().setHighlightSelectedRows(jMarkSelectedRow.isSelected());
 	}
 
 	@Override
 	public void load() {
-		jStable.setSelected(program.getSettings().isAutoUpdate());
-		jDev.setSelected(program.getSettings().isUpdateDev());
+		jEnterFilters.setSelected(program.getSettings().isFilterOnEnter());
+		jMarkSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
 	}
 }
+

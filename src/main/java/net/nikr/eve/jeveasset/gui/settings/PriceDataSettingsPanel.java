@@ -27,24 +27,16 @@ package net.nikr.eve.jeveasset.gui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog.PriceDataTask;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdateSelectedDialog;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
-import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 
 
 public class PriceDataSettingsPanel extends JSettingsPanel implements ActionListener {
@@ -54,11 +46,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	private JComboBox jRegions;
 	private JComboBox jDefaultPrice;
 	private JComboBox jSource;
-
-	private PriceDataSettings oldPriceDataSettings;
 	
 	public PriceDataSettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Price Data");
+		JTextArea jWarning = new JTextArea("When changing the source and/or region, the changes doesn't take effect until next time you update the price data.");
+		jWarning.setFont(this.getPanel().getFont());
+		jWarning.setBackground(this.getPanel().getBackground());
+		jWarning.setLineWrap(true);
+		jWarning.setWrapStyleWord(true);
+		jWarning.setFocusable(false);
+		jWarning.setEditable(false);
 
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
 		jRegions = new JComboBox();
@@ -86,8 +83,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 						.addComponent(jDefaultPrice)
 						.addComponent(jSource)
 					)
-
 				)
+				.addComponent(jWarning)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -103,6 +100,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 					.addComponent(jDefaultPriceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefaultPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addComponent(jWarning)
 		);
 	}
 
@@ -115,8 +113,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		boolean updateEventList = !defaultPrice.equals(EveAsset.getPriceSource());
 		//Create new settings
 		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
-		//Get old settings
-		oldPriceDataSettings = program.getSettings().getPriceDataSettings();
 		//Set new settings
 		program.getSettings().setPriceDataSettings( newPriceDataSettings );
 		//Update table if needed
@@ -132,30 +128,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
 		jDefaultPrice.setSelectedItem(EveAsset.getPriceSource());
 		
-	}
-
-	@Override
-	public void closed() {
-		PriceDataSettings newPriceDataSettings = program.getSettings().getPriceDataSettings();
-		if (oldPriceDataSettings.equals(newPriceDataSettings)) return;
-		Date date = program.getSettings().getPriceDataNextUpdate();
-		String nextUpdate = Formater.weekdayAndTime(date)+" GMT";
-		if (program.getSettings().isUpdatable(date)){
-			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Update price data with the new settings?", "Price Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.YES_OPTION){
-				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
-				updateTasks.add(new PriceDataTask(false, program));
-				UpdateSelectedDialog updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
-				return;
-			}
-			nextUpdate = "Now";
-		}
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "New settings not in use, yet....\r\nYou need to update the price data\r\nbefore the new settings will be in use\r\nNext update: "+nextUpdate, "Price Data", JOptionPane.PLAIN_MESSAGE);
-	}
-
-	@Override
-	public JComponent getDefaultFocus() {
-		return null;
 	}
 
 	@Override

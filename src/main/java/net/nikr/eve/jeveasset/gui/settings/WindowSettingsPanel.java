@@ -33,7 +33,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -229,16 +228,6 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			setValuesFromWindow();
 			setInputEnabled(true);
 		}
-	}
-
-	@Override
-	public void closed() {
-		
-	}
-
-	@Override
-	public JComponent getDefaultFocus() {
-		return null;
 	}
 
 	@Override

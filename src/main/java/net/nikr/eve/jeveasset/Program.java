@@ -66,6 +66,8 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.TablePanel;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.settings.ReprocessingSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.eve.jeveasset.io.ProgramUpdateChecker;
@@ -114,6 +116,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private ProxySettingsPanel proxySettingsPanel;
 	private PriceSettingsPanel priceSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
+	private ReprocessingSettingsPanel reprocessingSettingsPanel;
+	private TableSettingsPanel tableSettingsPanel;
 	private ProgramUpdateChecker programUpdateChecker;
 
 	private UpdateDialog updateDialog;
@@ -199,12 +203,18 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Log.info("		General");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
 		settingsDialog.add(generalSettingsPanel, ImageGetter.getIcon("cog.png"));
+		Log.info("		Table");
+		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog);
+		settingsDialog.add(tableSettingsPanel, ImageGetter.getIcon("application_view_detail.png"));
 		Log.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
 		Log.info("		Price");
 		priceSettingsPanel = new PriceSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceSettingsPanel, ImageGetter.getIcon("money.png"));
+		Log.info("		Reprocessing");
+		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
+		settingsDialog.add(reprocessingSettingsPanel, ImageGetter.getIcon("reprocessing.png"));
 		Log.info("		Proxy");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
 		settingsDialog.add(proxySettingsPanel, ImageGetter.getIcon("server_connect.png"));
@@ -391,7 +401,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				return;
 			}
 			priceSettingsPanel.setNewPrice(new UserPrice(eveAsset));
-			settingsDialog.setVisible(priceSettingsPanel.getPanel());
+			settingsDialog.setVisible(priceSettingsPanel);
 		}
 		if (Menu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {

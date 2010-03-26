@@ -27,7 +27,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Window;
 import javax.swing.GroupLayout;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
 
@@ -55,8 +54,6 @@ public abstract class JSettingsPanel {
 
 	public abstract void save();
 	public abstract void load();
-	public abstract void closed();
-	public abstract JComponent getDefaultFocus();
 
 	public JPanel getPanel() {
 		return jPanel;

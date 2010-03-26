@@ -24,70 +24,114 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs;
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
-public class SettingsDialog extends JDialogCentered implements ActionListener {
+public class SettingsDialog extends JDialogCentered implements ActionListener, ListSelectionListener {
 
 	public final static String ACTION_OK = "ACTION_OK";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
+	public final static String ACTION_APPLY = "ACTION_APPLY";
 
-	private JTabbedPane jTabbedPane;
+	private JList jTabs;
+	private JPanel jContent;
 	private JButton jOK;
-	private List<JSettingsPanel> jSettingsPanels;
+	private List<JSettingsPanel> settingsPanels;
+	private Map<Object, Icon> icons;
+	private DefaultListModel listModel;
+	private CardLayout cardLayout;
 
 	private boolean tabSelected = false;
 
 	public SettingsDialog(Program program, Image image) {
 		super(program, "Settings", image);
-		jSettingsPanels = new Vector<JSettingsPanel>();
+		settingsPanels = new Vector<JSettingsPanel>();
 
-		jTabbedPane = new JTabbedPane();
+		listModel = new DefaultListModel();
+
+		icons = new HashMap<Object, Icon>();
+		jTabs = new JList(listModel);
+		jTabs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jTabs.setCellRenderer(new IconListRenderer(icons));
+		jTabs.addListSelectionListener(this);
+		JScrollPane jTabsScroller = new JScrollPane(jTabs);
+
+		cardLayout = new CardLayout();
+
+		jContent = new JPanel(cardLayout);
+
+		JSeparator jSeparator = new JSeparator();
 
 		jOK = new JButton("OK");
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
+
+		JButton jApply = new JButton("Apply");
+		jApply.setActionCommand(ACTION_APPLY);
+		jApply.addActionListener(this);
 
 		JButton jCancel = new JButton("Cancel");
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jTabbedPane)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
+			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jTabsScroller, 100, 100, 100)
+					.addComponent(jContent)
+				)
+				.addComponent(jSeparator)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jApply, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jTabbedPane)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jTabsScroller)
+					.addComponent(jContent)
+				)
+				.addComponent(jSeparator, 5, 5, 5)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jApply, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
 	}
 
 	public void add(JSettingsPanel jSettingsPanel, Icon icon){
-		jTabbedPane.addTab(jSettingsPanel.getTitle(), icon, jSettingsPanel.getPanel());
-		jSettingsPanels.add(jSettingsPanel);
+		settingsPanels.add(jSettingsPanel);
+		icons.put(jSettingsPanel.getTitle(), icon);
+		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
+		listModel.addElement(jSettingsPanel.getTitle());
 	}
 
 
@@ -102,35 +146,26 @@ public class SettingsDialog extends JDialogCentered implements ActionListener {
 	}
 
 	@Override
-	protected void windowShown() {
-		JComponent jComponent = jSettingsPanels.get(jTabbedPane.getSelectedIndex()).getDefaultFocus();
-		if (jComponent != null){
-			jComponent.requestFocus();
-		}
-	}
+	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
 
 	@Override
 	protected void save() {
-		for (int a = 0; a < jSettingsPanels.size(); a++){
-			jSettingsPanels.get(a).save();
-		}
-		setVisible(false);
-		for (int a = 0; a < jSettingsPanels.size(); a++){
-			jSettingsPanels.get(a).closed();
+		for (int a = 0; a < settingsPanels.size(); a++){
+			settingsPanels.get(a).save();
 		}
 	}
 
 	public void setVisible(int number) {
-		jTabbedPane.setSelectedIndex(number);
+		jTabs.setSelectedIndex(number);
 		tabSelected = true;
 		setVisible(true);
 	}
 
-	public void setVisible(Component c) {
-		jTabbedPane.setSelectedComponent(c);
+	public void setVisible(JSettingsPanel c) {
+		jTabs.setSelectedIndex(settingsPanels.indexOf(c));
 		tabSelected = true;
 		setVisible(true);
 	}
@@ -138,11 +173,11 @@ public class SettingsDialog extends JDialogCentered implements ActionListener {
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			for (int a = 0; a < jSettingsPanels.size(); a++){
-				jSettingsPanels.get(a).load();
+			for (int a = 0; a < settingsPanels.size(); a++){
+				settingsPanels.get(a).load();
 			}
 			if (!tabSelected){
-				jTabbedPane.setSelectedIndex(0);
+				jTabs.setSelectedIndex(0);
 			}
 		} else {
 			tabSelected = false;
@@ -154,10 +189,35 @@ public class SettingsDialog extends JDialogCentered implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_OK.equals(e.getActionCommand())){
 			save();
+			setVisible(false);
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			setVisible(false);
 		}
+		if (ACTION_APPLY.equals(e.getActionCommand())){
+			save();
+		}
 
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		cardLayout.show(jContent, settingsPanels.get(jTabs.getSelectedIndex()).getTitle());
+	}
+
+	public class IconListRenderer extends DefaultListCellRenderer {
+
+		private Map<Object, Icon> icons = null;
+
+		public IconListRenderer(Map<Object, Icon> icons) {
+			this.icons = icons;
+		}
+
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			label.setIcon( icons.get(value) );
+			return label;
+		}
 	}
 }

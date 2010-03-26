@@ -38,7 +38,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -208,14 +207,6 @@ public class PriceSettingsPanel extends JSettingsPanel implements ActionListener
 		if (newUserPrice != null){
 			jAssets.setSelectedItem(newUserPrice);
 		}
-	}
-
-	@Override
-	public void closed() {}
-
-	@Override
-	public JComponent getDefaultFocus() {
-		return jPrice;
 	}
 
 	@Override
