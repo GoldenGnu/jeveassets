@@ -118,7 +118,7 @@ public class Settings{
 	private PriceDataGetter priceDataGetter;
 	
 	public Settings() {
-		SplashUpdater.setProgress(10);
+		SplashUpdater.setProgress(5);
 		items = new HashMap<Integer, Item>();
 		locations = new HashMap<Integer, Location>();
 		priceData = new HashMap<Integer, PriceData>();
@@ -161,17 +161,20 @@ public class Settings{
 	//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 	//Load static data
-		SplashUpdater.setProgress(20);
+		SplashUpdater.setProgress(10);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
-		SplashUpdater.setProgress(30);
+		SplashUpdater.setProgress(15);
 		LocationsReader.load(this); //Locations (Must be loaded before Assets)
-		SplashUpdater.setProgress(40);
+		SplashUpdater.setProgress(20);
 		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
-		SplashUpdater.setProgress(50);
+		SplashUpdater.setProgress(25);
 		JumpsReader.load(this); //Jumps
+		SplashUpdater.setProgress(30);
 	//Find profiles
 		ProfileReader.load(this);
+		SplashUpdater.setProgress(35);
 		loadAssets();
+		
 	}
 
 	public void loadAssets(){
@@ -179,10 +182,10 @@ public class Settings{
 		Log.info("Loading profile: "+activeProfile.getName());
 		accounts = new Vector<Account>();
 		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
-		SplashUpdater.setProgress(60);
+		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
-		SplashUpdater.setProgress(70);
+		SplashUpdater.setProgress(45);
 	}
 
 	public void saveAssets(){

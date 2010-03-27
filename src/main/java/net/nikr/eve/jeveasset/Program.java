@@ -135,7 +135,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private EventList<EveAsset> eveAssetEventList;
 
 	public Program(String[] args){
-		
 		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
 		
 		if(DEBUG){
@@ -168,65 +167,85 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		timer.setActionCommand(ACTION_TIMER);
 
 		updatable = new Updatable(settings);
-		
 		SplashUpdater.setText("Loading GUI");
 		Log.info("GUI Loading:");
 		Log.info("	Frame");
 		mainWindow = new MainWindow(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(50);
 		Log.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
+		SplashUpdater.setProgress(55);
 		Log.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
+		SplashUpdater.setProgress(60);
 		Log.info("	API Key Manager Dialog ");
 		apiManagerDialog = new ApiManagerDialog(this, ImageGetter.getImage("key.png"));
+		SplashUpdater.setProgress(65);
 		Log.info("	Values Dialog");
 		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
+		SplashUpdater.setProgress(68);
 		Log.info("	Ship Loadouts Dialog");
 		loadoutsDialog = new LoadoutsDialog(this, ImageGetter.getImage("icon26_02.png"));
+		SplashUpdater.setProgress(70);
 		Log.info("	Market Orders Dialog");
 		marketOrdersDialog = new MarketOrdersDialog(this, ImageGetter.getImage("icon07_12.png"));
+		SplashUpdater.setProgress(72);
 		Log.info("	Industry Jobs Dialog");
 		industryJobsDialog = new IndustryJobsDialog(this, ImageGetter.getImage("icon33_02.png"));
+		SplashUpdater.setProgress(74);
 		Log.info("	Routing Dialog");
 		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
+		SplashUpdater.setProgress(76);
 		Log.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
+		SplashUpdater.setProgress(78);
 		Log.info("	Materials Dialog");
 		materialsDialog = new MaterialsDialog(this, ImageGetter.getImage("icon23_16.png"));
+		SplashUpdater.setProgress(80);
 		Log.info("	Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
+		SplashUpdater.setProgress(82);
 		Log.info("	Profiles Dialog");
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
+		SplashUpdater.setProgress(84);
 		Log.info("	Settings Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
+		SplashUpdater.setProgress(86);
 		Log.info("		General");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
 		settingsDialog.add(generalSettingsPanel, ImageGetter.getIcon("cog.png"));
+		SplashUpdater.setProgress(88);
 		Log.info("		Table");
 		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog);
 		settingsDialog.add(tableSettingsPanel, ImageGetter.getIcon("application_view_detail.png"));
+		SplashUpdater.setProgress(90);
 		Log.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
+		SplashUpdater.setProgress(91);
 		Log.info("		Price");
 		priceSettingsPanel = new PriceSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceSettingsPanel, ImageGetter.getIcon("money.png"));
+		SplashUpdater.setProgress(92);
 		Log.info("		Reprocessing");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
 		settingsDialog.add(reprocessingSettingsPanel, ImageGetter.getIcon("reprocessing.png"));
+		SplashUpdater.setProgress(93);
 		Log.info("		Proxy");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
 		settingsDialog.add(proxySettingsPanel, ImageGetter.getIcon("server_connect.png"));
+		SplashUpdater.setProgress(94);
 		Log.info("		Window");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		settingsDialog.add(windowSettingsPanel, ImageGetter.getIcon("application.png"));
+		SplashUpdater.setProgress(95);
 		Log.info("	Update Dialog");
 		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
+		SplashUpdater.setProgress(97);
 		Log.info("	GUI loaded");
-		SplashUpdater.setProgress(90);
 		Log.info("Updating data...");
 		updateEventList();
+		SplashUpdater.setProgress(99);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		Log.info("Showing GUI");
