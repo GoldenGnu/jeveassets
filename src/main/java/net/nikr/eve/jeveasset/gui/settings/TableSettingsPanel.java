@@ -56,9 +56,10 @@ public class TableSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
 		program.getSettings().setHighlightSelectedRows(jMarkSelectedRow.isSelected());
+		return false;
 	}
 
 	@Override

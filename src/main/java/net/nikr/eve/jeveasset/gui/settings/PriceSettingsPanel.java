@@ -180,13 +180,13 @@ public class PriceSettingsPanel extends JSettingsPanel implements ActionListener
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		updatePrice();
+		boolean update = !program.getSettings().getUserPrices().equals(userPrices);
 		//Update Settings
 		program.getSettings().setUserPrices(userPrices);
-		//Update table
-		program.updateEventList();
-		this.newUserPrice = null;
+		//Update table if needed
+		return update;
 	}
 
 	@Override
@@ -207,6 +207,7 @@ public class PriceSettingsPanel extends JSettingsPanel implements ActionListener
 		if (newUserPrice != null){
 			jAssets.setSelectedItem(newUserPrice);
 		}
+		this.newUserPrice = null;
 	}
 
 	@Override

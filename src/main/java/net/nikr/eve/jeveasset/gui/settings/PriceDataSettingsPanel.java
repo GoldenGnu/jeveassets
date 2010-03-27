@@ -105,20 +105,18 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		//Get data for GUI
 		int region = jRegions.getSelectedIndex();
 		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
-		boolean updateEventList = !defaultPrice.equals(EveAsset.getPriceSource());
+		boolean update = !defaultPrice.equals(EveAsset.getPriceSource());
 		//Create new settings
 		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
 		//Set new settings
 		program.getSettings().setPriceDataSettings( newPriceDataSettings );
 		//Update table if needed
-		if (updateEventList){
-			program.updateEventList();
-		}
+		return update;
 	}
 
 	@Override

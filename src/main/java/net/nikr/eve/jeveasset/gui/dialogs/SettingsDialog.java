@@ -153,8 +153,14 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 
 	@Override
 	protected void save() {
+		boolean update = false;
 		for (int a = 0; a < settingsPanels.size(); a++){
-			settingsPanels.get(a).save();
+			if (settingsPanels.get(a).save()){
+				update = true;
+			}
+		}
+		if (update){
+			program.updateEventList();
 		}
 	}
 

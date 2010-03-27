@@ -62,10 +62,10 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public void save() {
-		
+	public boolean save() {
 		program.getSettings().setAutoUpdate(jStable.isSelected());
 		program.getSettings().setUpdateDev(jDev.isSelected());
+		return false;
 	}
 
 	@Override

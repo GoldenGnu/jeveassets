@@ -188,7 +188,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		if (jAutoSave.isSelected()){
 			program.getSettings().setWindowAutoSave(true);
 		} else {
@@ -215,6 +215,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 				program.getMainWindow().setSizeAndLocation(d, p, maximized);
 			}
 		}
+		return false;
 	}
 
 	@Override

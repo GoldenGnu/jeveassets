@@ -52,7 +52,7 @@ public abstract class JSettingsPanel {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public abstract void save();
+	public abstract boolean save();
 	public abstract void load();
 
 	public JPanel getPanel() {

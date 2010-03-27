@@ -114,6 +114,7 @@ public class Settings{
 	private boolean windowAutoSave;
 	private Profile activeProfile;
 	private List<Jump> jumps;
+	private ReprocessSettings reprocessSettings;
 
 	private PriceDataGetter priceDataGetter;
 	
@@ -137,6 +138,8 @@ public class Settings{
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 		flags.put(FLAG_AUTO_UPDATE, true);
 		flags.put(FLAG_UPDATE_DEV, false);
+
+		reprocessSettings = new ReprocessSettings();
 
 		activeProfile = new Profile("Default", true, true);
 		profiles.add(activeProfile);
@@ -379,7 +382,7 @@ public class Settings{
 							if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) price = priceDatum.getSellMin();
 							if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) price = priceDatum.getSellMedian();
 						}
-						priceReprocessed = priceReprocessed + (price * material.getQuantity());
+						priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 					}
 					//Unique Ids
 					if (!uniqueIds.contains(material.getId())){
@@ -538,6 +541,14 @@ public class Settings{
 
 	public void setActiveProfile(Profile activeProfile) {
 		this.activeProfile = activeProfile;
+	}
+
+	public ReprocessSettings getReprocessSettings() {
+		return reprocessSettings;
+	}
+
+	public void setReprocessSettings(ReprocessSettings reprocessSettings) {
+		this.reprocessSettings = reprocessSettings;
 	}
 
 	//@NotNull

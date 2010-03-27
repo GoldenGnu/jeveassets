@@ -35,6 +35,7 @@ import java.util.Vector;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -70,6 +71,13 @@ public class SettingsReader extends AbstractXmlReader {
 		if (windowNodes.getLength() == 1){
 			Element windowElement = (Element) windowNodes.item(0);
 			parseWindow(windowElement, settings);
+		}
+
+		//Reprocessing
+		NodeList reprocessingNodes = element.getElementsByTagName("reprocessing");
+		if (reprocessingNodes.getLength() == 1){
+			Element reprocessingElement = (Element) reprocessingNodes.item(0);
+			parseReprocessing(reprocessingElement, settings);
 		}
 
 
@@ -148,6 +156,14 @@ public class SettingsReader extends AbstractXmlReader {
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
 		}
+	}
+
+	private static void parseReprocessing(Element windowElement, Settings settings) throws XmlException {
+		int refining = AttributeGetters.getInt(windowElement, "refining");
+		int efficiency = AttributeGetters.getInt(windowElement, "efficiency");
+		int processing = AttributeGetters.getInt(windowElement, "processing");
+		int station = AttributeGetters.getInt(windowElement, "station");
+		settings.setReprocessSettings( new ReprocessSettings(station, refining, efficiency, processing));
 	}
 
 	private static void parseWindow(Element windowElement, Settings settings) throws XmlException {

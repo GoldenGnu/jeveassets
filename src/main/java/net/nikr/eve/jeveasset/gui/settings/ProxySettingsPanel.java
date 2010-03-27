@@ -154,7 +154,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		if (proxyTypeField.getSelectedItem() != Proxy.Type.DIRECT) {
 			try {
 				program.getSettings().setProxy(
@@ -172,6 +172,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		} else {
 			program.getSettings().setApiProxy(null);
 		}
+		return false;
 	}
 
 	@Override

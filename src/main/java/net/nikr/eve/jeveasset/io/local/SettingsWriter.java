@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -49,6 +50,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		} catch (XmlException ex) {
 			Log.error("Settings not saved "+ex.getMessage(), ex);
 		}
+		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
 		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
@@ -66,6 +68,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		Log.info("Settings saved");
 	}
+
+	private static void writeReprocessSettings(Document xmldoc, ReprocessSettings reprocessSettings){
+		Element parentNode = xmldoc.createElementNS(null, "reprocessing");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		parentNode.setAttributeNS(null, "refining", String.valueOf(reprocessSettings.getRefiningLevel()));
+		parentNode.setAttributeNS(null, "efficiency", String.valueOf(reprocessSettings.getRefineryEfficiencyLevel()));
+		parentNode.setAttributeNS(null, "processing", String.valueOf(reprocessSettings.getScrapmetalProcessingLevel()));
+		parentNode.setAttributeNS(null, "station", String.valueOf(reprocessSettings.getStation()));
+	}
+
 	private static void writeWindow(Document xmldoc, Settings settings){
 		Element parentNode = xmldoc.createElementNS(null, "window");
 		xmldoc.getDocumentElement().appendChild(parentNode);
