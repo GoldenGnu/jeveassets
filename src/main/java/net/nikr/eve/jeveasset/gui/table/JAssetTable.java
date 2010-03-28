@@ -126,6 +126,7 @@ public class JAssetTable extends JTable {
 					} else {
 						c.setBackground( new Color(255,200,200) );
 					}
+					return c;
 				}
 				if (eveAsset.getPriceReprocessed() < eveAsset.getPrice()){ //Price highest
 					if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()){
@@ -133,8 +134,9 @@ public class JAssetTable extends JTable {
 					} else {
 						c.setBackground( new Color(200,255,200) );
 					}
+					return c;
 				}
-				return c;
+				
 			}
 
 			//Reproccessed is greater then price
