@@ -50,6 +50,8 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private boolean updateHuman;
 	private boolean updateAccount;
 	private boolean hasError;
+	private boolean hasCorpError;
+	private boolean hasHumanError;
 	private UpdateTask updateTask;
 	private List<String> corporations;
 
@@ -71,6 +73,8 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		this.account = account;
 		this.updated = false;
 		this.hasError = false;
+		this.hasCorpError = false;
+		this.hasHumanError = false;
 		this.corporations = new ArrayList<String>();
 	}
 
@@ -169,19 +173,19 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 						setData(response, bCorp);
 					} else {
 						ApiError apiError = apiResponse.getError();
-						addError(characterName, apiError.getError());
+						addError(characterName, apiError.getError(), bCorp);
 						Log.info("	"+name+" failed to update for: "+characterName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
 				}
 			} catch (IOException ex) {
-				addError(characterName, "Not found");
+				addError(characterName, "Not found", bCorp);
 				Log.info("	"+name+" failed to update for: "+characterName+" (NOT FOUND)");
 			} catch (SAXException ex) {
-				addError(characterName, "Parser error");
+				addError(characterName, "Parser error", bCorp);
 				Log.info("	"+name+" failed to update for: "+characterName+" (PARSER ERROR)");
 			}
 		} else {
-			addError(characterName, "Not allowed yet");
+			addError(characterName, "Not allowed yet", bCorp);
 			Log.info("	"+name+" failed to update for: "+characterName+" (NOT ALLOWED YET)");
 		}
 	}
@@ -201,6 +205,14 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return hasError;
 	}
 
+	public boolean hasCorpError() {
+		return hasCorpError;
+	}
+
+	public boolean hasHumanError() {
+		return hasHumanError;
+	}
+
 	public void error(){
 		hasError = true;
 	}
@@ -208,6 +220,16 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private void addError(String human, String error){
 		if (updateTask != null) updateTask.addError(human, error);
 		hasError = true;
+	}
+
+	private void addError(String human, String error, boolean corp){
+		if (updateTask != null) updateTask.addError(human, error);
+		hasError = true;
+		if (corp){
+			hasCorpError = true;
+		} else {
+			hasHumanError = true;
+		}
 	}
 	
 	abstract protected T getResponse(boolean bCorp) throws IOException, SAXException;

@@ -88,7 +88,8 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 			if (!getAccount().getHumans().contains(human)){ //Add new account
 				if (isForceUpdate()){
 					accountBalanceGetter.load(null, true, human);
-					if (accountBalanceGetter.hasError()){
+					if (accountBalanceGetter.hasCorpError()) human.setUpdateCorporationAssets(false);
+					if (accountBalanceGetter.hasHumanError()){
 						this.error();
 						return;
 					}
