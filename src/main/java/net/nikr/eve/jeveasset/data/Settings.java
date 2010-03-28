@@ -78,6 +78,7 @@ public class Settings{
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
+	private final static String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
 	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
 	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
 	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
@@ -138,6 +139,8 @@ public class Settings{
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 		flags.put(FLAG_AUTO_UPDATE, true);
 		flags.put(FLAG_UPDATE_DEV, false);
+		flags.put(FLAG_REPROCESS_COLORS, false);
+
 
 		reprocessSettings = new ReprocessSettings();
 
@@ -674,6 +677,14 @@ public class Settings{
 	public void setUpdateDev(boolean updateDev) {
 		flags.put(FLAG_UPDATE_DEV, updateDev);
 	}
+	public boolean isReprocessColors() {
+		return flags.get(FLAG_REPROCESS_COLORS);
+	}
+	public void setReprocessColors(boolean updateDev) {
+		flags.put(FLAG_REPROCESS_COLORS, updateDev);
+	}
+
+
 
 
 	//Window

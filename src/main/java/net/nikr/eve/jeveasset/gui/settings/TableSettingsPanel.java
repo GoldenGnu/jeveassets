@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 public class TableSettingsPanel extends JSettingsPanel {
 		private JCheckBox jEnterFilters;
 		private JCheckBox jMarkSelectedRow;
+		private JCheckBox jReprocessColors;
 
 	public TableSettingsPanel(Program program, JDialogCentered jDialogCentered) {
 		super(program, jDialogCentered.getDialog(), "Table");
@@ -43,29 +44,37 @@ public class TableSettingsPanel extends JSettingsPanel {
 
 		jMarkSelectedRow = new JCheckBox("Highlight selected row(s)");
 
+		jReprocessColors = new JCheckBox("Sell/Reprocess colors (Green to sell and red to reprocess)");
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jEnterFilters)
 				.addComponent(jMarkSelectedRow)
+				.addComponent(jReprocessColors)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnterFilters)
 				.addComponent(jMarkSelectedRow)
+				.addComponent(jReprocessColors)
 		);
 	}
 
 	@Override
 	public boolean save() {
+		boolean update = jMarkSelectedRow.isSelected() != program.getSettings().isHighlightSelectedRows()
+						|| jReprocessColors.isSelected() != program.getSettings().isReprocessColors();
 		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
 		program.getSettings().setHighlightSelectedRows(jMarkSelectedRow.isSelected());
-		return false;
+		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
+		return update;
 	}
 
 	@Override
 	public void load() {
 		jEnterFilters.setSelected(program.getSettings().isFilterOnEnter());
 		jMarkSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
+		jReprocessColors.setSelected(program.getSettings().isReprocessColors());
 	}
 }
 

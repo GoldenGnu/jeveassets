@@ -116,6 +116,27 @@ public class JAssetTable extends JTable {
 				}
 				return c;
 			}
+			
+			//Reproccessing Colors
+			if (program.getSettings().isReprocessColors() && !isSelected){
+				Component c = getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				if (eveAsset.getPriceReprocessed() > eveAsset.getPrice()){ //Reprocessed highest
+					if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()){
+						c.setBackground( new Color(255,160,160) );
+					} else {
+						c.setBackground( new Color(255,200,200) );
+					}
+				}
+				if (eveAsset.getPriceReprocessed() < eveAsset.getPrice()){ //Price highest
+					if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()){
+						c.setBackground( new Color(160,255,160) );
+					} else {
+						c.setBackground( new Color(200,255,200) );
+					}
+				}
+				return c;
+			}
+
 			//Reproccessed is greater then price
 			if (eveAsset.getPriceReprocessed() > eveAsset.getPrice() && columnName.equals("Reprocessed")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
@@ -126,18 +147,27 @@ public class JAssetTable extends JTable {
 				}
 				return c;
 			}
+
 			//Selected row highlighting
 			if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
-				Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-				if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				c.setBackground( new Color(220,240,255) );
 				return c;
 			}
+			
 		}
 		return super.prepareRenderer(renderer, row, column);
+	}
+
+	private Component getMatchingTableCellRendererComponent(JTable table, Object value,
+					    boolean isSelected, boolean hasFocus,
+					    int row, int column){
+		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		return c;
 	}
 
 	
