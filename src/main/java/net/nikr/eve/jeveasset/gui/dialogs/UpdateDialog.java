@@ -73,10 +73,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private JButton jUpdate;
 	private JButton jCancel;
 
-
-	private UpdateSelectedDialog updateSelectedDialog;
-
-
 	public UpdateDialog(Program program, Image image) {
 		super(program, "Update", image);
 
@@ -180,11 +176,19 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		Date marketOrdersNextUpdate = null;
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
+
+		boolean bAccountsUpdateAll = true;
+		boolean bIndustryJobsUpdateAll = true;
+		boolean bMarketOrdersUpdateAll = true;
+		boolean bAssetsUpdateAll = true;
+		boolean bAccountBalanceUpdateAll = true;
+
 		Date priceDataNextUpdate = program.getSettings().getPriceDataNextUpdate();
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getCharactersNextUpdate());
+			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++){
 				Human human = humans.get(b);
@@ -193,15 +197,20 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, human.getMarketOrdersNextUpdate());
 					assetsNextUpdate = nextUpdate(assetsNextUpdate, human.getAssetNextUpdate());
 					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, human.getBalanceNextUpdate());
+					bIndustryJobsUpdateAll = updateAll(bIndustryJobsUpdateAll, human.getIndustryJobsNextUpdate());
+					bMarketOrdersUpdateAll = updateAll(bMarketOrdersUpdateAll, human.getMarketOrdersNextUpdate());
+					bAssetsUpdateAll = updateAll(bAssetsUpdateAll, human.getAssetNextUpdate());
+					bAccountBalanceUpdateAll = updateAll(bAccountBalanceUpdateAll, human.getBalanceNextUpdate());
+
 				}
 			}
 		}
-		setUpdateLabel(jMarketOrdersUpdate, jMarketOrders, marketOrdersNextUpdate);
-		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobs, industryJobsNextUpdate);
-		setUpdateLabel(jAccountsUpdate, jAccounts, accountsNextUpdate);
-		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate);
-		setUpdateLabel(jAssetsUpdate, jAssets, assetsNextUpdate);
-		setUpdateLabel(jPriceDataUpdate, jPriceData, priceDataNextUpdate, false);
+		setUpdateLabel(jMarketOrdersUpdate, jMarketOrders, marketOrdersNextUpdate, bMarketOrdersUpdateAll);
+		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobs, industryJobsNextUpdate, bIndustryJobsUpdateAll);
+		setUpdateLabel(jAccountsUpdate, jAccounts, accountsNextUpdate, bAccountsUpdateAll);
+		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate, bAccountBalanceUpdateAll);
+		setUpdateLabel(jAssetsUpdate, jAssets, assetsNextUpdate, bAssetsUpdateAll);
+		setUpdateLabel(jPriceDataUpdate, jPriceData, priceDataNextUpdate, true, false);
 		jUpdate.setEnabled(false);
 		setUpdatableButton(marketOrdersNextUpdate);
 		setUpdatableButton(industryJobsNextUpdate);
@@ -211,23 +220,24 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		setUpdatableButton(priceDataNextUpdate, false);
 	}
 
-	private void setUpdateLabel(JLabel jLabel, JCheckBox jCheckBox, Date nextUpdate){
-		this.setUpdateLabel(jLabel, jCheckBox, nextUpdate, true);
+	private void setUpdateLabel(JLabel jLabel, JCheckBox jCheckBox, Date nextUpdate, boolean updateAll){
+		this.setUpdateLabel(jLabel, jCheckBox, nextUpdate, updateAll, true);
 	}
 
-	private void setUpdateLabel(JLabel jLabel, JCheckBox jCheckBox, Date nextUpdate, boolean ignoreOnProxy){
+	private void setUpdateLabel(JLabel jLabel, JCheckBox jCheckBox, Date nextUpdate, boolean updateAll, boolean ignoreOnProxy){
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)){
-			jLabel.setText("-");
-			jLabel.setEnabled(false);
+			if (updateAll){
+				jLabel.setText("Now (All)");
+			} else {
+				jLabel.setText("Now (Some)");
+			}
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
 			jLabel.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
-			jLabel.setEnabled(true);
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
-			
 		}
 	}
 	
@@ -250,6 +260,10 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			nextUpdate = thisUpdate;
 		}
 		return nextUpdate;
+	}
+	
+	private boolean updateAll(boolean updateAll, Date nextUpdate){
+		return updateAll && program.getSettings().isUpdatable(nextUpdate, true);
 	}
 
 	@Override
@@ -304,8 +318,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					){
 				updateTasks.add( new PriceDataTask(jAssets.isSelected(), program) );
 			}
-			if (!updateTasks.isEmpty())
-				updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
+			if (!updateTasks.isEmpty()){
+				UpdateSelectedDialog updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
+			}
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			setVisible(false);
