@@ -28,8 +28,6 @@ package net.nikr.eve.jeveasset.data;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.log.Log;
-import uk.me.candle.eve.pricing.options.PricingNumber;
-import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataSettings {
@@ -127,18 +125,11 @@ public class PriceDataSettings {
 											};
 
 	private int region;
-	private String priceSource;
 	private String source;
 
-	public PriceDataSettings(int region, String priceSource, String source) {
+	public PriceDataSettings(int region, String source) {
 		this.region = region;
-		this.priceSource = priceSource;
 		this.source = source;
-	}
-
-	public String getPriceSource() {
-		if (!EveAsset.getPriceSources().contains(priceSource)) return EveAsset.getPriceSources().get(0);
-		return priceSource;
 	}
 
 	public int getRegion() {
@@ -155,30 +146,6 @@ public class PriceDataSettings {
 
 	public String getSource(){
 		return source;
-	}
-
-	public PricingType getDefaultPricingType(){
-		if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) return PricingType.MEAN;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) return PricingType.HIGH;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) return PricingType.LOW;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) return PricingType.MEDIAN;
-		if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) return PricingType.MEAN;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) return PricingType.HIGH;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) return PricingType.LOW;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) return PricingType.MEDIAN;
-		return PricingType.MEDIAN;
-	}
-
-	public PricingNumber getDefaultPricingNumber(){
-		if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) return PricingNumber.BUY;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) return PricingNumber.BUY;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) return PricingNumber.BUY;
-		if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) return PricingNumber.BUY;
-		if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) return PricingNumber.SELL;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) return PricingNumber.SELL;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) return PricingNumber.SELL;
-		if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) return PricingNumber.SELL;
-		return PricingNumber.SELL;
 	}
 
 	public List<Long> getRegions(){

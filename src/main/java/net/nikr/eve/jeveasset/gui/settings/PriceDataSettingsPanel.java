@@ -44,7 +44,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
 
 	private JComboBox jRegions;
-	private JComboBox jDefaultPrice;
+	private JComboBox jPriceType;
 	private JComboBox jSource;
 	
 	public PriceDataSettingsPanel(Program program, JDialogCentered jDialogCentered) {
@@ -60,8 +60,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		JLabel jRegionsLabel = new JLabel("Regions to include:");
 		jRegions = new JComboBox();
 
-		JLabel jDefaultPriceLabel = new JLabel("Price to use:");
-		jDefaultPrice = new JComboBox(EveAsset.getPriceSources());
+		JLabel jPriceTypeLabel = new JLabel("Price to use:");
+		jPriceType = new JComboBox(EveAsset.getPriceTypes());
 
 		JLabel jSourceLabel = new JLabel("Source to use:");
 		jSource = new JComboBox(PriceDataSettings.SOURCES);
@@ -75,12 +75,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jRegionsLabel)
-						.addComponent(jDefaultPriceLabel)
+						.addComponent(jPriceTypeLabel)
 						.addComponent(jSourceLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jRegions)
-						.addComponent(jDefaultPrice)
+						.addComponent(jPriceType)
 						.addComponent(jSource)
 					)
 				)
@@ -97,8 +97,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 					.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jDefaultPriceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDefaultPrice, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jWarning)
 		);
@@ -108,13 +108,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	public boolean save() {
 		//Get data for GUI
 		int region = jRegions.getSelectedIndex();
-		String defaultPrice = (String) jDefaultPrice.getSelectedItem();
+		String priceType = (String) jPriceType.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
-		boolean update = !defaultPrice.equals(EveAsset.getPriceSource());
+		boolean update = !priceType.equals(EveAsset.getPriceType());
 		//Create new settings
-		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, defaultPrice, source);
+		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, source);
 		//Set new settings
 		program.getSettings().setPriceDataSettings( newPriceDataSettings );
+		EveAsset.setPriceType(priceType);
 		//Update table if needed
 		return update;
 	}
@@ -124,7 +125,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
 		jSource.setSelectedItem(priceDataSettings.getSource());
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
-		jDefaultPrice.setSelectedItem(EveAsset.getPriceSource());
+		jPriceType.setSelectedItem(EveAsset.getPriceType());
 		
 	}
 

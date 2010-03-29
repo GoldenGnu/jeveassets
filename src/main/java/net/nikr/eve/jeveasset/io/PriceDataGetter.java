@@ -116,7 +116,6 @@ public class PriceDataGetter implements PricingListener {
 			createPriceData(ids.get(a), pricing);
 		}
 		//Wait to complete
-		//while (settings.getUniqueIds().size() !=  settings.getPriceData().size()){
 		while (settings.getUniqueIds().size() >  priceDataList.size()){
 			try {
 				synchronized(this) {
@@ -161,34 +160,27 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	private void createPriceData(int typeID, Pricing pricing){
-		//Log.info("	"+settings.getPriceData().size()+" of "+settings.getUniqueIds().size()+" done");
-		Double buyAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.BUY);
-		Double buyMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.BUY);
-		Double buyMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.BUY);
-		Double buyMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.BUY);
-		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
 		Double sellMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.SELL);
-		Double sellMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.SELL);
+		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
 		Double sellMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.SELL);
+		Double sellMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.SELL);
+		Double buyMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.BUY);
+		Double buyAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.BUY);
+		Double buyMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.BUY);
+		Double buyMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.BUY);
 
-		if (buyAvg != null
-				&& buyMax != null
-				&& buyMin != null
-				&& buyMedian != null
-				&& sellAvg != null
-				&& sellMax != null
-				&& sellMin != null
-				&& sellMedian != null){
+		if (sellMax != null && sellAvg != null && sellMedian != null && sellMin != null
+			&& buyMax != null && buyAvg != null && buyMedian != null && buyMin != null
+				){
 			PriceData priceData = new PriceData();
-			priceData.setBuyAvg(buyAvg);
-			priceData.setBuyMax(buyMax);
-			priceData.setBuyMin(buyMin);
-			priceData.setBuyMedian(buyMedian);
-			priceData.setSellAvg(sellAvg);
 			priceData.setSellMax(sellMax);
-			priceData.setSellMin(sellMin);
+			priceData.setSellAvg(sellAvg);
 			priceData.setSellMedian(sellMedian);
+			priceData.setSellMin(sellMin);
 			priceData.setBuyMax(buyMax);
+			priceData.setBuyAvg(buyAvg);
+			priceData.setBuyMedian(buyMedian);
+			priceData.setBuyMin(buyMin);
 			priceDataList.put(typeID, priceData);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);

@@ -150,7 +150,7 @@ public class Settings{
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 		resetMainTableColumns();
 
-		priceDataSettings = new PriceDataSettings(0, EveAsset.PRICE_SELL_MEDIAN, PriceDataSettings.SOURCE_EVE_CENTRAL);
+		priceDataSettings = new PriceDataSettings(0, PriceDataSettings.SOURCE_EVE_CENTRAL);
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -371,19 +371,12 @@ public class Settings{
 					portionSize = material.getPortionSize();
 					if (priceData.containsKey(material.getId())){
 						PriceData priceDatum = priceData.get(material.getId());
-						String priceSource = EveAsset.getPriceSource();
+						String priceType = EveAsset.getPriceType();
 						double price = 0;
 						if (userPrices.containsKey(material.getId())){
 							price = userPrices.get(material.getId()).getPrice();
 						} else {
-							if (priceSource.equals(EveAsset.PRICE_BUY_AVG)) price = priceDatum.getBuyAvg();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MAX)) price = priceDatum.getBuyMax();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MIN)) price = priceDatum.getBuyMin();
-							if (priceSource.equals(EveAsset.PRICE_BUY_MEDIAN)) price = priceDatum.getBuyMedian();
-							if (priceSource.equals(EveAsset.PRICE_SELL_AVG)) price = priceDatum.getSellAvg();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MAX)) price = priceDatum.getSellMax();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MIN)) price = priceDatum.getSellMin();
-							if (priceSource.equals(EveAsset.PRICE_SELL_MEDIAN)) price = priceDatum.getSellMedian();
+							price = EveAsset.getDefaultPrice(priceDatum);
 						}
 						priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 					}
@@ -447,7 +440,6 @@ public class Settings{
 	}
 	public void setPriceDataSettings(PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
-		EveAsset.setPriceSource(priceDataSettings.getPriceSource());
 	}
 	public Date getPriceDataNextUpdate(){
 		return priceDataGetter.getNextUpdate();

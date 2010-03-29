@@ -27,14 +27,14 @@ package net.nikr.eve.jeveasset.data;
 
 public class PriceData {
 
-	private double buyAvg;
-	private double buyMax;
-	private double buyMin;
-	private double buyMedian;
-	private double sellAvg;
 	private double sellMax;
-	private double sellMin;
+	private double sellAvg;
 	private double sellMedian;
+	private double sellMin;
+	private double buyMax;
+	private double buyAvg;
+	private double buyMedian;
+	private double buyMin;
 
 	public PriceData() {
 	}

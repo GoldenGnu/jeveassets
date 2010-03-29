@@ -220,16 +220,16 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static void parsePriceDataSettings(Element element, Settings settings){
 		int region = AttributeGetters.getInt(element, "region");
-		String defaultPrice = EveAsset.PRICE_SELL_MEDIAN;
+		String priceType = EveAsset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
-			defaultPrice = AttributeGetters.getString(element, "defaultprice");
+			priceType = AttributeGetters.getString(element, "defaultprice");
 		}
 		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
 		if (AttributeGetters.haveAttribute(element, "source")){
 			source = AttributeGetters.getString(element, "source");
 		}
-
-		settings.setPriceDataSettings( new PriceDataSettings(region, defaultPrice, source) );
+		EveAsset.setPriceType(priceType);
+		settings.setPriceDataSettings( new PriceDataSettings(region, source) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){
