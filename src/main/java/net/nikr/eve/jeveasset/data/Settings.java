@@ -224,6 +224,7 @@ public class Settings{
 		tableColumnNames.add("Buy Max");
 		tableColumnNames.add("Reprocessed");
 		tableColumnNames.add("Base Price");
+		tableColumnNames.add("Reprocessed Value");
 		tableColumnNames.add("Value");
 		tableColumnNames.add("Count");
 		tableColumnNames.add("Type Count");
@@ -233,25 +234,15 @@ public class Settings{
 		tableColumnNames.add("Type ID");
 
 		tableColumnTooltips = new HashMap<String, String>();
-		//tableColumnTooltips.put("Name", "Name");
-		//tableColumnTooltips.put("Group", "Group");
-		//tableColumnTooltips.put("Category", "Category");
-		//tableColumnTooltips.put("Owner", "Owner");
-		//tableColumnTooltips.put("Location", "Station");
-		//tableColumnTooltips.put("Region", "Region");
 		tableColumnTooltips.put("Security", "System Security Status");
-		//tableColumnTooltips.put("Container", "Container");
-		//tableColumnTooltips.put("Flag", "Flag");
 		tableColumnTooltips.put("Price", "Default Price");
 		tableColumnTooltips.put("Sell Min", "Minimum Sell Price");
 		tableColumnTooltips.put("Buy Max", "Maximum Buy Price");
-		tableColumnTooltips.put("Reprocessed", "Reprocessed value");
-		//tableColumnTooltips.put("Base Price", "Base Price");
+		tableColumnTooltips.put("Reprocessed", "Value reprocessed materials");
+		tableColumnTooltips.put("Reprocessed Value", "Reprocessed Value (Count*Reprocessed)");
 		tableColumnTooltips.put("Value", "Value (Count*Price)");
-		//tableColumnTooltips.put("Count", "Count");
 		tableColumnTooltips.put("Type Count", "Type Count (all assets of this type)");
 		tableColumnTooltips.put("Meta", "Meta Level");
-		//tableColumnTooltips.put("Volume", "Volume");
 		tableColumnTooltips.put("ID", "ID (this specific asset)");
 		tableColumnTooltips.put("Type ID", "Type ID (this type of asset)");
 		
@@ -269,6 +260,7 @@ public class Settings{
 		tableNumberColumns.add("Type ID");
 		tableNumberColumns.add("Type Count");
 		tableNumberColumns.add("Reprocessed");
+		tableNumberColumns.add("Reprocessed Value");
 		tableNumberColumns.add("Security");
 	}
 

@@ -307,6 +307,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			if (headerName.equals("Type Count")) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
 			if (headerName.equals("Security")) line.put(headerName, eveAsset.getSecurity());
 			if (headerName.equals("Reprocessed")) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
+			if (headerName.equals("Reprocessed Value")) line.put(headerName, getValue(eveAsset.getValueReprocessed(), lang));
 		}
 		return line;
 	}

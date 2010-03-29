@@ -264,6 +264,10 @@ public class EveAsset implements Comparable<EveAsset> {
 		return Formater.numberDouble(this.getPrice() * this.getCount());
 	}
 
+	public double getValueReprocessed() {
+		return Formater.numberDouble(this.getPriceReprocessed() * this.getCount());
+	}
+
 	public double getPriceBase() {
 		return priceBase;
 	}
