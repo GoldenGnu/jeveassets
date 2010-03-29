@@ -262,6 +262,7 @@ public class Settings{
 		tableNumberColumns.add("Reprocessed");
 		tableNumberColumns.add("Reprocessed Value");
 		tableNumberColumns.add("Security");
+		tableNumberColumns.add("Meta");
 	}
 
 	public boolean updatePriceData(UpdateTask task){

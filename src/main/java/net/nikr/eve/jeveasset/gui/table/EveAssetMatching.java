@@ -25,6 +25,8 @@
 
 package net.nikr.eve.jeveasset.gui.table;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 
@@ -169,7 +171,20 @@ public class EveAssetMatching {
 		if (column.equals("Container")) return -1;
 		if (column.equals("Flag")) return -1;
 		if (column.equals("Price")) return eveAsset.getPrice();
-		if (column.equals("Meta")) return -1;
+		if (column.equals("Meta")){
+			String meta = eveAsset.getMeta();
+			if (meta.isEmpty()) return 0;
+			Pattern p = Pattern.compile("\\d+");
+			Matcher m = p.matcher(meta);
+			if (m.find()){
+				meta = meta.substring(m.start(), m.end());
+				try {
+					return Double.valueOf( meta );
+				} catch (NumberFormatException ex){
+				}
+			}
+			return -1;
+		}
 		if (column.equals("ID")) return eveAsset.getId();
 		if (column.equals("Sell Min")) return eveAsset.getPriceSellMin();
 		if (column.equals("Buy Max")) return eveAsset.getPriceBuyMax();
@@ -188,6 +203,7 @@ public class EveAssetMatching {
 		}
 		if (column.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		if (column.equals("Reprocessed Value")) return eveAsset.getValueReprocessed();
+
 		return -1;
 	}
 
