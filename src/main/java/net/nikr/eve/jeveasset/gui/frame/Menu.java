@@ -135,7 +135,9 @@ public class Menu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
-		menu.addSeparator();
+		menu = new JMenu("Update");
+		//menu.setActionCommand("Something");
+		this.add(menu);
 
 		jUpdatable = new JMenuItem("Update");
 		jUpdatable.setIcon( ImageGetter.getIcon("update.png") );

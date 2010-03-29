@@ -348,7 +348,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 		if (!corpAssetsCopy.equals(corpAssets)){
 			program.updateEventList();
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select:\r\nOptions > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select: Menu > Update > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
 	}
@@ -566,7 +566,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					program.getSettings().getAccounts().add(checkHumanTask.account);
 					updateTable();
 					apiAddDialog.setVisible(false);
-					JOptionPane.showMessageDialog(dialog, "API Key Added.\r\n\r\nTo update assets select: Options > Update", "Api key added", JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(dialog, "API Key Added.\r\nTo update assets select: Menu > Update > Update", "Api key added", JOptionPane.PLAIN_MESSAGE);
 				}
 			}
 		}
