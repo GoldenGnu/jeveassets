@@ -299,7 +299,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			if (headerName.equals("Buy Max")) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
 			if (headerName.equals("Value")) line.put(headerName, getValue(eveAsset.getValue(), lang));
 			if (headerName.equals("Meta")) line.put(headerName, eveAsset.getMeta());
-			if (headerName.equals("ID")) line.put(headerName, getValue(eveAsset.getId(), lang));
+			if (headerName.equals("ID")) line.put(headerName, getValue(eveAsset.getItemId(), lang));
 			if (headerName.equals("Base Price")) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
 			if (headerName.equals("Volume")) line.put(headerName, getValue(eveAsset.getVolume(), lang));
 			if (headerName.equals("Type ID")) line.put(headerName, getValue(eveAsset.getTypeId(), lang));

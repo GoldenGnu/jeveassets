@@ -47,6 +47,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private static String priceType = defaultPriceType;
 
 	private List<EveAsset> assets = new Vector<EveAsset>();
+	private String typeName;
 	private String name;
 	private String group;
 	private String category;
@@ -58,7 +59,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String flag;
 	private double priceBase;
 	private String meta;
-	private long id;
+	private long itemId;
 	private int typeId;
 	private boolean marketGroup;
 	private PriceData priceData;
@@ -72,8 +73,9 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String security;
 	private double priceReprocessed;
 
-	public EveAsset(String name, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, long id, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
-		this.name = name;
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
+		this.typeName = typeName;
+		this.name = typeName;
 		this.group = group;
 		this.category = category;
 		this.owner = owner;
@@ -83,7 +85,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.flag = flag;
 		this.priceBase = priceBase;
 		this.meta = meta;
-		this.id = id;
+		this.itemId = itemId;
 		this.typeId = typeId;
 		this.marketGroup = marketGroup;
 		this.corporationAsset = corporationAsset;
@@ -112,7 +114,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public boolean isBlueprint() {
-		return (name.toLowerCase().contains("blueprint"));
+		return (typeName.toLowerCase().contains("blueprint"));
 	}
 
 	public void addEveAsset(EveAsset eveAsset) {
@@ -147,8 +149,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		return group;
 	}
 
-	public long getId() {
-		return id;
+	public long getItemId() {
+		return itemId;
 	}
 
 	public String getLocation() {
@@ -181,6 +183,14 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getTypeName() {
+		return typeName;
 	}
 
 	public String getOwner() {
@@ -304,20 +314,23 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof EveAsset) {
-			return equals((EveAsset) obj);
+		if (obj == null) {
+			return false;
 		}
-		return false;
-	}
-
-	public boolean equals(EveAsset eveAsset) {
-		return this.getName().equals(eveAsset.getName());
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EveAsset other = (EveAsset) obj;
+		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+		int hash = 3;
+		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
 		return hash;
 	}
 

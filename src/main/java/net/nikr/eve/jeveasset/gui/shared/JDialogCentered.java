@@ -53,7 +53,8 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public final static int NO_RESTRICTIONS = 0;
 	public final static int WORDS_ONLY = 1;
-	public final static int NUMBERS_ONLY = 2;
+	public final static int INTEGERS_ONLY = 2;
+	public final static int NUMBERS_ONLY = 3;
 
 	private JValidatedInputDialog jValidatedInputDialog;
 	private JConfirmDialog jConfirmDialog;

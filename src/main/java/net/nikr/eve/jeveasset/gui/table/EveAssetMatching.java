@@ -121,7 +121,7 @@ public class EveAssetMatching {
 						+ eveAsset.getName() + "\r\n"
 						+ eveAsset.getOwner() + "\r\n"
 						+ eveAsset.getCount() + "\r\n"
-						+ eveAsset.getId() + "\r\n"
+						+ eveAsset.getItemId() + "\r\n"
 						+ eveAsset.getPrice() + "\r\n"
 						+ eveAsset.getPriceSellMin() + "\r\n"
 						+ eveAsset.getPriceBuyMax() + "\r\n"
@@ -146,7 +146,7 @@ public class EveAssetMatching {
 		if (column.equals("Flag")) return eveAsset.getFlag();
 		if (column.equals("Price")) return String.valueOf(eveAsset.getPrice());
 		if (column.equals("Meta")) return eveAsset.getMeta();
-		if (column.equals("ID")) return String.valueOf(eveAsset.getId());
+		if (column.equals("ID")) return String.valueOf(eveAsset.getItemId());
 		if (column.equals("Sell Min")) return String.valueOf(eveAsset.getPriceSellMin());
 		if (column.equals("Buy Max")) return String.valueOf(eveAsset.getPriceBuyMax());
 		if (column.equals("Value")) return String.valueOf(eveAsset.getValue());
@@ -185,7 +185,7 @@ public class EveAssetMatching {
 			}
 			return -1;
 		}
-		if (column.equals("ID")) return eveAsset.getId();
+		if (column.equals("ID")) return eveAsset.getItemId();
 		if (column.equals("Sell Min")) return eveAsset.getPriceSellMin();
 		if (column.equals("Buy Max")) return eveAsset.getPriceBuyMax();
 		if (column.equals("Value")) return eveAsset.getValue();

@@ -23,44 +23,41 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
-
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import javax.swing.JTextField;
+package net.nikr.eve.jeveasset.data;
 
 
-public class JNumberField extends JTextField implements FocusListener{
+public class UserItemName extends UserListItem<Long>{
 
-	private String defaultValue;
+	private String typeName;
 
-	public JNumberField() {
-		this("0");
+	public UserItemName(UserItemName userItemName) {
+		this(userItemName.getValue(), userItemName.getKey(), userItemName.getTypeName());
 	}
 
-	public JNumberField(String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.addFocusListener(this);
-		this.setDocument( DocumentFactory.getIntegerPlainDocument() );
+	public UserItemName(EveAsset eveAsset) {
+		this(eveAsset.getName(), eveAsset.getItemId(), eveAsset.getTypeName());
+	}
+
+	public UserItemName(String name, long itemId, String typeName) {
+		super(name, itemId);
+		this.typeName = typeName;
+	}
+
+	public String getName(){
+		return this.getValue();
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public long getItemID(){
+		return this.getKey();
 	}
 
 	@Override
-	public void focusGained(FocusEvent e) {
-
+	public String toString(){
+		return typeName;
 	}
 
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (super.getText().equals("")){
-			super.setText(defaultValue);
-		}
-	}
-
-	@Override
-	public String getText() {
-		if (super.getText().equals("")) super.setText(defaultValue);
-		return super.getText();
-	}
-
-	
 }

@@ -35,15 +35,18 @@ import javax.swing.text.PlainDocument;
 
 public class DocumentFactory {
 
-	public static NumberPlainDocument getNumberPlainDocument(){
-		return new NumberPlainDocument();
+	public static IntegerPlainDocument getIntegerPlainDocument(){
+		return new IntegerPlainDocument();
 	}
 	public static WordPlainDocument getWordPlainDocument(){
 		return new WordPlainDocument();
 	}
 
+	public static DoublePlainDocument getDoublePlainDocument(){
+		return new DoublePlainDocument();
+	}
 
-	public static class NumberPlainDocument extends PlainDocument {
+	public static class IntegerPlainDocument extends PlainDocument {
 
 		@Override
 		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
@@ -62,6 +65,33 @@ public class DocumentFactory {
 			}
 			try {
 				Integer.parseInt(newValue);
+				super.insertString(offset, string, attributes);
+			} catch (NumberFormatException exception) {
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
+	}
+
+
+	public static class DoublePlainDocument extends PlainDocument {
+
+		@Override
+		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+			int length = getLength();
+			if (string == null) {
+				return;
+			}
+			String newValue;
+			if (length == 0) {
+				newValue = string;
+			} else {
+				String currentContent = getText(0, length);
+				StringBuffer currentBuffer = new StringBuffer(currentContent);
+				currentBuffer.insert(offset, string);
+				newValue = currentBuffer.toString();
+			}
+			try {
+				Double.parseDouble(newValue);
 				super.insertString(offset, string, attributes);
 			} catch (NumberFormatException exception) {
 				Toolkit.getDefaultToolkit().beep();

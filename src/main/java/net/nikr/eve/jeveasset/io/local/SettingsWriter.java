@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -59,6 +60,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
+		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeColumns(xmldoc, settings.getTableColumnNames(), settings.getTableColumnVisible());
 		writeUpdates(xmldoc, settings);
 		writeFilters(xmldoc, settings.getAssetFilters());
@@ -68,6 +70,19 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Log.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		Log.info("Settings saved");
+	}
+
+	private static void writeUserItemNames(Document xmldoc, Map<Long, UserItemName> userPrices){
+		Element parentNode = xmldoc.createElementNS(null, "itemmames");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<Long, UserItemName> entry : userPrices.entrySet()){
+			UserItemName userItemName = entry.getValue();
+			Element node = xmldoc.createElementNS(null, "itemname");
+			node.setAttributeNS(null, "name", userItemName.getName());
+			node.setAttributeNS(null, "typename", userItemName.getTypeName());
+			node.setAttributeNS(null, "itemid", String.valueOf(userItemName.getItemID()));
+			parentNode.appendChild(node);
+		}
 	}
 
 	private static void writeReprocessSettings(Document xmldoc, ReprocessSettings reprocessSettings){
@@ -89,6 +104,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "maximized", String.valueOf(settings.isWindowMaximized()));
 		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
 	}
+
+
 	private static void writeBpos(Document xmldoc, List<Long> bpos){
 		Element parentNode = xmldoc.createElementNS(null, "bpos");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -110,7 +127,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "typeid", String.valueOf(userPrice.getTypeID()));
 			parentNode.appendChild(node);
 		}
-
 	}
 	private static void writePriceDataSettings(Document xmldoc, PriceDataSettings priceDataSettings){
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");

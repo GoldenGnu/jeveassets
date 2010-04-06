@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -80,7 +81,6 @@ public class SettingsReader extends AbstractXmlReader {
 			parseReprocessing(reprocessingElement, settings);
 		}
 
-
 		//BPOs
 		NodeList bposNodes = element.getElementsByTagName("bpos");
 		if (bposNodes.getLength() == 1){
@@ -93,6 +93,14 @@ public class SettingsReader extends AbstractXmlReader {
 		if (userPriceNodes.getLength() == 1){
 			Element userPriceElement = (Element) userPriceNodes.item(0);
 			parseUserPrices(userPriceElement, settings);
+		}
+
+
+		//User Item Names
+		NodeList userItemNameNodes = element.getElementsByTagName("itemmames");
+		if (userItemNameNodes.getLength() == 1){
+			Element userItemNameElement = (Element) userItemNameNodes.item(0);
+			parseUserItemNames(userItemNameElement, settings);
 		}
 
 		//PriceDataSettings
@@ -215,6 +223,18 @@ public class SettingsReader extends AbstractXmlReader {
 			int typeID = AttributeGetters.getInt(currentNode, "typeid");
 			UserPrice userPrice = new UserPrice(price, typeID, name);
 			settings.getUserPrices().put(typeID, userPrice);
+		}
+	}
+
+	private static void parseUserItemNames(Element element, Settings settings){
+		NodeList userPriceNodes = element.getElementsByTagName("itemname");
+		for (int a = 0; a < userPriceNodes.getLength(); a++){
+			Element currentNode = (Element) userPriceNodes.item(a);
+			String name = AttributeGetters.getString(currentNode, "name");
+			String typeName = AttributeGetters.getString(currentNode, "typename");
+			long itemId = AttributeGetters.getLong(currentNode, "itemid");
+			UserItemName userItemName = new UserItemName(name, itemId, typeName);
+			settings.getUserItemNames().put(itemId, userItemName);
 		}
 	}
 

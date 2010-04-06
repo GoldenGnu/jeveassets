@@ -26,48 +26,40 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public class UserPrice extends UserListItem<Integer> {
+public abstract class UserListItem<K> implements Comparable<UserListItem> {
 
-	private int typeID;
-	private String name;
+	private String value;
+	private K key;
 
-	public UserPrice(EveAsset eveAsset) {
-		this(eveAsset.getPrice(), eveAsset.getTypeId(), eveAsset.getName());
+	public UserListItem(String value, K key) {
+		this.value = value;
+		this.key = key;
 	}
 
-	public UserPrice(UserPrice userPrice) {
-		this(userPrice.getPrice(), userPrice.getTypeID(), userPrice.getName());
+	public K getKey() {
+		return key;
 	}
 
-	public UserPrice(double price, int typeID, String name) {
-		super(String.valueOf(price), typeID);
-		this.typeID = typeID;
-		this.name = name;
+	public void setKey(K key) {
+		this.key = key;
 	}
 
-	public String getName() {
-		return name;
+	public String getValue() {
+		return value;
 	}
 
-	public double getPrice() {
-		try {
-			return Double.parseDouble(this.getValue());
-		} catch (NumberFormatException ex){
-			return 0;
-		}
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public void setPrice(double price) {
-		this.setValue(String.valueOf(price));
-	}
-
-	public int getTypeID() {
-		return typeID;
-	}
-	
 	@Override
-	public String toString() {
-		return getName();
+	public int compareTo(UserListItem o) {
+		return value.compareTo(o.getValue());
+	}
+
+	@Override
+	public String toString(){
+		return String.valueOf(value);
 	}
 
 	@Override
@@ -78,8 +70,11 @@ public class UserPrice extends UserListItem<Integer> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final UserPrice other = (UserPrice) obj;
-		if (this.typeID != other.typeID) {
+		final UserListItem<K> other = (UserListItem<K>) obj;
+		if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+			return false;
+		}
+		if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
 			return false;
 		}
 		return true;
@@ -87,8 +82,9 @@ public class UserPrice extends UserListItem<Integer> {
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 37 * hash + this.typeID;
+		int hash = 7;
+		hash = 83 * hash + (this.value != null ? this.value.hashCode() : 0);
+		hash = 83 * hash + (this.key != null ? this.key.hashCode() : 0);
 		return hash;
 	}
 }

@@ -186,7 +186,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		for (int a = 0; a < eveAssetEventList.size(); a++){
 			EveAsset eveAsset = eveAssetEventList.get(a);
 			if (eveAsset.getCategory().equals("Ship") && eveAsset.isSingleton()){
-				String s = eveAsset.getName()+" #"+eveAsset.getId();
+				String s = eveAsset.getName()+" #"+eveAsset.getItemId();
 				ships.put(s, eveAsset);
 				shipNames.add(s);
 			}

@@ -413,7 +413,7 @@ public class ApiIdConverter {
 			if (!sTemp.equals("")) {
 				sTemp = sTemp + ": ";
 			}
-			sTemp = sTemp + parentAsset.getName() + " #" + parentAsset.getId();
+			sTemp = sTemp + parentAsset.getName() + " #" + parentAsset.getItemId();
 			String parentContainer = parentAsset.getContainer();
 			if (!parentContainer.equals(sTemp) && !parentContainer.equals("") && !parentContainer.equals("Office")) {
 				sTemp = parentContainer + " - " + sTemp;

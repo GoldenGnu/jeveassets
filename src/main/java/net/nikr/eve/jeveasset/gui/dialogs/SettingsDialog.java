@@ -102,7 +102,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jTabsScroller, 100, 100, 100)
+					.addComponent(jTabsScroller)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator)
@@ -185,9 +185,8 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 			if (!tabSelected){
 				jTabs.setSelectedIndex(0);
 			}
-		} else {
-			tabSelected = false;
 		}
+		tabSelected = false;
 		super.setVisible(b);
 	}
 

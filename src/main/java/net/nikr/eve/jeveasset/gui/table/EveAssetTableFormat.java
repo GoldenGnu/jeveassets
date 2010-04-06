@@ -125,7 +125,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Base Price")) return eveAsset.getPriceBase();
 		if (sColumn.equals("Value")) return eveAsset.getValue();
 		if (sColumn.equals("Meta")) return eveAsset.getMeta();
-		if (sColumn.equals("ID")) return eveAsset.getId();
+		if (sColumn.equals("ID")) return eveAsset.getItemId();
 		if (sColumn.equals("Volume")) return eveAsset.getVolume();
 		if (sColumn.equals("Type ID")) return eveAsset.getTypeId();
 		if (sColumn.equals("Region")) return eveAsset.getRegion();

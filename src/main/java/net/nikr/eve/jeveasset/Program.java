@@ -41,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.gui.frame.Menu;
@@ -57,7 +58,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.RoutingDialogue;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.settings.PriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog;
@@ -68,6 +69,7 @@ import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
+import net.nikr.eve.jeveasset.gui.settings.UserItemNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.eve.jeveasset.io.ProgramUpdateChecker;
@@ -114,7 +116,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private GeneralSettingsPanel generalSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
-	private PriceSettingsPanel priceSettingsPanel;
+	private UserPriceSettingsPanel userPriceSettingsPanel;
+	private UserItemNameSettingsPanel userItemNameSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
 	private TableSettingsPanel tableSettingsPanel;
@@ -223,22 +226,26 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
 		SplashUpdater.setProgress(91);
-		Log.info("		Price");
-		priceSettingsPanel = new PriceSettingsPanel(this, settingsDialog);
-		settingsDialog.add(priceSettingsPanel, ImageGetter.getIcon("money.png"));
+		Log.info("		User Price");
+		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog);
+		settingsDialog.add(userPriceSettingsPanel, ImageGetter.getIcon("money.png"));
 		SplashUpdater.setProgress(92);
+		Log.info("		User Item Name");
+		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog);
+		settingsDialog.add(userItemNameSettingsPanel, ImageGetter.getIcon("set_name.png"));
+		SplashUpdater.setProgress(93);
 		Log.info("		Reprocessing");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
 		settingsDialog.add(reprocessingSettingsPanel, ImageGetter.getIcon("reprocessing.png"));
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(94);
 		Log.info("		Proxy");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
 		settingsDialog.add(proxySettingsPanel, ImageGetter.getIcon("server_connect.png"));
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(95);
 		Log.info("		Window");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		settingsDialog.add(windowSettingsPanel, ImageGetter.getIcon("application.png"));
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(96);
 		Log.info("	Update Dialog");
 		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
 		SplashUpdater.setProgress(97);
@@ -419,9 +426,15 @@ public class Program implements ActionListener, Listener<EveAsset>{
 						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			priceSettingsPanel.setNewPrice(new UserPrice(eveAsset));
-			settingsDialog.setVisible(priceSettingsPanel);
+			userPriceSettingsPanel.setNewItem(new UserPrice(eveAsset));
+			settingsDialog.setVisible(userPriceSettingsPanel);
 		}
+		if (TablePanel.ACTION_SET_ITEM_NAME.equals(e.getActionCommand())){
+			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
+			userItemNameSettingsPanel.setNewItem(new UserItemName(eveAsset));
+			settingsDialog.setVisible(userItemNameSettingsPanel);
+		}
+
 		if (Menu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
 				Desktop desktop = Desktop.getDesktop();

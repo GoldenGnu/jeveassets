@@ -96,6 +96,7 @@ public class Settings{
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
 	private Map<Integer, UserPrice> userPrices;
+	private Map<Long, UserItemName> userItemNames;
 	private List<Account> accounts;
 	private List<String> tableColumnNames;
 	private Map<String, String> tableColumnTooltips;
@@ -131,6 +132,7 @@ public class Settings{
 		bpos = new Vector<Long>();
 		jumps = new ArrayList<Jump>();
 		profiles = new ArrayList<Profile>();
+		userItemNames = new HashMap<Long, UserItemName>();
 		
 		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
@@ -348,6 +350,12 @@ public class Settings{
 			} else { //No user price, clear user price
 				eveAsset.setUserPrice(null);
 			}
+			//User Item Names
+			if (userItemNames.containsKey(eveAsset.getItemId())){
+				eveAsset.setName(userItemNames.get(eveAsset.getItemId()).getName());
+			} else {
+				eveAsset.setName(eveAsset.getTypeName());
+			}
 			//Price data
 			if (eveAsset.isMarketGroup()){ //Add price data
 				eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
@@ -364,7 +372,6 @@ public class Settings{
 					portionSize = material.getPortionSize();
 					if (priceData.containsKey(material.getId())){
 						PriceData priceDatum = priceData.get(material.getId());
-						String priceType = EveAsset.getPriceType();
 						double price = 0;
 						if (userPrices.containsKey(material.getId())){
 							price = userPrices.get(material.getId()).getPrice();
@@ -386,7 +393,7 @@ public class Settings{
 
 			//Blueprint
 			if (eveAsset.isBlueprint()){
-				eveAsset.setBpo(bpos.contains(eveAsset.getId()));
+				eveAsset.setBpo(bpos.contains(eveAsset.getItemId()));
 			} else {
 				eveAsset.setBpo(false);
 			}
@@ -442,6 +449,12 @@ public class Settings{
 	}
 	public void setUserPrices(Map<Integer, UserPrice> userPrices) {
 		this.userPrices = userPrices;
+	}
+	public Map<Long, UserItemName> getUserItemNames() {
+		return userItemNames;
+	}
+	public void setUserItemNames(Map<Long, UserItemName> userItemNames) {
+		this.userItemNames = userItemNames;
 	}
 	public List<Account> getAccounts() {
 		return accounts;

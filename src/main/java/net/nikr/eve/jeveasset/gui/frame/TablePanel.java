@@ -94,6 +94,7 @@ public class TablePanel extends JProgramPanel
 	public final static String ACTION_COPY_TABLE_SELECTED_CELLS = "ACTION_COPY_TABLE_SELECTED_CELLS";
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_SET_USER_PRICE = "ACTION_SET_USER_PRICE";
+	public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";
@@ -394,7 +395,6 @@ public class TablePanel extends JProgramPanel
 
 		boolean clickInRowsSelection = false;
 		int[] selectedRows = jTable.getSelectedRows();
-		//int[] selectedRows = jTable.getSelectedRows();
 		for (int a = 0; a < selectedRows.length; a++){
 			if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
 				clickInRowsSelection = true;
@@ -451,9 +451,15 @@ public class TablePanel extends JProgramPanel
 		}
 
 		if (selectedRows.length == 1 && selectedColumns.length == 1){
-			jMenuItem = new JMenuItem("Set price...");
+			jMenuItem = new JMenuItem("Set Price...");
 			jMenuItem.setIcon(  ImageGetter.getIcon("money.png") );
 			jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
+			jMenuItem.addActionListener(program);
+			jTablePopupMenu.add(jMenuItem);
+
+			jMenuItem = new JMenuItem("Set Name...");
+			jMenuItem.setIcon(  ImageGetter.getIcon("set_name.png") );
+			jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
 			jMenuItem.addActionListener(program);
 			jTablePopupMenu.add(jMenuItem);
 		}
@@ -691,12 +697,12 @@ public class TablePanel extends JProgramPanel
 			for (int a = 0; a < selectedRows.length; a++){
 				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
 				if (bpo){
-					if (!program.getSettings().getBpos().contains(eveAsset.getId())){
-						program.getSettings().getBpos().add(eveAsset.getId());
+					if (!program.getSettings().getBpos().contains(eveAsset.getItemId())){
+						program.getSettings().getBpos().add(eveAsset.getItemId());
 					}
 				} else {
-					if (program.getSettings().getBpos().contains(eveAsset.getId())){
-						int index = program.getSettings().getBpos().indexOf(eveAsset.getId());
+					if (program.getSettings().getBpos().contains(eveAsset.getItemId())){
+						int index = program.getSettings().getBpos().indexOf(eveAsset.getItemId());
 						program.getSettings().getBpos().remove(index);
 					}
 				}

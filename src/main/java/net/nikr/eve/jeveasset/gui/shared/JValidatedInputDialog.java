@@ -106,9 +106,11 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 			case WORDS_ONLY:
 				jName.setDocument( DocumentFactory.getWordPlainDocument() );
 				break;
-			case NUMBERS_ONLY:
-				jName.setDocument( DocumentFactory.getNumberPlainDocument() );
+			case INTEGERS_ONLY:
+				jName.setDocument( DocumentFactory.getIntegerPlainDocument() );
 				break;
+			case NUMBERS_ONLY:
+				jName.setDocument( DocumentFactory.getDoublePlainDocument() );
 			default:
 				jName.setDocument( new PlainDocument() );
 		}
