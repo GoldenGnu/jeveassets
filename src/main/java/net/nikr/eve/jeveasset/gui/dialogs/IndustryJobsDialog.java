@@ -74,7 +74,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 
 	public IndustryJobsDialog(Program program, Image image) {
 		super(program, "Industry Jobs", image);
-
+		getDialog().setResizable(true);
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_CLOSE);
 		jClose.addActionListener(this);
@@ -120,7 +120,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 					.addComponent(jStateLabel)
 					.addComponent(jState, 190, 190, 190)
 				)
-				.addComponent(jJobsScrollPanel, 700, 700, 700)
+				.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 		);
 		layout.setVerticalGroup(
@@ -133,7 +133,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 					.addComponent(jActivityLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jActivity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jJobsScrollPanel, 400, 400, 400)
+				.addComponent(jJobsScrollPanel, 100, 400, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
