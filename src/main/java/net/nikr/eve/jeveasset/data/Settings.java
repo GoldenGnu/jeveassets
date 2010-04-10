@@ -779,7 +779,11 @@ public class Settings{
 			File ret = null;
 			if (dynamic) {
 				File userDir = new File(System.getProperty("user.home", "."));
-				file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");
+				if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences
+					file = new File(userDir, "Library/Preferences/JEveAssets");
+				} else {
+					file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");	
+				}
 				ret = new File(file.getAbsolutePath()+File.separator+filename);
 				File parent = ret.getParentFile();
 				if (!parent.exists()) {
