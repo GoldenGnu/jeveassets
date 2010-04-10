@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *

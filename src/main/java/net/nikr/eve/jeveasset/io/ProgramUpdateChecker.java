@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -61,16 +57,21 @@ public class ProgramUpdateChecker {
 
 	public ProgramUpdateChecker(Program program) {
 		this.program = program;
-		parseVersion();
+		parseDataVersion();
+		if ((program.getSettings().isAutoUpdate())){
+			parseUpdateVersion();
+		}
 	}
 
 	public void showMessages(){
-		showMessages(false, program.getMainWindow().getFrame());
+		showMessages(program.getMainWindow().getFrame(), false);
 	}
 
-	public void showMessages(boolean requestedUpdate, Window parent){
-		parseUpdate();
-		if (isStableUpdateAvailable(requestedUpdate)){
+	public void showMessages(Window parent, boolean requestedUpdate){
+		if (requestedUpdate){
+			parseUpdateVersion();
+		}
+		if (isStableUpdateAvailable()){
 			int value = JOptionPane.showConfirmDialog(parent, "A new version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Version Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				try {
@@ -82,7 +83,7 @@ public class ProgramUpdateChecker {
 				}
 			}
 		}
-		if (isDevUpdateAvailable(requestedUpdate)){
+		if (isDevUpdateAvailable()){
 			int value = JOptionPane.showConfirmDialog(parent, "A new "+dev.getType().toLowerCase()+" version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Build Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				try {
@@ -94,21 +95,17 @@ public class ProgramUpdateChecker {
 				}
 			}
 		}
-		if (requestedUpdate && !isStableUpdateAvailable(requestedUpdate) && !isDevUpdateAvailable(requestedUpdate)){
+		if (requestedUpdate && !isStableUpdateAvailable() && !isDevUpdateAvailable()){
 			JOptionPane.showMessageDialog(parent, "No updates available", "Program Updates", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
-	private boolean isStableUpdateAvailable(boolean overwriteSettings){
-		return stable.isNewerThen(getProgram()) 
-				&& (program.getSettings().isAutoUpdate() || overwriteSettings)
-				&& (stable.isNewerThen(dev)	|| !program.getSettings().isUpdateDev());
+	private boolean isStableUpdateAvailable(){
+		return stable.isNewerThen(getProgram()) && (stable.isNewerThen(dev)	|| !program.getSettings().isUpdateDev());
 	}
 
-	private boolean isDevUpdateAvailable(boolean overwriteSettings){
-		return dev.isNewerThen(getProgram())
-				&& (program.getSettings().isAutoUpdate() || overwriteSettings)
-				&& dev.isNewerThen(stable) && program.getSettings().isUpdateDev();
+	private boolean isDevUpdateAvailable(){
+		return dev.isNewerThen(getProgram()) && dev.isNewerThen(stable) && program.getSettings().isUpdateDev();
 	}
 
 	private Version getProgram(){
@@ -134,17 +131,17 @@ public class ProgramUpdateChecker {
 		}
 	}
 
-	private void parseVersion(){
+	private void parseDataVersion(){
 		try {
 			InputStream is = new FileInputStream(Settings.getPathDataVersion());
-			parseVersion(parse(is));
+			parseDataVersion(parse(is));
 		} catch (IOException ex) {
 			Log.info("Failed to get data.xml information"+ex.getMessage());
 		} catch (XmlException ex) {
 			Log.info("Failed to get data.xml information"+ex.getMessage());
 		}
 	}
-	private void parseVersion(Element element) {
+	private void parseDataVersion(Element element) {
 		if (!element.getNodeName().equals("rows")) {
 			Log.info("Failed to get update information: Wrong root element name");
 			return;
@@ -157,7 +154,7 @@ public class ProgramUpdateChecker {
 		}
 	}
 
-	private void parseUpdate(){
+	private void parseUpdateVersion(){
 		try {
 			URL url = new URL(Program.PROGRAM_UPDATE_URL);
 			InputStream is = url.openStream();

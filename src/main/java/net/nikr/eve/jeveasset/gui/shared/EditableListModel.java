@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,8 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
-import net.nikr.eve.jeveasset.data.SolarSystem;
-import uk.me.candle.eve.graph.Node;
 
 public class EditableListModel<T> extends AbstractListModel {
 

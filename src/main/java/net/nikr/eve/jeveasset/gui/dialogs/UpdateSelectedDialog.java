@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +30,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -63,6 +60,10 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 	private JProgressBar jProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
+
+	public UpdateSelectedDialog(Program program, UpdateTask updateTask) {
+		this(program, Collections.singletonList(updateTask));
+	}
 
 
 	public UpdateSelectedDialog(Program program, List<UpdateTask> updateTasks) {
@@ -125,7 +126,6 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 			update();
 			setVisible(true);
 		}
-
 	}
 
 	private void update(){

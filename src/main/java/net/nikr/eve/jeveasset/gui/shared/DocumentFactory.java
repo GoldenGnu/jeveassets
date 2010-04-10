@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 
 package net.nikr.eve.jeveasset.gui.shared;
 

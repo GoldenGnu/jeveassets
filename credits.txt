@@ -24,11 +24,15 @@ My thanks goes out to all of the bellow!
 ________________________________________________________________________________
 _CONTRIBUTORS___________________________________________________________________
 
--Niklas Kyster Rasmussen AKA Golden Gnu* (Programmer, original creator)
--Flaming Candle* (Programmer)
--Varo Jan* (Main tester)
+Developers:
+  Niklas Kyster Rasmussen (Golden Gnu*)
+  Flaming Candle*
+  Jochen Bedersdorfer
 
-* In-game name
+Testers:
+  Varo Jan*
+
+* Eve Online in-game name
 
 ________________________________________________________________________________
 _EVE-ONLINE_____________________________________________________________________
@@ -39,21 +43,6 @@ Link:
   Main site: http://www.eveonline.com/
   Toolkit: http://www.eveonline.com/community/toolkit.asp
   API: http://api.eve-online.com/
-
-
-COPYRIGHT NOTICE:
-EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights
-are reserved worldwide. All other trademarks are the property of their
-respective owners. EVE Online, the EVE logo, EVE and all associated logos and 
-designs are the intellectual property of CCP hf. All artwork, screenshots,
-characters, vehicles, storylines, world facts or other recognizable features
-of the intellectual property relating to these trademarks are likewise the
-intellectual property of CCP hf. CCP hf. has granted permission to jEveAssets
-to use EVE Online and all associated logos and designs for promotional and
-information purposes in this program but does not endorse, and is not in any
-way affiliated with, jEveAsset. CCP is in no way responsible for the content
-on or functioning of this website, nor can it be liable for any damage arising
-from the use of this website.
 
 ________________________________________________________________________________
 _EVE-CENTRAL____________________________________________________________________
@@ -154,10 +143,20 @@ License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 
 ________________________________________________________________________________
+_OSXADAPTER_____________________________________________________________________
+
+jEveAssets use OSXAdapter to enhance support for mac os x environments
+
+Link:
+  http://eve.nikr.net/?page=jeveasset
+
+License:
+  Property (Copyright by Apple)
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009, 2010 Niklas Kyster Rasmussen, Flaming Candle
-
+Copyright 2009, 2010 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -172,6 +171,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with jEveAssets; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+EVE ONLINE COPYRIGHT NOTICE:
+EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights
+are reserved worldwide. All other trademarks are the property of their
+respective owners. EVE Online, the EVE logo, EVE and all associated logos and 
+designs are the intellectual property of CCP hf. All artwork, screenshots,
+characters, vehicles, storylines, world facts or other recognizable features
+of the intellectual property relating to these trademarks are likewise the
+intellectual property of CCP hf. CCP hf. has granted permission to jEveAssets
+to use EVE Online and all associated logos and designs for promotional and
+information purposes in this program but does not endorse, and is not in any
+way affiliated with, jEveAsset. CCP is in no way responsible for the content
+on or functioning of this website, nor can it be liable for any damage arising
+from the use of this website.
 
 ________________________________________________________________________________
 ________________________________________________________________________________

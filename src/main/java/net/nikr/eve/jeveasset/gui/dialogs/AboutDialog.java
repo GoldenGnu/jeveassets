@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -57,28 +54,42 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon( ImageGetter.getIcon("icon07_13.png") );
 
-		JEditorPane jProgram = new JEditorPane("text/html",
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+ "<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
+		JEditorPane jProgram = createEditorPane(
+				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
+				+ "Copyright &copy; 2009, 2010 Contributors<br>"
+				/*
+				"<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
 				+ "Version "+Program.PROGRAM_VERSION+"<br>"
 				+ "Copyright &copy; 2009, 2010 Contributors<br>"
 				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
-				+ "</div>"
-			);
-		jProgram.addHyperlinkListener(this);
-		jProgram.setEditable(false);
-		jProgram.setOpaque(false);
+				 */
+				);
 
-		JEditorPane jCredits = new JEditorPane("text/html",
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+
+		JEditorPane jInfo = createEditorPane(
+				  "<b>Version</b><br>"
+				+ "&nbsp;"+Program.PROGRAM_VERSION+"<br>"
+				+ "<br>"
 				+ "<b>Contributors</b><br>"
-				+ "&nbsp;Niklas Kyster Rasmussen (Original creator)<br>"
-				+ "&nbsp;Flaming Candle (Developer)<br>"
+				+ "&nbsp;Niklas Kyster Rasmussen<br>"
+				+ "&nbsp;Flaming Candle<br>"
+				+ "&nbsp;Jochen Bedersdorfer<br>"
+				+ "<br>"
+				+ "<b>www</b><br>"
+				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Homepage</a> (download and source)<br>"
+				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
+				+ "&nbsp;<a href=\"http://www.eveonline.com/iNgameboard.asp?a=topic&threadID=1103224/\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
-				+ "<b>Content</b><br>"
+				);
+		jInfo.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+
+		JEditorPane jExternal = createEditorPane(
+				  "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
@@ -93,13 +104,12 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (logging)<br>"
-				+ "</div>"
-				
-			);
-		jCredits.setEditable(false);
-		jCredits.setOpaque(false);
-		jCredits.addHyperlinkListener(this);
-
+				+ "<br>"
+				);
+		jExternal.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+		
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
@@ -116,8 +126,13 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 						.addComponent(jProgram)
 						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					)
+					
 				)
-				.addComponent(jCredits)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jInfo)
+					.addGap(20)
+					.addComponent(jExternal)
+				)
 				.addComponent(jCheckUpdates)
 		);
 		layout.setVerticalGroup(
@@ -126,12 +141,27 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 					.addComponent(jIcon)
 					.addComponent(jProgram)
 				)
-				.addComponent(jCredits)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jInfo)
+					.addComponent(jExternal)
+				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCheckUpdates, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
+	}
+
+	private JEditorPane createEditorPane(String text){
+		JEditorPane jEditorPane = new JEditorPane("text/html",
+				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
+				+text
+				+ "</div>"
+				);
+		jEditorPane.setEditable(false);
+		jEditorPane.setOpaque(false);
+		jEditorPane.addHyperlinkListener(this);
+		return jEditorPane;
 	}
 
 	@Override

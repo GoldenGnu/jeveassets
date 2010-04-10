@@ -1,9 +1,5 @@
 /*
- * Copyright 2009, 2010
- *    Niklas Kyster Rasmussen
- *    Flaming Candle*
- *
- *  (*) Eve-Online names @ http://www.eveonline.com/
+ * Copyright 2009, 2010 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -316,7 +312,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					|| jIndustryJobs.isSelected()
 					|| jAssets.isSelected()
 					){
-				updateTasks.add( new PriceDataTask(jAssets.isSelected(), program) );
+				updateTasks.add( new PriceDataTask(jAssets.isSelected()) );
 			}
 			if (!updateTasks.isEmpty()){
 				UpdateSelectedDialog updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
@@ -395,13 +391,11 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 	}
 
-	public static class PriceDataTask extends UpdateTask {
+	public class PriceDataTask extends UpdateTask {
 		private boolean forceUpdate;
-		private Program program;
 
-		public PriceDataTask(boolean forceUpdate, Program program) {
+		public PriceDataTask(boolean forceUpdate) {
 			super("Price Data");
-			this.program = program;
 			this.forceUpdate = forceUpdate;
 		}
 
