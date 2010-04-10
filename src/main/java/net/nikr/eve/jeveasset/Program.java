@@ -334,7 +334,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 
 	private void macOsxCode(){
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {
+		if (onMac()) {
 			try {
 				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
 				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[])null));
@@ -345,6 +345,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				Log.error("SecurityException: "+ex.getMessage(), ex);
 			}
 		}
+	}
+	public static boolean onMac() {
+		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
 
 	public Settings getSettings(){
