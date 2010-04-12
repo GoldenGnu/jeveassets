@@ -61,7 +61,7 @@ public class ApiAddDialog extends JDialogCentered implements ActionListener, Hyp
 	private Pattern pattern = Pattern.compile("[\\w\\d]*");
 	
 	public ApiAddDialog(ApiManagerDialog apiManager, Program program) {
-		super(program, "Add Api Key", apiManager);
+		super(program, "Add Api Key", apiManager.getDialog());
 		this.apiManager = apiManager;
 
 		JLabel jUserIdLabel = new JLabel("User ID");

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.GroupLayout.Alignment;
@@ -45,8 +44,8 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 
 	private boolean failed = false;
 
-	public JValidatedInputDialog(Program program, Window parent) {
-		super(program, "", parent);
+	public JValidatedInputDialog(Program program, JDialogCentered jDialogCentered) {
+		super(program, "", jDialogCentered.getDialog());
 
 		jMessage = new JTextArea();
 		jMessage.setFocusable(false);
@@ -96,9 +95,6 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 			jMessage.setText("");
 		}
 		switch (restrictions){
-			case NO_RESTRICTIONS:
-				jName.setDocument( new PlainDocument() );
-				break;
 			case WORDS_ONLY:
 				jName.setDocument( DocumentFactory.getWordPlainDocument() );
 				break;
@@ -107,6 +103,7 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 				break;
 			case NUMBERS_ONLY:
 				jName.setDocument( DocumentFactory.getDoublePlainDocument() );
+			case NO_RESTRICTIONS:
 			default:
 				jName.setDocument( new PlainDocument() );
 		}
@@ -153,6 +150,4 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 			this.setVisible(false);
 		}
 	}
-
-	
 }

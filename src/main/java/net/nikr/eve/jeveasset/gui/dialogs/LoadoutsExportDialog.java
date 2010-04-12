@@ -52,7 +52,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	private LoadoutsDialog loadoutsDialog;
 
 	public LoadoutsExportDialog(Program program, LoadoutsDialog loadoutsDialog) {
-		super(program, "Export Fitting", loadoutsDialog);
+		super(program, "Export Fitting", loadoutsDialog.getDialog());
 		this.loadoutsDialog = loadoutsDialog;
 
 		JLabel jNameLabel = new JLabel("Name:");

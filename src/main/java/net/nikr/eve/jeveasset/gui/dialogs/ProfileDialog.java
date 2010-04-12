@@ -36,6 +36,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import net.nikr.eve.jeveasset.Program;
@@ -167,7 +168,6 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				loadProfile(profile);
 				updateProfiles();
 				jProfiles.updateUI();
-
 			}
 		}
 		if(ACTION_LOAD_PROFILE.equals(e.getActionCommand())){
@@ -188,14 +188,17 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		if(ACTION_DELETE_PROFILE.equals(e.getActionCommand())){
 			Profile profile = (Profile) jProfiles.getSelectedValue();
 			if (profile != null && profile.isActiveProfile()){
-				showMessageDialog("Delete Profile", "You can not delete the active profile");
+				JOptionPane.showMessageDialog(this.getDialog(), "You can not delete the active profile", "Delete Profile", JOptionPane.INFORMATION_MESSAGE);
+				//showMessageDialog("Delete Profile", "You can not delete the active profile");
 			}
 			if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()){
-				showMessageDialog("Delete Profile", "You can not delete the default profile");
+				JOptionPane.showMessageDialog(this.getDialog(), "You can not delete the default profile", "Delete Profile", JOptionPane.INFORMATION_MESSAGE);
+				//showMessageDialog("Delete Profile", "You can not delete the default profile");
 			}
 			if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()){
-				boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
-				if (value){
+				int value = JOptionPane.showConfirmDialog(this.getDialog(), "msg", "title", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
+				if (value == JOptionPane.YES_OPTION){
 					program.getSettings().getProfiles().remove(profile);
 					profile.getFile().delete();
 					profile.getBackupFile().delete();

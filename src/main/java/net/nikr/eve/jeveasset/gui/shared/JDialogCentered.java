@@ -53,8 +53,6 @@ public abstract class JDialogCentered implements WindowListener {
 	public final static int NUMBERS_ONLY = 3;
 
 	private JValidatedInputDialog jValidatedInputDialog;
-	private JConfirmDialog jConfirmDialog;
-	private JMessageDialog jMessageDialog;
 
 	protected Program program;
 	protected Window parent;
@@ -68,9 +66,6 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public JDialogCentered(Program program, String title) {
 		this(program, title, program.getMainWindow().getFrame(), null);
-	}
-	public JDialogCentered(Program program, String title, JDialogCentered jDialogCentered) {
-		this(program, title, jDialogCentered.getDialog(), null);
 	}
 	public JDialogCentered(Program program, String title, Image image) {
 		this(program, title, program.getMainWindow().getFrame(), image);
@@ -89,12 +84,8 @@ public abstract class JDialogCentered implements WindowListener {
 		dialog.addWindowListener(this);
 		if (image != null) dialog.setIconImage(image);
 
-		if (!(this instanceof JValidatedInputDialog)
-				&& !(this instanceof JConfirmDialog)
-				&& !(this instanceof JMessageDialog)){
-			jValidatedInputDialog = new JValidatedInputDialog(program, parent);
-			jConfirmDialog = new JConfirmDialog(program, parent);
-			jMessageDialog = new JMessageDialog(program, parent);
+		if (!(this instanceof JValidatedInputDialog)){
+			jValidatedInputDialog = new JValidatedInputDialog(program, this);
 		}
 		
 		jPanel = new JPanel();
@@ -115,6 +106,7 @@ public abstract class JDialogCentered implements WindowListener {
 	protected abstract void windowShown();
 	protected abstract void windowActivated();
 	protected abstract void save();
+	//public abstract boolean validateInput(String value);
 
 	public JDialog getDialog() {
 		return dialog;
@@ -124,6 +116,12 @@ public abstract class JDialogCentered implements WindowListener {
 		return jValidatedInputDialog.show(title, message, defaultValue, restrictions);
 	}
 
+	
+	
+
+
+
+	/*
 	public boolean showConfirmDialog(String title, String message){
 		return jConfirmDialog.show(title, message);
 	}
@@ -131,6 +129,8 @@ public abstract class JDialogCentered implements WindowListener {
 	public void showMessageDialog(String title, String message){
 		jMessageDialog.show(title, message);
 	}
+	 * 
+	 */
 
 	public void setVisible(boolean b) {
 		if (b){
