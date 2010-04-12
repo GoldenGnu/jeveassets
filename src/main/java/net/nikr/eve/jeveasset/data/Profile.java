@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.data;
 import java.io.File;
 
 
-public class Profile {
+public class Profile implements Comparable<Profile>{
 
 	private String name;
 	private boolean defaultProfile;
@@ -114,5 +114,10 @@ public class Profile {
 		if (defaultProfile) temp = temp+" (default)";
 		//if (activeProfile) temp = temp+" (active)";
 		return temp;
+	}
+
+	@Override
+	public int compareTo(Profile o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +31,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -39,8 +42,6 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.JProfileListRenderer;
-import net.nikr.eve.jeveasset.gui.shared.ProfileComparator;
 
 
 public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener {
@@ -127,7 +128,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private void updateProfiles(){
 		DefaultListModel listModel = new DefaultListModel();
 		List<Profile> profiles = program.getSettings().getProfiles();
-		Collections.sort(profiles, new ProfileComparator());
+		Collections.sort(profiles);
 		for (int a = 0; a < profiles.size(); a++){
 			listModel.addElement(profiles.get(a));
 		}
@@ -255,4 +256,21 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			jProfiles.updateUI();
 		}
 	}
+
+	public class JProfileListRenderer extends DefaultListCellRenderer {
+
+	@Override
+	public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected, boolean cellHasFocus) {
+		Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		if (value instanceof Profile){
+			Profile profile = (Profile) value;
+			if (profile.isActiveProfile()){
+				Font font = component.getFont();
+				component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
+			}
+		}
+		return component;
+	}
+
+}
 }
