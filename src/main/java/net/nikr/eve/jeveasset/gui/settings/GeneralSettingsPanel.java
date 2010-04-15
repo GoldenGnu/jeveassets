@@ -22,9 +22,10 @@
 package net.nikr.eve.jeveasset.gui.settings;
 
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
@@ -34,8 +35,8 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private JCheckBox jDev;
 
 
-	public GeneralSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "General");
+	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "General", icon);
 
 		jStable = new JCheckBox("Automatically search for new "+Program.PROGRAM_NAME+" versions");
 

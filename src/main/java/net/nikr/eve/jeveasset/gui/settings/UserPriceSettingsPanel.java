@@ -22,17 +22,18 @@
 package net.nikr.eve.jeveasset.gui.settings;
 
 import java.util.Map;
+import javax.swing.Icon;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.UserPrice;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JUserListPanel;
 
 
 public class UserPriceSettingsPanel extends JUserListPanel<Integer, UserPrice> {
 
-	public UserPriceSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered, JUserListPanel.FILTER_NUMBERS_ONLY, "User Price", "Assets", "Price", "\r\nTo add new price:\r\n1. Right click a row in the table\r\n2. Select \"Set Price...\" in the popup menu");
+	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, icon, JUserListPanel.FILTER_NUMBERS_ONLY, "User Price", "Assets", "Price", "\r\nTo add new price:\r\n1. Right click a row in the table\r\n2. Select \"Set Price...\" in the popup menu");
 	}
 
 	@Override

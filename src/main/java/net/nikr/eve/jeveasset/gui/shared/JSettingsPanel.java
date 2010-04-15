@@ -23,8 +23,10 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Window;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 
 
 public abstract class JSettingsPanel {
@@ -35,10 +37,10 @@ public abstract class JSettingsPanel {
 	protected GroupLayout layout;
 	protected Window parent;
 
-	public JSettingsPanel(Program program, Window parent, String title ) {
+	public JSettingsPanel(Program program, SettingsDialog optionsDialog, String title, Icon icon) {
 		this.program = program;
 		this.title = title;
-		this.parent = parent;
+		this.parent = optionsDialog.getDialog();
 
 		jPanel = new JPanel();
 
@@ -46,6 +48,8 @@ public abstract class JSettingsPanel {
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
+
+		optionsDialog.add(this, icon);
 	}
 
 	public abstract boolean save();

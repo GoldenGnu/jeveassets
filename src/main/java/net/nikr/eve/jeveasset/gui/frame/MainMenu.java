@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
-public class Menu extends JMenuBar {
+public class MainMenu extends JMenuBar {
 	
 	private static final long serialVersionUID = 1l;
 
@@ -46,9 +46,9 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
 	public final static String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
 	public final static String ACTION_OPEN_METERIALS = "ACTION_OPEN_METERIALS";
-	public final static String ACTION_OPEN_API_MANAGER = "ACTION_OPEN_API_MANAGER";
+	public final static String ACTION_OPEN_ACCOUNT_MANAGER = "ACTION_OPEN_API_MANAGER";
 	public final static String ACTION_OPEN_PROFILES = "ACTION_OPEN_PROFILES";
-	public final static String ACTION_OPEN_SETTINGS = "ACTION_OPEN_SETTINGS";
+	public final static String ACTION_OPEN_OPTIONS = "ACTION_OPEN_SETTINGS";
 	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
 	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
 	public final static String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
@@ -56,10 +56,8 @@ public class Menu extends JMenuBar {
 	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
 	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
-	
-	
 
-	public Menu(Program program) {
+	public MainMenu(Program program) {
 		this.program = program;
 		
 		JMenu menu;
@@ -135,7 +133,7 @@ public class Menu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		jUpdatable = new JMenuItem("Update");
+		jUpdatable = new JMenuItem("Update...");
 		jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
 		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
 		jUpdatable.addActionListener(program);
@@ -146,15 +144,15 @@ public class Menu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		menuItem = new JMenuItem("Manage API Keys");
+		menuItem = new JMenuItem("Manage Accounts...");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("key.png") );
-		menuItem.setActionCommand(ACTION_OPEN_API_MANAGER);
+		menuItem.setActionCommand(ACTION_OPEN_ACCOUNT_MANAGER);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 
-		menuItem = new JMenuItem("Profiels");
+		menuItem = new JMenuItem("Profiels...");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("profile.png") );
 		menuItem.setActionCommand(ACTION_OPEN_PROFILES);
@@ -168,10 +166,10 @@ public class Menu extends JMenuBar {
 
 		menu.addSeparator();
 
-		menuItem = new JMenuItem("Settings");
+		menuItem = new JMenuItem("Options...");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("cog.png") );
-		menuItem.setActionCommand(ACTION_OPEN_SETTINGS);
+		menuItem.setActionCommand(ACTION_OPEN_OPTIONS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

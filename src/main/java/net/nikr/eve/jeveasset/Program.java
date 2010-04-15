@@ -40,9 +40,9 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.data.UserPrice;
-import net.nikr.eve.jeveasset.gui.frame.Menu;
+import net.nikr.eve.jeveasset.gui.frame.MainMenu;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.ApiManagerDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.GeneralSettingsPanel;
@@ -96,7 +96,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private MainWindow mainWindow;
 	
 	//Dialogs
-	private ApiManagerDialog apiManagerDialog;
+	private AccountManagerDialog accountManagerDialog;
 	private SaveFilterDialog saveFilterDialog;
 	private FiltersManagerDialog filtersManagerDialog;
 	private AboutDialog aboutDialog;
@@ -177,8 +177,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Log.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
 		SplashUpdater.setProgress(60);
-		Log.info("	API Key Manager Dialog ");
-		apiManagerDialog = new ApiManagerDialog(this, ImageGetter.getImage("key.png"));
+		Log.info("	Account Manager Dialog");
+		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
 		SplashUpdater.setProgress(65);
 		Log.info("	Values Dialog");
 		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
@@ -207,40 +207,32 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Log.info("	Profiles Dialog");
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
 		SplashUpdater.setProgress(84);
-		Log.info("	Settings Dialog");
+		Log.info("	Options Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		SplashUpdater.setProgress(86);
 		Log.info("		General");
-		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		settingsDialog.add(generalSettingsPanel, ImageGetter.getIcon("cog.png"));
+		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, ImageGetter.getIcon("cog.png"));
 		SplashUpdater.setProgress(88);
 		Log.info("		Table");
-		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog);
-		settingsDialog.add(tableSettingsPanel, ImageGetter.getIcon("application_view_detail.png"));
+		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application_view_detail.png"));
 		SplashUpdater.setProgress(90);
 		Log.info("		Price Data");
-		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		settingsDialog.add(priceDataSettingsPanel, ImageGetter.getIcon("coins.png"));
+		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, ImageGetter.getIcon("coins.png"));
 		SplashUpdater.setProgress(91);
 		Log.info("		User Price");
-		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog);
-		settingsDialog.add(userPriceSettingsPanel, ImageGetter.getIcon("money.png"));
+		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, ImageGetter.getIcon("money.png"));
 		SplashUpdater.setProgress(92);
 		Log.info("		User Item Name");
-		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog);
-		settingsDialog.add(userItemNameSettingsPanel, ImageGetter.getIcon("set_name.png"));
+		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, ImageGetter.getIcon("set_name.png"));
 		SplashUpdater.setProgress(93);
 		Log.info("		Reprocessing");
-		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		settingsDialog.add(reprocessingSettingsPanel, ImageGetter.getIcon("reprocessing.png"));
+		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, ImageGetter.getIcon("reprocessing.png"));
 		SplashUpdater.setProgress(94);
 		Log.info("		Proxy");
-		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		settingsDialog.add(proxySettingsPanel, ImageGetter.getIcon("server_connect.png"));
+		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, ImageGetter.getIcon("server_connect.png"));
 		SplashUpdater.setProgress(95);
 		Log.info("		Window");
-		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		settingsDialog.add(windowSettingsPanel, ImageGetter.getIcon("application.png"));
+		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application.png"));
 		SplashUpdater.setProgress(96);
 		Log.info("	Update Dialog");
 		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
@@ -255,16 +247,14 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		mainWindow.show();
 		//Start timer
 		timerTicked();
-
 		if(DEBUG){
 			Log.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		if (settings.getAccounts().isEmpty()){
-			apiManagerDialog.setVisible(true);
+			accountManagerDialog.setVisible(true);
 		}
 		programUpdateChecker.showMessages();
-
 		Log.info("Startup Done");
 	}
 	public void addPanel(JProgramPanel jProgramPanel){
@@ -378,43 +368,43 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (Menu.ACTION_OPEN_API_MANAGER.equals(e.getActionCommand())) {
-			apiManagerDialog.setVisible(true);
+		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
+			accountManagerDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
 			showAbout();
 		}
-		if (Menu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			valuesDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_METERIALS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_METERIALS.equals(e.getActionCommand())) {
 			materialsDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_LOADOUTS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_LOADOUTS.equals(e.getActionCommand())) {
 			loadoutsDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			marketOrdersDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
 			industryJobsDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
 			csvExportDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
 			routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("routing.png"));
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
 			routingDialogue.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);
 		}
-		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
 			showSettings();
 		}
-		if (Menu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
 		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
@@ -434,7 +424,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			settingsDialog.setVisible(userItemNameSettingsPanel);
 		}
 
-		if (Menu.ACTION_OPEN_README.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
 				Desktop desktop = Desktop.getDesktop();
 				try {
@@ -444,7 +434,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				}
 			}
 		}
-		if (Menu.ACTION_OPEN_LICENSE.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_LICENSE.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
 				Desktop desktop = Desktop.getDesktop();
 				try {
@@ -454,7 +444,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				}
 			}
 		}
-		if (Menu.ACTION_OPEN_CREDITS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_CREDITS.equals(e.getActionCommand())) {
 			if (Desktop.isDesktopSupported()) {
 				Desktop desktop = Desktop.getDesktop();
 				try {
@@ -464,7 +454,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				}
 			}
 		}
-		if (Menu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();
 		}
 		if (ACTION_TIMER.equals(e.getActionCommand())) {

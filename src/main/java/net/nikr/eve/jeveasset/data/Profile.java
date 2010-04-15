@@ -109,6 +109,30 @@ public class Profile implements Comparable<Profile>{
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Profile other = (Profile) obj;
+		if ((this.name == null) ? (other.name != null) : !this.name.toLowerCase().equals(other.name.toLowerCase())) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 97 * hash + (this.name != null ? this.name.toLowerCase().hashCode() : 0);
+		return hash;
+	}
+
+
+
+	@Override
 	public String toString(){
 		String temp = name;
 		if (defaultProfile) temp = temp+" (default)";
@@ -118,6 +142,6 @@ public class Profile implements Comparable<Profile>{
 
 	@Override
 	public int compareTo(Profile o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
 	}
 }

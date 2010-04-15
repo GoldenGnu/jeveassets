@@ -25,8 +25,6 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +36,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -47,12 +44,9 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JUneditableTableModel;
-import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
-import net.nikr.eve.jeveasset.io.Online;
-import net.nikr.log.Log;
 
 
-public class ApiManagerDialog extends JDialogCentered implements ActionListener, TableModelListener  {
+public class AccountManagerDialog extends JDialogCentered implements ActionListener, TableModelListener  {
 
 	public final static String ACTION_ADD = "ACTION_ADD";
 	public final static String ACTION_DONE = "ACTION_DONE";
@@ -68,7 +62,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	public final static String ACTION_CORPORATION_UNCHECK_SELECTED = "ACTION_CORPORATION_UNCHECK_SELECTED";
 
 	//GUI
-	private ApiAddDialog apiAddDialog;
+	private AccountImportDialog accountImportDialog;
 	private DefaultTableModel accountTableModel;
 	private JScrollPane jAccountScrollPanel;
 	private DefaultTableModel humanTableModel;
@@ -81,17 +75,15 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	private JDropDownButton jCorporation;
 	private JButton jDone;
 
-	private CheckHumanTask checkHumanTask;
-
 	private Map<Long, Boolean> shownAssets;
 	private Map<Long, Boolean> shownAssetsCopy;
 	private Map<Long, Boolean> corpAssets;
 	private Map<Long, Boolean> corpAssetsCopy;
 
-	public ApiManagerDialog(Program program, Image image) {
-		super(program, "Api Key Manager", image);
+	public AccountManagerDialog(Program program, Image image) {
+		super(program, "Accounts Management", image);
 
-		apiAddDialog = new ApiAddDialog(this, program);
+		accountImportDialog = new AccountImportDialog(this, program);
 
 		//Api Table
 		String[] columnNames = {"User", "Full API Key"};
@@ -229,8 +221,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	}
 
 	public void updateTable(){
-		
-
 		//Save HumanTable selected rows
 		List<Long> humanSelectedIds = new Vector<Long>();
 		for (int a = 0; a < humanTableModel.getRowCount(); a++){
@@ -269,24 +259,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 			jAssets.setEnabled(false);
 			jCorporation.setEnabled(false);
 		}
-	}
-
-	private void enableAll(boolean b){
-		jRemove.setEnabled(b);
-		jEdit.setEnabled(b);
-		jAdd.setEnabled(b);
-		jAssets.setEnabled(b);
-		jCorporation.setEnabled(b);
-		jDone.setEnabled(b);
-		jHumanTable.setEnabled(b);
-		jAccountTable.setEnabled(b);
-
-	}
-
-	public void saveApiKey(){
-		checkHumanTask = new CheckHumanTask(apiAddDialog.getUserId(), apiAddDialog.getApiKey());
-		checkHumanTask.addPropertyChangeListener( new AddApiKey());
-		checkHumanTask.execute();
 	}
 
 	private void checkAssets(boolean selected, boolean check, boolean assets){
@@ -374,24 +346,16 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD.equals(e.getActionCommand())) {
-			apiAddDialog.setVisible(true);
+			accountImportDialog.setVisible(true);
 		}
 		if (ACTION_DONE.equals(e.getActionCommand())) {
 			save();
 		}
 		if (ACTION_EDIT.equals(e.getActionCommand())) {
 			int row = jAccountTable.getSelectedRow();
-			int userID = Integer.valueOf( (String) jAccountTable.getValueAt(row, 0));
-			String oldApiKey = (String) jAccountTable.getValueAt(row, 1);
-			String newApiKey = (String) JOptionPane.showInputDialog(this.getDialog(), "Enter new api key", "Edit API Key", JOptionPane.PLAIN_MESSAGE, null, null, oldApiKey);
-			if (newApiKey == null){ //Cancel - do nothing
-				return;
-			}
-			enableAll(false);
-			checkHumanTask = new CheckHumanTask(userID, newApiKey);
-			checkHumanTask.addPropertyChangeListener( new UpdateApiKey() );
-			checkHumanTask.execute();
-			
+			String userID = (String) jAccountTable.getValueAt(row, 0);
+			String apiKey = (String) jAccountTable.getValueAt(row, 1);
+			accountImportDialog.show(userID, apiKey);
 		}
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			int selectedRow = jAccountTable.getSelectedRow();
@@ -443,9 +407,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 		}
 
 		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())){
-			
 			checkAssets(true, true, true);
-
 		}
 
 		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())){
@@ -497,125 +459,6 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 					}
 				}
 			}
-		}
-	}
-
-	class UpdateApiKey implements PropertyChangeListener{
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			apiAddDialog.setEnabledAll(false);
-			if (checkHumanTask.throwable != null){
-				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
-			}
-			if (checkHumanTask.done){
-				checkHumanTask.done = false;
-				if (checkHumanTask.result == 10){
-					JOptionPane.showMessageDialog(dialog, "API Key already exist", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
-				}
-				if (checkHumanTask.result == 20){
-					JOptionPane.showMessageDialog(dialog, "Please connect to the internet and try again.", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
-				}
-				if (checkHumanTask.result == 30){
-					JOptionPane.showMessageDialog(dialog, "The entered api key is not valid.", "Updating api key failed", JOptionPane.PLAIN_MESSAGE);
-				}
-				if (checkHumanTask.result == 100){
-					List<Account> accounts = program.getSettings().getAccounts();
-					for (int a = 0; a < accounts.size(); a++){
-						Account account = accounts.get(a);
-						if (account.getUserID() == checkHumanTask.userID){
-							account.setApiKey(checkHumanTask.apiKey);
-							break;
-						}
-					}
-					updateTable();
-					JOptionPane.showMessageDialog(dialog, "API Key updated", "Update API Key", JOptionPane.PLAIN_MESSAGE);
-				}
-				enableAll(true);
-			}
-		}
-
-	}
-
-	class AddApiKey implements PropertyChangeListener{
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (checkHumanTask.throwable != null){
-				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", checkHumanTask.throwable);
-			}
-			if (checkHumanTask.done){
-				checkHumanTask.done = false;
-				if (checkHumanTask.result == 10){
-					JOptionPane.showMessageDialog(dialog, "API Key already added", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
-					apiAddDialog.setEnabledAll(true);
-				}
-				if (checkHumanTask.result == 20){
-					JOptionPane.showMessageDialog(dialog, "Please connect to the internet and try again.", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
-					apiAddDialog.setEnabledAll(true);
-				}
-				if (checkHumanTask.result == 30){
-					JOptionPane.showMessageDialog(dialog, "The entered api key is not valid.", "Adding api key failed", JOptionPane.PLAIN_MESSAGE);
-					apiAddDialog.setEnabledAll(true);
-				}
-				if (checkHumanTask.result == 100){
-					program.getSettings().getAccounts().add(checkHumanTask.account);
-					updateTable();
-					apiAddDialog.setVisible(false);
-					JOptionPane.showMessageDialog(dialog, "API Key Added.\r\nTo update assets select: Menu > Update > Update", "Api key added", JOptionPane.PLAIN_MESSAGE);
-				}
-			}
-		}
-
-	}
-
-	class CheckHumanTask extends SwingWorker<Void, Void> {
-
-		private int result = 0;
-		private boolean done = false;
-		private Account account;
-		private Throwable throwable = null;
-		private int userID;
-		private String apiKey;
-		private HumansGetter humansGetter = new HumansGetter();
-
-		public CheckHumanTask(int userID, String apiKey) {
-			this.userID = userID;
-			this.apiKey = apiKey;
-		}
-
-		@Override
-		public Void doInBackground() {
-			setProgress(0);
-			try {
-				account = new Account(userID, apiKey);
-				boolean ok = !program.getSettings().getAccounts().contains( account );
-				if (!ok){
-					result = 10;
-					return null;
-				}
-				ok = Online.isOnline(program.getSettings());
-				if (!ok){
-					result = 20;
-					return null;
-				}
-				humansGetter.load(null, true, account);
-				if (humansGetter.hasError()){
-					result = 30;
-					return null;
-				}
-				result = 100;
-			} catch (Throwable ex) {
-				throwable = ex;
-				done = false;
-			}
-			return null;
-        }
-
-		@Override
-		public void done() {
-			done = true;
-			setProgress(100);
 		}
 	}
 }

@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -39,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserListItem;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 
 public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSettingsPanel implements ActionListener, FocusListener {
 
@@ -61,8 +63,10 @@ public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSett
 	private I lastItem = null;
 	private I newItem = null;
 
-	public JUserListPanel(Program program, JDialogCentered jDialogCentered, int filter, String title, String list, String item, String help) {
-		super(program, jDialogCentered.getDialog(), title);
+
+
+	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, int filter, String title, String list, String item, String help) {
+		super(program, optionsDialog, title, icon);
 
 		JLabel jSetPriceLable = new JLabel(list+":");
 		jItems = new JComboBox();

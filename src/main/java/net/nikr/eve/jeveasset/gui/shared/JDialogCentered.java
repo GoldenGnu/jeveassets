@@ -52,8 +52,6 @@ public abstract class JDialogCentered implements WindowListener {
 	public final static int INTEGERS_ONLY = 2;
 	public final static int NUMBERS_ONLY = 3;
 
-	private JValidatedInputDialog jValidatedInputDialog;
-
 	protected Program program;
 	protected Window parent;
 	protected JPanel jPanel;
@@ -83,10 +81,6 @@ public abstract class JDialogCentered implements WindowListener {
 		dialog.setResizable(false);
 		dialog.addWindowListener(this);
 		if (image != null) dialog.setIconImage(image);
-
-		if (!(this instanceof JValidatedInputDialog)){
-			jValidatedInputDialog = new JValidatedInputDialog(program, this);
-		}
 		
 		jPanel = new JPanel();
 
@@ -111,26 +105,6 @@ public abstract class JDialogCentered implements WindowListener {
 	public JDialog getDialog() {
 		return dialog;
 	}
-
-	public String showValidatedInputDialog(String title, String message, String defaultValue, int restrictions){
-		return jValidatedInputDialog.show(title, message, defaultValue, restrictions);
-	}
-
-	
-	
-
-
-
-	/*
-	public boolean showConfirmDialog(String title, String message){
-		return jConfirmDialog.show(title, message);
-	}
-
-	public void showMessageDialog(String title, String message){
-		jMessageDialog.show(title, message);
-	}
-	 * 
-	 */
 
 	public void setVisible(boolean b) {
 		if (b){

@@ -73,6 +73,9 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 	@Override
 	protected void setData(Response response, boolean bCorp) {
 		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
+		if (characters.isEmpty()){ //No characters on account
+			this.error(); //it's impossible to check if it's a limited or full api key
+		}
 		for (int a = 0; a < characters.size(); a++){
 			ApiCharacter apiCharacter = characters.get(a);
 			Human human = new Human(getAccount()
@@ -84,7 +87,9 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 			if (!getAccount().getHumans().contains(human)){ //Add new account
 				if (isForceUpdate()){
 					accountBalanceGetter.load(null, true, human);
-					if (accountBalanceGetter.hasCorpError()) human.setUpdateCorporationAssets(false);
+					if (accountBalanceGetter.hasCorpError()){
+						human.setUpdateCorporationAssets(false);
+					}
 					if (accountBalanceGetter.hasHumanError()){
 						this.error();
 						return;

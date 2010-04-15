@@ -25,13 +25,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
@@ -43,8 +44,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	private JComboBox jPriceType;
 	private JComboBox jSource;
 	
-	public PriceDataSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Price Data");
+	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "Price Data", icon);
 		JTextArea jWarning = new JTextArea("When changing the source and/or region, the changes doesn't take effect until next time you update the price data.");
 		jWarning.setFont(this.getPanel().getFont());
 		jWarning.setBackground(this.getPanel().getBackground());

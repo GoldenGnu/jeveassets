@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -34,7 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
@@ -58,8 +59,8 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	JCheckBox jMaximized;
 	JButton jDefault;
 
-	public WindowSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Window");
+	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "Window", icon);
 
 		jAutoSave = new JRadioButton("Save size on exit");
 		jAutoSave.setActionCommand(ACTION_AUTO_SAVE);

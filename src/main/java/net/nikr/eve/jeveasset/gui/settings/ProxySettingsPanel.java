@@ -28,6 +28,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -36,7 +37,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 // </editor-fold>
@@ -54,8 +55,8 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	private JCheckBox enableApiProxy;
 	private JTextField apiProxyField;
 
-	public ProxySettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Proxy");
+	public ProxySettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "Proxy", icon);
 
 		JLabel proxyTypeLabel = new JLabel("Proxy Type");
 		JLabel proxyAddressLabel = new JLabel("Proxy Address");

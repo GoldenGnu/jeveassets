@@ -22,9 +22,10 @@
 package net.nikr.eve.jeveasset.gui.settings;
 
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
 
@@ -33,8 +34,8 @@ public class TableSettingsPanel extends JSettingsPanel {
 		private JCheckBox jMarkSelectedRow;
 		private JCheckBox jReprocessColors;
 
-	public TableSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Table");
+	public TableSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "Table", icon);
 
 		jEnterFilters = new JCheckBox("Only filter when enter is pressed");
 

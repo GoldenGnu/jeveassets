@@ -21,16 +21,17 @@
 package net.nikr.eve.jeveasset.gui.settings;
 
 import java.util.Map;
+import javax.swing.Icon;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JUserListPanel;
 
 
 public class UserItemNameSettingsPanel extends JUserListPanel<Long, UserItemName> {
 
-	public UserItemNameSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered, JUserListPanel.FILTER_NO_RESTRICTIONS, "User Item Name ", "Assets", "Name", "\r\nTo add new item name:\r\n1. Right click a row in the table\r\n2. Select \"Set Name...\" in the popup menu");
+	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, icon, JUserListPanel.FILTER_NO_RESTRICTIONS, "User Item Name ", "Assets", "Name", "\r\nTo add new item name:\r\n1. Right click a row in the table\r\n2. Select \"Set Name...\" in the popup menu");
 	}
 
 	@Override

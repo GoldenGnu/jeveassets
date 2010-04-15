@@ -25,12 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JSettingsPanel;
 
@@ -51,8 +52,8 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	private JRadioButton[] jRefineryEfficiency;
 	private JRadioButton[] jScrapmetalProcessing;
 
-	public ReprocessingSettingsPanel(Program program, JDialogCentered jDialogCentered) {
-		super(program, jDialogCentered.getDialog(), "Reprocessing");
+	public ReprocessingSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
+		super(program, optionsDialog, "Reprocessing", icon);
 
 		JLabel jNotes = new JLabel("Note: Station tax is not calculated (0% tax or 6.67+ standing)");
 

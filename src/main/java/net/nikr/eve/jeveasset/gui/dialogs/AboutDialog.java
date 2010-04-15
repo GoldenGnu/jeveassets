@@ -21,12 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
+import java.beans.PropertyChangeEvent;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,38 +37,40 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.shared.JWait;
 
 
-public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
+public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
 
 	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private final static String ACTION_UPDATE = "ACTION_UPDATE";
 
 	private JButton jClose;
 	private JButton jCheckUpdates;
+	private JEditorPane jInfo;
+	private JEditorPane jExternal;
+	private JWait jWait;
 	
 	public AboutDialog(Program program, Image image) {
 		super(program, "About", image);
+
+		jWait = new JWait(this.getDialog());
+
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon( ImageGetter.getIcon("icon07_13.png") );
 
 		JEditorPane jProgram = createEditorPane(
 				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
 				+ "Copyright &copy; 2009, 2010 Contributors<br>"
-				/*
-				"<div style=\"font-size: 14pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
-				+ "Version "+Program.PROGRAM_VERSION+"<br>"
-				+ "Copyright &copy; 2009, 2010 Contributors<br>"
-				+ "<a href=\"http://eve.nikr.net/?page=jeveasset\">http://eve.nikr.net/?page=jeveasset</a><br>"
-				 */
 				);
 
 
-		JEditorPane jInfo = createEditorPane(
+		jInfo = createEditorPane(
 				  "<b>Version</b><br>"
 				+ "&nbsp;"+Program.PROGRAM_VERSION+"<br>"
 				+ "<br>"
@@ -88,7 +92,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
 
-		JEditorPane jExternal = createEditorPane(
+		jExternal = createEditorPane(
 				  "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
@@ -152,6 +156,13 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		);
 	}
 
+	private void setEnabledAll(boolean b){
+		jClose.setEnabled(b);
+		jCheckUpdates.setEnabled(b);
+		jInfo.setEnabled(b);
+		jExternal.setEnabled(b);
+	}
+
 	private JEditorPane createEditorPane(String text){
 		JEditorPane jEditorPane = new JEditorPane("text/html",
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
@@ -175,7 +186,9 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() {
+		setEnabledAll(true);
+	}
 
 	@Override
 	protected void windowActivated() {}
@@ -189,20 +202,53 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 			dialog.setVisible(false);
 		}
 		if (ACTION_UPDATE.equals(e.getActionCommand())){
-			program.checkForProgramUpdates(this.getDialog());
+			jWait.showWaitDialog("Checking for new program updates");
+			setEnabledAll(false);
+			CheckProgramUpdate checkProgramUpdate = new CheckProgramUpdate();
+			checkProgramUpdate.addPropertyChangeListener(this);
+			checkProgramUpdate.execute();
+			
 		}
 	}
 	
 	@Override
 	public void hyperlinkUpdate(HyperlinkEvent hle) {
-		if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-			try {
-				Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-			} catch (IOException e2) {
-				e2.printStackTrace();
+		Object o = hle.getSource();
+		if (o instanceof JEditorPane){
+			JEditorPane jEditorPane = (JEditorPane) o;
+			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
+				try {
+					Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
 			}
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		Object o = evt.getSource();
+		if (o instanceof SwingWorker){
+			SwingWorker swingWorker = (SwingWorker) o;
+			if (swingWorker.isDone()){
+				setEnabledAll(true);
+				jWait.hideWaitDialog();
+				
+			}
+		}
+
+	}
+
+	private class CheckProgramUpdate extends SwingWorker<Void, Void>{
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			program.checkForProgramUpdates(getDialog());
+			return null;
+		}
+
 	}
 }

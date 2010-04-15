@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,13 +41,16 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.JValidatedInputDialog;
+import net.nikr.eve.jeveasset.gui.shared.JWait;
 
 
-public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener {
+public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener, PropertyChangeListener {
 
 	private final static String ACTION_NEW_PROFILE = "ACTION_NEW_PROFILE";
 	private final static String ACTION_LOAD_PROFILE = "ACTION_LOAD_PROFILE";
@@ -61,9 +66,14 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private JButton jDelete;
 	private JButton jDefault;
 	private JButton jClose;
+	private JWait jWait;
+	private JValidatedInputDialog jValidatedInputDialog;
 
 	public ProfileDialog(Program program, Image image) {
 		super(program, "Profiles", image);
+
+		jWait = new JWait(this.getDialog());
+		jValidatedInputDialog = new JValidatedInputDialog(program, this);
 
 		jProfiles = new JList();
 		jProfiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -126,6 +136,17 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		);
 	}
 
+
+	private void setAllEnabled(boolean b){
+		jProfiles.setEnabled(b);
+		jNew.setEnabled(b);
+		jLoad.setEnabled(b);
+		jRename.setEnabled(b);
+		jDelete.setEnabled(b);
+		jDefault.setEnabled(b);
+		jClose.setEnabled(b);
+	}
+
 	private void updateProfiles(){
 		DefaultListModel listModel = new DefaultListModel();
 		List<Profile> profiles = program.getSettings().getProfiles();
@@ -135,6 +156,22 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		}
 		jProfiles.setModel(listModel);
 		if (!profiles.isEmpty()) jProfiles.setSelectedIndex(0);
+	}
+
+	private void loadProfile(Profile profile){
+		if (profile != null && !profile.isActiveProfile()){
+			List<Profile> profiles = program.getSettings().getProfiles();
+			for (int a = 0; a < profiles.size(); a++){
+				profiles.get(a).setActiveProfile(false);
+			}
+			program.getSettings().saveAssets();
+			program.getSettings().setAccounts( new ArrayList<Account>());
+			program.updateEventList();
+			program.getSettings().setActiveProfile(profile);
+			profile.setActiveProfile(true);
+			program.getSettings().loadAssets();
+			program.updateEventList();
+		}
 	}
 
 	@Override
@@ -161,25 +198,37 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(ACTION_NEW_PROFILE.equals(e.getActionCommand())){
-			String s = showValidatedInputDialog("New Profile", "Type name:", "", JDialogCentered.WORDS_ONLY);
+			String s = jValidatedInputDialog.show("New Profile", "Type name:", "", JDialogCentered.WORDS_ONLY);
 			if (s != null && !s.isEmpty()){
-				Profile profile = new Profile(s, false, false);
-				program.getSettings().getProfiles().add(profile);
-				loadProfile(profile);
-				updateProfiles();
-				jProfiles.updateUI();
+				if (program.getSettings().getProfiles().contains(new Profile(s, false, false))){
+					JOptionPane.showMessageDialog(this.getDialog(), "A profile with that name already exist", "New Profile", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					jWait.showWaitDialog("Creating Profile...");
+					setAllEnabled(false);
+					NewProfile newProfile = new NewProfile(s);
+					newProfile.addPropertyChangeListener(this);
+					newProfile.execute();
+				}
 			}
 		}
 		if(ACTION_LOAD_PROFILE.equals(e.getActionCommand())){
+			jWait.showWaitDialog("Loading Profile...");
+			setAllEnabled(false);
 			Profile profile = (Profile) jProfiles.getSelectedValue();
-			loadProfile(profile);
+			LoadProfile loadProfile = new LoadProfile(profile);
+			loadProfile.addPropertyChangeListener(this);
+			loadProfile.execute();
 		}
 		if(ACTION_RENAME_PROFILE.equals(e.getActionCommand())){
 			Profile profile = (Profile) jProfiles.getSelectedValue();
 			if (profile != null){
-				String s = showValidatedInputDialog("Rename Profile", "Type new name:", profile.getName(), JDialogCentered.WORDS_ONLY);
+				String s = jValidatedInputDialog.show("Rename Profile", "Type new name:", profile.getName(), JDialogCentered.WORDS_ONLY);
 				if (s != null && !s.isEmpty()){
-					profile.setName(s);
+					if (program.getSettings().getProfiles().contains(new Profile(s, false, false))){
+						JOptionPane.showMessageDialog(this.getDialog(), "A profile with that name already exist", "Rename Profile", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						profile.setName(s);
+					}
 				}
 				jProfiles.updateUI();
 				
@@ -196,7 +245,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				//showMessageDialog("Delete Profile", "You can not delete the default profile");
 			}
 			if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()){
-				int value = JOptionPane.showConfirmDialog(this.getDialog(), "msg", "title", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int value = JOptionPane.showConfirmDialog(this.getDialog(), "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored", "Delete Profile", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
 				if (value == JOptionPane.YES_OPTION){
 					program.getSettings().getProfiles().remove(profile);
@@ -227,7 +276,9 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			Profile profile = (Profile) jProfiles.getSelectedValue();
-			loadProfile(profile);
+			jWait.showWaitDialog("Loading Profile...");
+			LoadProfile loadProfile = new LoadProfile(profile);
+			loadProfile.execute();
 		}
 	}
 
@@ -243,37 +294,68 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	@Override
 	public void mouseExited(MouseEvent e) {}
 
-	private void loadProfile(Profile profile){
-		if (profile != null && !profile.isActiveProfile()){
-			List<Profile> profiles = program.getSettings().getProfiles();
-			for (int a = 0; a < profiles.size(); a++){
-				profiles.get(a).setActiveProfile(false);
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		Object o = evt.getSource();
+		if (o instanceof SwingWorker){
+			SwingWorker swingWorker = (SwingWorker) o;
+			if (swingWorker.isDone()){
+				updateProfiles();
+				jProfiles.updateUI();
+				setAllEnabled(true);
+				jWait.hideWaitDialog();
 			}
-			program.getSettings().saveAssets();
-			program.getSettings().setAccounts( new ArrayList<Account>());
-			program.updateEventList();
-			program.getSettings().setActiveProfile(profile);
-			profile.setActiveProfile(true);
-			program.getSettings().loadAssets();
-			program.updateEventList();
-			jProfiles.updateUI();
 		}
 	}
 
 	public class JProfileListRenderer extends DefaultListCellRenderer {
 
-	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected, boolean cellHasFocus) {
-		Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-		if (value instanceof Profile){
-			Profile profile = (Profile) value;
-			if (profile.isActiveProfile()){
-				Font font = component.getFont();
-				component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected, boolean cellHasFocus) {
+			Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if (value instanceof Profile){
+				Profile profile = (Profile) value;
+				if (profile.isActiveProfile()){
+					Font font = component.getFont();
+					component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
+				}
 			}
+			return component;
 		}
-		return component;
 	}
 
-}
+
+
+	private class NewProfile extends SwingWorker<Void, Void>{
+
+		private String profileName;
+
+		public NewProfile(String profileName) {
+			this.profileName = profileName;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			Profile profile = new Profile(profileName, false, false);
+			program.getSettings().getProfiles().add(profile);
+			loadProfile(profile);
+			return null;
+		}
+	}
+
+	private class LoadProfile extends SwingWorker<Void, Void>{
+
+		private Profile profile;
+
+		public LoadProfile(Profile profile) {
+			this.profile = profile;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			loadProfile(profile);
+			return null;
+		}
+
+	}
 }

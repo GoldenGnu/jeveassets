@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 public class MainWindow implements WindowListener {
 
 	//GUI
-	Menu menu;
+	MainMenu mainMenu;
 	JFrame jFrame;
 
 	//Data
@@ -65,12 +65,12 @@ public class MainWindow implements WindowListener {
 		jFrame.setIconImage( ImageGetter.getImage("safe16.png") );
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		menu = new Menu(program);
-		jFrame.setJMenuBar( menu );
+		mainMenu = new MainMenu(program);
+		jFrame.setJMenuBar( mainMenu );
 	}
 
-	public Menu getMenu() {
-		return menu;
+	public MainMenu getMenu() {
+		return mainMenu;
 	}
 
 	public void show(){

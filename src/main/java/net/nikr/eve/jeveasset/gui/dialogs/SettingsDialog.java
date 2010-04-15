@@ -65,7 +65,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 	private boolean tabSelected = false;
 
 	public SettingsDialog(Program program, Image image) {
-		super(program, "Settings", image);
+		super(program, Program.PROGRAM_NAME+" Settings", image);
 		settingsPanels = new Vector<JSettingsPanel>();
 
 		listModel = new DefaultListModel();
