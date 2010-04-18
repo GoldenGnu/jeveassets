@@ -25,9 +25,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 
 
 public class JWorking extends JPanel {
@@ -46,17 +45,13 @@ public class JWorking extends JPanel {
 		this.setDoubleBuffered(true);
 		loadingImages = new BufferedImage[IMG_FRAMES];
 		for (int a = 0; a < IMG_FRAMES; a++){
-			try {
-				String number;
-				if ((a+1)<10){
-					number = "0"+(a+1);
-				} else {
-					number = ""+(a+1);
-				}
-				loadingImages[a] = ImageIO.read(getClass().getResource("../images/working"+number+".png"));
-			} catch (IOException ex) {
-				
+			String number;
+			if ((a+1)<10){
+				number = "0"+(a+1);
+			} else {
+				number = ""+(a+1);
 			}
+			loadingImages[a] = ImageGetter.getBufferedImage("working"+number+".png");
 		}
 		Worker worker = new Worker(this);
 		worker.start();

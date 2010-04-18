@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.images;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -42,6 +43,18 @@ public class ImageGetter {
 	}
 
 	public static Image getImage(String s) {
+		try {
+			java.net.URL imgURL = ImageGetter.class.getResource(s);
+			if (imgURL != null) {
+				return ImageIO.read(imgURL);
+			}
+		} catch (IOException ex) {
+
+		}
+		return null;
+	}
+
+	public static BufferedImage getBufferedImage(String s) {
 		try {
 			java.net.URL imgURL = ImageGetter.class.getResource(s);
 			if (imgURL != null) {
