@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.utils.stationlist.ApiStation;
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.io.IOException;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;

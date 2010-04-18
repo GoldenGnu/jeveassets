@@ -21,8 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.utils.stationlist.Parser;
-import com.beimin.eveapi.utils.stationlist.Response;
+import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import java.io.IOException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -30,7 +29,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class ConquerableStationsGetter extends AbstractApiGetter<Response> {
+public class ConquerableStationsGetter extends AbstractApiGetter<StationListResponse> {
 
 	private Settings settings;
 
@@ -44,9 +43,8 @@ public class ConquerableStationsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getStationList();
+	protected StationListResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		return com.beimin.eveapi.eve.conquerablestationlist.ConquerableStationListParser.getInstance().getStationList();
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class ConquerableStationsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(StationListResponse response, boolean bCorp) {
 		settings.setConquerableStations( response.getStations() );
 	}
 }

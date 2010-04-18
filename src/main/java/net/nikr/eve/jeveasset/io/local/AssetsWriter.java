@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.balance.ApiAccountBalance;
-import com.beimin.eveapi.industry.ApiIndustryJob;
-import com.beimin.eveapi.order.ApiMarketOrder;
+import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;

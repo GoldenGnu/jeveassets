@@ -21,9 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.character.list.ApiCharacter;
-import com.beimin.eveapi.character.list.Parser;
-import com.beimin.eveapi.character.list.Response;
+import com.beimin.eveapi.account.characters.ApiCharacter;
+import com.beimin.eveapi.account.characters.CharactersResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class HumansGetter extends AbstractApiGetter<Response> {
+public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 
 	private AccountBalanceGetter accountBalanceGetter;
 
@@ -55,9 +54,8 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getEveCharacters(Human.getApiAuthorization(getAccount()));
+	protected CharactersResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		return com.beimin.eveapi.account.characters.CharactersParser.getInstance().getEveCharacters(Human.getApiAuthorization(getAccount()));
 	}
 
 	@Override
@@ -71,7 +69,7 @@ public class HumansGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(CharactersResponse response, boolean bCorp) {
 		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
 		if (characters.isEmpty()){ //No characters on account
 			this.error(); //it's impossible to check if it's a limited or full api key

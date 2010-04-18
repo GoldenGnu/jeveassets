@@ -21,10 +21,10 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.asset.ApiAsset;
-import com.beimin.eveapi.industry.ApiIndustryJob;
-import com.beimin.eveapi.order.ApiMarketOrder;
-import com.beimin.eveapi.utils.stationlist.ApiStation;
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.shared.assetlist.ApiAsset;
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;

@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.utils.stationlist.ApiStation;
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;

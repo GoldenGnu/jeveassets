@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.order.ApiMarketOrder;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.text.ParseException;
 import javax.management.timer.Timer;
 import net.nikr.log.Log;

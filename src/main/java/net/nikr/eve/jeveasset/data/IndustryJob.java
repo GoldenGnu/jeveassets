@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.industry.ApiIndustryJob;
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import java.text.ParseException;
 import java.util.Date;
 

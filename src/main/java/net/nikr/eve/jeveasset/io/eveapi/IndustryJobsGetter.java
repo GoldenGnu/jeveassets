@@ -21,9 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.industry.ApiIndustryJob;
-import com.beimin.eveapi.industry.Parser;
-import com.beimin.eveapi.industry.Response;
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class IndustryJobsGetter extends AbstractApiGetter<Response> {
+public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
 	public IndustryJobsGetter() {
 		super("Industry Jobs", true, false);
@@ -47,9 +46,12 @@ public class IndustryJobsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getInustryJobs(Human.getApiAuthorization(getHuman()), bCorp);
+	protected IndustryJobsResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		if (bCorp){
+			return com.beimin.eveapi.corporation.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+		} else {
+			return com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+		}
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(IndustryJobsResponse response, boolean bCorp) {
 		List<ApiIndustryJob> industryJobs = new Vector<ApiIndustryJob>(response.getIndustryJobs());
 		if (bCorp){
 			getHuman().setIndustryJobsCorporation(industryJobs);

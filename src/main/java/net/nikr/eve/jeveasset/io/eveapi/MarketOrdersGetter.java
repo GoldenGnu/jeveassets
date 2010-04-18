@@ -21,9 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.order.ApiMarketOrder;
-import com.beimin.eveapi.order.Parser;
-import com.beimin.eveapi.order.Response;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.shared.marketorders.MarketOrdersResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class MarketOrdersGetter extends AbstractApiGetter<Response> {
+public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
 	public MarketOrdersGetter() {
 		super("Market Orders", true, false);
@@ -47,9 +46,12 @@ public class MarketOrdersGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getMarketOrders(Human.getApiAuthorization(getHuman()), bCorp);
+	protected MarketOrdersResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		if (bCorp){
+			return com.beimin.eveapi.corporation.marketorders.MarketOrdersParser.getInstance().getMarketOrdersResponse(Human.getApiAuthorization(getHuman()));
+		} else {
+			return com.beimin.eveapi.character.marketorders.MarketOrdersParser.getInstance().getMarketOrdersResponse(Human.getApiAuthorization(getHuman()));
+		}
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(MarketOrdersResponse response, boolean bCorp) {
 		List<ApiMarketOrder> marketOrders = new Vector<ApiMarketOrder>(response.getMarketOrders());
 		if (bCorp){
 			getHuman().setMarketOrdersCorporation(marketOrders);

@@ -21,9 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.asset.ApiAsset;
-import com.beimin.eveapi.asset.Parser;
-import com.beimin.eveapi.asset.Response;
+import com.beimin.eveapi.shared.assetlist.ApiAsset;
+import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +35,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import org.xml.sax.SAXException;
 
 
-public class AssetsGetter extends AbstractApiGetter<Response> {
+public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	private Settings settings;
 
@@ -50,9 +49,12 @@ public class AssetsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getAssets(Human.getApiAuthorization(getHuman()), bCorp);
+	protected AssetListResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		if (bCorp){
+			return com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance().getAssetListResponse(Human.getApiAuthorization(getHuman()));
+		} else {
+			return com.beimin.eveapi.character.assetlist.AssetListParser.getInstance().getAssetListResponse(Human.getApiAuthorization(getHuman()));
+		}
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public class AssetsGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(AssetListResponse response, boolean bCorp) {
 		List<ApiAsset> apiAssets = new Vector<ApiAsset>(response.getAssets());
 		if (bCorp){
 			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));

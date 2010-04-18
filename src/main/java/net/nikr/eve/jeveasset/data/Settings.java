@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.AbstractApiParser;
-import com.beimin.eveapi.utils.stationlist.ApiStation;
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;

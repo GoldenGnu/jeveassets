@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.balance.ApiAccountBalance;
-import com.beimin.eveapi.balance.Parser;
-import com.beimin.eveapi.balance.Response;
+
+import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
+import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
 
-public class AccountBalanceGetter extends AbstractApiGetter<Response> {
+public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
 	public AccountBalanceGetter() {
 		super("Account Balance", true, false);
@@ -52,9 +52,12 @@ public class AccountBalanceGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected Response getResponse(boolean bCorp) throws IOException, SAXException {
-		Parser parser = new Parser();
-		return parser.getAccountBalance(Human.getApiAuthorization(getHuman()), bCorp);
+	protected AccountBalanceResponse getResponse(boolean bCorp) throws IOException, SAXException {
+		if (bCorp){
+			return com.beimin.eveapi.corporation.accountbalance.AccountBalanceParser.getInstance().getAccountBalanceResponse(Human.getApiAuthorization(getHuman()));
+		} else {
+			return com.beimin.eveapi.character.accountbalance.AccountBalanceParser.getInstance().getAccountBalanceResponse(Human.getApiAuthorization(getHuman()));
+		}		
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<Response> {
 	}
 
 	@Override
-	protected void setData(Response response, boolean bCorp) {
+	protected void setData(AccountBalanceResponse response, boolean bCorp) {
 		List<ApiAccountBalance> accountBalances = new Vector<ApiAccountBalance>(response.getAccountBalances());
 		if (bCorp){
 			getHuman().setAccountBalancesCorporation(accountBalances);
