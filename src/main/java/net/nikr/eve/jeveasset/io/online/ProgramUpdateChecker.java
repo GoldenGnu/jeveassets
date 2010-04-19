@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.online;
 
 import java.awt.Desktop;
 import java.awt.Window;
@@ -157,7 +157,7 @@ public class ProgramUpdateChecker {
 	private void parseUpdateVersion(){
 		try {
 			URL url = new URL(Program.PROGRAM_UPDATE_URL);
-			InputStream is = url.openStream();
+			InputStream is = url.openConnection(program.getSettings().getProxy()).getInputStream();
 			parseUpdate(parse(is));
 		} catch (MalformedURLException ex) {
 			Log.info("Failed to get update information: "+ex.getMessage());

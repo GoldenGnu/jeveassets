@@ -162,9 +162,12 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 					all.addAll(characterIndustryJobs);
 					if (human.isUpdateCorporationAssets()){
 						String corpKey = "["+human.getCorporation()+"]";
-						characters.add(corpKey);
+						if (!characters.contains(corpKey)){
+							characters.add(corpKey);
+							jobs.put(corpKey, new Vector<IndustryJob>());
+						}
 						List<IndustryJob> corporationIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), human.getCorporation(), program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems());
-						jobs.put(corpKey, corporationIndustryJobs);
+						jobs.get(corpKey).addAll(corporationIndustryJobs);
 						all.addAll(corporationIndustryJobs);
 					}
 				}

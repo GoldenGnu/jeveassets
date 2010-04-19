@@ -50,7 +50,7 @@ import net.nikr.eve.jeveasset.io.local.ItemsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
-import net.nikr.eve.jeveasset.io.PriceDataGetter;
+import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import net.nikr.log.Log;
@@ -83,8 +83,7 @@ public class Settings{
 	
 	//Data
 	private List<Integer> uniqueIds = null;
-	private Map<String, List<EveAsset>> uniqueAssetsDuplicates = null;
-	private List<EveAsset> allAssets = null;
+	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null;
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private Map<Integer, Item> items;
@@ -280,146 +279,131 @@ public class Settings{
 	}
 
 	public void clearEveAssetList(){
-		allAssets = null;
 		eventListAssets = null;
 		uniqueIds = null;
 		uniqueAssetsDuplicates = null;
 	}
 	public List<EveAsset> getEventListAssets(){
-		updateAssetLists(false);
+		updateAssetLists();
 		return eventListAssets;
 	}
-	public List<EveAsset> getAllAssets(){
-		updateAssetLists(true);
-		return allAssets;
-	}
-
 	public List<Integer> getUniqueIds(){
-		updateAssetLists(false);
+		updateAssetLists();
 		return uniqueIds;
 	}
 	
 	public boolean hasAssets(){
-		updateAssetLists(false);
+		updateAssetLists();
 		return !uniqueIds.isEmpty();
 	}
-	private void updateAssetLists(boolean getAllAssets){
-		if ((allAssets == null && getAllAssets) ||  (eventListAssets == null && !getAllAssets) ){
-			List<EveAsset> assetList = new Vector<EveAsset>();
+	private void updateAssetLists(){
+		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
+			eventListAssets = new Vector<EveAsset>();
 			uniqueIds = new Vector<Integer>();
-			uniqueAssetsDuplicates = new HashMap<String, List<EveAsset>>();
+			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
 			for (int a = 0; a < accounts.size(); a++){
 				Account account = accounts.get(a);
 				List<Human> humans = account.getHumans();
 				for (int b = 0; b < humans.size(); b++){
 					Human human = humans.get(b);
-					if (human.isShowAssets() || getAllAssets){
-						//Market Orders
-						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, conquerableStations, locations, items);
-						addAssets(marketOrdersAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, conquerableStations, locations, items);
-						addAssets(marketOrdersCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						//Industry Jobs
-						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, bpos, conquerableStations, locations, items);
-						addAssets(industryJobAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, bpos, conquerableStations, locations, items);
-						addAssets(industryJobCorporationAssets, assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						//Assets (Must be after Industry Jobs, for bpos to be marked)
-						addAssets(human.getAssets(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-						addAssets(human.getAssetsCorporation(), assetList, human.isShowAssets(), human.isUpdateCorporationAssets());
-					}
+					//Market Orders
+					List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, conquerableStations, locations, items);
+					addAssets(marketOrdersAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, conquerableStations, locations, items);
+					addAssets(marketOrdersCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					//Industry Jobs
+					List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, bpos, conquerableStations, locations, items);
+					addAssets(industryJobAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, bpos, conquerableStations, locations, items);
+					addAssets(industryJobCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					//Assets (Must be after Industry Jobs, for bpos to be marked)
+					addAssets(human.getAssets(), human.isShowAssets(), human.isUpdateCorporationAssets());
+					addAssets(human.getAssetsCorporation(), human.isShowAssets(), human.isUpdateCorporationAssets());
 				}
-			}
-			if (getAllAssets){
-				allAssets = assetList;
-			} else {
-				eventListAssets = assetList;
 			}
 		}
 	}
-	private void addAssets(List<EveAsset> currentAssets, List<EveAsset> assetList, boolean shouldShow, boolean shouldShowCorp){
+	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow, boolean shouldShowCorp){
 		for (int a = 0; a < currentAssets.size(); a++){
 			EveAsset eveAsset = currentAssets.get(a);
-			//User price
-			if (userPrices.containsKey(eveAsset.getTypeId())){ //Add User Price
-				eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeId()));
-			} else { //No user price, clear user price
-				eveAsset.setUserPrice(null);
-			}
-			//User Item Names
-			if (userItemNames.containsKey(eveAsset.getItemId())){
-				eveAsset.setName(userItemNames.get(eveAsset.getItemId()).getName());
-			} else {
-				eveAsset.setName(eveAsset.getTypeName());
-			}
-			//Price data
-			if (eveAsset.isMarketGroup()){ //Add price data
-				eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
-			}
-			//Reprocessed price
-			eveAsset.setPriceReprocessed(0);
-			if (getItems().containsKey(eveAsset.getTypeId())){
-				List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
-				double priceReprocessed = 0;
-				int portionSize = 0;
-				for (int b = 0; b < materials.size(); b++){
-					//Calculate reprocessed price
-					Material material = materials.get(b);
-					portionSize = material.getPortionSize();
-					if (priceData.containsKey(material.getId())){
-						PriceData priceDatum = priceData.get(material.getId());
-						double price = 0;
-						if (userPrices.containsKey(material.getId())){
-							price = userPrices.get(material.getId()).getPrice();
-						} else {
-							price = EveAsset.getDefaultPrice(priceDatum);
+			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
+				//User price
+				if (userPrices.containsKey(eveAsset.getTypeId())){ //Add User Price
+					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeId()));
+				} else { //No user price, clear user price
+					eveAsset.setUserPrice(null);
+				}
+				//User Item Names
+				if (userItemNames.containsKey(eveAsset.getItemId())){
+					eveAsset.setName(userItemNames.get(eveAsset.getItemId()).getName());
+				} else {
+					eveAsset.setName(eveAsset.getTypeName());
+				}
+				//Price data
+				if (eveAsset.isMarketGroup()){ //Add price data
+					eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
+				}
+				//Reprocessed price
+				eveAsset.setPriceReprocessed(0);
+				if (getItems().containsKey(eveAsset.getTypeId())){
+					List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
+					double priceReprocessed = 0;
+					int portionSize = 0;
+					for (int b = 0; b < materials.size(); b++){
+						//Calculate reprocessed price
+						Material material = materials.get(b);
+						portionSize = material.getPortionSize();
+						if (priceData.containsKey(material.getId())){
+							PriceData priceDatum = priceData.get(material.getId());
+							double price = 0;
+							if (userPrices.containsKey(material.getId())){
+								price = userPrices.get(material.getId()).getPrice();
+							} else {
+								price = EveAsset.getDefaultPrice(priceDatum);
+							}
+							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
-						priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
+						//Unique Ids
+						if (!uniqueIds.contains(material.getId())){
+							uniqueIds.add(material.getId());
+						}
 					}
-					//Unique Ids
-					if (!uniqueIds.contains(material.getId())){
-						uniqueIds.add(material.getId());
+					if (priceReprocessed > 0 && portionSize > 0){
+						priceReprocessed = priceReprocessed / portionSize;
 					}
+					eveAsset.setPriceReprocessed(priceReprocessed);
 				}
-				if (priceReprocessed > 0 && portionSize > 0){
-					priceReprocessed = priceReprocessed / portionSize;
-				}
-				eveAsset.setPriceReprocessed(priceReprocessed);
-			}
 
-			//Blueprint
-			if (eveAsset.isBlueprint()){
-				eveAsset.setBpo(bpos.contains(eveAsset.getItemId()));
-			} else {
-				eveAsset.setBpo(false);
-			}
-			//Type Count
-			if (!uniqueAssetsDuplicates.containsKey(eveAsset.getName())){
-				uniqueAssetsDuplicates.put(eveAsset.getName(), new Vector<EveAsset>());
-			}
-			if (shouldShow) {
-				List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getName());
-				long newCount = eveAsset.getCount();
-				if (!dup.isEmpty()){
-					newCount = newCount + dup.get(0).getTypeCount();
+				//Blueprint
+				if (eveAsset.isBlueprint()){
+					eveAsset.setBpo(bpos.contains(eveAsset.getItemId()));
+				} else {
+					eveAsset.setBpo(false);
 				}
-				dup.add(eveAsset);
-				for (int b = 0; b < dup.size(); b++){
-					dup.get(b).setTypeCount(newCount);
+				//Type Count
+				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeId())){
+					uniqueAssetsDuplicates.put(eveAsset.getTypeId(), new Vector<EveAsset>());
 				}
+				if (shouldShow) {
+					List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeId());
+					long newCount = eveAsset.getCount();
+					if (!dup.isEmpty()){
+						newCount = newCount + dup.get(0).getTypeCount();
+					}
+					dup.add(eveAsset);
+					for (int b = 0; b < dup.size(); b++){
+						dup.get(b).setTypeCount(newCount);
+					}
+				}
+				//Add asset
+				eventListAssets.add(eveAsset);
 			}
 			//Unique Ids
-			if (eveAsset.isMarketGroup()){
-				if (!uniqueIds.contains(eveAsset.getTypeId())){
-					uniqueIds.add(eveAsset.getTypeId());
-				}
-			}
-			//Add asset
-			if (shouldShow && (shouldShowCorp && eveAsset.isCorporationAsset()) || !eveAsset.isCorporationAsset()){
-				assetList.add(eveAsset);
+			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeId())){
+				uniqueIds.add(eveAsset.getTypeId());
 			}
 			//Add sub-assets
-			addAssets(eveAsset.getAssets(), assetList, shouldShow, shouldShowCorp);
+			addAssets(eveAsset.getAssets(), shouldShow, shouldShowCorp);
 		}
 	}
 	public List<Long> getBpos() {

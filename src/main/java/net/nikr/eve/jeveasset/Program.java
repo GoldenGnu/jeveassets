@@ -68,7 +68,7 @@ import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.UserItemNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
-import net.nikr.eve.jeveasset.io.ProgramUpdateChecker;
+import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.log.Log;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;

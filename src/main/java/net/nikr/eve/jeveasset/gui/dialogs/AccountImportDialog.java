@@ -53,7 +53,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JWorking;
-import net.nikr.eve.jeveasset.io.Online;
+import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import net.nikr.log.Log;
 

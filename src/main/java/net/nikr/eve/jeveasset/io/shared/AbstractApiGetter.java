@@ -46,32 +46,19 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private boolean updateHuman;
 	private boolean updateAccount;
 	private boolean hasError;
-	private boolean hasCorpError;
-	private boolean hasHumanError;
+	private boolean corporationError;
+	private boolean characterError;
 	private UpdateTask updateTask;
 	private List<String> corporations;
 
-	public AbstractApiGetter(String name) {
+	protected AbstractApiGetter(String name) {
 		this(name, false, false);
 	}
 
-	public AbstractApiGetter(String name, boolean updateHuman, boolean updateAccount) {
+	protected AbstractApiGetter(String name, boolean updateHuman, boolean updateAccount) {
 		this.name = name;
 		this.updateHuman = updateHuman;
 		this.updateAccount = updateAccount;
-		
-	}
-
-	private void init(UpdateTask updateTask, boolean forceUpdate, Human human, Account account){
-		this.forceUpdate = forceUpdate;
-		this.updateTask = updateTask;
-		this.human = human;
-		this.account = account;
-		this.updated = false;
-		this.hasError = false;
-		this.hasCorpError = false;
-		this.hasHumanError = false;
-		this.corporations = new ArrayList<String>();
 	}
 
 	protected void load(String characterName){
@@ -137,18 +124,29 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
+	private void init(UpdateTask updateTask, boolean forceUpdate, Human human, Account account){
+		this.forceUpdate = forceUpdate;
+		this.updateTask = updateTask;
+		this.human = human;
+		this.account = account;
+		this.updated = false;
+		this.hasError = false;
+		this.corporationError = false;
+		this.characterError = false;
+		this.corporations = new ArrayList<String>();
+	}
+
 	private void loadHuman(){
 		Date nextUpdate = getNextUpdate();
 		load(nextUpdate, false, human.getName());
 		if (human.isUpdateCorporationAssets()){
 			String corporation = human.getCorporation();
 			if (!corporations.contains(corporation)){
-				corporations.add(corporation);
-				load(nextUpdate, true, corporation);
-			} else {
-				human.setUpdateCorporationAssets(false);
+				boolean loaded = load(nextUpdate, true, corporation);
+				if (loaded){
+					corporations.add(corporation);
+				}
 			}
-			
 		}
 	}
 
@@ -156,34 +154,36 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		load(getNextUpdate(), false, String.valueOf(account.getUserID()));
 	}
 
-	private void load(Date nextUpdate, boolean bCorp, String characterName){
+	private boolean load(Date nextUpdate, boolean updateCorporation, String characterName){
 		if ((isUpdatable(nextUpdate) || forceUpdate) && !Program.FORCE_NO_UPDATE){
 			try {
-				T response = getResponse(bCorp);
+				T response = getResponse(updateCorporation);
 				if (response instanceof ApiResponse){
 					ApiResponse apiResponse = (ApiResponse)response;
 					setNextUpdate(apiResponse.getCachedUntil());
 					if (!apiResponse.hasError()){
 						Log.info("	"+name+" updated for: "+characterName);
 						this.updated = true;
-						setData(response, bCorp);
+						setData(response, updateCorporation);
+						return true;
 					} else {
 						ApiError apiError = apiResponse.getError();
-						addError(characterName, apiError.getError(), bCorp);
+						addError(characterName, apiError.getError(), updateCorporation);
 						Log.info("	"+name+" failed to update for: "+characterName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
 				}
 			} catch (IOException ex) {
-				addError(characterName, "Not found", bCorp);
-				Log.info("	"+name+" failed to update for: "+characterName+" (NOT FOUND)");
+				addError(characterName, "IO error", updateCorporation);
+				Log.info("	"+name+" failed to update for: "+characterName+" (IOException: "+ex.getMessage()+")");
 			} catch (SAXException ex) {
-				addError(characterName, "Parser error", bCorp);
-				Log.info("	"+name+" failed to update for: "+characterName+" (PARSER ERROR)");
+				addError(characterName, "Parser error", updateCorporation);
+				Log.info("	"+name+" failed to update for: "+characterName+" (SAXException: "+ex.getMessage()+")");
 			}
 		} else {
-			addError(characterName, "Not allowed yet", bCorp);
+			addError(characterName, "Not allowed yet", updateCorporation);
 			Log.info("	"+name+" failed to update for: "+characterName+" (NOT ALLOWED YET)");
 		}
+		return false;
 	}
 
 	protected Account getAccount(){
@@ -201,12 +201,12 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return hasError;
 	}
 
-	public boolean hasCorpError() {
-		return hasCorpError;
+	public boolean hasCorporationError() {
+		return corporationError;
 	}
 
-	public boolean hasHumanError() {
-		return hasHumanError;
+	public boolean hasCharacterError() {
+		return characterError;
 	}
 
 	public void error(){
@@ -218,13 +218,13 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		hasError = true;
 	}
 
-	private void addError(String human, String error, boolean corp){
+	private void addError(String human, String error, boolean updateCorporation){
 		if (updateTask != null) updateTask.addError(human, error);
 		hasError = true;
-		if (corp){
-			hasCorpError = true;
+		if (updateCorporation){
+			corporationError = true;
 		} else {
-			hasHumanError = true;
+			characterError = true;
 		}
 	}
 	

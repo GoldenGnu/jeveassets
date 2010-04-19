@@ -76,19 +76,11 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 		}
 		for (int a = 0; a < characters.size(); a++){
 			ApiCharacter apiCharacter = characters.get(a);
-			Human human = new Human(getAccount()
-									,apiCharacter.getName()
-									,apiCharacter.getCharacterID()
-									,apiCharacter.getCorporationName()
-									);
-
+			Human human = new Human(getAccount(), apiCharacter.getName(), apiCharacter.getCharacterID(), apiCharacter.getCorporationName());
 			if (!getAccount().getHumans().contains(human)){ //Add new account
 				if (isForceUpdate()){
 					accountBalanceGetter.load(null, true, human);
-					if (accountBalanceGetter.hasCorpError()){
-						human.setUpdateCorporationAssets(false);
-					}
-					if (accountBalanceGetter.hasHumanError()){
+					if (accountBalanceGetter.hasCharacterError()){
 						this.error();
 						return;
 					}

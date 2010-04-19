@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.io;
+package net.nikr.eve.jeveasset.io.online;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
