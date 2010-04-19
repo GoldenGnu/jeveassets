@@ -66,7 +66,7 @@ public abstract class UserListItem<K> implements Comparable<UserListItem> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final UserListItem<K> other = (UserListItem<K>) obj;
+		final UserListItem<?> other = (UserListItem<?>) obj;
 		if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
 			return false;
 		}
@@ -79,8 +79,10 @@ public abstract class UserListItem<K> implements Comparable<UserListItem> {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 83 * hash + (this.value != null ? this.value.hashCode() : 0);
-		hash = 83 * hash + (this.key != null ? this.key.hashCode() : 0);
+		hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
+		hash = 29 * hash + (this.key != null ? this.key.hashCode() : 0);
 		return hash;
 	}
+
+	
 }
