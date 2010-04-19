@@ -49,6 +49,29 @@ or
 ________________________________________________________________________________
 _CHANGE_LOG_____________________________________________________________________
 
+1.4.0
+New Features:
+-Profiles
+-New API update system (You select what to update)
+-Enhance support for mac os x environments
+-Program update notifications
+-New settings dialog layout
+-User settable reprocess efficiency
+-New special "sell or reprocess" color scheme
+-Rolling log (prevent the log from ever getting to large)
+-New pricing option "Midpoint" (sell min + buy max) / 2
+-New Column: Reprocessed Value (reprocessed price * count)
+-Meta Column: Now works as a the other number columns
+-Asset names can now be changed
+-Industry Jobs dialog can now be resized
+-New API import dialog
+-Now use EVEAPI 2.0.0 (library)
+
+Bug fixes:
+-Many minor bug fixes...
+
+________________________________________________________________________________
+
 1.3.0
 New Features:
 -New Tool: Routing - Find the shortest route between multiple asset locations

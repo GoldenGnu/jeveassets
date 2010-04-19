@@ -78,7 +78,7 @@ import org.apache.log4j.Logger;
 public class Program implements ActionListener, Listener<EveAsset>{
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "1.3.0";
+	public static final String PROGRAM_VERSION = "1.4.0 BETA 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/?page=jeveasset";
