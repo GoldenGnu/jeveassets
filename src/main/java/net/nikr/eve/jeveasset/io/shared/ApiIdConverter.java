@@ -335,6 +335,33 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
+	public static int solarSystemId(int locationID, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+		Location location = null;
+		ApiStation apiStation = null;
+
+		//Offices
+		if (locationID >= 66000000) {
+			if (locationID < 66014933) {
+				locationID = locationID - 6000001;
+			} else {
+				locationID = locationID - 6000000;
+			}
+		}
+
+		//Conquerable Stations
+		apiStation = conquerableStations.get(locationID);
+		if (apiStation != null) {
+			return apiStation.getSolarSystemID();
+		}
+
+		//locations.xml (staStations && mapDenormalize)
+		location = locations.get(locationID);
+		if (location != null) {
+			return location.getSolarSystemID();
+		}
+		return -1;
+	}
+
 	public static float volume(int typeID, Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {

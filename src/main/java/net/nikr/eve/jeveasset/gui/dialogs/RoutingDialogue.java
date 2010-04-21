@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.log.Log;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
@@ -159,37 +160,38 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		JScrollPane waypoSP = new JScrollPane(waypoints);
 
 		// widths are defined in here.
-    layout.setHorizontalGroup(
-							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addGroup(layout.createSequentialGroup().addContainerGap()
+		layout.setHorizontalGroup(
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(progress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+						.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+						.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup()
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(progress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-									.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-									.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-									.addGroup(layout.createSequentialGroup()
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-											.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-											.addComponent(availableRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-										)
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-											.addComponent(add, 80, 80, 80)
-											.addComponent(remove, 80, 80, 80)
-//											.addComponent(addRandom, 80, 80, 80)
-										)
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-											.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-											.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-											.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-											.addComponent(cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-										)
-									)
+									.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+									.addComponent(availableRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 								)
-								.addContainerGap()
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(add, 80, 80, 80)
+									.addComponent(remove, 80, 80, 80)
+//									.addComponent(addRandom, 80, 80, 80)
+								)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+									.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+									.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+									.addComponent(cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+								)
 							)
-						);
+						)
+					.addContainerGap()
+					)
+				);
 		// heights are defined here.
     layout.setVerticalGroup(
 							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -348,29 +350,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	 * @return null if the system is unreachable (e.g. w-space)
 	 */
 	private SolarSystem findNodeForLocation(Graph g, int locationID) {
-		int ssid = -1;
-		// from http://wiki.eve-id.net/APIvff2_Corp_AssetList_XML
-		if (66000000 <= locationID && locationID <= 66999999) {
-			// normal station office
-			ssid = program.getSettings().getLocations().get(locationID - 6000001).getSolarSystemID();
-		} else if (67000000 <= locationID && locationID <= 67999999) {
-			// conquerable station office
-			ssid = program.getSettings().getConquerableStations().get(locationID - 6000000).getSolarSystemID();
-		} else if (60014861 <= locationID && locationID <= 60014928) {
-			// conq stations; have these in the list already.
-			ssid = program.getSettings().getConquerableStations().get(locationID).getSolarSystemID();
-		} else if (60000000 <= locationID && locationID <= 61000000) {
-			// normal station?
-			ssid = program.getSettings().getLocations().get(locationID).getSolarSystemID();
-		} else if (61000000 <= locationID) {
-			// More conquerable statins (player built?)
-			ssid = program.getSettings().getConquerableStations().get(locationID).getSolarSystemID();
-		} else if (31000000 <= locationID && locationID <= 32000000) {
-			return null; // unreachable system. (w-space)
-		} else {
-			// something else... like in space.
-			ssid = locationID;//program.getSettings().getLocations().get(locationID).getSolarSystemID();
-		}
+		int ssid = ApiIdConverter.solarSystemId(locationID, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
 		if (ssid < 0) {
 			throw new RuntimeException("Unknown Location: " + locationID + ", ssid = " + ssid);
 		}
