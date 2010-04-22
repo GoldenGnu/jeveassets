@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -74,6 +75,15 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
 		} else {
 			getHuman().setAssets(ApiConverter.apiAsset(getHuman(), apiAssets, false, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
+		}
+	}
+
+	@Override
+	protected void clearData(boolean bCorp){
+		if (bCorp){
+			getHuman().setAssetsCorporation(new Vector<EveAsset>());
+		} else {
+			getHuman().setAssets(new Vector<EveAsset>());
 		}
 	}
 }

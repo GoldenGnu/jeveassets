@@ -79,4 +79,13 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 			getHuman().setAccountBalances(accountBalances);
 		}
 	}
+
+	@Override
+	protected void clearData(boolean bCorp){
+		if (bCorp){
+			getHuman().setAccountBalancesCorporation(new Vector<ApiAccountBalance>());
+		} else {
+			getHuman().setAccountBalances(new Vector<ApiAccountBalance>());
+		}
+	}
 }

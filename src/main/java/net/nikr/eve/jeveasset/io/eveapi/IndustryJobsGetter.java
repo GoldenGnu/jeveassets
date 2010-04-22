@@ -73,4 +73,13 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 			getHuman().setIndustryJobs(industryJobs);
 		}
 	}
+
+	@Override
+	protected void clearData(boolean bCorp){
+		if (bCorp){
+			getHuman().setIndustryJobsCorporation(new Vector<ApiIndustryJob>());
+		} else {
+			getHuman().setIndustryJobs(new Vector<ApiIndustryJob>());
+		}
+	}
 }

@@ -139,15 +139,15 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private void loadHuman(){
 		Date nextUpdate = getNextUpdate();
 		load(nextUpdate, false, human.getName());
-		if (human.isUpdateCorporationAssets()){
-			String corporation = human.getCorporation();
-			if (!corporations.contains(corporation)){
-				boolean loaded = load(nextUpdate, true, corporation);
-				if (loaded){
-					corporations.add(corporation);
-				}
+		String corporation = human.getCorporation();
+		boolean corporationLoaded = false;
+		if (human.isUpdateCorporationAssets() && !corporations.contains(corporation)){
+			corporationLoaded = load(nextUpdate, true, corporation);
+			if (corporationLoaded){
+				corporations.add(corporation);
 			}
 		}
+		if (!corporationLoaded) clearData(true);
 	}
 
 	private void loadAccount(){
@@ -232,6 +232,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	abstract protected Date getNextUpdate();
 	abstract protected void setNextUpdate(Date nextUpdate);
 	abstract protected void setData(T response, boolean bCorp);
+	abstract protected void clearData(boolean bCorp);
 
 	private boolean isUpdatable(Date date){
 		return ( (

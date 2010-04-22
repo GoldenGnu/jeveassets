@@ -73,4 +73,13 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 			getHuman().setMarketOrders(marketOrders);
 		}
 	}
+
+	@Override
+	protected void clearData(boolean bCorp){
+		if (bCorp){
+			getHuman().setMarketOrdersCorporation(new Vector<ApiMarketOrder>());
+		} else {
+			getHuman().setMarketOrders(new Vector<ApiMarketOrder>());
+		}
+	}
 }

@@ -98,4 +98,7 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 			}
 		}
 	}
+
+	@Override
+	protected void clearData(boolean bCorp){}
 }
