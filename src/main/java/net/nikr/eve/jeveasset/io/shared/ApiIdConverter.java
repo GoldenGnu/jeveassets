@@ -351,7 +351,10 @@ public class ApiIdConverter {
 		//Conquerable Stations
 		apiStation = conquerableStations.get(locationID);
 		if (apiStation != null) {
-			return apiStation.getSolarSystemID();
+			location = locations.get(apiStation.getSolarSystemID());
+			if (location != null) {
+				return location.getSolarSystemID();
+			}
 		}
 
 		//locations.xml (staStations && mapDenormalize)
