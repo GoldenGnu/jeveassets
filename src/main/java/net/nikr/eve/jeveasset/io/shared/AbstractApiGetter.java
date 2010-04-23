@@ -137,17 +137,19 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private void loadHuman(){
-		Date nextUpdate = getNextUpdate();
-		load(nextUpdate, false, human.getName());
-		String corporation = human.getCorporation();
-		boolean corporationLoaded = false;
-		if (human.isUpdateCorporationAssets() && !corporations.contains(corporation)){
-			corporationLoaded = load(nextUpdate, true, corporation);
-			if (corporationLoaded){
-				corporations.add(corporation);
+		if(human.isShowAssets()){ //Ignore hidden characters
+			Date nextUpdate = getNextUpdate();
+			boolean characterUpdated = load(nextUpdate, false, human.getName());
+			String corporation = human.getCorporation();
+			boolean corporationLoaded = false;
+			if (human.isUpdateCorporationAssets() && !corporations.contains(corporation)){
+				corporationLoaded = load(nextUpdate, true, corporation);
+				if (corporationLoaded){
+					corporations.add(corporation);
+				}
 			}
+			if (characterUpdated && !corporationLoaded) clearData(true);
 		}
-		if (!corporationLoaded) clearData(true);
 	}
 
 	private void loadAccount(){
