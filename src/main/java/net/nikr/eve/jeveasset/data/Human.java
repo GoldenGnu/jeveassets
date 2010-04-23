@@ -234,20 +234,24 @@ public class Human {
 	}
 
 	@Override
-	public boolean equals(Object o){
-		if (o instanceof Human){
-			return equals( (Human) o);
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
 		}
-		return false;
-	}
-	public boolean equals(Human h){
-		return (this.getCharacterID() == h.getCharacterID() );
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Human other = (Human) obj;
+		if (this.characterID != other.characterID) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 89 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		hash = 23 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
 		return hash;
 	}
 
