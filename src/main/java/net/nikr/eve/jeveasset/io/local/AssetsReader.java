@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
@@ -323,7 +324,6 @@ public class AssetsReader extends AbstractXmlReader {
 		String owner = AttributeGetters.getString(node, "owner");
 
 		//Calculated:
-		String container = ApiIdConverter.container(locationID, parentEveAsset);
 		String name = ApiIdConverter.name(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
@@ -334,7 +334,8 @@ public class AssetsReader extends AbstractXmlReader {
 		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String location = ApiIdConverter.location(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 		
-		return new EveAsset(name, group, category, owner, count, location, container, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
 	}
 }

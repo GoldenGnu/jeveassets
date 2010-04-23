@@ -22,7 +22,9 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Item;
@@ -429,22 +431,14 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static String container(int locationID, EveAsset parentAsset) {
-		String sTemp = "";
-
-		if (locationID >= 66000000 && locationID < 68000000) {
-			sTemp = "Office";
-		}
-		if (parentAsset != null) {
-			if (!sTemp.equals("")) {
-				sTemp = sTemp + ": ";
+	public static List<EveAsset> parents(EveAsset parentEveAsset) {
+		List<EveAsset> parents = new Vector<EveAsset>();
+		if (parentEveAsset != null){
+			for (int a = 0; a < parentEveAsset.getParents().size(); a++){
+				parents.add(parentEveAsset.getParents().get(a));
 			}
-			sTemp = sTemp + parentAsset.getName() + " #" + parentAsset.getItemId();
-			String parentContainer = parentAsset.getContainer();
-			if (!parentContainer.equals(sTemp) && !parentContainer.equals("") && !parentContainer.equals("Office")) {
-				sTemp = parentContainer + " - " + sTemp;
-			}
+			parents.add(parentEveAsset);
 		}
-		return sTemp;
+		return parents;
 	}
 }

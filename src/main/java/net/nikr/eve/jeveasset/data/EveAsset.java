@@ -51,7 +51,8 @@ public class EveAsset implements Comparable<EveAsset> {
 	private long count;
 	private String location;
 	private int locationID;
-	private String container;
+	private String container = "";
+	private List<EveAsset> parents;
 	private String flag;
 	private double priceBase;
 	private String meta;
@@ -69,7 +70,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String security;
 	private double priceReprocessed;
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, String container, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
 		this.typeName = typeName;
 		this.name = typeName;
 		this.group = group;
@@ -77,7 +78,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.owner = owner;
 		this.count = count;
 		this.location = location;
-		this.container = container;
+		this.parents = parents;
 		this.flag = flag;
 		this.priceBase = priceBase;
 		this.meta = meta;
@@ -127,6 +128,14 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public String getContainer() {
 		return container;
+	}
+
+	public void setContainer(String container) {
+		this.container = container;
+	}
+
+	public List<EveAsset> getParents() {
+		return parents;
 	}
 
 	public boolean isCorporationAsset() {

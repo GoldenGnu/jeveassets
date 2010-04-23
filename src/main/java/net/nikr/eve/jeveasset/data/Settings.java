@@ -339,6 +339,19 @@ public class Settings{
 				} else {
 					eveAsset.setName(eveAsset.getTypeName());
 				}
+				//Contaioner
+				String sContainer = "";
+				for (int b = 0; b < eveAsset.getParents().size(); b++){
+					EveAsset parentEveAsset = eveAsset.getParents().get(b);
+					if (b != 0) sContainer = sContainer + ">";
+					if (parentEveAsset.getName().equals(parentEveAsset.getTypeName())){
+						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemId();
+					} else {
+						sContainer = sContainer + parentEveAsset.getName();
+					}
+				}
+				eveAsset.setContainer(sContainer);
+
 				//Price data
 				if (eveAsset.isMarketGroup()){ //Add price data
 					eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
