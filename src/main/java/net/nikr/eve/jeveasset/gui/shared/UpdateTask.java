@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -148,25 +147,21 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jText.setText(name+" (click for more information)");
 			StyledDocument doc = new DefaultStyledDocument();
-			SimpleAttributeSet detailsAttributeSet = new SimpleAttributeSet();
-			detailsAttributeSet.addAttribute(StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-			detailsAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-			SimpleAttributeSet headlineAttributeSet = new SimpleAttributeSet();
-			headlineAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
+			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
 
-			SimpleAttributeSet nameAttributeSet = new SimpleAttributeSet();
-			nameAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-			nameAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(187, 32, 32));
 			try {
-				doc.insertString(doc.getLength(), "Failed to update:", headlineAttributeSet);
+				boolean first = true;
 				for (Map.Entry<String, String> entry : errors.entrySet()){
-					String error = processError(entry.getValue());
-					doc.insertString(doc.getLength(), "\r\n", null);
-					doc.insertString(doc.getLength(), entry.getKey(), nameAttributeSet);
-					doc.insertString(doc.getLength(), "\r\n"+error, null);
+					if (first){
+						first = false;
+					} else {
+						doc.insertString(doc.getLength(), "\n\r", null);
+					}
+					doc.insertString(doc.getLength(), entry.getKey(), null);
+					doc.insertString(doc.getLength(), "\r\n"+processError(entry.getValue()), errorAttributeSet);
 				}
-				doc.insertString(doc.getLength(), "\r\n(see log.txt for details)", detailsAttributeSet);
-			} catch (BadLocationException badLocationException) {
+			} catch (BadLocationException ex) {
 
 			}
 			jError.setDocument(doc);

@@ -143,7 +143,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			String corporation = human.getCorporation();
 			boolean corporationLoaded = false;
 			if (human.isUpdateCorporationAssets() && !corporations.contains(corporation)){
-				corporationLoaded = load(nextUpdate, true, corporation);
+				corporationLoaded = load(nextUpdate, true, corporation+" ("+human.getName()+")");
 				if (corporationLoaded){
 					corporations.add(corporation);
 				}
@@ -153,10 +153,10 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private void loadAccount(){
-		load(getNextUpdate(), false, String.valueOf(account.getUserID()));
+		load(getNextUpdate(), false, String.valueOf("Account #"+account.getUserID()));
 	}
 
-	private boolean load(Date nextUpdate, boolean updateCorporation, String characterName){
+	private boolean load(Date nextUpdate, boolean updateCorporation, String updateName){
 		if ((isUpdatable(nextUpdate) || forceUpdate) && !Program.FORCE_NO_UPDATE){
 			try {
 				T response = getResponse(updateCorporation);
@@ -164,26 +164,26 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 					ApiResponse apiResponse = (ApiResponse)response;
 					setNextUpdate(apiResponse.getCachedUntil());
 					if (!apiResponse.hasError()){
-						Log.info("	"+name+" updated for: "+characterName);
+						Log.info("	"+name+" updated for: "+updateName);
 						this.updated = true;
 						setData(response, updateCorporation);
 						return true;
 					} else {
 						ApiError apiError = apiResponse.getError();
-						addError(characterName, apiError.getError(), updateCorporation);
-						Log.info("	"+name+" failed to update for: "+characterName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+						addError(updateName, apiError.getError(), updateCorporation);
+						Log.info("	"+name+" failed to update for: "+updateName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
 					}
 				}
 			} catch (IOException ex) {
-				addError(characterName, "IO error", updateCorporation);
-				Log.info("	"+name+" failed to update for: "+characterName+" (IOException: "+ex.getMessage()+")");
+				addError(updateName, "IO error", updateCorporation);
+				Log.info("	"+name+" failed to update for: "+updateName+" (IOException: "+ex.getMessage()+")");
 			} catch (SAXException ex) {
-				addError(characterName, "Parser error", updateCorporation);
-				Log.info("	"+name+" failed to update for: "+characterName+" (SAXException: "+ex.getMessage()+")");
+				addError(updateName, "Parser error", updateCorporation);
+				Log.info("	"+name+" failed to update for: "+updateName+" (SAXException: "+ex.getMessage()+")");
 			}
 		} else {
-			addError(characterName, "Not allowed yet", updateCorporation);
-			Log.info("	"+name+" failed to update for: "+characterName+" (NOT ALLOWED YET)");
+			addError(updateName, "Not allowed yet", updateCorporation);
+			Log.info("	"+name+" failed to update for: "+updateName+" (NOT ALLOWED YET)");
 		}
 		return false;
 	}
