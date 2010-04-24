@@ -71,32 +71,37 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 	@Override
 	protected void setData(CharactersResponse response, boolean bCorp) {
 		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
+		List<Human> humans = new Vector<Human>();
 		if (characters.isEmpty()){ //No characters on account
 			this.error(); //it's impossible to check if it's a limited or full api key
+			return;
 		}
 		for (int a = 0; a < characters.size(); a++){
 			ApiCharacter apiCharacter = characters.get(a);
 			Human human = new Human(getAccount(), apiCharacter.getName(), apiCharacter.getCharacterID(), apiCharacter.getCorporationName());
+
 			if (!getAccount().getHumans().contains(human)){ //Add new account
-				if (isForceUpdate()){
+				if (isForceUpdate()){ //New account
 					accountBalanceGetter.load(null, true, human);
 					if (accountBalanceGetter.hasCharacterError()){
 						this.error();
 						return;
 					}
 				}
-				getAccount().getHumans().add(human);
+				humans.add(human);
 			} else { //Update existing account
-				List<Human> humans = getAccount().getHumans();
-				for (int b = 0; b < humans.size(); b++){
-					Human currentHuman = humans.get(b);
-					if (currentHuman.getCharacterID() == human.getCharacterID()){
+				for (int b = 0; b < getAccount().getHumans().size(); b++){
+					Human currentHuman = getAccount().getHumans().get(b);
+					if (currentHuman.equals(human)){
 						currentHuman.setName(human.getName());
 						currentHuman.setCorporation(human.getCorporation());
+						humans.add(currentHuman);
+						break;
 					}
 				}
 			}
 		}
+		getAccount().setHumans(humans);
 	}
 
 	@Override
