@@ -81,22 +81,28 @@ public class Account {
 	}
 
 	@Override
-	public boolean equals(Object o){
-		if (o instanceof Account){
-			return equals( (Account) o);
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
 		}
-		return false;
-	}
-
-	public boolean equals(Account a){
-		return (this.apiKey.equals(a.getApiKey()) && this.getUserID() == a.getUserID());
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Account other = (Account) obj;
+		if (this.userID != other.userID) {
+			return false;
+		}
+		if ((this.apiKey == null) ? (other.apiKey != null) : !this.apiKey.equals(other.apiKey)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 61 * hash + this.userID;
-		hash = 61 * hash + (this.apiKey != null ? this.apiKey.hashCode() : 0);
+		int hash = 7;
+		hash = 83 * hash + this.userID;
+		hash = 83 * hash + (this.apiKey != null ? this.apiKey.hashCode() : 0);
 		return hash;
 	}
 }

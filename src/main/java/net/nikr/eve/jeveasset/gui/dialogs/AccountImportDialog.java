@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -78,6 +79,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private CardLayout cardLayout;
 	private JPanel jContent;
 	private Account account;
+	private boolean bEditAccount;
 
 	private DonePanel donePanel;
 
@@ -166,8 +168,8 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		if (s != null){
 			s = s.trim();
 			try{
-				int number = Integer.valueOf(s);
-				if (s.length() >= 3 && s.length() <= 10){
+				Integer.valueOf(s);
+				if (s.length() >= 3 && s.length() <= 10 && jUserId.isEnabled()){
 					jUserId.setText(s);
 				}
 				return;
@@ -204,6 +206,13 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	public void show(String userId, String apiKey) {
 		jUserId.setText(userId);
 		jApiKey.setText(apiKey);
+		if (userId.isEmpty() || apiKey.isEmpty()){
+			jUserId.setEnabled(true);
+			bEditAccount = false;
+		} else {
+			jUserId.setEnabled(false);
+			bEditAccount = true;
+		}
 		nTabIndex = 0;
 		updateTab();
 		super.setVisible(true);
@@ -260,7 +269,17 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				break;
 			case 3:
 				if (account != null){
-					program.getSettings().getAccounts().add(account);
+					if (bEditAccount){
+						List<Account> accounts = program.getSettings().getAccounts();
+						for (int a = 0; a < accounts.size(); a++){
+							if (accounts.get(a).getUserID() == account.getUserID()){
+								accounts.get(a).setApiKey(account.getApiKey());
+								break;
+							}
+						}
+					} else {
+						program.getSettings().getAccounts().add(account);
+					}
 					apiManager.updateTable();
 					this.setVisible(false);
 				}
