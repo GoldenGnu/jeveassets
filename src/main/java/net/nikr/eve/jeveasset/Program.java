@@ -319,6 +319,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		programUpdateChecker.showMessages(parent, true);
 	}
 
+	public String getProgramDataVersion(){
+		return programUpdateChecker.getProgramDataVersion();
+	}
+
 	private void macOsxCode(){
 		if (onMac()) {
 			try {

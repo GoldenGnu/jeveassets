@@ -72,7 +72,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 
 		jInfo = createEditorPane(
 				  "<b>Version</b><br>"
-				+ "&nbsp;"+Program.PROGRAM_VERSION+"<br>"
+				+ "&nbsp;"+Program.PROGRAM_VERSION+" ("+program.getProgramDataVersion()+")<br>"
 				+ "<br>"
 				+ "<b>Contributors</b><br>"
 				+ "&nbsp;Niklas Kyster Rasmussen<br>"

@@ -63,6 +63,14 @@ public class ProgramUpdateChecker {
 		}
 	}
 
+	public String getProgramDataVersion(){
+		int end = programDataVersion.lastIndexOf(".");
+		if (programDataVersion.length() >= end){
+			return programDataVersion.substring(0, end);
+		}
+		return programDataVersion;
+	}
+
 	public void showMessages(){
 		showMessages(program.getMainWindow().getFrame(), false);
 	}
