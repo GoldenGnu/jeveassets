@@ -41,7 +41,6 @@ import java.util.TimeZone;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
@@ -113,7 +112,7 @@ public class Settings{
 	private List<Jump> jumps;
 	private ReprocessSettings reprocessSettings;
 
-	private PriceDataGetter priceDataGetter;
+	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
@@ -187,7 +186,8 @@ public class Settings{
 		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
-		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
+		clearEveAssetList(); //Must be cleared to update uniqueIds
+		priceDataGetter.load(null, false, false); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(45);
 	}
 
@@ -262,12 +262,8 @@ public class Settings{
 		tableNumberColumns.add("Meta");
 	}
 
-	public boolean updatePriceData(UpdateTask task){
-		return priceDataGetter.updatePriceData(task);
-	}
-
-	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
-		return priceDataGetter.updatePriceData(task, forceUpdate);
+	public PriceDataGetter getPriceDataGetter(){
+		return priceDataGetter;
 	}
 
 	public static void setPortable(boolean portable) {

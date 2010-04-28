@@ -54,30 +54,11 @@ public class PriceDataGetter implements PricingListener {
 	private boolean enableCacheTimers = true;
 	private Map<Integer, PriceData> priceDataList;
 
-	final PriceDataGetter lock = this;
-
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
-		updatePriceData(null, false, false);
 	}
 
-	public boolean updatePriceData(){
-		return updatePriceData(null);
-	}
-
-	public boolean updatePriceData(UpdateTask task){
-		return updatePriceData(task, false, true);
-	}
-
-	public boolean updatePriceData(boolean forceUpdate){
-		return updatePriceData(null, forceUpdate, true);
-	}
-
-	public boolean updatePriceData(UpdateTask task, boolean forceUpdate){
-		return updatePriceData(task, forceUpdate, true);
-	}
-
-	public boolean updatePriceData(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
+	public boolean load(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
 		this.updateTask = task;
 		this.enableCacheTimers = enableCacheTimers;
 		updated = false;
@@ -185,7 +166,7 @@ public class PriceDataGetter implements PricingListener {
 		if (updateTask != null) updateTask.setTaskProgress(settings.getUniqueIds().size(), priceDataList.size(), 0, 100);
 	}
 
-	class EveAssetPricingOptions implements PricingOptions {
+	private class EveAssetPricingOptions implements PricingOptions {
 
 		@Override
 		public long getPriceCacheTimer() {

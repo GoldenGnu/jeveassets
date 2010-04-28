@@ -402,7 +402,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() throws Throwable {
 			program.getSettings().clearEveAssetList();
-			program.getSettings().updatePriceData(this, forceUpdate);
+			program.getSettings().getPriceDataGetter().load(this, forceUpdate, true);
 		}
 	}
 }
