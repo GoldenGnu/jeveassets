@@ -259,10 +259,10 @@ public class TablePanel extends JProgramPanel
 
 	private void updateCoulmnsSize(){
 		if (program.getSettings().isAutoResizeColumnsText()){
-			autoResizeColumns();
+			autoResizeColumnsText();
 		}
 		if (program.getSettings().isAutoResizeColumnsWindow()){
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			autoResizeColumnsWindow();
 		}
 		if (!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow()){
 			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -296,18 +296,22 @@ public class TablePanel extends JProgramPanel
 	public void filtersChanged(){
 		updateToolPanel();
 	}
+
+	private void autoResizeColumnsWindow() {
+		for (int a = 0; a < jTable.getColumnCount(); a++){
+			jTable.getColumnModel().getColumn(a).setPreferredWidth(75);
+		}
+		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+	}
 	
-	private void autoResizeColumns() {
-		if (!eveAssetEventList.isEmpty()){
+	private void autoResizeColumnsText() {
+		if (!eveAssetEventList.isEmpty() && eveAssetTableModel.getRowCount() > 0){
 			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
 				autoResizeColumn(jTable.getColumnModel().getColumn(i));
 			}
-			if(eveAssetTableModel.getRowCount() == 0){
-				jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			}
 		} else {
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			autoResizeColumnsWindow();
 		}
 	}
 
@@ -601,13 +605,8 @@ public class TablePanel extends JProgramPanel
 		if (ACTION_RESET_COLUMNS_TO_DEFAULT.equals(e.getActionCommand())){
 			program.getSettings().resetMainTableColumns();
 			updateTableStructure();
-			updateColumnMenus();
-			if (program.getSettings().isAutoResizeColumnsWindow()){
-				for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
-					jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
-				}
-			}
 			updateCoulmnsSize();
+			updateColumnMenus();
 		}
 		if (ACTION_AUTO_RESIZING_COLUMNS_TEXT.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(true);
@@ -618,9 +617,6 @@ public class TablePanel extends JProgramPanel
 		if (ACTION_AUTO_RESIZING_COLUMNS_WINDOW.equals(e.getActionCommand())){
 			program.getSettings().setAutoResizeColumnsText(false);
 			program.getSettings().setAutoResizeColumnsWindow(true);
-			for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
-				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
-			}
 			updateCoulmnsSize();
 			updateColumnMenus();
 		}
