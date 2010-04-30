@@ -29,6 +29,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.digester.Digester;
@@ -38,14 +39,13 @@ import org.supercsv.cellprocessor.constraint.Unique;
 
 
 public class Main {
-	static String[] args;
 	Program program;
 	//DataLoader dataLoader;
 	/** Creates a new instance of Main */
-	public Main(String[] argumentsString) {
+	public Main() {
 		//Force error here, if any libraries are missing
 		try {
-			Digester digester = new Digester();
+			Digester.class.getName(); // digester = new Digester();
 			BeanUtils beanUtils = new BeanUtils();
 			org.apache.commons.logging.Log apacheLog = new SimpleLog("");
 			LogManager logManager = new LogManager();
@@ -75,7 +75,7 @@ public class Main {
 				Log.error("The Commons Digester library is missing (lib\\lcommons-digester-2.0.jar)\nPlease see readme.txt for more information.", e);
 			}
 		}
-		program = new Program(args);
+		program = new Program();
 		
 	}
 	
@@ -83,14 +83,31 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-			Main.args = args;
+			//Arguments
+			//We need to know if we are debuging before we can set forceNoUpdate and forceUpdate
+			for (int a = 0; a < args.length; a++){
+				if (args[a].toLowerCase().equals("-debug")){
+					Program.setDebug(true);
+				}
+			}
+			for (int a = 0; a < args.length; a++){
+				if (args[a].toLowerCase().equals("-portable")){
+					Settings.setPortable(true);
+				}
+				if (args[a].toLowerCase().equals("-noupdate")){
+					Program.setForceNoUpdate(Program.isDebug());
+				}
+				if (args[a].toLowerCase().equals("-update")){
+					Program.setForceUpdate(Program.isDebug());
+				}
+			}
 			javax.swing.SwingUtilities.invokeLater(
 				new Runnable() {
 					@Override
 					public void run() {
 						createAndShowGUI();
-							}
 					}
+				}
 			);
 	}
 	
@@ -116,7 +133,7 @@ public class Main {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
-		Main main = new Main(args);
+		Main main = new Main();
 	}
 	
 	private static void initLookAndFeel() {
@@ -129,9 +146,8 @@ public class Main {
 		//lookAndFeel = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
-		} catch (Exception e) {
-			Log.error("failed to set LookAndFeel: "+lookAndFeel, e);
-			e.printStackTrace();
+		} catch (Exception ex) {
+			Log.error("failed to set LookAndFeel: "+lookAndFeel, ex);
 		}
 	}
 

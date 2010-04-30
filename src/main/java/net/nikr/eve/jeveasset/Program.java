@@ -88,9 +88,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	private final static String ACTION_TIMER = "ACTION_TIMER";
 
-	public static final boolean DEBUG = false;
-	public static final boolean FORCE_UPDATE = (DEBUG && false);
-	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
+	private static boolean debug = false;
+	private static boolean forceUpdate = false;
+	private static boolean forceNoUpdate = false;
 
 	//GUI
 	private MainWindow mainWindow;
@@ -133,12 +133,12 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private Settings settings;
 	private EventList<EveAsset> eveAssetEventList;
 
-	public Program(String[] args){
+	public Program(){
 		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
 		
-		if(DEBUG){
+		if(debug){
 			Log.enableDebug();
-			Log.debug("FORCE_UPDATE: "+FORCE_UPDATE+" FORCE_NO_UPDATE: "+FORCE_NO_UPDATE);
+			Log.debug("Force Update: "+forceUpdate+" Force No Update: "+forceNoUpdate);
 		}
 
 		//Config log4j
@@ -150,13 +150,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		//Data
 		SplashUpdater.setText("Loading DATA");
 		Log.info("DATA Loading...");
-
-		//Arguments
-		for (int a = 0; a < args.length; a++){
-			if (args[a].toLowerCase().equals("-portable")){
-				Settings.setPortable(true);
-			}
-		}
+		
 		settings = new Settings();
 		settings.loadSettings();
 		eveAssetEventList = new BasicEventList<EveAsset>();
@@ -247,9 +241,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		mainWindow.show();
 		//Start timer
 		timerTicked();
-		if(DEBUG){
+		if(debug){
 			Log.info("Show Debug Warning");
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: This is a debug build...", "Debug", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		if (settings.getAccounts().isEmpty()){
 			accountManagerDialog.setVisible(true);
@@ -363,6 +357,30 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 	public EventList<EveAsset> getEveAssetEventList() {
 		return eveAssetEventList;
+	}
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean debug) {
+		Program.debug = debug;
+	}
+
+	public static boolean isForceNoUpdate() {
+		return forceNoUpdate;
+	}
+
+	public static void setForceNoUpdate(boolean forceNoUpdate) {
+		Program.forceNoUpdate = forceNoUpdate;
+	}
+
+	public static boolean isForceUpdate() {
+		return forceUpdate;
+	}
+
+	public static void setForceUpdate(boolean forceUpdate) {
+		Program.forceUpdate = forceUpdate;
 	}
 
 	@Override

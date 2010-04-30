@@ -819,8 +819,8 @@ public class Settings{
 	public boolean isUpdatable(Date date, boolean ignoreOnProxy){
 		return ( (Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
-				|| Program.FORCE_UPDATE
+				|| Program.isForceUpdate()
 				|| (getApiProxy() != null && ignoreOnProxy) )
-				&& !Program.FORCE_NO_UPDATE);
+				&& !Program.isForceNoUpdate());
 	}
 }

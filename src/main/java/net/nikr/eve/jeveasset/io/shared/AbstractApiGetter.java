@@ -157,7 +157,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private boolean load(Date nextUpdate, boolean updateCorporation, String updateName){
-		if ((isUpdatable(nextUpdate) || forceUpdate) && !Program.FORCE_NO_UPDATE){
+		if (isUpdatable(nextUpdate)){
 			try {
 				T response = getResponse(updateCorporation);
 				if (response instanceof ApiResponse){
@@ -240,9 +240,9 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return ( (
 				Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
-				|| Program.FORCE_UPDATE
+				|| Program.isForceUpdate()
 				)
-				&& !Program.FORCE_NO_UPDATE);
+				&& !Program.isForceNoUpdate());
 	}
 	
 }

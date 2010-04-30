@@ -98,7 +98,7 @@ public class SplashUpdater extends Thread{
 				Dimension size = splash.getSize();
 				g.fillRect(0, 0, size.width, size.height);
 				g.setPaintMode();
-				if (Program.DEBUG){
+				if (Program.isDebug()){
 					g.setColor(Color.GRAY);
 					g.drawString("DEBUG", 344, 232);
 					g.setColor(Color.WHITE);
