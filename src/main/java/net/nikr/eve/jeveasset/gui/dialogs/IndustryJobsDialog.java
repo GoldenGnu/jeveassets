@@ -29,12 +29,14 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -71,6 +73,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 	public IndustryJobsDialog(Program program, Image image) {
 		super(program, "Industry Jobs", image);
 		getDialog().setResizable(true);
+		
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_CLOSE);
 		jClose.addActionListener(this);
@@ -110,14 +113,16 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jCharactersLabel)
-					.addComponent(jCharacters, 190, 190, 190)
+					.addComponent(jCharacters, 200, 200, 200)
 					.addComponent(jActivityLabel)
-					.addComponent(jActivity, 190, 190, 190)
+					.addComponent(jActivity, 200, 200, 200)
 					.addComponent(jStateLabel)
-					.addComponent(jState, 190, 190, 190)
+					.addComponent(jState, 200, 200, 200)
 				)
-				.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
-				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+					.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
+					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -149,7 +154,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 		characters = new Vector<String>();
 		//characters.add("All");
 		jobs = new HashMap<String, List<IndustryJob>>();
-		all = new Vector<IndustryJob>();
+		all = new ArrayList<IndustryJob>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (int a = 0; a < accounts.size(); a++){
 			List<Human> tempHumans = accounts.get(a).getHumans();
@@ -164,7 +169,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 						String corpKey = "["+human.getCorporation()+"]";
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
-							jobs.put(corpKey, new Vector<IndustryJob>());
+							jobs.put(corpKey, new ArrayList<IndustryJob>());
 						}
 						List<IndustryJob> corporationIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), human.getCorporation(), program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems());
 						jobs.get(corpKey).addAll(corporationIndustryJobs);
@@ -218,7 +223,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 			String selected = (String) jCharacters.getSelectedItem();
 			if (characters.size() > 1){
 				List<IndustryJob> industryJobsInput;
-				List<IndustryJob> industryJobsOutput = new Vector<IndustryJob>();
+				List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
 				//Characters
 				if (selected.equals("All")){
 					industryJobsInput = all;
