@@ -29,6 +29,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 
 	public MarketOrdersDialog(Program program, Image image) {
 		super(program, "Market Orders", image);
-
+		getDialog().setResizable(true);
+		
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_CLOSE);
 		jClose.addActionListener(this);
@@ -130,11 +132,10 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 							.addComponent(jStateLabel)
 							.addComponent(jState, 200, 200, 200)
 						)
-						
-						.addComponent(jSellOrdersScrollPanel, 650, 650, 650)
+						.addComponent(jSellOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jBuyOrdersScrollPanel, 650, 650, 650)
+						.addComponent(jBuyOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
 						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					)
 				)
@@ -149,11 +150,11 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSellLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSellOrdersScrollPanel, 200, 200, 200)
+					.addComponent(jSellOrdersScrollPanel, 200, 200, Short.MAX_VALUE)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jBuyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBuyOrdersScrollPanel, 200, 200, 200)
+					.addComponent(jBuyOrdersScrollPanel, 200, 200, Short.MAX_VALUE)
 				)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
@@ -173,13 +174,13 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 	protected void windowShown() {
 		characters = new Vector<String>();
 		orders = new HashMap<String, List<MarketOrder>>();
-		all = new Vector<MarketOrder>();
+		all = new ArrayList<MarketOrder>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (int a = 0; a < accounts.size(); a++){
 			List<Human> tempHumans = accounts.get(a).getHumans();
 			for (int b = 0; b < tempHumans.size(); b++){
 				Human human = tempHumans.get(b);
-				List<MarketOrder> marketOrders = new Vector<MarketOrder>();
+				List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
 					characters.add(human.getName());
@@ -190,7 +191,7 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 						String corpKey = "["+human.getCorporation()+"]";
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
-							orders.put(corpKey, new Vector<MarketOrder>());
+							orders.put(corpKey, new ArrayList<MarketOrder>());
 						}
 						List<MarketOrder> corporationMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings().getConquerableStations(), program.getSettings().getLocations(), program.getSettings().getItems());
 						orders.get(corpKey).addAll(corporationMarketOrders);
@@ -240,8 +241,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 			String selected = (String) jCharacters.getSelectedItem();
 			if (characters.size() > 1){
 				List<MarketOrder> marketOrders;
-				List<MarketOrder> sellMarketOrders = new Vector<MarketOrder>();
-				List<MarketOrder> buyMarketOrders = new Vector<MarketOrder>();
+				List<MarketOrder> sellMarketOrders = new ArrayList<MarketOrder>();
+				List<MarketOrder> buyMarketOrders = new ArrayList<MarketOrder>();
 				if (selected.equals("All")){
 					marketOrders = all;
 				} else {
