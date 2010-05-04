@@ -43,6 +43,7 @@ import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
+import net.nikr.log.Log;
 
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
@@ -54,6 +55,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	private JButton jCheckUpdates;
 	private JEditorPane jInfo;
 	private JEditorPane jExternal;
+	private JEditorPane jThanks;
 	private JWait jWait;
 	
 	public AboutDialog(Program program, Image image) {
@@ -64,11 +66,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon( ImageGetter.getIcon("icon07_13.png") );
 
-		JEditorPane jProgram = createEditorPane(
+		JEditorPane jProgram = createEditorPane(false, 
 				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
 				+ "Copyright &copy; 2009, 2010 Contributors<br>"
 				);
-
 
 		jInfo = createEditorPane(
 				  "<b>Version</b><br>"
@@ -88,9 +89,6 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
 				);
-		jInfo.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
-				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
 
 		jExternal = createEditorPane(
 				  "<b>Content</b><br>"
@@ -110,9 +108,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (logging)<br>"
 				+ "<br>"
 				);
-		jExternal.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
-				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+
+		jThanks =  createEditorPane(
+				"<b>Special Thanks</b><br>"
+				+ "&nbsp;jEveAssets is heavily based on the interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
 		
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
@@ -137,6 +136,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 					.addGap(20)
 					.addComponent(jExternal)
 				)
+				.addComponent(jThanks)
 				.addComponent(jCheckUpdates)
 		);
 		layout.setVerticalGroup(
@@ -149,6 +149,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 					.addComponent(jInfo)
 					.addComponent(jExternal)
 				)
+				.addComponent(jThanks)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCheckUpdates, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -161,9 +162,14 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jCheckUpdates.setEnabled(b);
 		jInfo.setEnabled(b);
 		jExternal.setEnabled(b);
+		jThanks.setEnabled(b);
 	}
 
 	private JEditorPane createEditorPane(String text){
+		return createEditorPane(true, text);
+	}
+
+	private JEditorPane createEditorPane(boolean addBorder, String text){
 		JEditorPane jEditorPane = new JEditorPane("text/html",
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
 				+text
@@ -172,6 +178,11 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jEditorPane.setEditable(false);
 		jEditorPane.setOpaque(false);
 		jEditorPane.addHyperlinkListener(this);
+		if (addBorder){
+			jEditorPane.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
+					BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+		}
 		return jEditorPane;
 	}
 
@@ -219,10 +230,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
 				try {
 					Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				} catch (IOException e2) {
-					e2.printStackTrace();
+				} catch (URISyntaxException ex) {
+					Log.warning("URISyntaxException: "+ex.getMessage());
+				} catch (IOException ex) {
+					Log.warning("IOException: "+ex.getMessage());
 				}
 			}
 		}
