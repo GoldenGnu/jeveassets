@@ -476,6 +476,16 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				}
 			}
 		}
+		if (MainMenu.ACTION_OPEN_CHANGELOG.equals(e.getActionCommand())) {
+			if (Desktop.isDesktopSupported()) {
+				Desktop desktop = Desktop.getDesktop();
+				try {
+					desktop.open(new File(Settings.getPathChangeLog()));
+				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open changelog.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
+				}
+			}
+		}
 		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();
 		}

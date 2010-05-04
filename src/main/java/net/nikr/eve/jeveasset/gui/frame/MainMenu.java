@@ -52,7 +52,8 @@ public class MainMenu extends JMenuBar {
 	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
 	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
 	public final static String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
-	public final static String ACTION_OPEN_README = "ACTION_OPEN_FAQ";
+	public final static String ACTION_OPEN_README = "ACTION_OPEN_README";
+	public final static String ACTION_OPEN_CHANGELOG = "ACTION_OPEN_CHANGELOG";
 	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
 	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
@@ -172,10 +173,6 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(ACTION_OPEN_OPTIONS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-
-		
-		
-		
 		
 		menu = new JMenu("Help");
 		//menu.setActionCommand("Something");
@@ -201,6 +198,15 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Change Log");
+		//menuItem.setIcon( ImageGetter.getIcon(".png") );
+		menuItem.setActionCommand(ACTION_OPEN_CHANGELOG);
+		menuItem.addActionListener(program);
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menu.add(menuItem);
+
+
 
 		menu.addSeparator();
 

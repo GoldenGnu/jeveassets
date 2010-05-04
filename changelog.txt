@@ -1,0 +1,134 @@
+
+
+               ########             #####   
+               ########            #######  
+               ###                ###   ### 
+             # ######## #  # #### ######### #### #### #### ##### ####
+               ######## #  # #    ######### #    #    #      #   #
+             # ###      #  # #### ###   ### #### #### ####   #   ####
+             # ######## #### #    ###   ###    #    # #      #      #
+             # ########  ##  #### ###   ### #### #### ####   #   ####
+             #
+           ###    #### #  # #### #  # #### #### #    #### ####
+                  #    #  # #  # ## # #    #    #    #  # #
+                  #    #### #### #### # ## #### #    #  # # ##
+                  #    #  # #  # # ## #  # #    #    #  # #  #
+                  #### #  # #  # #  # #### #### #### #### ####
+
+________________________________________________________________________________
+_1.4.0__________________________________________________________________________
+
+New Features:
+-Profiles
+-New API update system (You select what to update)
+-Enhanced support for mac os x environments
+-Program update notifications
+-New settings dialog layout
+-User settable reprocess efficiency
+-New special "sell or reprocess" color scheme
+-Rolling log (prevent the log from ever getting to large)
+-New pricing option "Midpoint" (sell min + buy max) / 2
+-New Column: Reprocessed Value (reprocessed price * count)
+-Meta Column: Now works as a the other number columns
+-Asset names can now be changed
+-Industry Jobs and Market Orders dialogs are now resizable
+-New API import dialog
+-Now use EVEAPI 2.0.0 (library)
+
+Bug fixes:
+-Many minor bug fixes...
+
+________________________________________________________________________________
+_1.3.0__________________________________________________________________________
+
+New Features:
+-New Tool: Routing - Find the shortest route between multiple asset locations
+
+________________________________________________________________________________
+_1.2.3__________________________________________________________________________
+
+New Features:
+-Now ignore update timer if the Api Proxy is set
+
+Bug fixes:
+-Possible fix for crash bug in JCustomFileChooser (Java Bug)
+-Better memory management
+-Fix minor display bug
+-Better log output
+
+________________________________________________________________________________
+_1.2.2__________________________________________________________________________
+
+Bug fixes:
+-Fixed bug that would crash jEveAssets when updating assets (industry jobs)
+-Fixed bug that ignored the update timer for industry jobs
+
+Known Issues:
+-The holiday gift show up as !XXXX
+
+________________________________________________________________________________
+_1.2.1__________________________________________________________________________
+
+New Features:
+-Now backup settings files (on save)
+
+Bug fixes:
+-Fix bug that would sometimes hide industry jobs and market orders
+-Fixed bug that would crash jEveAssets when updating assets (holiday gift bug)
+
+Known Issues:
+-The holiday gift show up as !XXXX
+________________________________________________________________________________
+_1.2.0__________________________________________________________________________
+
+New Features:
+-Added market orders tool
+-Added industry jobs tool
+-Now retain window position/size on restart
+-Added a label to the toolbar that show the current filter
+-Now show the eve server time on the statusbar
+-The security column now have the filter modes: "Great than" and "Less than"
+-Price data from both eve-metrics and eve-central (Candles pricing library)
+-Added more options to the API Manager
+-The table now save the selection on update
+-Added the ability highlight the selected row
+-The price field in price settings, now have focus when adding a new price
+
+Bug fixes:
+-JTextField swing bug (workaround)
+-New assets have no price (from Market Orders/Industry Jobs)
+-Conquerable Stations locations get error string
+
+________________________________________________________________________________
+_1.1.0__________________________________________________________________________
+
+New Features:
+-Added hide/show columns to the main menu
+-Better error messages when Updating assets
+-New layout for about dialog
+-The default eve-central price can now be changed
+-Added new filter modes: Greater/Less then column (compare two columns)
+-API keys can now be changed after they have been added
+-Filtering is now only triggered when no keys have been pressed for 500ms
+-Now automatically mark blueprints that have been used as copy/original 
+-All settings are now in the same dialog
+-Improved the way progress is showed when updating assets and price data
+-New dialog key bindings: Escape cancel and enter saves
+-Industry jobs: Now adds blueprints in use to the asset list
+-Market orders: now adds remaining items from sell orders to the assets list
+-Portable setting: save all files in program directory (see FAQ)
+-New Column: Reprocessed value
+-New Column: System security status
+-Added volume to statusbar and table popup menu
+
+Bug fixes:
+-Fixed bug with invalid proxy settings
+-Fixed bug with pos and industry jobs
+-Fixed bug in save filter dialog
+
+________________________________________________________________________________
+_1.0.0__________________________________________________________________________
+
+First stable release...
+________________________________________________________________________________
+________________________________________________________________________________

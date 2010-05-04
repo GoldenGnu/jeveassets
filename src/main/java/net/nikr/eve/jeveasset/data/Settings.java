@@ -68,6 +68,7 @@ public class Settings{
 	private final static String PATH_README = "readme.txt";
 	private final static String PATH_LICENSE = "license.txt";
 	private final static String PATH_CREDITS = "credits.txt";
+	private final static String PATH_CHANGELOG = "changelog.txt";
 	private final static String PATH_PROFILES = "profiles";
 
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
@@ -747,6 +748,10 @@ public class Settings{
 	public static String getPathCredits(){
 		return getLocalFile(Settings.PATH_CREDITS, false);
 	}
+	public static String getPathChangeLog(){
+		return getLocalFile(Settings.PATH_CHANGELOG, false);
+	}
+
 	public static String getUserDirectory(){
 		File userDir = new File(System.getProperty("user.home", "."));
 		return userDir.getAbsolutePath()+File.separator;

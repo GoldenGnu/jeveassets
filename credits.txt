@@ -14,12 +14,6 @@
                        #    #### #### #  #  #    #   ####
                        #    # #  #    #  #  #    #      #
                        #### #  # #### ###  ###   #   ####
-________________________________________________________________________________
-_CREDITS________________________________________________________________________
-
-This project couldn't have been done without help...
-
-My thanks goes out to all of the bellow!
 
 ________________________________________________________________________________
 _CONTRIBUTORS___________________________________________________________________
@@ -33,6 +27,20 @@ Testers:
   Varo Jan*
 
 * Eve Online in-game name
+
+________________________________________________________________________________
+_SPECIAL_THANKS_________________________________________________________________
+
+jEveAssets is heavily based on the interface in EVE Asset Manager
+
+Copyright:
+  William J Rogers
+
+Link:
+  http://wiki.heavyduck.com/EveAssetManager
+
+License:
+  GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
 
 ________________________________________________________________________________
 _EVE-ONLINE_____________________________________________________________________
@@ -78,7 +86,7 @@ License:
 ________________________________________________________________________________
 _GLAZED_LISTS___________________________________________________________________
 
-jEveAssets use Glazed Lists to sort and filter the table
+jEveAssets use Glazed Lists to sort and filter the tables
 
 Link:
   http://publicobject.com/glazedlists/
