@@ -169,7 +169,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			program.updateEventList();
 			program.getSettings().setActiveProfile(profile);
 			profile.setActiveProfile(true);
-			program.getSettings().loadAssets();
+			program.getSettings().loadActiveProfile();
 			program.updateEventList();
 		}
 	}

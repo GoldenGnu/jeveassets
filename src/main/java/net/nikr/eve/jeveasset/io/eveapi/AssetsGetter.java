@@ -24,9 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.shared.assetlist.ApiAsset;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -70,20 +70,20 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(AssetListResponse response, boolean bCorp) {
-		List<ApiAsset> apiAssets = new Vector<ApiAsset>(response.getAssets());
+		List<ApiAsset> apiAssets = new ArrayList<ApiAsset>(response.getAssets());
 		if (bCorp){
-			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
+			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings));
 		} else {
-			getHuman().setAssets(ApiConverter.apiAsset(getHuman(), apiAssets, false, settings.getConquerableStations(), settings.getLocations(), settings.getItems()));
+			getHuman().setAssets(ApiConverter.apiAsset(getHuman(), apiAssets, false, settings));
 		}
 	}
 
 	@Override
 	protected void clearData(boolean bCorp){
 		if (bCorp){
-			getHuman().setAssetsCorporation(new Vector<EveAsset>());
+			getHuman().setAssetsCorporation(new ArrayList<EveAsset>());
 		} else {
-			getHuman().setAssets(new Vector<EveAsset>());
+			getHuman().setAssets(new ArrayList<EveAsset>());
 		}
 	}
 }

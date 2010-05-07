@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<eveapi version="2">
+  <currentTime>2008-05-25 20:23:34</currentTime>
+  <result>
+    <rowset name="jobs" key="jobID" columns="jobID,assemblyLineID,containerID,
+            installedItemID,installedItemLocationID,installedItemQuantity,
+            installedItemProductivityLevel,installedItemMaterialLevel,
+            installedItemLicensedProductionRunsRemaining,outputLocationID,
+            installerID,runs,licensedProductionRuns,installedInSolarSystemID,
+            containerLocationID,materialMultiplier,charMaterialMultiplier,
+            timeMultiplier,charTimeMultiplier,installedItemTypeID,outputTypeID,
+            containerTypeID,installedItemCopy,completed,completedSuccessfully,
+            installedItemFlag,outputFlag,activityID,completedStatus,installTime,
+            beginProductionTime,endProductionTime,pauseProductionTime">
+		<row
+  jobID="74216115"
+  assemblyLineID="62336"
+  containerID="60006586"
+  installedItemID="1458298315"
+  installedItemLocationID="199651549"
+  installedItemQuantity="1"
+  installedItemProductivityLevel="0"
+  installedItemMaterialLevel="0"
+  installedItemLicensedProductionRunsRemaining="-1"
+  outputLocationID="60006586"
+  installerID="887313171"
+  runs="2"
+  licensedProductionRuns="0"
+  installedInSolarSystemID="30001670"
+  containerLocationID="30001670"
+  materialMultiplier="1"
+  charMaterialMultiplier="1"
+  timeMultiplier="1"
+  charTimeMultiplier="0.8"
+  installedItemTypeID="31621"
+  outputTypeID="31620"
+  containerTypeID="1928"
+  installedItemCopy="0"
+  completed="0"
+  completedSuccessfully="0"
+  installedItemFlag="119"
+  outputFlag="4"
+  activityID="1"
+  completedStatus="0"
+  installTime="2010-05-04 22:57:00"
+  beginProductionTime="2010-05-04 22:57:00"
+  endProductionTime="2010-05-04 23:37:00"
+  pauseProductionTime="0001-01-01 00:00:00" />
+    </rowset>
+  </result>
+  <cachedUntil>2008-05-25 20:38:34</cachedUntil>
+</eveapi>

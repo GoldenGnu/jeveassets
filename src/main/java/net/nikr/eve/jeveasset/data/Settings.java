@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -122,9 +121,9 @@ public class Settings{
 		priceData = new HashMap<Integer, PriceData>();
 		conquerableStations = new HashMap<Integer, ApiStation>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
-		accounts = new Vector<Account>();
+		accounts = new ArrayList<Account>();
 		userPrices = new HashMap<Integer, UserPrice>();
-		bpos = new Vector<Long>();
+		bpos = new ArrayList<Long>();
 		jumps = new ArrayList<Jump>();
 		profiles = new ArrayList<Profile>();
 		userItemNames = new HashMap<Long, UserItemName>();
@@ -153,6 +152,7 @@ public class Settings{
 		windowSize = new Dimension(800, 600);
 		windowMaximized = false;
 		windowAutoSave = true;
+		loadSettings();
 	}
 
 	public void saveSettings(){
@@ -160,8 +160,8 @@ public class Settings{
 		saveAssets();
 	}
 
-	public void loadSettings(){
-	//Load data and overwite default values
+	private void loadSettings(){
+		//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 	//Load static data
 		SplashUpdater.setProgress(10);
@@ -176,14 +176,12 @@ public class Settings{
 	//Find profiles
 		ProfileReader.load(this);
 		SplashUpdater.setProgress(35);
-		loadAssets();
-		
 	}
 
-	public void loadAssets(){
+	public void loadActiveProfile(){
 	//Load Assets
 		Log.info("Loading profile: "+activeProfile.getName());
-		accounts = new Vector<Account>();
+		accounts = new ArrayList<Account>();
 		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
@@ -196,7 +194,7 @@ public class Settings{
 		AssetsWriter.save(this, activeProfile.getFilename());
 	}
 
-	public void resetMainTableColumns(){
+	public final void resetMainTableColumns(){
 		//Also need to update:
 		//		gui.table.EveAssetTableFormat.getColumnClass()
 		//		gui.table.EveAssetTableFormat.getColumnComparator()
@@ -207,7 +205,7 @@ public class Settings{
 		//	If number column:
 		//		add to mainTableNumberColumns bellow
 
-		tableColumnNames = new Vector<String>();
+		tableColumnNames = new ArrayList<String>();
 		tableColumnNames.add("Name");
 		tableColumnNames.add("Group");
 		tableColumnNames.add("Category");
@@ -244,9 +242,9 @@ public class Settings{
 		tableColumnTooltips.put("ID", "ID (this specific asset)");
 		tableColumnTooltips.put("Type ID", "Type ID (this type of asset)");
 		
-		tableColumnVisible = new Vector<String>(tableColumnNames);
+		tableColumnVisible = new ArrayList<String>(tableColumnNames);
 
-		tableNumberColumns = new Vector<String>();
+		tableNumberColumns = new ArrayList<String>();
 		tableNumberColumns.add("Count");
 		tableNumberColumns.add("Price");
 		tableNumberColumns.add("Sell Min");
@@ -295,8 +293,8 @@ public class Settings{
 	}
 	private void updateAssetLists(){
 		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
-			eventListAssets = new Vector<EveAsset>();
-			uniqueIds = new Vector<Integer>();
+			eventListAssets = new ArrayList<EveAsset>();
+			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
 			for (int a = 0; a < accounts.size(); a++){
 				Account account = accounts.get(a);
@@ -304,14 +302,14 @@ public class Settings{
 				for (int b = 0; b < humans.size(); b++){
 					Human human = humans.get(b);
 					//Market Orders
-					List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, conquerableStations, locations, items);
+					List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, this);
 					addAssets(marketOrdersAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
-					List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, conquerableStations, locations, items);
+					List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, this);
 					addAssets(marketOrdersCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
 					//Industry Jobs
-					List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, bpos, conquerableStations, locations, items);
+					List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, this);
 					addAssets(industryJobAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
-					List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, bpos, conquerableStations, locations, items);
+					List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, this);
 					addAssets(industryJobCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
 					//Assets (Must be after Industry Jobs, for bpos to be marked)
 					addAssets(human.getAssets(), human.isShowAssets(), human.isUpdateCorporationAssets());
@@ -392,7 +390,7 @@ public class Settings{
 				}
 				//Type Count
 				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeId())){
-					uniqueAssetsDuplicates.put(eveAsset.getTypeId(), new Vector<EveAsset>());
+					uniqueAssetsDuplicates.put(eveAsset.getTypeId(), new ArrayList<EveAsset>());
 				}
 				if (shouldShow) {
 					List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeId());

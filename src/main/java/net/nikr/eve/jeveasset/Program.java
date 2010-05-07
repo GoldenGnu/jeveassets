@@ -152,7 +152,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Log.info("DATA Loading...");
 		
 		settings = new Settings();
-		settings.loadSettings();
+		settings.loadActiveProfile();
 		eveAssetEventList = new BasicEventList<EveAsset>();
 		programUpdateChecker = new ProgramUpdateChecker(this);
 
