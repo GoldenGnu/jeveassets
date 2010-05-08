@@ -25,10 +25,10 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -66,7 +66,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 
 	public SettingsDialog(Program program, Image image) {
 		super(program, Program.PROGRAM_NAME+" Settings", image);
-		settingsPanels = new Vector<JSettingsPanel>();
+		settingsPanels = new ArrayList<JSettingsPanel>();
 
 		listModel = new DefaultListModel();
 

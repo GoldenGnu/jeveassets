@@ -27,9 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -186,7 +186,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 
 	public void filtersChanged() {
 		listModel.clear();
-		List<String> list = new Vector<String>( program.getSettings().getAssetFilters().keySet() );
+		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);
 		for (int a = 0; a < list.size(); a++){
 			listModel.addElement(list.get(a));

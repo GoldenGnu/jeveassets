@@ -30,10 +30,10 @@ import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -287,8 +287,8 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	}
 
 	private boolean calcTotal(){
-		owners = new Vector<String>();
-		corps = new Vector<String>();
+		owners = new ArrayList<String>();
+		corps = new ArrayList<String>();
 		ownersTotalAccountBalance = new HashMap<String, Double>();
 		ownersTotalItemsValue = new HashMap<String, Double>();
 		ownersTotalItemsCount = new HashMap<String, Long>();

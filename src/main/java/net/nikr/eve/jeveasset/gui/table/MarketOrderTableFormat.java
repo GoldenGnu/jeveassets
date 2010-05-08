@@ -23,9 +23,9 @@
 package net.nikr.eve.jeveasset.gui.table;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 
@@ -35,7 +35,7 @@ public class MarketOrderTableFormat implements AdvancedTableFormat<MarketOrder> 
 	List<String> columnNames;
 
 	public MarketOrderTableFormat() {
-		columnNames = new Vector<String>();
+		columnNames = new ArrayList<String>();
 		columnNames.add("Name");
 		columnNames.add("Quantity");
 		columnNames.add("Price");

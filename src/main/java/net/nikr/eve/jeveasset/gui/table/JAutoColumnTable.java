@@ -25,8 +25,8 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -124,7 +124,7 @@ public class JAutoColumnTable extends JTable  {
 				if (e.getToIndex() > e.getFromIndex()) movingToIndex = movingToIndex + 1;
 				tempMainTableColumnNames.add(movingToIndex, movingColumnName);
 
-				List<String> mainTableColumnVisible = new Vector<String>();
+				List<String> mainTableColumnVisible = new ArrayList<String>();
 				String columnOrder = "";
 				String columnVisible = "";
 				for (int a = 0; a < tempMainTableColumnNames.size(); a++){
@@ -150,7 +150,7 @@ public class JAutoColumnTable extends JTable  {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.getSource().equals(getTableHeader())){
-				tempMainTableColumnNames = new Vector<String>(columnNames);
+				tempMainTableColumnNames = new ArrayList<String>(columnNames);
 			}
 		}
 

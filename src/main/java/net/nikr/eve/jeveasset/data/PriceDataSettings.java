@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.log.Log;
 
 
@@ -145,7 +145,7 @@ public class PriceDataSettings {
 	}
 
 	public List<Long> getRegions(){
-		List<Long> regions = new Vector<Long>();
+		List<Long> regions = new ArrayList<Long>();
 		String sRegion = "";
 		if (source.equals(SOURCE_EVE_CENTRAL)){
 			sRegion = REGIONS_EVE_CENTRAL[getRegion()];

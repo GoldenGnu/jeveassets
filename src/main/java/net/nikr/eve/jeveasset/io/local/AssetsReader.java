@@ -27,7 +27,6 @@ import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;

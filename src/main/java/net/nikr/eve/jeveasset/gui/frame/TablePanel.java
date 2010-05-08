@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -710,7 +709,7 @@ public class TablePanel extends JProgramPanel
 			} else {
 				program.getSettings().getTableColumnVisible().add(e.getActionCommand());
 				List<String> mainTableColumnNames = program.getSettings().getTableColumnNames();
-				List<String> mainTableColumnVisible = new Vector<String>();
+				List<String> mainTableColumnVisible = new ArrayList<String>();
 				for (int a = 0; a < mainTableColumnNames.size(); a++){
 					if (program.getSettings().getTableColumnVisible().contains(mainTableColumnNames.get(a))){
 						mainTableColumnVisible.add(mainTableColumnNames.get(a));
@@ -730,8 +729,8 @@ public class TablePanel extends JProgramPanel
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getSource().equals(jTable.getTableHeader())){
-			tempMainTableColumnNames = new Vector<String>(program.getSettings().getTableColumnNames());
-			tempMainTableColumnVisible = new Vector<String>(program.getSettings().getTableColumnVisible());
+			tempMainTableColumnNames = new ArrayList<String>(program.getSettings().getTableColumnNames());
+			tempMainTableColumnVisible = new ArrayList<String>(program.getSettings().getTableColumnVisible());
 		}
 		if (e.getSource().equals(jTable) && e.isPopupTrigger()){
 				showTablePopup(e);
@@ -779,7 +778,7 @@ public class TablePanel extends JProgramPanel
 			if (e.getToIndex() > e.getFromIndex()) movingToIndex = movingToIndex + 1;
 			tempMainTableColumnNames.add(movingToIndex, movingColumnName);
 
-			List<String> mainTableColumnVisible = new Vector<String>();
+			List<String> mainTableColumnVisible = new ArrayList<String>();
 			String columnOrder = "";
 			String columnVisible = "";
 			for (int a = 0; a < tempMainTableColumnNames.size(); a++){

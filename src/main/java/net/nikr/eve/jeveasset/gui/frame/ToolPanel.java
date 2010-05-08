@@ -25,9 +25,9 @@ import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -52,7 +52,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 	public final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
 
 	//Data
-	private Vector<FilterPanel> filters;
+	private List<FilterPanel> filters;
 	private MatcherEditorManager matcherEditorManager;
 	int rowCount;
 
@@ -67,7 +67,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 	public ToolPanel(Program program, MatcherEditorManager matcherEditorManager) {
 		super(program);
 		this. matcherEditorManager = matcherEditorManager;
-		filters = new Vector<FilterPanel>();
+		filters = new ArrayList<FilterPanel>();
 		
 
 		//Layout setup
@@ -127,7 +127,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 	}
 
 	public List<AssetFilter> getAssetFilters(){
-		List<AssetFilter> assetFilters = new Vector<AssetFilter>();
+		List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
 		for (int a = 0; a < filters.size(); a++){
 			AssetFilter assetFilter = filters.get(a).getAssetFilter();
 			if (!assetFilter.isEmpty()){
@@ -247,7 +247,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 		jLoadFilter.clearMenu();
 		JMenuItem jMenuItem;
 		
-		List<String> list = new Vector<String>( program.getSettings().getAssetFilters().keySet() );
+		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);
 		for (int a = 0; a < list.size(); a++){
 			String s = list.get(a);

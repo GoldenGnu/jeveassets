@@ -24,9 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import com.beimin.eveapi.shared.marketorders.MarketOrdersResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -66,7 +66,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(MarketOrdersResponse response, boolean bCorp) {
-		List<ApiMarketOrder> marketOrders = new Vector<ApiMarketOrder>(response.getMarketOrders());
+		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getMarketOrders());
 		if (bCorp){
 			getHuman().setMarketOrdersCorporation(marketOrders);
 		} else {
@@ -77,9 +77,9 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	@Override
 	protected void clearData(boolean bCorp){
 		if (bCorp){
-			getHuman().setMarketOrdersCorporation(new Vector<ApiMarketOrder>());
+			getHuman().setMarketOrdersCorporation(new ArrayList<ApiMarketOrder>());
 		} else {
-			getHuman().setMarketOrders(new Vector<ApiMarketOrder>());
+			getHuman().setMarketOrders(new ArrayList<ApiMarketOrder>());
 		}
 	}
 }

@@ -24,9 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -66,7 +66,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(IndustryJobsResponse response, boolean bCorp) {
-		List<ApiIndustryJob> industryJobs = new Vector<ApiIndustryJob>(response.getIndustryJobs());
+		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
 		if (bCorp){
 			getHuman().setIndustryJobsCorporation(industryJobs);
 		} else {
@@ -77,9 +77,9 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	@Override
 	protected void clearData(boolean bCorp){
 		if (bCorp){
-			getHuman().setIndustryJobsCorporation(new Vector<ApiIndustryJob>());
+			getHuman().setIndustryJobsCorporation(new ArrayList<ApiIndustryJob>());
 		} else {
-			getHuman().setIndustryJobs(new Vector<ApiIndustryJob>());
+			getHuman().setIndustryJobs(new ArrayList<ApiIndustryJob>());
 		}
 	}
 }

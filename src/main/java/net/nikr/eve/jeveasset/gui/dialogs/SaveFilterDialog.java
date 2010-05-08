@@ -27,9 +27,9 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -96,7 +96,7 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	}
 	
 	public void filtersChanged(){
-		List<String> list = new Vector<String>( program.getSettings().getAssetFilters().keySet() );
+		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);
 		filters.clear();
 		filters.addAll(list);

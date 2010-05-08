@@ -25,9 +25,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -72,7 +72,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(AccountBalanceResponse response, boolean bCorp) {
-		List<ApiAccountBalance> accountBalances = new Vector<ApiAccountBalance>(response.getAccountBalances());
+		List<ApiAccountBalance> accountBalances = new ArrayList<ApiAccountBalance>(response.getAccountBalances());
 		if (bCorp){
 			getHuman().setAccountBalancesCorporation(accountBalances);
 		} else {
@@ -83,9 +83,9 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	@Override
 	protected void clearData(boolean bCorp){
 		if (bCorp){
-			getHuman().setAccountBalancesCorporation(new Vector<ApiAccountBalance>());
+			getHuman().setAccountBalancesCorporation(new ArrayList<ApiAccountBalance>());
 		} else {
-			getHuman().setAccountBalances(new Vector<ApiAccountBalance>());
+			getHuman().setAccountBalances(new ArrayList<ApiAccountBalance>());
 		}
 	}
 }

@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -151,7 +152,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		jDecimalSeparator = new JComboBox( new String[]{"Dot", "Comma"});
 
 		JLabel jColumnSelectionLabel = new JLabel("Columns:");
-		jColumnSelection = new JMultiSelectionList( (Vector<String>)program.getSettings().getTableColumnNames() );
+		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getTableColumnNames()) );
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
 
@@ -339,7 +340,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 	@Override
 	protected void save() {
-		List<HashMap<String, ? super Object>> data = new Vector<HashMap<String, ? super Object>>();
+		List<HashMap<String, ? super Object>> data = new ArrayList<HashMap<String, ? super Object>>();
 
 		Object[] columns = jColumnSelection.getSelectedValues();
 

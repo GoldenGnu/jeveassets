@@ -25,10 +25,10 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -222,7 +222,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	public void updateTable(){
 		//Save HumanTable selected rows
-		List<Long> humanSelectedIds = new Vector<Long>();
+		List<Long> humanSelectedIds = new ArrayList<Long>();
 		for (int a = 0; a < humanTableModel.getRowCount(); a++){
 			if (jHumanTable.getSelectionModel().isSelectedIndex(a)){
 				humanSelectedIds.add( Long.valueOf( (String) jHumanTable.getValueAt(a, 0) ) );
@@ -262,7 +262,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	private void checkAssets(boolean selected, boolean check, boolean assets){
-		List<Long> ids = new Vector<Long>();
+		List<Long> ids = new ArrayList<Long>();
 		if (selected){
 			int[] selectedRows = jHumanTable.getSelectedRows();
 			for (int a = 0; a < selectedRows.length; a++){

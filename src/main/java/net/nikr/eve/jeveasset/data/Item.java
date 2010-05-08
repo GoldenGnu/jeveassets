@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 
 public class Item {
@@ -46,7 +46,7 @@ public class Item {
 		this.volume = volume;
 		this.meta = meta;
 		this.marketGroup = marketGroup;
-		materials = new Vector<Material>();
+		materials = new ArrayList<Material>();
 	}
 
 	public void addMaterial(Material material){

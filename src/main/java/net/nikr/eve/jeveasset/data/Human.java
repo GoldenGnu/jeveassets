@@ -25,9 +25,9 @@ import com.beimin.eveapi.ApiAuthorization;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 
 public class Human {
@@ -52,6 +52,10 @@ public class Human {
 	private List<EveAsset> assets;
 	private List<EveAsset> assetsCorporation;
 
+	public Human(Account parentAccount, String name, long characterID, String corporation) {
+		this(parentAccount, name, characterID, corporation, true, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+	}
+
 	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
@@ -65,36 +69,14 @@ public class Human {
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		//Default
-		assets = new Vector<EveAsset>();
-		assetsCorporation = new Vector<EveAsset>();
-		accountBalances = new  Vector<ApiAccountBalance>();
-		accountBalancesCorporation = new  Vector<ApiAccountBalance>();
-		marketOrders = new  Vector<ApiMarketOrder>();
-		marketOrdersCorporation = new  Vector<ApiMarketOrder>();
-		industryJobs = new  Vector<ApiIndustryJob>();
-		industryJobsCorporation = new  Vector<ApiIndustryJob>();
-	}
-
-	public Human(Account parentAccount, String name, long characterID, String corporation) {
-		this.parentAccount = parentAccount;
-		this.name = name;
-		this.characterID = characterID;
-		this.corporation = corporation;
-		//Default
-		updateCorporationAssets = true;
-		showAssets = true;
-		assetNextUpdate = Settings.getGmtNow();
-		balanceNextUpdate = Settings.getGmtNow();
-		marketOrdersNextUpdate = Settings.getGmtNow();
-		industryJobsNextUpdate = Settings.getGmtNow();
-		assets = new Vector<EveAsset>();
-		assetsCorporation = new Vector<EveAsset>();
-		accountBalances = new  Vector<ApiAccountBalance>();
-		accountBalancesCorporation = new  Vector<ApiAccountBalance>();
-		marketOrders = new  Vector<ApiMarketOrder>();
-		marketOrdersCorporation = new  Vector<ApiMarketOrder>();
-		industryJobs = new  Vector<ApiIndustryJob>();
-		industryJobsCorporation = new  Vector<ApiIndustryJob>();
+		assets = new ArrayList<EveAsset>();
+		assetsCorporation = new ArrayList<EveAsset>();
+		accountBalances = new  ArrayList<ApiAccountBalance>();
+		accountBalancesCorporation = new  ArrayList<ApiAccountBalance>();
+		marketOrders = new  ArrayList<ApiMarketOrder>();
+		marketOrdersCorporation = new  ArrayList<ApiMarketOrder>();
+		industryJobs = new  ArrayList<ApiIndustryJob>();
+		industryJobsCorporation = new  ArrayList<ApiIndustryJob>();
 	}
 
 	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {

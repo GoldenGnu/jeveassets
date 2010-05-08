@@ -24,9 +24,9 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.account.characters.ApiCharacter;
 import com.beimin.eveapi.account.characters.CharactersResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
@@ -70,8 +70,8 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 
 	@Override
 	protected void setData(CharactersResponse response, boolean bCorp) {
-		List<ApiCharacter> characters = new Vector<ApiCharacter>(response.getEveCharacters());
-		List<Human> humans = new Vector<Human>();
+		List<ApiCharacter> characters = new ArrayList<ApiCharacter>(response.getEveCharacters());
+		List<Human> humans = new ArrayList<Human>();
 		if (characters.isEmpty()){ //No characters on account
 			this.error(); //it's impossible to check if it's a limited or full api key
 			return;

@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -58,7 +59,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		jRegions = new JComboBox();
 
 		JLabel jPriceTypeLabel = new JLabel("Price to use:");
-		jPriceType = new JComboBox(EveAsset.getPriceTypes());
+		jPriceType = new JComboBox( new Vector<String>(EveAsset.getPriceTypes()));
 
 		JLabel jSourceLabel = new JLabel("Source to use:");
 		jSource = new JComboBox(PriceDataSettings.SOURCES);

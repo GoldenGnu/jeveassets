@@ -24,10 +24,10 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -260,8 +260,8 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static void parseColumns(Element element, Settings settings){
 		NodeList columnNodes = element.getElementsByTagName("column");
-		List<String> mainTableColumnNames = new Vector<String>();
-		List<String> mainTableColumnVisible = new Vector<String>();
+		List<String> mainTableColumnNames = new ArrayList<String>();
+		List<String> mainTableColumnVisible = new ArrayList<String>();
 		for (int a = 0; a < columnNodes.getLength(); a++){
 			Element currentNode = (Element) columnNodes.item(a);
 			String name = AttributeGetters.getString(currentNode, "name");
@@ -311,7 +311,7 @@ public class SettingsReader extends AbstractXmlReader {
 	}
 
 	private static List<AssetFilter> parseFilterRows(Element element){
-		List<AssetFilter> assetFilters = new Vector<AssetFilter>();
+		List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
 		NodeList rowNodes = element.getElementsByTagName("row");
 		for (int a = 0; a < rowNodes.getLength(); a++){
 			Element currentNode = (Element) rowNodes.item(a);

@@ -20,8 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 public class EveAsset implements Comparable<EveAsset> {
@@ -40,9 +40,9 @@ public class EveAsset implements Comparable<EveAsset> {
 	//Default
 	private static String defaultPriceType = PRICE_MIDPOINT;
 
-	private static String priceType = defaultPriceType;
+	private static String priceType = PRICE_MIDPOINT;
 
-	private List<EveAsset> assets = new Vector<EveAsset>();
+	private List<EveAsset> assets = new ArrayList<EveAsset>();
 	private String typeName;
 	private String name;
 	private String group;
@@ -352,8 +352,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		
 	}
 
-	public static Vector<String> getPriceTypes(){
-		Vector<String> priceSources = new Vector<String>();
+	public static List<String> getPriceTypes(){
+		List<String> priceSources = new ArrayList<String>();
 		priceSources.add(PRICE_SELL_MAX);
 		priceSources.add(PRICE_SELL_AVG);
 		priceSources.add(PRICE_SELL_MEDIAN);

@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 
 public class Account {
@@ -32,21 +32,18 @@ public class Account {
 	private List<Human> humans;
 	private Date charactersNextUpdate;
 
+	public Account(int userID, String apiKey) {
+		this(userID, apiKey, Settings.getGmtNow());
+	}
+
 	public Account(int userID, String apiKey, Date charactersNextUpdate) {
 		this.userID = userID;
 		this.apiKey = apiKey;
 		this.charactersNextUpdate = charactersNextUpdate;
 		//Default
-		humans = new Vector<Human>();
+		humans = new ArrayList<Human>();
 	}
-	
-	public Account(int userID, String apiKey) {
-		this.userID = userID;
-		this.apiKey = apiKey;
-		//Default
-		humans = new Vector<Human>();
-		charactersNextUpdate = Settings.getGmtNow();
-	}
+
 	public String getApiKey() {
 		return apiKey;
 	}
