@@ -108,7 +108,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeArtifactIds>logkit,servlet-api,avalon-framework,icu4j,jdom,xalan,xercesImpl,xml-apis,xmlParserAPIs,xom</excludeArtifactIds>
+							<excludeArtifactIds>junit,logkit,servlet-api,avalon-framework,icu4j,jdom,xalan,xercesImpl,xml-apis,xmlParserAPIs,xom</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
