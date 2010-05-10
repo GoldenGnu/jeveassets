@@ -158,6 +158,16 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		if (!profiles.isEmpty()) jProfiles.setSelectedIndex(0);
 	}
 
+
+	private void startLoadProfile(){
+		jWait.showWaitDialog("Loading Profile...");
+		setAllEnabled(false);
+		Profile profile = (Profile) jProfiles.getSelectedValue();
+		LoadProfile loadProfile = new LoadProfile(profile);
+		loadProfile.addPropertyChangeListener(this);
+		loadProfile.execute();
+	}
+
 	private void loadProfile(Profile profile){
 		if (profile != null && !profile.isActiveProfile()){
 			List<Profile> profiles = program.getSettings().getProfiles();
@@ -212,12 +222,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			}
 		}
 		if(ACTION_LOAD_PROFILE.equals(e.getActionCommand())){
-			jWait.showWaitDialog("Loading Profile...");
-			setAllEnabled(false);
-			Profile profile = (Profile) jProfiles.getSelectedValue();
-			LoadProfile loadProfile = new LoadProfile(profile);
-			loadProfile.addPropertyChangeListener(this);
-			loadProfile.execute();
+			startLoadProfile();
 		}
 		if(ACTION_RENAME_PROFILE.equals(e.getActionCommand())){
 			Profile profile = (Profile) jProfiles.getSelectedValue();
@@ -275,10 +280,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
-			Profile profile = (Profile) jProfiles.getSelectedValue();
-			jWait.showWaitDialog("Loading Profile...");
-			LoadProfile loadProfile = new LoadProfile(profile);
-			loadProfile.execute();
+			startLoadProfile();
 		}
 	}
 
