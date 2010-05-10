@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.io.File;
+import net.nikr.log.Log;
 
 
 public class Profile implements Comparable<Profile>{
@@ -86,10 +87,14 @@ public class Profile implements Comparable<Profile>{
 			File to = getFile();
 			File backTo = getBackupFile();
 			if (!from.equals(to)){
-				from.renameTo(to);
+				if (!from.renameTo(to)){
+					Log.warning("Failed to rename profile: "+this.getName());
+				}
 			}
 			if (!backFrom.equals(backTo)){
-				backFrom.renameTo(backTo);
+				if (!backFrom.renameTo(backTo)){
+					Log.warning("Failed to rename profile backup: "+this.getName());
+				}
 			}
 		}
 	}

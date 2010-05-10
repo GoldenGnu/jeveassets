@@ -40,18 +40,32 @@ public class ProfileReader {
 		
 		File[] files = profilesDirectory.listFiles(fileFilter);
 		if (files != null){
+			boolean defaultProfileFound = false;
 			for (File file : files){
 				String name = file.getName();
-				
 				Profile profile = new Profile(formatName(name), defaultProfile(name), activeProfile(name));
-				if (profile.isDefaultProfile()){
+				if (profile.isDefaultProfile() && !defaultProfileFound){
 					Log.info("Default profile found: "+formatName(name));
+					defaultProfileFound = true;
 					profiles.add(0, profile);
 					settings.setActiveProfile(profile);
+				}  else if (profile.isDefaultProfile() && defaultProfileFound){
+					Log.warning("Default profile found (again): "+formatName(name));
+					profile.setDefaultProfile(false);
+					profile.setActiveProfile(false);
+					profiles.add(profile);
 				} else {
 					Log.info("Profile found: "+formatName(name));
 					profiles.add(profile);
 				}
+			}
+			if (!defaultProfileFound && !profiles.isEmpty()){
+				Log.warning("No default profile found: Using first available");
+				profiles.get(0).setDefaultProfile(true);
+				profiles.get(0).setActiveProfile(true);
+				settings.setActiveProfile(profiles.get(0));
+			} else if (!defaultProfileFound && profiles.isEmpty()){
+				Log.info("No default profile found: Using default settings)");
 			}
 			if (!profiles.isEmpty()) settings.setProfiles(profiles);
 			return true;
