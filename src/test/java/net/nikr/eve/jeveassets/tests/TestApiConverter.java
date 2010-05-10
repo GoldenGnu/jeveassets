@@ -20,9 +20,8 @@ import net.nikr.log.Log;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -31,11 +30,11 @@ import org.xml.sax.SAXException;
  */
 public class TestApiConverter {
 
-	Settings settings;
+	static Settings settings;
 	List<ApiIndustryJob> industryJobs;
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void oneTimeSetUp(){
 		Log.init(TestApiConverter.class, "");
 
 		//Config log4j
@@ -45,9 +44,19 @@ public class TestApiConverter {
 		Logger.getLogger("org.apache.commons").setLevel(Level.INFO);
 
 		settings = new Settings();
+	}
+
+	@AfterClass
+	public static void oneTimeTearDown() {
+		settings = null;
+	}
+
+	@Before
+	public void setUp() {
 		InputStream is = TestApiConverter.class.getResourceAsStream("jobs.xml");
+		IndustryJobsResponse response;
 		try {
-			IndustryJobsResponse response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
+			response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
 			industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
 		} catch (IOException ex) {
 			fail("IOException: "+ex.getMessage());
@@ -56,15 +65,29 @@ public class TestApiConverter {
 		}
 	}
 
+	@After
+	public void tearDown() {
+		industryJobs.clear();
+		industryJobs = null;
+	}
+
 	@Test
 	public void testApiIndustryJob(){
 		Human human = new Human(null, "TESTCASE", 0, "TEST CORP");
 		List<EveAsset> assets = ApiConverter.apiIndustryJob(industryJobs, human, true, settings);
-		assertEquals(assets.get(0).getLocation(), "Baviasi");
+		for (int a = 0; a < assets.size(); a++){
+			assertFalse("Job asset location not found", assets.get(a).getLocation().contains("Error !"));
+			assertFalse("Job asset location not found", assets.get(a).getLocation().equals("Unknown"));
+		}
+
 	}
 	@Test
 	public void testApiIndustryJobsToIndustryJobs(){
-		List<IndustryJob> jobs = ApiConverter.apiIndustryJobsToIndustryJobs(industryJobs, "TEST CORP", settings);
-		assertEquals(jobs.get(0).getLocation(), "Baviasi");
+		List<IndustryJob> jobs;
+		jobs = ApiConverter.apiIndustryJobsToIndustryJobs(industryJobs, "TEST CORP", settings);
+		for (int a = 0; a < jobs.size(); a++){
+			assertFalse("Job location not found", jobs.get(a).getLocation().contains("Error !"));
+			assertFalse("Job location not found", jobs.get(a).getLocation().equals("Unknown"));
+		}
 	}
 }
