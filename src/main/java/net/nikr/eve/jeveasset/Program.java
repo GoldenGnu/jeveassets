@@ -78,7 +78,7 @@ import org.apache.log4j.Logger;
 public class Program implements ActionListener, Listener<EveAsset>{
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "1.4.0 BETA 2";
+	public static final String PROGRAM_VERSION = "1.4.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/?page=jeveasset";
@@ -241,15 +241,17 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		mainWindow.show();
 		//Start timer
 		timerTicked();
+		Log.info("Startup Done");
 		if(debug){
 			Log.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		if (settings.getAccounts().isEmpty()){
+			Log.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
 		programUpdateChecker.showMessages();
-		Log.info("Startup Done");
+		
 	}
 	public void addPanel(JProgramPanel jProgramPanel){
 		if (jProgramPanel instanceof TablePanel){
@@ -280,7 +282,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
 	}
 	
-	public void updateEventList(){
+	final public void updateEventList(){
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
