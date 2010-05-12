@@ -385,6 +385,19 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Program.forceUpdate = forceUpdate;
 	}
 
+	private void openFile(String filename){
+		File file = new File(filename);
+		Log.info("Opening: "+file.getName());
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.open(file);
+			} catch (IOException ex) {
+				JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open "+file.getName(), "Open file", JOptionPane.PLAIN_MESSAGE);
+			}
+		}
+	}
+
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {
 		this.getTablePanel().updateToolPanel();
@@ -401,7 +414,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			valuesDialog.setVisible(true);
 		}
-		if (MainMenu.ACTION_OPEN_METERIALS.equals(e.getActionCommand())) {
+		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {
 			materialsDialog.setVisible(true);
 		}
 		if (MainMenu.ACTION_OPEN_LOADOUTS.equals(e.getActionCommand())) {
@@ -449,44 +462,16 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 
 		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				try {
-					desktop.open(new File(Settings.getPathReadme()));
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open readme.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
-				}
-			}
+			openFile(Settings.getPathReadme());
 		}
 		if (MainMenu.ACTION_OPEN_LICENSE.equals(e.getActionCommand())) {
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				try {
-					desktop.open(new File(Settings.getPathLicense()));
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open license.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
-				}
-			}
+			openFile(Settings.getPathLicense());
 		}
 		if (MainMenu.ACTION_OPEN_CREDITS.equals(e.getActionCommand())) {
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				try {
-					desktop.open(new File(Settings.getPathCredits()));
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open credits.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
-				}
-			}
+			openFile(Settings.getPathCredits());
 		}
 		if (MainMenu.ACTION_OPEN_CHANGELOG.equals(e.getActionCommand())) {
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				try {
-					desktop.open(new File(Settings.getPathChangeLog()));
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open changelog.txt", "Open file", JOptionPane.PLAIN_MESSAGE);
-				}
-			}
+			openFile(Settings.getPathChangeLog());
 		}
 		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();

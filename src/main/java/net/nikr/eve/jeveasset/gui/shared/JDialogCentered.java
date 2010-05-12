@@ -108,6 +108,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public void setVisible(boolean b) {
 		if (b){
+			Log.info("Showing: "+title+" Dialog");
 			dialog.pack();
 			//Get the parent size
 			Dimension screenSize = parent.getSize();
@@ -121,6 +122,8 @@ public abstract class JDialogCentered implements WindowListener {
 			dialog.setLocationRelativeTo(parent);
 
 			firstActivating = true;
+		} else {
+			Log.info("Hiding: "+title);
 		}
 		dialog.setVisible(b);
 	}
@@ -152,7 +155,9 @@ public abstract class JDialogCentered implements WindowListener {
 	}
 
 	@Override
-	public void windowClosing(WindowEvent e) {}
+	public void windowClosing(WindowEvent e) {
+		Log.info("Hiding: "+title+" (close)");
+	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {}
