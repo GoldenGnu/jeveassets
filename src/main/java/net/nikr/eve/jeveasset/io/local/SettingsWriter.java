@@ -34,19 +34,22 @@ import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class SettingsWriter extends AbstractXmlWriter {
 
+	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
+
 	public static void save(Settings settings){
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("settings");
 		} catch (XmlException ex) {
-			Log.error("Settings not saved "+ex.getMessage(), ex);
+			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -63,9 +66,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		try {
 			writeXmlFile(xmldoc, Settings.getPathSettings());
 		} catch (XmlException ex) {
-			Log.error("Settings not saved "+ex.getMessage(), ex);
+			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
-		Log.info("Settings saved");
+		LOG.info("Settings saved");
 	}
 
 	private static void writeUserItemNames(Document xmldoc, Map<Long, UserItemName> userPrices){

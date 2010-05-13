@@ -23,10 +23,13 @@ package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class PriceDataSettings {
+
+	private final static Logger LOG = LoggerFactory.getLogger(PriceDataSettings.class);
 
 	public final static String SOURCE_EVE_CENTRAL = "eve-central";
 	public final static String SOURCE_EVE_METRICS = "eve-metrics";
@@ -130,11 +133,11 @@ public class PriceDataSettings {
 
 	public int getRegion() {
 		if (source.equals(SOURCE_EVE_CENTRAL) && region >= REGIONS_EVE_CENTRAL.length){
-			Log.warning("PriceDataSettings: region index is larger then the region array (eve-central)");
+			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-central)");
 			return 0;
 		}
 		if (source.equals(SOURCE_EVE_METRICS) && region >= REGIONS_EVE_METRICS.length){
-			Log.warning("PriceDataSettings: region index is larger then the region array (eve-metrics)");
+			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-metrics)");
 			return 0;
 		}
 		return region;

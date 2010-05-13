@@ -39,10 +39,13 @@ import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public abstract class JDialogCentered implements WindowListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(MoveJList.class);
 
 	private final static String ACTION_CANCEL = "ACTION_CANCEL";
 	private final static String ACTION_OK = "ACTION_OK";
@@ -108,7 +111,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public void setVisible(boolean b) {
 		if (b){
-			Log.info("Showing: "+title+" Dialog");
+			LOG.info("Showing: {} Dialog", title);
 			dialog.pack();
 			//Get the parent size
 			Dimension screenSize = parent.getSize();
@@ -123,7 +126,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 			firstActivating = true;
 		} else {
-			Log.info("Hiding: "+title);
+			LOG.info("Hiding: "+title);
 		}
 		dialog.setVisible(b);
 	}
@@ -156,7 +159,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		Log.info("Hiding: "+title+" (close)");
+		LOG.info("Hiding: "+title+" (close)");
 	}
 
 	@Override
@@ -172,7 +175,7 @@ public abstract class JDialogCentered implements WindowListener {
 	public void windowActivated(WindowEvent e) {
 		JComponent defaultFocus = this.getDefaultFocus();
 		if (defaultFocus == null){
-			Log.warning("No default focus for: "+this.title);
+			LOG.warn("No default focus for: {}", this.title);
 			return;
 		}
 		if (firstActivating){
@@ -189,6 +192,7 @@ public abstract class JDialogCentered implements WindowListener {
 	public void windowDeactivated(WindowEvent e) {}
 
 	private class HideAction extends AbstractAction {
+		private static final long serialVersionUID = 1l;
 
 		public HideAction(String actionCommand) {
 			this.putValue(Action.ACTION_COMMAND_KEY, actionCommand);

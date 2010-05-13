@@ -24,10 +24,13 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.text.ParseException;
 import javax.management.timer.Timer;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
+
+	private final static Logger LOG = LoggerFactory.getLogger(MarketOrder.class);
 
 	private String name;
 	private String location;
@@ -111,7 +114,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 				return "Expired";
 			}
 		} catch (ParseException ex) {
-			Log.error("Failed to parse IssuedDate", ex);
+			LOG.error("Failed to parse IssuedDate", ex);
 		}
 		return "";
 	}

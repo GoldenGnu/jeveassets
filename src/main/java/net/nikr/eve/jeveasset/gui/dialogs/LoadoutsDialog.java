@@ -51,10 +51,13 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class LoadoutsDialog extends JDialogCentered implements ActionListener, ListEventListener<EveAsset> {
+
+	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsDialog.class);
 
 	public final static String ACTION_SHIP_SELECTED = "ACTION_SHIP_SELECTED";
 	public final static String ACTION_LOADOUTS_CLOSE = "ACTION_LOADOUTS_CLOSE";
@@ -218,7 +221,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 							+File.separator+"EVE"
 							+File.separator+"fittings"
 							);
-		Log.info("Mac Browsing: "+mac.getAbsolutePath());
+		LOG.info("Mac Browsing: {}", mac.getAbsolutePath());
 		if (windows.exists()){ //Windows
 			jXmlFileChooser.setCurrentDirectory( windows );
 		} else if(mac.exists()) { //Mac

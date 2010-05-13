@@ -27,24 +27,27 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
 public class ConquerableStationsReader extends AbstractXmlReader {
 
+	private final static Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
+
 	public static boolean load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
 			parseConquerableStations(element, settings);
 		} catch (IOException ex) {
-			Log.info("Conquerable stations not loaded");
+			LOG.info("Conquerable stations not loaded");
 			return false;
 		} catch (XmlException ex) {
-			Log.error("Conquerable stations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not loaded: "+ex.getMessage(), ex);
 		}
-		Log.info("Conquerable stations loaded");
+		LOG.info("Conquerable stations loaded");
 		return true;
 	}
 

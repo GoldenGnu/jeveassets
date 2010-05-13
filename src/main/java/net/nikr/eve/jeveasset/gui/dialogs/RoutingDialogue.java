@@ -52,7 +52,8 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
@@ -66,6 +67,8 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  * @author Candle
  */
 public class RoutingDialogue extends JDialogCentered implements ActionListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(RoutingDialogue.class);
 
 	public static final String ACTION_ADD = "ACTION_ADD";
 	public static final String ACTION_ADD_RANDOM = "ACTION_ADD_RNDOM";
@@ -319,7 +322,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			if (loc != null) {
 				allLocs.add(loc);
 			} else {
-				Log.debug("ignoring " + ea.getLocation());
+				LOG.debug("ignoring {}", ea.getLocation());
 			}
 			progress.setValue(progress.getValue() + 1);
 		}
@@ -356,7 +359,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Log.debug(e.getActionCommand());
+		LOG.debug(e.getActionCommand());
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			move(available, waypoints, ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getWaypointLimit());
 		} else if (ACTION_REMOVE.equals(e.getActionCommand())) {

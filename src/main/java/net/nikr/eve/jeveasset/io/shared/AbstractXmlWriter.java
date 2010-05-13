@@ -37,12 +37,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 
 public abstract class AbstractXmlWriter {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
 
 	protected static Document getXmlDocument(String rootname) throws XmlException  {
 		try {
@@ -95,12 +98,12 @@ public abstract class AbstractXmlWriter {
 		File backupFile = new File(backup);
 		if (backupFile.exists()){
 			if (!backupFile.delete()){
-				Log.warning("Was not able to delete previous backup file: "+backup);
+				LOG.warn("Was not able to delete previous backup file: {}", backup);
 			}
 		}
 		if (outputFile.exists()){
 			if (!outputFile.renameTo(backupFile)){
-				Log.warning("Was not able to make backup of: "+filename);
+				LOG.warn("Was not able to make backup of: {}", filename);
 			}
 		}
 	}

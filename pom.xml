@@ -126,11 +126,11 @@
 			<artifactId>eveapi</artifactId>
 			<version>2.0.0</version>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>net.nikr</groupId>
 			<artifactId>log</artifactId>
 			<version>1.1.1</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>
 			<artifactId>glazedlists_java15</artifactId>
@@ -162,7 +162,59 @@
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<!--
+				define a version of commons-logging that is
+			  way in advance of the current real version
+				the jar returned is empty, thus removing the
+				commons-logging classes.
+		  -->
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>99.0-does-not-exist</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+		<dependency>
+			<!--
+				use the log4j adaptor, which sends the logging calls to
+				log4j. - the artifact is slf4j-log4j12, because we
+				are using the log4j 1.2.* library
+			-->
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.11</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<!--
+				This contains fake commons-logging classes that
+				redirect commons-logging calls to the slf4j API
+			-->
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>Version99</id>
+			<name>Version 99 Does Not Exist Maven repository</name>
+			<layout>default</layout>
+			<url>http://no-commons-logging.zapto.org/mvn2</url>
+		</repository>
+	</repositories>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

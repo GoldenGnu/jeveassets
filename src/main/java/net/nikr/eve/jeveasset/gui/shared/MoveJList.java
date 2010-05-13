@@ -23,9 +23,13 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import javax.swing.JList;
 import javax.swing.ListModel;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoveJList<T> extends JList {
+
+	private final static Logger LOG = LoggerFactory.getLogger(MoveJList.class);
+
 	private static final long serialVersionUID = 1l;
 
 	public MoveJList() {
@@ -60,7 +64,7 @@ public class MoveJList<T> extends JList {
 			T ss = (T) obj;
 			if (fModel.contains(ss)) {
 				if (to.getModel().getSize() < limit) {
-					Log.debug("Moving " + ss);
+					LOG.debug("Moving {}", ss);
 					if (fModel.remove(ss)) {
 						tModel.add(ss);
 					}

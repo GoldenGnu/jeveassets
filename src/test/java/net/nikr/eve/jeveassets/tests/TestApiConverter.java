@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.nikr.eve.jeveassets.tests;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
@@ -16,12 +11,10 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-import net.nikr.log.Log;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import static org.junit.Assert.*;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -29,19 +22,17 @@ import org.xml.sax.SAXException;
  * @author Niklas
  */
 public class TestApiConverter {
+	static {
+		System.setProperty("log.home", ".");
+		System.setProperty("log.level", "DEBUG");
+	}
+	private final static Logger LOG = LoggerFactory.getLogger(TestApiConverter.class);
 
 	static Settings settings;
 	List<ApiIndustryJob> industryJobs;
 
 	@BeforeClass
 	public static void oneTimeSetUp(){
-		Log.init(TestApiConverter.class, "");
-
-		//Config log4j
-		BasicConfigurator.configure();
-		Logger.getLogger("com.beimin.eveapi").setLevel(Level.INFO);
-		Logger.getLogger("uk.me.candle").setLevel(Level.INFO);
-		Logger.getLogger("org.apache.commons").setLevel(Level.INFO);
 
 		settings = new Settings();
 	}

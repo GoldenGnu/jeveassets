@@ -38,24 +38,27 @@ import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
 public class SettingsReader extends AbstractXmlReader {
 
+	private final static Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
+
 	public static boolean load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathSettings());
 			parseSettings(element, settings);
 		} catch (IOException ex) {
-			Log.info("Settings not loaded");
+			LOG.info("Settings not loaded");
 			return false;
 		} catch (XmlException ex) {
-			Log.error("Settings not loaded: ("+Settings.getPathSettings()+")"+ex.getMessage(), ex);
+			LOG.error("Settings not loaded: ("+Settings.getPathSettings()+")"+ex.getMessage(), ex);
 		}
-		Log.info("Settings loaded");
+		LOG.info("Settings loaded");
 		return true;
 	}
 

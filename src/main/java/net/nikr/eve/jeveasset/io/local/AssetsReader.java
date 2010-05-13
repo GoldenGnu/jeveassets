@@ -35,24 +35,28 @@ import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
 public class AssetsReader extends AbstractXmlReader {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AssetsReader.class);
+
 	public static boolean load(Settings settings, String filename){
 		try {
 			Element element = getDocumentElement(filename);
 			parseSettings(element, settings);
 		} catch (IOException ex) {
-			Log.info("Assets not loaded");
+			LOG.info("Assets not loaded");
 			return false;
 		} catch (XmlException ex) {
-			Log.error("Assets not loaded: ("+filename+")"+ex.getMessage(), ex);
+			LOG.error("Assets not loaded: ("+filename+")"+ex.getMessage(), ex);
 		}
-		Log.info("Assets loaded");
+		LOG.info("Assets loaded");
 		return true;
 	}
 	private static void parseSettings(Element element, Settings settings) throws XmlException {

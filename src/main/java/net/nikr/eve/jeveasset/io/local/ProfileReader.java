@@ -27,10 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ProfileReader {
+
+	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
 
 	public static boolean load(Settings settings){
 		backwardCompatibility();
@@ -45,27 +48,27 @@ public class ProfileReader {
 				String name = file.getName();
 				Profile profile = new Profile(formatName(name), defaultProfile(name), activeProfile(name));
 				if (profile.isDefaultProfile() && !defaultProfileFound){
-					Log.info("Default profile found: "+formatName(name));
+					LOG.info("Default profile found: {}", formatName(name));
 					defaultProfileFound = true;
 					profiles.add(0, profile);
 					settings.setActiveProfile(profile);
 				}  else if (profile.isDefaultProfile() && defaultProfileFound){
-					Log.warning("Default profile found (again): "+formatName(name));
+					LOG.warn("Default profile found (again): {}", formatName(name));
 					profile.setDefaultProfile(false);
 					profile.setActiveProfile(false);
 					profiles.add(profile);
 				} else {
-					Log.info("Profile found: "+formatName(name));
+					LOG.info("Profile found: {}", formatName(name));
 					profiles.add(profile);
 				}
 			}
 			if (!defaultProfileFound && !profiles.isEmpty()){
-				Log.warning("No default profile found: Using first available");
+				LOG.warn("No default profile found: Using first available");
 				profiles.get(0).setDefaultProfile(true);
 				profiles.get(0).setActiveProfile(true);
 				settings.setActiveProfile(profiles.get(0));
 			} else if (!defaultProfileFound && profiles.isEmpty()){
-				Log.info("No default profile found: Using default settings)");
+				LOG.info("No default profile found: Using default settings)");
 			}
 			if (!profiles.isEmpty()) settings.setProfiles(profiles);
 			return true;
@@ -79,18 +82,18 @@ public class ProfileReader {
 		File dir = new File(Settings.getPathProfilesDirectory());
 		if (!dir.exists()){
 			if (dir.mkdirs()){
-				Log.info("Created profiles directory");
+				LOG.info("Created profiles directory");
 			} else {
-				Log.error("Failed to make profiles directory");
+				LOG.error("Failed to make profiles directory");
 			}
 		}
 		//Move assets.xml to new location
 		File assets = new File(Settings.getPathAssetsOld());
 		if (assets.exists()){
 			if (assets.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.xml"))){
-				Log.info("Moved assets.xml to new location");
+				LOG.info("Moved assets.xml to new location");
 			} else {
-				Log.error("Failed to move assets.xml to new location");
+				LOG.error("Failed to move assets.xml to new location");
 			}
 		}
 		//Move assets.bac to new location
@@ -100,9 +103,9 @@ public class ProfileReader {
 		File backup = new File(filename);
 		if (backup.exists()){
 			if (backup.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.bac"))){
-				Log.info("Moved assets.xml to new location");
+				LOG.info("Moved assets.xml to new location");
 			} else {
-				Log.error("Failed to move assets.xml to new location");
+				LOG.error("Failed to move assets.xml to new location");
 			}
 		}
 	}

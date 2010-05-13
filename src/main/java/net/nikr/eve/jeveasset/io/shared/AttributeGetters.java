@@ -22,11 +22,15 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 
 public class AttributeGetters {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AttributeGetters.class);
+
 	public static boolean haveAttribute(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
@@ -38,7 +42,7 @@ public class AttributeGetters {
 	public static String getString(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return "";
 		}
 		return attributeNode.getNodeValue();
@@ -47,7 +51,7 @@ public class AttributeGetters {
 	public static int getInt(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return -1;
 		}
 		String sTemp = attributeNode.getNodeValue();
@@ -56,7 +60,7 @@ public class AttributeGetters {
 			nTemp = Integer.parseInt(sTemp);
 			return nTemp;
 		} catch(NumberFormatException ex){
-			Log.warning("Failed to convert string to int: "+sTemp+" from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to convert string to int: {} from node: {} > {}",new Object[]{sTemp, node.getNodeName(), attributeName});
 			return -1;
 		}
 	}
@@ -64,7 +68,7 @@ public class AttributeGetters {
 	public static long getLong(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return -1;
 		}
 		String sTemp = attributeNode.getNodeValue();
@@ -73,7 +77,7 @@ public class AttributeGetters {
 			nTemp = safeStringToLong(sTemp);//Long.parseLong(sTemp);
 			return nTemp;
 		} catch (NumberFormatException ex){
-			Log.warning("Failed to convert string to long: "+sTemp+" from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to convert string to long: {} from node: {} > {}",new Object[]{sTemp, node.getNodeName(), attributeName});
 			return -1;
 		}
 	}
@@ -81,7 +85,7 @@ public class AttributeGetters {
 	public static double getDouble(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return -1;
 		}
 		String sTemp = attributeNode.getNodeValue();
@@ -90,7 +94,7 @@ public class AttributeGetters {
 			nTemp = Double.valueOf(sTemp);//Long.parseLong(sTemp);
 			return nTemp;
 		} catch (NumberFormatException ex){
-			Log.warning("Failed to convert string to long: "+sTemp+" from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to convert string to double: {} from node: {} > {}",new Object[]{sTemp, node.getNodeName(), attributeName});
 			return -1;
 		}
 	}
@@ -98,7 +102,7 @@ public class AttributeGetters {
 	public static float getFloat(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return -1;
 		}
 		String sTemp = attributeNode.getNodeValue();
@@ -107,7 +111,7 @@ public class AttributeGetters {
 			nTemp = Float.valueOf(sTemp);//Long.parseLong(sTemp);
 			return nTemp;
 		} catch (NumberFormatException ex){
-			Log.warning("Failed to convert string to long: "+sTemp+" from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to convert string to float: {} from node: {} > {}",new Object[]{sTemp, node.getNodeName(), attributeName});
 			return -1;
 		}
 	}
@@ -115,7 +119,7 @@ public class AttributeGetters {
 	public static boolean getBoolean(Node node, String attributeName){
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
-			Log.warning("Failed to parse attribute from node: "+node.getNodeName()+" > "+attributeName);
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
 			return false;
 		}
 		String sTemp = attributeNode.getNodeValue();

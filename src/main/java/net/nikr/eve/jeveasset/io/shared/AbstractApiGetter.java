@@ -32,11 +32,14 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 
 abstract public class AbstractApiGetter<T extends ApiResponse> {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
 	
 	private String name;
 	private Account account;
@@ -83,7 +86,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 
 	protected void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts){
 		init(updateTask, forceUpdate, null, null);
-		Log.info(name+" updating:");
+		LOG.info("{} updating:", name);
 		for (int a = 0; a < accounts.size(); a++){
 			account = accounts.get(a);
 			if (updateAccount){
@@ -116,11 +119,11 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			}
 		}
 		if (updated && updateTask != null && !updateTask.hasError()){
-			Log.info("	"+name+" updated (ALL)");
+			LOG.info("	{} updated (ALL)", name);
 		} else if(updated && updateTask != null && updateTask.hasError()) {
-			Log.info("	"+name+" updated (SOME)");
+			LOG.info("	{} updated (SOME)", name);
 		} else {
-			Log.info("	"+name+" not updated (NONE)");
+			LOG.info("	{} not updated (NONE)", name);
 		}
 	}
 
@@ -164,26 +167,26 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 					ApiResponse apiResponse = (ApiResponse)response;
 					setNextUpdate(apiResponse.getCachedUntil());
 					if (!apiResponse.hasError()){
-						Log.info("	"+name+" updated for: "+updateName);
+						LOG.info("	{} updated for: {}", name, updateName);
 						this.updated = true;
 						setData(response, updateCorporation);
 						return true;
 					} else {
 						ApiError apiError = apiResponse.getError();
 						addError(updateName, apiError.getError(), updateCorporation);
-						Log.info("	"+name+" failed to update for: "+updateName+" (API ERROR: code: "+apiError.getCode()+" :: "+apiError.getError()+")");
+						LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{name, updateName, apiError.getCode(), apiError.getError()});
 					}
 				}
 			} catch (IOException ex) {
 				addError(updateName, "IO error", updateCorporation);
-				Log.info("	"+name+" failed to update for: "+updateName+" (IOException: "+ex.getMessage()+")");
+				LOG.info("	{} failed to update for: {} (IOException: {})", new Object[]{name, updateName, ex.getMessage()});
 			} catch (SAXException ex) {
 				addError(updateName, "Parser error", updateCorporation);
-				Log.info("	"+name+" failed to update for: "+updateName+" (SAXException: "+ex.getMessage()+")");
+				LOG.info("	{} failed to update for: {} (SAXException: {})", new Object[]{name, updateName, ex.getMessage()});
 			}
 		} else {
 			addError(updateName, "Not allowed yet", updateCorporation);
-			Log.info("	"+name+" failed to update for: "+updateName+" (NOT ALLOWED YET)");
+			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", name, updateName);
 		}
 		return false;
 	}

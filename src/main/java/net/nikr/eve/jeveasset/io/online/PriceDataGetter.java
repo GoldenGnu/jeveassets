@@ -35,7 +35,8 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.pricing.Pricing;
 import uk.me.candle.eve.pricing.PricingFactory;
 import uk.me.candle.eve.pricing.PricingListener;
@@ -45,6 +46,8 @@ import uk.me.candle.eve.pricing.options.PricingType;
 
 
 public class PriceDataGetter implements PricingListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
 	private Settings settings;
 	private UpdateTask updateTask;
@@ -64,11 +67,11 @@ public class PriceDataGetter implements PricingListener {
 		updated = false;
 
 		if (forceUpdate){
-			Log.info("Price data updating:");
+			LOG.info("Price data updating:");
 		} else if (!enableCacheTimers) {
-			Log.info("Price data loading:");
+			LOG.info("Price data loading:");
 		} else {
-			Log.info("Price data loading (updating as needed):");
+			LOG.info("Price data loading (updating as needed):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
@@ -98,7 +101,7 @@ public class PriceDataGetter implements PricingListener {
                     wait();
                 }
 			} catch (InterruptedException ex) {
-				Log.info("Failed to update price");
+				LOG.info("Failed to update price");
 				this.updateTask.addError("Price data", "Cancelled");
 				this.updateTask.setTaskProgress(100, 100, 0, 100);
 				this.updateTask = null;
@@ -107,17 +110,17 @@ public class PriceDataGetter implements PricingListener {
 		}
 		settings.setPriceData( priceDataList );
 		if (!enableCacheTimers && updated){
-			Log.info("	Price data loaded (updated as needed)");
+			LOG.info("	Price data loaded (updated as needed)");
 		} else if (!enableCacheTimers) {
-			Log.info("	Price data loaded");
+			LOG.info("	Price data loaded");
 		} else if (updated){
-			Log.info("	Price data updated");
+			LOG.info("	Price data updated");
 		}
 		try {
 			pricing.writeCache();
-			Log.info("	Price data cached saved");
+			LOG.info("	Price data cached saved");
 		} catch (IOException ex) {
-			Log.error("Failed to write price data cache", ex);
+			LOG.error("Failed to write price data cache", ex);
 		}
 		return updated;
 	}

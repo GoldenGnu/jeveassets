@@ -25,12 +25,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.supercsv.io.*;
 import org.supercsv.prefs.CsvPreference;
 
 
 public class CsvWriter {
+
+	private final static Logger LOG = LoggerFactory.getLogger(CsvWriter.class);
 
 	public static boolean save(String filename, List<HashMap<String, ? super Object>> data, String[] header, CsvPreference csvPreference) {
 		ICsvMapWriter writer;
@@ -42,10 +45,10 @@ public class CsvWriter {
 			}
 			writer.close();
 		} catch (IOException ex){
-			Log.warning("CSV file saving failed");
+			LOG.warn("CSV file saving failed");
 			return false;
 		}
-		Log.info("CSV file saved");
+		LOG.info("CSV file saved");
 		return true;
 	}
 }

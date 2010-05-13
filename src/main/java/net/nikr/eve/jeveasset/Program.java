@@ -69,13 +69,11 @@ import net.nikr.eve.jeveasset.gui.settings.UserItemNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
-import net.nikr.log.Log;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Program implements ActionListener, Listener<EveAsset>{
+	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
 	public static final String PROGRAM_VERSION = "1.4.0";
@@ -134,22 +132,15 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private EventList<EveAsset> eveAssetEventList;
 
 	public Program(){
-		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
+		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
 		
 		if(debug){
-			Log.enableDebug();
-			Log.debug("Force Update: "+forceUpdate+" Force No Update: "+forceNoUpdate);
+			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
-
-		//Config log4j
-		BasicConfigurator.configure();
-		Logger.getLogger("com.beimin.eveapi").setLevel(Level.INFO);
-		Logger.getLogger("uk.me.candle").setLevel(Level.INFO);
-		Logger.getLogger("org.apache.commons").setLevel(Level.INFO);
 
 		//Data
 		SplashUpdater.setText("Loading DATA");
-		Log.info("DATA Loading...");
+		LOG.info("DATA Loading...");
 		
 		settings = new Settings();
 		settings.loadActiveProfile();
@@ -161,93 +152,93 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 		updatable = new Updatable(settings);
 		SplashUpdater.setText("Loading GUI");
-		Log.info("GUI Loading:");
-		Log.info("	Frame");
+		LOG.info("GUI Loading:");
+		LOG.info("	Frame");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
-		Log.info("	Save Filters Dialog");
+		LOG.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
 		SplashUpdater.setProgress(55);
-		Log.info("	Filters Manager Dialog");
+		LOG.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
 		SplashUpdater.setProgress(60);
-		Log.info("	Account Manager Dialog");
+		LOG.info("	Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
 		SplashUpdater.setProgress(65);
-		Log.info("	Values Dialog");
+		LOG.info("	Values Dialog");
 		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
 		SplashUpdater.setProgress(68);
-		Log.info("	Ship Loadouts Dialog");
+		LOG.info("	Ship Loadouts Dialog");
 		loadoutsDialog = new LoadoutsDialog(this, ImageGetter.getImage("icon26_02.png"));
 		SplashUpdater.setProgress(70);
-		Log.info("	Market Orders Dialog");
+		LOG.info("	Market Orders Dialog");
 		marketOrdersDialog = new MarketOrdersDialog(this, ImageGetter.getImage("icon07_12.png"));
 		SplashUpdater.setProgress(72);
-		Log.info("	Industry Jobs Dialog");
+		LOG.info("	Industry Jobs Dialog");
 		industryJobsDialog = new IndustryJobsDialog(this, ImageGetter.getImage("icon33_02.png"));
 		SplashUpdater.setProgress(74);
-		Log.info("	Routing Dialog");
+		LOG.info("	Routing Dialog");
 		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
 		SplashUpdater.setProgress(76);
-		Log.info("	About Dialog");
+		LOG.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
 		SplashUpdater.setProgress(78);
-		Log.info("	Materials Dialog");
+		LOG.info("	Materials Dialog");
 		materialsDialog = new MaterialsDialog(this, ImageGetter.getImage("icon23_16.png"));
 		SplashUpdater.setProgress(80);
-		Log.info("	Csv Export Dialog");
+		LOG.info("	Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
 		SplashUpdater.setProgress(82);
-		Log.info("	Profiles Dialog");
+		LOG.info("	Profiles Dialog");
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
 		SplashUpdater.setProgress(84);
-		Log.info("	Options Dialog");
+		LOG.info("	Options Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		SplashUpdater.setProgress(86);
-		Log.info("		General");
+		LOG.info("		General");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, ImageGetter.getIcon("cog.png"));
 		SplashUpdater.setProgress(88);
-		Log.info("		Table");
+		LOG.info("		Table");
 		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application_view_detail.png"));
 		SplashUpdater.setProgress(90);
-		Log.info("		Price Data");
+		LOG.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, ImageGetter.getIcon("coins.png"));
 		SplashUpdater.setProgress(91);
-		Log.info("		User Price");
+		LOG.info("		User Price");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, ImageGetter.getIcon("money.png"));
 		SplashUpdater.setProgress(92);
-		Log.info("		User Item Name");
+		LOG.info("		User Item Name");
 		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, ImageGetter.getIcon("set_name.png"));
 		SplashUpdater.setProgress(93);
-		Log.info("		Reprocessing");
+		LOG.info("		Reprocessing");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, ImageGetter.getIcon("reprocessing.png"));
 		SplashUpdater.setProgress(94);
-		Log.info("		Proxy");
+		LOG.info("		Proxy");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, ImageGetter.getIcon("server_connect.png"));
 		SplashUpdater.setProgress(95);
-		Log.info("		Window");
+		LOG.info("		Window");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application.png"));
 		SplashUpdater.setProgress(96);
-		Log.info("	Update Dialog");
+		LOG.info("	Update Dialog");
 		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
 		SplashUpdater.setProgress(97);
-		Log.info("	GUI loaded");
-		Log.info("Updating data...");
+		LOG.info("	GUI loaded");
+		LOG.info("Updating data...");
 		updateEventList();
 		SplashUpdater.setProgress(99);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
-		Log.info("Showing GUI");
+		LOG.info("Showing GUI");
 		mainWindow.show();
 		//Start timer
 		timerTicked();
-		Log.info("Startup Done");
+		LOG.info("Startup Done");
 		if(debug){
-			Log.info("Show Debug Warning");
+			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		if (settings.getAccounts().isEmpty()){
-			Log.info("Show Account Manager");
+			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
 		programUpdateChecker.showMessages();
@@ -292,14 +283,14 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 
 	public void saveSettings(){
-		Log.info("Saving...");
+		LOG.info("Saving...");
 		mainWindow.updateSettings();
 		settings.saveSettings();
 	}
 	
 	public void exit(){
 		saveSettings();
-		Log.info("Exiting...");
+		LOG.info("Exiting...");
 		System.exit(0);
 	}
 
@@ -326,9 +317,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[])null));
 				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[])null));
 			} catch (NoSuchMethodException ex) {
-				Log.error("NoSuchMethodException: "+ex.getMessage(), ex);
+				LOG.error("NoSuchMethodException: " + ex.getMessage(), ex);
 			} catch (SecurityException ex) {
-				Log.error("SecurityException: "+ex.getMessage(), ex);
+				LOG.error("SecurityException: " + ex.getMessage(), ex);
 			}
 		}
 	}
@@ -387,7 +378,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	private void openFile(String filename){
 		File file = new File(filename);
-		Log.info("Opening: "+file.getName());
+		LOG.info("Opening: {}", file.getName());
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			try {

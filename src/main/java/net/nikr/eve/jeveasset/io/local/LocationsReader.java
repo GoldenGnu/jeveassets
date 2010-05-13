@@ -28,7 +28,8 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,16 +37,18 @@ import org.w3c.dom.NodeList;
 
 public class LocationsReader extends AbstractXmlReader {
 
+	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
+
 	public static void load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathLocations());
 			parseLocations(element, settings.getLocations());
 		} catch (IOException ex) {
-			Log.error("Locations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Locations not loaded: "+ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			Log.error("Locations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Locations not loaded: "+ex.getMessage(), ex);
 		}
-		Log.info("Locations loaded");
+		LOG.info("Locations loaded");
 	}
 
 	private static void parseLocations(Element element, Map<Integer, Location> locations){

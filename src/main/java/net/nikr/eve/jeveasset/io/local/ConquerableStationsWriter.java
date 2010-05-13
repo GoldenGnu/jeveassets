@@ -26,19 +26,22 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class ConquerableStationsWriter extends AbstractXmlWriter {
 
+	private final static Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
+
 	public static void save(Settings settings){
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("stations");
 		} catch (XmlException ex) {
-			Log.error("Conquerable stations not saved "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not saved "+ex.getMessage(), ex);
 		}
 		writeConquerableStations(xmldoc, settings.getConquerableStations());
 
@@ -46,9 +49,9 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 		try {
 			writeXmlFile(xmldoc, Settings.getPathConquerableStations());
 		} catch (XmlException ex) {
-			Log.error("Conquerable stations not saved "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not saved "+ex.getMessage(), ex);
 		}
-		Log.info("	Conquerable stations saved");
+		LOG.info("	Conquerable stations saved");
 	}
 	private static void writeConquerableStations(Document xmldoc, Map<Integer, ApiStation> conquerableStations){
 		Element parentNode = xmldoc.getDocumentElement();

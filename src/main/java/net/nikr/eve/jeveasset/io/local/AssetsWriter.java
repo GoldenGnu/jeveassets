@@ -31,26 +31,30 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class AssetsWriter extends AbstractXmlWriter {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AssetsWriter.class);
+
 	public static void save(Settings settings, String filename){
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("assets");
 		} catch (XmlException ex) {
-			Log.error("Assets not saved "+ex.getMessage(), ex);
+			LOG.error("Assets not saved "+ex.getMessage(), ex);
 		}
 		writeAccounts(xmldoc, settings.getAccounts());
 		try {
 			writeXmlFile(xmldoc, filename);
 		} catch (XmlException ex) {
-			Log.error("Assets not saved "+ex.getMessage(), ex);
+			LOG.error("Assets not saved "+ex.getMessage(), ex);
 		}
-		Log.info("Assets saved");
+		LOG.info("Assets saved");
 	}
 
 	private static void writeAccounts(Document xmldoc, List<Account> accounts){

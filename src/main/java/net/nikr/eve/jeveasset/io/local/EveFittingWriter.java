@@ -29,12 +29,16 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class EveFittingWriter extends AbstractXmlWriter {
+
+	private final static Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
+
 	public static void save(List<EveAsset> eveassets, String filename){
 		save(eveassets, filename, null, null);
 	}
@@ -44,7 +48,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		try {
 			xmldoc = getXmlDocument("fittings");
 		} catch (XmlException ex) {
-			Log.error("Eve fitting not saved "+ex.getMessage(), ex);
+			LOG.error("Eve fitting not saved "+ex.getMessage(), ex);
 		}
 
 		boolean noSetupName = (setupName == null);
@@ -58,9 +62,9 @@ public class EveFittingWriter extends AbstractXmlWriter {
 			//writeXmlFile(xmldoc, filename, "UTF-8");
 			writeXmlFile(xmldoc, filename);
 		} catch (XmlException ex) {
-			Log.error("Eve fitting not saved "+ex.getMessage(), ex);
+			LOG.error("Eve fitting not saved "+ex.getMessage(), ex);
 		}
-		Log.info("Eve fitting saved");
+		LOG.info("Eve fitting saved");
 	}
 	private static void writeFitting(Document xmldoc, EveAsset eveAsset, String setupName, String description, String filename) {
 		Element fittingsNode = xmldoc.getDocumentElement();

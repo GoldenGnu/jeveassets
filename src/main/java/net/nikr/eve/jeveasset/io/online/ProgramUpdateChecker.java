@@ -40,7 +40,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -49,7 +50,8 @@ import org.xml.sax.SAXException;
 
 public class ProgramUpdateChecker {
 
-	
+	private final static Logger LOG = LoggerFactory.getLogger(ProgramUpdateChecker.class);
+
 	private Program program;
 	private String programDataVersion = "";
 	private Version stable = new Version();
@@ -85,9 +87,9 @@ public class ProgramUpdateChecker {
 				try {
 					Desktop.getDesktop().browse(new URI(Program.PROGRAM_HOMEPAGE));
 				} catch (IOException ex) {
-					Log.info("Failed to open browser");
+					LOG.info("Failed to open browser");
 				} catch (URISyntaxException ex) {
-					Log.info("Failed to open browser");
+					LOG.info("Failed to open browser");
 				}
 			}
 		}
@@ -97,9 +99,9 @@ public class ProgramUpdateChecker {
 				try {
 					Desktop.getDesktop().browse(new URI(Program.PROGRAM_HOMEPAGE));
 				} catch (IOException ex) {
-					Log.info("Failed to open browser");
+					LOG.info("Failed to open browser");
 				} catch (URISyntaxException ex) {
-					Log.info("Failed to open browser");
+					LOG.info("Failed to open browser");
 				}
 			}
 		}
@@ -144,14 +146,14 @@ public class ProgramUpdateChecker {
 			InputStream is = new FileInputStream(Settings.getPathDataVersion());
 			parseDataVersion(parse(is));
 		} catch (IOException ex) {
-			Log.info("Failed to get data.xml information"+ex.getMessage());
+			LOG.info("Failed to get data.xml information"+ex.getMessage());
 		} catch (XmlException ex) {
-			Log.info("Failed to get data.xml information"+ex.getMessage());
+			LOG.info("Failed to get data.xml information"+ex.getMessage());
 		}
 	}
 	private void parseDataVersion(Element element) {
 		if (!element.getNodeName().equals("rows")) {
-			Log.info("Failed to get update information: Wrong root element name");
+			LOG.info("Failed to get update information: Wrong root element name");
 			return;
 		}
 		//row
@@ -168,18 +170,18 @@ public class ProgramUpdateChecker {
 			InputStream is = url.openConnection(program.getSettings().getProxy()).getInputStream();
 			parseUpdate(parse(is));
 		} catch (MalformedURLException ex) {
-			Log.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: "+ex.getMessage());
 		} catch (IOException ex) {
-			Log.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: "+ex.getMessage());
 		} catch (XmlException ex) {
-			Log.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: "+ex.getMessage());
 		}
 	}
 
 
 	private void parseUpdate(Element element) {
 		if (!element.getNodeName().equals("update")) {
-			Log.info("Failed to get update information: Wrong root element name");
+			LOG.info("Failed to get update information: Wrong root element name");
 		}
 		//jEveAssets
 		NodeList nodes = element.getElementsByTagName("jeveassets");
@@ -287,7 +289,7 @@ public class ProgramUpdateChecker {
 				int end = m.end();
 				strings = version.substring(start, end).split("\\.");
 			} else {
-				Log.info("Failed to get update information: Reg Exp didn't find X.X.X in program version");
+				LOG.info("Failed to get update information: Reg Exp didn't find X.X.X in program version");
 				return new int[0];
 			}
 			if (strings.length != 3) return new int[0];

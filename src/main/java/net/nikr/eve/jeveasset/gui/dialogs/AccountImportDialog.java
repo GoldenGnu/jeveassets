@@ -56,10 +56,13 @@ import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JWorking;
 import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AccountImportDialog extends JDialogCentered implements ActionListener, PropertyChangeListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
 	public final static String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
 	public final static String ACTION_NEXT = "ACTION_NEXT";
@@ -293,7 +296,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		if (o instanceof ValidateApiKeyTask){
 			ValidateApiKeyTask validateApiKeyTask = (ValidateApiKeyTask) o;
 			if (validateApiKeyTask.throwable != null){
-				Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", validateApiKeyTask.throwable);
+				LOG.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", validateApiKeyTask.throwable);
 			}
 			if (validateApiKeyTask.done){
 				validateApiKeyTask.done = false;

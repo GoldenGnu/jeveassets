@@ -29,7 +29,8 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -37,16 +38,18 @@ import org.w3c.dom.NodeList;
 
 public class ItemsReader extends AbstractXmlReader {
 
+	private final static Logger LOG = LoggerFactory.getLogger(ItemsReader.class);
+
 	public static void load(Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathItems());
 			parseItems(element, settings.getItems());
 		} catch (IOException ex) {
-			Log.error("Items not loaded: "+ex.getMessage(), ex);
+			LOG.error("Items not loaded: "+ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			Log.error("Items not loaded: "+ex.getMessage(), ex);
+			LOG.error("Items not loaded: "+ex.getMessage(), ex);
 		}
-		Log.info("Items loaded");
+		LOG.info("Items loaded");
 	}
 
 	private static void parseItems(Element element, Map<Integer, Item> items){

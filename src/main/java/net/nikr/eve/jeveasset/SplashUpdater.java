@@ -29,10 +29,13 @@ import java.awt.SplashScreen;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SplashUpdater extends Thread{
+	private final static Logger LOG = LoggerFactory.getLogger(SplashUpdater.class);
+
 	private static int nProgress = 0;
 	private static String sText = "";
 	private static int currentLoadingImage = 0;
@@ -48,7 +51,7 @@ public class SplashUpdater extends Thread{
 			try {
 				loadingImages[a] = ImageIO.read(getClass().getResource("gui/images/loading0"+(a+1)+".png"));
 			} catch (IOException ex) {
-				Log.warning("SplashScreen: loading0"+(a+1)+".png (NOT FOUND)");
+				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (a+1));
 			}
 		}
 		
@@ -115,7 +118,7 @@ public class SplashUpdater extends Thread{
 				if (loadingImages[currentLoadingImage] != null) g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
 				splash.update();
 			} catch (IllegalStateException ex) {
-				Log.info("SplashScreen: Closed before painting ended (NO PROBLEM)");
+				LOG.info("SplashScreen: Closed before painting ended (NO PROBLEM)");
 			}
 		}
 	}

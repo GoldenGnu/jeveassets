@@ -43,10 +43,13 @@ import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
 	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private final static String ACTION_UPDATE = "ACTION_UPDATE";
@@ -231,9 +234,9 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				try {
 					Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
 				} catch (URISyntaxException ex) {
-					Log.warning("URISyntaxException: "+ex.getMessage());
+					LOG.warn("URISyntaxException: "+ex.getMessage(), ex);
 				} catch (IOException ex) {
-					Log.warning("IOException: "+ex.getMessage());
+					LOG.warn("IOException: "+ex.getMessage(), ex);
 				}
 			}
 		}

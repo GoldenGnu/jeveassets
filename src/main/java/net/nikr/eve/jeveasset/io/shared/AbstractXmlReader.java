@@ -27,13 +27,15 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 
 public abstract class AbstractXmlReader {
+	private final static Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
 	protected static Element getDocumentElement(String filename) throws XmlException, IOException {
 		return getDocumentElement(filename, false);
@@ -70,20 +72,20 @@ public abstract class AbstractXmlReader {
 		File backupFile = new File(backup);
 		File inputFile = new File(filename);
 		if (!backupFile.exists()){
-			Log.warning("No backup file found: "+backup);
+			LOG.warn("No backup file found: {}", backup);
 			return false;
 		}
 		if (inputFile.exists() ){
 			if (!inputFile.delete()){
-				Log.warning("Was not able to delete buggy inputfile: "+filename);
+				LOG.warn("Was not able to delete buggy inputfile: {}", filename);
 				return false;
 			}
 		}
 		if (backupFile.renameTo(inputFile)){
-			Log.warning("Backup file restored: "+backup);
+			LOG.warn("Backup file restored: {}", backup);
 			return true;
 		} else {
-			Log.warning("Was not able to restore backup: "+backup);
+			LOG.warn("Was not able to restore backup: {}", backup);
 		}
 		return false;
 	}

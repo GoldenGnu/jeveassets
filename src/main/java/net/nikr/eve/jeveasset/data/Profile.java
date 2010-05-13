@@ -22,10 +22,13 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.io.File;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Profile implements Comparable<Profile>{
+
+	private final static Logger LOG = LoggerFactory.getLogger(Profile.class);
 
 	private String name;
 	private boolean defaultProfile;
@@ -88,12 +91,12 @@ public class Profile implements Comparable<Profile>{
 			File backTo = getBackupFile();
 			if (!from.equals(to)){
 				if (!from.renameTo(to)){
-					Log.warning("Failed to rename profile: "+this.getName());
+					LOG.warn("Failed to rename profile: {}", this.getName());
 				}
 			}
 			if (!backFrom.equals(backTo)){
 				if (!backFrom.renameTo(backTo)){
-					Log.warning("Failed to rename profile backup: "+this.getName());
+					LOG.warn("Failed to rename profile backup: {}", this.getName());
 				}
 			}
 		}

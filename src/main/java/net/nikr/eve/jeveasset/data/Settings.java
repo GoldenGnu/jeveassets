@@ -51,10 +51,13 @@ import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.ProfileReader;
-import net.nikr.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Settings{
+
+	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
 
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
@@ -180,7 +183,7 @@ public class Settings{
 
 	public void loadActiveProfile(){
 	//Load Assets
-		Log.info("Loading profile: "+activeProfile.getName());
+		LOG.info("Loading profile: {}", activeProfile.getName());
 		accounts = new ArrayList<Account>();
 		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
@@ -780,7 +783,7 @@ public class Settings{
 				File parent = ret.getParentFile();
 				if (!parent.exists()) {
 					if (!parent.mkdirs()) {
-						Log.error("failed to create directories for " + parent.getAbsolutePath());
+						LOG.error("failed to create directories for " + parent.getAbsolutePath());
 					}
 				}
 			} else {
@@ -789,7 +792,7 @@ public class Settings{
 			}
 			return ret.getAbsolutePath();
 		} catch (URISyntaxException ex) {
-			Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
+			LOG.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
 		}
 		return null;
 	}
