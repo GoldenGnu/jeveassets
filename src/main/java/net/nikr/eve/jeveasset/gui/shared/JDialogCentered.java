@@ -64,6 +64,11 @@ public abstract class JDialogCentered implements WindowListener {
 	private String title;
 	private boolean firstActivating = false;
 
+	/**
+	 *
+	 * @param load does nothing except change the signature.
+	 */
+	protected JDialogCentered(boolean load) { }
 
 	public JDialogCentered(Program program, String title) {
 		this(program, title, program.getMainWindow().getFrame(), null);

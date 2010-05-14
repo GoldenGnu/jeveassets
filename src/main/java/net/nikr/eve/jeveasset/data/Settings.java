@@ -158,6 +158,12 @@ public class Settings{
 		loadSettings();
 	}
 
+	/**
+	 *
+	 * @param load does nothing except change the method signature.
+	 */
+	protected Settings(boolean load) { }
+
 	public void saveSettings(){
 		SettingsWriter.save(this);
 		saveAssets();

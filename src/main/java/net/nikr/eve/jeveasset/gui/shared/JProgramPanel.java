@@ -44,6 +44,12 @@ public abstract class JProgramPanel {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
+	/**
+	 *
+	 * @param load does nothing except change the signature.
+	 */
+	protected JProgramPanel(boolean load) { }
+
 	protected abstract JProgramPanel getThis();
 
 	public JPanel getPanel() {

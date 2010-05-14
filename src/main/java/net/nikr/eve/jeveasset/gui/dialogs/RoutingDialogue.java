@@ -90,7 +90,16 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private JLabel waypointsRemaining; // waypoint count
 	private ProgressBar progress;
 	private JButton cancel;
-	Graph filteredGraph;
+	protected Graph filteredGraph;
+
+	
+	/**
+	 *
+	 * @param load does nothing except change the signature.
+	 */
+	protected RoutingDialogue(boolean load) {
+		super(load);
+	}
 
 	public RoutingDialogue(Program program, Image image) {
 		super(program, "Routing", image);
@@ -154,6 +163,10 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 		doLayout();
 		cancel.setEnabled(false); // can't cancel the initial load...
+	}
+
+	protected RoutingDialogue(Program program) {
+		super(program, "Routing", (Image)null);
 	}
 
 	private void doLayout() {
@@ -290,7 +303,12 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		progress.setMaximum(settings.getJumps().size() + 1 + program.getTablePanel().getFilteredAssets().size());
 		progress.setMinimum(0);
 		progress.setValue(0);
-								
+
+		buildGraph(settings, progress);
+		processFilteredAssets(settings, progress);
+	}
+
+	protected void buildGraph(Settings settings, Progress progress) {
 		// build the graph.
 		// filter the solarsystems based on the settings.
 		filteredGraph = new Graph();
@@ -308,6 +326,9 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			filteredGraph.addEdge(new Edge(f, t));
 			progress.setValue(progress.getValue() + 1);
 		}
+	}
+
+	protected void processFilteredAssets(Settings settings, Progress progress) {
 		// select the active places.
 		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
 			@Override
@@ -409,8 +430,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			setUIEnabled(false);
 			List<Node> inputWaypoints = new ArrayList<Node>(waypoints.getEditableModel().getAll());
 
-			List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(
-							progress, filteredGraph, inputWaypoints);
+			List<Node> route = executeRouteFinding(inputWaypoints);
 
 			StringBuilder sb = new StringBuilder("The suggested route has ");
 			sb.append(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastDistance());
@@ -437,6 +457,11 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		} finally {
 			setUIEnabled(true);
 		}
+	}
+
+	protected List<Node> executeRouteFinding(List<Node> inputWaypoints) {
+		List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(progress, filteredGraph, inputWaypoints);
+		return route;
 	}
 
 	private void setUIEnabled(boolean b) {

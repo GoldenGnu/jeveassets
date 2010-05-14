@@ -244,6 +244,13 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		programUpdateChecker.showMessages();
 		
 	}
+
+	/**
+	 *
+	 * @param load does nothing except change the signature.
+	 */
+	protected Program(boolean load) { }
+
 	public void addPanel(JProgramPanel jProgramPanel){
 		if (jProgramPanel instanceof TablePanel){
 			tablePanel = (TablePanel) jProgramPanel;
