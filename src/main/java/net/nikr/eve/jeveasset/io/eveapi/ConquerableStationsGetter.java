@@ -25,6 +25,7 @@ import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import java.io.IOException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
 
@@ -60,6 +61,7 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	@Override
 	protected void setData(StationListResponse response, boolean bCorp) {
 		settings.setConquerableStations( response.getStations() );
+		ConquerableStationsWriter.save(settings);
 	}
 
 	@Override
