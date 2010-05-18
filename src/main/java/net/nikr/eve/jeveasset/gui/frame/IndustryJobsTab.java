@@ -19,14 +19,13 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.frame;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -36,10 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,18 +43,17 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.table.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class IndustryJobsDialog extends JDialogCentered implements ActionListener {
+public class IndustryJobsTab extends JMainTab implements ActionListener {
 
-	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
-	private JButton jClose;
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private JComboBox jActivity;
@@ -70,13 +65,8 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 	private Map<String, List<IndustryJob>> jobs;
 	private Vector<String> characters;
 
-	public IndustryJobsDialog(Program program, Image image) {
-		super(program, "Industry Jobs", image);
-		getDialog().setResizable(true);
-		
-		jClose = new JButton("Close");
-		jClose.setActionCommand(ACTION_CLOSE);
-		jClose.addActionListener(this);
+	public IndustryJobsTab(Program program) {
+		super(program, "Industry Jobs", ImageGetter.getIcon("icon33_02.png"), true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -119,10 +109,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 					.addComponent(jStateLabel)
 					.addComponent(jState, 200, 200, 200)
 				)
-				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-					.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
-					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
+				.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -135,22 +122,11 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 					.addComponent(jActivity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jJobsScrollPanel, 100, 400, Short.MAX_VALUE)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jClose;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jClose;
-	}
-
-	@Override
-	protected void windowShown() {
+	public void updateData() {
 		characters = new Vector<String>();
 		//characters.add("All");
 		jobs = new HashMap<String, List<IndustryJob>>();
@@ -207,18 +183,7 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 	}
 
 	@Override
-	protected void windowActivated() {
-		
-	}
-
-	@Override
-	protected void save() {}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CLOSE.equals(e.getActionCommand())) {
-			dialog.setVisible(false);
-		}
 		if (ACTION_SELECTED.equals(e.getActionCommand())) {
 			String selected = (String) jCharacters.getSelectedItem();
 			if (characters.size() > 1){
@@ -247,7 +212,4 @@ public class IndustryJobsDialog extends JDialogCentered implements ActionListene
 			}
 		}
 	}
-
-
-	
 }

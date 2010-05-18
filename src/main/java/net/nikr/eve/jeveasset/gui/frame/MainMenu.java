@@ -36,10 +36,6 @@ public class MainMenu extends JMenuBar {
 	
 	private static final long serialVersionUID = 1l;
 
-	private JMenu jColumnMenu;
-	private JMenuItem jUpdatable;
-	private Program program;
-
 	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
 	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
@@ -57,6 +53,10 @@ public class MainMenu extends JMenuBar {
 	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
 	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
+
+	private JMenu jColumnMenu;
+	private JMenuItem jUpdatable;
+	private Program program;
 
 	public MainMenu(Program program) {
 		this.program = program;
@@ -218,7 +218,7 @@ public class MainMenu extends JMenuBar {
 		menu.add(menuItem);
 	}
 
-	public void updateColumnSelectionMenu(){
+	final public void updateColumnSelectionMenu(){
 		JMenuItem jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JRadioButtonMenuItem jRadioButtonMenuItem;
@@ -226,8 +226,8 @@ public class MainMenu extends JMenuBar {
 		jColumnMenu.removeAll();
 
 		jMenuItem = new JMenuItem("Reset columns to default");
-		jMenuItem.setActionCommand(TablePanel.ACTION_RESET_COLUMNS_TO_DEFAULT);
-		jMenuItem.addActionListener(program.getTablePanel());
+		jMenuItem.setActionCommand(AssetsTab.ACTION_RESET_COLUMNS_TO_DEFAULT);
+		jMenuItem.addActionListener(program.getAssetsTab());
 		jColumnMenu.add(jMenuItem);
 
 		jColumnMenu.addSeparator();
@@ -236,24 +236,24 @@ public class MainMenu extends JMenuBar {
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
 		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
-		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_AUTO_RESIZING_COLUMNS_TEXT);
-		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_TEXT);
+		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
 		group.add(jRadioButtonMenuItem);
 		jColumnMenu.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
 		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
-		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
-		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
+		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
 		group.add(jRadioButtonMenuItem);
 		jColumnMenu.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
 		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
-		jRadioButtonMenuItem.setActionCommand(TablePanel.ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
-		jRadioButtonMenuItem.addActionListener(program.getTablePanel());
+		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
+		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
 		group.add(jRadioButtonMenuItem);
 		jColumnMenu.add(jRadioButtonMenuItem);
@@ -264,7 +264,7 @@ public class MainMenu extends JMenuBar {
 		for (int a = 0; a < columns.size(); a++){
 			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
 			jCheckBoxMenuItem.setActionCommand(columns.get(a));
-			jCheckBoxMenuItem.addActionListener(program.getTablePanel());
+			jCheckBoxMenuItem.addActionListener(program.getAssetsTab());
 			jCheckBoxMenuItem.setIcon( ImageGetter.getIcon("application_view_columns.png") );
 			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
 			jColumnMenu.add(jCheckBoxMenuItem);

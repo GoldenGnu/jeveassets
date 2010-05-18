@@ -9,9 +9,9 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
+import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.frame.TablePanel;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 
@@ -31,7 +31,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public TablePanel getTablePanel() {
+	public AssetsTab getAssetsTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

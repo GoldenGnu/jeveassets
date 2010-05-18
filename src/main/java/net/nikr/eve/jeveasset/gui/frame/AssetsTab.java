@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.datatransfer.Transferable;
 import javax.swing.event.TableModelEvent;
-import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.event.ChangeEvent;
@@ -73,12 +72,13 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.table.JAssetTable;
 import net.nikr.eve.jeveasset.gui.table.EveAssetTableHeader;
 import net.nikr.eve.jeveasset.gui.table.MatcherEditorManager;
 
 
-public class TablePanel extends JProgramPanel
+public class AssetsTab extends JMainTab
 		implements MouseListener, ActionListener, TableColumnModelListener,
 		ClipboardOwner, TableModelListener {
 
@@ -119,9 +119,8 @@ public class TablePanel extends JProgramPanel
 	private int rowsLastTime = 0;
 	private int rowsCount = 0;
 	
-	public TablePanel(Program program) {
-		super(program);
-
+	public AssetsTab(Program program) {
+		super(program, "Assets", ImageGetter.getIcon("safe16.png"), false);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
@@ -535,11 +534,11 @@ public class TablePanel extends JProgramPanel
 		jMenuItem.setEnabled(false);
 		jTablePopupMenu.add(jMenuItem);
 
-		JPanel jPanel = new JPanel();
-		jPanel.setMinimumSize( new Dimension(50, 5) );
-		jPanel.setPreferredSize( new Dimension(50, 5) );
-		jPanel.setMaximumSize( new Dimension(50, 5) );
-		jTablePopupMenu.add(jPanel);
+		JPanel jSpacePanel = new JPanel();
+		jSpacePanel.setMinimumSize( new Dimension(50, 5) );
+		jSpacePanel.setPreferredSize( new Dimension(50, 5) );
+		jSpacePanel.setMaximumSize( new Dimension(50, 5) );
+		jTablePopupMenu.add(jSpacePanel);
 
 		double total = 0;
 		long count = 0;
@@ -592,11 +591,6 @@ public class TablePanel extends JProgramPanel
 		new StringSelection(String.valueOf(o));
 		Clipboard cp = tk.getSystemClipboard();
 		cp.setContents(st, this);
-	}
-
-	@Override
-	protected JProgramPanel getThis(){
-		return this;
 	}
 
 	@Override
@@ -815,4 +809,7 @@ public class TablePanel extends JProgramPanel
 			updateToolPanel();
 		}
 	}
+
+	@Override
+	public void updateData() {}
 }

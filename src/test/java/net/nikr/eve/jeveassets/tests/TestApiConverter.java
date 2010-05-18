@@ -2,6 +2,7 @@ package net.nikr.eve.jeveassets.tests;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import org.xml.sax.SAXException;
  */
 public class TestApiConverter {
 	static {
-		System.setProperty("log.home", ".");
+		System.setProperty("log.home", "."+File.separator);
 		System.setProperty("log.level", "DEBUG");
 	}
 	private final static Logger LOG = LoggerFactory.getLogger(TestApiConverter.class);
@@ -33,7 +34,6 @@ public class TestApiConverter {
 
 	@BeforeClass
 	public static void oneTimeSetUp(){
-
 		settings = new Settings();
 	}
 

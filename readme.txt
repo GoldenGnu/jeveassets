@@ -59,7 +59,7 @@ ________________________________________________________________________________
 Q: jEveAssets crashed/does not work as intended
 
 A: Please send an email to niklaskr@gmail.com and include the following:
-   1.) The latest error.txt in the logs directory
+   1.) The jeveassets.log in the user directory (see below)
    2.) Instructions on how to reproduce the bug
 
 ________________________________________________________________________________
@@ -71,10 +71,10 @@ A: You need to double click to sort a new column
 
 ________________________________________________________________________________
 
-Q: How do I manually set price for asset
+Q: How do I manually set price or name for asset
 
-A: Right click the asset you want to set price for in the table
-   and select "Set price..." in the popup-menu
+A: Right click the asset you want to set price or table for in the table
+   and select "Set price..." or "Set name..." in the popup-menu
 
 ________________________________________________________________________________
 
@@ -88,7 +88,7 @@ ________________________________________________________________________________
 Q: The [...] library is missing
 
 A: Please re-download jEveAssets from http://eve.nikr.net/?page=jeveasset
-   And leave the unzipped folder intact 
+   And leave the unzipped folder intact
 ________________________________________________________________________________
 
 Q: How do I use portable settings?
@@ -101,17 +101,15 @@ Q: Where is the user files?
 
 A:
 
-   Windows XP:
-   C:\Documents and Settings\[USERNAME]\.jeveassets\
-
-   Windows Vista:
-   C:\Users\[USERNAME]\.jeveassets\
+   Windows:
+     XP: C:\Documents and Settings\[USERNAME]\.jeveassets\
+     Vista: C:\Users\[USERNAME]\.jeveassets\
 
    Linux:
-   Send me an email if you know (niklaskr@gmail.com)
+     /home/[USERNAME]/.jeveassets/
 
    Mac:
-   Send me an email if you know (niklaskr@gmail.com)
+     ~/Library/Preferences/JEveAssets
 
    Replace [USERNAME] with your username
 

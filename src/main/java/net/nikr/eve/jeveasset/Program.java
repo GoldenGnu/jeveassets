@@ -47,9 +47,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.GeneralSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
+import net.nikr.eve.jeveasset.gui.frame.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.MarketOrdersDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.RoutingDialogue;
@@ -60,13 +59,15 @@ import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.frame.TablePanel;
+import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
+import net.nikr.eve.jeveasset.gui.frame.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.UserItemNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import org.slf4j.Logger;
@@ -102,8 +103,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private MaterialsDialog materialsDialog;
 	private LoadoutsDialog loadoutsDialog;
 	private RoutingDialogue routingDialogue;
-	private MarketOrdersDialog marketOrdersDialog;
-	private IndustryJobsDialog industryJobsDialog;
+	private MarketOrdersTab marketOrdersTab;
+	private IndustryJobsTab industryJobsTab;
 	private CsvExportDialog csvExportDialog;
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
@@ -123,7 +124,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private Updatable updatable;
 
 	//Panels
-	private TablePanel tablePanel;
+	private AssetsTab assetsTab;
 	private StatusPanel statusPanel;
 	private ToolPanel toolPanel;
 
@@ -156,76 +157,80 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("	Frame");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
+		LOG.info("		Assets Tab");
+		assetsTab = new AssetsTab(this);
+		mainWindow.addTab(assetsTab);
+		SplashUpdater.setProgress(55);
+		LOG.info("		Industry Jobs Tab");
+		industryJobsTab = new IndustryJobsTab(this);
+		SplashUpdater.setProgress(60);
+		LOG.info("		Market Orders Tab");
+		marketOrdersTab = new MarketOrdersTab(this);
+		SplashUpdater.setProgress(62);
 		LOG.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
-		SplashUpdater.setProgress(55);
+		SplashUpdater.setProgress(64);
 		LOG.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
-		SplashUpdater.setProgress(60);
+		SplashUpdater.setProgress(66);
 		LOG.info("	Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
-		SplashUpdater.setProgress(65);
+		SplashUpdater.setProgress(68);
 		LOG.info("	Values Dialog");
 		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
-		SplashUpdater.setProgress(68);
+		SplashUpdater.setProgress(70);
 		LOG.info("	Ship Loadouts Dialog");
 		loadoutsDialog = new LoadoutsDialog(this, ImageGetter.getImage("icon26_02.png"));
-		SplashUpdater.setProgress(70);
-		LOG.info("	Market Orders Dialog");
-		marketOrdersDialog = new MarketOrdersDialog(this, ImageGetter.getImage("icon07_12.png"));
 		SplashUpdater.setProgress(72);
-		LOG.info("	Industry Jobs Dialog");
-		industryJobsDialog = new IndustryJobsDialog(this, ImageGetter.getImage("icon33_02.png"));
-		SplashUpdater.setProgress(74);
 		LOG.info("	Routing Dialog");
 		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(74);
 		LOG.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(76);
 		LOG.info("	Materials Dialog");
 		materialsDialog = new MaterialsDialog(this, ImageGetter.getImage("icon23_16.png"));
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(78);
 		LOG.info("	Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
-		SplashUpdater.setProgress(82);
+		SplashUpdater.setProgress(80);
 		LOG.info("	Profiles Dialog");
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
+		SplashUpdater.setProgress(82);
+		LOG.info("	Update Dialog");
+		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
 		SplashUpdater.setProgress(84);
 		LOG.info("	Options Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
-		SplashUpdater.setProgress(86);
+		SplashUpdater.setProgress(85);
 		LOG.info("		General");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, ImageGetter.getIcon("cog.png"));
-		SplashUpdater.setProgress(88);
+		SplashUpdater.setProgress(86);
 		LOG.info("		Table");
 		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application_view_detail.png"));
-		SplashUpdater.setProgress(90);
+		SplashUpdater.setProgress(87);
 		LOG.info("		Price Data");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, ImageGetter.getIcon("coins.png"));
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(88);
 		LOG.info("		User Price");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, ImageGetter.getIcon("money.png"));
-		SplashUpdater.setProgress(92);
+		SplashUpdater.setProgress(89);
 		LOG.info("		User Item Name");
 		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, ImageGetter.getIcon("set_name.png"));
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(90);
 		LOG.info("		Reprocessing");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, ImageGetter.getIcon("reprocessing.png"));
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(91);
 		LOG.info("		Proxy");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, ImageGetter.getIcon("server_connect.png"));
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(92);
 		LOG.info("		Window");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application.png"));
-		SplashUpdater.setProgress(96);
-		LOG.info("	Update Dialog");
-		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
-		SplashUpdater.setProgress(97);
+		SplashUpdater.setProgress(93);
 		LOG.info("	GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
-		SplashUpdater.setProgress(99);
+		SplashUpdater.setProgress(95);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -252,9 +257,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	protected Program(boolean load) { }
 
 	public void addPanel(JProgramPanel jProgramPanel){
-		if (jProgramPanel instanceof TablePanel){
-			tablePanel = (TablePanel) jProgramPanel;
-		} else if (jProgramPanel instanceof StatusPanel){
+		if (jProgramPanel instanceof StatusPanel){
 			statusPanel = (StatusPanel) jProgramPanel;
 		} else if (jProgramPanel instanceof ToolPanel){
 			toolPanel = (ToolPanel) jProgramPanel;
@@ -265,7 +268,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		this.getFiltersManagerDialog().filtersChanged();
 		this.getSaveFilterDialog().filtersChanged();
 		this.getToolPanel().filtersChanged();
-		this.getTablePanel().filtersChanged();
+		this.getAssetsTab().filtersChanged();
 	}
 
 	public void tableUpdated(){
@@ -287,6 +290,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		eveAssetEventList.addAll( settings.getEventListAssets() );
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
+		for (JMainTab jMainTab : mainWindow.getTabs()){
+			jMainTab.updateData();
+		}
 	}
 
 	public void saveSettings(){
@@ -346,8 +352,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	public SaveFilterDialog getSaveFilterDialog(){
 		return saveFilterDialog;
 	}
-	public TablePanel getTablePanel(){
-		return tablePanel;
+	public AssetsTab getAssetsTab(){
+		return assetsTab;
 	}
 	public ToolPanel getToolPanel(){
 		return toolPanel;
@@ -398,7 +404,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {
-		this.getTablePanel().updateToolPanel();
+		this.getAssetsTab().updateToolPanel();
 	}
 
 	@Override
@@ -419,10 +425,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			loadoutsDialog.setVisible(true);
 		}
 		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
-			marketOrdersDialog.setVisible(true);
+			mainWindow.addTab(marketOrdersTab);
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
-			industryJobsDialog.setVisible(true);
+			mainWindow.addTab(industryJobsTab);
 		}
 		if (MainMenu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
 			csvExportDialog.setVisible(true);
@@ -442,8 +448,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
-		if (TablePanel.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
-			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
+		if (AssetsTab.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
+			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
 			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
 				JOptionPane.showMessageDialog(mainWindow.getFrame(),
 						"You can not set price for Blueprint Copies.\r\n" +
@@ -453,8 +459,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			userPriceSettingsPanel.setNewItem(new UserPrice(eveAsset));
 			settingsDialog.setVisible(userPriceSettingsPanel);
 		}
-		if (TablePanel.ACTION_SET_ITEM_NAME.equals(e.getActionCommand())){
-			EveAsset eveAsset = this.getTablePanel().getSelectedAsset();
+		if (AssetsTab.ACTION_SET_ITEM_NAME.equals(e.getActionCommand())){
+			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
 			userItemNameSettingsPanel.setNewItem(new UserItemName(eveAsset));
 			settingsDialog.setVisible(userItemNameSettingsPanel);
 		}

@@ -300,7 +300,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		description.scrollRectToVisible(new Rectangle(1,1,1,1));
 		Settings settings = program.getSettings();
 
-		progress.setMaximum(settings.getJumps().size() + 1 + program.getTablePanel().getFilteredAssets().size());
+		progress.setMaximum(settings.getJumps().size() + 1 + program.getAssetsTab().getFilteredAssets().size());
 		progress.setMinimum(0);
 		progress.setValue(0);
 
@@ -338,7 +338,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 				return n1.compareTo(n2);
 			}
 		});
-		for (EveAsset ea : program.getTablePanel().getFilteredAssets()) {
+		for (EveAsset ea : program.getAssetsTab().getFilteredAssets()) {
 			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getLocationID());
 			if (loc != null) {
 				allLocs.add(loc);

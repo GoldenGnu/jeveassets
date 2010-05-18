@@ -19,14 +19,13 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.frame;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -37,9 +36,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,19 +44,18 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.table.MarketOrderTableFormat;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersDialog extends JDialogCentered implements ActionListener {
+public class MarketOrdersTab extends JMainTab implements ActionListener {
 
-	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	
 	
-	private JButton jClose;
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private EventList<MarketOrder> sellOrdersEventList;
@@ -74,13 +70,8 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 
 	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
-	public MarketOrdersDialog(Program program, Image image) {
-		super(program, "Market Orders", image);
-		getDialog().setResizable(true);
-		
-		jClose = new JButton("Close");
-		jClose.setActionCommand(ACTION_CLOSE);
-		jClose.addActionListener(this);
+	public MarketOrdersTab(Program program) {
+		super(program, "Market Orders", ImageGetter.getIcon("icon07_12.png"), true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -134,10 +125,7 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 						)
 						.addComponent(jSellOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
 					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jBuyOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
-						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
+					.addComponent(jBuyOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
 				)
 		);
 		layout.setVerticalGroup(
@@ -156,22 +144,11 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 					.addComponent(jBuyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jBuyOrdersScrollPanel, 200, 200, Short.MAX_VALUE)
 				)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jClose;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jClose;
-	}
-
-	@Override
-	protected void windowShown() {
+	public void updateData() {
 		characters = new Vector<String>();
 		orders = new HashMap<String, List<MarketOrder>>();
 		all = new ArrayList<MarketOrder>();
@@ -227,16 +204,7 @@ public class MarketOrdersDialog extends JDialogCentered implements ActionListene
 	}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CLOSE.equals(e.getActionCommand())) {
-			dialog.setVisible(false);
-		}
 		if (ACTION_SELECTED.equals(e.getActionCommand())) {
 			String selected = (String) jCharacters.getSelectedItem();
 			if (characters.size() > 1){
