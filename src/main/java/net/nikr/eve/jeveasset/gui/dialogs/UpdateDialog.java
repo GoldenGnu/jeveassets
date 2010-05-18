@@ -292,14 +292,17 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		if (ACTION_UPDATE.equals(e.getActionCommand())){
 			this.setVisible(false);
 			List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
+			if (jMarketOrders.isSelected() || jIndustryJobs.isSelected() || jAssets.isSelected()){
+				updateTasks.add( new ConquerableStationsTask()); //Should properly always be first
+			}
+			if (jAccounts.isSelected()){
+				updateTasks.add( new AccountsTask() );
+			}
 			if (jMarketOrders.isSelected()){
 				updateTasks.add( new MarketOrdersTask() );
 			}
 			if (jIndustryJobs.isSelected()){
 				updateTasks.add( new IndustryJobsTask() );
-			}
-			if (jAccounts.isSelected()){
-				updateTasks.add( new AccountsTask() );
 			}
 			if (jAccountBalance.isSelected()){
 				updateTasks.add( new BalanceTask() );
@@ -320,6 +323,19 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			setVisible(false);
+		}
+	}
+
+	public class ConquerableStationsTask extends UpdateTask {
+
+		public ConquerableStationsTask() {
+			super("Conquerable Stations");
+		}
+
+		@Override
+		public void update() throws Throwable {
+			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
+			conquerableStationsGetter.load(program.getSettings());
 		}
 	}
 
@@ -344,9 +360,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() throws Throwable {
-			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
-			conquerableStationsGetter.load(program.getSettings());
-
 			AssetsGetter assetsGetter = new AssetsGetter();
 			assetsGetter.load(this, program.getSettings());
 		}
