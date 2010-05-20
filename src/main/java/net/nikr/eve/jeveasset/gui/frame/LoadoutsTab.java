@@ -19,15 +19,13 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.frame;
 
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -48,19 +46,21 @@ import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsExportDialog;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsDialog extends JDialogCentered implements ActionListener, ListEventListener<EveAsset> {
+public class LoadoutsTab extends JMainTab implements ActionListener {
 
-	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsDialog.class);
+	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
 	public final static String ACTION_SHIP_SELECTED = "ACTION_SHIP_SELECTED";
-	public final static String ACTION_LOADOUTS_CLOSE = "ACTION_LOADOUTS_CLOSE";
 	public final static String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
 	public final static String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
 
@@ -71,7 +71,6 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	private JButton jExportAll;
 	private LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
-	private JButton jClose;
 
 	//Data
 	private EventList<EveAsset> eveAssetEventList;
@@ -82,13 +81,13 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	private String backgroundHexColor;
 	private String gridHexColor;
 
-	public LoadoutsDialog(Program program, Image image) {
-		super(program, "Ship Loadouts", image);
+	public LoadoutsTab(Program program) {
+		super(program, "Ship Loadouts", ImageGetter.getIcon("icon26_02.png"), true);
 
-		backgroundHexColor = Integer.toHexString(dialog.getBackground().getRGB());
+		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
 
-		gridHexColor = Integer.toHexString(dialog.getBackground().darker().getRGB());
+		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
@@ -131,11 +130,6 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		JScrollPane jShipScrollPane = new JScrollPane(jShip);
 		jPanel.add(jShipScrollPane);
 
-		jClose = new JButton("Close");
-		jClose.setActionCommand(ACTION_LOADOUTS_CLOSE);
-		jClose.addActionListener(this);
-		jPanel.add(jClose);
-
 		JLabel jShipsLabel = new JLabel("Ships:");
 
 		layout.setHorizontalGroup(
@@ -157,8 +151,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addComponent(jShipScrollPane, 500, 500, 500)
-					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jShipScrollPane, 500, 500, Short.MAX_VALUE)
 				)
 
 			)
@@ -171,40 +164,9 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 					.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExportAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jShipScrollPane, 420, 420, 420)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jShipScrollPane, 420, 420, Short.MAX_VALUE)
 		);
 		eveAssetEventList = program.getEveAssetEventList();
-		eveAssetEventList.addListEventListener(this);
-		update();
-	}
-	private void update() {
-		jShips.removeAllItems();
-		ships = new HashMap<String, EveAsset>();
-		List<String> shipNames = new ArrayList<String>();
-		for (int a = 0; a < eveAssetEventList.size(); a++){
-			EveAsset eveAsset = eveAssetEventList.get(a);
-			if (eveAsset.getCategory().equals("Ship") && eveAsset.isSingleton()){
-				String s = eveAsset.getName()+" #"+eveAsset.getItemId();
-				ships.put(s, eveAsset);
-				shipNames.add(s);
-			}
-
-		}
-		if (ships.isEmpty()){
-			jShips.setEnabled(false);
-			jShips.addItem("No ships found");
-			jExport.setEnabled(false);
-			jExportAll.setEnabled(false);
-		} else {
-			Collections.sort(shipNames);
-			for (int a = 0; a < shipNames.size(); a++){
-				jShips.addItem(shipNames.get(a));
-			}
-			jShips.setEnabled(true);
-			jExport.setEnabled(true);
-			jExportAll.setEnabled(true);
-		}
 	}
 
 	private String browse(){
@@ -231,7 +193,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 		} else { //Others: use program directory is there is only Win & Mac clients
 			jXmlFileChooser.setCurrentDirectory( new File(Settings.getUserDirectory()) );
 		}
-		int bFound = jXmlFileChooser.showSaveDialog(dialog); //.showDialog(this, "OK"); //.showOpenDialog(this);
+		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame()); //.showDialog(this, "OK"); //.showOpenDialog(this);
 		if (bFound  == JFileChooser.APPROVE_OPTION){
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
@@ -269,36 +231,7 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jShips;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jClose;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {
-		this.setVisible(false);
-	}
-
-	@Override
-	public void listChanged(ListEvent<EveAsset> listChanges) {
-		update();
-	}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_LOADOUTS_CLOSE.equals(e.getActionCommand())) {
-			save();
-		}
 		if (ACTION_SHIP_SELECTED.equals(e.getActionCommand())) {
 			String s = (String)jShips.getSelectedItem();
 			if (s == null || s.equals("") || ships == null || ships.isEmpty()){
@@ -434,6 +367,36 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 			String filename = browse();
 			if (filename != null) EveFittingWriter.save(new ArrayList<EveAsset>(ships.values()), filename);
 
+		}
+	}
+
+	@Override
+	public void updateData() {
+		jShips.removeAllItems();
+		ships = new HashMap<String, EveAsset>();
+		List<String> shipNames = new ArrayList<String>();
+		for (int a = 0; a < eveAssetEventList.size(); a++){
+			EveAsset eveAsset = eveAssetEventList.get(a);
+			if (eveAsset.getCategory().equals("Ship") && eveAsset.isSingleton()){
+				String s = eveAsset.getName()+" #"+eveAsset.getItemId();
+				ships.put(s, eveAsset);
+				shipNames.add(s);
+			}
+
+		}
+		if (ships.isEmpty()){
+			jShips.setEnabled(false);
+			jShips.addItem("No ships found");
+			jExport.setEnabled(false);
+			jExportAll.setEnabled(false);
+		} else {
+			Collections.sort(shipNames);
+			for (int a = 0; a < shipNames.size(); a++){
+				jShips.addItem(shipNames.get(a));
+			}
+			jShips.setEnabled(true);
+			jExport.setEnabled(true);
+			jExportAll.setEnabled(true);
 		}
 	}
 	

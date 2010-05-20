@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
+import net.nikr.eve.jeveasset.gui.frame.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 
 
@@ -49,10 +51,10 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	private JTextPane jDescription;
 	private JButton jOK;
 
-	private LoadoutsDialog loadoutsDialog;
+	private LoadoutsTab loadoutsDialog;
 
-	public LoadoutsExportDialog(Program program, LoadoutsDialog loadoutsDialog) {
-		super(program, "Export Fitting", loadoutsDialog.getDialog());
+	public LoadoutsExportDialog(Program program, LoadoutsTab loadoutsDialog) {
+		super(program, "Export Fitting", ImageGetter.getImage("icon26_02.png"));
 		this.loadoutsDialog = loadoutsDialog;
 
 		JLabel jNameLabel = new JLabel("Name:");
