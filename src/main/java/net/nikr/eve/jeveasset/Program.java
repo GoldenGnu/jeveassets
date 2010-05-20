@@ -57,7 +57,6 @@ import net.nikr.eve.jeveasset.gui.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.ValuesDialog;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MarketOrdersTab;
@@ -99,9 +98,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private SaveFilterDialog saveFilterDialog;
 	private FiltersManagerDialog filtersManagerDialog;
 	private AboutDialog aboutDialog;
-	private ValuesDialog valuesDialog;
+	private ValuesTab valuesTab;
 	private MaterialsTab materialsTab;
-	private LoadoutsTab loadoutsDialog;
+	private LoadoutsTab loadoutsTab;
 	private RoutingDialogue routingDialogue;
 	private MarketOrdersTab marketOrdersTab;
 	private IndustryJobsTab industryJobsTab;
@@ -171,19 +170,19 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		materialsTab = new MaterialsTab(this);
 		SplashUpdater.setProgress(64);
 		LOG.info("		Ship Loadouts Tab");
-		loadoutsDialog = new LoadoutsTab(this);
+		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
+		LOG.info("		Values Tab");
+		valuesTab = new ValuesTab(this);
+		SplashUpdater.setProgress(68);
 		LOG.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
-		SplashUpdater.setProgress(68);
+		SplashUpdater.setProgress(70);
 		LOG.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
-		SplashUpdater.setProgress(70);
+		SplashUpdater.setProgress(72);
 		LOG.info("	Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
-		SplashUpdater.setProgress(72);
-		LOG.info("	Values Dialog");
-		valuesDialog = new ValuesDialog(this, ImageGetter.getImage("icon07_02.png"));
 		SplashUpdater.setProgress(74);
 		LOG.info("	Routing Dialog");
 		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
@@ -416,13 +415,13 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			showAbout();
 		}
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
-			valuesDialog.setVisible(true);
+			mainWindow.addTab(valuesTab);
 		}
 		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		}
 		if (MainMenu.ACTION_OPEN_LOADOUTS.equals(e.getActionCommand())) {
-			mainWindow.addTab(loadoutsDialog);
+			mainWindow.addTab(loadoutsTab);
 		}
 		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);

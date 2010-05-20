@@ -19,12 +19,9 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset;
 
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Image;
@@ -35,21 +32,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 
 
-public class ValuesDialog extends JDialogCentered implements ActionListener, ListEventListener<EveAsset> {
+public class ValuesTab extends JMainTab implements ActionListener {
 
-	public final static String ACTION_VALUES_CLOSE = "ACTION_VALUES_CLOSE";
 	public final static String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
 	public final static String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
 
@@ -62,11 +58,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	private final String NAME_BEST_SHIP = "Best ship";
 	private final String NAME_BEST_MODULE = "Best module";
 
-
 	private final int COLUMN_WIDTH = 243;
-
-
-
 
 	//GUI
 	private JComboBox jOwners;
@@ -74,7 +66,6 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	private JComboBox jCorps;
 	private JEditorPane jCorp;
 	private JEditorPane jAll;
-	private JButton jClose;
 
 	//Data
 	private List<String> owners;
@@ -111,13 +102,13 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	private String backgroundHexColor;
 	private String gridHexColor;
 
-	public ValuesDialog(Program program, Image image) {
-		super(program, "Values", image);
+	public ValuesTab(Program program) {
+		super(program, "Values", ImageGetter.getIcon("icon07_02.png"), true);
 
-		backgroundHexColor = Integer.toHexString(dialog.getBackground().getRGB());
+		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
 
-		gridHexColor = Integer.toHexString(dialog.getBackground().darker().getRGB());
+		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		jOwners = new JComboBox();
@@ -149,11 +140,6 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 		jAll.setOpaque(false);
 		jPanel.add(jAll);
 
-		jClose = new JButton("Close");
-		jClose.setActionCommand(ACTION_VALUES_CLOSE);
-		jClose.addActionListener(this);
-		jPanel.add(jClose);
-
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -176,7 +162,6 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 							)
 						)
 					)
-					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 		);
 		layout.setVerticalGroup(
@@ -192,98 +177,8 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 					.addComponent(jCorp, 450, 450, 450)
 				)
 				
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 		eveAssetEventList = program.getEveAssetEventList();
-		eveAssetEventList.addListEventListener(this);
-		update();
-
-	}
-
-	public void update() {
-		calcTotal();
-		jOwners.removeAllItems();
-		for (int a = 0; a < owners.size(); a++){
-			jOwners.addItem(owners.get(a));
-		}
-		if (jOwners.getModel().getSize() > 0){
-			jOwners.setEnabled(true);
-		} else {
-			jOwners.addItem("No character found");
-			jOwners.setEnabled(false);
-		}
-		jOwners.setSelectedIndex(0);
-
-		jCorps.removeAllItems();
-		for (int a = 0; a < corps.size(); a++){
-			jCorps.addItem(corps.get(a));
-		}
-		if (jCorps.getModel().getSize() > 0){
-			jCorps.setEnabled(true);
-		} else {
-			jCorps.addItem("No corporation found");
-			jCorps.setEnabled(false);
-		}
-		jCorps.setSelectedIndex(0);
-
-		Output output = new Output("Grand Total");
-		output.addHeading(NAME_TOTAL);
-		if (totalAccountBalance != 0
-				|| totalItemsValue != 0
-				|| totalSellOrders != 0
-				|| totalBuyOrders != 0
-				){
-			output.addValue(Formater.isk(totalAccountBalance
-					+totalItemsValue
-					+totalSellOrders
-					+totalBuyOrders));
-		}
-		output.addNone();
-
-		output.addHeading(NAME_WALLET_BALANCE);
-		if (totalAccountBalance != 0) output.addValue(Formater.isk(totalAccountBalance));
-		output.addNone();
-
-		output.addHeading(NAME_ASSETS_VALUE);
-		if (totalItemsValue != 0) output.addValue(Formater.isk(totalItemsValue));
-		output.addNone();
-
-		output.addHeading(NAME_ASSETS_SELL_ORDERS);
-		if (totalSellOrders != 0) output.addValue(Formater.isk(totalSellOrders));
-		output.addNone();
-
-		output.addHeading(NAME_ASSETS_ESCROWS);
-		if (totalBuyOrders != 0) output.addValue(Formater.isk(totalBuyOrders));
-		output.addNone();
-
-		output.addHeading(NAME_BEST_ASSET);
-		if (bestItem != null){
-			output.addValue(bestItem.getName()+"<br/>"+Formater.isk(bestItem.getPrice()));
-			output.addNone();
-		} else {
-			output.addNone(2);
-		}
-		
-
-		output.addHeading(NAME_BEST_SHIP);
-		if (bestShip != null){
-			output.addValue(bestShip.getName()+"<br/>"+Formater.isk(bestShip.getPrice()));
-			output.addNone();
-		} else {
-			output.addNone(2);
-		}
-		
-
-		output.addHeading(NAME_BEST_MODULE);
-		if (bestModule != null){
-			output.addValue(bestModule.getName()+"<br/>"+Formater.isk(bestModule.getPrice()));
-			output.addNone();
-		} else {
-			output.addNone(2);
-		}
-		
-
-		jAll.setText(output.getOutput());
 	}
 
 	private boolean calcTotal(){
@@ -537,36 +432,7 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jOwners;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return jClose;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {
-		this.setVisible(false);
-	}
-
-	@Override
-	public void listChanged(ListEvent listChanges) {
-		update();
-	}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_VALUES_CLOSE.equals(e.getActionCommand())) {
-			save();
-		}
 		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
 			String s = (String)jOwners.getSelectedItem();
 			if (s == null || s.equals("Select a charecter...")){
@@ -718,6 +584,93 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 
 			jCorp.setText(output.getOutput());
 		}
+	}
+
+	@Override
+	public void updateData() {
+		calcTotal();
+		jOwners.removeAllItems();
+		for (int a = 0; a < owners.size(); a++){
+			jOwners.addItem(owners.get(a));
+		}
+		if (jOwners.getModel().getSize() > 0){
+			jOwners.setEnabled(true);
+		} else {
+			jOwners.addItem("No character found");
+			jOwners.setEnabled(false);
+		}
+		jOwners.setSelectedIndex(0);
+
+		jCorps.removeAllItems();
+		for (int a = 0; a < corps.size(); a++){
+			jCorps.addItem(corps.get(a));
+		}
+		if (jCorps.getModel().getSize() > 0){
+			jCorps.setEnabled(true);
+		} else {
+			jCorps.addItem("No corporation found");
+			jCorps.setEnabled(false);
+		}
+		jCorps.setSelectedIndex(0);
+
+		Output output = new Output("Grand Total");
+		output.addHeading(NAME_TOTAL);
+		if (totalAccountBalance != 0
+				|| totalItemsValue != 0
+				|| totalSellOrders != 0
+				|| totalBuyOrders != 0
+				){
+			output.addValue(Formater.isk(totalAccountBalance
+					+totalItemsValue
+					+totalSellOrders
+					+totalBuyOrders));
+		}
+		output.addNone();
+
+		output.addHeading(NAME_WALLET_BALANCE);
+		if (totalAccountBalance != 0) output.addValue(Formater.isk(totalAccountBalance));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_VALUE);
+		if (totalItemsValue != 0) output.addValue(Formater.isk(totalItemsValue));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_SELL_ORDERS);
+		if (totalSellOrders != 0) output.addValue(Formater.isk(totalSellOrders));
+		output.addNone();
+
+		output.addHeading(NAME_ASSETS_ESCROWS);
+		if (totalBuyOrders != 0) output.addValue(Formater.isk(totalBuyOrders));
+		output.addNone();
+
+		output.addHeading(NAME_BEST_ASSET);
+		if (bestItem != null){
+			output.addValue(bestItem.getName()+"<br/>"+Formater.isk(bestItem.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+
+
+		output.addHeading(NAME_BEST_SHIP);
+		if (bestShip != null){
+			output.addValue(bestShip.getName()+"<br/>"+Formater.isk(bestShip.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+
+
+		output.addHeading(NAME_BEST_MODULE);
+		if (bestModule != null){
+			output.addValue(bestModule.getName()+"<br/>"+Formater.isk(bestModule.getPrice()));
+			output.addNone();
+		} else {
+			output.addNone(2);
+		}
+
+
+		jAll.setText(output.getOutput());
 	}
 
 	private class Output{
