@@ -19,35 +19,31 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs;
+package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.event.ActionEvent;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 
 
-public class MaterialsDialog extends JDialogCentered implements ActionListener, ListEventListener<EveAsset> {
-
-	private static final String ACTION_MATERIALS_CLOSE = "ACTION_MATERIALS_CLOSE";
+public class MaterialsTab extends JMainTab {
 
 	//GUI
 	private JEditorPane jText;
-	private JButton jClose;
 
 	//Data
 	private EventList<EveAsset> eveAssetEventList;
@@ -57,18 +53,15 @@ public class MaterialsDialog extends JDialogCentered implements ActionListener, 
 	private String backgroundHexColor;
 	private String gridHexColor;
 
-
-
-	public MaterialsDialog(Program program, Image image) {
-		super(program, "Materials", image);
+	public MaterialsTab(Program program) {
+		super(program, "Materials", ImageGetter.getIcon("icon23_16.png"), true);
 		//Category: Asteroid
 		//Category: Material
-		dialog.setResizable(true);
 
-		backgroundHexColor = Integer.toHexString(dialog.getBackground().getRGB());
+		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
 
-		gridHexColor = Integer.toHexString(dialog.getBackground().darker().getRGB());
+		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		jText = new JEditorPane("text/html","<html>");
@@ -79,50 +72,15 @@ public class MaterialsDialog extends JDialogCentered implements ActionListener, 
 		JScrollPane jScrollPanel = new JScrollPane(jText);
 		jPanel.add(jScrollPanel);
 
-		jClose = new JButton("Close");
-		jClose.setActionCommand(ACTION_MATERIALS_CLOSE);
-		jClose.addActionListener(this);
-		jPanel.add(jClose);
-
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(jScrollPanel, 500, 500, Short.MAX_VALUE)
-				)
-				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+			layout.createSequentialGroup()
+				.addComponent(jScrollPanel, 500, 500, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jScrollPanel, 450, 450, Short.MAX_VALUE)
-				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 		eveAssetEventList = program.getEveAssetEventList();
-		eveAssetEventList.addListEventListener(this);
-		update();
-	}
-
-	private void update(){
-		locations = new HashMap<String, Map<String, Map<String, Material>>>();
-		total = new HashMap<String, Map<String, Material>>();
-		for (int a = 0; a < eveAssetEventList.size(); a++){
-			EveAsset eveAsset = eveAssetEventList.get(a);
-			Map<String, Map<String, Material>> locationMap;
-			if (locations.containsKey(eveAsset.getLocation())){
-				locationMap = locations.get(eveAsset.getLocation());
-			} else {
-				locationMap = new HashMap<String, Map<String, Material>>();
-				locations.put(eveAsset.getLocation(), locationMap);
-			}
-			if (eveAsset.getCategory().equals("Material")){
-				add(eveAsset, locationMap);
-				add(eveAsset, total);
-
-			}
-		}
-		Lines lines = new Lines();
-		text(lines);
-		jText.setText(lines.getOutput());
-		jText.setCaretPosition(0);
 	}
 
 	private void text(Lines lines){
@@ -205,36 +163,28 @@ public class MaterialsDialog extends JDialogCentered implements ActionListener, 
 	}
 
 	@Override
-	protected JComponent getDefaultFocus() {
-		return jClose;
-	}
+	public void updateData() {
+		locations = new HashMap<String, Map<String, Map<String, Material>>>();
+		total = new HashMap<String, Map<String, Material>>();
+		for (int a = 0; a < eveAssetEventList.size(); a++){
+			EveAsset eveAsset = eveAssetEventList.get(a);
+			Map<String, Map<String, Material>> locationMap;
+			if (locations.containsKey(eveAsset.getLocation())){
+				locationMap = locations.get(eveAsset.getLocation());
+			} else {
+				locationMap = new HashMap<String, Map<String, Material>>();
+				locations.put(eveAsset.getLocation(), locationMap);
+			}
+			if (eveAsset.getCategory().equals("Material")){
+				add(eveAsset, locationMap);
+				add(eveAsset, total);
 
-	@Override
-	protected JButton getDefaultButton() {
-		return jClose;
-	}
-
-	@Override
-	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {}
-
-	@Override
-	protected void save() {
-		this.setVisible(false);
-	}
-
-	@Override
-	public void listChanged(ListEvent<EveAsset> listChanges) {
-		update();
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_MATERIALS_CLOSE.equals(e.getActionCommand())){
-			save();
+			}
 		}
+		Lines lines = new Lines();
+		text(lines);
+		jText.setText(lines.getOutput());
+		jText.setCaretPosition(0);
 	}
 
 	private class Material {
