@@ -21,8 +21,11 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
 
@@ -35,6 +38,7 @@ public abstract class JMainTab {
 	private String title;
 	private Icon icon;
 	private boolean closeable;
+	private List<JLabel> statusbarLabels = new ArrayList<JLabel>();
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
@@ -55,6 +59,13 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
+	public void addStatusbarLabel(JLabel jLabel){
+		statusbarLabels.add(jLabel);
+	}
+
+	public List<JLabel> getStatusbarLabels(){
+		return statusbarLabels;
+	}
 	public abstract void updateData();
 
 	public Icon getIcon() {

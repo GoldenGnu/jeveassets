@@ -52,6 +52,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -101,11 +102,15 @@ public class AssetsTab extends JMainTab
 
 	//GUI
 	private ToolPanel toolPanel;
-	private StatusPanel statusPanel;
 	private JTable jTable;
 	private JDropDownButton jColumnsSelection;
 	private JPopupMenu jTablePopupMenu;
 
+
+	private JLabel jTotalValue;
+	private JLabel jCount;
+	private JLabel jAverage;
+	private JLabel jVolume;
 
 	//Table Data
 	private EventTableModel<EveAsset> eveAssetTableModel;
@@ -174,9 +179,20 @@ public class AssetsTab extends JMainTab
 		toolPanel = new ToolPanel(program, matcherEditorManager);
 		this.getPanel().add(toolPanel.getPanel());
 
-		statusPanel = new StatusPanel(program);
-
 		updateColumnPopupMenu();
+
+
+		jVolume = StatusPanel.createLabel("Total volume of shown assets", ImageGetter.getIcon("volume.png"));
+		this.addStatusbarLabel(jVolume);
+
+		jCount = StatusPanel.createLabel("Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
+		this.addStatusbarLabel(jCount);
+
+		jAverage = StatusPanel.createLabel("Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
+		this.addStatusbarLabel(jAverage);
+
+		jTotalValue = StatusPanel.createLabel("Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
+		this.addStatusbarLabel(jTotalValue);
 		
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -189,7 +205,6 @@ public class AssetsTab extends JMainTab
 					)
 					.addGap(15)
 				)
-				.addComponent(statusPanel.getPanel())
 			)
 		);
 		layout.setVerticalGroup(
@@ -197,7 +212,6 @@ public class AssetsTab extends JMainTab
 				.addGap(5)
 				.addComponent(toolPanel.getPanel())
 				.addComponent(jTableSPanel)
-				.addComponent(statusPanel.getPanel(), 25, 25, 25)
 		);
 		
 	}
@@ -214,10 +228,10 @@ public class AssetsTab extends JMainTab
 			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 		}
 		if (count > 0 && total > 0) average = total / count;
-		program.getStatusPanel().setTotalValue(total);
-		program.getStatusPanel().setCount(count);
-		program.getStatusPanel().setAverage(average);
-		program.getStatusPanel().setVolume(volume);
+		jTotalValue.setText(Formater.isk(total));
+		jCount.setText(Formater.count(count));
+		jAverage.setText(Formater.isk(average));
+		jVolume.setText(Formater.number(volume));
 	}
 
 	public void updateToolPanel(){

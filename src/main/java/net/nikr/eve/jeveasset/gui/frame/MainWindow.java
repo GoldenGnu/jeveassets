@@ -39,6 +39,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -46,12 +48,13 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 
 
-public class MainWindow implements WindowListener {
+public class MainWindow implements WindowListener, ChangeListener {
 
 	//GUI
 	private MainMenu mainMenu;
 	private JFrame jFrame;
 	private JTabbedPane jTabbedPane;
+	private StatusPanel statusPanel;
 
 	//Data
 	private Program program;
@@ -80,17 +83,25 @@ public class MainWindow implements WindowListener {
 		jFrame.setJMenuBar( mainMenu );
 
 		jTabbedPane = new JTabbedPane();
-		jMainPanel.add( jTabbedPane );		
+		jTabbedPane.addChangeListener(this);
+		jMainPanel.add( jTabbedPane );
+
+		statusPanel = new StatusPanel(program);
+		jMainPanel.add( statusPanel.getPanel() );
 	}
 
 	public void addTab(JMainTab jMainTab){
 		if (!tabs.contains(jMainTab)){
 			jMainTab.updateData();
-			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			tabs.add(jMainTab);
+			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
 		}
 		jTabbedPane.setSelectedComponent(jMainTab.getPanel());
+	}
+
+	public JMainTab getSelectedTab(){
+		return tabs.get(jTabbedPane.getSelectedIndex());
 	}
 
 	public void removeTab(JMainTab jMainTab){
@@ -185,6 +196,11 @@ public class MainWindow implements WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		program.getStatusPanel().tabChanged();
+	}
 
 	private class TabCloseButton extends JPanel{
 

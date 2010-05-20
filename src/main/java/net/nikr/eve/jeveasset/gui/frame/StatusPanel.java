@@ -22,8 +22,9 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -37,44 +38,30 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 public class StatusPanel extends JProgramPanel {
 	
 	//GUI
-	private JLabel jTotalValue;
-	private JLabel jCount;
-	private JLabel jAverage;
-	private JLabel jVolume;
+	
 	private JLabel jEveTime;
 	private JLabel jUpdatable;
 	private JToolBar jToolBar;
 
 
+	private List<JLabel> programStatus = new ArrayList<JLabel>();
+
 	public StatusPanel(Program program) {
 		super(program);
-
+		
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
 		jToolBar = new JToolBar();
 		jToolBar.setFloatable(false);
 		jToolBar.setRollover(false);
+		
+		
 
-		jToolBar.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(1, 0, 0, 0, this.getPanel().getBackground().darker()),
-				BorderFactory.createMatteBorder(1, 0, 0, 0, this.getPanel().getBackground().brighter())
-				));
-		addSpace(5);
-
-		jUpdatable = addIcon(ImageGetter.getIcon("update.png"), "Updatable");
-
+		jUpdatable = createIcon(ImageGetter.getIcon("update.png"), "Updatable");
+		programStatus.add(jUpdatable);
 		jEveTime = createLabel("Eve Server Time", ImageGetter.getIcon("eve.png"));
-
-		jVolume = createLabel("Total volume of shown assets", ImageGetter.getIcon("volume.png"));
-
-		jCount = createLabel("Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
-
-		jAverage = createLabel("Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
-
-		jTotalValue = createLabel("Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
-
-		addSpace(10);
+		programStatus.add(jEveTime);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -84,10 +71,26 @@ public class StatusPanel extends JProgramPanel {
 			layout.createSequentialGroup()
 				.addComponent(jToolBar, 25, 25, 25)
 		);
-		setAverage(0);
-		setTotalValue(0);
-		setCount(0);
-		timerTicked(true);
+	}
+
+	public void tabChanged(){
+		doLayout();
+	}
+	
+	private void doLayout(){
+		jToolBar.removeAll();
+		addSpace(5);
+		for (JLabel jLabel : programStatus){
+			jToolBar.add(jLabel);
+			addSpace(10);
+		}
+		for (JLabel jLabel : program.getMainWindow().getSelectedTab().getStatusbarLabels()){
+			jToolBar.add(jLabel);
+			addSpace(10);
+		}
+		addSpace(10);
+		this.getPanel().updateUI();
+
 	}
 
 	public void timerTicked(boolean updatable){
@@ -99,40 +102,24 @@ public class StatusPanel extends JProgramPanel {
 			jUpdatable.setToolTipText("Not Updatable");
 		}
 	}
-	
 
-	public void setAverage(double n){
-		jAverage.setText(Formater.isk(n));
-	}
-	public void setTotalValue(double n){
-		jTotalValue.setText(Formater.isk(n));
-	}
-	public void setCount(long n){
-		jCount.setText(Formater.count(n));
-	}
-	public void setVolume(float n){
-		jVolume.setText(Formater.number(n));
-	}
-	private JLabel addIcon(Icon icon, String toolTip){
+	public static JLabel createIcon(Icon icon, String toolTip){
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
-		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
+		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
 		jLabel.setMinimumSize( new Dimension(25, 25) );
 		jLabel.setPreferredSize( new Dimension(25, 25));
 		jLabel.setMaximumSize( new Dimension(25, 25));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setToolTipText(toolTip);
-		jToolBar.add(jLabel);
 		return jLabel;
 	}
-	private JLabel createLabel(String toolTip, Icon icon){
-		addIcon(icon, toolTip);
+	public static JLabel createLabel(String toolTip, Icon icon){
 		JLabel jLabel = new JLabel();
-		jLabel.setForeground(jToolBar.getBackground().darker().darker().darker());
+		jLabel.setIcon(icon);
+		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
 		jLabel.setToolTipText(toolTip);
 		jLabel.setHorizontalAlignment(JLabel.LEFT);
-		jToolBar.add(jLabel);
-		addSpace(10);
 		return jLabel;
 	}
 	private void addSpace(int width){
