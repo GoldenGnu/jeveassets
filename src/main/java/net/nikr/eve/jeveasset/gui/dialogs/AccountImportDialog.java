@@ -160,7 +160,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 			}
 		}
 		String s = null;
-		Transferable transferable = dialog.getToolkit().getSystemClipboard ().getContents(this);
+		Transferable transferable = getDialog().getToolkit().getSystemClipboard ().getContents(this);
 		try {
 			s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException ex) {

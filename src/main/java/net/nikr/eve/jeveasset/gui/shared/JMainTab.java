@@ -39,6 +39,8 @@ public abstract class JMainTab {
 	protected JPanel jPanel;
 	protected GroupLayout layout;
 
+	protected JMainTab(boolean load) { }
+
 	public JMainTab(Program program, String title, Icon icon, boolean closeable) {
 		this.program = program;
 		this.title = title;

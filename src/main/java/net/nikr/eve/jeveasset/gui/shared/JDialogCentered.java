@@ -59,8 +59,8 @@ public abstract class JDialogCentered implements WindowListener {
 	protected Window parent;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
-	protected JDialog dialog;
-
+	
+	private JDialog dialog;
 	private String title;
 	private boolean firstActivating = false;
 

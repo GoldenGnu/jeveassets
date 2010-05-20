@@ -19,12 +19,11 @@
  *
  */
 
-package net.nikr.eve.jeveasset;
+package net.nikr.eve.jeveasset.gui.frame;
 
 import ca.odell.glazedlists.EventList;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

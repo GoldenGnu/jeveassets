@@ -213,7 +213,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ABOUT_CLOSE.equals(e.getActionCommand())) {
-			dialog.setVisible(false);
+			super.setVisible(false);
 		}
 		if (ACTION_UPDATE.equals(e.getActionCommand())){
 			jWait.showWaitDialog("Checking for new program updates");

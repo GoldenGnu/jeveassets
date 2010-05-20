@@ -61,6 +61,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
+import net.nikr.eve.jeveasset.gui.frame.ValuesTab;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
@@ -175,17 +176,17 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("		Values Tab");
 		valuesTab = new ValuesTab(this);
 		SplashUpdater.setProgress(68);
+		LOG.info("		Routing Tab");
+		routingDialogue = new RoutingDialogue(this);
+		SplashUpdater.setProgress(70);
 		LOG.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
-		SplashUpdater.setProgress(70);
+		SplashUpdater.setProgress(72);
 		LOG.info("	Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
-		SplashUpdater.setProgress(72);
+		SplashUpdater.setProgress(74);
 		LOG.info("	Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
-		SplashUpdater.setProgress(74);
-		LOG.info("	Routing Dialog");
-		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
 		SplashUpdater.setProgress(76);
 		LOG.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
@@ -433,10 +434,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			csvExportDialog.setVisible(true);
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("routing.png"));
+			routingDialogue = new RoutingDialogue(this);
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
-			routingDialogue.setVisible(true);
+			mainWindow.addTab(routingDialogue);
 		}
 		if (MainMenu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);

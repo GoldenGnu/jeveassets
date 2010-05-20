@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 import net.nikr.eve.jeveasset.gui.shared.EditableListModel;
 import net.nikr.eve.jeveasset.gui.shared.MoveJList;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +37,6 @@ import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -50,7 +48,8 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,18 +65,16 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  *
  * @author Candle
  */
-public class RoutingDialogue extends JDialogCentered implements ActionListener {
+public class RoutingDialogue extends JMainTab implements ActionListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(RoutingDialogue.class);
 
 	public static final String ACTION_ADD = "ACTION_ADD";
 	public static final String ACTION_ADD_RANDOM = "ACTION_ADD_RNDOM";
-	public static final String ACTION_CLOSE = "ACTION_CLOSE";
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
 	public static final String ACTION_CHANGE_ALGORITHM = "ACTION_CHANGE_ALGORITHM";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private JButton close;
 	private JButton add;
 	private JButton remove;
 	private JButton calculate;
@@ -101,24 +98,21 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		super(load);
 	}
 
-	public RoutingDialogue(Program program, Image image) {
-		super(program, "Routing", image);
+	public RoutingDialogue(Program program) {
+		super(program, "Routing", ImageGetter.getIcon("routing.png"), true);
 
-		close = new JButton("Close");
 		add = new JButton(">>>");
 		remove = new JButton("<<<");
 		calculate = new JButton("Calculate Route");
 		addRandom = new JButton("Other");
 		cancel = new JButton("Cancel");
 
-		close.setActionCommand(ACTION_CLOSE);
 		add.setActionCommand(ACTION_ADD);
 		remove.setActionCommand(ACTION_REMOVE);
 		calculate.setActionCommand(ACTION_CALCULATE);
 		addRandom.setActionCommand(ACTION_ADD_RANDOM);
 		cancel.setActionCommand(ACTION_CANCEL);
 
-		close.addActionListener(this);
 		add.addActionListener(this);
 		remove.addActionListener(this);
 		calculate.addActionListener(this);
@@ -163,10 +157,6 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 		doLayout();
 		cancel.setEnabled(false); // can't cancel the initial load...
-	}
-
-	protected RoutingDialogue(Program program) {
-		super(program, "Routing", (Image)null);
 	}
 
 	private void doLayout() {
@@ -265,35 +255,6 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		int cur = available.getModel().getSize();
 		int tot = cur + waypoints.getModel().getSize();
 		availableRemaining.setText(cur + " of " + tot + " total");
-	}
-
-	@Override
-	protected void save() {
-		this.setVisible(false);
-	}
-
-	@Override
-	protected JComponent getDefaultFocus() {
-		return close;
-	}
-
-	@Override
-	protected JButton getDefaultButton() {
-		return close;
-	}
-
-	@Override
-	protected void windowActivated() { }
-
-	@Override
-	protected void windowShown() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				windowShownInner();
-			}
-		}, "routing dialogue ")
-		.start();
 	}
 
 	private void windowShownInner() {
@@ -419,7 +380,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	private void processRouteInner() {
 		if (waypoints.getModel().getSize() <= 2) {
-			JOptionPane.showMessageDialog(getDialog(), "There is little point in trying to calculate the\n" +
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "There is little point in trying to calculate the\n" +
 							"optimal route between two points, since there is only\n" +
 							"one possible solution", "Not calculating", JOptionPane.INFORMATION_MESSAGE);
 			return;
@@ -444,13 +405,13 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			sb.append((int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000));
 			sb.append(" seconds.");
 
-			JOptionPane.showMessageDialog(getDialog()
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, sb.toString()
 							, "Route"
 							, JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (DisconnectedGraphException dce) {
-			JOptionPane.showMessageDialog(getDialog()
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, dce.getMessage()
 							, "Error"
 							, JOptionPane.ERROR_MESSAGE);
@@ -465,7 +426,6 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	}
 
 	private void setUIEnabled(boolean b) {
-		close.setEnabled(b);
 		add.setEnabled(b);
 		remove.setEnabled(b);
 		calculate.setEnabled(b);
@@ -481,6 +441,27 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	private void cancelProcessing() {
 		((RoutingAlgorithmContainer)algorithm.getSelectedItem()).getCancelService().cancel();
+	}
+
+	@Override
+	public void updateData() {
+		//Do everything the constructor do...
+		/*
+		available.getEditableModel().clear();
+		waypoints.getEditableModel().clear();
+		algorithm.setSelectedIndex(0);
+		updateRemaining();
+		setUIEnabled(false);
+		cancel.setEnabled(false);
+		 * 
+		 */
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				windowShownInner();
+			}
+		}, "routing dialogue ")
+		.start();
 	}
 
 	/**

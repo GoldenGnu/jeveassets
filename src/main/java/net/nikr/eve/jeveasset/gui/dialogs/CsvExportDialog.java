@@ -272,7 +272,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			jCsvFileChooser.setCurrentDirectory( defaulFile );
 			jCsvFileChooser.setSelectedFile( new File(getDefaultFilePath()));
 		}
-		int bFound = jCsvFileChooser.showSaveDialog(dialog); //.showDialog(this, "OK"); //.showOpenDialog(this);
+		int bFound = jCsvFileChooser.showSaveDialog(getDialog()); //.showDialog(this, "OK"); //.showOpenDialog(this);
 		if (bFound  == JFileChooser.APPROVE_OPTION){
 			File file = jCsvFileChooser.getSelectedFile();
 			jPath.setText( file.getAbsolutePath() );
@@ -345,7 +345,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		Object[] columns = jColumnSelection.getSelectedValues();
 
 		if (columns.length == 0){
-			JOptionPane.showMessageDialog(dialog, "You must select atleast one column", "CSV Export", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getDialog(), "You must select atleast one column", "CSV Export", JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
@@ -419,7 +419,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			}
 		}
 		if (!CsvWriter.save(jPath.getText(), data, header, new CsvPreference('\"', fieldDelimiter, lineDelimiter))){
-			JOptionPane.showMessageDialog(dialog, "Failed to save CSV file", "Export CSV", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getDialog(), "Failed to save CSV file", "Export CSV", JOptionPane.PLAIN_MESSAGE);
 		}
 
 		this.setVisible(false);
