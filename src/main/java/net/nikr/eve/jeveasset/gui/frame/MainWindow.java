@@ -32,7 +32,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,9 +46,13 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MainWindow implements WindowListener, ChangeListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
 	//GUI
 	private MainMenu mainMenu;
@@ -75,27 +79,43 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		JPanel jMainPanel = new JPanel();
-		jMainPanel.setLayout( new BoxLayout(jMainPanel, BoxLayout.PAGE_AXIS) );
-		jFrame.getContentPane().add(jMainPanel);
+		JPanel jPanel = new JPanel();
+		GroupLayout layout = new GroupLayout(jPanel);
+		jPanel.setLayout(layout);
+		layout.setAutoCreateGaps(false);
+		layout.setAutoCreateContainerGaps(false);
+
+		jFrame.getContentPane().add(jPanel);
 
 		mainMenu = new MainMenu(program);
 		jFrame.setJMenuBar( mainMenu );
 
 		jTabbedPane = new JTabbedPane();
 		jTabbedPane.addChangeListener(this);
-		jMainPanel.add( jTabbedPane );
 
 		statusPanel = new StatusPanel(program);
-		jMainPanel.add( statusPanel.getPanel() );
+
+		layout.setHorizontalGroup(
+			layout.createParallelGroup()
+				.addComponent(jTabbedPane, 0, 0, Short.MAX_VALUE)
+				.addComponent(statusPanel.getPanel(), 0, 0, Short.MAX_VALUE)
+		);
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+				.addComponent(jTabbedPane, 0, 0, Short.MAX_VALUE)
+				.addComponent(statusPanel.getPanel(), 25, 25, 25)
+		);
 	}
 
 	public void addTab(JMainTab jMainTab){
 		if (!tabs.contains(jMainTab)){
+			LOG.info("Opening tab: "+jMainTab.getTitle());
 			jMainTab.updateData();
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
+		} else {
+			LOG.info("Focusing tab: "+jMainTab.getTitle());
 		}
 		jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 	}
@@ -105,6 +125,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 	}
 
 	public void removeTab(JMainTab jMainTab){
+		LOG.info("Closing tab: "+jMainTab.getTitle());
 		int index = tabs.indexOf(jMainTab);
 		jTabbedPane.removeTabAt(index);
 		tabs.remove(index);

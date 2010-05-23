@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -87,7 +88,6 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private Map<String, EveAsset> corpsBestModule;
 	private Map<String, EveAsset> corpsBestShip;
 
-
 	private double totalItemsValue = 0;
 	private long totalItemsCount = 0;
 	private double totalAccountBalance = 0;
@@ -113,51 +113,55 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jOwners = new JComboBox();
 		jOwners.setActionCommand(ACTION_OWNER_SELECTED);
 		jOwners.addActionListener(this);
-		jPanel.add(jOwners);
 
 		jOwner = new JEditorPane("text/html","<html>");
 		JCopyPopup.install(jOwner);
 		jOwner.setEditable(false);
 		jOwner.setOpaque(false);
-		jPanel.add(jOwner);
+		jOwner.setBorder(null);
+		JScrollPane jOwnerScroll = new JScrollPane(jOwner);
+		jOwnerScroll.setBorder(null);
 
 		jCorps = new JComboBox();
 		jCorps.setActionCommand(ACTION_CORP_SELECTED);
 		jCorps.addActionListener(this);
-		jPanel.add(jCorps);
 
 		jCorp = new JEditorPane("text/html","<html>");
 		JCopyPopup.install(jCorp);
 		jCorp.setEditable(false);
 		jCorp.setOpaque(false);
-		jPanel.add(jCorp);
+		jCorp.setBorder(null);
+		JScrollPane jCorpScroll = new JScrollPane(jCorp);
+		jCorpScroll.setBorder(null);
 
 
 		jAll = new JEditorPane("text/html","<html>");
 		JCopyPopup.install(jAll);
 		jAll.setEditable(false);
 		jAll.setOpaque(false);
-		jPanel.add(jAll);
+		jAll.setBorder(null);
+		JScrollPane jAllScroll = new JScrollPane(jAll);
+		jAllScroll.setBorder(null);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 					.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(jAll, COLUMN_WIDTH, COLUMN_WIDTH, COLUMN_WIDTH)
+							.addComponent(jAllScroll, 10, 10, Short.MAX_VALUE)
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(jOwner, COLUMN_WIDTH, COLUMN_WIDTH, COLUMN_WIDTH)
+							.addComponent(jOwnerScroll, 10, 10, Short.MAX_VALUE)
 							.addGroup(layout.createSequentialGroup()
 								.addGap(3)
-								.addComponent(jOwners, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(jOwners, 10, 10, Short.MAX_VALUE)
 							)
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addComponent(jCorp, COLUMN_WIDTH, COLUMN_WIDTH, COLUMN_WIDTH)
+							.addComponent(jCorpScroll, 10, 10, Short.MAX_VALUE)
 							.addGroup(layout.createSequentialGroup()
 								.addGap(3)
-								.addComponent(jCorps, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(jCorps, 10, 10, Short.MAX_VALUE)
 							)
 						)
 					)
@@ -171,9 +175,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				)
 				
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAll, 450, 450, 450)
-					.addComponent(jOwner, 450, 450, 450)
-					.addComponent(jCorp, 450, 450, 450)
+					.addComponent(jAllScroll, 0, 0, Short.MAX_VALUE)
+					.addComponent(jOwnerScroll, 0, 0, Short.MAX_VALUE)
+					.addComponent(jCorpScroll, 0, 0, Short.MAX_VALUE)
 				)
 				
 		);

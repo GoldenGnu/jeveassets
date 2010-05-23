@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class JDialogCentered implements WindowListener {
 
-	private final static Logger LOG = LoggerFactory.getLogger(MoveJList.class);
+	private final static Logger LOG = LoggerFactory.getLogger(JDialogCentered.class);
 
 	private final static String ACTION_CANCEL = "ACTION_CANCEL";
 	private final static String ACTION_OK = "ACTION_OK";

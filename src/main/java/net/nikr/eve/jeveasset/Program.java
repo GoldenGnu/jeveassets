@@ -154,80 +154,80 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		updatable = new Updatable(settings);
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
-		LOG.info("	Frame");
+		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
-		LOG.info("		Assets Tab");
+		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
 		SplashUpdater.setProgress(55);
-		LOG.info("		Industry Jobs Tab");
+		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		SplashUpdater.setProgress(60);
-		LOG.info("		Market Orders Tab");
+		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
 		SplashUpdater.setProgress(62);
-		LOG.info("		Materials Tab");
+		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
 		SplashUpdater.setProgress(64);
-		LOG.info("		Ship Loadouts Tab");
+		LOG.info("Loading: Ship Loadouts Tab");
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
-		LOG.info("		Values Tab");
+		LOG.info("Loading: Values Tab");
 		valuesTab = new ValuesTab(this);
 		SplashUpdater.setProgress(68);
-		LOG.info("		Routing Tab");
+		LOG.info("Loading: Routing Tab");
 		routingDialogue = new RoutingDialogue(this);
 		SplashUpdater.setProgress(70);
-		LOG.info("	Save Filters Dialog");
+		LOG.info("Loading: Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
 		SplashUpdater.setProgress(72);
-		LOG.info("	Filters Manager Dialog");
+		LOG.info("Loading: Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this, ImageGetter.getImage("folder.png"));
 		SplashUpdater.setProgress(74);
-		LOG.info("	Account Manager Dialog");
+		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this, ImageGetter.getImage("key.png"));
 		SplashUpdater.setProgress(76);
-		LOG.info("	About Dialog");
+		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
 		SplashUpdater.setProgress(78);
-		LOG.info("	Csv Export Dialog");
+		LOG.info("Loading: Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this, ImageGetter.getImage("table_save.png"));
 		SplashUpdater.setProgress(80);
-		LOG.info("	Profiles Dialog");
+		LOG.info("Loading: Profiles Dialog");
 		profileDialog = new ProfileDialog(this, ImageGetter.getImage("profile.png"));
 		SplashUpdater.setProgress(82);
-		LOG.info("	Update Dialog");
+		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this, ImageGetter.getImage("update.png"));
 		SplashUpdater.setProgress(84);
-		LOG.info("	Options Dialog");
+		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this, ImageGetter.getImage("cog.png"));
 		SplashUpdater.setProgress(85);
-		LOG.info("		General");
+		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, ImageGetter.getIcon("cog.png"));
 		SplashUpdater.setProgress(86);
-		LOG.info("		Table");
+		LOG.info("Loading: Table Settings Panel");
 		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application_view_detail.png"));
 		SplashUpdater.setProgress(87);
-		LOG.info("		Price Data");
+		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, ImageGetter.getIcon("coins.png"));
 		SplashUpdater.setProgress(88);
-		LOG.info("		User Price");
+		LOG.info("Loading: User Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, ImageGetter.getIcon("money.png"));
 		SplashUpdater.setProgress(89);
-		LOG.info("		User Item Name");
+		LOG.info("Loading: User Item Name Settings Panel");
 		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, ImageGetter.getIcon("set_name.png"));
 		SplashUpdater.setProgress(90);
-		LOG.info("		Reprocessing");
+		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, ImageGetter.getIcon("reprocessing.png"));
 		SplashUpdater.setProgress(91);
-		LOG.info("		Proxy");
+		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, ImageGetter.getIcon("server_connect.png"));
 		SplashUpdater.setProgress(92);
-		LOG.info("		Window");
+		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, ImageGetter.getIcon("application.png"));
 		SplashUpdater.setProgress(93);
-		LOG.info("	GUI loaded");
+		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
 		SplashUpdater.setProgress(95);
@@ -409,12 +409,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
-			accountManagerDialog.setVisible(true);
-		}
-		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
-			showAbout();
-		}
+	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			mainWindow.addTab(valuesTab);
 		}
@@ -430,23 +425,21 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
 		}
-		if (MainMenu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
-			csvExportDialog.setVisible(true);
-		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
 			routingDialogue = new RoutingDialogue(this);
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
 			mainWindow.addTab(routingDialogue);
 		}
+	//Settings
+		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
+			accountManagerDialog.setVisible(true);
+		}
 		if (MainMenu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);
 		}
 		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
 			showSettings();
-		}
-		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
-			updateDialog.setVisible(true);
 		}
 		if (AssetsTab.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
@@ -464,7 +457,17 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			userItemNameSettingsPanel.setNewItem(new UserItemName(eveAsset));
 			settingsDialog.setVisible(userItemNameSettingsPanel);
 		}
-
+	//Others
+		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
+			showAbout();
+		}
+		if (MainMenu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
+			csvExportDialog.setVisible(true);
+		}
+		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
+			updateDialog.setVisible(true);
+		}
+	//External files
 		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			openFile(Settings.getPathReadme());
 		}
@@ -480,6 +483,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();
 		}
+	//Ticker
 		if (ACTION_TIMER.equals(e.getActionCommand())) {
 			timerTicked();
 		}

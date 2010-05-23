@@ -21,11 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
-import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -111,24 +108,21 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jShips = new JComboBox();
 		jShips.setActionCommand(ACTION_SHIP_SELECTED);
 		jShips.addActionListener(this);
-		jPanel.add(jShips);
 
 		jExport = new JButton("Export");
 		jExport.setActionCommand(ACTION_EXPORT_LOADOUT);
 		jExport.addActionListener(this);
-		jPanel.add(jExport);
 
 		jExportAll = new JButton("Export All");
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
-		jPanel.add(jExportAll);
 		
 		jShip = new JEditorPane("text/html","<html>");
 		JCopyPopup.install(jShip);
 		jShip.setEditable(false);
 		jShip.setOpaque(false);
+		jShip.setBorder(null);
 		JScrollPane jShipScrollPane = new JScrollPane(jShip);
-		jPanel.add(jShipScrollPane);
 
 		JLabel jShipsLabel = new JLabel("Ships:");
 
@@ -151,7 +145,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addComponent(jShipScrollPane, 500, 500, Short.MAX_VALUE)
+					.addComponent(jShipScrollPane, 0, 0, Short.MAX_VALUE)
 				)
 
 			)
@@ -164,7 +158,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExportAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jShipScrollPane, 420, 420, Short.MAX_VALUE)
+				.addComponent(jShipScrollPane, 0, 0, Short.MAX_VALUE)
 		);
 		eveAssetEventList = program.getEveAssetEventList();
 	}

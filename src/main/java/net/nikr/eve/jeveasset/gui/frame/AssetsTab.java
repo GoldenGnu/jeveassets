@@ -201,7 +201,7 @@ public class AssetsTab extends JMainTab
 					.addGap(15)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(toolPanel.getPanel())
-						.addComponent(jTableSPanel)
+						.addComponent(jTableSPanel, 0, 0, Short.MAX_VALUE)
 					)
 					.addGap(15)
 				)
@@ -211,7 +211,7 @@ public class AssetsTab extends JMainTab
 			layout.createSequentialGroup()
 				.addGap(5)
 				.addComponent(toolPanel.getPanel())
-				.addComponent(jTableSPanel)
+				.addComponent(jTableSPanel, 0, 0, Short.MAX_VALUE)
 		);
 		
 	}

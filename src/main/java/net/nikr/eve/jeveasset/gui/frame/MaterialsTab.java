@@ -21,15 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
-import java.awt.event.ActionEvent;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -68,17 +62,18 @@ public class MaterialsTab extends JMainTab {
 		JCopyPopup.install(jText);
 		jText.setEditable(false);
 		jText.setOpaque(false);
+		jText.setBorder(null);
 
 		JScrollPane jScrollPanel = new JScrollPane(jText);
-		jPanel.add(jScrollPanel);
+		//jScrollPanel.setBorder(null);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jScrollPanel, 500, 500, Short.MAX_VALUE)
+				.addComponent(jScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jScrollPanel, 450, 450, Short.MAX_VALUE)
+				.addComponent(jScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
 		eveAssetEventList = program.getEveAssetEventList();
 	}

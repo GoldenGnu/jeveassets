@@ -123,9 +123,9 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 							.addComponent(jStateLabel)
 							.addComponent(jState, 200, 200, 200)
 						)
-						.addComponent(jSellOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
+						.addComponent(jSellOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
 					)
-					.addComponent(jBuyOrdersScrollPanel, 650, 650, Short.MAX_VALUE)
+					.addComponent(jBuyOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
 				)
 		);
 		layout.setVerticalGroup(
@@ -138,11 +138,11 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSellLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSellOrdersScrollPanel, 200, 200, Short.MAX_VALUE)
+					.addComponent(jSellOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jBuyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBuyOrdersScrollPanel, 200, 200, Short.MAX_VALUE)
+					.addComponent(jBuyOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
 				)
 		);
 	}
