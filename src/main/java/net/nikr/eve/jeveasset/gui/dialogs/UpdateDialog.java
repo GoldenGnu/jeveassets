@@ -335,7 +335,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() throws Throwable {
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
-			conquerableStationsGetter.load(program.getSettings());
+			conquerableStationsGetter.load(this, program.getSettings());
 		}
 	}
 

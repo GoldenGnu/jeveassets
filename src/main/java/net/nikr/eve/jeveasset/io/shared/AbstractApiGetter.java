@@ -64,13 +64,8 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		this.updateAccount = updateAccount;
 	}
 
-	protected void load(String characterName){
-		init(null, false, null, null);
-		load(getNextUpdate(), false, characterName);
-	}
-
-	protected void load(UpdateTask updateTask, String characterName){
-		init(updateTask, false, null, null);
+	protected void load(UpdateTask updateTask, boolean forceUpdate, String characterName){
+		init(updateTask, forceUpdate, null, null);
 		load(getNextUpdate(), false, characterName);
 	}
 
@@ -243,6 +238,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		return ( (
 				Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
+				|| forceUpdate
 				|| Program.isForceUpdate()
 				)
 				&& !Program.isForceNoUpdate());

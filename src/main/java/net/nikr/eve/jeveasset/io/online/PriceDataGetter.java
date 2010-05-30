@@ -82,7 +82,6 @@ public class PriceDataGetter implements PricingListener {
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
-
 		//Reset cache timers...
 		if (forceUpdate){
 			for (int a = 0; a < ids.size(); a++){

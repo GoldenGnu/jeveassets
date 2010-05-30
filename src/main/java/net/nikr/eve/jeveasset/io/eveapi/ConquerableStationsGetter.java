@@ -25,6 +25,7 @@ import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import java.io.IOException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;
@@ -38,9 +39,9 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 		super("Conquerable Stations");
 	}
 
-	public void load(Settings settings){
+	public void load(UpdateTask updateTask, Settings settings){
 		this.settings = settings;
-		load("jEveAssets");
+		load(updateTask, settings.isForceUpdate(), "jEveAssets");
 	}
 
 	@Override

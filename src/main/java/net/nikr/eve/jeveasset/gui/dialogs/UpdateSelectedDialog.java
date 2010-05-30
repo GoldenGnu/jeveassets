@@ -21,59 +21,65 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.JWindow;
+import javax.swing.WindowConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
 
 
-public class UpdateSelectedDialog implements PropertyChangeListener, ActionListener{
+public class UpdateSelectedDialog implements PropertyChangeListener, ActionListener, WindowListener{
 
 	public final static String ACTION_OK = "ACTION_OK";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static int WIDTH = 240;
+	public final static int WIDTH = 260;
 
 	private List<UpdateTask> updateTasks;
 	private int index;
 	private UpdateTask updateTask;
-	private JWindow jWindow;
+	private JDialog jWindow;
 	private Program program;
 	private JProgressBar jProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
+	private JTextPane jErrorMessage;
+	private JLabel jErrorName;
+	private JScrollPane jErrorScroll;
 
 	public UpdateSelectedDialog(Program program, UpdateTask updateTask) {
 		this(program, Collections.singletonList(updateTask));
 	}
 
-
 	public UpdateSelectedDialog(Program program, List<UpdateTask> updateTasks) {
 		this.program = program;
 		this.updateTasks = updateTasks;
 
-		jWindow = new JWindow(program.getMainWindow().getFrame());
+		jWindow = new JDialog(program.getMainWindow().getFrame());
+		jWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		jWindow.setResizable(false);
+		jWindow.addWindowListener(this);
 
 		JPanel jPanel = new JPanel();
-		jPanel.setBorder( BorderFactory.createRaisedBevelBorder() );
 
 		GroupLayout layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);
@@ -95,32 +101,57 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
+		jErrorName = new JLabel("");
+		jErrorName.setFont( new Font(jErrorName.getFont().getName(), Font.BOLD, jErrorName.getFont().getSize()+4));
+		jErrorName.setVisible(false);
+
+		jErrorMessage = new JTextPane();
+		jErrorMessage.setText("");
+		jErrorMessage.setEditable(false);
+		jErrorMessage.setFocusable(false);
+		jErrorMessage.setOpaque(false);
+
+		jErrorScroll = new JScrollPane(jErrorMessage);
+		jErrorScroll.setVisible(false);
+		
 		ParallelGroup horizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
-		horizontalGroup.addComponent(jUpdate);
+		horizontalGroup.addComponent(jUpdate, WIDTH, WIDTH, WIDTH);
 		for (int a = 0; a < updateTasks.size(); a++){
 			horizontalGroup.addComponent(updateTasks.get(a).getTextLabel(), WIDTH, WIDTH, WIDTH);
-			horizontalGroup.addComponent(updateTasks.get(a).getErrorLabel(), WIDTH, WIDTH, WIDTH);
-			updateTasks.get(a).getTextLabel().addMouseListener( new ErrorMouseListener(updateTasks.get(a).getErrorLabel()) );
+			updateTasks.get(a).getTextLabel().addMouseListener( new ErrorMouseListener(updateTasks.get(a)) );
 		}
 		horizontalGroup.addComponent(jProgressBar, WIDTH, WIDTH, WIDTH);
 		horizontalGroup.addGroup(layout.createSequentialGroup()
 				.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				);
-		layout.setHorizontalGroup(horizontalGroup);
+		layout.setHorizontalGroup(
+			layout.createSequentialGroup()
+				.addGroup(horizontalGroup)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jErrorName)
+					.addComponent(jErrorScroll, WIDTH, WIDTH, WIDTH)
+				)
+		);
+
 		SequentialGroup verticalGroup = layout.createSequentialGroup();
 		verticalGroup.addComponent(jUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		for (int a = 0; a < updateTasks.size(); a++){
 			verticalGroup.addComponent(updateTasks.get(a).getTextLabel(), Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
-			verticalGroup.addComponent(updateTasks.get(a).getErrorLabel());
 		}
 		verticalGroup.addComponent(jProgressBar, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		verticalGroup.addGroup(layout.createParallelGroup()
 				.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				);
-		layout.setVerticalGroup(verticalGroup);
-		jWindow.pack();
+		layout.setVerticalGroup(
+			layout.createParallelGroup()
+				.addGroup(verticalGroup)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jErrorName)
+					.addComponent(jErrorScroll)
+				)
+		);
 		if (!updateTasks.isEmpty()){
 			index = 0;
 			update();
@@ -141,23 +172,29 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 		}
 	}
 
+	private void centerWindow(){
+		jWindow.pack();
+		jWindow.setLocationRelativeTo(jWindow.getParent());
+	}
+
 	private void setVisible(boolean b) {
 		program.getMainWindow().setEnabled(!b);
 		if (b){
-			//Get the parent size
-			Dimension screenSize = jWindow.getParent().getSize();
-
-			//Calculate the frame location
-			int x = (screenSize.width - jWindow.getWidth()) / 2;
-			int y = (screenSize.height - jWindow.getHeight()) / 2;
-
-			//Set the new frame location
-
-			jWindow.setLocation(x, y);
-			jWindow.setLocationRelativeTo(jWindow.getParent());
+			centerWindow();
 		}
 		jWindow.setVisible(b);
 		if (b) jWindow.requestFocus();
+	}
+
+	private void cancelUpdate(){
+		int cancelledIndex = index;
+		index = updateTasks.size();
+		updateTask.cancel(true);
+		for (int a = cancelledIndex; a < updateTasks.size(); a++){
+			updateTasks.get(a).cancelled();
+		}
+		jProgressBar.setIndeterminate(false);
+		jProgressBar.setValue(0);
 	}
 
 	@Override
@@ -183,34 +220,73 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 			setVisible(false);
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			int cancelledIndex = index;
-			List<UpdateTask> cancelled = new ArrayList<UpdateTask>(updateTasks);
-			updateTasks = new ArrayList<UpdateTask>();
-			updateTask.cancel(true);
-			for (int a = cancelledIndex; a < cancelled.size(); a++){
-				cancelled.get(a).cancelled();
-			}
-			jProgressBar.setIndeterminate(false);
-			jProgressBar.setValue(0);
+			cancelUpdate();
 		}
 
 	}
 
+	@Override
+	public void windowOpened(WindowEvent e) {}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (index >= updateTasks.size()){
+			setVisible(false);
+		} else {
+			int value = JOptionPane.showConfirmDialog(jWindow, "Do you want to cancel the update?", "Cancel Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value == JOptionPane.YES_OPTION){
+				cancelUpdate();
+				setVisible(false);
+			}
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowActivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
+
 
 	class ErrorMouseListener implements MouseListener{
 
-		private JTextPane jError;
+		private UpdateTask mouseTask;
 
-		public ErrorMouseListener(JTextPane jError) {
-			this.jError = jError;
+		public ErrorMouseListener(UpdateTask mouseTask) {
+			this.mouseTask = mouseTask;
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e){
-			if (e.getButton() == MouseEvent.BUTTON1 && !jError.getText().isEmpty()){
-				jError.setSize(WIDTH, Integer.MAX_VALUE); //Workaround for size being to small
-				jError.setVisible(!jError.isVisible());
-				jWindow.pack();
+			if (e.getButton() == MouseEvent.BUTTON1 && mouseTask.hasError()){
+				jErrorMessage.setText("");
+				jErrorName.setText("");
+				boolean shown = mouseTask.isErrorShown();
+				for (UpdateTask task : updateTasks){
+					task.showError(false);
+				}
+				if (shown){
+					mouseTask.showError(false);
+					jErrorScroll.setVisible(false);
+					jErrorName.setVisible(false);
+					jWindow.pack();
+				} else {
+					jErrorScroll.setVisible(true);
+					jErrorName.setVisible(true);
+					jWindow.pack();
+					mouseTask.showError(true);
+					mouseTask.setError(jErrorMessage);
+					jErrorName.setText(mouseTask.getName()+" Errors");
+				}
 			}
 		}
 

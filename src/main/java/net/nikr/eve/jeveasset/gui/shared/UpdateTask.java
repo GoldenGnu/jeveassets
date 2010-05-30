@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -48,9 +49,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	private boolean done = false;
 	private Throwable throwable = null;
 	private JLabel jText;
-	private JTextPane jError;
+	//private JTextPane jError;
 	private Map<String, String> errors;
 	private String name;
+	private boolean errorShown = false;
 
 	public UpdateTask(String name) {
 		this.name = name;
@@ -58,19 +60,15 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		jText = new JLabel(name);
 		jText.setIcon( ImageGetter.getIcon("bullet_black.png"));
 
-		jError = new JTextPane();
-		jError.setEditable(false);
-		jError.setFocusable(false);
-		jError.setVisible(false);
-
 		errors = new HashMap<String, String>();
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public JLabel getTextLabel(){
 		return jText;
-	}
-	public JTextPane getErrorLabel(){
-		return jError;
 	}
 
 	public void addError(String human, String error){
@@ -114,7 +112,31 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 
 	protected void setTaskProgress(int progress){
 		this.setProgress(progress);
-	 }
+	}
+
+	public void setError(JTextPane jError){
+		if (!errors.isEmpty()){
+			StyledDocument doc = new DefaultStyledDocument();
+			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
+			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
+
+			try {
+				boolean first = true;
+				for (Map.Entry<String, String> entry : errors.entrySet()){
+					if (first){
+						first = false;
+					} else {
+						doc.insertString(doc.getLength(), "\n\r", null);
+					}
+					doc.insertString(doc.getLength(), entry.getKey(), null);
+					doc.insertString(doc.getLength(), "\r\n"+processError(entry.getValue()), errorAttributeSet);
+				}
+			} catch (BadLocationException ex) {
+
+			}
+			jError.setDocument(doc);
+		}
+	}
 
 	public void setTaskProgress(float end, float done, int start, int max){
 		int progress = Math.round(((done/end)*(max-start))+start);
@@ -136,39 +158,33 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			} else {
 				jText.setIcon( ImageGetter.getIcon("bullet_error.png"));
 			}
-			showError();
+			if (!errors.isEmpty()){
+				jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				jText.setText(name+" (click to show errors)");
+			}
 		} else {
 			jText.setIcon( ImageGetter.getIcon("bullet_go.png"));
 		}
 	}
 
-	private void showError(){
+	public void showError(boolean b){
 		if (!errors.isEmpty()){
-			jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			jText.setText(name+" (click for more information)");
-			StyledDocument doc = new DefaultStyledDocument();
-			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
-			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
-
-			try {
-				boolean first = true;
-				for (Map.Entry<String, String> entry : errors.entrySet()){
-					if (first){
-						first = false;
-					} else {
-						doc.insertString(doc.getLength(), "\n\r", null);
-					}
-					doc.insertString(doc.getLength(), entry.getKey(), null);
-					doc.insertString(doc.getLength(), "\r\n"+processError(entry.getValue()), errorAttributeSet);
-				}
-			} catch (BadLocationException ex) {
-
+			Font font = jText.getFont();
+			if (b){
+				errorShown = true;
+				jText.setFont( new Font(font.getName(), Font.BOLD, font.getSize()) );
+				jText.setText(name+" (click to hide errors)");
+				
+			} else {
+				errorShown = false;
+				jText.setFont( new Font(font.getName(), Font.PLAIN, font.getSize()) );
+				jText.setText(name+" (click to show errors)");
 			}
-			jError.setDocument(doc);
-			jError.setBackground(jText.getBackground());
-			jError.setForeground(jText.getForeground());
-			jError.setFont(jText.getFont());
 		}
+	}
+
+	public boolean isErrorShown() {
+		return errorShown;
 	}
 
 	private String processError(String error){
