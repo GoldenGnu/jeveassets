@@ -541,6 +541,10 @@ public class Settings{
 		this.activeProfile = activeProfile;
 	}
 
+	public Profile getActiveProfile() {
+		return activeProfile;
+	}
+
 	public ReprocessSettings getReprocessSettings() {
 		return reprocessSettings;
 	}

@@ -69,11 +69,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 
 		//Frame
 		jFrame = new JFrame();
-		if (Settings.isPortable()){
-			jFrame.setTitle(Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION+" portable");
-		} else {
-			jFrame.setTitle(Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION);
-		}
+		updateTitle();
 		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
 		jFrame.setIconImage( ImageGetter.getImage("safe16.png") );
 		jFrame.addWindowListener(this);
@@ -105,6 +101,17 @@ public class MainWindow implements WindowListener, ChangeListener {
 				.addComponent(jTabbedPane, 0, 0, Short.MAX_VALUE)
 				.addComponent(statusPanel.getPanel(), 25, 25, 25)
 		);
+	}
+
+	final public void updateTitle(){
+		String title = Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION;
+		if (Settings.isPortable()){
+			title = title+" portable";
+		}
+		if (program.getSettings().getProfiles().size() > 1){
+			title = title+" - "+program.getSettings().getActiveProfile().getName();
+		}
+		jFrame.setTitle(title);
 	}
 
 	public void addTab(JMainTab jMainTab){

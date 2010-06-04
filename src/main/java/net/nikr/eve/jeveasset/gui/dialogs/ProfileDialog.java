@@ -306,6 +306,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				jProfiles.updateUI();
 				setAllEnabled(true);
 				jWait.hideWaitDialog();
+				program.getMainWindow().updateTitle();
 			}
 		}
 	}
