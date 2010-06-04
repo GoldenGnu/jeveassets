@@ -61,7 +61,6 @@ public abstract class JDialogCentered implements WindowListener {
 	protected GroupLayout layout;
 	
 	private JDialog dialog;
-	private String title;
 	private boolean firstActivating = false;
 
 	/**
@@ -81,7 +80,6 @@ public abstract class JDialogCentered implements WindowListener {
 	}
 	public JDialogCentered(Program program, String title, Window parent, Image image) {
 		this.program = program;
-		this.title = title;
 		this.parent = parent;
 
 		dialog = new JDialog(parent, JDialog.DEFAULT_MODALITY_TYPE);
@@ -108,7 +106,6 @@ public abstract class JDialogCentered implements WindowListener {
 	protected abstract void windowShown();
 	protected abstract void windowActivated();
 	protected abstract void save();
-	//public abstract boolean validateInput(String value);
 
 	public JDialog getDialog() {
 		return dialog;
@@ -116,7 +113,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 	public void setVisible(boolean b) {
 		if (b){
-			LOG.info("Showing: {} Dialog", title);
+			LOG.info("Showing: {} Dialog", dialog.getTitle());
 			dialog.pack();
 			//Get the parent size
 			Dimension screenSize = parent.getSize();
@@ -131,7 +128,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 			firstActivating = true;
 		} else {
-			LOG.info("Hiding: "+title);
+			LOG.info("Hiding: {} Dialog", dialog.getTitle());
 		}
 		dialog.setVisible(b);
 	}
@@ -164,7 +161,7 @@ public abstract class JDialogCentered implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		LOG.info("Hiding: "+title+" (close)");
+		LOG.info("Hiding: {} Dialog (close)", dialog.getTitle());
 	}
 
 	@Override
@@ -180,7 +177,7 @@ public abstract class JDialogCentered implements WindowListener {
 	public void windowActivated(WindowEvent e) {
 		JComponent defaultFocus = this.getDefaultFocus();
 		if (defaultFocus == null){
-			LOG.warn("No default focus for: {}", this.title);
+			LOG.warn("No default focus for: {}", dialog.getTitle());
 			return;
 		}
 		if (firstActivating){
