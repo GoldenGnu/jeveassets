@@ -155,7 +155,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			listModel.addElement(profiles.get(a));
 		}
 		jProfiles.setModel(listModel);
-		if (!profiles.isEmpty()) jProfiles.setSelectedIndex(0);
+		if (!profiles.isEmpty()) jProfiles.setSelectedValue(program.getSettings().getActiveProfile(), true);
 	}
 
 
