@@ -153,7 +153,7 @@ public class MainMenu extends JMenuBar {
 		menu.add(menuItem);
 
 
-		menuItem = new JMenuItem("Profiels...");
+		menuItem = new JMenuItem("Profiles...");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon( ImageGetter.getIcon("profile.png") );
 		menuItem.setActionCommand(ACTION_OPEN_PROFILES);
