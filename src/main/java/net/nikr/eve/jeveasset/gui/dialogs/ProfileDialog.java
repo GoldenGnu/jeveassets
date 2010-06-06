@@ -160,12 +160,16 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 
 	private void startLoadProfile(){
-		jWait.showWaitDialog("Loading Profile...");
-		setAllEnabled(false);
 		Profile profile = (Profile) jProfiles.getSelectedValue();
-		LoadProfile loadProfile = new LoadProfile(profile);
-		loadProfile.addPropertyChangeListener(this);
-		loadProfile.execute();
+		if (profile.isActiveProfile()){
+			JOptionPane.showMessageDialog(this.getDialog(), "Profile already loaded.", "Load Profile", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			jWait.showWaitDialog("Loading Profile...");
+			setAllEnabled(false);
+			LoadProfile loadProfile = new LoadProfile(profile);
+			loadProfile.addPropertyChangeListener(this);
+			loadProfile.execute();
+		}
 	}
 
 	private void loadProfile(Profile profile){
@@ -305,8 +309,12 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				updateProfiles();
 				jProfiles.updateUI();
 				setAllEnabled(true);
-				jWait.hideWaitDialog();
 				program.getMainWindow().updateTitle();
+				jWait.hideWaitDialog();
+				if (!program.getToolPanel().getAssetFilters().isEmpty()){
+					int value = JOptionPane.showConfirmDialog(this.getDialog(), "Clear asset filter?", "Profile Loaded", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (value == JOptionPane.YES_OPTION) program.getToolPanel().clearFilters();
+				}
 			}
 		}
 	}

@@ -159,9 +159,18 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 		addFilter(filterPanel);
 	}
 
+	public void clearFilters(){
+		while(filters.size() > 0){
+			removeFilter( filters.get(0) );
+		}
+		this.addFilter();
+		this.updateLayout();
+	}
+
 	private void addFilter(){
 		addFilter(new FilterPanel(program, this));
 	}
+
 	private void addFilter(FilterPanel filterPanel){
 		this.getPanel().add(filterPanel.getPanel()); //Must be done before filtering
 		filters.add(filterPanel); //Must be done before filtering
@@ -174,6 +183,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 		}
 		this.updateLayout();
 	}
+
 	private void removeFilter(FilterPanel filterPanel){
 		this.getPanel().remove(filterPanel.getPanel());
 		filters.remove(filterPanel);
@@ -183,13 +193,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 		}
 		this.updateLayout();
 	}
-	private void resetFilters(){
-		while(filters.size() > 0){
-			removeFilter( filters.get(0) );
-		}
-		this.addFilter();
-		this.updateLayout();
-	}
+	
 	private void updateLayout(){
 		//Horizontal
 		ParallelGroup pg;
@@ -243,7 +247,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 		saveFilterDialog.setVisible(true);
 	}
 
-	public void filtersChanged(){
+	final public void filtersChanged(){
 		jLoadFilter.clearMenu();
 		JMenuItem jMenuItem;
 		
@@ -295,7 +299,7 @@ public class ToolPanel extends JProgramPanel implements ActionListener {
 			return;
 		}
 		if (ACTION_CLEAR_FIELDS.equals(e.getActionCommand())) {
-			this.resetFilters();
+			this.clearFilters();
 			return;
 		}
 		if (ACTION_SAVE_FILTER.equals(e.getActionCommand())) {
