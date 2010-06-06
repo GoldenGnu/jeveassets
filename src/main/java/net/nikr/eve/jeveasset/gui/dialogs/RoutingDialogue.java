@@ -88,6 +88,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 	private ProgressBar progress;
 	private JButton cancel;
 	protected Graph filteredGraph;
+	private JTextArea lastResultArea;
 
 	
 	/**
@@ -155,6 +156,11 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 		availableRemaining = new JLabel();
 		updateRemaining();
 
+		lastResultArea = new JTextArea();
+		lastResultArea.setEditable(false);
+		lastResultArea.setEnabled(false);
+		lastResultArea.setText("Once a route has been found, it will be displayed here.");
+
 		doLayout();
 		cancel.setEnabled(false); // can't cancel the initial load...
 	}
@@ -164,6 +170,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 		description.scrollRectToVisible(new Rectangle(1,1,1,1));
 		JScrollPane availSP = new JScrollPane(available);
 		JScrollPane waypoSP = new JScrollPane(waypoints);
+		JScrollPane routeSP = new JScrollPane(lastResultArea);
 
 		// widths are defined in here.
 		layout.setHorizontalGroup(
@@ -178,6 +185,8 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 									.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
 									.addComponent(availableRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+									.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+									.addComponent(cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
 								)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -187,13 +196,13 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 								)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-									.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 									.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-									.addComponent(cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+									.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+									.addComponent(routeSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
 								)
 							)
 						)
+						.addContainerGap()
 					)
 				);
 		// heights are defined here.
@@ -216,8 +225,14 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 						.addComponent(availableRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 						.addComponent(waypointsRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					)
-					.addComponent(calculate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(cancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(calculate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(cancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						)
+						.addComponent(routeSP, GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
+					)
+					.addContainerGap()
 				)
 			);
 		setUIEnabled(false);
@@ -381,7 +396,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 	private void processRouteInner() {
 		if (waypoints.getModel().getSize() <= 2) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "There is little point in trying to calculate the\n" +
-							"optimal route between two points, since there is only\n" +
+							"optimal route between two or fewer points, since there is only\n" +
 							"one possible solution", "Not calculating", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
@@ -393,22 +408,31 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 
 			List<Node> route = executeRouteFinding(inputWaypoints);
 
-			StringBuilder sb = new StringBuilder("The suggested route has ");
-			sb.append(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastDistance());
-			sb.append(" jumps and is:\n");
+			StringBuilder sb = new StringBuilder();
 			for (Node ss : route) {
-				sb.append(" * ");
 				sb.append(ss.getName());
 				sb.append('\n');
 			}
+			int time = (int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000);
 			sb.append("Generating this route took ");
-			sb.append((int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000));
-			sb.append(" seconds.");
+			sb.append(time);
+			sb.append(" second");
+			if (time != 1) {
+				sb.append("s");
+			}
+			sb.append(".");
 
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, sb.toString()
+							, "A route consisting of " +
+							  ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastDistance() +
+							  " jumps has been found.\nIt took " +
+							  (int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000) +
+							  " seconds"
 							, "Route"
 							, JOptionPane.INFORMATION_MESSAGE);
+
+			lastResultArea.setText(sb.toString());
+			lastResultArea.setEnabled(true);
 
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()

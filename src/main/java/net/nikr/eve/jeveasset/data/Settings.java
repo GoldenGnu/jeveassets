@@ -779,6 +779,7 @@ public class Settings{
    * @return
    */
 	private static String getLocalFile(String filename, boolean dynamic){
+		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
 		try {
 			File file = null;
 			File ret = null;
@@ -800,6 +801,7 @@ public class Settings{
 				file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
 				ret = new File(file.getAbsolutePath()+File.separator+filename);
 			}
+			LOG.debug("Found file at: {}", ret.getAbsolutePath());
 			return ret.getAbsolutePath();
 		} catch (URISyntaxException ex) {
 			LOG.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
