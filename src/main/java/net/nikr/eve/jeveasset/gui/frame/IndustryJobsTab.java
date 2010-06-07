@@ -57,7 +57,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private JComboBox jActivity;
-	private JTable jJobs;
+	private JAutoColumnTable jJobs;
 
 	private EventList<IndustryJob> jobsEventList;
 
@@ -97,7 +97,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		//Sorters
 		TableComparatorChooser.install(jJobs, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
-		JScrollPane jJobsScrollPanel = new JScrollPane(jJobs);
+		JScrollPane jJobsScrollPanel = jJobs.getScrollPanel();
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

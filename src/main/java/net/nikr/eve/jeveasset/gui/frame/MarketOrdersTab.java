@@ -65,8 +65,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 	private Map<String, List<MarketOrder>> orders;
 	private Vector<String> characters;
 
-	private JTable jSellOrders;
-	private JTable jBuyOrders;
+	private JAutoColumnTable jSellOrders;
+	private JAutoColumnTable jBuyOrders;
 
 	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
@@ -105,8 +105,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 		JLabel jSellLabel = new JLabel("Sell Orders");
 		JLabel jBuyLabel = new JLabel("Buy Orders");
 		//Scroll Panels
-		JScrollPane jSellOrdersScrollPanel = new JScrollPane(jSellOrders);
-		JScrollPane jBuyOrdersScrollPanel = new JScrollPane(jBuyOrders);
+		JScrollPane jSellOrdersScrollPanel = jSellOrders.getScrollPanel();
+		JScrollPane jBuyOrdersScrollPanel = jBuyOrders.getScrollPanel();
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()

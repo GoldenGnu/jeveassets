@@ -23,10 +23,13 @@ package net.nikr.eve.jeveasset.gui.table;
 
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Component;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -42,10 +45,11 @@ import net.nikr.eve.jeveasset.gui.table.CellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.table.CellRenderers.QuantityCellRenderer;
 
 
-public class JAutoColumnTable extends JTable  {
+public class JAutoColumnTable extends JTable {
 
 	private final List<String> columnNames;
 	private EventTableModel eventTableModel;
+	private JScrollPane jScroll;
 
 	public JAutoColumnTable(EventTableModel dm, List<String> columnNames) {
 		setModel(dm);
@@ -53,21 +57,30 @@ public class JAutoColumnTable extends JTable  {
 		this.columnNames = columnNames;
 
 		ModelListener modelListener = new ModelListener();
-		
+
+		jScroll = new JScrollPane(this);
+		jScroll.addComponentListener(modelListener);
 		getTableHeader().addMouseListener(modelListener);
 		getColumnModel().addColumnModelListener(modelListener);
 		dm.addTableModelListener(modelListener);
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Quantity.class, new QuantityCellRenderer());
+	}
 
+	public JScrollPane getScrollPanel() {
+		return jScroll;
 	}
 
 	private void autoResizeColumns() {
 		if (this.getRowCount() > 0){
+			int size = 0;
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			for (int i = 0; i < this.getColumnCount(); i++) {
-				autoResizeColumn(this.getColumnModel().getColumn(i));
+				 size = size+autoResizeColumn(this.getColumnModel().getColumn(i));
+			}
+			if (size < jScroll.getSize().width){
+				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			}
 		} else {
 			for (int i = 0; i < this.getColumnCount(); i++) {
@@ -77,7 +90,7 @@ public class JAutoColumnTable extends JTable  {
 		}
 	}
 
-	private void autoResizeColumn(TableColumn column) {
+	private int autoResizeColumn(TableColumn column) {
 		int maxWidth = 0;
 		TableCellRenderer renderer = column.getHeaderRenderer();
 		if (renderer == null) {
@@ -91,9 +104,12 @@ public class JAutoColumnTable extends JTable  {
 			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
 		}
 		column.setPreferredWidth(maxWidth+4);
+		return maxWidth+4;
 	}
 
-	class ModelListener implements TableModelListener, TableColumnModelListener, MouseListener {
+	
+
+	class ModelListener implements TableModelListener, TableColumnModelListener, MouseListener, ComponentListener {
 
 		private boolean columnMoved = false;
 		private List<String> tempMainTableColumnNames;
@@ -171,6 +187,19 @@ public class JAutoColumnTable extends JTable  {
 		@Override
 		public void mouseExited(MouseEvent e) {}
 
-	}
 
+		@Override
+		public void componentResized(ComponentEvent e) {
+			autoResizeColumns();
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {}
+
+		@Override
+		public void componentShown(ComponentEvent e) {}
+
+		@Override
+		public void componentHidden(ComponentEvent e) {}
+	}
 }
