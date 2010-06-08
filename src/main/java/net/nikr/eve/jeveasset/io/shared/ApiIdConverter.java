@@ -401,7 +401,7 @@ public class ApiIdConverter {
 			}
 		}
 		if (parentAsset != null) {
-			return parentAsset.getRegion();
+			return parentAsset.getSolarSystem();
 		}
 		return "Error !" + String.valueOf(locationID);
 	}
