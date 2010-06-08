@@ -50,7 +50,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
@@ -315,7 +314,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 			}
 		});
 		for (EveAsset ea : program.getAssetsTab().getFilteredAssets()) {
-			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getLocationID());
+			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemId());
 			if (loc != null) {
 				allLocs.add(loc);
 			} else {
@@ -338,14 +337,13 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 	 * @return null if the system is unreachable (e.g. w-space)
 	 */
 	private SolarSystem findNodeForLocation(Graph g, int locationID) {
-		int ssid = ApiIdConverter.solarSystemId(locationID, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
-		if (ssid < 0) {
-			throw new RuntimeException("Unknown Location: " + locationID + ", ssid = " + ssid);
+		if (locationID < 0) {
+			throw new RuntimeException("Unknown Location: " + locationID);
 		}
 		for (Node n : g.getNodes()) {
 			if (n instanceof SolarSystem) {
 				SolarSystem ss = (SolarSystem) n;
-				if (ss.getSolarSystemID() == ssid) {
+				if (ss.getSolarSystemID() == locationID) {
 					return ss;
 				}
 			}

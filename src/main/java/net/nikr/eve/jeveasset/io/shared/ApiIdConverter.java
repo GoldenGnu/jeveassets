@@ -337,7 +337,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static int solarSystemId(int locationID, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static int solarSystemId(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -364,7 +364,46 @@ public class ApiIdConverter {
 		if (location != null) {
 			return location.getSolarSystemID();
 		}
+		if (parentAsset != null) {
+			return parentAsset.getSolarSystemId();
+		}
 		return -1;
+	}
+
+	public static String solarSystem(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+		Location location = null;
+		ApiStation apiStation = null;
+
+		//Offices
+		if (locationID >= 66000000) {
+			if (locationID < 66014933) {
+				locationID = locationID - 6000001;
+			} else {
+				locationID = locationID - 6000000;
+			}
+		}
+
+		//Conquerable Stations
+		apiStation = conquerableStations.get(locationID);
+		if (apiStation != null) {
+			location = locations.get(apiStation.getSolarSystemID());
+			if (location != null) {
+				return location.getName();
+			}
+		}
+
+		//locations.xml (staStations && mapDenormalize)
+		location = locations.get(locationID);
+		if (location != null) {
+			location = locations.get(location.getSolarSystemID());
+			if (location != null) {
+				return location.getName();
+			}
+		}
+		if (parentAsset != null) {
+			return parentAsset.getRegion();
+		}
+		return "Error !" + String.valueOf(locationID);
 	}
 
 	public static float volume(int typeID, Map<Integer, Item> items) {

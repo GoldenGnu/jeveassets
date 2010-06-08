@@ -338,7 +338,8 @@ public class AssetsReader extends AbstractXmlReader {
 		String location = ApiIdConverter.location(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
-		
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+		String solarSystem = ApiIdConverter.solarSystem(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		int solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 }

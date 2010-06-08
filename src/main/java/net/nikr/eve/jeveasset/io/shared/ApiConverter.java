@@ -58,6 +58,7 @@ public class ApiConverter {
 		boolean corporationAsset = bCorp;
 		boolean singleton  = true;
 
+		//Calculated:
 		String name = ApiIdConverter.name(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
@@ -65,16 +66,15 @@ public class ApiConverter {
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
 		String meta = ApiIdConverter.meta(typeID, settings.getItems());
-
 		String owner = ApiIdConverter.owner(human, bCorp);
-
 		String location = ApiIdConverter.location(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
-
+		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 
 	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, boolean bCorp, Settings settings){
@@ -108,8 +108,8 @@ public class ApiConverter {
 		boolean corporationAsset = bCorp;
 		boolean singleton  = false;
 
+		//Calculated:
 		String flag = ApiIdConverter.flag(nFlag);
-
 		String name = ApiIdConverter.name(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
@@ -117,17 +117,16 @@ public class ApiConverter {
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
 		String meta = ApiIdConverter.meta(typeID, settings.getItems());
-
 		String owner = ApiIdConverter.owner(human, bCorp);
-
 		String location = apiIndustryJobLocation(apiIndustryJob, settings);
-
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
-
+		//FIXME This could be wrong...
+		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 
 	public static List<EveAsset> apiAsset(Human human, List<ApiAsset> assets, boolean bCorp, Settings settings){
@@ -168,9 +167,11 @@ public class ApiConverter {
 		String security = ApiIdConverter.security(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String location = ApiIdConverter.location(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();

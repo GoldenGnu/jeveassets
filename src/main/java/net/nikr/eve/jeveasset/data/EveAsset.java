@@ -69,8 +69,10 @@ public class EveAsset implements Comparable<EveAsset> {
 	private boolean singleton;
 	private String security;
 	private double priceReprocessed;
+	private String solarSystem;
+	private int solarSystemId;
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security) {
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security, String solarSystem, int solarSystemId) {
 		this.typeName = typeName;
 		this.name = typeName;
 		this.group = group;
@@ -92,6 +94,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.bpo = false;
 		this.singleton = singleton;
 		this.security = security;
+		this.solarSystem = solarSystem;
+		this.solarSystemId = solarSystemId;
 	}
 
 	public void setPriceData(PriceData priceData) {
@@ -305,6 +309,14 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public void setTypeCount(long typeCount) {
 		this.typeCount = typeCount;
+	}
+
+	public String getSolarSystem() {
+		return solarSystem;
+	}
+
+	public int getSolarSystemId() {
+		return solarSystemId;
 	}
 
 	@Override

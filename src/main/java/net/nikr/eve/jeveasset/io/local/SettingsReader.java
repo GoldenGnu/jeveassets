@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -66,6 +67,14 @@ public class SettingsReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
+
+		//Overview
+		NodeList overviewNodes = element.getElementsByTagName("overview");
+		if (overviewNodes.getLength() == 1){
+			Element overviewElement = (Element) overviewNodes.item(0);
+			parseOverview(overviewElement, settings);
+		}
+
 		//Window
 		NodeList windowNodes = element.getElementsByTagName("window");
 		if (windowNodes.getLength() == 1){
@@ -162,6 +171,22 @@ public class SettingsReader extends AbstractXmlReader {
 				break;
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
+		}
+	}
+
+	private static void parseOverview(Element overviewElement, Settings settings) throws XmlException {
+		NodeList groupNodes = overviewElement.getElementsByTagName("group");
+		for (int a = 0; a < groupNodes.getLength(); a++){
+			Element groupNode = (Element) groupNodes.item(a);
+			String name = AttributeGetters.getString(groupNode, "name");
+			OverviewGroup overviewGroup = new OverviewGroup(name);
+			settings.getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
+			NodeList locationNodes = groupNode.getElementsByTagName("location");
+			for (int b = 0; b < locationNodes.getLength(); b++){
+				Element locationNode = (Element) locationNodes.item(b);
+				String location = AttributeGetters.getString(locationNode, "name");
+				overviewGroup.add(location);
+			}
 		}
 	}
 

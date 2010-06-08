@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -51,6 +52,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
+		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
 		writeBpos(xmldoc, settings.getBpos());
@@ -69,6 +71,22 @@ public class SettingsWriter extends AbstractXmlWriter {
 			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		LOG.info("Settings saved");
+	}
+
+	private static void writeOverviewGroups(Document xmldoc, Map<String, OverviewGroup> overviewGroups){
+		Element parentNode = xmldoc.createElementNS(null, "overview");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<String, OverviewGroup> entry : overviewGroups.entrySet()){
+			OverviewGroup overviewGroup = entry.getValue();
+			Element node = xmldoc.createElementNS(null, "group");
+			node.setAttributeNS(null, "name", overviewGroup.getName());
+			parentNode.appendChild(node);
+			for (int a = 0; a < overviewGroup.getLocations().size(); a++){
+				Element nodeLocation = xmldoc.createElementNS(null, "location");
+				nodeLocation.setAttributeNS(null, "name", overviewGroup.getLocations().get(a));
+				node.appendChild(nodeLocation);
+			}
+		}
 	}
 
 	private static void writeUserItemNames(Document xmldoc, Map<Long, UserItemName> userPrices){

@@ -113,6 +113,7 @@ public class Settings{
 	private boolean windowAutoSave;
 	private Profile activeProfile;
 	private List<Jump> jumps;
+	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
 
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
@@ -130,6 +131,7 @@ public class Settings{
 		jumps = new ArrayList<Jump>();
 		profiles = new ArrayList<Profile>();
 		userItemNames = new HashMap<Long, UserItemName>();
+		overviewGroups = new HashMap<String, OverviewGroup>();
 		
 		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
@@ -721,6 +723,10 @@ public class Settings{
 	
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
+	}
+
+	public Map<String, OverviewGroup> getOverviewGroups() {
+		return overviewGroups;
 	}
 
 	public static String getPathSettings(){
