@@ -48,9 +48,13 @@ import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JValidatedInputDialog;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener, PropertyChangeListener {
+
+	private final static Logger LOG = LoggerFactory.getLogger(ProfileDialog.class);
 
 	private final static String ACTION_NEW_PROFILE = "ACTION_NEW_PROFILE";
 	private final static String ACTION_LOAD_PROFILE = "ACTION_LOAD_PROFILE";
@@ -283,7 +287,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2){
+		if (e.getClickCount() == 2 && jProfiles.isEnabled()){
 			startLoadProfile();
 		}
 	}
