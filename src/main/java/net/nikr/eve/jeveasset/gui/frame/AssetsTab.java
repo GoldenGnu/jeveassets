@@ -116,6 +116,7 @@ public class AssetsTab extends JMainTab
 	private EventTableModel<EveAsset> eveAssetTableModel;
 	private EventList<EveAsset> eveAssetEventList;
 	private EventSelectionModel<EveAsset> selectionModel;
+	private FilterList<EveAsset> filterList;
 	
 	//Data
 	private boolean columnMoved = false;
@@ -134,10 +135,10 @@ public class AssetsTab extends JMainTab
 		SortedList<EveAsset> sortedList = new SortedList<EveAsset>(eveAssetEventList);
 		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
-		FilterList<EveAsset> textFilteredList = new FilterList<EveAsset>(sortedList);
-		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(textFilteredList, program);
+		filterList = new FilterList<EveAsset>(sortedList);
+		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(filterList, program);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<EveAsset>(textFilteredList, eveAssetTableFormat);
+		eveAssetTableModel = new EventTableModel<EveAsset>(filterList, eveAssetTableFormat);
 		eveAssetTableModel.addTableModelListener(this);
 
 		//Table
@@ -156,7 +157,7 @@ public class AssetsTab extends JMainTab
 				TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 
 		//Table Selection
-		selectionModel = new EventSelectionModel<EveAsset>(textFilteredList);
+		selectionModel = new EventSelectionModel<EveAsset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
@@ -262,10 +263,9 @@ public class AssetsTab extends JMainTab
 	 * @return a list of the filtered assets.
 	 */
 	public List<EveAsset> getFilteredAssets() {
-		List<EveAsset> ret = new ArrayList<EveAsset>();
-		for (int i = 0; i < eveAssetTableModel.getRowCount(); ++i) {
-			ret.add(eveAssetTableModel.getElementAt(i));
-		}
+		eveAssetEventList.getReadWriteLock().writeLock().lock();
+		List<EveAsset> ret = new ArrayList<EveAsset>(filterList);
+		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
 

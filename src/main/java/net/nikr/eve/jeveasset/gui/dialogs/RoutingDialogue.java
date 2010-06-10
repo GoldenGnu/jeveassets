@@ -88,6 +88,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 	private JButton cancel;
 	protected Graph filteredGraph;
 	private JTextArea lastResultArea;
+	private Thread updateDataThread;
 
 	
 	/**
@@ -157,8 +158,8 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 
 		lastResultArea = new JTextArea();
 		lastResultArea.setEditable(false);
-		lastResultArea.setEnabled(false);
-		lastResultArea.setText("Once a route has been found, it will be displayed here.");
+		//lastResultArea.setEnabled(false);
+		//lastResultArea.setText("Once a route has been found, it will be displayed here.");
 
 		doLayout();
 		cancel.setEnabled(false); // can't cancel the initial load...
@@ -279,7 +280,13 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 		progress.setMinimum(0);
 		progress.setValue(0);
 
-		buildGraph(settings, progress);
+		//Only need to build the graph once
+		if (filteredGraph == null){
+			progress.setMaximum(settings.getJumps().size() + 1 + program.getAssetsTab().getFilteredAssets().size());
+			buildGraph(settings, progress);
+		} else {
+			progress.setMaximum(program.getAssetsTab().getFilteredAssets().size());
+		}
 		processFilteredAssets(settings, progress);
 	}
 
@@ -324,7 +331,7 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 		}
 
 		available.getEditableModel().addAll(allLocs);
-
+		if (progress.getMaximum() == 0) progress.setMaximum(1);
 		progress.setValue(progress.getMaximum());
 		updateRemaining();
 		setUIEnabled(true);
@@ -467,23 +474,30 @@ public class RoutingDialogue extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		//Do everything the constructor do...
-		/*
+		//Wait for process to complete
+		if (updateDataThread != null){
+			while (updateDataThread.isAlive()){ 
+
+			}
+		}
+		//Do everything the constructor does...
 		available.getEditableModel().clear();
 		waypoints.getEditableModel().clear();
 		algorithm.setSelectedIndex(0);
+		lastResultArea.setText("Once a route has been found,\nit will be displayed here.");
+		lastResultArea.setCaretPosition(0);
+		lastResultArea.setEnabled(false);
 		updateRemaining();
 		setUIEnabled(false);
 		cancel.setEnabled(false);
-		 * 
-		 */
-		new Thread(new Runnable() {
+		
+		updateDataThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				windowShownInner();
 			}
-		}, "routing dialogue ")
-		.start();
+		}, "routing dialogue ");
+		updateDataThread.start();
 	}
 
 	/**
