@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.frame;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
+import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class StatusPanel extends JProgramPanel {
+public class StatusPanel extends JGroupLayoutPanel {
 	
 	//GUI
 	
@@ -128,10 +128,5 @@ public class StatusPanel extends JProgramPanel {
 		jSpace.setPreferredSize( new Dimension(width, 25));
 		jSpace.setMaximumSize( new Dimension(width, 25));
 		jToolBar.add(jSpace);
-	}
-
-	@Override
-	protected JProgramPanel getThis(){
-		return this;
 	}
 }

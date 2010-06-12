@@ -2,16 +2,11 @@ package net.nikr.eve.jeveassets.tests.routing;
 
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.EditableListModel;
-import net.nikr.eve.jeveasset.gui.shared.MoveJList;
-import net.nikr.eve.jeveassets.tests.mocks.FakeProgram;
 import net.nikr.eve.jeveassets.tests.mocks.FakeProgress;
-import net.nikr.eve.jeveassets.tests.routing.mocks.FakeRoutingDialogue;
+import net.nikr.eve.jeveassets.tests.routing.mocks.FakeRoutingTab;
 import net.nikr.eve.jeveassets.tests.routing.mocks.RoutingMockProgram;
 import net.nikr.eve.jeveassets.tests.routing.mocks.RoutingMockSettings;
-import org.junit.Before;
 import org.junit.Test;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;
@@ -62,7 +57,7 @@ public class TestRouting {
 	private void testRoute(List<String> waypointNames, RoutingAlgorithm ra, int exptectedDistance) {
 
 	  RoutingMockSettings rms = new RoutingMockSettings();
-		FakeRoutingDialogue frd = new FakeRoutingDialogue(new RoutingMockProgram(rms), null, ra);
+		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(rms), null, ra);
 		frd.buildGraph(rms, new FakeProgress());
 		List<Node> initial = frd.getNodesFromNames(waypointNames);
 		List<Node> routeBF = ra.execute(new FakeProgress(), frd.getGraph(), new ArrayList<Node>(initial));

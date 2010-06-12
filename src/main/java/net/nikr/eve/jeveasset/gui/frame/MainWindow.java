@@ -192,6 +192,10 @@ public class MainWindow implements WindowListener, ChangeListener {
 		return jFrame;
 	}
 
+	public StatusPanel getStatusPanel() {
+		return statusPanel;
+	}
+
 	public void updateSettings(){
 		if (program.getSettings().isWindowAutoSave()){
 			program.getSettings().setWindowMaximized( (jFrame.getState() == JFrame.MAXIMIZED_BOTH) );

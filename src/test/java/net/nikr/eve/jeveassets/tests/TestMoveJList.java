@@ -25,11 +25,8 @@
 
 package net.nikr.eve.jeveassets.tests;
 
-import java.util.ArrayList;
+import net.nikr.eve.jeveasset.gui.tabs.routing.MoveJList;
 import java.util.Comparator;
-import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.EditableListModel;
-import net.nikr.eve.jeveasset.gui.shared.MoveJList;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

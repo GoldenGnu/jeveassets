@@ -25,7 +25,7 @@ import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import java.io.IOException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import org.xml.sax.SAXException;

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.shared.UpdateTask;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.pricing.Pricing;

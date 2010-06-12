@@ -25,10 +25,10 @@
 
 package net.nikr.eve.jeveassets.tests;
 
+import net.nikr.eve.jeveasset.gui.tabs.routing.EditableListModel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.EditableListModel;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

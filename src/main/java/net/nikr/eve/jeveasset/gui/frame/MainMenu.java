@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;

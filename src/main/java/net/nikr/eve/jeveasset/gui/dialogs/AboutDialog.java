@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
+	private final static Logger LOG = LoggerFactory.getLogger(AboutDialog.class);
 
 	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private final static String ACTION_UPDATE = "ACTION_UPDATE";

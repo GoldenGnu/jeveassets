@@ -7,13 +7,12 @@ import java.awt.event.ActionEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
+import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
-import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
+import net.nikr.eve.jeveasset.gui.tabs.assets.ToolPanel;
 
 /**
  * any method called will throw an exception. extend and override only the ones that are needed to perform the tests.
@@ -39,9 +38,6 @@ public abstract class FakeProgram extends Program {
 	public void actionPerformed(ActionEvent e) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-
-	@Override
-	public void addPanel(JProgramPanel jProgramPanel) { }
 
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {

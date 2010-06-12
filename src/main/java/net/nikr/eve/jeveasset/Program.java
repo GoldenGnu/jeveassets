@@ -28,48 +28,48 @@ import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Desktop;
 import java.awt.Window;
-import java.io.IOException;
-import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.data.UserPrice;
-import net.nikr.eve.jeveasset.gui.frame.MainMenu;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.AccountManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.CsvExportDialog;
-import net.nikr.eve.jeveasset.gui.settings.PriceDataSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.GeneralSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.FiltersManagerDialog;
-import net.nikr.eve.jeveasset.gui.frame.IndustryJobsTab;
-import net.nikr.eve.jeveasset.gui.frame.LoadoutsTab;
-import net.nikr.eve.jeveasset.gui.frame.MaterialsTab;
-import net.nikr.eve.jeveasset.gui.dialogs.ProfileDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.RoutingDialogue;
-import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.settings.UserPriceSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.SettingsDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.UpdateDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.export.CsvExportDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.GeneralSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.PriceDataSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.ProxySettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.TableSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
+import net.nikr.eve.jeveasset.gui.frame.MainMenu;
+import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.frame.AssetsTab;
-import net.nikr.eve.jeveasset.gui.frame.MarketOrdersTab;
-import net.nikr.eve.jeveasset.gui.frame.OverviewTab;
-import net.nikr.eve.jeveasset.gui.frame.ToolPanel;
-import net.nikr.eve.jeveasset.gui.frame.ValuesTab;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
-import net.nikr.eve.jeveasset.gui.settings.ReprocessingSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.TableSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.UserItemNameSettingsPanel;
-import net.nikr.eve.jeveasset.gui.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JProgramPanel;
+import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
+import net.nikr.eve.jeveasset.gui.shared.Updatable;
+import net.nikr.eve.jeveasset.gui.tabs.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
+import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
+import net.nikr.eve.jeveasset.gui.tabs.assets.ToolPanel;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,16 +100,22 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private SaveFilterDialog saveFilterDialog;
 	private FiltersManagerDialog filtersManagerDialog;
 	private AboutDialog aboutDialog;
-	private ValuesTab valuesTab;
-	private MaterialsTab materialsTab;
-	private LoadoutsTab loadoutsTab;
-	private RoutingDialogue routingDialogue;
-	private MarketOrdersTab marketOrdersTab;
-	private IndustryJobsTab industryJobsTab;
-	private OverviewTab overviewTab;
 	private CsvExportDialog csvExportDialog;
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
+	private UpdateDialog updateDialog;
+
+	//Tabs
+	private ValuesTab valuesTab;
+	private MaterialsTab materialsTab;
+	private LoadoutsTab loadoutsTab;
+	private RoutingTab routingDialogue;
+	private MarketOrdersTab marketOrdersTab;
+	private IndustryJobsTab industryJobsTab;
+	private AssetsTab assetsTab;
+	private OverviewTab overviewTab;
+
+	//Settings Panels
 	private GeneralSettingsPanel generalSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
@@ -118,17 +124,11 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private WindowSettingsPanel windowSettingsPanel;
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
 	private TableSettingsPanel tableSettingsPanel;
+
+
 	private ProgramUpdateChecker programUpdateChecker;
-
-	private UpdateDialog updateDialog;
-
 	private Timer timer;
 	private Updatable updatable;
-
-	//Panels
-	private AssetsTab assetsTab;
-	private StatusPanel statusPanel;
-	private ToolPanel toolPanel;
 
 	//Data
 	private Settings settings;
@@ -179,7 +179,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		valuesTab = new ValuesTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
-		routingDialogue = new RoutingDialogue(this);
+		routingDialogue = new RoutingTab(this);
 		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
@@ -261,14 +261,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	 */
 	protected Program(boolean load) { }
 
-	public void addPanel(JProgramPanel jProgramPanel){
-		if (jProgramPanel instanceof StatusPanel){
-			statusPanel = (StatusPanel) jProgramPanel;
-		} else if (jProgramPanel instanceof ToolPanel){
-			toolPanel = (ToolPanel) jProgramPanel;
-		}
-	}
-	
 	public void filtersChanged(){
 		this.getFiltersManagerDialog().filtersChanged();
 		this.getSaveFilterDialog().filtersChanged();
@@ -361,10 +353,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		return assetsTab;
 	}
 	public ToolPanel getToolPanel(){
-		return toolPanel;
+		return assetsTab.getToolPanel();
 	}
 	public StatusPanel getStatusPanel(){
-		return statusPanel;
+		return this.getMainWindow().getStatusPanel();
 	}
 	public EventList<EveAsset> getEveAssetEventList() {
 		return eveAssetEventList;
@@ -434,7 +426,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			mainWindow.addTab(overviewTab);
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			routingDialogue = new RoutingDialogue(this);
+			routingDialogue = new RoutingTab(this);
 			// XXX Although the line above should be removed for production, removing it makes
 			// XXX the GUI flicker.
 			mainWindow.addTab(routingDialogue);
