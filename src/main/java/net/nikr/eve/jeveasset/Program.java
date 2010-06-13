@@ -109,7 +109,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private ValuesTab valuesTab;
 	private MaterialsTab materialsTab;
 	private LoadoutsTab loadoutsTab;
-	private RoutingTab routingDialogue;
+	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
 	private IndustryJobsTab industryJobsTab;
 	private AssetsTab assetsTab;
@@ -179,7 +179,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		valuesTab = new ValuesTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
-		routingDialogue = new RoutingTab(this);
+		routingTab = new RoutingTab(this);
 		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
@@ -426,10 +426,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			mainWindow.addTab(overviewTab);
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			routingDialogue = new RoutingTab(this);
-			// XXX Although the line above should be removed for production, removing it makes
-			// XXX the GUI flicker.
-			mainWindow.addTab(routingDialogue);
+			// XXX Although the line above should be removed for production, removing it makes the GUI flicker.
+			routingTab = new RoutingTab(this);
+			mainWindow.addTab(routingTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {

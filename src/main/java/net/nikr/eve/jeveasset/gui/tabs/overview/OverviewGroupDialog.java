@@ -25,15 +25,17 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
+import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.images.ImageGetter;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 
@@ -45,9 +47,10 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 
 	private JTextField jName;
 	private JLabel jNameLabel;
-	private JCheckBox jStation;
-	private JCheckBox jSystem;
-	private JCheckBox jRegion;
+	private JRadioButton jNone;
+	private JRadioButton jStation;
+	private JRadioButton jSystem;
+	private JRadioButton jRegion;
 	private JButton jOK;
 	private JButton jCancel;
 
@@ -60,17 +63,21 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 	public OverviewGroupDialog(Program program, OverviewTab overviewTab) {
 		super(program, "", ImageGetter.getImage("groups.png"));
 		this.overviewTab = overviewTab;
-		JLabel jSelect = new JLabel("Select locations:");
-
+		
 		jNameLabel = new JLabel();
 
-		jStation = new JCheckBox();
-		jSystem = new JCheckBox();
-		jRegion = new JCheckBox();
+		jNone = new JRadioButton("None");
+		jStation = new JRadioButton();
+		jSystem = new JRadioButton();
+		jRegion = new JRadioButton();
+
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(jNone);
+		bg.add(jStation);
+		bg.add(jSystem);
+		bg.add(jRegion);
 
 		jName = new JTextField();
-
-
 
 		jOK = new JButton("OK");
 		jOK.setActionCommand(ACTION_OK);
@@ -84,6 +91,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			layout.createParallelGroup()
 				
 				.addComponent(jName, 250, 250, Short.MAX_VALUE)
+				.addComponent(jNone)
 				.addComponent(jSystem)
 				.addComponent(jRegion)
 				.addComponent(jStation)
@@ -100,7 +108,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			layout.createSequentialGroup()
 				.addComponent(jNameLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				//.addComponent(jSelect, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jNone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jStation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRegion, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -117,15 +125,13 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 		this.system = system;
 		this.region = region;
 		this.overviewGroup = overviewGroup;
-		jStation.setSelected(false);
-		jSystem.setSelected(false);
-		jRegion.setSelected(false);
-		if (overviewGroup != null){
+		jNone.setSelected(true);
+		if (overviewGroup != null){ //Edit or Rename group
 			for (int a = 0; a < overviewGroup.getLocations().size(); a++){
-				String location = overviewGroup.getLocations().get(a);
-				if (location.equals(station)) jStation.setSelected(true);
-				if (location.equals(system)) jSystem.setSelected(true);
-				if (location.equals(region)) jRegion.setSelected(true);
+				OverviewLocation location = overviewGroup.getLocations().get(a);
+				if (location.getName().equals(station)) jStation.setSelected(true);
+				if (location.getName().equals(system)) jSystem.setSelected(true);
+				if (location.getName().equals(region)) jRegion.setSelected(true);
 			}
 			if (station == null && system == null && region == null){
 				this.getDialog().setTitle("Rename Group");
@@ -143,7 +149,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				jName.setVisible(false);
 			}
 			
-		} else {
+		} else { //Create new group
 			this.getDialog().setTitle("New Group");
 			jNameLabel.setText("Group Name:");
 			jNameLabel.setFont(jName.getFont());
@@ -160,7 +166,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 		if (system != null){
 			jSystem.setVisible(true);
 			jSystem.setText(system+" (System)");
-			
+
 		} else {
 			jSystem.setVisible(false);
 		}
@@ -217,9 +223,9 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				}
 				String group = jName.getText();
 				overviewGroup = new OverviewGroup(group);
-				if (jStation.isSelected()) overviewGroup.add(station);
-				if (jSystem.isSelected()) overviewGroup.add(system);
-				if (jRegion.isSelected()) overviewGroup.add(region);
+				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
+				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
+				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
 				program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 			} else { //Edit/Rename group
 				if (!jName.getText().equals(overviewGroup.getName())){
@@ -241,12 +247,12 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 					overviewGroup.setName(jName.getText());
 					program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 				}
-				overviewGroup.remove(system);
-				overviewGroup.remove(station);
-				overviewGroup.remove(region);
-				if (jStation.isSelected()) overviewGroup.add(station);
-				if (jSystem.isSelected()) overviewGroup.add(system);
-				if (jRegion.isSelected()) overviewGroup.add(region);
+				overviewGroup.remove(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
+				overviewGroup.remove(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
+				overviewGroup.remove(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
+				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
+				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
+				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
 			}
 			overviewTab.updateTableData();
 			this.setVisible(false);

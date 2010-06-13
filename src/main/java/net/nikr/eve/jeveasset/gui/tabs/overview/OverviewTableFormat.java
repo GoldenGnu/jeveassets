@@ -105,7 +105,7 @@ public class OverviewTableFormat implements AdvancedTableFormat<Overview> {
 		if (columnName.equals("Name")) return String.class;
 		if (columnName.equals("Solar System")) return String.class;
 		if (columnName.equals("Region")) return String.class;
-		if (columnName.equals("Volume")) return Long.class;
+		if (columnName.equals("Volume")) return Float.class;
 		if (columnName.equals("Count")) return Long.class;
 		if (columnName.equals("Average Value")) return Double.class;
 		if (columnName.equals("Value")) return Double.class;

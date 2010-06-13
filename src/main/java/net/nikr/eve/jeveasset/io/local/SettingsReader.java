@@ -31,6 +31,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
+import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -185,7 +186,8 @@ public class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < locationNodes.getLength(); b++){
 				Element locationNode = (Element) locationNodes.item(b);
 				String location = AttributeGetters.getString(locationNode, "name");
-				overviewGroup.add(location);
+				String type = AttributeGetters.getString(locationNode, "type");
+				overviewGroup.add( new OverviewLocation(location, type));
 			}
 		}
 	}

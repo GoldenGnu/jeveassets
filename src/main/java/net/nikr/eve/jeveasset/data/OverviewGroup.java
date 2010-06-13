@@ -26,23 +26,23 @@ import java.util.List;
 
 
 public class OverviewGroup {
-	private List<String> locations;
+	private List<OverviewLocation> locations;
 	private String name;
 
 	public OverviewGroup(String name) {
 		this.name = name;
-		locations = new ArrayList<String>();
+		locations = new ArrayList<OverviewLocation>();
 	}
 
-	public void add(String location){
+	public void add(OverviewLocation location){
 		locations.add(location);
 	}
 
-	public void remove(String location){
+	public void remove(OverviewLocation location){
 		locations.remove(location);
 	}
 
-	public List<String> getLocations() {
+	public List<OverviewLocation> getLocations() {
 		return locations;
 	}
 
