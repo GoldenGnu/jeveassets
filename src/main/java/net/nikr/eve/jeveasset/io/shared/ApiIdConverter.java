@@ -228,6 +228,40 @@ public class ApiIdConverter {
 		}
 	}
 
+	public static boolean locationTest(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+		Location location = null;
+		ApiStation apiStation = null;
+
+		//Offices
+		if (locationID >= 66000000) {
+			if (locationID < 66014933) {
+				locationID = locationID - 6000001;
+			} else {
+				locationID = locationID - 6000000;
+			}
+		}
+
+		//Conquerable Stations
+		apiStation = conquerableStations.get(locationID);
+		if (apiStation != null) {
+			location = locations.get(apiStation.getSolarSystemID());
+			if (location != null) {
+				return true;
+			}
+		}
+
+		//locations.xml (staStations && mapDenormalize)
+		location = locations.get(locationID);
+		if (location != null) {
+			return true;
+		}
+
+		if (parentAsset != null) {
+			return true;
+		}
+		return false;
+	}
+
 	public static String location(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
@@ -369,7 +403,7 @@ public class ApiIdConverter {
 		}
 		return -1;
 	}
-
+	//PENDING Make Test for ApiIdConverter.solarSystem(...)
 	public static String solarSystem(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;

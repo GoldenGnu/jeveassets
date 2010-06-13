@@ -31,8 +31,12 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiConverter {
+
+	private static Logger LOG = LoggerFactory.getLogger(ApiConverter.class);;
 
 	public static List<EveAsset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, boolean bCorp, Settings settings){
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
@@ -101,7 +105,7 @@ public class ApiConverter {
 	
 	private static EveAsset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Human human, boolean bCorp, Settings settings){
 		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
-		int locationID = (int) apiIndustryJob.getInstalledItemLocationID();
+		int locationID = (int) apiIndustryJobLocationId(apiIndustryJob, settings);
 		long count = apiIndustryJob.getInstalledItemQuantity();
 		long id = apiIndustryJob.getInstalledItemID();
 		int nFlag = apiIndustryJob.getInstalledItemFlag();
@@ -118,10 +122,9 @@ public class ApiConverter {
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
 		String meta = ApiIdConverter.meta(typeID, settings.getItems());
 		String owner = ApiIdConverter.owner(human, bCorp);
-		String location = apiIndustryJobLocation(apiIndustryJob, settings);
+		String location = ApiIdConverter.location(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		//FIXME This could be wrong...
 		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
@@ -195,19 +198,17 @@ public class ApiConverter {
 
 	private static IndustryJob apiIndustryJobToIndustryJob(ApiIndustryJob apiIndustryJob, String owner, Settings settings){
 		String name = ApiIdConverter.name((int)apiIndustryJob.getInstalledItemTypeID(), settings.getItems());
-		//FIXME This conversion is not working...
-		String location = apiIndustryJobLocation(apiIndustryJob, settings);
+		int locationID = (int)apiIndustryJobLocationId(apiIndustryJob, settings);
+		String location = ApiIdConverter.location(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		return new IndustryJob(apiIndustryJob, name, location, owner);
 	}
 	
-	private static String apiIndustryJobLocation(ApiIndustryJob apiIndustryJob, Settings settings){
-		String location = ApiIdConverter.location((int)apiIndustryJob.getInstalledItemLocationID(), null, settings.getConquerableStations(), settings.getLocations());
-		if (location.contains("Error !")){
-			location = ApiIdConverter.location((int)apiIndustryJob.getContainerLocationID(), null, settings.getConquerableStations(), settings.getLocations());
-		}
-		if (location.contains("Error !")){
-			location = "Unknown";
-		}
-		return location;
+	private static long apiIndustryJobLocationId(ApiIndustryJob apiIndustryJob, Settings settings){
+		boolean location = ApiIdConverter.locationTest((int)apiIndustryJob.getInstalledItemLocationID(), null, settings.getConquerableStations(), settings.getLocations());
+		if (location) return apiIndustryJob.getInstalledItemLocationID();
+		location = ApiIdConverter.locationTest((int)apiIndustryJob.getContainerLocationID(), null, settings.getConquerableStations(), settings.getLocations());
+		if (location) return apiIndustryJob.getContainerLocationID();
+		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: "+apiIndustryJob.getInstalledItemLocationID()+" - ContainerLocationID: "+apiIndustryJob.getContainerLocationID());
+		return -1;
 	}
 }
