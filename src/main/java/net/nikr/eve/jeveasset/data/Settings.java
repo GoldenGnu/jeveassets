@@ -307,6 +307,7 @@ public class Settings{
 			eventListAssets = new ArrayList<EveAsset>();
 			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
+			List<String> corporations = new ArrayList<String>();
 			for (int a = 0; a < accounts.size(); a++){
 				Account account = accounts.get(a);
 				List<Human> humans = account.getHumans();
@@ -324,7 +325,11 @@ public class Settings{
 					addAssets(industryJobCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
 					//Assets (Must be after Industry Jobs, for bpos to be marked)
 					addAssets(human.getAssets(), human.isShowAssets(), human.isUpdateCorporationAssets());
-					addAssets(human.getAssetsCorporation(), human.isShowAssets(), human.isUpdateCorporationAssets());
+					//Only add corporation assets once...
+					if (!corporations.contains(human.getCorporation()) && !human.getAssetsCorporation().isEmpty()){
+						corporations.add(human.getCorporation());
+						addAssets(human.getAssetsCorporation(), human.isShowAssets(), human.isUpdateCorporationAssets());
+					}
 				}
 			}
 		}
