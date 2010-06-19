@@ -40,6 +40,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.gui.dialogs.account.SeparatorTableCell;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
@@ -104,6 +105,7 @@ public class JAutoColumnTable extends JTable {
 		maxWidth = component.getPreferredSize().width;
 		for (int a = 0; a < this.getRowCount(); a++){
 			renderer = this.getCellRenderer(a, column.getModelIndex());
+			if (renderer instanceof SeparatorTableCell) continue;
 			component = renderer.getTableCellRendererComponent(this, this.getValueAt(a, column.getModelIndex()), false, false, a, column.getModelIndex());
 			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
 		}

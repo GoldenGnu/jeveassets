@@ -40,8 +40,7 @@ public class ApiConverter {
 
 	public static List<EveAsset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, boolean bCorp, Settings settings){
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
-		for (int a = 0; a < marketOrders.size(); a++){
-			ApiMarketOrder apiMarketOrder = marketOrders.get(a);
+		for (ApiMarketOrder apiMarketOrder : marketOrders){
 			if (apiMarketOrder.getBid() == 0
 					&& apiMarketOrder.getOrderState() == 0
 					&& apiMarketOrder.getVolRemaining() > 0
@@ -83,8 +82,7 @@ public class ApiConverter {
 
 	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, boolean bCorp, Settings settings){
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
-		for (int a = 0; a < industryJobs.size(); a++){
-			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
+		for (ApiIndustryJob apiIndustryJob : industryJobs){
 			long id = apiIndustryJob.getInstalledItemID();
 			if (apiIndustryJob.getCompleted() == 0){
 				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, bCorp, settings);
@@ -138,8 +136,7 @@ public class ApiConverter {
 		return eveAssets;
 	}
 	private static void apiAsset(Human human, List<ApiAsset> assets, List<EveAsset> eveAssets, EveAsset parentEveAsset, boolean bCorp, Settings settings){
-		for (int a = 0; a < assets.size(); a++){
-			ApiAsset asset = assets.get(a);
+		for (ApiAsset asset : assets){
 			EveAsset eveAsset = apiAssetsToEveAsset(human, asset, parentEveAsset, bCorp, settings);
 			if (parentEveAsset == null){
 				eveAssets.add(eveAsset);
@@ -178,8 +175,8 @@ public class ApiConverter {
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		for (int a = 0; a < apiMarketOrders.size(); a++){
-			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrders.get(a), settings));
+		for (ApiMarketOrder apiMarketOrder : apiMarketOrders){
+			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrder, settings));
 		}
 		return marketOrders;
 	}
@@ -190,8 +187,8 @@ public class ApiConverter {
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
-		for (int a = 0; a < apiIndustryJobs.size(); a++){
-			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJobs.get(a), owner, settings));
+		for (ApiIndustryJob apiIndustryJob : apiIndustryJobs){
+			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJob, owner, settings));
 		}
 		return industryJobs;
 	}

@@ -31,14 +31,16 @@ public class Account {
 	private String apiKey;
 	private List<Human> humans;
 	private Date charactersNextUpdate;
+	private String name;
 
 	public Account(int userID, String apiKey) {
-		this(userID, apiKey, Settings.getGmtNow());
+		this(userID, apiKey, String.valueOf(userID), Settings.getGmtNow());
 	}
 
-	public Account(int userID, String apiKey, Date charactersNextUpdate) {
+	public Account(int userID, String apiKey, String name, Date charactersNextUpdate) {
 		this.userID = userID;
 		this.apiKey = apiKey;
+		this.name = name;
 		this.charactersNextUpdate = charactersNextUpdate;
 		//Default
 		humans = new ArrayList<Human>();
@@ -58,6 +60,14 @@ public class Account {
 
 	public void setCharactersNextUpdate(Date charactersNextUpdate) {
 		this.charactersNextUpdate = charactersNextUpdate;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<Human> getHumans() {

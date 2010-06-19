@@ -281,6 +281,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 							}
 						}
 					} else {
+						apiManager.forceUpdate();
 						program.getSettings().getAccounts().add(account);
 					}
 					apiManager.updateTable();

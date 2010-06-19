@@ -21,78 +21,67 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.swing.EventTableModel;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
 
-public class AccountManagerDialog extends JDialogCentered implements ActionListener, TableModelListener  {
+public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
 
-	public final static String ACTION_ADD = "ACTION_ADD";
-	public final static String ACTION_DONE = "ACTION_DONE";
-	public final static String ACTION_REMOVE = "ACTION_REMOVE";
-	public final static String ACTION_EDIT = "ACTION_EDIT";
-	public final static String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
-	public final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
-	public final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
-	public final static String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
-	public final static String ACTION_CORPORATION_CHECK_ALL = "ACTION_CORPORATION_CHECK_ALL";
-	public final static String ACTION_CORPORATION_UNCHECK_ALL = "ACTION_CORPORATION_UNCHECK_ALL";
-	public final static String ACTION_CORPORATION_CHECK_SELECTED = "ACTION_CORPORATION_CHECK_SELECTED";
-	public final static String ACTION_CORPORATION_UNCHECK_SELECTED = "ACTION_CORPORATION_UNCHECK_SELECTED";
+	private final static String ACTION_ADD = "ACTION_ADD";
+	private final static String ACTION_CLOSE = "ACTION_CLOSE";
+	private final static String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
+	private final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
+	private final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
+	private final static String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
+	private final static String ACTION_CORPORATION_CHECK_ALL = "ACTION_CORPORATION_CHECK_ALL";
+	private final static String ACTION_CORPORATION_UNCHECK_ALL = "ACTION_CORPORATION_UNCHECK_ALL";
+	private final static String ACTION_CORPORATION_CHECK_SELECTED = "ACTION_CORPORATION_CHECK_SELECTED";
+	private final static String ACTION_CORPORATION_UNCHECK_SELECTED = "ACTION_CORPORATION_UNCHECK_SELECTED";
 
 	//GUI
 	private AccountImportDialog accountImportDialog;
-	private DefaultTableModel accountTableModel;
-	private JScrollPane jAccountScrollPanel;
-	private DefaultTableModel humanTableModel;
-	private JTable jHumanTable;
-	private JTable jAccountTable;
-	private JButton jRemove;
-	private JButton jEdit;
+	private JSeparatorTable jTable;
 	private JButton jAdd;
 	private JDropDownButton jAssets;
 	private JDropDownButton jCorporation;
-	private JButton jDone;
+	private JButton jClose;
+	private EventList<Human> eventList;
+	private EventTableModel<Human> tableModel;
 
-	private Map<Long, Boolean> shownAssets;
-	private Map<Long, Boolean> shownAssetsCopy;
-	private Map<Long, Boolean> corpAssets;
-	private Map<Long, Boolean> corpAssetsCopy;
+	private Map<Human, Boolean> shownAssets;
+	private Map<Human, Boolean> corpAssets;
+	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(Program program, Image image) {
 		super(program, "Accounts Management", image);
 
 		accountImportDialog = new AccountImportDialog(this, program);
 
-		//Api Table
-		String[] columnNames = {"User", "Full API Key"};
-		accountTableModel = new JUneditableTableModel(columnNames);
-		jAccountTable = new JTable( accountTableModel );
-		jAccountTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		jAccountTable.getTableHeader().setReorderingAllowed(false);
-		jAccountTable.getTableHeader().setResizingAllowed(false);
-		jAccountScrollPanel = new JScrollPane(jAccountTable);
-		jPanel.add(jAccountScrollPanel);
+		eventList = new BasicEventList<Human>();
+
+		SeparatorList<Human> separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
+		HumanTableFormat humanTableFormat = new HumanTableFormat();
+		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
+		jTable = new JSeparatorTable(tableModel, humanTableFormat.getColumnNames());
+		jTable.setSeparatorRenderer(new SeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorEditor(new SeparatorTableCell(this, jTable, separatorList));
 
 		//Add Button
 		jAdd = new JButton("Add");
@@ -100,193 +89,146 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jAdd.addActionListener(this);
 		jPanel.add(jAdd);
 
-		//Edit Button
-		jEdit = new JButton("Edit");
-		jEdit.setActionCommand(ACTION_EDIT);
-		jEdit.addActionListener(this);
-		jPanel.add(jEdit);
-
-		//Remove Button
-		jRemove = new JButton("Remove");
-		jRemove.setActionCommand(ACTION_REMOVE);
-		jRemove.addActionListener(this);
-		jPanel.add(jRemove);
-
-		jAssets = new JDropDownButton("Personal");
+		jAssets = new JDropDownButton("Show Assets");
 		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
 		jPanel.add(jAssets);
 
 		JMenuItem menuItem;
 
-		menuItem = new JMenuItem("Check All Asssets");
+		menuItem = new JMenuItem("Check All");
 		menuItem.setActionCommand(ACTION_ASSETS_CHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
-		menuItem = new JMenuItem("Uncheck All Asssets");
+		menuItem = new JMenuItem("Uncheck All");
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
 		jAssets.addSeparator();
 
-		menuItem = new JMenuItem("Check Selected Asssets");
+		menuItem = new JMenuItem("Check Selected");
 		menuItem.setActionCommand(ACTION_ASSETS_CHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck Selected Asssets");
+		menuItem = new JMenuItem("Uncheck Selected");
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
-		jCorporation = new JDropDownButton("Corp.");
+		jCorporation = new JDropDownButton("Show Corp.");
 		//jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
 
-		menuItem = new JMenuItem("Check All Corporations");
+		menuItem = new JMenuItem("Check All");
 		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_ALL);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck All Corporations");
+		menuItem = new JMenuItem("Uncheck All");
 		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_ALL);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
 		jCorporation.addSeparator();
 
-		menuItem = new JMenuItem("Check Selected Corporations");
+		menuItem = new JMenuItem("Check Selected");
 		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck Selected Corporations");
+		menuItem = new JMenuItem("Uncheck Selected");
 		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
 		jPanel.add(jCorporation);
 
-		//Human/Characters Table
-		String[] characterColumnNames = {"User", "Name", "Corporation", "Corporation Assets", "Show Assets"};
-		humanTableModel = new JUneditableTableModel(characterColumnNames);
-		humanTableModel.addTableModelListener(this);
-		jHumanTable = new JTable( humanTableModel );
-		jHumanTable.getTableHeader().setReorderingAllowed(false);
-		JScrollPane jCharacterScrollPanel = new JScrollPane(jHumanTable);
-		jPanel.add(jCharacterScrollPanel);
-
 		//Done Button
-		jDone = new JButton("Done");
-		jDone.setActionCommand(ACTION_DONE);
-		jDone.addActionListener(this);
-		jPanel.add(jDone);
+		jClose = new JButton("Close");
+		jClose.setActionCommand(ACTION_CLOSE);
+		jClose.addActionListener(this);
+		jPanel.add(jClose);
 
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup()
-				.addComponent(jAccountScrollPanel, 550, 550, 550)
-				.addComponent(jCharacterScrollPanel, 550, 550, 550)
-			)
-			.addGroup(layout.createParallelGroup()
-				.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				.addComponent(jRemove, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				.addComponent(jAssets, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				.addComponent(jCorporation, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				.addComponent(jDone, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-			)
+			layout.createParallelGroup()
+				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+					.addComponent(jTable.getScrollPanel(), 550, 550, 550)
+					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addGap(0, 0, Short.MAX_VALUE)
+					.addComponent(jAssets, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
+					.addComponent(jCorporation, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jAccountScrollPanel, 142, 142, 142)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jCharacterScrollPanel, 142, 142, 142)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					)
-				)
-				.addComponent(jDone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jTable.getScrollPanel(), 400, 400, 400)
+				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				
 		);
-		updateTable();
+	}
+
+	public void forceUpdate(){
+		forceUpdate = true;
 	}
 
 	public void updateTable(){
-		//Save HumanTable selected rows
-		List<Long> humanSelectedIds = new ArrayList<Long>();
-		for (int a = 0; a < humanTableModel.getRowCount(); a++){
-			if (jHumanTable.getSelectionModel().isSelectedIndex(a)){
-				humanSelectedIds.add( Long.valueOf( (String) jHumanTable.getValueAt(a, 0) ) );
-			}
-		}
-		//Clear rows
-		accountTableModel.setRowCount(0);
-		humanTableModel.setRowCount(0);
-
 		//Update rows (Add all rows)
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++){
-			Account account = accounts.get(a);
-			accountTableModel.addRow( new String[] {String.valueOf(account.getUserID() ), account.getApiKey()});
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++){
-				Human human = humans.get(b);
-				humanTableModel.addRow( new Object[] {String.valueOf(human.getCharacterID()), human.getName(), human.getCorporation(), human.isUpdateCorporationAssets(), human.isShowAssets()} );
-				if (humanSelectedIds.contains(human.getCharacterID())){ //Restore selection
-					jHumanTable.getSelectionModel().addSelectionInterval(humanTableModel.getRowCount()-1, humanTableModel.getRowCount()-1);
-				}
-
+		shownAssets = new HashMap<Human, Boolean>();
+		corpAssets = new HashMap<Human, Boolean>();
+		eventList.getReadWriteLock().writeLock().lock();
+		eventList.clear();
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				eventList.add(human);
+				shownAssets.put(human, human.isShowAssets());
+				corpAssets.put(human, human.isUpdateCorporationAssets());
 			}
 		}
-		if (jAccountTable.getRowCount() > 0){
-			jAccountTable.setRowSelectionInterval(0, 0);
-			jRemove.setEnabled(true);
-			jEdit.setEnabled(true);
+		eventList.getReadWriteLock().writeLock().unlock();
+		if (eventList.size() > 1){
+			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCorporation.setEnabled(true);
 		} else {
-			jRemove.setEnabled(false);
-			jEdit.setEnabled(false);
 			jAssets.setEnabled(false);
 			jCorporation.setEnabled(false);
 		}
 	}
 
 	private void checkAssets(boolean selected, boolean check, boolean assets){
-		List<Long> ids = new ArrayList<Long>();
 		if (selected){
-			int[] selectedRows = jHumanTable.getSelectedRows();
+			int[] selectedRows = jTable.getSelectedRows();
 			for (int a = 0; a < selectedRows.length; a++){
-				String s = (String) jHumanTable.getValueAt(selectedRows[a], 0);
-				ids.add( Long.valueOf(s) );
-			}
-		}
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int b = 0; b < accounts.size(); b++){
-			Account account = accounts.get(b);
-			List<Human> humans = account.getHumans();
-			for (int c = 0; c < humans.size(); c++){
-				Human human = humans.get(c);
-				if (ids.contains(human.getCharacterID()) || !selected){
+				Object o = tableModel.getElementAt(selectedRows[a]);
+				if (o instanceof Human){
+					Human human = (Human) o;
 					if (assets){
-						shownAssetsCopy.put(human.getCharacterID(), check);
 						human.setShowAssets(check);
 					} else {
-						corpAssetsCopy.put(human.getCharacterID(), check);
+						human.setUpdateCorporationAssets(check);
+					}
+				}
+			}
+		} else {
+			for (Account account : program.getSettings().getAccounts()){
+				for (Human human : account.getHumans()){
+					if (assets){
+						human.setShowAssets(check);
+					} else {
 						human.setUpdateCorporationAssets(check);
 					}
 				}
 			}
 		}
-		updateTable();
 	}
 
 	@Override
@@ -296,25 +238,31 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected JButton getDefaultButton() {
-		return jDone;
+		return jClose;
 	}
 
 	@Override
-	protected void windowShown() {
-		jAccountTable.getColumnModel().getColumn(0).setPreferredWidth(65);
-		jAccountTable.getColumnModel().getColumn(1).setPreferredWidth(jAccountScrollPanel.getViewportBorderBounds().width - 65); //455
-	}
+	protected void windowShown() {}
 
 	@Override
 	protected void windowActivated() {}
 
 	@Override
 	protected void save() {
-		if (!shownAssetsCopy.equals(shownAssets)){
+		boolean showAssets = false;
+		boolean showCorporation = false;
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				if (human.isShowAssets() != shownAssets.get(human)) showAssets = true;
+				if (human.isUpdateCorporationAssets() != corpAssets.get(human)) showCorporation = true;
+			}
+		}
+		System.out.println("a: "+showAssets+" c: "+showCorporation+" f: "+forceUpdate);
+		if (showAssets || showCorporation || forceUpdate){
+			System.out.println("updating...");
 			program.updateEventList();
 		}
-		if (!corpAssetsCopy.equals(corpAssets)){
-			program.updateEventList();
+		if (showCorporation){
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select: Menu > Update > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
@@ -323,20 +271,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			shownAssets = new HashMap<Long, Boolean>();
-			corpAssets = new HashMap<Long, Boolean>();
-			List<Account> accounts = program.getSettings().getAccounts();
-			for (int a = 0; a < accounts.size(); a++){
-				Account account = accounts.get(a);
-				List<Human> humans = account.getHumans();
-				for (int c = 0; c < humans.size(); c++){
-					Human human = humans.get(c);
-					shownAssets.put(human.getCharacterID(), human.isShowAssets());
-					corpAssets.put(human.getCharacterID(), human.isUpdateCorporationAssets());
-				}
-			}
-			shownAssetsCopy = new HashMap<Long, Boolean>(shownAssets);
-			corpAssetsCopy = new HashMap<Long, Boolean>(corpAssets);
+			forceUpdate = false;
 			updateTable();
 		}
 		super.setVisible(b);
@@ -347,54 +282,32 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			accountImportDialog.setVisible(true);
 		}
-		if (ACTION_DONE.equals(e.getActionCommand())) {
+		if (ACTION_CLOSE.equals(e.getActionCommand())) {
 			save();
 		}
-		if (ACTION_EDIT.equals(e.getActionCommand())) {
-			int row = jAccountTable.getSelectedRow();
-			String userID = (String) jAccountTable.getValueAt(row, 0);
-			String apiKey = (String) jAccountTable.getValueAt(row, 1);
-			accountImportDialog.show(userID, apiKey);
+		if (SeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
+			int index = jTable.getSelectedRow();
+			Object o = tableModel.getElementAt(index);
+			if (o instanceof SeparatorList.Separator<?>){
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+				Human human = (Human) separator.first();
+				Account account = human.getParentAccount();
+				accountImportDialog.show(String.valueOf(account.getUserID()), account.getApiKey());
+			}
 		}
-		if (ACTION_REMOVE.equals(e.getActionCommand())) {
-			int selectedRow = jAccountTable.getSelectedRow();
-			if (selectedRow == -1){
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Nothing to remove...", "Remove Api Key", JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			int userID = Integer.parseInt((String)accountTableModel.getValueAt(selectedRow, 0));
-			String apiKey = (String) accountTableModel.getValueAt(selectedRow, 1);
-
-			List<Account> accounts =  program.getSettings().getAccounts();
-
-			Account tempAccount = new Account(userID, apiKey);
-			String users = "";
-			for (int a = 0; a < accounts.size(); a++){
-				Account account = accounts.get(a);
-				if (account.equals(tempAccount)){
-					List<Human> humans = account.getHumans();
-					if (humans.size() > 1){
-						users = "Characters Removed:\r\n";
-						for (int b = 0; b < humans.size(); b++){
-							Human human = humans.get(b);
-							users = users + "  " + human.getName()+"\r\n";
-						}
-					} else {
-						users = "Character removed: ";
-						for (int b = 0; b < humans.size(); b++){
-							Human human = humans.get(b);
-							users = users + human.getName()+"\r\n";
-						}
-					}
+		if (SeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
+			int index = jTable.getSelectedRow();
+			Object o = tableModel.getElementAt(index);
+			if (o instanceof SeparatorList.Separator<?>){
+				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete Account?", "Delete Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (nReturn == JOptionPane.YES_OPTION){
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+					Human human = (Human) separator.first();
+					Account account = human.getParentAccount();
+					program.getSettings().getAccounts().remove( account );
+					forceUpdate();
+					updateTable();
 				}
-			}
-
-			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Remove API Key: "+userID+"?\r\n"+users, "Remove Api Key", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.YES_OPTION){
-				accountTableModel.removeRow(selectedRow);
-				program.getSettings().getAccounts().remove( tempAccount );
-				updateTable();
-				program.updateEventList();
 			}
 		}
 		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())){
@@ -427,37 +340,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		if (ACTION_CORPORATION_UNCHECK_SELECTED.equals(e.getActionCommand())){
 			checkAssets(true, false, false);
-		}
-	}
-	
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		if (e.getType() == TableModelEvent.UPDATE){
-			int rowStart = e.getFirstRow();
-			int rowEnd = e.getLastRow();
-			int column = e.getColumn();
-			for (int a = rowStart; a <= rowEnd; a++){
-				boolean booleanColumn = (Boolean) humanTableModel.getValueAt(a, column);
-				String characterID = (String) humanTableModel.getValueAt(a, 0);
-				List<Account> accounts = program.getSettings().getAccounts();
-				for (int b = 0; b < accounts.size(); b++){
-					Account account = accounts.get(b);
-					List<Human> humans = account.getHumans();
-					for (int c = 0; c < humans.size(); c++){
-						Human human = humans.get(c);
-						if (Integer.valueOf(characterID) == human.getCharacterID()){
-							if (column == 3){
-								corpAssetsCopy.put(human.getCharacterID(), (Boolean) booleanColumn);
-								human.setUpdateCorporationAssets((Boolean) booleanColumn);
-							}
-							if (column == 4){
-								shownAssetsCopy.put(human.getCharacterID(), (Boolean) booleanColumn);
-								human.setShowAssets((Boolean) booleanColumn);
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 }

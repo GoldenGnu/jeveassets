@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 
 public class LocationsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
+	private final static Logger LOG = LoggerFactory.getLogger(LocationsReader.class);
 
 	public static void load(Settings settings){
 		try {

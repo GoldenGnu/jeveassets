@@ -26,42 +26,31 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageGetter {
+
+	private static Logger LOG = LoggerFactory.getLogger(ImageGetter.class);
 
 	public ImageGetter() {
 	}
 
 	public static ImageIcon getIcon(String s){
-		java.net.URL imgURL = ImageGetter.class.getResource(s);
-		if (imgURL != null) {
-			return new ImageIcon(imgURL);
-		} else {
-			return null;
-		}
+		return new ImageIcon(getBufferedImage(s));
 	}
 
 	public static Image getImage(String s) {
-		try {
-			java.net.URL imgURL = ImageGetter.class.getResource(s);
-			if (imgURL != null) {
-				return ImageIO.read(imgURL);
-			}
-		} catch (IOException ex) {
-
-		}
-		return null;
+		return getBufferedImage(s);
+		
 	}
 
 	public static BufferedImage getBufferedImage(String s) {
 		try {
 			java.net.URL imgURL = ImageGetter.class.getResource(s);
-			if (imgURL != null) {
-				return ImageIO.read(imgURL);
-			}
+			return ImageIO.read(imgURL);
 		} catch (IOException ex) {
-
+			LOG.warn("icon: "+s+" not found");
 		}
 		return null;
 	}

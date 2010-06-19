@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 public class Settings{
 
-	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
+	private final static Logger LOG = LoggerFactory.getLogger(Settings.class);
 
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";

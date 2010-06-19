@@ -21,40 +21,16 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import javax.swing.table.DefaultTableModel;
+import java.util.Comparator;
+import net.nikr.eve.jeveasset.data.Human;
 
 
-public class JUneditableTableModel extends DefaultTableModel {
+public class SeparatorListComparator implements Comparator<Human> {
 
-	
-	
-	public JUneditableTableModel(Object[] columnNames) {
-		super(columnNames, 0);
-	}
-	
 	@Override
-	public boolean isCellEditable(int row, int column){
-		if (getColumnClass(column) == Boolean.class){
-			return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		if (this.getColumnCount() > 0){
-			Object o = this.getValueAt(0, columnIndex);
-			if (o instanceof Integer){
-				return Integer.class;
-			}
-			if (o instanceof Long){
-				return Long.class;
-			}
-			if (o instanceof Boolean){
-				return Boolean.class;
-			}
-		}
-		return Object.class;
+	public int compare(Human o1, Human o2) {
+		Integer userId1 = o1.getParentAccount().getUserID();
+		return userId1.compareTo(o2.getParentAccount().getUserID());
 	}
 
 }

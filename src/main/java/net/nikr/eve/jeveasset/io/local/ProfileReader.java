@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class ProfileReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
 
 	public static boolean load(Settings settings){
 		backwardCompatibility();

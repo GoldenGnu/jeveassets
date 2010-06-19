@@ -309,7 +309,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		for (int a = 0; a < assets.size(); a++){
 			EveAsset eveAsset = assets.get(a);
-			//XXX We ignoring station containers (as they are not really cargo)
+			//XXX Overview: We ignoring station containers (as they are not really cargo)
 			if (eveAsset.getGroup().equals("Audit Log Secure Container")) continue;
 
 			//Ingnore Station Services (Count 1, Volume 1)
