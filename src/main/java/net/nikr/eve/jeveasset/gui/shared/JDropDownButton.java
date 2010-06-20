@@ -73,10 +73,10 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 
 	public JDropDownButton(String text, Icon icon, int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
 		super(text, icon);
-		if (popupHorizontalAlignment != LEFT || popupHorizontalAlignment != RIGHT || popupHorizontalAlignment != CENTER){
+		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER){
 			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
-		if (popupVerticalAlignment != TOP || popupVerticalAlignment != BOTTOM || popupVerticalAlignment != CENTER){
+		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER){
 			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
