@@ -60,24 +60,24 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	public JDropDownButton(int popupHorizontalAlignment) throws IllegalArgumentException {
 		this("", null, popupHorizontalAlignment, BOTTOM);
 	}
-	public JDropDownButton(int popupHorizontalAlignment, int popupVerticalAlignment) throws  IllegalArgumentException {
+	public JDropDownButton(int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
 		this("", null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
 
 	public JDropDownButton(String text, int popupHorizontalAlignment) throws IllegalArgumentException {
 		this(text, null, popupHorizontalAlignment, BOTTOM);
 	}
-	public JDropDownButton(String text, int popupHorizontalAlignment, int popupVerticalAlignment) throws  IllegalArgumentException {
+	public JDropDownButton(String text, int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
 		this(text, null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
 
-	public JDropDownButton(String text, Icon icon, int popupHorizontalAlignment, int popupVerticalAlignment) throws  IllegalArgumentException {
+	public JDropDownButton(String text, Icon icon, int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
 		super(text, icon);
 		if (popupHorizontalAlignment != LEFT || popupHorizontalAlignment != RIGHT || popupHorizontalAlignment != CENTER){
-			new  IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
+			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
 		if (popupVerticalAlignment != TOP || popupVerticalAlignment != BOTTOM || popupVerticalAlignment != CENTER){
-			new  IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
+			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
 		this.popupVerticalAlignment = popupVerticalAlignment;
@@ -87,7 +87,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		clearMenu();
 	}
 
-	public void clearMenu(){
+	final public void clearMenu(){
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(this);
 	}
