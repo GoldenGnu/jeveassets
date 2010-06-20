@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.frame;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -55,6 +56,10 @@ public class MainMenu extends JMenuBar {
 	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
 	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
+
+	private final static Icon ICON_COLUMN_RESIZE = ImageGetter.getIcon("application_view_detail.png");
+	private final static Icon ICON_COLUMN_SHOW = ImageGetter.getIcon("application_view_columns.png");
+	private final static Icon ICON_UPDATE = ImageGetter.getIcon("update.png");
 
 	private JMenu jColumnMenu;
 	private JMenuItem jUpdatable;
@@ -244,7 +249,7 @@ public class MainMenu extends JMenuBar {
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_TEXT);
 		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
@@ -252,7 +257,7 @@ public class MainMenu extends JMenuBar {
 		jColumnMenu.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
 		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
@@ -260,7 +265,7 @@ public class MainMenu extends JMenuBar {
 		jColumnMenu.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
 		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
 		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
@@ -274,7 +279,7 @@ public class MainMenu extends JMenuBar {
 			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
 			jCheckBoxMenuItem.setActionCommand(columns.get(a));
 			jCheckBoxMenuItem.addActionListener(program.getAssetsTab());
-			jCheckBoxMenuItem.setIcon( ImageGetter.getIcon("application_view_columns.png") );
+			jCheckBoxMenuItem.setIcon(ICON_COLUMN_SHOW);
 			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
 			jColumnMenu.add(jCheckBoxMenuItem);
 		}
@@ -282,7 +287,7 @@ public class MainMenu extends JMenuBar {
 
 	public void timerTicked(boolean updatable){
 		if (updatable){
-			jUpdatable.setIcon( ImageGetter.getIcon("update.png") );
+			jUpdatable.setIcon(ICON_UPDATE);
 			jUpdatable.setToolTipText("Updatable");
 		} else {
 			jUpdatable.setIcon( jUpdatable.getDisabledIcon() );

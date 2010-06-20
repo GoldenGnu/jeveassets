@@ -33,6 +33,7 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,6 +54,9 @@ import org.slf4j.LoggerFactory;
 public class MainWindow implements WindowListener, ChangeListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(MainWindow.class);
+
+	private final static Icon ICON_CLOSE = ImageGetter.getIcon("close.png");
+	private final static Icon ICON_CLOSE_ACTIVE = ImageGetter.getIcon("close_active.png");
 
 	//GUI
 	private MainMenu mainMenu;
@@ -245,8 +249,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 			if (jMainTab.isCloseable()){
 				JButton jClose = new JButton();
 				jClose.setToolTipText("Close Tab");
-				jClose.setIcon(ImageGetter.getIcon("close.png"));
-				jClose.setRolloverIcon(ImageGetter.getIcon("close_active.png"));
+				jClose.setIcon(ICON_CLOSE);
+				jClose.setRolloverIcon(ICON_CLOSE_ACTIVE);
 				jClose.setUI(new BasicButtonUI());
 				jClose.setPreferredSize(new Dimension(16, 16));
 				jClose.setOpaque(false);

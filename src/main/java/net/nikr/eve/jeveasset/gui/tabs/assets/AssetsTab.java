@@ -50,6 +50,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -96,6 +97,18 @@ public class AssetsTab extends JMainTab
 	public final static String ACTION_ADD_FILTER_LESS_THEN = "ACTION_ADD_FILTER_LESS_THEN";
 	public final static String ACTION_ADD_FILTER_GREATER_THEN_COLUMN = "ACTION_ADD_FILTER_GREATER_THEN_COLUMN";
 	public final static String ACTION_ADD_FILTER_LESS_THEN_COLUMN = "ACTION_ADD_FILTER_LESS_THEN_COLUMN";
+
+	private final static Icon ICON_COPY =  ImageGetter.getIcon("page_copy.png");
+	private final static Icon ICON_PRICE =  ImageGetter.getIcon("money.png");
+	private final static Icon ICON_NAME =  ImageGetter.getIcon("set_name.png");
+	private final static Icon ICON_BLUEPRINT =  ImageGetter.getIcon("icon33_02.png");
+	private final static Icon ICON_INFORMATION =  ImageGetter.getIcon("information.png");
+	private final static Icon ICON_ISK =  ImageGetter.getIcon("icon07_02.png");
+	private final static Icon ICON_AVERAGE =  ImageGetter.getIcon("shape_align_middle.png");
+	private final static Icon ICON_COUNT =  ImageGetter.getIcon("add.png");
+	private final static Icon ICON_VOLUME =  ImageGetter.getIcon("volume.png");
+	private final static Icon ICON_COLUMN_RESIZE =  ImageGetter.getIcon("application_view_detail.png");
+	private final static Icon ICON_COLUMN_SHOW =  ImageGetter.getIcon("application_view_columns.png");
 
 	//GUI
 	private ToolPanel toolPanel;
@@ -364,7 +377,7 @@ public class AssetsTab extends JMainTab
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_TEXT);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
@@ -372,7 +385,7 @@ public class AssetsTab extends JMainTab
 		jColumnsSelection.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
@@ -380,7 +393,7 @@ public class AssetsTab extends JMainTab
 		jColumnsSelection.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
-		jRadioButtonMenuItem.setIcon( ImageGetter.getIcon("application_view_detail.png") );
+		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
@@ -394,7 +407,7 @@ public class AssetsTab extends JMainTab
 			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
 			jCheckBoxMenuItem.setActionCommand(columns.get(a));
 			jCheckBoxMenuItem.addActionListener(this);
-			jCheckBoxMenuItem.setIcon( ImageGetter.getIcon("application_view_columns.png") );
+			jCheckBoxMenuItem.setIcon(ICON_COLUMN_SHOW);
 			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
 			jColumnsSelection.add(jCheckBoxMenuItem);
 		}
@@ -435,7 +448,7 @@ public class AssetsTab extends JMainTab
 
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(  ImageGetter.getIcon("page_copy.png") );
+		jMenuItem.setIcon(ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY_TABLE_SELECTED_CELLS);
 		jMenuItem.addActionListener(this);
 		jTablePopupMenu.add(jMenuItem);
@@ -465,20 +478,20 @@ public class AssetsTab extends JMainTab
 
 		if (selectedRows.length == 1 && selectedColumns.length == 1){
 			jMenuItem = new JMenuItem("Set Price...");
-			jMenuItem.setIcon(  ImageGetter.getIcon("money.png") );
+			jMenuItem.setIcon(ICON_PRICE);
 			jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
 			jMenuItem.addActionListener(program);
 			jTablePopupMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Set Name...");
-			jMenuItem.setIcon(  ImageGetter.getIcon("set_name.png") );
+			jMenuItem.setIcon(ICON_NAME);
 			jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
 			jMenuItem.addActionListener(program);
 			jTablePopupMenu.add(jMenuItem);
 		}
 		if (isBlueprints){
 			jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
-			jCheckBoxMenuItem.setIcon(  ImageGetter.getIcon("icon33_02.png") );
+			jCheckBoxMenuItem.setIcon(ICON_BLUEPRINT);
 			jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
 			jCheckBoxMenuItem.addActionListener(this);
 			jCheckBoxMenuItem.setSelected(isBPOs);
@@ -545,7 +558,7 @@ public class AssetsTab extends JMainTab
 		jTablePopupMenu.addSeparator();
 
 		jMenuItem = new JMenuItem("Selection Information");
-		jMenuItem.setDisabledIcon( ImageGetter.getIcon("information.png") );
+		jMenuItem.setDisabledIcon(ICON_INFORMATION);
 		jMenuItem.setEnabled(false);
 		jTablePopupMenu.add(jMenuItem);
 
@@ -566,25 +579,25 @@ public class AssetsTab extends JMainTab
 		}
 
 		jMenuItem = new JMenuItem(Formater.isk(total));
-		jMenuItem.setDisabledIcon( ImageGetter.getIcon("icon07_02.png") );
+		jMenuItem.setDisabledIcon(ICON_ISK);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.isk(total/count) );
-		jMenuItem.setDisabledIcon( ImageGetter.getIcon("shape_align_middle.png") );
+		jMenuItem.setDisabledIcon(ICON_AVERAGE);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Average value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.count(count));
-		jMenuItem.setDisabledIcon( ImageGetter.getIcon("add.png") );
+		jMenuItem.setDisabledIcon(ICON_COUNT);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Count of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.number(volume));
-		jMenuItem.setDisabledIcon( ImageGetter.getIcon("volume.png") );
+		jMenuItem.setDisabledIcon(ICON_VOLUME);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Volume of selected assets");
 		jTablePopupMenu.add(jMenuItem);
