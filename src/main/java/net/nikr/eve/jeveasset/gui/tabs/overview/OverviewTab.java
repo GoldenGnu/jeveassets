@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
@@ -69,6 +70,17 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	public final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
 	public final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
 	public final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
+
+	private final static Icon ICON_COPY = ImageGetter.getIcon("page_copy.png");
+	private final static Icon ICON_GROUPS = ImageGetter.getIcon("groups.png");
+	private final static Icon ICON_RENAME = ImageGetter.getIcon("textfield_rename.png");
+	private final static Icon ICON_DELETE = ImageGetter.getIcon("delete.png");
+	private final static Icon ICON_ADD = ImageGetter.getIcon("add.png");
+	private final static Icon ICON_STATION = ImageGetter.getIcon("station.png");
+	private final static Icon ICON_SYSTEM = ImageGetter.getIcon("system.png");
+	private final static Icon ICON_REGION = ImageGetter.getIcon("region.png");
+	private final static Icon ICON_LOCATIONS = ImageGetter.getIcon("locations.png");
+	private final static Icon ICON_ASSETS = ImageGetter.getIcon("safe16.png");
 
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
@@ -137,7 +149,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		Overview overview = overviewTableModel.getElementAt(index);
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(  ImageGetter.getIcon("page_copy.png") );
+		jMenuItem.setIcon(ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY);
 		jMenuItem.addActionListener(this);
 		jTablePopupMenu.add(jMenuItem);
@@ -145,11 +157,11 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Groups
 		if (!jViews.getSelectedItem().equals("Groups")){
 			jSubMenu = new JMenu("Groups");
-			jSubMenu.setIcon(ImageGetter.getIcon("groups.png"));
+			jSubMenu.setIcon(ICON_GROUPS);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem("Add to new group...");
-			jMenuItem.setIcon(ImageGetter.getIcon("add.png"));
+			jMenuItem.setIcon(ICON_ADD);
 			jMenuItem.setActionCommand(ACTION_ADD_NEW_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -171,18 +183,10 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 						if (location.isRegion()) region = true;
 					}
 				}
-				String title = overviewGroup.getName();
-
-				if (system || station || region) title = title + " (";
-				if (station) title = title + "Station";
-				if (station && (system || region) ) title = title + " ";
-				if (system) title = title + "System";
-				if (system && region) title = title + " ";
-				if (region) title = title + "Region";
-				if (system || station || region) title = title + ")";
-
-				jCheckBoxMenuItem = new JCheckBoxMenuItem(title);
-				//jCheckBoxMenuItem.setIcon(ImageGetter.getIcon("page_copy.png"));
+				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
+				if (station) jCheckBoxMenuItem.setIcon(ICON_STATION);
+				if (system) jCheckBoxMenuItem.setIcon(ICON_SYSTEM);
+				if (region) jCheckBoxMenuItem.setIcon(ICON_REGION);
 				jCheckBoxMenuItem.setActionCommand(overviewGroup.getName());
 				jCheckBoxMenuItem.addActionListener(addToGroup);
 				jCheckBoxMenuItem.setSelected(found);
@@ -192,17 +196,17 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Groups - Locations
 		if (jViews.getSelectedItem().equals("Groups")){
 			jSubMenu = new JMenu("Group");
-			jSubMenu.setIcon(ImageGetter.getIcon("groups.png"));
+			jSubMenu.setIcon(ICON_GROUPS);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem("Rename Group");
-			jMenuItem.setIcon(ImageGetter.getIcon("textfield_rename.png"));
+			jMenuItem.setIcon(ICON_RENAME);
 			jMenuItem.setActionCommand(ACTION_RENAME_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Delete Group");
-			jMenuItem.setIcon(ImageGetter.getIcon("delete.png"));
+			jMenuItem.setIcon(ICON_DELETE);
 			jMenuItem.setActionCommand(ACTION_DELETE_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -212,8 +216,10 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				if (!overviewGroup.getLocations().isEmpty()) jSubMenu.addSeparator();
 				for (int a = 0; a < overviewGroup.getLocations().size(); a++){
 					OverviewLocation location = overviewGroup.getLocations().get(a);
-					jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getNameAndType());
-					//jCheckBoxMenuItem.setIcon(ImageGetter.getIcon("delete.png"));
+					jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
+					if (location.isStation()) jCheckBoxMenuItem.setIcon(ICON_STATION);
+					if (location.isSystem()) jCheckBoxMenuItem.setIcon(ICON_SYSTEM);
+					if (location.isRegion()) jCheckBoxMenuItem.setIcon(ICON_REGION);
 					jCheckBoxMenuItem.setActionCommand(location.getName());
 					jCheckBoxMenuItem.addActionListener(removeFromGroup);
 					jCheckBoxMenuItem.setSelected(true);
@@ -224,30 +230,31 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		//Asset Filter
 		jSubMenu = new JMenu("Add Asset Filter");
+		jSubMenu.setIcon(ICON_ASSETS);
 		jTablePopupMenu.add(jSubMenu);
 		if (!jViews.getSelectedItem().equals("Groups")){
 			if (jViews.getSelectedItem().equals("Stations")){
 				jMenuItem = new JMenuItem("Station");
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setIcon(ICON_STATION);
 				jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
 			if (jViews.getSelectedItem().equals("Stations") || jViews.getSelectedItem().equals("Systems")){
 				jMenuItem = new JMenuItem("System");
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+				jMenuItem.setIcon(ICON_SYSTEM);
 				jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
 			jMenuItem = new JMenuItem("Region");
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(ICON_REGION);
 			jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 		} else {
 			jMenuItem = new JMenuItem("Locations");
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(ICON_LOCATIONS);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -409,6 +416,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			updateTableView();
 			return;
 		}
+		//Group
 		if (ACTION_ADD_NEW_GROUP.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
@@ -444,6 +452,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			overviewGroupDialog.show(null, null, null, overviewGroup);
 			return;
 		}
+		//Copy
 		if (ACTION_COPY.equals(e.getActionCommand())){
 			String s = "";
 			int[] selectedRows = jOverviewTable.getSelectedRows();
@@ -457,42 +466,51 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			}
 			copyToClipboard(s);
 		}
+		//Filter
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Location", overview.getName(), AssetFilter.MODE_EQUALS, true, null);
-			program.getToolPanel().addFilter(assetFilter);
+			program.getToolPanel().addFilter(assetFilter, true);
+			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Location", overview.getSolarSystem(), AssetFilter.MODE_CONTAIN, true, null);
-			program.getToolPanel().addFilter(assetFilter);
+			program.getToolPanel().addFilter(assetFilter, true);
+			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Region", overview.getRegion(), AssetFilter.MODE_EQUALS, true, null);
-			program.getToolPanel().addFilter(assetFilter);
+			program.getToolPanel().addFilter(assetFilter, true);
+			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+			List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
 			for (OverviewLocation location : overviewGroup.getLocations()){
 				if (location.isStation()){
 					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_EQUALS, false, null);
-					program.getToolPanel().addFilter(assetFilter);
+					assetFilters.add(assetFilter);
+					program.getToolPanel().addFilter(assetFilter, true);
 				}
 				if (location.isSystem()){
 					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_CONTAIN, false, null);
-					program.getToolPanel().addFilter(assetFilter);
+					assetFilters.add(assetFilter);
+					program.getToolPanel().addFilter(assetFilter, true);
 				}
 				if (location.isRegion()){
 					AssetFilter assetFilter = new AssetFilter("Region", location.getName(), AssetFilter.MODE_EQUALS, false, null);
-					program.getToolPanel().addFilter(assetFilter);
+					assetFilters.add(assetFilter);
+					program.getToolPanel().addFilter(assetFilter, true);
 				}
 			}
+			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 	}
 

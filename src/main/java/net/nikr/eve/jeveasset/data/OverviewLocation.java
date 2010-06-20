@@ -48,14 +48,6 @@ public class OverviewLocation {
 		return type;
 	}
 
-	public String getNameAndType(){
-		String temp = name;
-		if (type.equals(TYPE_STATION)) temp = temp + " (Station)";
-		if (type.equals(TYPE_SYSTEM)) temp = temp + " (System)";
-		if (type.equals(TYPE_REGION)) temp = temp + " (Region)";
-		return temp;
-	}
-
 	public boolean isStation(){
 		return type.equals(TYPE_STATION);
 	}

@@ -148,13 +148,19 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	}
 
 	public void addFilter(AssetFilter assetFilter){
+		addFilter(assetFilter, false);
+	}
+
+	public void addFilter(AssetFilter assetFilter, boolean unique){
 		FilterPanel filterPanel = new FilterPanel(program, this);
 		filterPanel.setAssetFilter(assetFilter);
 		//Remove single empty filter...
 		if (filters.size() == 1 && filters.get(0).getAssetFilter().isEmpty()){
 			removeFilter( filters.get(0) );
 		}
-		addFilter(filterPanel);
+		if (!getAssetFilters().contains(assetFilter) || !unique){
+			addFilter(filterPanel);
+		}
 	}
 
 	public void clearFilters(){
