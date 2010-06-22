@@ -50,7 +50,6 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -71,7 +70,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -97,18 +96,6 @@ public class AssetsTab extends JMainTab
 	public final static String ACTION_ADD_FILTER_LESS_THEN = "ACTION_ADD_FILTER_LESS_THEN";
 	public final static String ACTION_ADD_FILTER_GREATER_THEN_COLUMN = "ACTION_ADD_FILTER_GREATER_THEN_COLUMN";
 	public final static String ACTION_ADD_FILTER_LESS_THEN_COLUMN = "ACTION_ADD_FILTER_LESS_THEN_COLUMN";
-
-	private final static Icon ICON_COPY =  ImageGetter.getIcon("page_copy.png");
-	private final static Icon ICON_PRICE =  ImageGetter.getIcon("money.png");
-	private final static Icon ICON_NAME =  ImageGetter.getIcon("set_name.png");
-	private final static Icon ICON_BLUEPRINT =  ImageGetter.getIcon("icon33_02.png");
-	private final static Icon ICON_INFORMATION =  ImageGetter.getIcon("information.png");
-	private final static Icon ICON_ISK =  ImageGetter.getIcon("icon07_02.png");
-	private final static Icon ICON_AVERAGE =  ImageGetter.getIcon("shape_align_middle.png");
-	private final static Icon ICON_COUNT =  ImageGetter.getIcon("add.png");
-	private final static Icon ICON_VOLUME =  ImageGetter.getIcon("volume.png");
-	private final static Icon ICON_COLUMN_RESIZE =  ImageGetter.getIcon("application_view_detail.png");
-	private final static Icon ICON_COLUMN_SHOW =  ImageGetter.getIcon("application_view_columns.png");
 
 	//GUI
 	private ToolPanel toolPanel;
@@ -136,7 +123,7 @@ public class AssetsTab extends JMainTab
 	private int rowsCount = 0;
 	
 	public AssetsTab(Program program) {
-		super(program, "Assets", ImageGetter.getIcon("safe16.png"), false);
+		super(program, "Assets", Images.ICON_TOOL_ASSETS, false);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
@@ -173,7 +160,7 @@ public class AssetsTab extends JMainTab
 
 		//Table Button
 		jColumnsSelection = new JDropDownButton(JDropDownButton.RIGHT);
-		jColumnsSelection.setIcon( ImageGetter.getIcon("bullet_arrow_down.png") );
+		jColumnsSelection.setIcon(Images.ICON_ARROW_DOWN);
 		jColumnsSelection.setHorizontalAlignment(SwingConstants.RIGHT);
 		jColumnsSelection.setBorder(null);
 		jColumnsSelection.addMouseListener(this);
@@ -193,16 +180,16 @@ public class AssetsTab extends JMainTab
 		updateColumnPopupMenu();
 
 
-		jVolume = StatusPanel.createLabel("Total volume of shown assets", ImageGetter.getIcon("volume.png"));
+		jVolume = StatusPanel.createLabel("Total volume of shown assets", Images.ICON_VOLUME);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel("Total number of shown assets", ImageGetter.getIcon("add.png")); //Add
+		jCount = StatusPanel.createLabel("Total number of shown assets", Images.ICON_ADD); //Add
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel("Average value of shown assets", ImageGetter.getIcon("shape_align_middle.png"));
+		jAverage = StatusPanel.createLabel("Average value of shown assets", Images.ICON_AVERAGE);
 		this.addStatusbarLabel(jAverage);
 
-		jTotalValue = StatusPanel.createLabel("Total value of shown assets", ImageGetter.getIcon("icon07_02.png"));
+		jTotalValue = StatusPanel.createLabel("Total value of shown assets", Images.ICON_TOOL_VALUES);
 		this.addStatusbarLabel(jTotalValue);
 		
 		layout.setHorizontalGroup(
@@ -247,12 +234,12 @@ public class AssetsTab extends JMainTab
 
 	public void updateToolPanel(){
 		String filter = "<i>Untitled</i>";
-		if (program.getToolPanel().getAssetFilters().isEmpty()){
+		if (getToolPanel().getAssetFilters().isEmpty()){
 			filter = "<i>Empty</i>";
 		}
-		if (program.getSettings().getAssetFilters().containsValue(program.getToolPanel().getAssetFilters())){
+		if (program.getSettings().getAssetFilters().containsValue(getToolPanel().getAssetFilters())){
 			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
-				if (entry.getValue().equals(program.getToolPanel().getAssetFilters())){
+				if (entry.getValue().equals(getToolPanel().getAssetFilters())){
 					filter = entry.getKey();
 					break;
 				}
@@ -377,7 +364,7 @@ public class AssetsTab extends JMainTab
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
-		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_TEXT);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
@@ -385,7 +372,7 @@ public class AssetsTab extends JMainTab
 		jColumnsSelection.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
-		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
@@ -393,7 +380,7 @@ public class AssetsTab extends JMainTab
 		jColumnsSelection.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
-		jRadioButtonMenuItem.setIcon(ICON_COLUMN_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
@@ -407,7 +394,7 @@ public class AssetsTab extends JMainTab
 			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
 			jCheckBoxMenuItem.setActionCommand(columns.get(a));
 			jCheckBoxMenuItem.addActionListener(this);
-			jCheckBoxMenuItem.setIcon(ICON_COLUMN_SHOW);
+			jCheckBoxMenuItem.setIcon(Images.ICON_TABLE_SHOW);
 			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
 			jColumnsSelection.add(jCheckBoxMenuItem);
 		}
@@ -448,7 +435,7 @@ public class AssetsTab extends JMainTab
 
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(ICON_COPY);
+		jMenuItem.setIcon(Images.ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY_TABLE_SELECTED_CELLS);
 		jMenuItem.addActionListener(this);
 		jTablePopupMenu.add(jMenuItem);
@@ -478,20 +465,20 @@ public class AssetsTab extends JMainTab
 
 		if (selectedRows.length == 1 && selectedColumns.length == 1){
 			jMenuItem = new JMenuItem("Set Price...");
-			jMenuItem.setIcon(ICON_PRICE);
+			jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
 			jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
 			jMenuItem.addActionListener(program);
 			jTablePopupMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Set Name...");
-			jMenuItem.setIcon(ICON_NAME);
+			jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
 			jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
 			jMenuItem.addActionListener(program);
 			jTablePopupMenu.add(jMenuItem);
 		}
 		if (isBlueprints){
 			jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
-			jCheckBoxMenuItem.setIcon(ICON_BLUEPRINT);
+			jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
 			jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
 			jCheckBoxMenuItem.addActionListener(this);
 			jCheckBoxMenuItem.setSelected(isBPOs);
@@ -558,7 +545,7 @@ public class AssetsTab extends JMainTab
 		jTablePopupMenu.addSeparator();
 
 		jMenuItem = new JMenuItem("Selection Information");
-		jMenuItem.setDisabledIcon(ICON_INFORMATION);
+		jMenuItem.setDisabledIcon(Images.ICON_DIALOG_ABOUT);
 		jMenuItem.setEnabled(false);
 		jTablePopupMenu.add(jMenuItem);
 
@@ -579,25 +566,25 @@ public class AssetsTab extends JMainTab
 		}
 
 		jMenuItem = new JMenuItem(Formater.isk(total));
-		jMenuItem.setDisabledIcon(ICON_ISK);
+		jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.isk(total/count) );
-		jMenuItem.setDisabledIcon(ICON_AVERAGE);
+		jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Average value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.count(count));
-		jMenuItem.setDisabledIcon(ICON_COUNT);
+		jMenuItem.setDisabledIcon(Images.ICON_ADD);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Count of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem( Formater.number(volume));
-		jMenuItem.setDisabledIcon(ICON_VOLUME);
+		jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Volume of selected assets");
 		jTablePopupMenu.add(jMenuItem);

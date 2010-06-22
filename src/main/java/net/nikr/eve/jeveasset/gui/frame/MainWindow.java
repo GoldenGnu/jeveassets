@@ -33,7 +33,6 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,7 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +53,6 @@ import org.slf4j.LoggerFactory;
 public class MainWindow implements WindowListener, ChangeListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(MainWindow.class);
-
-	private final static Icon ICON_CLOSE = ImageGetter.getIcon("close.png");
-	private final static Icon ICON_CLOSE_ACTIVE = ImageGetter.getIcon("close_active.png");
 
 	//GUI
 	private MainMenu mainMenu;
@@ -75,7 +71,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame = new JFrame();
 		updateTitle();
 		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
-		jFrame.setIconImage( ImageGetter.getImage("safe16.png") );
+		jFrame.setIconImage(Images.IMAGE_JEVEASSETS16);
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -249,8 +245,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 			if (jMainTab.isCloseable()){
 				JButton jClose = new JButton();
 				jClose.setToolTipText("Close Tab");
-				jClose.setIcon(ICON_CLOSE);
-				jClose.setRolloverIcon(ICON_CLOSE_ACTIVE);
+				jClose.setIcon(Images.ICON_CLOSE);
+				jClose.setRolloverIcon(Images.ICON_CLOSE_ACTIVE);
 				jClose.setUI(new BasicButtonUI());
 				jClose.setPreferredSize(new Dimension(16, 16));
 				jClose.setOpaque(false);

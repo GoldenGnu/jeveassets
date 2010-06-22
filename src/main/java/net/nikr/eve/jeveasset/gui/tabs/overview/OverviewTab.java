@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
@@ -53,7 +52,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 
@@ -71,17 +70,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	public final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
 	public final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 
-	private final static Icon ICON_COPY = ImageGetter.getIcon("page_copy.png");
-	private final static Icon ICON_GROUPS = ImageGetter.getIcon("groups.png");
-	private final static Icon ICON_RENAME = ImageGetter.getIcon("textfield_rename.png");
-	private final static Icon ICON_DELETE = ImageGetter.getIcon("delete.png");
-	private final static Icon ICON_ADD = ImageGetter.getIcon("add.png");
-	private final static Icon ICON_STATION = ImageGetter.getIcon("station.png");
-	private final static Icon ICON_SYSTEM = ImageGetter.getIcon("system.png");
-	private final static Icon ICON_REGION = ImageGetter.getIcon("region.png");
-	private final static Icon ICON_LOCATIONS = ImageGetter.getIcon("locations.png");
-	private final static Icon ICON_ASSETS = ImageGetter.getIcon("safe16.png");
-
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
 	private OverviewTableFormat overviewTableFormat;
@@ -97,7 +85,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
 
 	public OverviewTab(Program program) {
-		super(program, "Overview", ImageGetter.getIcon("icon03_13.png"), true);
+		super(program, "Overview", Images.ICON_TOOL_OVERVIEW, true);
 
 		overviewGroupDialog = new OverviewGroupDialog(program, this);
 		jViews = new JComboBox( new String[]  {"Stations", "Systems", "Regions", "Groups"} );
@@ -149,7 +137,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		Overview overview = overviewTableModel.getElementAt(index);
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(ICON_COPY);
+		jMenuItem.setIcon(Images.ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY);
 		jMenuItem.addActionListener(this);
 		jTablePopupMenu.add(jMenuItem);
@@ -157,11 +145,11 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Groups
 		if (!jViews.getSelectedItem().equals("Groups")){
 			jSubMenu = new JMenu("Groups");
-			jSubMenu.setIcon(ICON_GROUPS);
+			jSubMenu.setIcon(Images.ICON_GROUPS);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem("Add to new group...");
-			jMenuItem.setIcon(ICON_ADD);
+			jMenuItem.setIcon(Images.ICON_ADD);
 			jMenuItem.setActionCommand(ACTION_ADD_NEW_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -184,9 +172,9 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 					}
 				}
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (station) jCheckBoxMenuItem.setIcon(ICON_STATION);
-				if (system) jCheckBoxMenuItem.setIcon(ICON_SYSTEM);
-				if (region) jCheckBoxMenuItem.setIcon(ICON_REGION);
+				if (station) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
+				if (system) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
+				if (region) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
 				jCheckBoxMenuItem.setActionCommand(overviewGroup.getName());
 				jCheckBoxMenuItem.addActionListener(addToGroup);
 				jCheckBoxMenuItem.setSelected(found);
@@ -196,17 +184,17 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Groups - Locations
 		if (jViews.getSelectedItem().equals("Groups")){
 			jSubMenu = new JMenu("Group");
-			jSubMenu.setIcon(ICON_GROUPS);
+			jSubMenu.setIcon(Images.ICON_GROUPS);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem("Rename Group");
-			jMenuItem.setIcon(ICON_RENAME);
+			jMenuItem.setIcon(Images.ICON_RENAME);
 			jMenuItem.setActionCommand(ACTION_RENAME_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Delete Group");
-			jMenuItem.setIcon(ICON_DELETE);
+			jMenuItem.setIcon(Images.ICON_DELETE);
 			jMenuItem.setActionCommand(ACTION_DELETE_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -217,9 +205,9 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				for (int a = 0; a < overviewGroup.getLocations().size(); a++){
 					OverviewLocation location = overviewGroup.getLocations().get(a);
 					jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
-					if (location.isStation()) jCheckBoxMenuItem.setIcon(ICON_STATION);
-					if (location.isSystem()) jCheckBoxMenuItem.setIcon(ICON_SYSTEM);
-					if (location.isRegion()) jCheckBoxMenuItem.setIcon(ICON_REGION);
+					if (location.isStation()) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
+					if (location.isSystem()) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
+					if (location.isRegion()) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
 					jCheckBoxMenuItem.setActionCommand(location.getName());
 					jCheckBoxMenuItem.addActionListener(removeFromGroup);
 					jCheckBoxMenuItem.setSelected(true);
@@ -230,31 +218,31 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		//Asset Filter
 		jSubMenu = new JMenu("Add Asset Filter");
-		jSubMenu.setIcon(ICON_ASSETS);
+		jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
 		jTablePopupMenu.add(jSubMenu);
 		if (!jViews.getSelectedItem().equals("Groups")){
 			if (jViews.getSelectedItem().equals("Stations")){
 				jMenuItem = new JMenuItem("Station");
-				jMenuItem.setIcon(ICON_STATION);
+				jMenuItem.setIcon(Images.ICON_STATION);
 				jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
 			if (jViews.getSelectedItem().equals("Stations") || jViews.getSelectedItem().equals("Systems")){
 				jMenuItem = new JMenuItem("System");
-				jMenuItem.setIcon(ICON_SYSTEM);
+				jMenuItem.setIcon(Images.ICON_SYSTEM);
 				jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
 			jMenuItem = new JMenuItem("Region");
-			jMenuItem.setIcon(ICON_REGION);
+			jMenuItem.setIcon(Images.ICON_REGION);
 			jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 		} else {
 			jMenuItem = new JMenuItem("Locations");
-			jMenuItem.setIcon(ICON_LOCATIONS);
+			jMenuItem.setIcon(Images.ICON_LOCATIONS);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);

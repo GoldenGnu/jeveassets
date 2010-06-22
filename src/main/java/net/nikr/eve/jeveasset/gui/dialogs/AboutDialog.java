@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jWait = new JWait(this.getDialog());
 
 		JLabel jIcon = new JLabel();
-		jIcon.setIcon( ImageGetter.getIcon("icon07_13.png") );
+		jIcon.setIcon(Images.ICON_JEVEASSETS64);
 
 		JEditorPane jProgram = createEditorPane(false, 
 				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"

@@ -46,7 +46,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +98,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 	}
 
 	public RoutingTab(Program program) {
-		super(program, "Routing", ImageGetter.getIcon("routing.png"), true);
+		super(program, "Routing", Images.ICON_TOOL_ROUTING, true);
 
 		add = new JButton(">>>");
 		remove = new JButton("<<<");

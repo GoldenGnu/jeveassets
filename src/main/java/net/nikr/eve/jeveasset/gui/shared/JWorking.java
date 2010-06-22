@@ -26,7 +26,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 
 
 public class JWorking extends JPanel {
@@ -51,7 +51,7 @@ public class JWorking extends JPanel {
 			} else {
 				number = ""+(a+1);
 			}
-			loadingImages[a] = ImageGetter.getBufferedImage("working"+number+".png");
+			loadingImages[a] = Images.getBufferedImage("working"+number+".png");
 		}
 		Worker worker = new Worker(this);
 		worker.start();

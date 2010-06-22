@@ -28,7 +28,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -48,7 +48,7 @@ public class MaterialsTab extends JMainTab {
 	private String gridHexColor;
 
 	public MaterialsTab(Program program) {
-		super(program, "Materials", ImageGetter.getIcon("icon23_16.png"), true);
+		super(program, "Materials", Images.ICON_TOOL_MATERIALS, true);
 		//Category: Asteroid
 		//Category: Material
 

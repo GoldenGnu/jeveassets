@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -102,7 +102,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private String gridHexColor;
 
 	public ValuesTab(Program program) {
-		super(program, "Values", ImageGetter.getIcon("icon07_02.png"), true);
+		super(program, "Values", Images.ICON_TOOL_VALUES, true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());

@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -42,7 +41,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
@@ -56,18 +55,13 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	private String name;
 	private boolean errorShown = false;
 
-	private final static Icon ICON_NOT_STARTED = ImageGetter.getIcon("bullet_black.png");
-	private final static Icon ICON_WORKING = ImageGetter.getIcon("bullet_go.png");
-	private final static Icon ICON_CANCELLED = ImageGetter.getIcon("bullet_red.png");
-	private final static Icon ICON_DONE_OK = ImageGetter.getIcon("bullet_green.png");
-	private final static Icon ICON_DONE_SOME = ImageGetter.getIcon("bullet_orange.png");
-	private final static Icon ICON_DONE_ERROR = ImageGetter.getIcon("bullet_error.png");
+	
 
 	public UpdateTask(String name) {
 		this.name = name;
 		this.addPropertyChangeListener(this);
 		jText = new JLabel(name);
-		jText.setIcon(ICON_NOT_STARTED);
+		jText.setIcon(Images.ICON_NOT_STARTED);
 
 		errors = new HashMap<String, String>();
 	}
@@ -153,7 +147,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	}
 
 	public void cancelled(){
-		jText.setIcon(ICON_CANCELLED);
+		jText.setIcon(Images.ICON_CANCELLED);
 	}
 
 	@Override
@@ -161,18 +155,18 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		int value = getProgress();
 		if (value == 100){
 			if (errors.isEmpty()){
-				jText.setIcon(ICON_DONE_OK);
+				jText.setIcon(Images.ICON_DONE_OK);
 			} else if (isCancelled()){
-				jText.setIcon(ICON_DONE_SOME);
+				jText.setIcon(Images.ICON_DONE_SOME);
 			} else {
-				jText.setIcon(ICON_DONE_ERROR);
+				jText.setIcon(Images.ICON_DONE_ERROR);
 			}
 			if (!errors.isEmpty()){
 				jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				jText.setText(name+" (click to show errors)");
 			}
 		} else {
-			jText.setIcon(ICON_WORKING);
+			jText.setIcon(Images.ICON_WORKING);
 		}
 	}
 

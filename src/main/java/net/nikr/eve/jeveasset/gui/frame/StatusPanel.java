@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
@@ -58,9 +58,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 		
 		
 
-		jUpdatable = createIcon(ImageGetter.getIcon("update.png"), "Updatable");
+		jUpdatable = createIcon(Images.ICON_UPDATE, "Updatable");
 		programStatus.add(jUpdatable);
-		jEveTime = createLabel("Eve Server Time", ImageGetter.getIcon("eve.png"));
+		jEveTime = createLabel("Eve Server Time", Images.ICON_EVE);
 		programStatus.add(jEveTime);
 
 		layout.setHorizontalGroup(

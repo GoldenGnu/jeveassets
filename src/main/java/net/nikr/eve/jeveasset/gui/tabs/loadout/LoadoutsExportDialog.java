@@ -37,7 +37,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 
 
@@ -53,7 +53,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	private LoadoutsTab loadoutsDialog;
 
 	public LoadoutsExportDialog(Program program, LoadoutsTab loadoutsDialog) {
-		super(program, "Export Fitting", ImageGetter.getImage("icon26_02.png"));
+		super(program, "Export Fitting", Images.IMAGE_DIALOG_LOADOUT_EXPORT);
 		this.loadoutsDialog = loadoutsDialog;
 
 		JLabel jNameLabel = new JLabel("Name:");

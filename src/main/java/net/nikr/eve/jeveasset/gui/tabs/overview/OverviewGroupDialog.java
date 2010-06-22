@@ -36,7 +36,7 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 
 
@@ -61,7 +61,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 	private OverviewTab overviewTab;
 
 	public OverviewGroupDialog(Program program, OverviewTab overviewTab) {
-		super(program, "", ImageGetter.getImage("groups.png"));
+		super(program, "", Images.IMAGE_DIALOG_OVERVIEW_GROUPS);
 		this.overviewTab = overviewTab;
 		
 		jNameLabel = new JLabel();

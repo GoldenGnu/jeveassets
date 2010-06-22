@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
 
@@ -78,7 +78,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//Add
 		jAddField = new JButton("Add Field");
-		jAddField.setIcon( ImageGetter.getIcon("add.png") );
+		jAddField.setIcon(Images.ICON_ADD);
 		jAddField.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jAddField.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setHorizontalAlignment(JButton.LEFT);
@@ -88,7 +88,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//Reset
 		jClearFields = new JButton("Clear Fields");
-		jClearFields.setIcon( ImageGetter.getIcon("page_white.png") );
+		jClearFields.setIcon(Images.ICON_CLEAR);
 		jClearFields.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jClearFields.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setHorizontalAlignment(JButton.LEFT);
@@ -100,7 +100,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//Save Filter
 		jSaveFilter = new JButton("Save Filter");
-		jSaveFilter.setIcon( ImageGetter.getIcon("disk.png") );
+		jSaveFilter.setIcon(Images.ICON_SAVE);
 		jSaveFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setHorizontalAlignment(JButton.LEFT);
@@ -110,7 +110,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//Load Filter
 		jLoadFilter = new JDropDownButton("Load Filter");
-		jLoadFilter.setIcon( ImageGetter.getIcon("folder.png") );
+		jLoadFilter.setIcon( Images.ICON_FOLDER);
 		jLoadFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setHorizontalAlignment(JButton.LEFT);
@@ -261,7 +261,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 			String s = list.get(a);
 			jMenuItem = new JMenuItem(s);
 			jMenuItem.setRolloverEnabled(true);
-			jMenuItem.setIcon( ImageGetter.getIcon("folder.png") );
+			jMenuItem.setIcon( Images.ICON_FOLDER);
 			jMenuItem.setActionCommand(s);
 			jMenuItem.addActionListener(this);
 			jLoadFilter.add(jMenuItem);

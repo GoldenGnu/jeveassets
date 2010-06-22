@@ -15,7 +15,6 @@ import java.awt.event.FocusListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -26,7 +25,7 @@ import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 
 /**
  *
@@ -39,9 +38,7 @@ public class SeparatorTableCell extends AbstractCellEditor
 	private final static String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
-
-	private static final Icon EXPANDED_ICON =  ImageGetter.getIcon("expanded.png"); //Icons.triangle(9, SwingConstants.EAST, Color.WHITE);
-	private static final Icon COLLAPSED_ICON = ImageGetter.getIcon("collapsed.png");//  Icons.triangle(9, SwingConstants.SOUTH, Color.WHITE);
+	
 	private static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
 
 	/** the separator list to lock */
@@ -70,12 +67,12 @@ public class SeparatorTableCell extends AbstractCellEditor
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
 
-		jExpand = new JButton(EXPANDED_ICON);
+		jExpand = new JButton(Images.ICON_EXPANDED);
 		jExpand.setOpaque(false);
 		jExpand.setContentAreaFilled(false);
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.setBorder(EMPTY_TWO_PIXEL_BORDER);
-		jExpand.setIcon(EXPANDED_ICON);
+		jExpand.setIcon(Images.ICON_EXPANDED);
 		jExpand.addActionListener(this);
 
 
@@ -143,7 +140,7 @@ public class SeparatorTableCell extends AbstractCellEditor
 			if(human == null) return; // handle 'late' rendering calls after this separator is invalid
 			Account account = human.getParentAccount();
 			jTable.setRowHeight(row, jPanel.getPreferredSize().height);
-			jExpand.setIcon(separator.getLimit() == 0 ? EXPANDED_ICON : COLLAPSED_ICON);
+			jExpand.setIcon(separator.getLimit() == 0 ? Images.ICON_EXPANDED : Images.ICON_COLLAPSED);
 			if (account.getName().isEmpty()){
 				jAccountName.setText(String.valueOf(account.getUserID()));
 			} else {

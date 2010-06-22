@@ -43,7 +43,7 @@ import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -78,7 +78,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private String gridHexColor;
 
 	public LoadoutsTab(Program program) {
-		super(program, "Ship Loadouts", ImageGetter.getIcon("icon26_02.png"), true);
+		super(program, "Ship Loadouts", Images.ICON_TOOL_SHIP_LOADOUTS, true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());

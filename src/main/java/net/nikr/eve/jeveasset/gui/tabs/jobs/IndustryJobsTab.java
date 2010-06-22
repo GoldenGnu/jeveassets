@@ -42,7 +42,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -64,7 +64,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private Vector<String> characters;
 
 	public IndustryJobsTab(Program program) {
-		super(program, "Industry Jobs", ImageGetter.getIcon("icon33_02.png"), true);
+		super(program, "Industry Jobs", Images.ICON_TOOL_INDUSTRY_JOBS, true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);

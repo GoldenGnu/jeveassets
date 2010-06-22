@@ -32,11 +32,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 
 
 public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner {
@@ -44,10 +43,6 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 	public static final String ACTION_CUT = "ACTION_CUT";
 	public static final String ACTION_COPY = "ACTION_COPY";
 	public static final String ACTION_PASTE = "ACTION_PASTE";
-
-	private static final Icon ICON_CUT = ImageGetter.getIcon("cut.png");
-	private static final Icon ICON_COPY = ImageGetter.getIcon("page_copy.png");
-	private static final Icon ICON_PASTE = ImageGetter.getIcon("page_paste.png");
 
 	private JTextComponent component;
 	private JPopupMenu jPopupMenu;
@@ -79,7 +74,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 
 		if (component.isEditable()){
 			jMenuItem = new JMenuItem("Cut");
-			jMenuItem.setIcon(ICON_CUT);
+			jMenuItem.setIcon(Images.ICON_CUT);
 			jMenuItem.setActionCommand(ACTION_CUT);
 			jMenuItem.addActionListener(this);
 			jMenuItem.setEnabled(canCopy);
@@ -87,7 +82,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 		}
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(ICON_COPY);
+		jMenuItem.setIcon(Images.ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setEnabled(canCopy);
@@ -95,7 +90,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 
 		if (component.isEditable()){
 			jMenuItem = new JMenuItem("Paste");
-			jMenuItem.setIcon(ICON_PASTE);
+			jMenuItem.setIcon(Images.ICON_PASTE);
 			jMenuItem.setActionCommand(ACTION_PASTE);
 			jMenuItem.addActionListener(this);
 			jPopupMenu.add(jMenuItem);

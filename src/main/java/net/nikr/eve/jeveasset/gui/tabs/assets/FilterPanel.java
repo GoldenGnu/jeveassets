@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.gui.images.ImageGetter;
+import net.nikr.eve.jeveasset.gui.images.Images;
 
 
 public class FilterPanel extends JGroupLayoutPanel {
@@ -72,7 +72,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 		this.getPanel().add(jText);
 		
 		jRemove = new JButton();
-		jRemove.setIcon( ImageGetter.getIcon("delete.png") );
+		jRemove.setIcon(Images.ICON_DELETE);
 		jRemove.setActionCommand(ACTION_REMOVE_FILTER);
 		jRemove.addActionListener(filtersPanel);
 		this.getPanel().add(jRemove);
