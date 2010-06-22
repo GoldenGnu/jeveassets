@@ -28,13 +28,9 @@ import org.slf4j.LoggerFactory;
 public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private final static Logger LOG = LoggerFactory.getLogger(NikrUncaughtExceptionHandler.class);
 
-  String uncaughtErrorMessage = "Please email the latest error.txt in the logs directory to niklaskr@gmail.com";
+	String uncaughtErrorMessage = "Please email the latest error.txt in the logs directory to niklaskr@gmail.com";
 
 	public NikrUncaughtExceptionHandler() { }
-
-	public NikrUncaughtExceptionHandler(String uncaughtErrorMessage) {
-		this.uncaughtErrorMessage = uncaughtErrorMessage;
-	}
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {

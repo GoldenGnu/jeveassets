@@ -136,7 +136,7 @@ public class Main {
 		Program.setForceUpdate(hasUpdate && Program.isDebug());
 
 		// fix the uncaught exception handlers
-		System.setProperty("sun.awt.exception.handler", "net.nikr.log.NikrUncaughtExceptionHandler");
+		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
 
 		javax.swing.SwingUtilities.invokeLater(
