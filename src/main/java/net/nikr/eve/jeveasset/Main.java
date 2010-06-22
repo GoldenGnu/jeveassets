@@ -21,20 +21,13 @@
 
 package net.nikr.eve.jeveasset;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import com.beimin.eveapi.ApiAuth;
-import com.beimin.eveapi.ApiAuthorization;
 import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.data.Settings;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.digester.Digester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.supercsv.cellprocessor.constraint.Unique;
 
 
 public class Main {
@@ -52,35 +45,7 @@ public class Main {
 
 	/** Creates a new instance of Main */
 	public Main() {
-		//Force error here, if any libraries are missing
-		try {
-			Digester.class.getName(); // digester = new Digester();
-			BeanUtils beanUtils = new BeanUtils();
-			ApiAuth apiAuth = new ApiAuthorization(1, 1, "");
-			EventList<String> eventList = new BasicEventList<String>();
-			Unique Unique = new Unique();
-		} catch (NoClassDefFoundError e){
-			if (e.toString().contains("supercsv")){
-				LOG.error("The Super CSV library is missing (lib\\SuperCSV-1.52.jar)\nPlease see readme.txt for more information.", e);
-			}
-			if (e.toString().contains("glazedlists")){
-				LOG.error("The Glazed Lists library is missing (lib\\glazedlists-1.8.0_java15.jar)\nPlease see readme.txt for more information.", e);
-			}
-			if (e.toString().contains("eveapi")){
-				LOG.error("The EVEAPI library is missing (lib\\EVEAPI.jar)\nPlease see readme.txt for more information.", e);
-			}
-			if (e.toString().contains("log4j")){
-				LOG.error("The log4j library is missing (lib\\log4j-1.2.15.jar)\nPlease see readme.txt for more information.", e);
-			}
-			if (e.toString().contains("beanutils") || e.toString().contains("collections")){
-				LOG.error("The Commons BeanUtils library is missing (lib\\commons-beanutils-1.8.0.jar)\nPlease see readme.txt for more information.", e);
-			}
-			if (e.toString().contains("digester")){
-				LOG.error("The Commons Digester library is missing (lib\\lcommons-digester-2.0.jar)\nPlease see readme.txt for more information.", e);
-			}
-		}
 		program = new Program();
-		
 	}
 	
 	/**
@@ -88,7 +53,6 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-
 		boolean isDebug = false;
 		boolean isPortable = false;
 		boolean hasNoUpdate = false;
@@ -140,22 +104,20 @@ public class Main {
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
 
 		javax.swing.SwingUtilities.invokeLater(
-						new Runnable() {
-
-							@Override
-							public void run() {
-								createAndShowGUI();
-							}
-						});
+			new Runnable() {
+				@Override
+				public void run() {
+					createAndShowGUI();
+				}
+			});
 	}
 	
 	private static void createAndShowGUI() {
-
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();
 
 		initLookAndFeel();
-
+		
 		//Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);

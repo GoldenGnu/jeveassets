@@ -118,17 +118,6 @@ License:
   GNU Lesser General Public License (http://www.gnu.org/copyleft/lesser.html)
 
 ________________________________________________________________________________
-_NIKR_LOG_______________________________________________________________________
-
-jEveAssets use NiKR Log to log events and errors
-
-Link:
-  http://eve.nikr.net/?page=jeveasset
-
-License:
-  GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
-
-________________________________________________________________________________
 _PRICING________________________________________________________________________
 
 jEveAssets use the Pricing library to get price data
