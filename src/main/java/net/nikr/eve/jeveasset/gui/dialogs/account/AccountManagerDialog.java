@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
@@ -46,6 +48,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	private final static String ACTION_ADD = "ACTION_ADD";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
+	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
+	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 	private final static String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
 	private final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
 	private final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
@@ -59,11 +63,15 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private AccountImportDialog accountImportDialog;
 	private JSeparatorTable jTable;
 	private JButton jAdd;
+	private JButton jExpand;
+	private JButton jCollapse;
 	private JDropDownButton jAssets;
 	private JDropDownButton jCorporation;
 	private JButton jClose;
 	private EventList<Human> eventList;
 	private EventTableModel<Human> tableModel;
+	private SeparatorList<Human> separatorList;
+	private EventSelectionModel<Human> selectionModel;
 
 	private Map<Human, Boolean> shownAssets;
 	private Map<Human, Boolean> corpAssets;
@@ -76,23 +84,33 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		eventList = new BasicEventList<Human>();
 
-		SeparatorList<Human> separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
+		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
 		HumanTableFormat humanTableFormat = new HumanTableFormat();
 		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
 		jTable = new JSeparatorTable(tableModel, humanTableFormat.getColumnNames());
+		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new SeparatorTableCell(this, jTable, separatorList));
 		jTable.setSeparatorEditor(new SeparatorTableCell(this, jTable, separatorList));
+
+		selectionModel = new EventSelectionModel<Human>(separatorList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
 
 		//Add Button
 		jAdd = new JButton("Add");
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
-		jPanel.add(jAdd);
+
+		jCollapse = new JButton("Collapse");
+		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.addActionListener(this);
+
+		jExpand = new JButton("Expand");
+		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.addActionListener(this);
 
 		jAssets = new JDropDownButton("Show Assets");
 		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
-		jPanel.add(jAssets);
-
 		JMenuItem menuItem;
 
 		menuItem = new JMenuItem("Check All");
@@ -142,13 +160,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
-		jPanel.add(jCorporation);
-
 		//Done Button
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_CLOSE);
 		jClose.addActionListener(this);
-		jPanel.add(jClose);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -158,6 +173,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addGap(0, 0, Short.MAX_VALUE)
 					.addComponent(jAssets, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
 					.addComponent(jCorporation, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
@@ -167,6 +184,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -198,9 +217,13 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCorporation.setEnabled(true);
+			jCollapse.setEnabled(true);
+			jExpand.setEnabled(true);
 		} else {
 			jAssets.setEnabled(false);
 			jCorporation.setEnabled(false);
+			jCollapse.setEnabled(false);
+			jExpand.setEnabled(false);
 		}
 	}
 
@@ -229,6 +252,23 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				}
 			}
 		}
+	}
+
+	private void expandSeparators(boolean expand){
+		selectionModel.setEnabled(false);
+		for (int a = 0; a < tableModel.getRowCount(); a++){
+			Object o = tableModel.getElementAt(a);
+			if (o instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) o;
+				separatorList.getReadWriteLock().writeLock().lock();
+				try {
+					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
+		selectionModel.setEnabled(true);
 	}
 
 	@Override
@@ -279,6 +319,13 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			accountImportDialog.setVisible(true);
+		}
+
+		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			expandSeparators(false);
+		}
+		if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			expandSeparators(true);
 		}
 		if (ACTION_CLOSE.equals(e.getActionCommand())) {
 			save();
