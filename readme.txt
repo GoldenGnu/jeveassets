@@ -67,21 +67,14 @@ ________________________________________________________________________________
 Q: I can't sort columns
 
 A: You need to double click to sort a new column
-   just clicking will, sup-sort the column
+   A single click will sub-sort the column
 
 ________________________________________________________________________________
 
-Q: How do I manually set price or name for asset
+Q: How do I manually set price/name/BPO for assets
 
-A: Right click the asset you want to set price or table for in the table
-   and select "Set price..." or "Set name..." in the popup-menu
-
-________________________________________________________________________________
-
-Q: How do I mark a blueprint as an original
-
-A: Right click the asset you want to mark as BPO for in the table
-   and select "Blueprint Original" in the popup-menu
+A: Right click the asset you want to change in the assets table
+   Select: Set price.../Set name.../Blueprint Original in the popup-menu
 
 ________________________________________________________________________________
 
