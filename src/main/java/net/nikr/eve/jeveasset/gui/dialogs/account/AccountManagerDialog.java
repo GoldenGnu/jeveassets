@@ -257,9 +257,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				if (human.isUpdateCorporationAssets() != corpAssets.get(human)) showCorporation = true;
 			}
 		}
-		System.out.println("a: "+showAssets+" c: "+showCorporation+" f: "+forceUpdate);
 		if (showAssets || showCorporation || forceUpdate){
-			System.out.println("updating...");
 			program.updateEventList();
 		}
 		if (showCorporation){
