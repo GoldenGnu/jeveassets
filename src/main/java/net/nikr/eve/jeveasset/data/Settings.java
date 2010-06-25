@@ -73,6 +73,7 @@ public class Settings{
 	private final static String PATH_CHANGELOG = "changelog.txt";
 	private final static String PATH_PROFILES = "profiles";
 
+	private final static String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
 	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
@@ -141,6 +142,7 @@ public class Settings{
 		flags.put(FLAG_AUTO_UPDATE, true);
 		flags.put(FLAG_UPDATE_DEV, false);
 		flags.put(FLAG_REPROCESS_COLORS, false);
+		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
 
 
 		reprocessSettings = new ReprocessSettings();
@@ -682,6 +684,12 @@ public class Settings{
 	}
 	public void setUpdateDev(boolean updateDev) {
 		flags.put(FLAG_UPDATE_DEV, updateDev);
+	}
+	public boolean isIgnoreSecureContainers() {
+		return flags.get(FLAG_IGNORE_SECURE_CONTAINERS);
+	}
+	public void setIgnoreSecureContainers(boolean ignoreSecureContainers) {
+		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 	public boolean isReprocessColors() {
 		return flags.get(FLAG_REPROCESS_COLORS);

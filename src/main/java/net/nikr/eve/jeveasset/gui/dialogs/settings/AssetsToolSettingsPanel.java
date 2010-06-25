@@ -24,16 +24,17 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 
 
-public class TableSettingsPanel extends JSettingsPanel {
+public class AssetsToolSettingsPanel extends JSettingsPanel {
 		private JCheckBox jEnterFilters;
 		private JCheckBox jMarkSelectedRow;
 		private JCheckBox jReprocessColors;
 
-	public TableSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "Table", icon);
+	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
+		super(program, settingsDialog, "Assets", icon, parentNode);
 
 		jEnterFilters = new JCheckBox("Only filter when enter is pressed");
 

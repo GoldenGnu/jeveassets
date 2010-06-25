@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.UserItemName;
 public class UserItemNameSettingsPanel extends JUserListPanel<Long, UserItemName> {
 
 	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, icon, JUserListPanel.FILTER_NO_RESTRICTIONS, "User Item Name ", "Assets", "Name", "\r\nTo add new item name:\r\n1. Right click a row in the table\r\n2. Select \"Set Name...\" in the popup menu");
+		super(program, optionsDialog, icon, JUserListPanel.FILTER_NO_RESTRICTIONS, "User Item Name ", "Assets", "Name", "\r\nTo add new item name:\r\n1. Right click a row in the assets table\r\n2. Select \"Set Name...\" in the popup menu");
 	}
 
 	@Override

@@ -26,55 +26,67 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 
 
-public class SettingsDialog extends JDialogCentered implements ActionListener, ListSelectionListener {
+public class SettingsDialog extends JDialogCentered implements ActionListener, TreeSelectionListener {
 
 	public final static String ACTION_OK = "ACTION_OK";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_APPLY = "ACTION_APPLY";
 
-	private JList jTabs;
+	private JTree jTree;
 	private JPanel jContent;
 	private JButton jOK;
 	private List<JSettingsPanel> settingsPanels;
 	private Map<Object, Icon> icons;
-	private DefaultListModel listModel;
+	private DefaultMutableTreeNode rootNode;
+	private DefaultTreeModel treeModel;
 	private CardLayout cardLayout;
 
 	private boolean tabSelected = false;
 
 	public SettingsDialog(Program program, Image image) {
 		super(program, Program.PROGRAM_NAME+" Settings", image);
+
 		settingsPanels = new ArrayList<JSettingsPanel>();
-
-		listModel = new DefaultListModel();
-
 		icons = new HashMap<Object, Icon>();
-		jTabs = new JList(listModel);
-		jTabs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jTabs.setCellRenderer(new IconListRenderer(icons));
-		jTabs.addListSelectionListener(this);
-		JScrollPane jTabsScroller = new JScrollPane(jTabs);
+
+		rootNode = new DefaultMutableTreeNode("root");
+		treeModel = new DefaultTreeModel(rootNode);
+		jTree = new JTree(treeModel);
+		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		jTree.putClientProperty("JTree.lineStyle", "None");
+		jTree.setCellRenderer(new IconTreeCellRenderer(icons));
+		jTree.setExpandsSelectedPaths(true);
+		jTree.setRootVisible(false);
+		jTree.setShowsRootHandles(true);
+		jTree.addTreeSelectionListener(this);
+		
+		JScrollPane jTreeScroller = new JScrollPane(jTree);
 
 		cardLayout = new CardLayout();
 
@@ -97,7 +109,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jTabsScroller)
+					.addComponent(jTreeScroller)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator)
@@ -110,7 +122,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jTabsScroller)
+					.addComponent(jTreeScroller, 10, 10, Short.MAX_VALUE)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator, 5, 5, 5)
@@ -122,11 +134,22 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 		);
 	}
 
-	public void add(JSettingsPanel jSettingsPanel, Icon icon){
+	public DefaultMutableTreeNode addGroup(String name, Icon icon){
+		SettingsGroup group = new SettingsGroup(program, this, name, icon);
+		return group.getTreeNode();
+	}
+
+	public DefaultMutableTreeNode add(JSettingsPanel jSettingsPanel, Icon icon, DefaultMutableTreeNode parentNode){
 		settingsPanels.add(jSettingsPanel);
 		icons.put(jSettingsPanel.getTitle(), icon);
 		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
-		listModel.addElement(jSettingsPanel.getTitle());
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(jSettingsPanel.getTitle());
+		if (parentNode == null){
+			treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
+		} else {
+			treeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
+		}
+		return node;
 	}
 
 
@@ -159,16 +182,26 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 		}
 	}
 
-	public void setVisible(int number) {
-		jTabs.setSelectedIndex(number);
+	public void setVisible(JSettingsPanel c) {
+		jTree.setSelectionRow(settingsPanels.indexOf(c));
 		tabSelected = true;
 		setVisible(true);
 	}
 
-	public void setVisible(JSettingsPanel c) {
-		jTabs.setSelectedIndex(settingsPanels.indexOf(c));
-		tabSelected = true;
-		setVisible(true);
+	private void expandAll(TreePath parent, boolean expand) {
+		TreeNode node = (TreeNode)parent.getLastPathComponent();
+		if (node.getChildCount() >= 0) {
+			for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+				TreeNode n = (TreeNode)e.nextElement();
+				TreePath path = parent.pathByAddingChild(n);
+				expandAll(path, expand);
+			}
+		}
+		if (expand) {
+			jTree.expandPath(parent);
+		} else {
+			jTree.collapsePath(parent);
+		}
 	}
 
 	@Override
@@ -177,8 +210,9 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 			for (int a = 0; a < settingsPanels.size(); a++){
 				settingsPanels.get(a).load();
 			}
+			expandAll(new TreePath((rootNode)), true);
 			if (!tabSelected){
-				jTabs.setSelectedIndex(0);
+				jTree.setSelectionRow(0);
 			}
 		}
 		tabSelected = false;
@@ -201,23 +235,39 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, L
 	}
 
 	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		cardLayout.show(jContent, settingsPanels.get(jTabs.getSelectedIndex()).getTitle());
+	public void valueChanged(TreeSelectionEvent e) {
+		cardLayout.show(jContent, settingsPanels.get(jTree.getSelectionRows()[0]).getTitle());
 	}
 
-	public class IconListRenderer extends DefaultListCellRenderer {
+	public class IconTreeCellRenderer implements TreeCellRenderer{
 
 		private Map<Object, Icon> icons = null;
+		private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
 
-		public IconListRenderer(Map<Object, Icon> icons) {
+		public IconTreeCellRenderer(Map<Object, Icon> icons) {
 			this.icons = icons;
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			label.setIcon( icons.get(value) );
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			JLabel label = (JLabel) cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+			label.setIcon(icons.get(value.toString()));
 			return label;
 		}
+
+	}
+
+	private static class SettingsGroup extends JSettingsPanel{
+
+		public SettingsGroup(Program program, SettingsDialog settingsDialog, String sTitle, Icon icon) {
+			super(program, settingsDialog, sTitle, icon);
+		}
+
+		@Override
+		public boolean save() { return false; }
+
+		@Override
+		public void load() {}
+
 	}
 }

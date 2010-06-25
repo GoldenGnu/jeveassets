@@ -290,7 +290,27 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		overviewEventList.getReadWriteLock().writeLock().unlock();
 	}
 
-	public void updateTableData(){
+	public void resetViews(){
+		jViews.setSelectedItem("Stations");
+	}
+	
+	private void copyToClipboard(Object o){
+		SecurityManager sm = System.getSecurityManager();
+		if (sm != null) {
+			try {
+				sm.checkSystemClipboardAccess();
+			} catch (Exception ex) {
+				return;
+			}
+		}
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		StringSelection st = new StringSelection(String.valueOf(o));
+		Clipboard cp = tk.getSystemClipboard();
+		cp.setContents(st, this);
+	}
+
+	@Override
+	public void updateData() {
 		stations = new ArrayList<Overview>();
 		systems = new ArrayList<Overview>();
 		regions = new ArrayList<Overview>();
@@ -305,7 +325,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		for (int a = 0; a < assets.size(); a++){
 			EveAsset eveAsset = assets.get(a);
 			//XXX Overview: We ignoring station containers (as they are not really cargo)
-			if (eveAsset.getGroup().equals("Audit Log Secure Container")) continue;
+			if (eveAsset.getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) continue;
 
 			//Ingnore Station Services (Count 1, Volume 1)
 			if (eveAsset.getGroup().equals("Station Services")) continue;
@@ -377,27 +397,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		updateTableView();
 	}
 
-	private void copyToClipboard(Object o){
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		StringSelection st = new StringSelection(String.valueOf(o));
-		Clipboard cp = tk.getSystemClipboard();
-		cp.setContents(st, this);
-	}
-
-	@Override
-	public void updateData() {
-		updateTableData();
-		jViews.setSelectedItem("Stations");
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_VIEW_SELECTED.equals(e.getActionCommand())){
@@ -429,7 +428,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete Group: "+overviewGroup.getName()+"?", "Delete Group", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				program.getSettings().getOverviewGroups().remove(overviewGroup.getName());
-				updateTableData();
+				updateData();
 			}
 			return;
 		}
@@ -564,7 +563,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Remove Location:\n\""+location+"\"", "Remove Location", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				overviewGroup.remove(new OverviewLocation(location));
-				updateTableData();
+				updateData();
 			}
 		}
 	}

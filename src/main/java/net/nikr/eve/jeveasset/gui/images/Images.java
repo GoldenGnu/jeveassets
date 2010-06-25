@@ -69,6 +69,7 @@ public class Images {
 	public final static Icon ICON_UPDATE = Images.getIcon("update.png");
 	public final static Icon ICON_EVE = Images.getIcon("eve.png");
 	public final static Icon ICON_ARROW_DOWN = Images.getIcon("bullet_arrow_down.png");
+	public final static Icon ICON_TOOLS = Images.getIcon("bricks.png");
 
 	public final static Icon ICON_AVERAGE =  Images.getIcon("shape_align_middle.png");
 	public final static Icon ICON_VOLUME =  Images.getIcon("volume.png");

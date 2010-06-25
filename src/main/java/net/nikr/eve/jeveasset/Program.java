@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItemName;
@@ -47,7 +48,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.PriceDataSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ProxySettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.TableSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
@@ -122,7 +124,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private UserItemNameSettingsPanel userItemNameSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
-	private TableSettingsPanel tableSettingsPanel;
+	private AssetsToolSettingsPanel assetsToolSettingsPanel;
+	private OverviewToolSettingsPanel overviewToolSettingsPanel;
 
 
 	private ProgramUpdateChecker programUpdateChecker;
@@ -158,6 +161,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
+	//Tools
 		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
@@ -183,6 +187,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
 		SplashUpdater.setProgress(72);
+	//Dialogs
 		LOG.info("Loading: Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
 		SplashUpdater.setProgress(74);
@@ -204,37 +209,42 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this, Images.IMAGE_DIALOG_UPDATE);
 		SplashUpdater.setProgress(86);
+	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this, Images.IMAGE_DIALOG_SETTINGS);
 		SplashUpdater.setProgress(87);
 		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, Images.ICON_DIALOG_SETTINGS);
 		SplashUpdater.setProgress(88);
-		LOG.info("Loading: Table Settings Panel");
-		tableSettingsPanel = new TableSettingsPanel(this, settingsDialog, Images.ICON_TABLE_RESIZE);
+		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.ICON_TOOLS);
+		LOG.info("Loading: Assets Tool Settings Panel");
+		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, Images.ICON_TOOL_ASSETS, toolNode);
 		SplashUpdater.setProgress(89);
+		LOG.info("Loading: Overview Tool Settings Panel");
+		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, Images.ICON_TOOL_OVERVIEW, toolNode);
+		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, Images.ICON_PRICE_DATA);
-		SplashUpdater.setProgress(90);
+		SplashUpdater.setProgress(91);
 		LOG.info("Loading: User Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_PRICE);
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(92);
 		LOG.info("Loading: User Item Name Settings Panel");
 		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_NAME);
-		SplashUpdater.setProgress(92);
+		SplashUpdater.setProgress(93);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, Images.ICON_REPROCESSING);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, Images.ICON_PROXY);
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(95);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, Images.ICON_WINDOW);
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(96);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
-		SplashUpdater.setProgress(97);
+		SplashUpdater.setProgress(98);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -423,6 +433,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 		if (MainMenu.ACTION_OPEN_OVERVIEW.equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
+			overviewTab.resetViews();
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
 			// XXX Although the line above should be removed for production, removing it makes the GUI flicker.

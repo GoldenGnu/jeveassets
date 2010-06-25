@@ -56,6 +56,6 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 				+ uncaughtErrorMessage
 				, e);
 		JOptionPane.showMessageDialog(null, uncaughtErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-
+		System.exit(-1);
 	}
 }

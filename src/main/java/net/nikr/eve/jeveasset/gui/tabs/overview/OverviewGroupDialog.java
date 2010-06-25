@@ -254,7 +254,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
 				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
 			}
-			overviewTab.updateTableData();
+			overviewTab.updateData();
 			this.setVisible(false);
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){

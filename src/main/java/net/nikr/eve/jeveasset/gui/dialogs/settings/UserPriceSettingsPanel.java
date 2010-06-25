@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.UserPrice;
 public class UserPriceSettingsPanel extends JUserListPanel<Integer, UserPrice> {
 
 	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, icon, JUserListPanel.FILTER_NUMBERS_ONLY, "User Price", "Assets", "Price", "\r\nTo add new price:\r\n1. Right click a row in the table\r\n2. Select \"Set Price...\" in the popup menu");
+		super(program, optionsDialog, icon, JUserListPanel.FILTER_NUMBERS_ONLY, "User Price", "Assets", "Price", "\r\nTo add new price:\r\n1. Right click a row in the assets table\r\n2. Select \"Set Price...\" in the popup menu");
 	}
 
 	@Override

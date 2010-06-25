@@ -25,6 +25,7 @@ import java.awt.Window;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JPanel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 
 
@@ -35,8 +36,13 @@ public abstract class JSettingsPanel {
 	protected JPanel jPanel;
 	protected GroupLayout layout;
 	protected Window parent;
+	protected DefaultMutableTreeNode treeNode;
 
 	public JSettingsPanel(Program program, SettingsDialog optionsDialog, String title, Icon icon) {
+		this(program, optionsDialog, title, icon, null);
+	}
+
+	public JSettingsPanel(Program program, SettingsDialog optionsDialog, String title, Icon icon, DefaultMutableTreeNode parentNode) {
 		this.program = program;
 		this.title = title;
 		this.parent = optionsDialog.getDialog();
@@ -47,8 +53,7 @@ public abstract class JSettingsPanel {
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
-
-		optionsDialog.add(this, icon);
+		treeNode = optionsDialog.add(this, icon, parentNode);
 	}
 
 	public abstract boolean save();
@@ -62,5 +67,7 @@ public abstract class JSettingsPanel {
 		return title;
 	}
 
-
+	public DefaultMutableTreeNode getTreeNode() {
+		return treeNode;
+	}
 }
