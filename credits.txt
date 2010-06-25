@@ -31,7 +31,7 @@ Testers:
 ________________________________________________________________________________
 _SPECIAL_THANKS_________________________________________________________________
 
-jEveAssets is heavily based on the interface in EVE Asset Manager
+jEveAssets is heavily based on the user interface in EVE Asset Manager
 
 Copyright:
   William J Rogers
@@ -86,7 +86,7 @@ License:
 ________________________________________________________________________________
 _GLAZED_LISTS___________________________________________________________________
 
-jEveAssets use Glazed Lists to sort and filter the tables
+jEveAssets use Glazed Lists to sort and filter tables
 
 Link:
   http://publicobject.com/glazedlists/
@@ -149,6 +149,40 @@ Link:
 
 License:
   Property (Copyright by Apple)
+
+________________________________________________________________________________
+_SLF4J__________________________________________________________________________
+
+jEveAssets use SLF4J as logging facade 
+
+Link:
+  http://www.slf4j.org/
+
+License:
+  MIT License (http://en.wikipedia.org/wiki/MIT_License)
+
+________________________________________________________________________________
+_LOG4J__________________________________________________________________________
+
+jEveAssets use Log4j to log events and errors
+
+Link:
+  http://logging.apache.org/log4j/1.2/
+
+License:
+  The Apache Software License, Version 2.0
+  http://www.apache.org/licenses/LICENSE-2.0
+
+________________________________________________________________________________
+_JUNIT__________________________________________________________________________
+
+jEveAssets use JUnit for unit testing
+
+Link:
+  http://junit.sourceforge.net/
+
+License:
+  Common Public License V1.0 (http://junit.sourceforge.net/cpl-v10.html)
 
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
