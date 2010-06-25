@@ -104,17 +104,18 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
 				+ "&nbsp;<a href=\"http://supercsv.sourceforge.net/\">Super CSV</a> (csv export)<br> "
 				+ "&nbsp;<a href=\"http://code.google.com/p/eveapi/\">eveapi</a> (parsing eve-online api)<br> "
-				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit tesing)<br>"
+				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
+				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
+				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/1.2/\">log4j</a> (logging)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">OSXAdapter</a> (native mac os x support)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">NiKR Log</a> (logging)<br>"
-				+ "<br>"
+				//+ "<br>"
 				);
 
 		jThanks =  createEditorPane(
 				"<b>Special Thanks</b><br>"
-				+ "&nbsp;jEveAssets is heavily based on the interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
+				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
 		
 		jClose = new JButton("Close");
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
@@ -136,7 +137,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jInfo)
-					.addGap(20)
+					.addGap(10)
 					.addComponent(jExternal)
 				)
 				.addComponent(jThanks)
