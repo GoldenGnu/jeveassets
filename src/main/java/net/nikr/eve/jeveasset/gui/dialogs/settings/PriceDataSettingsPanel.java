@@ -45,7 +45,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	
 	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
 		super(program, optionsDialog, "Price Data", icon);
-		JTextArea jWarning = new JTextArea("When changing the source and/or region, the changes doesn't take effect until next time you update the price data.");
+		JTextArea jWarning = new JTextArea("Note: When changing the source and/or region, the changes doesn't take effect until next time you update the price data.");
 		jWarning.setFont(this.getPanel().getFont());
 		jWarning.setBackground(this.getPanel().getBackground());
 		jWarning.setLineWrap(true);

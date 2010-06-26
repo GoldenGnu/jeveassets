@@ -70,6 +70,7 @@ public class Images {
 	public final static Icon ICON_EVE = Images.getIcon("eve.png");
 	public final static Icon ICON_ARROW_DOWN = Images.getIcon("bullet_arrow_down.png");
 	public final static Icon ICON_TOOLS = Images.getIcon("bricks.png");
+	public final static Icon ICON_MODIFIED_ASSETS = Images.getIcon("textfield_rename.png");
 
 	public final static Icon ICON_AVERAGE =  Images.getIcon("shape_align_middle.png");
 	public final static Icon ICON_VOLUME =  Images.getIcon("volume.png");
@@ -83,7 +84,6 @@ public class Images {
 	public final static Icon ICON_CLEAR = Images.getIcon("page_white.png");
 	public final static Icon ICON_SAVE = Images.getIcon("disk.png");
 	public final static Icon ICON_FOLDER = Images.getIcon("folder.png");
-
 
 	public final static Icon ICON_TOOL_ASSETS = Images.getIcon("safe16.png");
 	public final static Icon ICON_TOOL_OVERVIEW = Images.getIcon("icon03_13.png");

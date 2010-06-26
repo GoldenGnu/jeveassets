@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserListItem;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -67,8 +68,8 @@ public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSett
 
 
 
-	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, int filter, String title, String list, String item, String help) {
-		super(program, optionsDialog, title, icon);
+	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode, int filter, String title, String list, String item, String help) {
+		super(program, optionsDialog, title, icon, parentNode);
 
 		JLabel jSetPriceLable = new JLabel(list+":");
 		jItems = new JComboBox();
@@ -186,7 +187,7 @@ public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSett
 			setEnabledAll(true);
 		} else {
 			jItems.setModel( new DefaultComboBoxModel() );
-			jItems.addItem("No prices found");
+			jItems.addItem("No values found");
 			jItem.setText("");
 			setEnabledAll(false);
 		}

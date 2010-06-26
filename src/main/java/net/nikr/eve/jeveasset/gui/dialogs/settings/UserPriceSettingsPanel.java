@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.util.Map;
 import javax.swing.Icon;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.UserPrice;
@@ -30,8 +31,8 @@ import net.nikr.eve.jeveasset.data.UserPrice;
 
 public class UserPriceSettingsPanel extends JUserListPanel<Integer, UserPrice> {
 
-	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, icon, JUserListPanel.FILTER_NUMBERS_ONLY, "User Price", "Assets", "Price", "\r\nTo add new price:\r\n1. Right click a row in the assets table\r\n2. Select \"Set Price...\" in the popup menu");
+	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
+		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NUMBERS_ONLY, "Price", "Assets", "Prices", "\r\nTo set the price for an asset type:\r\n1. Go to the Assets Tab\r\n2. Right click on the asset in the table\r\n3. Select \"Set Price...\" in the popup menu");
 	}
 
 	@Override

@@ -22,14 +22,15 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.util.Map;
 import javax.swing.Icon;
+import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItemName;
 
 
 public class UserItemNameSettingsPanel extends JUserListPanel<Long, UserItemName> {
 
-	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, icon, JUserListPanel.FILTER_NO_RESTRICTIONS, "User Item Name ", "Assets", "Name", "\r\nTo add new item name:\r\n1. Right click a row in the assets table\r\n2. Select \"Set Name...\" in the popup menu");
+	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
+		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NO_RESTRICTIONS, "Names", "Assets", "Name", "\r\nTo change the name of an asset:\r\n1. Go to the Assets Tab\r\n2. Right click on the asset in the table\r\n3. Select \"Set Name...\" in the popup menu");
 	}
 
 	@Override
