@@ -16,6 +16,16 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.5.0__________________________________________________________________________
+
+-Tools are now tabs in the main window
+-New Tool: Overview
+-Now use slf4J and log4j to log events and errors
+-New layout for the Account Manager
+-New layout for the Updating Dialog
+-Numerous bug fixes and minor changes
+
+________________________________________________________________________________
 _1.4.1__________________________________________________________________________
 
 Bug fixes:
