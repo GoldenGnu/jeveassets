@@ -120,7 +120,19 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 		);
 	}
 
-	public void show(String station, String system, String region, OverviewGroup overviewGroup){
+	public void groupNew(String station, String system, String region){
+		show(station, system, region, null);
+	}
+
+	public void groupRename(OverviewGroup overviewGroup){
+		show(null, null, null, overviewGroup);
+	}
+
+	public void groupAdd(String station, String system, String region, OverviewGroup overviewGroup){
+		show(station, system, region, overviewGroup);
+	}
+
+	private void show(String station, String system, String region, OverviewGroup overviewGroup){
 		this.station = station;
 		this.system = system;
 		this.region = region;
@@ -175,6 +187,11 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			jRegion.setText(region+" (Region)");
 		} else {
 			jRegion.setVisible(false);
+		}
+		if (station != null || system != null || region != null){
+			jNone.setVisible(true);
+		} else {
+			jNone.setVisible(false);
 		}
 		this.setVisible(true);
 	}
@@ -254,7 +271,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
 				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
 			}
-			overviewTab.updateData();
+			overviewTab.updateTable();
 			this.setVisible(false);
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){

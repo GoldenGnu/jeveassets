@@ -271,6 +271,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	 */
 	protected Program(boolean load) { }
 
+	//FIXME should be renamed to savedFiltersChanged
 	public void filtersChanged(){
 		this.getFiltersManagerDialog().filtersChanged();
 		this.getSaveFilterDialog().filtersChanged();
@@ -409,9 +410,14 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 	}
 
+	/**
+	 *
+	 * Called when the asset filter is changed
+	 */
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {
 		this.getAssetsTab().updateToolPanel();
+		overviewTab.updateTable();
 	}
 
 	@Override

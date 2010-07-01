@@ -36,19 +36,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
@@ -59,26 +65,29 @@ import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 
 public class OverviewTab extends JMainTab implements ActionListener, MouseListener, ClipboardOwner {
 
-	public final static String ACTION_VIEW_SELECTED = "ACTION_VIEW_SELECTED";
-	public final static String ACTION_ADD_NEW_GROUP = "ACTION_ADD_NEW_GROUP";
-	public final static String ACTION_DELETE_GROUP = "ACTION_DELETE_GROUP";
-	public final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
-	public final static String ACTION_EDIT_GROUP = "ACTION_EDIT_GROUP";
-	public final static String ACTION_COPY = "ACTION_COPY";
-	public final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
-	public final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
-	public final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
-	public final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
+	private final static String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
+	private final static String ACTION_ADD_NEW_GROUP = "ACTION_ADD_NEW_GROUP";
+	private final static String ACTION_DELETE_GROUP = "ACTION_DELETE_GROUP";
+	private final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
+	private final static String ACTION_COPY = "ACTION_COPY";
+	private final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
+	private final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
+	private final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
+	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
+	private final static String ALL = "All";
+	private final static String ASSET_FILTER = "Filtered Assets";
+	private final static String GROUPED = "Grouped";
+	private final static String UNGROUPED = "Ungrouped";
 
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
 	private OverviewTableFormat overviewTableFormat;
 	private JAutoColumnTable jOverviewTable;
 	private JComboBox jViews;
-	private List<Overview> regions;
-	private List<Overview> systems;
-	private List<Overview> stations;
-	private List<Overview> groups;
+	private JComboBox jCharacters;
+	private JComboBox jSource;
+	private JComboBox jGroups;
+	private JLabel jGroupsLabel;
 	private OverviewGroupDialog overviewGroupDialog;
 
 	private AddToGroup addToGroup = new AddToGroup();
@@ -88,9 +97,26 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		super(program, "Overview", Images.ICON_TOOL_OVERVIEW, true);
 
 		overviewGroupDialog = new OverviewGroupDialog(program, this);
+
+		JLabel jViewsLabel = new JLabel("View");
 		jViews = new JComboBox( new String[]  {"Stations", "Systems", "Regions", "Groups"} );
-		jViews.setActionCommand(ACTION_VIEW_SELECTED);
+		jViews.setActionCommand(ACTION_UPDATE_LIST);
 		jViews.addActionListener(this);
+
+		JLabel jCharactersLabel = new JLabel("Character");
+		jCharacters = new JComboBox();
+		jCharacters.setActionCommand(ACTION_UPDATE_LIST);
+		jCharacters.addActionListener(this);
+
+		JLabel jSourceLabel = new JLabel("Source");
+		jSource = new JComboBox( new String[]  {"All Assets", ASSET_FILTER} );
+		jSource.setActionCommand(ACTION_UPDATE_LIST);
+		jSource.addActionListener(this);
+
+		jGroupsLabel = new JLabel("Groups");
+		jGroups = new JComboBox( new String[]  {ALL, GROUPED, UNGROUPED} );
+		jGroups.setActionCommand(ACTION_UPDATE_LIST);
+		jGroups.addActionListener(this);
 
 		//Table format
 		overviewTableFormat = new OverviewTableFormat();
@@ -110,17 +136,31 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
-				.addComponent(jViews, 200, 200, 200)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jOverviewScrollPanel, 400, 400, Short.MAX_VALUE)
+					.addComponent(jViewsLabel)
+					.addComponent(jViews, 100, 100, 100)
+					.addComponent(jSourceLabel)
+					.addComponent(jSource, 100, 100, 100)
+					.addComponent(jGroupsLabel)
+					.addComponent(jGroups, 100, 100, 100)
+					.addComponent(jCharactersLabel)
+					.addComponent(jCharacters, 100, 100, 200)
 				)
+				.addComponent(jOverviewScrollPanel, 400, 400, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jViews, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOverviewScrollPanel, 100, 400, Short.MAX_VALUE)
+					.addComponent(jViewsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jViews, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroupsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addComponent(jOverviewScrollPanel, 100, 400, Short.MAX_VALUE)
 		);
 	}
 
@@ -251,47 +291,127 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	private void updateTableView(){
+	private List<Overview> getList(List<EveAsset> input, String character, String view, String groups){
+		List<Overview> locations = new ArrayList<Overview>();
+		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
+		List<String> groupedLocations = new ArrayList<String>();
+		if (view.equals("Groups")){ //Add all groups
+			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
+				OverviewGroup overviewGroup = entry.getValue();
+				if (!locationsMap.containsKey(overviewGroup.getName())){ //Create new overview
+					Overview overview = new Overview(overviewGroup.getName(), "", "", 0, 0, 0, 0);
+					locationsMap.put(overviewGroup.getName(), overview);
+					locations.add(overview);
+				}
+			}
+		} else { //Add all group locations
+			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
+				OverviewGroup overviewGroup = entry.getValue();
+				for (OverviewLocation overviewLocation : overviewGroup.getLocations()){
+					if (!groupedLocations.contains(overviewLocation.getName())){
+						groupedLocations.add(overviewLocation.getName());
+					}
+				}
+			}
+		}
+		for (EveAsset eveAsset : input){
+			String name;
+			if (eveAsset.isCorporationAsset()){
+				name = "["+eveAsset.getOwner()+"]";
+			} else {
+				name = eveAsset.getOwner();
+			}
+			if (!character.equals(name) && !character.equals(ALL)) continue;
+			if (eveAsset.getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) continue;
+			if (eveAsset.getGroup().equals("Station Services")) continue;
+
+			double reprocessedValue = eveAsset.getValueReprocessed();
+			double value = eveAsset.getPrice() * eveAsset.getCount();
+			long count = eveAsset.getCount();
+			double volume = eveAsset.getVolume() * eveAsset.getCount();
+			if (!view.equals("Groups")){ //Locations
+				String location = "";
+				if (view.equals("Regions")) location = eveAsset.getRegion();
+				if (view.equals("Systems")) location = eveAsset.getSolarSystem();
+				if (view.equals("Stations")) location = eveAsset.getLocation();
+				if (groups.equals(GROUPED) && !groupedLocations.contains(location)) continue;
+				if (groups.equals(UNGROUPED) && groupedLocations.contains(location)) continue;
+				if (locationsMap.containsKey(location)){ //Update existing overview
+					Overview overview = locationsMap.get(location);
+					overview.addCount(count);
+					overview.addValue(value);
+					overview.addVolume(volume);
+					overview.addReprocessedValue(reprocessedValue);
+				} else { //Create new overview
+					Overview overview = new Overview(location, eveAsset.getSolarSystem(), eveAsset.getRegion(), reprocessedValue, volume, count, value);
+					locationsMap.put(location, overview);
+					locations.add(overview);
+				}
+			} else { //Groups
+				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
+					OverviewGroup overviewGroup = entry.getValue();
+					for (int c = 0; c < overviewGroup.getLocations().size(); c++){
+						OverviewLocation overviewLocation = overviewGroup.getLocations().get(c);
+						if (overviewLocation.equalsLocation(eveAsset)){ //Update existing overview (group)
+							Overview overview = locationsMap.get(overviewGroup.getName());
+							overview.addCount(count);
+							overview.addValue(value);
+							overview.addVolume(volume);
+							overview.addReprocessedValue(reprocessedValue);
+							break; //Only add once....
+						}
+					}
+				}
+			}
+		}
+		return locations;
+	}
+
+	public void updateTable(){
 		overviewEventList.getReadWriteLock().writeLock().lock();
 		overviewEventList.clear();
 		overviewEventList.getReadWriteLock().writeLock().unlock();
-		if (jViews.getSelectedItem().equals("Regions")){
+		String character = (String) jCharacters.getSelectedItem();
+		String view = (String) jViews.getSelectedItem();
+		String source = (String) jSource.getSelectedItem();
+		String groups = (String) jGroups.getSelectedItem();
+		if (view.equals("Regions")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
 			overviewTableModel.fireTableStructureChanged();
 			
 		}
-		if (jViews.getSelectedItem().equals("Systems")){
+		if (view.equals("Systems")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getSystemColumns());
 			overviewTableModel.fireTableStructureChanged();
 			
 		}
-		if (jViews.getSelectedItem().equals("Stations")){
+		if (view.equals("Stations")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getStationColumns());
 			overviewTableModel.fireTableStructureChanged();
 			
 		}
-		if (jViews.getSelectedItem().equals("Groups")){
+		if (view.equals("Groups")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
 			overviewTableModel.fireTableStructureChanged();
 		}
+		//Hide/Show Grouped filter
+		jGroups.setVisible(!view.equals("Groups"));
+		jGroupsLabel.setVisible(!view.equals("Groups"));
 		overviewEventList.getReadWriteLock().writeLock().lock();
-		if (jViews.getSelectedItem().equals("Regions")){
-			overviewEventList.addAll(regions);
-		}
-		if (jViews.getSelectedItem().equals("Systems")){
-			overviewEventList.addAll(systems);
-		}
-		if (jViews.getSelectedItem().equals("Stations")){
-			overviewEventList.addAll(stations);
-		}
-		if (jViews.getSelectedItem().equals("Groups")){
-			overviewEventList.addAll(groups);
+		if (source.equals(ASSET_FILTER)){
+			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view, groups));
+		} else {
+			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view, groups));
 		}
 		overviewEventList.getReadWriteLock().writeLock().unlock();
 	}
 
 	public void resetViews(){
-		jViews.setSelectedItem("Stations");
+		jViews.setSelectedIndex(0);
+		jCharacters.setSelectedIndex(0);
+		jSource.setSelectedIndex(0);
+		jGroups.setSelectedIndex(0);
+		
 	}
 	
 	private void copyToClipboard(Object o){
@@ -311,96 +431,29 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 	@Override
 	public void updateData() {
-		stations = new ArrayList<Overview>();
-		systems = new ArrayList<Overview>();
-		regions = new ArrayList<Overview>();
-		groups = new ArrayList<Overview>();
-		overviewEventList.clear();
-		EventList<EveAsset> assets = program.getEveAssetEventList();
-		Map<String, Overview> regionsMap = new HashMap<String, Overview>();
-		Map<String, Overview> systemsMap = new HashMap<String, Overview>();
-		Map<String, Overview> stationsMap = new HashMap<String, Overview>();
-		Map<String, Overview> groupsMap = new HashMap<String, Overview>();
-
-		for (int a = 0; a < assets.size(); a++){
-			EveAsset eveAsset = assets.get(a);
-			//XXX Overview: We ignoring station containers (as they are not really cargo)
-			if (eveAsset.getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) continue;
-
-			//Ingnore Station Services (Count 1, Volume 1)
-			if (eveAsset.getGroup().equals("Station Services")) continue;
-			double reprocessedValue = eveAsset.getValueReprocessed();
-			double value = eveAsset.getPrice() * eveAsset.getCount();
-			long count = eveAsset.getCount();
-			double volume = eveAsset.getVolume() * eveAsset.getCount();
-			//Regions
-			if (regionsMap.containsKey(eveAsset.getRegion())){
-				Overview overview = regionsMap.get(eveAsset.getRegion());
-				overview.addCount(count);
-				overview.addValue(value);
-				overview.addVolume(volume);
-				overview.addReprocessedValue(reprocessedValue);
-			} else {
-				Overview overview = new Overview(eveAsset.getRegion(), "", eveAsset.getRegion(), reprocessedValue, volume, count, value);
-				regionsMap.put(eveAsset.getRegion(), overview);
-				regions.add(overview);
-			}
-			//Systems
-			if (systemsMap.containsKey(eveAsset.getSolarSystem())){
-				Overview overview = systemsMap.get(eveAsset.getSolarSystem());
-				overview.addCount(count);
-				overview.addValue(value);
-				overview.addVolume(volume);
-				overview.addReprocessedValue(reprocessedValue);
-			} else {
-				Overview overview = new Overview(eveAsset.getSolarSystem(), eveAsset.getSolarSystem(), eveAsset.getRegion(), reprocessedValue, volume, count, value);
-				systemsMap.put(eveAsset.getSolarSystem(), overview);
-				systems.add(overview);
-			}
-			//Stations
-			if (stationsMap.containsKey(eveAsset.getLocation())){
-				Overview overview = stationsMap.get(eveAsset.getLocation());
-				overview.addCount(count);
-				overview.addValue(value);
-				overview.addVolume(volume);
-				overview.addReprocessedValue(reprocessedValue);
-			} else {
-				Overview overview = new Overview(eveAsset.getLocation(), eveAsset.getSolarSystem(), eveAsset.getRegion(), reprocessedValue, volume, count, value);
-				stationsMap.put(eveAsset.getLocation(), overview);
-				stations.add(overview);
-			}
-			//Groups
-			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
-				OverviewGroup overviewGroup = entry.getValue();
-				if (!groupsMap.containsKey(overviewGroup.getName())){
-					Overview overview = new Overview(overviewGroup.getName(), "", "", 0, 0, 0, 0);
-					groupsMap.put(overviewGroup.getName(), overview);
-					groups.add(overview);
-				}
-				for (int c = 0; c < overviewGroup.getLocations().size(); c++){
-					OverviewLocation location = overviewGroup.getLocations().get(c);
-					if (location.equalsLocation(eveAsset)){
-						Overview overview = groupsMap.get(overviewGroup.getName());
-						overview.addCount(count);
-						overview.addValue(value);
-						overview.addVolume(volume);
-						overview.addReprocessedValue(reprocessedValue);
-						break; //Only add once....
-					}
-				}
+		Vector<String> filters = new Vector<String>();
+		filters.add(ALL);
+		List<String> chars = new ArrayList<String>();
+		List<String> corps = new ArrayList<String>();
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				chars.add(human.getName());
+				String corp = "["+human.getCorporation()+"]";
+				if (!corps.contains(corp)) corps.add(corp);
 			}
 		}
-		//Cleanup
-		regionsMap.clear();
-		systemsMap.clear();
-		stationsMap.clear();
-		updateTableView();
+		Collections.sort(chars);
+		Collections.sort(corps);
+		filters.addAll(chars);
+		filters.addAll(corps);
+		jCharacters.setModel( new DefaultComboBoxModel(filters));
+		updateTable();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_VIEW_SELECTED.equals(e.getActionCommand())){
-			updateTableView();
+		if (ACTION_UPDATE_LIST.equals(e.getActionCommand())){
+			updateTable();
 			return;
 		}
 		//Group
@@ -418,7 +471,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			}
 			String region = overview.getRegion();
 			
-			overviewGroupDialog.show(station, system, region, null);
+			overviewGroupDialog.groupNew(station, system, region);
 			return;
 		}
 		if (ACTION_DELETE_GROUP.equals(e.getActionCommand())){
@@ -428,7 +481,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete Group: "+overviewGroup.getName()+"?", "Delete Group", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				program.getSettings().getOverviewGroups().remove(overviewGroup.getName());
-				updateData();
+				updateTable();
 			}
 			return;
 		}
@@ -436,7 +489,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
-			overviewGroupDialog.show(null, null, null, overviewGroup);
+			overviewGroupDialog.groupRename(overviewGroup);
 			return;
 		}
 		//Copy
@@ -547,7 +600,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 					system = overview.getSolarSystem();
 				}
 				String region = overview.getRegion();
-				overviewGroupDialog.show(station, system, region, overviewGroup);
+				overviewGroupDialog.groupAdd(station, system, region, overviewGroup);
 			}
 		}
 	}
