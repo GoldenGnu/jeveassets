@@ -76,18 +76,14 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 	private final static String ALL = "All";
 	private final static String ASSET_FILTER = "Filtered Assets";
-	private final static String GROUPED = "Grouped";
-	private final static String UNGROUPED = "Ungrouped";
 
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
 	private OverviewTableFormat overviewTableFormat;
-	private JAutoColumnTable jOverviewTable;
+	private JOverviewTable jOverviewTable;
 	private JComboBox jViews;
 	private JComboBox jCharacters;
 	private JComboBox jSource;
-	private JComboBox jGroups;
-	private JLabel jGroupsLabel;
 	private OverviewGroupDialog overviewGroupDialog;
 
 	private AddToGroup addToGroup = new AddToGroup();
@@ -113,11 +109,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		jSource.setActionCommand(ACTION_UPDATE_LIST);
 		jSource.addActionListener(this);
 
-		jGroupsLabel = new JLabel("Groups");
-		jGroups = new JComboBox( new String[]  {ALL, GROUPED, UNGROUPED} );
-		jGroups.setActionCommand(ACTION_UPDATE_LIST);
-		jGroups.addActionListener(this);
-
 		//Table format
 		overviewTableFormat = new OverviewTableFormat();
 		//Backend
@@ -127,7 +118,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
-		jOverviewTable = new JAutoColumnTable(overviewTableModel, overviewTableFormat.getColumnNames());
+		jOverviewTable = new JOverviewTable(overviewTableModel, overviewTableFormat.getColumnNames());
 		jOverviewTable.addMouseListener(this);
 		//Sorters
 		TableComparatorChooser.install(jOverviewTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
@@ -141,8 +132,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 					.addComponent(jViews, 100, 100, 100)
 					.addComponent(jSourceLabel)
 					.addComponent(jSource, 100, 100, 100)
-					.addComponent(jGroupsLabel)
-					.addComponent(jGroups, 100, 100, 100)
 					.addComponent(jCharactersLabel)
 					.addComponent(jCharacters, 100, 100, 200)
 				)
@@ -157,8 +146,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroupsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jOverviewScrollPanel, 100, 400, Short.MAX_VALUE)
 		);
@@ -291,7 +278,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	private List<Overview> getList(List<EveAsset> input, String character, String view, String groups){
+	private List<Overview> getList(List<EveAsset> input, String character, String view){
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -304,7 +291,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 					locations.add(overview);
 				}
 			}
-		} else { //Add all group locations
+		} else { //Add all grouped locations
 			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
 				OverviewGroup overviewGroup = entry.getValue();
 				for (OverviewLocation overviewLocation : overviewGroup.getLocations()){
@@ -334,8 +321,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				if (view.equals("Regions")) location = eveAsset.getRegion();
 				if (view.equals("Systems")) location = eveAsset.getSolarSystem();
 				if (view.equals("Stations")) location = eveAsset.getLocation();
-				if (groups.equals(GROUPED) && !groupedLocations.contains(location)) continue;
-				if (groups.equals(UNGROUPED) && groupedLocations.contains(location)) continue;
 				if (locationsMap.containsKey(location)){ //Update existing overview
 					Overview overview = locationsMap.get(location);
 					overview.addCount(count);
@@ -364,6 +349,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				}
 			}
 		}
+		jOverviewTable.setGroupedLocations(groupedLocations);
 		return locations;
 	}
 
@@ -374,7 +360,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		String character = (String) jCharacters.getSelectedItem();
 		String view = (String) jViews.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
-		String groups = (String) jGroups.getSelectedItem();
 		if (view.equals("Regions")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
 			overviewTableModel.fireTableStructureChanged();
@@ -394,14 +379,11 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
 			overviewTableModel.fireTableStructureChanged();
 		}
-		//Hide/Show Grouped filter
-		jGroups.setVisible(!view.equals("Groups"));
-		jGroupsLabel.setVisible(!view.equals("Groups"));
 		overviewEventList.getReadWriteLock().writeLock().lock();
 		if (source.equals(ASSET_FILTER)){
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view, groups));
+			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view));
 		} else {
-			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view, groups));
+			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view));
 		}
 		overviewEventList.getReadWriteLock().writeLock().unlock();
 	}
@@ -410,7 +392,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		jViews.setSelectedIndex(0);
 		jCharacters.setSelectedIndex(0);
 		jSource.setSelectedIndex(0);
-		jGroups.setSelectedIndex(0);
 		
 	}
 	

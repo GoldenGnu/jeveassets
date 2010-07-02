@@ -51,8 +51,8 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.QuantityCellRenderer
 public class JAutoColumnTable extends JTable {
 
 	private final List<String> columnNames;
-	private EventTableModel eventTableModel;
 	private JScrollPane jScroll;
+	protected EventTableModel eventTableModel;
 
 	public JAutoColumnTable(EventTableModel dm, List<String> columnNames) {
 		setModel(dm);
