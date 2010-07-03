@@ -314,9 +314,9 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				setAllEnabled(true);
 				program.getMainWindow().updateTitle();
 				jWait.hideWaitDialog();
-				if (!program.getToolPanel().getAssetFilters().isEmpty()){
+				if (!program.getAssetsTab().getAssetFilters().isEmpty()){
 					int value = JOptionPane.showConfirmDialog(this.getDialog(), "Clear asset filter?", "Profile Loaded", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (value == JOptionPane.YES_OPTION) program.getToolPanel().clearFilters();
+					if (value == JOptionPane.YES_OPTION) program.getAssetsTab().clearFilters();
 				}
 			}
 		}

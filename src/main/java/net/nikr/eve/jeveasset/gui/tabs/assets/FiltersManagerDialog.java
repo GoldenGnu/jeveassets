@@ -119,7 +119,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 				.addComponent(jScrollPanel)
 				.addComponent(jDone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
-		filtersChanged();
+		savedFiltersChanged();
 	}
 
 	public String getSelectedString(){
@@ -163,7 +163,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 			program.getSettings().getAssetFilters().remove(s);
 			program.getSettings().getAssetFilters().put(s, assetFilters);
 		}
-		program.filtersChanged();
+		program.savedFiltersChanged();
 	}
 
 	private void deleteFilter(){
@@ -172,7 +172,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete filter:\r\n\""+filterName+"\"?", "Delete Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (nReturn == JOptionPane.YES_OPTION){
 			program.getSettings().getAssetFilters().remove(filterName);
-			program.filtersChanged();
+			program.savedFiltersChanged();
 		}
 	}
 
@@ -180,11 +180,11 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		String filterName = getSelectedString();
 		if (filterName == null) return;
 		List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get( filterName );
-		program.getToolPanel().setAssetFilters(assetFilters);
+		program.getAssetsTab().setAssetFilters(assetFilters);
 		this.setVisible(false);
 	}
 
-	public void filtersChanged() {
+	public void savedFiltersChanged() {
 		listModel.clear();
 		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);

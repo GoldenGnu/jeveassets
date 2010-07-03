@@ -121,7 +121,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//Add one filterPanel
 		addFilter();
-		filtersChanged();
+		savedFiltersChanged();
 	}
 
 	public List<AssetFilter> getAssetFilters(){
@@ -251,7 +251,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		saveFilterDialog.setVisible(true);
 	}
 
-	final public void filtersChanged(){
+	final public void savedFiltersChanged(){
 		jLoadFilter.clearMenu();
 		JMenuItem jMenuItem;
 		

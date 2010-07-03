@@ -65,7 +65,6 @@ import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
-import net.nikr.eve.jeveasset.gui.tabs.assets.ToolPanel;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -143,19 +142,19 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
 
-		//Data
+	//Data
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
-		
 		settings = new Settings();
 		settings.loadActiveProfile();
 		eveAssetEventList = new BasicEventList<EveAsset>();
 		programUpdateChecker = new ProgramUpdateChecker(this);
-
+	//Timer
 		timer = new Timer(1000, this);
 		timer.setActionCommand(ACTION_TIMER);
-
+	//Updatable
 		updatable = new Updatable(settings);
+	//GUI
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
 		LOG.info("Loading: Main Window");
@@ -257,12 +256,11 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
+		programUpdateChecker.showMessages();
 		if (settings.getAccounts().isEmpty()){
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
-		programUpdateChecker.showMessages();
-		
 	}
 
 	/**
@@ -270,18 +268,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	 * @param load does nothing except change the signature.
 	 */
 	protected Program(boolean load) { }
-
-	//FIXME should be renamed to savedFiltersChanged
-	public void filtersChanged(){
-		this.getFiltersManagerDialog().filtersChanged();
-		this.getSaveFilterDialog().filtersChanged();
-		this.getToolPanel().filtersChanged();
-		this.getAssetsTab().filtersChanged();
-	}
-
-	public void tableUpdated(){
-
-	}
 
 	private void timerTicked(){
 		if (!timer.isRunning()){
@@ -344,9 +330,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			}
 		}
 	}
-	public static boolean onMac() {
-		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-	}
 
 	public Settings getSettings(){
 		return settings;
@@ -363,14 +346,15 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	public AssetsTab getAssetsTab(){
 		return assetsTab;
 	}
-	public ToolPanel getToolPanel(){
-		return assetsTab.getToolPanel();
-	}
 	public StatusPanel getStatusPanel(){
 		return this.getMainWindow().getStatusPanel();
 	}
 	public EventList<EveAsset> getEveAssetEventList() {
 		return eveAssetEventList;
+	}
+
+	public static boolean onMac() {
+		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
 
 	public static boolean isDebug() {
@@ -418,9 +402,18 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 	}
 
+
 	/**
-	 *
-	 * Called when the asset table is re-filtered
+	 * Called when saved asset filters are updated (save/rename/delete)
+	 */
+	public void savedFiltersChanged(){
+		this.getFiltersManagerDialog().savedFiltersChanged();
+		this.getSaveFilterDialog().savedFiltersChanged();
+		this.getAssetsTab().savedFiltersChanged();
+	}
+
+	/**
+	 * Called when the asset table is filtered
 	 */
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {
@@ -491,7 +484,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
-	//External files
+	//External Files
 		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
 			openFile(Settings.getPathReadme());
 		}

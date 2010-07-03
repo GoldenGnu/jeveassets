@@ -12,7 +12,6 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.tabs.assets.ToolPanel;
 
 /**
  * any method called will throw an exception. extend and override only the ones that are needed to perform the tests.
@@ -55,7 +54,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void filtersChanged() {
+	public void savedFiltersChanged() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -90,11 +89,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public ToolPanel getToolPanel() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public void saveSettings() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
@@ -108,10 +102,4 @@ public abstract class FakeProgram extends Program {
 	public void showSettings() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-
-	@Override
-	public void tableUpdated() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
 }

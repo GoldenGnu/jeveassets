@@ -494,21 +494,21 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Location", overview.getName(), AssetFilter.MODE_EQUALS, true, null);
-			program.getToolPanel().addFilter(assetFilter, true);
+			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Location", overview.getSolarSystem(), AssetFilter.MODE_CONTAIN, true, null);
-			program.getToolPanel().addFilter(assetFilter, true);
+			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			AssetFilter assetFilter = new AssetFilter("Region", overview.getRegion(), AssetFilter.MODE_EQUALS, true, null);
-			program.getToolPanel().addFilter(assetFilter, true);
+			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())){
@@ -520,17 +520,17 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				if (location.isStation()){
 					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_EQUALS, false, null);
 					assetFilters.add(assetFilter);
-					program.getToolPanel().addFilter(assetFilter, true);
+					program.getAssetsTab().addFilter(assetFilter, true);
 				}
 				if (location.isSystem()){
 					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_CONTAIN, false, null);
 					assetFilters.add(assetFilter);
-					program.getToolPanel().addFilter(assetFilter, true);
+					program.getAssetsTab().addFilter(assetFilter, true);
 				}
 				if (location.isRegion()){
 					AssetFilter assetFilter = new AssetFilter("Region", location.getName(), AssetFilter.MODE_EQUALS, false, null);
 					assetFilters.add(assetFilter);
-					program.getToolPanel().addFilter(assetFilter, true);
+					program.getAssetsTab().addFilter(assetFilter, true);
 				}
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());

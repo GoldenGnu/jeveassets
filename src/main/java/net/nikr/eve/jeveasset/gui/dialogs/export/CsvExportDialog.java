@@ -401,7 +401,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 		}
 		if (jCurrentFilter.isSelected()){
-			List<AssetFilter> assetFilters = program.getToolPanel().getAssetFilters();
+			List<AssetFilter> assetFilters = program.getAssetsTab().getAssetFilters();
 			FilterList<EveAsset> assets = new FilterList<EveAsset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
 			for (int a = 0; a < assets.size(); a++){
 				EveAsset eveAsset = assets.get(a);

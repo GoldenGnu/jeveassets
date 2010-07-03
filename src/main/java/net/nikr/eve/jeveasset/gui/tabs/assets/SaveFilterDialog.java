@@ -92,10 +92,10 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
-		filtersChanged();
+		savedFiltersChanged();
 	}
 	
-	public void filtersChanged(){
+	public void savedFiltersChanged(){
 		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);
 		filters.clear();
@@ -138,8 +138,8 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		}
 		this.setVisible(false);
 		//Update filters
-		program.getSettings().getAssetFilters().put(returnValue, program.getToolPanel().getAssetFilters());
-		program.filtersChanged();
+		program.getSettings().getAssetFilters().put(returnValue, program.getAssetsTab().getAssetFilters());
+		program.savedFiltersChanged();
 	}
 
 	@Override
