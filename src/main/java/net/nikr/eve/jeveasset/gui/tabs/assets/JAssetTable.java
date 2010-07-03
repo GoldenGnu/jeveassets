@@ -57,6 +57,8 @@ public class JAssetTable extends JTable {
 		tableCellRenderer = new DefaultTableCellRenderer();
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
+		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
+		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
 	}
 
 	@Override
@@ -160,11 +162,12 @@ public class JAssetTable extends JTable {
 	private Component getMatchingTableCellRendererComponent(JTable table, Object value,
 					    boolean isSelected, boolean hasFocus,
 					    int row, int column){
+
 		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Integer.class)) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Float.class)) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Double.class)) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Long.class)) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 		return c;
 	}
 

@@ -252,7 +252,7 @@ public class MaterialsTab extends JMainTab {
 			output = output +"<tr>"
 							+"<td style=\"background: #ffffff; text-align: right;\">"+material.getCount()+"</td>"
 							+"<td style=\"background: #ffffff;\">"+material.getName()+"</td>"
-							+"<td style=\"background: #ffffff; text-align: right;\">"+Formater.isk(material.getValue())+"</td>"
+							+"<td style=\"background: #ffffff; text-align: right;\">"+Formater.iskFormat(material.getValue())+"</td>"
 							+"</tr>"
 						;
 		}

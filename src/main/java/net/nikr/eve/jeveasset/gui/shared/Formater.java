@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,72 +30,72 @@ import net.nikr.eve.jeveasset.data.Settings;
 
 
 public class Formater {
-	private static DecimalFormat isk  = new DecimalFormat("#,##0.00 isk");
-	private static DecimalFormat standard  = new DecimalFormat("#,##0.00");
-	private static DecimalFormat standardInteger  = new DecimalFormat("#,##0");
-	private static DecimalFormat standardFloat  = new DecimalFormat("#,##0.###");
-	private static DecimalFormat twoDigs = new DecimalFormat("#.##", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat count  = new DecimalFormat("#,##0 items");
-	private static DateFormat todaysdate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
+
+	private static DecimalFormat iskFormat  = new DecimalFormat("#,##0.00 isk");
+	private static DecimalFormat itemsFormat  = new DecimalFormat("#,##0 items");
+	private static DecimalFormat longFormat  = new DecimalFormat("#,##0");
+	private static DecimalFormat integerFormat  = new DecimalFormat("0");
+	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
+	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
+	
+	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
 	private static DateFormat weekdayTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
-	private static DateFormat timeonly = new SimpleDateFormat("HH:mm", new Locale("en"));
+	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
 
-	public static String isk(Object obj){
-		return isk.format(obj);
-	}
-	public static String isk(Double number){
-		return isk.format(number);
-	}
-	public static String isk(Long number){
-		return isk.format(number);
-	}
-	public static String number(Object obj){
-		return standard.format(obj);
-	}
-	public static String number(Double number){
-		return standard.format(number);
-	}
-	public static double numberDouble(Double number){
-		try {
-			return Double.valueOf(twoDigs.format(number));
-		} catch (NumberFormatException ex){
-			return -1;
-		}
-	}
-	public static String numberFloat(Object obj){
-		return standardFloat.format(obj);
-	}
-	public static String integer(Object obj){
-		return standardInteger.format(obj);
+	private Formater() {
 	}
 
-	public static String count(Object obj){
-		return count.format(obj);
+	public static String iskFormat(Double number){
+		return iskFormat.format(number);
 	}
-	public static String count(Integer number){
-		return count.format(number);
+	public static String itemsFormat(Long number){
+		return itemsFormat.format(number);
 	}
-	public static String count(Long number){
-		return count.format(number);
+	public static String doubleFormat(Object obj){
+		return decimalFormat.format(obj);
 	}
+	/**
+	 * WARNING: This is not an good format for columns
+	 * It does however give a very precise result
+	 * 
+	 * @param obj value to be formated
+	 * @return formated value
+	 */
+	public static String floatFormat(Object obj){
+		return floatFormat.format(obj);
+	}
+	public static String integerFormat(Object obj){
+		return integerFormat.format(obj);
+	}
+	public static String longFormat(Object obj){
+		return longFormat.format(obj);
+	}
+
+	public static double round(double number, int decimalPlaces){
+		double modifier = Math.pow(10.0, decimalPlaces);
+		return Math.round(number * modifier) / modifier;
+	}
+
 	public static String weekdayAndTime(Date date){
 		if (today(date)){
-			return "Today "+timeonly.format(date);
+			return "Today "+timeOnly.format(date);
 		} else {
 			return weekdayTime.format(date);
 		}
 	}
+
 	public static String timeOnly(Date date){
-		return timeonly.format(date);
+		return timeOnly.format(date);
 	}
+
 	public static String simpleDate(Date date){
 		return simpleDate.format(date);
 	}
-	public static boolean today(Date date){
-		String sDate = todaysdate.format(date);
-		String sNow = todaysdate.format(Settings.getGmtNow());
+
+	private static boolean today(Date date){
+		String sDate = todaysDate.format(date);
+		String sNow = todaysDate.format(Settings.getGmtNow());
 		return sDate.equals(sNow);
 	}
-
 }

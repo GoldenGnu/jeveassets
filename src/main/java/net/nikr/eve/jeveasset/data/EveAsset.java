@@ -280,11 +280,11 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public double getValue() {
-		return Formater.numberDouble(this.getPrice() * this.getCount());
+		return Formater.round(this.getPrice() * this.getCount(), 2);
 	}
 
 	public double getValueReprocessed() {
-		return Formater.numberDouble(this.getPriceReprocessed() * this.getCount());
+		return Formater.round(this.getPriceReprocessed() * this.getCount(), 2);
 	}
 
 	public double getPriceBase() {

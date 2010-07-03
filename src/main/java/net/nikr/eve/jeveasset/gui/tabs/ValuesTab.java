@@ -456,56 +456,56 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			//Buy Orders
 			if (ownersTotalBuyOrders.containsKey(s)) total = total + ownersTotalBuyOrders.get(s);
 			if (total != 0){
-				output.addValue(Formater.isk(total));
+				output.addValue(Formater.iskFormat(total));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_WALLET_BALANCE);
 			if (ownersTotalAccountBalance.containsKey(s)){
 				double l = ownersTotalAccountBalance.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 			
 			output.addHeading(NAME_ASSETS_VALUE);
 			if (ownersTotalItemsValue.containsKey(s)){
 				double l = ownersTotalItemsValue.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_SELL_ORDERS);
 			if (ownersTotalSellOrders.containsKey(s)){
 				double l = ownersTotalSellOrders.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
 			if (ownersTotalBuyOrders.containsKey(s)){
 				double l = ownersTotalBuyOrders.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 			
 			output.addHeading(NAME_BEST_ASSET);
 			if (ownersBestItem.containsKey(s)){
 				EveAsset ownerBestItem = ownersBestItem.get(s);
-				output.addValue(ownerBestItem.getName()+"<br/>"+Formater.isk(ownerBestItem.getPrice()));
+				output.addValue(ownerBestItem.getName()+"<br/>"+Formater.iskFormat(ownerBestItem.getPrice()));
 			}
 			output.addNone(2);
 			
 			output.addHeading(NAME_BEST_SHIP);
 			if (ownersBestShip.containsKey(s)){
 				EveAsset ownerBestShip = ownersBestShip.get(s);
-				output.addValue(ownerBestShip.getName()+"<br/>"+Formater.isk(ownerBestShip.getPrice()));
+				output.addValue(ownerBestShip.getName()+"<br/>"+Formater.iskFormat(ownerBestShip.getPrice()));
 			}
 			output.addNone(2);
 			
 			output.addHeading(NAME_BEST_MODULE);
 			if (ownersBestModule.containsKey(s)){
 				EveAsset ownerBestModule = ownersBestModule.get(s);
-				output.addValue(ownerBestModule.getName()+"<br/>"+Formater.isk(ownerBestModule.getPrice()));
+				output.addValue(ownerBestModule.getName()+"<br/>"+Formater.iskFormat(ownerBestModule.getPrice()));
 			}
 			output.addNone(2);
 			
@@ -531,56 +531,56 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			//Buy Orders
 			if (corpsTotalBuyOrders.containsKey(s)) total = total + corpsTotalBuyOrders.get(s);
 			if (total != 0){
-				output.addValue(Formater.isk(total));
+				output.addValue(Formater.iskFormat(total));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_WALLET_BALANCE);
 			if (corpsTotalAccountBalance.containsKey(s)){
 				double l = corpsTotalAccountBalance.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_VALUE);
 			if (corpsTotalItemsValue.containsKey(s)){
 				double l = corpsTotalItemsValue.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_SELL_ORDERS);
 			if (corpsTotalSellOrders.containsKey(s)){
 				double l = corpsTotalSellOrders.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
 			if (corpsTotalBuyOrders.containsKey(s)){
 				double l = corpsTotalBuyOrders.get(s);
-				output.addValue(Formater.isk(l));
+				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_BEST_ASSET);
 			if (corpsBestItem.containsKey(s)){
 				EveAsset corpBestItem = corpsBestItem.get(s);
-				output.addValue(corpBestItem.getName()+"<br/>"+Formater.isk(corpBestItem.getPrice()));
+				output.addValue(corpBestItem.getName()+"<br/>"+Formater.iskFormat(corpBestItem.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_SHIP);
 			if (corpsBestShip.containsKey(s)){
 				EveAsset corpBestShip = corpsBestShip.get(s);
-				output.addValue(corpBestShip.getName()+"<br/>"+Formater.isk(corpBestShip.getPrice()));
+				output.addValue(corpBestShip.getName()+"<br/>"+Formater.iskFormat(corpBestShip.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_MODULE);
 			if (corpsBestModule.containsKey(s)){
 				EveAsset corpBestModule = corpsBestModule.get(s);
-				output.addValue(corpBestModule.getName()+"<br/>"+Formater.isk(corpBestModule.getPrice()));
+				output.addValue(corpBestModule.getName()+"<br/>"+Formater.iskFormat(corpBestModule.getPrice()));
 			}
 			output.addNone(2);
 
@@ -623,7 +623,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				|| totalSellOrders != 0
 				|| totalBuyOrders != 0
 				){
-			output.addValue(Formater.isk(totalAccountBalance
+			output.addValue(Formater.iskFormat(totalAccountBalance
 					+totalItemsValue
 					+totalSellOrders
 					+totalBuyOrders));
@@ -631,24 +631,24 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		output.addNone();
 
 		output.addHeading(NAME_WALLET_BALANCE);
-		if (totalAccountBalance != 0) output.addValue(Formater.isk(totalAccountBalance));
+		if (totalAccountBalance != 0) output.addValue(Formater.iskFormat(totalAccountBalance));
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_VALUE);
-		if (totalItemsValue != 0) output.addValue(Formater.isk(totalItemsValue));
+		if (totalItemsValue != 0) output.addValue(Formater.iskFormat(totalItemsValue));
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_SELL_ORDERS);
-		if (totalSellOrders != 0) output.addValue(Formater.isk(totalSellOrders));
+		if (totalSellOrders != 0) output.addValue(Formater.iskFormat(totalSellOrders));
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_ESCROWS);
-		if (totalBuyOrders != 0) output.addValue(Formater.isk(totalBuyOrders));
+		if (totalBuyOrders != 0) output.addValue(Formater.iskFormat(totalBuyOrders));
 		output.addNone();
 
 		output.addHeading(NAME_BEST_ASSET);
 		if (bestItem != null){
-			output.addValue(bestItem.getName()+"<br/>"+Formater.isk(bestItem.getPrice()));
+			output.addValue(bestItem.getName()+"<br/>"+Formater.iskFormat(bestItem.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);
@@ -657,7 +657,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 		output.addHeading(NAME_BEST_SHIP);
 		if (bestShip != null){
-			output.addValue(bestShip.getName()+"<br/>"+Formater.isk(bestShip.getPrice()));
+			output.addValue(bestShip.getName()+"<br/>"+Formater.iskFormat(bestShip.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);
@@ -666,7 +666,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 		output.addHeading(NAME_BEST_MODULE);
 		if (bestModule != null){
-			output.addValue(bestModule.getName()+"<br/>"+Formater.isk(bestModule.getPrice()));
+			output.addValue(bestModule.getName()+"<br/>"+Formater.iskFormat(bestModule.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);

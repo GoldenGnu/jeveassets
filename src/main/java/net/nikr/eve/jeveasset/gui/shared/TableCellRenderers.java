@@ -33,7 +33,7 @@ public class TableCellRenderers {
 		}
 		@Override
 		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.integer(value));
+			setText((value == null) ? "" : Formater.longFormat(value));
 		}
 	}
 
@@ -44,7 +44,7 @@ public class TableCellRenderers {
 		}
 		@Override
 		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.number(value));
+			setText((value == null) ? "" : Formater.doubleFormat(value));
 		}
 	}
 
@@ -52,6 +52,11 @@ public class TableCellRenderers {
 		public IntegerCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : Formater.integerFormat(value));
 		}
 	}
 
@@ -62,7 +67,7 @@ public class TableCellRenderers {
 		}
 		@Override
 		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.numberFloat(value));
+			setText((value == null) ? "" : Formater.floatFormat(value));
 		}
 	}
 	

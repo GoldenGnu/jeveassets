@@ -105,8 +105,8 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	public void setPopupHorizontalAlignment(int popupHorizontalAlignment) throws  IllegalArgumentException {
-		if (popupHorizontalAlignment != LEFT || popupHorizontalAlignment != RIGHT || popupHorizontalAlignment != CENTER){
-			new  IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
+		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER){
+			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
 	}
@@ -116,8 +116,8 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	public void setPopupVerticalAlignment(int popupVerticalAlignment) throws  IllegalArgumentException {
-		if (popupVerticalAlignment != TOP || popupVerticalAlignment != BOTTOM || popupVerticalAlignment != CENTER){
-			new  IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
+		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER){
+			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
 		this.popupVerticalAlignment = popupVerticalAlignment;
 	}

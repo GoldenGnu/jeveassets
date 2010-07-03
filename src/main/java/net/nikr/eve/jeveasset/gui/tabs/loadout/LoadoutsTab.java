@@ -429,7 +429,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			moduleOutput = moduleOutput
 					+ "<tr>"
 					+ "<td style=\"background: #ffffff;\">"+name+"</td>"
-					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.isk(price)+"</td>"
+					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.iskFormat(price)+"</td>"
 					+ "</tr>";
 		}
 		public void addModule(String name, double price, double value){
@@ -437,7 +437,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			moduleOutput = moduleOutput
 					+ "<tr>"
 					+ "<td style=\"background: #ffffff;\">"+name+"</td>"
-					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.isk(price)+" &nbsp; ("+Formater.isk(value)+")</td>"
+					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.iskFormat(price)+" &nbsp; ("+Formater.iskFormat(value)+")</td>"
 					+ "</tr>";
 		}
 

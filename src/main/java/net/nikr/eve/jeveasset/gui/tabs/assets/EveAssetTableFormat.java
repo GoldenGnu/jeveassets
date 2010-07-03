@@ -65,7 +65,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Base Price")) return Double.class;
 		if (sColumn.equals("Value")) return Double.class;
 		if (sColumn.equals("Meta")) return String.class;
-		if (sColumn.equals("ID")) return Long.class;
+		if (sColumn.equals("ID")) return Integer.class;
 		if (sColumn.equals("Volume")) return Float.class;
 		if (sColumn.equals("Type ID")) return Integer.class;
 		if (sColumn.equals("Region")) return String.class;

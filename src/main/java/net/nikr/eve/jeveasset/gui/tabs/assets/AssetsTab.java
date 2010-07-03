@@ -226,10 +226,10 @@ public class AssetsTab extends JMainTab
 			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 		}
 		if (count > 0 && total > 0) average = total / count;
-		jTotalValue.setText(Formater.isk(total));
-		jCount.setText(Formater.count(count));
-		jAverage.setText(Formater.isk(average));
-		jVolume.setText(Formater.number(volume));
+		jTotalValue.setText(Formater.iskFormat(total));
+		jCount.setText(Formater.itemsFormat(count));
+		jAverage.setText(Formater.iskFormat(average));
+		jVolume.setText(Formater.doubleFormat(volume));
 	}
 
 	public void updateToolPanel(){
@@ -582,25 +582,25 @@ public class AssetsTab extends JMainTab
 			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 		}
 
-		jMenuItem = new JMenuItem(Formater.isk(total));
+		jMenuItem = new JMenuItem(Formater.iskFormat(total));
 		jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.isk(total/count) );
+		jMenuItem = new JMenuItem( Formater.iskFormat(total/count) );
 		jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Average value of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.count(count));
+		jMenuItem = new JMenuItem( Formater.itemsFormat(count));
 		jMenuItem.setDisabledIcon(Images.ICON_ADD);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Count of selected assets");
 		jTablePopupMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.number(volume));
+		jMenuItem = new JMenuItem( Formater.doubleFormat(volume));
 		jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setToolTipText("Volume of selected assets");
