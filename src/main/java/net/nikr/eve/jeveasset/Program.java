@@ -400,19 +400,27 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private void openFile(String filename){
 		File file = new File(filename);
 		LOG.info("Opening: {}", file.getName());
+		boolean opened = false;
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
-			try {
-				desktop.open(file);
-			} catch (IOException ex) {
-				JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open "+file.getName(), "Open file", JOptionPane.PLAIN_MESSAGE);
+			if (desktop.isSupported(Desktop.Action.OPEN)) {
+				try {
+					desktop.open(file);
+					opened = true;
+				} catch (IOException ex) {
+					LOG.warn("	Opening Failed: "+ex.getMessage());
+				}
 			}
+		}
+		if (!opened){
+			LOG.warn("	Opening File Failed");
+			JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open "+file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
 	/**
 	 *
-	 * Called when the asset filter is changed
+	 * Called when the asset table is re-filtered
 	 */
 	@Override
 	public void changedMatcher(Event<EveAsset> matcherEvent) {

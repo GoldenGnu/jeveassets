@@ -354,6 +354,8 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	}
 
 	public void updateTable(){
+		//Only need to update when added to the main window
+		if (!program.getMainWindow().getTabs().contains(this)) return;
 		overviewEventList.getReadWriteLock().writeLock().lock();
 		overviewEventList.clear();
 		overviewEventList.getReadWriteLock().writeLock().unlock();
@@ -412,8 +414,8 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 	@Override
 	public void updateData() {
-		Vector<String> filters = new Vector<String>();
-		filters.add(ALL);
+		Vector<String> characters = new Vector<String>();
+		characters.add(ALL);
 		List<String> chars = new ArrayList<String>();
 		List<String> corps = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()){
@@ -425,9 +427,9 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		}
 		Collections.sort(chars);
 		Collections.sort(corps);
-		filters.addAll(chars);
-		filters.addAll(corps);
-		jCharacters.setModel( new DefaultComboBoxModel(filters));
+		characters.addAll(chars);
+		characters.addAll(corps);
+		jCharacters.setModel( new DefaultComboBoxModel(characters));
 		updateTable();
 	}
 
