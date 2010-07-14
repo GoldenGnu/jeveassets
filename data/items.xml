@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <rows>
     <row category="#System" group="#System" id="0" marketgroup="false" meta="" name="#System" price="0" volume="0.0"/>
     <row category="Owner" group="Corporation" id="2" marketgroup="false" meta="" name="Corporation" price="0" volume="0.0"/>
@@ -38380,4 +38380,5 @@
     <row category="Module" group="Shield Transporter" id="32467" marketgroup="false" meta="" name="Civilian Remote Shield Transporter" price="4996" volume="5.0"/>
     <row category="Module" group="Armor Repair Projector" id="32469" marketgroup="false" meta="" name="Civilian Remote Armor Repair System" price="4996" volume="5.0"/>
     <row category="Entity" group="Tutorial Drone" id="32471" marketgroup="false" meta="" name="Damaged Vessel" price="0" volume="115000.0"/>
+    <row category="Ship" group="Industrial" id="2863" marketgroup="false" meta="" name="Primae" price="0" volume="270000"/>
 </rows>
