@@ -199,7 +199,7 @@ public class Settings{
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
 		clearEveAssetList(); //Must be cleared to update uniqueIds
-		priceDataGetter.load(null, false, false); //Price Data - Must be loaded last
+		priceDataGetter.load(); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(45);
 	}
 

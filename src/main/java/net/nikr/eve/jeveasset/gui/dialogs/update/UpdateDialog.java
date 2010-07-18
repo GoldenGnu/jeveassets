@@ -314,10 +314,10 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					|| jIndustryJobs.isSelected()
 					|| jAssets.isSelected()
 					){
-				updateTasks.add( new PriceDataTask(jAssets.isSelected()) );
+				updateTasks.add( new PriceDataTask(jPriceData.isSelected()) );
 			}
 			if (!updateTasks.isEmpty()){
-				UpdateSelectedDialog updateSelectedDialog = new UpdateSelectedDialog(program, updateTasks);
+				TaskDialog updateSelectedDialog = new TaskDialog(program, updateTasks);
 			}
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
@@ -404,17 +404,21 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	}
 
 	public class PriceDataTask extends UpdateTask {
-		private boolean forceUpdate;
+		private boolean update;
 
-		public PriceDataTask(boolean forceUpdate) {
+		public PriceDataTask(boolean update) {
 			super("Price Data");
-			this.forceUpdate = forceUpdate;
+			this.update = update;
 		}
 
 		@Override
 		public void update() throws Throwable {
 			program.getSettings().clearEveAssetList();
-			program.getSettings().getPriceDataGetter().load(this, forceUpdate, true);
+			if (update){
+				program.getSettings().getPriceDataGetter().update(this);
+			} else {
+				program.getSettings().getPriceDataGetter().load(this);
+			}
 		}
 	}
 }

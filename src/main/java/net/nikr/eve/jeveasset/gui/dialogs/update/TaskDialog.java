@@ -47,7 +47,7 @@ import javax.swing.WindowConstants;
 import net.nikr.eve.jeveasset.Program;
 
 
-public class UpdateSelectedDialog implements PropertyChangeListener, ActionListener, WindowListener{
+public class TaskDialog implements PropertyChangeListener, ActionListener, WindowListener{
 
 	public final static String ACTION_OK = "ACTION_OK";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
@@ -65,11 +65,11 @@ public class UpdateSelectedDialog implements PropertyChangeListener, ActionListe
 	private JLabel jErrorName;
 	private JScrollPane jErrorScroll;
 
-	public UpdateSelectedDialog(Program program, UpdateTask updateTask) {
+	public TaskDialog(Program program, UpdateTask updateTask) {
 		this(program, Collections.singletonList(updateTask));
 	}
 
-	public UpdateSelectedDialog(Program program, List<UpdateTask> updateTasks) {
+	public TaskDialog(Program program, List<UpdateTask> updateTasks) {
 		this.program = program;
 		this.updateTasks = updateTasks;
 

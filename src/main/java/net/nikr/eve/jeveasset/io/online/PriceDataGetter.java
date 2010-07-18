@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,30 +52,53 @@ public class PriceDataGetter implements PricingListener {
 
 	private Settings settings;
 	private UpdateTask updateTask;
-	private boolean updated;
 	private long nextUpdate = 0;
-	private long priceCacheTimer = 60*60*1000l; // 1 hour
-	private boolean enableCacheTimers = true;
+	private long priceCacheTimer = 1*60*60*1000l; // 1 hour (hours*min*sec*ms)
 	private Map<Integer, PriceData> priceDataList;
+	private List<Integer> failedIds;
+	private final int attemptCount = 1;
+	private boolean update;
 
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
 	}
+	/**
+	 * Load price data from cache and only update missing price data
+	 * @return
+	 */
+	public boolean load(){
+		return process(null, false);
+	}
+	/**
+	 * Load price data from cache and only update missing price data
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
+	public boolean load(UpdateTask task){
+		return process(task, false);
+	}
+	/**
+	 * Update of all price data
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
 
-	public boolean load(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
+	public boolean update(UpdateTask task){
+		return process(task, true);
+	}
+
+	private boolean process(UpdateTask task, boolean update){
 		this.updateTask = task;
-		this.enableCacheTimers = enableCacheTimers;
-		updated = false;
-
-		if (forceUpdate){
-			LOG.info("Price data updating:");
-		} else if (!enableCacheTimers) {
-			LOG.info("Price data loading:");
+		this.update = update;
+		
+		if (update){
+			LOG.info("Price data update:");
 		} else {
-			LOG.info("Price data loading (updating as needed):");
+			LOG.info("Price data loading:");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
+		failedIds = new ArrayList<Integer>();
 
 		//Get all price ids
 		List<Integer> ids = settings.getUniqueIds();
@@ -82,38 +106,48 @@ public class PriceDataGetter implements PricingListener {
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
+		pricing.resetAllAttemptCounters();
 		//Reset cache timers...
-		if (forceUpdate){
-			for (int a = 0; a < ids.size(); a++){
-				pricing.setPrice(ids.get(a), -1.0);
+		if (update){
+			for (int id : ids){
+				pricing.setPrice(id, -1.0);
 			}
 		}
 		
 		//Load price data (Update as needed)
-		for (int a = 0; a < ids.size(); a++){
-			createPriceData(ids.get(a), pricing);
+		for (int id : ids){
+			createPriceData(id, pricing);
 		}
 		//Wait to complete
-		while (settings.getUniqueIds().size() >  priceDataList.size()){
+		while (ids.size() >  (priceDataList.size() + failedIds.size())){
 			try {
 				synchronized(this) {
                     wait();
                 }
 			} catch (InterruptedException ex) {
 				LOG.info("Failed to update price");
-				this.updateTask.addError("Price data", "Cancelled");
-				this.updateTask.setTaskProgress(100, 100, 0, 100);
-				this.updateTask = null;
+				pricing.cancelAll();
+				if (updateTask != null){
+					updateTask.addError("Price data", "Cancelled");
+					updateTask.setTaskProgress(100, 100, 0, 100);
+					updateTask = null;
+				}
+
 				return false;
 			}
 		}
-		settings.setPriceData( priceDataList );
-		if (!enableCacheTimers && updated){
-			LOG.info("	Price data loaded (updated as needed)");
-		} else if (!enableCacheTimers) {
-			LOG.info("	Price data loaded");
-		} else if (updated){
-			LOG.info("	Price data updated");
+		boolean updated = (!priceDataList.isEmpty() && failedIds.isEmpty());
+		if (updated){ //All Updated
+			if (update) {
+				LOG.info("	Price data updated");
+			} else {
+				LOG.info("	Price data loaded");
+			}
+			//We only set the price data if everthing worked (AKA all updated)
+			settings.setPriceData( priceDataList );
+		} else { //None or some updated
+			LOG.info("	Failed to update price data");
+			if (updateTask != null) this.updateTask.addError("Price data", "Failed to update price data");
 		}
 		try {
 			pricing.writeCache();
@@ -131,7 +165,14 @@ public class PriceDataGetter implements PricingListener {
 	@Override
 	public void priceUpdated(int typeID, Pricing pricing) {
 		createPriceData(typeID, pricing);
-		updated = true;
+		synchronized(this) {
+			notify();
+		}
+	}
+
+	@Override
+	public void priceUpdateFailed(int typeID, Pricing pricing) {
+		failedIds.add(typeID);
 		synchronized(this) {
 			notify();
 		}
@@ -172,7 +213,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public long getPriceCacheTimer() {
-			return priceCacheTimer; // 1 hour
+			return priceCacheTimer;
 		}
 
 		@Override
@@ -211,12 +252,17 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public boolean getCacheTimersEnabled() {
-			return enableCacheTimers;
+			return update;
 		}
 
 		@Override
 		public Proxy getProxy() {
 			return settings.getProxy();
+		}
+
+		@Override
+		public int getAttemptCount() {
+			return attemptCount;
 		}
 	}
 }
