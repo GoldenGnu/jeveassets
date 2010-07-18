@@ -28,6 +28,8 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -46,16 +49,19 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersTab extends JMainTab implements ActionListener {
+public class MarketOrdersTab extends JMainTab implements ActionListener, MouseListener {
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	
 	
 	private JComboBox jCharacters;
 	private JComboBox jState;
+	private EventTableModel<MarketOrder> sellOrdersTableModel;
+	private EventTableModel<MarketOrder> buyOrdersTableModel;
 	private EventList<MarketOrder> sellOrdersEventList;
 	private EventList<MarketOrder> buyOrdersEventList;
 
@@ -89,11 +95,13 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(sellOrdersEventList);
 		SortedList<MarketOrder> buyOrdersSortedList = new SortedList<MarketOrder>(buyOrdersEventList);
 		//Table Model
-		EventTableModel sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
-		EventTableModel buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
+		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
+		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
 		jSellOrders = new JAutoColumnTable(sellOrdersTableModel, sellTableFormat.getColumnNames());
+		jSellOrders.addMouseListener(this);
 		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel, buyTableFormat.getColumnNames());
+		jBuyOrders.addMouseListener(this);
 		//Sorters
 		TableComparatorChooser.install(jSellOrders, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, sellTableFormat);
 		TableComparatorChooser.install(jBuyOrders, buyOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, buyTableFormat);
@@ -143,6 +151,29 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 					.addComponent(jBuyOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
 				)
 		);
+	}
+
+	private void showPopupMenu(MouseEvent e) {
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		MarketOrder marketOrder = null;
+		if (jSellOrders.equals(e.getSource())){
+			jSellOrders.setRowSelectionInterval(jSellOrders.rowAtPoint(e.getPoint()), jSellOrders.rowAtPoint(e.getPoint()));
+			jSellOrders.setColumnSelectionInterval(0, jSellOrders.getColumnCount()-1);
+			int index = jSellOrders.getSelectedRow();
+			marketOrder = sellOrdersTableModel.getElementAt(index);
+		}
+		if (jBuyOrders.equals(e.getSource())){
+			jBuyOrders.setRowSelectionInterval(jBuyOrders.rowAtPoint(e.getPoint()), jBuyOrders.rowAtPoint(e.getPoint()));
+			jBuyOrders.setColumnSelectionInterval(0, jBuyOrders.getColumnCount()-1);
+			int index = jBuyOrders.getSelectedRow();
+			marketOrder = buyOrdersTableModel.getElementAt(index);
+			
+		}
+		if (marketOrder != null){
+			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, marketOrder));
+			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, marketOrder));
+		}
+		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
 	@Override
@@ -257,4 +288,27 @@ public class MarketOrdersTab extends JMainTab implements ActionListener {
 			}
 		}
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()){
+			showPopupMenu(e);
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()){
+			showPopupMenu(e);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }

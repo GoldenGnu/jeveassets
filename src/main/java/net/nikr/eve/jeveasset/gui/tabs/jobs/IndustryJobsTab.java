@@ -28,6 +28,8 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -45,10 +48,11 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class IndustryJobsTab extends JMainTab implements ActionListener {
+public class IndustryJobsTab extends JMainTab implements ActionListener, MouseListener {
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
@@ -58,6 +62,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private JAutoColumnTable jJobs;
 
 	private EventList<IndustryJob> jobsEventList;
+	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private List<IndustryJob> all;
 	private Map<String, List<IndustryJob>> jobs;
@@ -89,9 +94,10 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		//For soring the table
 		SortedList<IndustryJob> jobsSortedList = new SortedList<IndustryJob>(jobsEventList);
 		//Table Model
-		EventTableModel jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
+		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
 		//Tables
 		jJobs = new JAutoColumnTable(jobsTableModel, industryJobsTableFormat.getColumnNames());
+		jJobs.addMouseListener(this);
 		//Sorters
 		TableComparatorChooser.install(jJobs, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
@@ -122,6 +128,18 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 				.addComponent(jJobsScrollPanel, 100, 400, Short.MAX_VALUE)
 		);
 	}
+
+	private void showPopupMenu(MouseEvent e) {
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		jJobs.setRowSelectionInterval(jJobs.rowAtPoint(e.getPoint()), jJobs.rowAtPoint(e.getPoint()));
+		jJobs.setColumnSelectionInterval(0, jJobs.getColumnCount()-1);
+		int index = jJobs.getSelectedRow();
+		IndustryJob industryJob = jobsTableModel.getElementAt(index);
+		jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, industryJob));
+		jTablePopupMenu.add(JMenuTools.getLookupMenu(program, industryJob));
+		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+	
 
 	@Override
 	public void updateData() {
@@ -210,4 +228,23 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			}
 		}
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }

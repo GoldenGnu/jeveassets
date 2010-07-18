@@ -78,9 +78,11 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private String state = "";
 	private String name = "";
 	private String location = "";
+	private String system;
+	private String region;
 	private String owner = "";
 
-	public IndustryJob(ApiIndustryJob apiIndustryJob, String name, String location, String owner) {
+	public IndustryJob(ApiIndustryJob apiIndustryJob, String name, String location, String system, String region, String owner) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -99,7 +101,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setCharMaterialMultiplier(apiIndustryJob.getCharMaterialMultiplier());
 		this.setTimeMultiplier(apiIndustryJob.getTimeMultiplier());
 		this.setCharTimeMultiplier(apiIndustryJob.getCharTimeMultiplier());
-		this.setInstalledItemTypeID(apiIndustryJob.getInstalledItemID());
+		this.setInstalledItemTypeID(apiIndustryJob.getInstalledItemTypeID()); //Fixed
 		this.setOutputTypeID(apiIndustryJob.getOutputTypeID());
 		this.setContainerTypeID(apiIndustryJob.getContainerTypeID());
 		this.setInstalledItemCopy(apiIndustryJob.getInstalledItemCopy());
@@ -115,6 +117,8 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setPauseProductionTime(apiIndustryJob.getPauseProductionTime());
 		this.name = name;
 		this.location = location;
+		this.system = system;
+		this.region = region;
 		this.owner = owner;
 
 		switch (this.getActivityID()){
@@ -207,6 +211,14 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	public String getLocation() {
 		return location;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public String getSystem() {
+		return system;
 	}
 
 	public String getOwner() {

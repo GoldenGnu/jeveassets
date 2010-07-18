@@ -34,12 +34,14 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	private String name;
 	private String location;
+	private String system;
+	private String region;
 	private String rangeFormated;
 	private String status;
 	private Quantity quantity;
 
 
-	public MarketOrder(ApiMarketOrder apiMarketOrder, String name, String location) {
+	public MarketOrder(ApiMarketOrder apiMarketOrder, String name, String location, String system, String region) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -57,6 +59,8 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		this.setVolRemaining(apiMarketOrder.getVolRemaining());
 		this.name = name;
 		this.location = location;
+		this.system = system;
+		this.region = region;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
 		if (this.getRange() == -1) rangeFormated = "Station";
@@ -125,6 +129,14 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public String getLocation() {
 		return location;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public String getSystem() {
+		return system;
 	}
 
 	public String getRangeFormated() {

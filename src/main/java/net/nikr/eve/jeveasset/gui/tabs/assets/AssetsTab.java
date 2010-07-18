@@ -74,6 +74,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 
 
 public class AssetsTab extends JMainTab
@@ -504,59 +505,81 @@ public class AssetsTab extends JMainTab
 		if (selectedRows.length == 1 && selectedColumns.length == 1){
 
 			jSubMenu = new JMenu("Add Filter");
+			jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
 			//jSubMenu.setMnemonic(KeyEvent.VK_S);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem(AssetFilter.MODE_CONTAIN);
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(Images.ICON_CONTAIN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem(AssetFilter.MODE_CONTAIN_NOT);
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(Images.ICON_NOT_CONTAIN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem(AssetFilter.MODE_EQUALS);
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(Images.ICON_EQUAL);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem(AssetFilter.MODE_EQUALS_NOT);
-			//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
+			jMenuItem.setIcon(Images.ICON_NOT_EQUAL);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
-			if (program.getSettings().getTableNumberColumns().contains(column)){
-				jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN);
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-
-				jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN);
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-
-				jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN_COLUMN);
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-
-				jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN_COLUMN);
-				//jMenuItem.setIcon(  IconGettet.getIcon("page_copy.png") );
-				jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
+			boolean numericColumn = program.getSettings().getTableNumberColumns().contains(column);
+			
+			jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN);
+			jMenuItem.setIcon(Images.ICON_GREATER_THEN);
+			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
+			jMenuItem.addActionListener(this);
+			if (!numericColumn){
+				jMenuItem.setEnabled(false);
+				jMenuItem.setToolTipText("Can only be used with numeric columns");
 			}
+			jSubMenu.add(jMenuItem);
+
+			jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN);
+			jMenuItem.setIcon(Images.ICON_LESS_THEN);
+			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
+			jMenuItem.addActionListener(this);
+			if (!numericColumn){
+				jMenuItem.setEnabled(false);
+				jMenuItem.setToolTipText("Can only be used with numeric columns");
+			}
+			jSubMenu.add(jMenuItem);
+
+			jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN_COLUMN);
+			jMenuItem.setIcon(Images.ICON_GREATER_THEN_COLUMN);
+			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
+			jMenuItem.addActionListener(this);
+			if (!numericColumn){
+				jMenuItem.setEnabled(false);
+				jMenuItem.setToolTipText("Can only be used with numeric columns");
+			}
+			jSubMenu.add(jMenuItem);
+
+			jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN_COLUMN);
+			jMenuItem.setIcon(Images.ICON_LESS_THEN_COLUMN);
+			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
+			jMenuItem.addActionListener(this);
+			if (!numericColumn){
+				jMenuItem.setEnabled(false);
+				jMenuItem.setToolTipText("Can only be used with numeric columns");
+			}
+			jSubMenu.add(jMenuItem);
+		}
+
+		if (selectedRows.length == 1 && selectedColumns.length == 1){
+			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[0]);
+			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, eveAsset));
 		}
 		
 		jTablePopupMenu.addSeparator();

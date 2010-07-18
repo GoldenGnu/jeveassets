@@ -60,7 +60,7 @@ import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 
 
 public class OverviewTab extends JMainTab implements ActionListener, MouseListener, ClipboardOwner {
@@ -70,9 +70,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	private final static String ACTION_DELETE_GROUP = "ACTION_DELETE_GROUP";
 	private final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
 	private final static String ACTION_COPY = "ACTION_COPY";
-	private final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
-	private final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
-	private final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
 	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 	private final static String ALL = "All";
 	private final static String ASSET_FILTER = "Filtered Assets";
@@ -244,35 +241,19 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		}
 
 		//Asset Filter
-		jSubMenu = new JMenu("Add Asset Filter");
-		jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
-		jTablePopupMenu.add(jSubMenu);
-		if (!jViews.getSelectedItem().equals("Groups")){
-			if (jViews.getSelectedItem().equals("Stations")){
-				jMenuItem = new JMenuItem("Station");
-				jMenuItem.setIcon(Images.ICON_STATION);
-				jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-			}
-			if (jViews.getSelectedItem().equals("Stations") || jViews.getSelectedItem().equals("Systems")){
-				jMenuItem = new JMenuItem("System");
-				jMenuItem.setIcon(Images.ICON_SYSTEM);
-				jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-			}
-			jMenuItem = new JMenuItem("Region");
-			jMenuItem.setIcon(Images.ICON_REGION);
-			jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-		} else {
+		
+		jSubMenu = JMenuTools.getAssetFilterMenu(program, overview);
+		if (jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Locations");
 			jMenuItem.setIcon(Images.ICON_LOCATIONS);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
+		}
+		jTablePopupMenu.add(jSubMenu);
+		//XXX - you can not lookup group locations
+		if (!overview.isGroup()){
+			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, overview));
 		}
 
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -490,6 +471,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			copyToClipboard(s);
 		}
 		//Filter
+		/*
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
@@ -511,6 +493,8 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
+		 * 
+		 */
 		if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);

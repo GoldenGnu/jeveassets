@@ -89,6 +89,10 @@ public class Overview implements Comparable<Overview>{
 		return name.equals(region);
 	}
 
+	public boolean isGroup(){
+		return solarSystem.equals("") && region.equals("");
+	}
+
 	public void addCount(long count) {
 		this.count = this.count + count;
 	}

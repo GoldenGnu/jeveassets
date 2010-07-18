@@ -71,6 +71,22 @@ public class Images {
 	public final static Icon ICON_ARROW_DOWN = Images.getIcon("bullet_arrow_down.png");
 	public final static Icon ICON_TOOLS = Images.getIcon("bricks.png");
 	public final static Icon ICON_MODIFIED_ASSETS = Images.getIcon("textfield_rename.png");
+	public final static Icon ICON_EXTERNAL_LINK = Images.getIcon("world_link.png");
+	public final static Icon ICON_EVE_MARKETS = Images.getIcon("eve_markets.png");
+	public final static Icon ICON_DOTLAN_EVEMAPS = Images.getIcon("dotlan_evemaps.png");
+	public final static Icon ICON_EVE_CENTRAL = Images.getIcon("eve_central.png");
+	public final static Icon ICON_EVE_METRICS = Images.getIcon("eve_metrics.png");
+	public final static Icon ICON_CHRUKER = Images.getIcon("chruker.png");
+
+
+	public final static Icon ICON_NOT_CONTAIN = Images.getIcon("not_contain.png");
+	public final static Icon ICON_CONTAIN = Images.getIcon("contain.png");
+	public final static Icon ICON_NOT_EQUAL = Images.getIcon("not_equal.png");
+	public final static Icon ICON_EQUAL = Images.getIcon("equal.png");
+	public final static Icon ICON_GREATER_THEN = Images.getIcon("greater_then.png");
+	public final static Icon ICON_GREATER_THEN_COLUMN = Images.getIcon("greater_then_column.png");
+	public final static Icon ICON_LESS_THEN = Images.getIcon("less_then.png");
+	public final static Icon ICON_LESS_THEN_COLUMN = Images.getIcon("less_then_column.png");
 
 	public final static Icon ICON_AVERAGE =  Images.getIcon("shape_align_middle.png");
 	public final static Icon ICON_VOLUME =  Images.getIcon("volume.png");

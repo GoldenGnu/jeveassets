@@ -183,7 +183,9 @@ public class ApiConverter {
 	private static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
 		String name = ApiIdConverter.name((int)apiMarketOrder.getTypeID(), settings.getItems());
 		String location = ApiIdConverter.location((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
-		return new MarketOrder(apiMarketOrder, name, location);
+		String system = ApiIdConverter.solarSystem((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
+		String region = ApiIdConverter.region((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
+		return new MarketOrder(apiMarketOrder, name, location, system, region);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
@@ -197,7 +199,9 @@ public class ApiConverter {
 		String name = ApiIdConverter.name((int)apiIndustryJob.getInstalledItemTypeID(), settings.getItems());
 		int locationID = (int)apiIndustryJobLocationId(apiIndustryJob, settings);
 		String location = ApiIdConverter.location(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		return new IndustryJob(apiIndustryJob, name, location, owner);
+		String system = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		return new IndustryJob(apiIndustryJob, name, location, system, region, owner);
 	}
 	
 	private static long apiIndustryJobLocationId(ApiIndustryJob apiIndustryJob, Settings settings){
