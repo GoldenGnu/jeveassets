@@ -19,7 +19,6 @@
  *
  */
 
-
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
 import java.awt.Image;
@@ -50,9 +49,12 @@ import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
 public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_UPDATE = "ACTION_UPDATE";
+	private final static String ACTION_CANCEL = "ACTION_CANCEL";
+	private final static String ACTION_UPDATE = "ACTION_UPDATE";
+	private final static String ACTION_CHANGED = "ACTION_CHANGED";
+	private final static String ACTION_CHECK_ALL = "ACTION_CHECK_ALL";
 
+	private JCheckBox jCheckAll;
 	private JCheckBox jMarketOrders;
 	private JLabel jMarketOrdersUpdate;
 	private JCheckBox jIndustryJobs;
@@ -67,11 +69,15 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private JLabel jPriceDataUpdate;
 	private JButton jUpdate;
 	private JButton jCancel;
+	private List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
 
 	public UpdateDialog(Program program, Image image) {
 		super(program, "Update", image);
 
-		JLabel jUpdateLabel = new JLabel("Update:");
+		jCheckAll = new JCheckBox("All");
+		jCheckAll.setActionCommand(ACTION_CHECK_ALL);
+		jCheckAll.addActionListener(this);
+
 		jMarketOrders = new JCheckBox("Market Orders");
 		jIndustryJobs = new JCheckBox("Industry Jobs");
 		jAccounts = new JCheckBox("Accounts");
@@ -79,6 +85,16 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jAssets = new JCheckBox("Assets");
 		jPriceData = new JCheckBox("Price Data");
 
+		jCheckBoxes.add(jMarketOrders);
+		jCheckBoxes.add(jIndustryJobs);
+		jCheckBoxes.add(jAccounts);
+		jCheckBoxes.add(jAccountBalance);
+		jCheckBoxes.add(jAssets);
+		jCheckBoxes.add(jPriceData);
+		for (JCheckBox jCheckBox : jCheckBoxes){
+			jCheckBox.setActionCommand(ACTION_CHANGED);
+			jCheckBox.addActionListener(this);
+		}
 		JLabel jNextUpdateLabel = new JLabel("Next Update:");
 		jMarketOrdersUpdate = new JLabel();
 		jIndustryJobsUpdate = new JLabel();
@@ -101,7 +117,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jUpdateLabel, 110, 110, 110)
+						.addComponent(jCheckAll)
 						.addComponent(jMarketOrders)
 						.addComponent(jIndustryJobs)
 						.addComponent(jAccounts)
@@ -117,7 +133,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 						.addComponent(jAccountBalanceUpdate)
 						.addComponent(jAssetsUpdate)
 						.addComponent(jPriceDataUpdate)
-
 					)
 				)
 				.addGroup(Alignment.TRAILING ,layout.createSequentialGroup()
@@ -129,7 +144,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jUpdateLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCheckAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jNextUpdateLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
@@ -158,10 +173,31 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 				)
 				.addGap(30)
 				.addGroup(layout.createParallelGroup()
+					//.addComponent(jCheckAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
+	}
+
+	private void changed() {
+		boolean allChecked = true;
+		boolean noneChecked = false;
+		boolean allDiabled = true;
+		for (JCheckBox jCheckBox : jCheckBoxes){
+			if (jCheckBox.isEnabled() && !jCheckBox.isSelected()){
+				allChecked = false;
+			}
+			if (jCheckBox.isEnabled() && jCheckBox.isSelected()){
+				noneChecked = true;
+			}
+			if (jCheckBox.isEnabled()){
+				allDiabled = false;
+			}
+
+		}
+		jUpdate.setEnabled(noneChecked);
+		jCheckAll.setSelected(allChecked && !allDiabled);
 	}
 
 	public void update(){
@@ -206,7 +242,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate, bAccountBalanceUpdateAll);
 		setUpdateLabel(jAssetsUpdate, jAssets, assetsNextUpdate, bAssetsUpdateAll);
 		setUpdateLabel(jPriceDataUpdate, jPriceData, priceDataNextUpdate, true, false);
+		changed();
 		jUpdate.setEnabled(false);
+		jCheckAll.setEnabled(false);
 		setUpdatableButton(marketOrdersNextUpdate);
 		setUpdatableButton(industryJobsNextUpdate);
 		setUpdatableButton(accountsNextUpdate);
@@ -244,6 +282,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)){
 			jUpdate.setEnabled(true);
+			jCheckAll.setEnabled(true);
 		}
 	}
 
@@ -322,6 +361,18 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			setVisible(false);
+		}
+		if (ACTION_CHANGED.equals(e.getActionCommand())){
+			changed();
+		}
+		if (ACTION_CHECK_ALL.equals(e.getActionCommand())){
+			boolean checked = jCheckAll.isSelected();
+			for (JCheckBox jCheckBox : jCheckBoxes){
+				if (jCheckBox.isEnabled()){
+					jCheckBox.setSelected(checked);
+				}
+			}
+			changed();
 		}
 	}
 
