@@ -35,7 +35,7 @@ public class Item {
 	private float volume;
 	private String meta;
 	private boolean marketGroup;
-	private List<Material> materials;
+	private List<ReprocessedMaterial> reprocessedMaterials;
 
 	public Item(int id, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
 		this.id = id;
@@ -46,15 +46,15 @@ public class Item {
 		this.volume = volume;
 		this.meta = meta;
 		this.marketGroup = marketGroup;
-		materials = new ArrayList<Material>();
+		reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 	}
 
-	public void addMaterial(Material material){
-		materials.add(material);
+	public void addReprocessedMaterial(ReprocessedMaterial material){
+		reprocessedMaterials.add(material);
 	}
 
-	public List<Material> getMaterials() {
-		return materials;
+	public List<ReprocessedMaterial> getReprocessedMaterial() {
+		return reprocessedMaterials;
 	}
 
 	public String getCategory() {

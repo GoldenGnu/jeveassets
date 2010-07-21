@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
+import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
@@ -89,8 +90,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
 		jTable = new JSeparatorTable(tableModel, humanTableFormat.getColumnNames());
 		jTable.getTableHeader().setReorderingAllowed(false);
-		jTable.setSeparatorRenderer(new SeparatorTableCell(this, jTable, separatorList));
-		jTable.setSeparatorEditor(new SeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorEditor(new HumanSeparatorTableCell(this, jTable, separatorList));
 
 		selectionModel = new EventSelectionModel<Human>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -254,23 +255,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		}
 	}
 
-	private void expandSeparators(boolean expand){
-		selectionModel.setEnabled(false);
-		for (int a = 0; a < tableModel.getRowCount(); a++){
-			Object o = tableModel.getElementAt(a);
-			if (o instanceof SeparatorList.Separator){
-				SeparatorList.Separator separator = (SeparatorList.Separator) o;
-				separatorList.getReadWriteLock().writeLock().lock();
-				try {
-					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
-				} finally {
-					separatorList.getReadWriteLock().writeLock().unlock();
-				}
-			}
-		}
-		selectionModel.setEnabled(true);
-	}
-
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jAdd;
@@ -320,17 +304,16 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			accountImportDialog.setVisible(true);
 		}
-
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			expandSeparators(false);
+			jTable.expandSeparators(false, separatorList);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			expandSeparators(true);
+			jTable.expandSeparators(true, separatorList);
 		}
 		if (ACTION_CLOSE.equals(e.getActionCommand())) {
 			save();
 		}
-		if (SeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
+		if (HumanSeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
@@ -340,7 +323,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				accountImportDialog.show(String.valueOf(account.getUserID()), account.getApiKey());
 			}
 		}
-		if (SeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
+		if (HumanSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){

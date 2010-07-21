@@ -39,13 +39,13 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.gui.dialogs.account.SeparatorTableCell;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.QuantityCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.NumberToStringCellRenderer;
 
 
 public class JAutoColumnTable extends JTable {
@@ -70,7 +70,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
-		this.setDefaultRenderer(Quantity.class, new QuantityCellRenderer());
+		this.setDefaultRenderer(Quantity.class, new NumberToStringCellRenderer());
+		this.setDefaultRenderer(ISK.class, new NumberToStringCellRenderer());
 	}
 
 	public JScrollPane getScrollPanel() {

@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Material;
+import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -84,6 +84,6 @@ public class ItemsReader extends AbstractXmlReader {
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int portionSize = AttributeGetters.getInt(node, "portionsize");
-		item.addMaterial( new Material(id, quantity, portionSize));
+		item.addReprocessedMaterial( new ReprocessedMaterial(id, quantity, portionSize));
 	}
 }

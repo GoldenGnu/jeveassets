@@ -1,9 +1,10 @@
 /* Glazed Lists                                                 (c) 2003-2006 */
 /* http://publicobject.com/glazedlists/                      publicobject.com,*/
 /*                                                     O'Dell Engineering Ltd.*/
-package net.nikr.eve.jeveasset.gui.dialogs.account;
+package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -18,7 +19,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
@@ -38,6 +38,34 @@ public class JSeparatorTable extends JAutoColumnTable {
         this.separatorRenderer = getDefaultRenderer(Object.class);
     }
 
+
+	public void expandSeparators(boolean expand, SeparatorList<?> separatorList){
+		final EventTableModel tableModel = getEventTableModel();
+		final EventSelectionModel selectModel = getEventSelectionModel();
+		if (selectModel != null) selectModel.setEnabled(false);
+		for (int a = 0; a < tableModel.getRowCount(); a++){
+			Object o = tableModel.getElementAt(a);
+			if (o instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) o;
+				separatorList.getReadWriteLock().writeLock().lock();
+				try {
+					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
+		if (selectModel != null) selectModel.setEnabled(true);
+	}
+
+	private EventSelectionModel getEventSelectionModel() {
+		if (selectionModel instanceof EventSelectionModel<?>){
+			return (EventSelectionModel) selectionModel;
+		} else {
+			return null;
+		}
+    }
+
     /**
      * A convenience method to cast the TableModel to the expected
      * EventTableModel implementation.
@@ -47,6 +75,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     private EventTableModel getEventTableModel() {
         return (EventTableModel) getModel();
     }
+
 
     /** {@inheritDoc} */
     public Rectangle getCellRect(int row, int column, boolean includeSpacing) {

@@ -5,77 +5,38 @@
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.SeparatorList;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import ca.odell.glazedlists.SeparatorList.Separator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
 
 /**
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class SeparatorTableCell extends AbstractCellEditor 
-		implements TableCellRenderer, TableCellEditor, FocusListener, ActionListener{
+public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
+		implements FocusListener, ActionListener{
 
-	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 	private final static String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
-	
-	private static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
 
 	/** the separator list to lock */
-	private final SeparatorList<Human> separatorList;
-	private int row;
-
-	private final JPanel jPanel;
 	private final JTextField jAccountName;
-	private final JButton jExpand;
 	private final JButton jEdit;
 	private final JButton jDelete;
-	private final GroupLayout layout;
-	private final JTable jTable;
 
-	private SeparatorList.Separator<?> separator;
-
-	public SeparatorTableCell(ActionListener actionListener, JTable jTable, SeparatorList<Human> separatorList) {
-		this.jTable = jTable;
-		this.separatorList = separatorList;
-
-		jPanel = new JPanel(new BorderLayout());
-		jPanel.setBackground(Color.LIGHT_GRAY);
-
-		layout = new GroupLayout(jPanel);
-		jPanel.setLayout(layout);
-		layout.setAutoCreateGaps(false);
-		layout.setAutoCreateContainerGaps(false);
-
-		jExpand = new JButton(Images.ICON_EXPANDED);
-		jExpand.setOpaque(false);
-		jExpand.setContentAreaFilled(false);
-		jExpand.setActionCommand(ACTION_EXPAND);
-		jExpand.setBorder(EMPTY_TWO_PIXEL_BORDER);
-		jExpand.setIcon(Images.ICON_EXPANDED);
-		jExpand.addActionListener(this);
-
-
+	public HumanSeparatorTableCell(ActionListener actionListener, JTable jTable, SeparatorList<Human> separatorList) {
+		super(jTable, separatorList);
+		
 		jAccountName = new JTextField();
 		jAccountName.addFocusListener(this);
 		jAccountName.setBorder(null);
@@ -116,53 +77,18 @@ public class SeparatorTableCell extends AbstractCellEditor
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		configure(value, row);
-		return jPanel;
-	}
-
-	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		configure(value, row);
-		return jPanel;
-	}
-
-	@Override
-	public Object getCellEditorValue() {
-		return this.separator;
-	}
-
-	private void configure(Object value, int row) {
-		this.row = row;
-		if (value instanceof SeparatorList.Separator<?>){
-			this.separator = (SeparatorList.Separator<?>)value;
-			Human human = (Human) separator.first();
-			if(human == null) return; // handle 'late' rendering calls after this separator is invalid
-			Account account = human.getParentAccount();
-			jTable.setRowHeight(row, jPanel.getPreferredSize().height);
-			jExpand.setIcon(separator.getLimit() == 0 ? Images.ICON_EXPANDED : Images.ICON_COLLAPSED);
-			if (account.getName().isEmpty()){
-				jAccountName.setText(String.valueOf(account.getUserID()));
-			} else {
-				jAccountName.setText(account.getName());
-			}
+	protected void configure(Separator<?> separator) {
+		Human human = (Human) separator.first();
+		if(human == null) return; // handle 'late' rendering calls after this separator is invalid
+		Account account = human.getParentAccount();
+		if (account.getName().isEmpty()){
+			jAccountName.setText(String.valueOf(account.getUserID()));
+		} else {
+			jAccountName.setText(account.getName());
 		}
 	}
-
-	private void expandSeparator(boolean expand){
-		separatorList.getReadWriteLock().writeLock().lock();
-		try {
-			separator.setLimit(expand ? Integer.MAX_VALUE : 0);
-		} finally {
-			separatorList.getReadWriteLock().writeLock().unlock();
-		}
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_EXPAND.equals(e.getActionCommand())){
-			expandSeparator(separator.getLimit() == 0);
-		}
 		if (ACTION_ACCOUNT_NAME.equals(e.getActionCommand())){
 			Human human = (Human) separator.first();
 			Account account = human.getParentAccount();
@@ -185,7 +111,6 @@ public class SeparatorTableCell extends AbstractCellEditor
 		if (e.getSource() instanceof JTextField){
 			jTable.setRowSelectionInterval(row, row);
 			jAccountName.selectAll();
-			
 		}
 	}
 
@@ -193,4 +118,6 @@ public class SeparatorTableCell extends AbstractCellEditor
 	public void focusLost(FocusEvent e) {
 
 	}
+
+
 }

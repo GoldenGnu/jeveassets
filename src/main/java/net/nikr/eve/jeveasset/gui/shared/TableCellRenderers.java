@@ -71,8 +71,8 @@ public class TableCellRenderers {
 		}
 	}
 	
-	public static class QuantityCellRenderer extends DefaultTableCellRenderer {
-		public QuantityCellRenderer() {
+	public static class NumberToStringCellRenderer extends DefaultTableCellRenderer {
+		public NumberToStringCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		}

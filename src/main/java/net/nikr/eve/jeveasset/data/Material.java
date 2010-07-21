@@ -19,29 +19,92 @@
  *
  */
 
+
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
-public class Material {
-	int id;
-	int quantity;
-	int portionSize;
 
-	public Material(int id, int quantity, int portionSize) {
-		this.id = id;
-		this.quantity = quantity;
-		this.portionSize = portionSize;
+public class Material{
+	private String name;
+	private String location;
+	private String group;
+	private double value = 0;
+	private long count = 0;
+	private boolean first = false;
+
+	public Material(String name, String location, String group) {
+		this.name = name;
+		this.location = location;
+		this.group = group;
 	}
 
-	public int getId() {
-		return id;
+	public void updateValue(long count, double price){
+		this.count = this.count + count;
+		this.value = this.value + (count*price);
 	}
 
-	public int getPortionSize() {
-		return portionSize;
+	public long getCount() {
+		return count;
 	}
 
-	public int getQuantity() {
-		return quantity;
+	public String getGroup() {
+		return group;
 	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean isFirst() {
+		return first;
+	}
+
+	public void first(){
+		first = true;
+	}
+
+	public double getValue() {
+		return Formater.round(value, 2);
+	}
+
+	public String getSeperator(){
+		return this.getLocation()+this.getGroup();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Material other = (Material) obj;
+		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+			return false;
+		}
+		if ((this.location == null) ? (other.location != null) : !this.location.equals(other.location)) {
+			return false;
+		}
+		if ((this.group == null) ? (other.group != null) : !this.group.equals(other.group)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
+		hash = 29 * hash + (this.location != null ? this.location.hashCode() : 0);
+		hash = 29 * hash + (this.group != null ? this.group.hashCode() : 0);
+		return hash;
+	}
+
+	
 }

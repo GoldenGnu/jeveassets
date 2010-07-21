@@ -60,7 +60,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
-import net.nikr.eve.jeveasset.gui.tabs.MaterialsTab;
+import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;

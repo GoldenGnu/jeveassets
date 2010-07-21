@@ -372,12 +372,12 @@ public class Settings{
 				//Reprocessed price
 				eveAsset.setPriceReprocessed(0);
 				if (getItems().containsKey(eveAsset.getTypeId())){
-					List<Material> materials = getItems().get(eveAsset.getTypeId()).getMaterials();
+					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeId()).getReprocessedMaterial();
 					double priceReprocessed = 0;
 					int portionSize = 0;
-					for (int b = 0; b < materials.size(); b++){
+					for (int b = 0; b < reprocessedMaterials.size(); b++){
 						//Calculate reprocessed price
-						Material material = materials.get(b);
+						ReprocessedMaterial material = reprocessedMaterials.get(b);
 						portionSize = material.getPortionSize();
 						if (priceData.containsKey(material.getId())){
 							PriceData priceDatum = priceData.get(material.getId());
