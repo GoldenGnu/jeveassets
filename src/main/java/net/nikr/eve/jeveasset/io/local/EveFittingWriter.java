@@ -129,7 +129,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 				if (modules.containsKey("SubSystem"+a)){
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
 					hardwareNode.setAttributeNS(null, "slot", "subsystem slot"+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem"+a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}

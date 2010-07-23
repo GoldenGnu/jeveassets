@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -395,7 +394,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 	@Override
 	public void updateData() {
-		Vector<String> characters = new Vector<String>();
+		List<String> characters = new ArrayList<String>();
 		characters.add(ALL);
 		List<String> chars = new ArrayList<String>();
 		List<String> corps = new ArrayList<String>();
@@ -410,7 +409,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		Collections.sort(corps);
 		characters.addAll(chars);
 		characters.addAll(corps);
-		jCharacters.setModel( new DefaultComboBoxModel(characters));
+		jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 		updateTable();
 	}
 
@@ -471,30 +470,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			copyToClipboard(s);
 		}
 		//Filter
-		/*
-		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
-			Overview overview = overviewTableModel.getElementAt(index);
-			AssetFilter assetFilter = new AssetFilter("Location", overview.getName(), AssetFilter.MODE_EQUALS, true, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
-			Overview overview = overviewTableModel.getElementAt(index);
-			AssetFilter assetFilter = new AssetFilter("Location", overview.getSolarSystem(), AssetFilter.MODE_CONTAIN, true, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
-			Overview overview = overviewTableModel.getElementAt(index);
-			AssetFilter assetFilter = new AssetFilter("Region", overview.getRegion(), AssetFilter.MODE_EQUALS, true, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		 * 
-		 */
 		if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())){
 			int index = jOverviewTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);

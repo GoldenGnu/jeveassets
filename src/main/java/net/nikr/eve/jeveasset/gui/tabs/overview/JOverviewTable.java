@@ -78,8 +78,8 @@ class JOverviewTable extends JAutoColumnTable{
 			hasFocus = (rowIsLead && colIsLead) && isFocusOwner();
 		}
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		if (eventTableModel.getRowCount() >= row){
-			Overview overview = (Overview) eventTableModel.getElementAt(row);
+		if (dm.getRowCount() >= row){
+			Overview overview = (Overview) dm.getElementAt(row);
 			if (groupedLocations.contains(overview.getName()) && columnName.equals("Name")){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){

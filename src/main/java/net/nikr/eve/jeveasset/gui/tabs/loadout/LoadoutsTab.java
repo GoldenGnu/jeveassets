@@ -21,32 +21,38 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
+import ca.odell.glazedlists.BasicEventList;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
+import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,35 +62,31 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
-	public final static String ACTION_SHIP_SELECTED = "ACTION_SHIP_SELECTED";
+	public final static String ACTION_FILTER = "ACTION_FILTER";
+	public final static String ACTION_CHARACTERS = "ACTION_CHARACTERS";
 	public final static String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
 	public final static String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
+	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
+	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 
 	//GUI
+	private JComboBox jCharacters;
 	private JComboBox jShips;
-	private JEditorPane jShip;
+	private JButton jExpand;
+	private JButton jCollapse;
+	private JSeparatorTable jTable;
+	private EventTableModel<Module> moduleTableModel;
 	private JButton jExport;
 	private JButton jExportAll;
 	private LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Data
-	private EventList<EveAsset> eveAssetEventList;
-	private Map<String, EveAsset> ships;
-	private Map<String, List<EveAsset>> modules;
-
-
-	private String backgroundHexColor;
-	private String gridHexColor;
+	private EventList<Module> moduleEventList;
+	private SeparatorList<Module> separatorList;
 
 	public LoadoutsTab(Program program) {
 		super(program, "Ship Loadouts", Images.ICON_TOOL_SHIP_LOADOUTS, true);
-
-		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
-		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
-
-		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
-		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
@@ -103,10 +105,23 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jXmlFileChooser = new JCustomFileChooser(program, "xml");
 			}
 		}
+		JLabel jCharactersLabel = new JLabel("Character");
+		jCharacters = new JComboBox();
+		jCharacters.setActionCommand(ACTION_CHARACTERS);
+		jCharacters.addActionListener(this);
 
+		JLabel jShipsLabel = new JLabel("Ship");
 		jShips = new JComboBox();
-		jShips.setActionCommand(ACTION_SHIP_SELECTED);
+		jShips.setActionCommand(ACTION_FILTER);
 		jShips.addActionListener(this);
+
+		jCollapse = new JButton("Collapse");
+		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.addActionListener(this);
+
+		jExpand = new JButton("Expand");
+		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.addActionListener(this);
 
 		jExport = new JButton("Export");
 		jExport.setActionCommand(ACTION_EXPORT_LOADOUT);
@@ -116,50 +131,53 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 		
-		jShip = new JEditorPane("text/html","<html>");
-		JCopyPopup.install(jShip);
-		jShip.setEditable(false);
-		jShip.setOpaque(false);
-		jShip.setBorder(null);
-		JScrollPane jShipScrollPane = new JScrollPane(jShip);
-
-		JLabel jShipsLabel = new JLabel("Ships:");
+		ModuleTableFormat materialTableFormat = new ModuleTableFormat();
+		moduleEventList = new BasicEventList<Module>();
+		separatorList = new SeparatorList<Module>(moduleEventList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		//Tables 
+		jTable = new JSeparatorTable(moduleTableModel, materialTableFormat.getColumnNames());
+		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
+		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
+		PaddingTableCellRenderer.install(jTable, 3);
+		EventSelectionModel<Module> selectionModel = new EventSelectionModel<Module>(separatorList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
+		//Scroll Panels
+		JScrollPane jModuleScrollPanel = jTable.getScrollPanel();
 
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jShipsLabel)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(jShips, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(jExport, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(jExportAll, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10)
-					)
-
+					.addComponent(jCharactersLabel)
+					.addComponent(jCharacters, 120, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jShipsLabel)
+					.addComponent(jShips, 120, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addComponent(jShipScrollPane, 0, 0, Short.MAX_VALUE)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jExport, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jExportAll, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10)
 				)
-
-			)
+				.addComponent(jModuleScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShipsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShips, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExportAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jShipScrollPane, 0, 0, Short.MAX_VALUE)
+				.addComponent(jModuleScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
-		eveAssetEventList = program.getEveAssetEventList();
 	}
 
 	private String browse(){
@@ -195,269 +213,161 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 	}
 	
-	private String addTo(String output, String content, String heading){
-		output = output +"<tr><td style=\"background: #"+gridHexColor+"; font-size: 15pt; font-weight: bold;\">"+heading+"</td></tr>";
-		if (!content.equals("")){
-			output = output +"<tr><td style=\"background: #"+backgroundHexColor+";\">"+content+"<br/></td></tr>";
-		} else {
-			
-		}
-		return output;
-	}
-
 	public void export(){
 		String fitName = loadoutsExportDialog.getFittingName();
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
 		if (!fitName.equals("")){
-			loadoutsExportDialog.setVisible(false);
-			String s = (String)jShips.getSelectedItem();
-			if (s == null || s.equals("") || ships == null || ships.isEmpty()){
-				return;
+			String selectedShip = (String)jShips.getSelectedItem();
+			EveAsset exportAsset = null;
+			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+			for (EveAsset eveAsset : eveAssetEventList){
+				String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+				if (!selectedShip.equals(key)){
+					continue;
+				} else {
+					exportAsset = eveAsset;
+					break;
+				}
 			}
+			loadoutsExportDialog.setVisible(false);
+			if (exportAsset == null) return;
 			String filename = browse();
-			List<EveAsset> eveAssets = new ArrayList<EveAsset>();
-			eveAssets.add(ships.get(s));
-			if (filename != null) EveFittingWriter.save(eveAssets, filename, fitName, fitDescription);
+			if (filename != null) EveFittingWriter.save(Collections.singletonList(exportAsset), filename, fitName, fitDescription);
 		} else {
 			JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(), "Name can not be empty...", "Empty Name", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
+
+	private void updateTable(){
+		String selectedShip = (String)jShips.getSelectedItem();
+		List<Module> ship = new ArrayList<Module>();
+		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+		for (EveAsset eveAsset : eveAssetEventList){
+			String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+			if (!selectedShip.equals(key)) continue;
+			Module moduleShip = new Module("Ship", eveAsset.getLocation(), "Total1", eveAsset.getOwner(), 0, eveAsset.getPrice(), 0);
+			ship.add(moduleShip);
+			Module moduleModules = new Module("Modules", eveAsset.getLocation(), "Total2", eveAsset.getOwner(), 0, 0, 0);
+			ship.add(moduleModules);
+			Module moduleTotal = new Module("Total", eveAsset.getLocation(), "Total3", eveAsset.getOwner(), 0, eveAsset.getPrice(), 0);
+			ship.add(moduleTotal);
+			for (EveAsset assetModule : eveAsset.getAssets()){
+				Module module = new Module(assetModule.getName(), assetModule.getLocation(), assetModule.getFlag(), eveAsset.getOwner(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount());
+				if (!ship.contains(module)
+						|| assetModule.getFlag().contains("HiSlot")
+						|| assetModule.getFlag().contains("MedSlot")
+						|| assetModule.getFlag().contains("LoSlot")
+						|| assetModule.getFlag().contains("RigSlot")
+						|| assetModule.getFlag().contains("SubSystem") ){
+					ship.add(module);
+				} else {
+					module = ship.get(ship.indexOf(module));
+					module.addCount(assetModule.getCount());
+					module.addValue(assetModule.getPrice()*assetModule.getCount());
+				}
+				moduleModules.addValue(assetModule.getPrice()*assetModule.getCount());
+				moduleTotal.addValue(assetModule.getPrice()*assetModule.getCount());
+			}
+			Collections.sort(ship);
+			if (!ship.isEmpty()) ship.get(0).first();
+		}
+		moduleEventList.getReadWriteLock().writeLock().lock();
+		moduleEventList.clear();
+		moduleEventList.addAll(ship);
+		moduleEventList.getReadWriteLock().writeLock().unlock();
+	}
+
+	@Override
+	public void updateData() {
+		List<String > characters = new ArrayList<String>();
+		List<Account> accounts = program.getSettings().getAccounts();
+		for (Account account : accounts){
+			for (Human human : account.getHumans()){
+				if (human.isShowAssets()){
+					characters.add(human.getName());
+					if (human.isUpdateCorporationAssets()){
+						String corpKey = "["+human.getCorporation()+"]";
+						if (!characters.contains(corpKey)){
+							characters.add(corpKey);
+						}
+					}
+				}
+			}
+		}
+		if (!characters.isEmpty()){
+			jCharacters.setEnabled(true);
+			Collections.sort(characters);
+			characters.add(0, "All");
+			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
+			jCharacters.setSelectedIndex(0);
+		} else {
+			jCharacters.setEnabled(false);
+			jCharacters.setModel( new DefaultComboBoxModel());
+			jCharacters.getModel().setSelectedItem("No character found");
+			jShips.setModel( new DefaultComboBoxModel());
+			jShips.getModel().setSelectedItem("No character found");
+
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SHIP_SELECTED.equals(e.getActionCommand())) {
-			String s = (String)jShips.getSelectedItem();
-			if (s == null || s.equals("") || ships == null || ships.isEmpty()){
-				jShip.setText("<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\"><font size=\"5\"><b><br/></b></font><br/><br/><br/><br/><br/><br/><br/><br/></div>");
-				return;
+		if (ACTION_CHARACTERS.equals(e.getActionCommand())) {
+			String character = (String) jCharacters.getSelectedItem();
+			List<String> charShips = new ArrayList<String>();
+			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+			for (EveAsset eveAsset : eveAssetEventList){
+				String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
+				if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All") ) continue;
+				charShips.add(key);
 			}
-			modules = new HashMap<String, List<EveAsset>>();
-
-			EveAsset ship = ships.get(s);
-			double value = 0; //ship.getPriceSellMedian();
-			List<EveAsset> assets = ship.getAssets();
-			for (int a = 0; a < assets.size(); a++){
-				EveAsset module = assets.get(a);
-				if ( (module.getFlag().contains("Slot") && module.getCategory().equals("Module"))
-					|| !module.getFlag().contains("Slot")){
-					if (modules.containsKey(module.getFlag())){
-						modules.get(module.getFlag()).add(module);
-					} else {
-						List<EveAsset> subModules = new ArrayList<EveAsset>();
-						subModules.add(module);
-						modules.put(module.getFlag(), subModules);
-					}
-					value = value + (module.getPrice() * module.getCount());
-				}
+			if (!charShips.isEmpty()){
+				Collections.sort(charShips);
+				jExpand.setEnabled(true);
+				jCollapse.setEnabled(true);
+				jExport.setEnabled(true);
+				jExportAll.setEnabled(true);
+				jCharacters.setEnabled(true);
+				jShips.setEnabled(true);
+				jShips.setModel( new DefaultComboBoxModel(charShips.toArray()));
+				jShips.setSelectedIndex(0);
+			} else {
+				jExpand.setEnabled(false);
+				jCollapse.setEnabled(false);
+				jExport.setEnabled(false);
+				jExportAll.setEnabled(false);
+				jShips.setEnabled(false);
+				jShips.setModel( new DefaultComboBoxModel());
+				jShips.getModel().setSelectedItem("No ships found");
 			}
-			Output output = new Output(ship.getOwner() + "<br/>" + ship.getLocation());
-
-			output.addHeading("Total value");
-			output.addModule("Ship", ship.getPrice());
-			output.addModule("Modules", value);
-			output.addModule("Total", value+ship.getPrice());
-			output.addNone();
-
-			output.addHeading("High Slots");
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("HiSlot"+a)) output.addModule(modules.get("HiSlot"+a).get(0));
-			}
-			output.addNone();
-
-			output.addHeading("Medium Slots");
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("MedSlot"+a)) output.addModule(modules.get("MedSlot"+a).get(0));
-			}
-			output.addNone();
-
-			output.addHeading("Low Slots");
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("LoSlot"+a)) output.addModule(modules.get("LoSlot"+a).get(0));
-			}
-			output.addNone();
-
-			output.addHeading("Rig Slots");
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("RigSlot"+a)) output.addModule(modules.get("RigSlot"+a).get(0));
-			}
-			output.addNone();
-
-			output.addHeading("Sub Systems");
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("SubSystem"+a)) output.addModule(modules.get("SubSystem"+a).get(0));
-			}
-			output.addNone();
-
-			output.addHeading("Drone Bay");
-			if (modules.containsKey("DroneBay")){
-				Map<String, Long> moduleCount = new HashMap<String, Long>();
-				Map<String, EveAsset> moduleEveAsset = new HashMap<String, EveAsset>();
-				List<EveAsset> subModules = modules.get("DroneBay");
-				for (int a = 0; a < subModules.size(); a++){
-					EveAsset subModule = subModules.get(a);
-					if (moduleCount.containsKey(subModule.getName())){
-						long count = moduleCount.get(subModule.getName());
-						moduleCount.remove(subModule.getName());
-						count = count +  subModule.getCount();
-						moduleCount.put(subModule.getName(), count);
-					} else {
-						moduleEveAsset.put(subModule.getName(), subModule);
-						moduleCount.put(subModule.getName(), subModule.getCount());
-					}
-				}
-				for (Map.Entry<String, Long> entry : moduleCount.entrySet()){
-					String module = entry.getKey();
-					long count = entry.getValue();
-					EveAsset eveAsset = moduleEveAsset.get(module);
-					if (count > 1){
-						output.addModule(count+"x "+module, eveAsset.getPrice(), eveAsset.getPrice()*count);
-					} else {
-						output.addModule(module, eveAsset.getPrice());
-					}
-
-				}
-			}
-			output.addNone();
-
-			output.addHeading("Cargo");
-			if (modules.containsKey("Cargo")){
-				Map<String, Long> moduleCount = new HashMap<String, Long>();
-				Map<String, EveAsset> moduleEveAsset = new HashMap<String, EveAsset>();
-				List<EveAsset> subModules = modules.get("Cargo");
-				for (int a = 0; a < subModules.size(); a++){
-					EveAsset subModule = subModules.get(a);
-					if (moduleCount.containsKey(subModule.getName())){
-						long count = moduleCount.get(subModule.getName());
-						moduleCount.remove(subModule.getName());
-						count = count +  subModule.getCount();
-						moduleCount.put(subModule.getName(), count);
-					} else {
-						moduleEveAsset.put(subModule.getName(), subModule);
-						moduleCount.put(subModule.getName(), subModule.getCount());
-					}
-				}
-				for (Map.Entry<String, Long> entry : moduleCount.entrySet()){
-					String module = entry.getKey();
-					long count = entry.getValue();
-					EveAsset eveAsset = moduleEveAsset.get(module);
-					if (count > 1){
-						output.addModule(count+"x "+module, eveAsset.getPrice(), eveAsset.getPrice()*count);
-					} else {
-						output.addModule(module, eveAsset.getPrice());
-					}
-
-				}
-			}
-			output.addNone();
 			
-			jShip.setText(output.getOutput());
-			jShip.setCaretPosition(0);
+			
+		}
+		if (ACTION_FILTER.equals(e.getActionCommand())) {
+			updateTable();
+		}
+		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			jTable.expandSeparators(false, separatorList);
+		}
+		if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			jTable.expandSeparators(true, separatorList);
 		}
 		if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
 			loadoutsExportDialog.setVisible(true);
 		}
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
-			if (filename != null) EveFittingWriter.save(new ArrayList<EveAsset>(ships.values()), filename);
-
-		}
-	}
-
-	@Override
-	public void updateData() {
-		jShips.removeAllItems();
-		ships = new HashMap<String, EveAsset>();
-		List<String> shipNames = new ArrayList<String>();
-		for (int a = 0; a < eveAssetEventList.size(); a++){
-			EveAsset eveAsset = eveAssetEventList.get(a);
-			if (eveAsset.getCategory().equals("Ship") && eveAsset.isSingleton()){
-				String s = eveAsset.getName()+" #"+eveAsset.getItemId();
-				ships.put(s, eveAsset);
-				shipNames.add(s);
+			List<EveAsset> ships = new ArrayList<EveAsset>();
+			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+			for (EveAsset eveAsset : eveAssetEventList){
+				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
+				ships.add(eveAsset);
 			}
+			if (filename != null) EveFittingWriter.save(new ArrayList<EveAsset>(ships), filename);
 
 		}
-		if (ships.isEmpty()){
-			jShips.setEnabled(false);
-			jShips.addItem("No ships found");
-			jExport.setEnabled(false);
-			jExportAll.setEnabled(false);
-		} else {
-			Collections.sort(shipNames);
-			for (int a = 0; a < shipNames.size(); a++){
-				jShips.addItem(shipNames.get(a));
-			}
-			jShips.setEnabled(true);
-			jExport.setEnabled(true);
-			jExportAll.setEnabled(true);
-		}
-	}
-	
-	private class Output {
-		private boolean containModul;
-		private String output;
-		private String headingOutput;
-		private String moduleOutput;
 
-		public Output(String title) {
-			containModul = false;
-			output = "<html>"
-				//+"<div  style=\"padding: 10px;\">"
-				+"<div>"
-				+"<table cellspacing=\"1\" style=\"padding: 0px; background: #"+gridHexColor+"; width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 9px;\">"
-				+"<tr><td colspan=\"2\" style=\"background: #222222; color: #ffffff; font-size: 11px; font-weight: bold;\">"+title+"</td></tr>";
-			headingOutput = "";
-			moduleOutput = "";
-		}
-
-
-
-		public void addHeading(String heading){
-			//headingOutput = headingOutput+"<tr><td style=\"background: #"+gridHexColor+"; font-size: 15pt; font-weight: bold;\">"+heading+"</td></tr>";
-			headingOutput = headingOutput+"<tr><td colspan=\"2\" style=\"background: #"+gridHexColor+"; color: #ffffff; font-size: 11px; font-weight: bold;\">"+heading+"</td></tr>";
-			containModul = false;
-		}
-
-
-		
-
-		public void addModule(EveAsset module){
-			addModule(module.getName(), module.getPrice());
-		}
-		public void addModule(String name, double price){
-			containModul = true;
-			moduleOutput = moduleOutput
-					+ "<tr>"
-					+ "<td style=\"background: #ffffff;\">"+name+"</td>"
-					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.iskFormat(price)+"</td>"
-					+ "</tr>";
-		}
-		public void addModule(String name, double price, double value){
-			containModul = true;
-			moduleOutput = moduleOutput
-					+ "<tr>"
-					+ "<td style=\"background: #ffffff;\">"+name+"</td>"
-					+ "<td style=\"background: #ffffff; text-align: right;\">"+Formater.iskFormat(price)+" &nbsp; ("+Formater.iskFormat(value)+")</td>"
-					+ "</tr>";
-		}
-
-		public void addNone(){
-			if (containModul){
-				output = output+headingOutput;
-				output = output+moduleOutput;
-			}
-			headingOutput = "";
-			moduleOutput = "";
-			
-			/*
-			if (containNone){
-				output = output+"<tr><td style=\"background: #"+backgroundHexColor+";\"><i>none</i></td></tr>";
-			}
-			 */
-		}
-
-		public String getOutput(){
-			return output+"</table></div>";
-		}
 	}
 }

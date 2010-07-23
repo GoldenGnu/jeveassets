@@ -2,7 +2,7 @@
 /* http://publicobject.com/glazedlists/                      publicobject.com,*/
 /*                                                     O'Dell Engineering Ltd.*/
 
-package net.nikr.eve.jeveasset.gui.tabs.materials;
+package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.SeparatorList;
 import java.awt.Color;
@@ -10,38 +10,51 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Material;
+import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
 
 /**
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
+public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 
+	private final JLabel jOwner;
 	private final JLabel jLocation;
-	private final JLabel jGroup;
+	private final JLabel jFlag;
 
-	public MaterialsSeparatorTableCell(JTable jTable, SeparatorList<Material> separatorList) {
+	public ModuleSeparatorTableCell(JTable jTable, SeparatorList<Module> separatorList) {
 		super(jTable, separatorList);
-		
+
+		jOwner = new JLabel();
+		Font largeFont = new Font(jOwner.getFont().getName(), Font.BOLD, jOwner.getFont().getSize()+1) ;
+		jOwner.setBorder(null);
+		jOwner.setBackground(Color.BLACK);
+		jOwner.setForeground(Color.WHITE);
+		jOwner.setOpaque(true);
+		jOwner.setFont(largeFont);
+
 		jLocation = new JLabel();
 		jLocation.setBorder(null);
 		jLocation.setBackground(Color.BLACK);
 		jLocation.setForeground(Color.WHITE);
 		jLocation.setOpaque(true);
-		Font font = jLocation.getFont();
-		jLocation.setFont( new Font(font.getName(), Font.BOLD, font.getSize()+1));
+		jLocation.setFont(largeFont);
 
-		jGroup = new JLabel();
-		jGroup.setBorder(null);
-		jGroup.setOpaque(false);
-		jGroup.setBackground(Color.BLACK);
-		jGroup.setFont( new Font(font.getName(), Font.BOLD, font.getSize()+1));
+		jFlag = new JLabel();
+		jFlag.setBorder(null);
+		jFlag.setOpaque(false);
+		jFlag.setBackground(Color.BLACK);
+		jFlag.setFont(largeFont);
 
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
+				.addGroup(layout.createSequentialGroup()
+					.addGap(1)
+					.addComponent(jOwner, 0, 0, Integer.MAX_VALUE)
+					.addGap(1)
+				)
 				.addGroup(layout.createSequentialGroup()
 					.addGap(1)
 					.addComponent(jLocation, 0, 0, Integer.MAX_VALUE)
@@ -50,17 +63,18 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jExpand)
 					.addGap(1)
-					.addComponent(jGroup, 0, 0, Integer.MAX_VALUE)
+					.addComponent(jFlag, 0, 0, Integer.MAX_VALUE)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGap(1)
+				.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jLocation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGap(1)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGap(2)
 		);
@@ -68,10 +82,13 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 
 	@Override
 	protected void configure(SeparatorList.Separator<?> separator) {
-		Material material = (Material) separator.first();
-		if(material == null) return; // handle 'late' rendering calls after this separator is invalid
-		jLocation.setVisible(material.isFirst());
-		jLocation.setText(material.getLocation());
-		jGroup.setText(material.getGroup());
+		Module module = (Module) separator.first();
+		if(module == null) return; // handle 'late' rendering calls after this separator is invalid
+		jLocation.setVisible(module.isFirst());
+		jLocation.setText("  "+module.getLocation());
+		jOwner.setVisible(module.isFirst());
+		jOwner.setText("  "+module.getOwner());
+		jFlag.setText(module.getFlag());
 	}
+
 }

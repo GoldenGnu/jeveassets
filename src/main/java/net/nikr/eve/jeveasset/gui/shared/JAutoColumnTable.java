@@ -41,6 +41,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
@@ -52,11 +53,11 @@ public class JAutoColumnTable extends JTable {
 
 	private final List<String> columnNames;
 	private JScrollPane jScroll;
-	protected EventTableModel eventTableModel;
+	protected EventTableModel dm;
 
 	public JAutoColumnTable(EventTableModel dm, List<String> columnNames) {
 		setModel(dm);
-		eventTableModel = dm;
+		this.dm = dm;
 		this.columnNames = columnNames;
 
 		ModelListener modelListener = new ModelListener();
@@ -72,6 +73,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
 		this.setDefaultRenderer(Quantity.class, new NumberToStringCellRenderer());
 		this.setDefaultRenderer(ISK.class, new NumberToStringCellRenderer());
+		this.setDefaultRenderer(ModulePriceValue.class, new NumberToStringCellRenderer());
 	}
 
 	public JScrollPane getScrollPanel() {
@@ -183,7 +185,7 @@ public class JAutoColumnTable extends JTable {
 				columnMoved = false;
 				columnNames.clear();
 				columnNames.addAll(tempMainTableColumnNames);
-				eventTableModel.fireTableStructureChanged();
+				dm.fireTableStructureChanged();
 				autoResizeColumns();
 			}
 		}

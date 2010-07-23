@@ -25,7 +25,7 @@ package net.nikr.eve.jeveasset.data;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class Material{
+public class Material implements Comparable<Material>{
 	private String name;
 	private String location;
 	private String group;
@@ -49,15 +49,15 @@ public class Material{
 	}
 
 	public String getGroup() {
-		return group;
+		return group.substring(1);
 	}
 
 	public String getLocation() {
-		return location;
+		return location.substring(1);
 	}
 
 	public String getName() {
-		return name;
+		return name.substring(1);
 	}
 
 	public boolean isFirst() {
@@ -73,7 +73,11 @@ public class Material{
 	}
 
 	public String getSeperator(){
-		return this.getLocation()+this.getGroup();
+		return location+group;
+	}
+
+	protected String getCompare(){
+		return location+group+name;
 	}
 
 	@Override
@@ -104,6 +108,11 @@ public class Material{
 		hash = 29 * hash + (this.location != null ? this.location.hashCode() : 0);
 		hash = 29 * hash + (this.group != null ? this.group.hashCode() : 0);
 		return hash;
+	}
+
+	@Override
+	public int compareTo(Material o) {
+		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
 
 	

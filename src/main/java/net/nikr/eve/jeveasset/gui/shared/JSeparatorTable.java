@@ -78,6 +78,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 
     /** {@inheritDoc} */
+	@Override
     public Rectangle getCellRect(int row, int column, boolean includeSpacing) {
         final EventTableModel eventTableModel = getEventTableModel();
 
@@ -107,6 +108,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     }
 
     /** {@inheritDoc} */
+	@Override
     public Object getValueAt(int row, int column) {
         final Object rowValue = getEventTableModel().getElementAt(row);
 
@@ -119,6 +121,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     }
 
     /** {@inheritDoc} */
+	@Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         // if it's the separator row, use the separator renderer
         if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
@@ -129,6 +132,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     }
 
     /** {@inheritDoc} */
+	@Override
     public TableCellEditor getCellEditor(int row, int column) {
         // if it's the separator row, use the separator editor
         if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
@@ -139,6 +143,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     }
 
     /** {@inheritDoc} */
+	@Override
     public boolean isCellEditable(int row, int column) {
         // if it's the separator row, it is always editable (so that the separator can be collapsed/expanded)
         if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
@@ -161,6 +166,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     public void setSeparatorEditor(TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
 
     /** {@inheritDoc} */
+	@Override
     public void tableChanged(TableModelEvent e) {
         // stop edits when the table changes, or else we might
         // get a relocated edit in the wrong cell!
@@ -180,6 +186,7 @@ class SpanTableUI extends BasicTableUI {
 
     private JSeparatorTable separatorTable;
 
+	@Override
     public void installUI(JComponent c) {
         this.separatorTable = (JSeparatorTable) c;
         super.installUI(c);
@@ -188,6 +195,7 @@ class SpanTableUI extends BasicTableUI {
     /** Paint a representation of the <code>table</code> instance
      * that was set in installUI().
      */
+	@Override
     public void paint(Graphics g, JComponent c) {
         Rectangle clip = g.getClipBounds();
 

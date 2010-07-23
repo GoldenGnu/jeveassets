@@ -27,7 +27,6 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,12 +35,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
-import javax.swing.JTable.PrintMode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -64,13 +61,11 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
-	private MaterialTableFormat materialTableFormat;
 	private EventTableModel<Material> materialTableModel;
 
 	//Data
 	private EventList<Material> materialEventList;
 	private SeparatorList<Material> separatorList;
-
 
 	public MaterialsTab(Program program) {
 		super(program, "Materials", Images.ICON_TOOL_MATERIALS, true);
@@ -89,31 +84,18 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
-		//Table format
-		materialTableFormat = new MaterialTableFormat();
-		//Backend
+		MaterialTableFormat materialTableFormat = new MaterialTableFormat();
 		materialEventList = new BasicEventList<Material>();
-		//For soring the table
-		//SortedList<Material> overviewSortedList = new SortedList<Material>(materialEventList);
 		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
-
-		//Table Model
 		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
 		//Tables
 		jTable = new JSeparatorTable(materialTableModel, materialTableFormat.getColumnNames());
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
-		//jTable.setRowHeight(jTable.getRowHeight()+40);
-		//jTable.setFont( new Font(jTable.getFont().getName(), jTable.getFont().getStyle(), jTable.getFont().getSize()+1));
-
 		EventSelectionModel<Material> selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
-		//jTable.setRowMargin(10);
-		//jTable.setRowHeight(jTable.getRowHeight()+10);
-		
-		//jTable.getColumnModel().setColumnMargin(jTable.getColumnModel().getColumnMargin()+10);
 		//Scroll Panels
 		JScrollPane jMaterialScrollPanel = jTable.getScrollPanel();
 
@@ -139,7 +121,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
-		Vector<String > characters = new Vector<String>();
+		List<String > characters = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts){
 			for (Human human : account.getHumans()){
@@ -155,12 +137,16 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			}
 		}
 		if (!characters.isEmpty()){
+			jExpand.setEnabled(true);
+			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters));
+			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {
+			jExpand.setEnabled(false);
+			jCollapse.setEnabled(false);
 			jCharacters.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
 			jCharacters.getModel().setSelectedItem("No character found");
@@ -168,62 +154,64 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	}
 
 	private void updateTable(){
-		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
-		List<Material> materials = new ArrayList<Material>();
-		List<Material> summary = new ArrayList<Material>();
-		List<String> locations = new ArrayList<String>();
-		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 		String character = (String) jCharacters.getSelectedItem();
-		List<Material> total = new ArrayList<Material>();
-		Material allMaterials = new Material("All Material", "Summary", "XXXGrand Total");
+		List<Material> materials = new ArrayList<Material>();
+		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
+		Map<String, Material> summary = new HashMap<String, Material>();
+		Map<String, Material> total = new HashMap<String, Material>();
+		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+		Material allMaterials = new Material("2All", "2Summary", "2Grand Total");
 		for (EveAsset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material")) continue;
 			if (!eveAsset.getOwner().equals(character) && !eveAsset.getOwner().equals("["+character+"]") && !character.equals("All")) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
-			Material material;
+			//Locations
 			if (!uniqueMaterials.containsKey(key)){ //New
-				material = new Material(eveAsset.getName(), eveAsset.getLocation(), eveAsset.getGroup());
+				Material material = new Material("1"+eveAsset.getName(), "1"+eveAsset.getLocation(), "1"+eveAsset.getGroup());
 				uniqueMaterials.put(key, material);
 				materials.add(material);
-				if (!locations.contains(eveAsset.getLocation())){
-					material.first();
-					locations.add(eveAsset.getLocation());
-				}
-			} else { //Exist
-				material = uniqueMaterials.get(key);
 			}
-			Material summaryMaterial = new Material(eveAsset.getName(), "Summary", eveAsset.getGroup());
-			if (!summary.contains(summaryMaterial)){
-					summary.add(summaryMaterial);
-			} else {
-				summaryMaterial = summary.get(summary.indexOf(summaryMaterial));
+			Material material = uniqueMaterials.get(key);
+			//Summary
+			if (!summary.containsKey(eveAsset.getGroup())){ //New
+				Material summaryMaterial = new Material("1"+eveAsset.getName(), "2Summary", "1"+eveAsset.getGroup());
+				summary.put(eveAsset.getName(), summaryMaterial);
+				materials.add(summaryMaterial);
 			}
-			Material totalMaterial = new Material(eveAsset.getGroup(), "Summary", "XXXGrand Total");
-			if (!total.contains(totalMaterial)){
-				total.add(totalMaterial);
-			} else {
-				totalMaterial =  total.get(total.indexOf(totalMaterial));
+			Material summaryMaterial = summary.get(eveAsset.getName());
+			//Total
+			if (!total.containsKey(eveAsset.getGroup())){
+				Material totalMaterial = new Material("1"+eveAsset.getGroup(), "2Summary", "2Grand Total");
+				total.put(eveAsset.getGroup(), totalMaterial);
+				materials.add(totalMaterial);
 			}
+			Material totalMaterial =  total.get(eveAsset.getGroup());
 			//Update values
 			material.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 			summaryMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 			totalMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 			allMaterials.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 		}
-		for (Material material : summary){
-			materials.add(material);
+		if (!materials.isEmpty()) materials.add(allMaterials);
+		Collections.sort(materials);
+		String location = "";
+		for (Material material : materials){
+			if (!location.equals(material.getLocation())){
+				material.first();
+				location = material.getLocation();
+			}
 		}
-		for (Material material : total){
-			materials.add(material);
-		}
-		if (!materials.isEmpty()){
-			materials.add(allMaterials);
-		}
-		if (!summary.isEmpty()) summary.get(0).first();
 		materialEventList.getReadWriteLock().writeLock().lock();
 		materialEventList.clear();
 		materialEventList.addAll(materials);
 		materialEventList.getReadWriteLock().writeLock().unlock();
+		if (!materials.isEmpty()){
+			jExpand.setEnabled(true);
+			jCollapse.setEnabled(true);
+		} else {
+			jExpand.setEnabled(false);
+			jCollapse.setEnabled(false);
+		}
 		jTable.getScrollPanel().getViewport().setViewPosition(new Point(0,0));
 	}
 
