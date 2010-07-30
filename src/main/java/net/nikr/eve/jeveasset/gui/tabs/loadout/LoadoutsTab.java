@@ -24,12 +24,15 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 import ca.odell.glazedlists.BasicEventList;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +44,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
@@ -51,6 +55,7 @@ import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
@@ -58,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements ActionListener {
+public class LoadoutsTab extends JMainTab implements ActionListener, MouseListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
@@ -83,6 +88,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	//Data
 	private EventList<Module> moduleEventList;
+	private FilterList<Module> moduleFilterList;
 	private SeparatorList<Module> separatorList;
 
 	public LoadoutsTab(Program program) {
@@ -133,12 +139,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		
 		ModuleTableFormat materialTableFormat = new ModuleTableFormat();
 		moduleEventList = new BasicEventList<Module>();
-		separatorList = new SeparatorList<Module>(moduleEventList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		moduleFilterList = new FilterList<Module>(moduleEventList);
+		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
 		//Tables 
 		jTable = new JSeparatorTable(moduleTableModel, materialTableFormat.getColumnNames());
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
+		jTable.addMouseListener(this);
 		PaddingTableCellRenderer.install(jTable, 3);
 		EventSelectionModel<Module> selectionModel = new EventSelectionModel<Module>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -150,9 +158,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jCharactersLabel)
-					.addComponent(jCharacters, 120, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jCharacters, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jShipsLabel)
-					.addComponent(jShips, 120, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jShips, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
@@ -238,22 +246,35 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 	}
 
+	private void showPopupMenu(MouseEvent e) {
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+		int index = jTable.getSelectedRow();
+		Object o = moduleTableModel.getElementAt(index);
+		if (o instanceof Module){
+			Module module = (Module)o;
+			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, module));
+			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, module));
+			jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
+	}
+
 
 	private void updateTable(){
-		String selectedShip = (String)jShips.getSelectedItem();
 		List<Module> ship = new ArrayList<Module>();
 		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 		for (EveAsset eveAsset : eveAssetEventList){
 			String key = eveAsset.getName()+" #"+eveAsset.getItemId();
-			if (!selectedShip.equals(key)) continue;
-			Module moduleShip = new Module("Ship", eveAsset.getLocation(), "Total1", eveAsset.getOwner(), 0, eveAsset.getPrice(), 0);
+			if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
+			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", 0, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeId());
+			Module moduleModules = new Module(eveAsset, "2Modules", "", key, "Total Value", 0, 0, 0, false, 0);
+			Module moduleTotal = new Module(eveAsset, "3Total", "", key, "Total Value", 0, eveAsset.getPrice(), 0, false, 0);
 			ship.add(moduleShip);
-			Module moduleModules = new Module("Modules", eveAsset.getLocation(), "Total2", eveAsset.getOwner(), 0, 0, 0);
 			ship.add(moduleModules);
-			Module moduleTotal = new Module("Total", eveAsset.getLocation(), "Total3", eveAsset.getOwner(), 0, eveAsset.getPrice(), 0);
 			ship.add(moduleTotal);
 			for (EveAsset assetModule : eveAsset.getAssets()){
-				Module module = new Module(assetModule.getName(), assetModule.getLocation(), assetModule.getFlag(), eveAsset.getOwner(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount());
+				Module module = new Module(assetModule, "1"+assetModule.getName(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount(), assetModule.isMarketGroup(), assetModule.getTypeId());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains("HiSlot")
 						|| assetModule.getFlag().contains("MedSlot")
@@ -269,8 +290,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				moduleModules.addValue(assetModule.getPrice()*assetModule.getCount());
 				moduleTotal.addValue(assetModule.getPrice()*assetModule.getCount());
 			}
-			Collections.sort(ship);
-			if (!ship.isEmpty()) ship.get(0).first();
+		}
+		Collections.sort(ship);
+		String key = "";
+		for (Module module : ship){
+			if (!key.equals(module.getKey())){
+				module.first();
+				key = module.getKey();
+			}
 		}
 		moduleEventList.getReadWriteLock().writeLock().lock();
 		moduleEventList.clear();
@@ -307,8 +334,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			jCharacters.getModel().setSelectedItem("No character found");
 			jShips.setModel( new DefaultComboBoxModel());
 			jShips.getModel().setSelectedItem("No character found");
-
 		}
+		updateTable();
 	}
 
 	@Override
@@ -346,7 +373,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())) {
-			updateTable();
+			String selectedShip = (String)jShips.getSelectedItem();
+			moduleFilterList.setMatcher( new Module.ModuleMatcher(selectedShip));
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);
@@ -370,4 +398,23 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }

@@ -30,6 +30,8 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -47,10 +50,11 @@ import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener{
+public class MaterialsTab extends JMainTab implements ActionListener, MouseListener{
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -92,6 +96,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		jTable = new JSeparatorTable(materialTableModel, materialTableFormat.getColumnNames());
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
+		jTable.addMouseListener(this);
 		PaddingTableCellRenderer.install(jTable, 3);
 		EventSelectionModel<Material> selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -153,6 +158,20 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		}
 	}
 
+	private void showPopupMenu(MouseEvent e) {
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+		int index = jTable.getSelectedRow();
+		Object o = materialTableModel.getElementAt(index);
+		if (o instanceof Material){
+			Material material = (Material)o;
+			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, material));
+			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, material));
+			jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
+	}
+
 	private void updateTable(){
 		String character = (String) jCharacters.getSelectedItem();
 		List<Material> materials = new ArrayList<Material>();
@@ -160,28 +179,28 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		Map<String, Material> summary = new HashMap<String, Material>();
 		Map<String, Material> total = new HashMap<String, Material>();
 		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
-		Material allMaterials = new Material("2All", "2Summary", "2Grand Total");
+		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
 		for (EveAsset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material")) continue;
 			if (!eveAsset.getOwner().equals(character) && !eveAsset.getOwner().equals("["+character+"]") && !character.equals("All")) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
 			//Locations
 			if (!uniqueMaterials.containsKey(key)){ //New
-				Material material = new Material("1"+eveAsset.getName(), "1"+eveAsset.getLocation(), "1"+eveAsset.getGroup());
+				Material material = new Material("1"+eveAsset.getName(), "1"+eveAsset.getLocation(), "1"+eveAsset.getGroup(), eveAsset);
 				uniqueMaterials.put(key, material);
 				materials.add(material);
 			}
 			Material material = uniqueMaterials.get(key);
 			//Summary
 			if (!summary.containsKey(eveAsset.getGroup())){ //New
-				Material summaryMaterial = new Material("1"+eveAsset.getName(), "2Summary", "1"+eveAsset.getGroup());
+				Material summaryMaterial = new Material("1"+eveAsset.getName(), "2Summary", "1"+eveAsset.getGroup(), eveAsset);
 				summary.put(eveAsset.getName(), summaryMaterial);
 				materials.add(summaryMaterial);
 			}
 			Material summaryMaterial = summary.get(eveAsset.getName());
 			//Total
 			if (!total.containsKey(eveAsset.getGroup())){
-				Material totalMaterial = new Material("1"+eveAsset.getGroup(), "2Summary", "2Grand Total");
+				Material totalMaterial = new Material("1"+eveAsset.getGroup(), "2Summary", "2Grand Total", null);
 				total.put(eveAsset.getGroup(), totalMaterial);
 				materials.add(totalMaterial);
 			}
@@ -227,6 +246,25 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jTable.expandSeparators(true, separatorList);
 		}
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) showPopupMenu(e);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 
 
 

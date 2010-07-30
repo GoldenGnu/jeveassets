@@ -29,14 +29,36 @@ public class Material implements Comparable<Material>{
 	private String name;
 	private String location;
 	private String group;
+	private String typeName;
+	private boolean marketGroup;
+	private long typeID;
+	private String station;
+	private String system;
+	private String region;
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
 
-	public Material(String name, String location, String group) {
+	public Material(String name, String location, String group, EveAsset eveAsset) {
 		this.name = name;
 		this.location = location;
 		this.group = group;
+		if (eveAsset != null){
+			this.typeName = eveAsset.getName();
+			this.marketGroup = eveAsset.isMarketGroup();
+			this.typeID = eveAsset.getTypeId();
+			this.station = eveAsset.getLocation();
+			this.system = eveAsset.getSolarSystem();
+			this.region = eveAsset.getRegion();
+		} else {
+			this.typeName = "";
+			this.marketGroup = false;
+			this.typeID = 0;
+			this.station = null;
+			this.system = null;
+			this.region = null;
+		}
+		
 	}
 
 	public void updateValue(long count, double price){
@@ -58,6 +80,30 @@ public class Material implements Comparable<Material>{
 
 	public String getName() {
 		return name.substring(1);
+	}
+
+	public boolean isMarketGroup() {
+		return marketGroup;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
+	public long getTypeID() {
+		return typeID;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public String getStation() {
+		return station;
 	}
 
 	public boolean isFirst() {

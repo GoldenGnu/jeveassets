@@ -152,6 +152,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		JMenuItem  jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
+		JMenuItem jSubMenuItem;
 
 		//Select clicked row
 		jOverviewTable.setRowSelectionInterval(jOverviewTable.rowAtPoint(e.getPoint()), jOverviewTable.rowAtPoint(e.getPoint()));
@@ -241,15 +242,15 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		//Asset Filter
 		
-		jSubMenu = JMenuTools.getAssetFilterMenu(program, overview);
+		jSubMenuItem = JMenuTools.getAssetFilterMenu(program, overview);
 		if (jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Locations");
 			jMenuItem.setIcon(Images.ICON_LOCATIONS);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
+			jSubMenuItem.add(jMenuItem);
 		}
-		jTablePopupMenu.add(jSubMenu);
+		jTablePopupMenu.add(jSubMenuItem);
 		//XXX - you can not lookup group locations
 		if (!overview.isGroup()){
 			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, overview));
