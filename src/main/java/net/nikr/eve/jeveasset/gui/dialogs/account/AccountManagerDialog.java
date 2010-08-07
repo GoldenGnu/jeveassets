@@ -169,7 +169,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-					.addComponent(jTable.getScrollPanel(), 550, 550, 550)
+					.addComponent(jTable.getScrollPanel(), 550, 550, Short.MAX_VALUE)
 					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -190,10 +190,13 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jTable.getScrollPanel(), 400, 400, 400)
+				.addComponent(jTable.getScrollPanel(), 400, 400, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				
 		);
+                getDialog().pack(); //Pack here to allow...
+                getDialog().setMinimumSize(getDialog().getSize(null)); // ...retrieval of dimensions here.
+                getDialog().setResizable(true);
 	}
 
 	public void forceUpdate(){
