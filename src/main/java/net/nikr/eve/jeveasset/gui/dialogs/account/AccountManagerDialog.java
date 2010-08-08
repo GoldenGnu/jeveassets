@@ -28,6 +28,7 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
+import java.awt.Dimension;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -190,13 +191,15 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jTable.getScrollPanel(), 400, 400, Short.MAX_VALUE)
+				.addComponent(jTable.getScrollPanel(), 200, 200, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				
 		);
-                getDialog().pack(); //Pack here to allow...
-                getDialog().setMinimumSize(getDialog().getSize(null)); // ...retrieval of dimensions here.
-                getDialog().setResizable(true);
+		// Pack then take the dialog dimensions to use as the minimun dimension.
+		getDialog().pack();
+		Dimension d = new Dimension(getDialog().getWidth() + 10, getDialog().getHeight() + 10); // Use 10 pixel buffer to offset the resize 'bug'.
+		getDialog().setMinimumSize(d);
+		getDialog().setResizable(true);
 	}
 
 	public void forceUpdate(){
