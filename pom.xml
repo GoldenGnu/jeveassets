@@ -22,6 +22,8 @@
 		</developer>
 		<developer>
 			<id>candle</id>
+			<email>jeveassets@candle.me.uk</email>
+			<timezone>+1</timezone>
 		</developer>
 		<developer>
 			<id>beders</id>
@@ -62,8 +64,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${project.build.sourceVersion}</source>
+					<target>${project.build.sourceVersion}</target>
 					<compilerArgument>-Xlint</compilerArgument>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
@@ -120,6 +122,30 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.5</version>
+        <configuration>
+          <linkXref>true</linkXref>
+          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>${project.build.sourceVersion}</targetJdk>
+          <excludes>
+            <exclude>**/*Bean.java</exclude>
+            <exclude>**/generated/*.java</exclude>
+          </excludes>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources/stubs</excludeRoot>
+          </excludeRoots>
+        </configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.beimin</groupId>
@@ -212,5 +238,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceVersion>1.6</project.build.sourceVersion>
 	</properties>
 </project>
