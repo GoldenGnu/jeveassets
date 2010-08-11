@@ -110,10 +110,9 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		if (expand) scrollToRow(row+separator.size());
 		//Workaround
 		for (int a = 0; a < jTable.getRowCount(); a++){
-			if (!(jTable.getValueAt(a, 0) instanceof SeparatorList.Separator<?>)){
-				if (jTable.getRowHeight() != jTable.getRowHeight(a)){
-					jTable.setRowHeight(a, jTable.getRowHeight());
-				}
+			if (!(jTable.getValueAt(a, 0) instanceof SeparatorList.Separator<?>)
+							&& jTable.getRowHeight() != jTable.getRowHeight(a)){
+				jTable.setRowHeight(a, jTable.getRowHeight());
 			}
 		}
 	}

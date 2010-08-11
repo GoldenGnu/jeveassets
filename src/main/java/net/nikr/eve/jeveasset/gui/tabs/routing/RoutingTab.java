@@ -364,8 +364,8 @@ public class RoutingTab extends JMainTab implements ActionListener {
 			move(available, waypoints, ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getWaypointLimit());
 		} else if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			move(waypoints, available, Integer.MAX_VALUE);
-		} else if (ACTION_CHANGE_ALGORITHM.equals(e.getActionCommand())) {
-			// this isn't used.
+//		} else if (ACTION_CHANGE_ALGORITHM.equals(e.getActionCommand())) {
+//			// this isn't used.
 		} else if (ACTION_CALCULATE.equals(e.getActionCommand())) {
 			processRoute();
 		} else if (ACTION_CANCEL.equals(e.getActionCommand())) {

@@ -43,14 +43,13 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 	public void handle(Throwable e){
 		//Workaround:
 		StackTraceElement[] stackTraceElements = e.getStackTrace();
-		if (stackTraceElements.length > 0){
-			if (stackTraceElements[0].getClassName().equals("sun.font.FontDesignMetrics")
+		if (stackTraceElements.length > 0
+						&& stackTraceElements[0].getClassName().equals("sun.font.FontDesignMetrics")
 						&& stackTraceElements[0].getLineNumber() == 492
 						&& stackTraceElements[0].getMethodName().equals("charsWidth")
 						){
-				LOG.warn("sun.font.FontDesignMetrics bug detected");
-				return;
-			}
+			LOG.warn("sun.font.FontDesignMetrics bug detected");
+			return;
 		}
 		LOG.error("Uncaught Exception (sun.awt.exception.handler):"
 				+ uncaughtErrorMessage

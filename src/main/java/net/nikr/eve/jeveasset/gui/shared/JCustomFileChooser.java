@@ -54,12 +54,10 @@ public class JCustomFileChooser extends JFileChooser {
 			selectedFile = new File(selectedFile.getAbsolutePath()+"."+customExtension);
 			this.setSelectedFile(selectedFile);
 		}
-		if (selectedFile != null){
-			if (selectedFile.exists()){
-				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (nReturn == JOptionPane.NO_OPTION){
-					return;
-				}
+		if (selectedFile != null && selectedFile.exists()){
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION){
+				return;
 			}
 		}
 		super.approveSelection();

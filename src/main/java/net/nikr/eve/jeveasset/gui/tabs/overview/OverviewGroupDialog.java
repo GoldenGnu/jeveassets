@@ -252,12 +252,11 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 					}
 					//Check for duplicates
 					for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
-						if (entry.getKey().toLowerCase().equals(jName.getText().toLowerCase())){
 							//Check if it's just a case change
-							if (!jName.getText().toLowerCase().equals(overviewGroup.getName().toLowerCase())){
-								JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name already exist...", "Rename Group", JOptionPane.INFORMATION_MESSAGE);
-								return;
-							}
+						if (entry.getKey().toLowerCase().equals(jName.getText().toLowerCase())
+										&& !jName.getText().toLowerCase().equals(overviewGroup.getName().toLowerCase())){
+							JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name already exist...", "Rename Group", JOptionPane.INFORMATION_MESSAGE);
+							return;
 						}
 					}
 					program.getSettings().getOverviewGroups().remove(overviewGroup.getName());

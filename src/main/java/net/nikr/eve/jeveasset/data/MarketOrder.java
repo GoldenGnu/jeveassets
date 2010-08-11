@@ -109,7 +109,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		try {
 			timeRemaining = (this.getIssuedDate().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
 			if (timeRemaining > 0){
-				long sec = (timeRemaining/1000) % 60;
+				//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
 				long min = (timeRemaining/(1000*60)) % 60;
 				long hours = (timeRemaining/(1000*60*60)) % 24;
 				long days = (timeRemaining/(1000*60*60*24));

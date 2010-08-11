@@ -89,15 +89,13 @@ public class Profile implements Comparable<Profile>{
 			this.defaultProfile = defaultProfile;
 			File to = getFile();
 			File backTo = getBackupFile();
-			if (!from.equals(to)){
-				if (!from.renameTo(to)){
-					LOG.warn("Failed to rename profile: {}", this.getName());
-				}
+			if (!from.equals(to)
+							&& !from.renameTo(to)) {
+				LOG.warn("Failed to rename profile: {}", this.getName());
 			}
-			if (!backFrom.equals(backTo)){
-				if (!backFrom.renameTo(backTo)){
-					LOG.warn("Failed to rename profile backup: {}", this.getName());
-				}
+			if (!backFrom.equals(backTo)
+							&& !backFrom.renameTo(backTo)) {
+				LOG.warn("Failed to rename profile backup: {}", this.getName());
 			}
 		}
 	}

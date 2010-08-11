@@ -215,10 +215,9 @@ public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSett
 	public void load(){
 		//Clear temp settings
 		items = new HashMap<K, I>();
-		if (newItem != null){
-			if (!getItems().containsKey(newItem.getKey())){
-				items.put(newItem.getKey(), newItem);
-			}
+		if (newItem != null
+						&& !getItems().containsKey(newItem.getKey())){
+			items.put(newItem.getKey(), newItem);
 		}
 		for (Map.Entry<K, I> entry : getItems().entrySet()){
 			I item = newItem(entry.getValue());

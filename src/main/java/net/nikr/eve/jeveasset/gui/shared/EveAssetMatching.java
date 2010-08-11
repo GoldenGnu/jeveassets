@@ -25,9 +25,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class EveAssetMatching {
+	private static final Logger LOG = LoggerFactory.getLogger(EveAssetMatching.class);
 
 	public EveAssetMatching() {
 
@@ -73,7 +76,7 @@ public class EveAssetMatching {
 						number = Double.valueOf(text);
 						return (value == number);
 					} catch (NumberFormatException ex){
-						
+						LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
 					}
 					return false;
 				} else {
@@ -91,7 +94,7 @@ public class EveAssetMatching {
 						number = Double.valueOf(text);
 						return (value != number);
 					} catch (NumberFormatException ex){
-
+						LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
 					}
 					return false;
 				} else {
@@ -177,6 +180,7 @@ public class EveAssetMatching {
 				try {
 					return Double.valueOf( meta );
 				} catch (NumberFormatException ex){
+					LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
 				}
 			}
 			return -1;

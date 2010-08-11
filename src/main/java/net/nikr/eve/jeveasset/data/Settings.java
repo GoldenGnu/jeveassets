@@ -811,10 +811,9 @@ public class Settings{
 				}
 				ret = new File(file.getAbsolutePath()+File.separator+filename);
 				File parent = ret.getParentFile();
-				if (!parent.exists()) {
-					if (!parent.mkdirs()) {
-						LOG.error("failed to create directories for " + parent.getAbsolutePath());
-					}
+				if (!parent.exists()
+								&& !parent.mkdirs()) {
+					LOG.error("failed to create directories for " + parent.getAbsolutePath());
 				}
 			} else {
 				file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();

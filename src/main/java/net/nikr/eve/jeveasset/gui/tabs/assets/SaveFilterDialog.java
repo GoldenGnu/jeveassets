@@ -158,8 +158,9 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			this.setVisible(false);
 		}
-		if (ACTION_SELECTED.equals(e.getActionCommand())){
-			if (jName.getSelectedItem() == null) jName.getModel().setSelectedItem("");
+		if (ACTION_SELECTED.equals(e.getActionCommand())
+						&& jName.getSelectedItem() == null) {
+			jName.getModel().setSelectedItem("");
 		}
 	}
 

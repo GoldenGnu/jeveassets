@@ -43,9 +43,12 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public abstract class UpdateTask extends SwingWorker<Void, Void> implements PropertyChangeListener {
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
 	private boolean done = false;
 	private Throwable throwable = null;
@@ -135,7 +138,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 					doc.insertString(doc.getLength(), "\r\n"+processError(entry.getValue()), errorAttributeSet);
 				}
 			} catch (BadLocationException ex) {
-
+				LOG.warn("Ignoring exception: " + ex.getMessage(), ex);
 			}
 			jError.setDocument(doc);
 		}

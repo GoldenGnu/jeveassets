@@ -96,15 +96,11 @@ public abstract class AbstractXmlWriter {
 		int end = filename.lastIndexOf(".");
 		String backup = filename.substring(0, end)+".bac";
 		File backupFile = new File(backup);
-		if (backupFile.exists()){
-			if (!backupFile.delete()){
-				LOG.warn("Was not able to delete previous backup file: {}", backup);
-			}
+		if (backupFile.exists() && !backupFile.delete()){
+			LOG.warn("Was not able to delete previous backup file: {}", backup);
 		}
-		if (outputFile.exists()){
-			if (!outputFile.renameTo(backupFile)){
-				LOG.warn("Was not able to make backup of: {}", filename);
-			}
+		if (outputFile.exists() && !outputFile.renameTo(backupFile)){
+			LOG.warn("Was not able to make backup of: {}", filename);
 		}
 	}
 }

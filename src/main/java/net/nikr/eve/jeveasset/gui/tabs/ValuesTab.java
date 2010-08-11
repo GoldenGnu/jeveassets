@@ -253,22 +253,26 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				EveAsset corpBestModule = corpsBestModule.get(corp);
 				if (corpBestModule == null && eveAsset.getCategory().equals("Module")) corpBestModule = eveAsset;
 
-				if (corpBestModule != null){
-					if (corpBestModule.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Module")){
-						if (corpsBestModule.containsValue(corpBestModule)) corpsBestModule.remove(corp);
-						corpsBestModule.put(corp, eveAsset);
+				if (corpBestModule != null
+								&& corpBestModule.getPrice() <= eveAsset.getPrice()
+								&& eveAsset.getCategory().equals("Module")){
+					if (corpsBestModule.containsValue(corpBestModule)) {
+						corpsBestModule.remove(corp);
 					}
+					corpsBestModule.put(corp, eveAsset);
 				}
 
 				//Corp Best Module
 				EveAsset corpBestShip = corpsBestShip.get(corp);
 				if (corpBestShip == null && eveAsset.getCategory().equals("Ship")) corpBestShip = eveAsset;
 
-				if (corpBestShip != null){
-					if (corpBestShip.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Ship")){
-						if (corpsBestShip.containsValue(corpBestShip)) corpsBestShip.remove(corp);
-						corpsBestShip.put(corp, eveAsset);
+				if (corpBestShip != null
+								&& corpBestShip.getPrice() <= eveAsset.getPrice()
+								&& eveAsset.getCategory().equals("Ship")){
+					if (corpsBestShip.containsValue(corpBestShip)) {
+						corpsBestShip.remove(corp);
 					}
+					corpsBestShip.put(corp, eveAsset);
 				}
 			} else { //User Asset
 				String owner = eveAsset.getOwner();
@@ -303,22 +307,26 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				EveAsset ownerBestModule = ownersBestModule.get(owner);
 				if (ownerBestModule == null && eveAsset.getCategory().equals("Module")) ownerBestModule = eveAsset;
 
-				if (ownerBestModule != null){
-					if (ownerBestModule.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Module")){
-						if (ownersBestModule.containsValue(ownerBestModule)) ownersBestModule.remove(owner);
-						ownersBestModule.put(owner, eveAsset);
+				if (ownerBestModule != null
+								&& ownerBestModule.getPrice() <= eveAsset.getPrice()
+								&& eveAsset.getCategory().equals("Module")){
+					if (ownersBestModule.containsValue(ownerBestModule)) {
+						ownersBestModule.remove(owner);
 					}
+					ownersBestModule.put(owner, eveAsset);
 				}
 
 				//Owner Best Ship
 				EveAsset ownerBestShip = ownersBestShip.get(owner);
 				if (ownerBestShip == null && eveAsset.getCategory().equals("Ship")) ownerBestShip = eveAsset;
 
-				if (ownerBestShip != null){
-					if (ownerBestShip.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Ship")){
-						if (ownersBestShip.containsValue(ownerBestShip)) ownersBestShip.remove(owner);
-						ownersBestShip.put(owner, eveAsset);
+				if (ownerBestShip != null
+								&& ownerBestShip.getPrice() <= eveAsset.getPrice()
+								&& eveAsset.getCategory().equals("Ship")){
+					if (ownersBestShip.containsValue(ownerBestShip)) {
+						ownersBestShip.remove(owner);
 					}
+					ownersBestShip.put(owner, eveAsset);
 				}
 			}
 			//Total items value
@@ -335,18 +343,18 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 			//Best Module
 			if (bestModule == null && eveAsset.getCategory().equals("Module")) bestModule = eveAsset;
-			if (bestModule != null) {
-				if (bestModule.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Module")){
-					bestModule = eveAsset;
-				}
+			if (bestModule != null
+							&& bestModule.getPrice() <= eveAsset.getPrice()
+							&& eveAsset.getCategory().equals("Module")){
+				bestModule = eveAsset;
 			}
 
 			//Best Ship
 			if (bestShip == null && eveAsset.getCategory().equals("Ship")) bestShip = eveAsset;
-			if (bestShip != null) {
-				if (bestShip.getPrice() <= eveAsset.getPrice() && eveAsset.getCategory().equals("Ship")){
-					bestShip = eveAsset;
-				}
+			if (bestShip != null
+							&& bestShip.getPrice() <= eveAsset.getPrice()
+							&& eveAsset.getCategory().equals("Ship")){
+				bestShip = eveAsset;
 			}
 		}
 		List<Account> accounts = program.getSettings().getAccounts();
