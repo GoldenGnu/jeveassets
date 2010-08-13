@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemDialog;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
@@ -48,6 +49,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	public final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
 	public final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
 	public final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
+	public final static String ACTION_ADD_SYSTEM = "ADD_SYSTEM";
 
 	//Data
 	private List<FilterPanel> filters;
@@ -115,6 +117,15 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jLoadFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setHorizontalAlignment(JButton.LEFT);
 		jToolBar.add(jLoadFilter);
+
+		//Add System
+		JButton jAddSystem = new JButton("Add System");
+		jAddSystem.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jAddSystem.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jAddSystem.setHorizontalAlignment(JButton.LEFT);
+		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
+		jAddSystem.addActionListener(this);
+		jToolBar.add(jAddSystem);
 
 		jRows = new JLabel();
 		this.getPanel().add(jRows);
@@ -308,6 +319,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
 			program.getFiltersManagerDialog().setVisible(true);
 			return;
+		}
+		if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
+			AddSystemDialog asd = new AddSystemDialog(this.program);
+			asd.setVisible(true);
 		}
 		loadFilter(e.getActionCommand());
 	}
