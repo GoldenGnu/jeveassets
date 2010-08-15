@@ -23,9 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.addsystem;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.GroupLayout;
