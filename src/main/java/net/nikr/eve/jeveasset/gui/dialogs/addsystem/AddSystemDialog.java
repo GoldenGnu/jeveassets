@@ -21,104 +21,189 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.addsystem;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.swing.GroupLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
-import net.nikr.eve.jeveasset.data.Location;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AddSystemDialog extends JDialogCentered {
-	
-	private final static Logger LOG = LoggerFactory.getLogger(AddSystemDialog.class);
+public class AddSystemDialog  extends JDialogCentered  {
 
-	public final static String ACTION_SAVE = "ACTION_SAVE";
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_SELECTED = "ACTION_SELECTED";
+	private static final String DEFAULT_SELECTED_SYSTEM = "None";
+	private static final String DEFAULT_FILTER_RESULT = "No filter applied";
+	private static final Logger LOG = LoggerFactory.getLogger(AddSystemDialog.class);
 
-	private EventList<String> systems;
-	private JLabel jPrompt;
-	private JComboBox jSystem;
-	private JButton jAdd;
-	private JButton jCancel;
+	private JDialog dialog;
+	private JLabel filterLabel;
+	private JTextField filterTextField;
+	private JLabel filterInfoLabel;
+	private JLabel filterInfoResultLabel;
+	private JLabel selectedSystemLabel;
+	private JLabel selectedSystemValueLabel;
+	private JButton cancelButton;
+	private JButton addButton;
+	private SystemSelectTreePanel systemTree;
 	
 	public AddSystemDialog(Program program) {
-		super(program, "Add System");
+		super(program, "Add system");
+		dialog = getDialog();
+		dialog.setResizable(true);
+		dialog.setMinimumSize(new Dimension(300,400));
 
-		this.getDialog().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		filterLabel = new JLabel("Systems filter text:");
 
-		jPrompt = new JLabel("Enter System Name:");
-		jSystem = new JComboBox();
-		jAdd = new JButton("Add");
-		jCancel = new JButton("Cancel");
+		filterTextField = new JTextField("");
+		filterTextField.addKeyListener(new FilterTextFieldListener());
 
-		jAdd.setEnabled(false);
-		jCancel.setEnabled(false);
+		filterInfoLabel = new JLabel("Filter Result:");
 
-		Set<String> systemsTemp = new TreeSet<String>();
-		for (Location l : program.getSettings().getLocations().values()) {
-			// Check first char of location ID to extract solar systems only.
-			if (Integer.toString(l.getId()).charAt(0) == '3' ) {
-				String regionName = program.getSettings().getLocations().get(l.getRegion()).getName();
-				if (!"Unknown".equals(regionName))
-					systemsTemp.add(l.getName() + " (" + regionName + ")");
-			}
-		systems = new BasicEventList<String>();
-		systems.addAll(systemsTemp);
-		}
-		AutoCompleteSupport.install(jSystem, systems);
+		filterInfoResultLabel = new JLabel(DEFAULT_FILTER_RESULT);
+
+		selectedSystemLabel = new JLabel("Selected system:");
+
+		selectedSystemValueLabel = new JLabel(DEFAULT_SELECTED_SYSTEM);
+
+		cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new CancelButtonListener());
+
+		addButton = new JButton("Add");
+		addButton.setEnabled(false);
+
+		systemTree = new SystemSelectTreePanel(program.getSettings().getGalaxyModel());
+		systemTree.addPropertyChangeListener(SystemSelectTreePanel.TREE_CHANGE_PROPERTY_NAME, new SystemPropertyChangeListener());
+
+		layoutComponents();
+	}
+
+	private void layoutComponents() {
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jPrompt)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jSystem, 200, 200, 200)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
+			layout.createParallelGroup()
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(filterLabel)
+					.addComponent(filterTextField)
+				)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(filterInfoLabel)
+					.addComponent(filterInfoResultLabel)
+				)
+				.addComponent(systemTree)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(selectedSystemLabel)
+					.addComponent(selectedSystemValueLabel)
+				)
+				.addGroup(layout.createSequentialGroup()
+					.addGap(0, 0, Short.MAX_VALUE)
+					.addComponent(addButton)
+					.addComponent(cancelButton)
 				)
 		);
+		layout.linkSize(SwingConstants.HORIZONTAL, addButton, cancelButton);
 
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jPrompt, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+					.addComponent(filterLabel)
+					.addComponent(filterTextField)
 				)
+				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+					.addComponent(filterInfoLabel)
+					.addComponent(filterInfoResultLabel)
+				)
+				.addComponent(systemTree)
+				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+					.addComponent(selectedSystemLabel)
+					.addComponent(selectedSystemValueLabel))
+				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+					.addComponent(addButton)
+					.addComponent(cancelButton)
+			)
 		);
 
 	}
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return jSystem;
+		return filterTextField;
 	}
 
 	@Override
 	protected JButton getDefaultButton() {
-		return jAdd;
+		return null;
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() {
+	}
 
 	@Override
-	protected void windowActivated() {}
+	protected void windowActivated() {
+	}
 
 	@Override
-	protected void save() {}
+	protected void save() {
+	}
 
+	class AddBbuttonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	class CancelButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			dialog.dispose();
+		}
+	}
+
+	class FilterTextFieldListener extends KeyAdapter {
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			JTextField tf = (JTextField) e.getSource();
+			systemTree.setFilterText(tf.getText());
+			int systemCount = systemTree.getSystemCount();
+			filterInfoResultLabel.setText(generateFilterResultString(systemCount));
+		}
+	}
+
+	private String generateFilterResultString(int resultCount) {
+		if ("".equals(filterTextField.getText())) {
+			return DEFAULT_FILTER_RESULT;
+		} else if (resultCount == 1) {
+			return "<html><b>" + resultCount + " system matches</b>";
+		} else {
+			return "<html><b>" + resultCount + " systems match</b>";
+		}
+	}
+
+	class SystemPropertyChangeListener implements PropertyChangeListener {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (evt.getNewValue() != null) {
+				selectedSystemValueLabel.setText("<html><b>" + evt.getNewValue().toString() + "</b>");
+				addButton.setEnabled(true);
+			} else {
+				selectedSystemValueLabel.setText(DEFAULT_SELECTED_SYSTEM);
+				addButton.setEnabled(false);
+			}
+		}
+	}
 }
