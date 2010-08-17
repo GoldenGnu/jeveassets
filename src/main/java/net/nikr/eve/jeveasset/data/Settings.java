@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
@@ -116,6 +117,7 @@ public class Settings{
 	private List<Jump> jumps;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
+	private Galaxy model;
 
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	
@@ -160,6 +162,7 @@ public class Settings{
 		windowMaximized = false;
 		windowAutoSave = true;
 		loadSettings();
+		model = new Galaxy(this.locations, this.jumps);
 	}
 
 	/**
@@ -168,6 +171,10 @@ public class Settings{
 	 */
 	protected Settings(boolean load) { }
 
+	public Galaxy getGalaxyModel() {
+		return model;
+	}
+	
 	public void saveSettings(){
 		SettingsWriter.save(this);
 		saveAssets();
