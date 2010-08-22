@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.io.IOException;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -40,7 +41,7 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 	public static boolean load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
-			parseConquerableStations(element, settings);
+			parseConquerableStations(element, settings.getConquerableStations());
 		} catch (IOException ex) {
 			LOG.info("Conquerable stations not loaded");
 			return false;
@@ -51,23 +52,23 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseConquerableStations(Element element, Settings settings) throws XmlException {
+	private static void parseConquerableStations(Element element, Map<Integer, ApiStation> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		parseStations(element, settings);
+		parseStations(element, conquerableStations);
 	}
 
-	private static void parseStations(Element element, Settings settings){
+	private static void parseStations(Element element, Map<Integer, ApiStation> conquerableStations){
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element currentNode = (Element) filterNodes.item(a);
-			ApiStation station = parseStation(currentNode, settings);
-			settings.getConquerableStations().put(station.getStationID(), station);
+			ApiStation station = parseStation(currentNode);
+			conquerableStations.put(station.getStationID(), station);
 			
 		}
 	}
-	private static ApiStation parseStation(Element element, Settings settings){
+	private static ApiStation parseStation(Element element){
 		ApiStation station = new ApiStation();
 		station.setCorporationID( AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName( AttributeGetters.getString(element, "corporationname"));

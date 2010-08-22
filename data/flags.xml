@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rows>
+    <row flagid="0" flagname="None" flagtext="None"/>
+    <row flagid="1" flagname="Wallet" flagtext="Wallet"/>
+    <row flagid="2" flagname="Factory" flagtext="Factory"/>
+    <row flagid="4" flagname="Hangar" flagtext="Hangar"/>
+    <row flagid="5" flagname="Cargo" flagtext="Cargo"/>
+    <row flagid="6" flagname="Briefcase" flagtext="Briefcase"/>
+    <row flagid="7" flagname="Skill" flagtext="Skill"/>
+    <row flagid="8" flagname="Reward" flagtext="Reward"/>
+    <row flagid="9" flagname="Connected" flagtext="Character in station connected"/>
+    <row flagid="10" flagname="Disconnected" flagtext="Character in station offline"/>
+    <row flagid="11" flagname="LoSlot0" flagtext="Low power slot 1"/>
+    <row flagid="12" flagname="LoSlot1" flagtext="Low power slot 2"/>
+    <row flagid="13" flagname="LoSlot2" flagtext="Low power slot 3"/>
+    <row flagid="14" flagname="LoSlot3" flagtext="Low power slot 4"/>
+    <row flagid="15" flagname="LoSlot4" flagtext="Low power slot 5"/>
+    <row flagid="16" flagname="LoSlot5" flagtext="Low power slot 6"/>
+    <row flagid="17" flagname="LoSlot6" flagtext="Low power slot 7"/>
+    <row flagid="18" flagname="LoSlot7" flagtext="Low power slot 8"/>
+    <row flagid="19" flagname="MedSlot0" flagtext="Medium power slot 1"/>
+    <row flagid="20" flagname="MedSlot1" flagtext="Medium power slot 2"/>
+    <row flagid="21" flagname="MedSlot2" flagtext="Medium power slot 3"/>
+    <row flagid="22" flagname="MedSlot3" flagtext="Medium power slot 4"/>
+    <row flagid="23" flagname="MedSlot4" flagtext="Medium power slot 5"/>
+    <row flagid="24" flagname="MedSlot5" flagtext="Medium power slot 6"/>
+    <row flagid="25" flagname="MedSlot6" flagtext="Medium power slot 7"/>
+    <row flagid="26" flagname="MedSlot7" flagtext="Medium power slot 8"/>
+    <row flagid="27" flagname="HiSlot0" flagtext="High power slot 1"/>
+    <row flagid="28" flagname="HiSlot1" flagtext="High power slot 2"/>
+    <row flagid="29" flagname="HiSlot2" flagtext="High power slot 3"/>
+    <row flagid="30" flagname="HiSlot3" flagtext="High power slot 4"/>
+    <row flagid="31" flagname="HiSlot4" flagtext="High power slot 5"/>
+    <row flagid="32" flagname="HiSlot5" flagtext="High power slot 6"/>
+    <row flagid="33" flagname="HiSlot6" flagtext="High power slot 7"/>
+    <row flagid="34" flagname="HiSlot7" flagtext="High power slot 8"/>
+    <row flagid="35" flagname="Fixed Slot" flagtext="Fixed Slot"/>
+    <row flagid="40" flagname="PromenadeSlot1" flagtext="Promenade Slot 1"/>
+    <row flagid="41" flagname="PromenadeSlot2" flagtext="Promenade Slot 2"/>
+    <row flagid="42" flagname="PromenadeSlot3" flagtext="Promenade Slot 3"/>
+    <row flagid="43" flagname="PromenadeSlot4" flagtext="Promenade Slot 4"/>
+    <row flagid="44" flagname="PromenadeSlot5" flagtext="Promenade Slot 5"/>
+    <row flagid="45" flagname="PromenadeSlot6" flagtext="Promenade Slot 6"/>
+    <row flagid="46" flagname="PromenadeSlot7" flagtext="Promenade Slot 7"/>
+    <row flagid="47" flagname="PromenadeSlot8" flagtext="Promenade Slot 8"/>
+    <row flagid="48" flagname="PromenadeSlot9" flagtext="Promenade Slot 9"/>
+    <row flagid="49" flagname="PromenadeSlot10" flagtext="Promenade Slot 10"/>
+    <row flagid="50" flagname="PromenadeSlot11" flagtext="Promenade Slot 11"/>
+    <row flagid="51" flagname="PromenadeSlot12" flagtext="Promenade Slot 12"/>
+    <row flagid="52" flagname="PromenadeSlot13" flagtext="Promenade Slot 13"/>
+    <row flagid="53" flagname="PromenadeSlot14" flagtext="Promenade Slot 14"/>
+    <row flagid="54" flagname="PromenadeSlot15" flagtext="Promenade Slot 15"/>
+    <row flagid="55" flagname="PromenadeSlot16" flagtext="Promenade Slot 16"/>
+    <row flagid="56" flagname="Capsule" flagtext="Capsule"/>
+    <row flagid="57" flagname="Pilot" flagtext="Pilot"/>
+    <row flagid="58" flagname="Passenger" flagtext="Passenger"/>
+    <row flagid="59" flagname="Boarding Gate" flagtext="Boarding gate"/>
+    <row flagid="60" flagname="Crew" flagtext="Crew"/>
+    <row flagid="61" flagname="Skill In Training" flagtext="Skill in training"/>
+    <row flagid="62" flagname="CorpMarket" flagtext="Corporation Market Deliveries / Returns"/>
+    <row flagid="63" flagname="Locked" flagtext="Locked item, can not be moved unless unlocked"/>
+    <row flagid="64" flagname="Unlocked" flagtext="Unlocked item, can be moved"/>
+    <row flagid="70" flagname="Office Slot 1" flagtext="Office slot 1"/>
+    <row flagid="71" flagname="Office Slot 2" flagtext="Office slot 2"/>
+    <row flagid="72" flagname="Office Slot 3" flagtext="Office slot 3"/>
+    <row flagid="73" flagname="Office Slot 4" flagtext="Office slot 4"/>
+    <row flagid="74" flagname="Office Slot 5" flagtext="Office slot 5"/>
+    <row flagid="75" flagname="Office Slot 6" flagtext="Office slot 6"/>
+    <row flagid="76" flagname="Office Slot 7" flagtext="Office slot 7"/>
+    <row flagid="77" flagname="Office Slot 8" flagtext="Office slot 8"/>
+    <row flagid="78" flagname="Office Slot 9" flagtext="Office slot 9"/>
+    <row flagid="79" flagname="Office Slot 10" flagtext="Office slot 10"/>
+    <row flagid="80" flagname="Office Slot 11" flagtext="Office slot 11"/>
+    <row flagid="81" flagname="Office Slot 12" flagtext="Office slot 12"/>
+    <row flagid="82" flagname="Office Slot 13" flagtext="Office slot 13"/>
+    <row flagid="83" flagname="Office Slot 14" flagtext="Office slot 14"/>
+    <row flagid="84" flagname="Office Slot 15" flagtext="Office slot 15"/>
+    <row flagid="85" flagname="Office Slot 16" flagtext="Office slot 16"/>
+    <row flagid="86" flagname="Bonus" flagtext="Bonus"/>
+    <row flagid="87" flagname="DroneBay" flagtext="Drone Bay"/>
+    <row flagid="88" flagname="Booster" flagtext="Booster"/>
+    <row flagid="89" flagname="Implant" flagtext="Implant"/>
+    <row flagid="90" flagname="ShipHangar" flagtext="Ship Hangar"/>
+    <row flagid="91" flagname="ShipOffline" flagtext="Ship Offline"/>
+    <row flagid="92" flagname="RigSlot0" flagtext="Rig power slot 1"/>
+    <row flagid="93" flagname="RigSlot1" flagtext="Rig power slot 2"/>
+    <row flagid="94" flagname="RigSlot2" flagtext="Rig power slot 3"/>
+    <row flagid="95" flagname="RigSlot3" flagtext="Rig power slot 4"/>
+    <row flagid="96" flagname="RigSlot4" flagtext="Rig power slot 5"/>
+    <row flagid="97" flagname="RigSlot5" flagtext="Rig power slot 6"/>
+    <row flagid="98" flagname="RigSlot6" flagtext="Rig power slot 7"/>
+    <row flagid="99" flagname="RigSlot7" flagtext="Rig power slot 8"/>
+    <row flagid="100" flagname="Factory Operation" flagtext="Factory Background Operation"/>
+    <row flagid="116" flagname="CorpSAG2" flagtext="Corp Security Access Group 2"/>
+    <row flagid="117" flagname="CorpSAG3" flagtext="Corp Security Access Group 3"/>
+    <row flagid="118" flagname="CorpSAG4" flagtext="Corp Security Access Group 4"/>
+    <row flagid="119" flagname="CorpSAG5" flagtext="Corp Security Access Group 5"/>
+    <row flagid="120" flagname="CorpSAG6" flagtext="Corp Security Access Group 6"/>
+    <row flagid="121" flagname="CorpSAG7" flagtext="Corp Security Access Group 7"/>
+    <row flagid="122" flagname="SecondaryStorage" flagtext="Secondary Storage"/>
+    <row flagid="123" flagname="CaptainsQuarters" flagtext="Captains Quarters"/>
+    <row flagid="124" flagname="Wis Promenade" flagtext="Wis Promenade"/>
+    <row flagid="125" flagname="SubSystem0" flagtext="Sub system slot 0"/>
+    <row flagid="126" flagname="SubSystem1" flagtext="Sub system slot 1"/>
+    <row flagid="127" flagname="SubSystem2" flagtext="Sub system slot 2"/>
+    <row flagid="128" flagname="SubSystem3" flagtext="Sub system slot 3"/>
+    <row flagid="129" flagname="SubSystem4" flagtext="Sub system slot 4"/>
+    <row flagid="130" flagname="SubSystem5" flagtext="Sub system slot 5"/>
+    <row flagid="131" flagname="SubSystem6" flagtext="Sub system slot 6"/>
+    <row flagid="132" flagname="SubSystem7" flagtext="Sub system slot 7"/>
+    <row flagid="133" flagname="SpecializedFuelBay" flagtext="Specialized Fuel Bay"/>
+    <row flagid="134" flagname="SpecializedOreHold" flagtext="Specialized Ore Hold"/>
+    <row flagid="135" flagname="SpecializedGasHold" flagtext="Specialized Gas Hold"/>
+    <row flagid="136" flagname="SpecializedMineralHold" flagtext="Specialized Mineral Hold"/>
+    <row flagid="137" flagname="SpecializedSalvageHold" flagtext="Specialized Salvage Hold"/>
+    <row flagid="138" flagname="SpecializedShipHold" flagtext="Specialized Ship Hold"/>
+    <row flagid="139" flagname="SpecializedSmallShipHold" flagtext="Specialized Small Ship Hold"/>
+    <row flagid="140" flagname="SpecializedMediumShipHold" flagtext="Specialized Medium Ship Hold"/>
+    <row flagid="141" flagname="SpecializedLargeShipHold" flagtext="Specialized Large Ship Hold"/>
+    <row flagid="142" flagname="SpecializedIndustrialShipHold" flagtext="Specialized Industrial Ship Hold"/>
+    <row flagid="143" flagname="SpecializedAmmoHold" flagtext="Specialized Ammo Hold"/>
+    <row flagid="144" flagname="StructureActive" flagtext="StructureActive"/>
+    <row flagid="145" flagname="StructureInactive" flagtext="StructureInactive"/>
+    <row flagid="146" flagname="JunkyardReprocessed" flagtext="This item was put into a junkyard through reprocession."/>
+    <row flagid="147" flagname="JunkyardTrashed" flagtext="This item was put into a junkyard through being trashed by its owner."/>
+</rows>

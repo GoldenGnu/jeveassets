@@ -41,17 +41,18 @@ import java.util.TimeZone;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
+import net.nikr.eve.jeveasset.io.local.FlagsReader;
 import net.nikr.eve.jeveasset.io.local.ItemsReader;
-import net.nikr.eve.jeveasset.io.local.SettingsReader;
+import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
+import net.nikr.eve.jeveasset.io.local.ProfileReader;
+import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.local.JumpsReader;
-import net.nikr.eve.jeveasset.io.local.ProfileReader;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,7 @@ public class Settings{
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
 	private final static String PATH_JUMPS = "data"+File.separator+"jumps.xml";
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
+	private final static String PATH_FLAGS = "data"+File.separator+"flags.xml";
 	private final static String PATH_DATA_VERSION = "data"+File.separator+"data.xml";
 	private final static String PATH_PRICE_DATA = "data"+File.separator+"pricedata.dat";
 	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
@@ -86,14 +88,18 @@ public class Settings{
 	private static boolean portable = false;
 	
 	//Data
+	private Map<Integer, Item> items = new HashMap<Integer, Item>();
+	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>();
+	private Map<Integer, Location> locations = new HashMap<Integer, Location>();
+	private List<Jump> jumps = new ArrayList<Jump>();
+	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
+
+	
 	private List<Integer> uniqueIds = null;
 	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null;
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
-	private Map<Integer, Item> items;
 	private Map<Integer, PriceData> priceData;
-	private Map<Integer, Location> locations;
-	private Map<Integer, ApiStation> conquerableStations;
 	private Map<Integer, UserPrice> userPrices;
 	private Map<Long, UserItemName> userItemNames;
 	private List<Account> accounts;
@@ -114,25 +120,21 @@ public class Settings{
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
 	private Profile activeProfile;
-	private List<Jump> jumps;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
-
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
-		items = new HashMap<Integer, Item>();
-		locations = new HashMap<Integer, Location>();
 		priceData = new HashMap<Integer, PriceData>();
-		conquerableStations = new HashMap<Integer, ApiStation>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new ArrayList<Account>();
+		profiles = new ArrayList<Profile>();
+
+		//Settings
 		userPrices = new HashMap<Integer, UserPrice>();
 		bpos = new ArrayList<Long>();
-		jumps = new ArrayList<Jump>();
-		profiles = new ArrayList<Profile>();
 		userItemNames = new HashMap<Long, UserItemName>();
 		overviewGroups = new HashMap<String, OverviewGroup>();
 		
@@ -181,18 +183,19 @@ public class Settings{
 	}
 
 	private void loadSettings(){
-		//Load data and overwite default values
-		settingsLoaded = SettingsReader.load(this);
 	//Load static data
 		SplashUpdater.setProgress(10);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
 		SplashUpdater.setProgress(15);
 		LocationsReader.load(this); //Locations (Must be loaded before Assets)
 		SplashUpdater.setProgress(20);
-		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
-		SplashUpdater.setProgress(25);
 		JumpsReader.load(this); //Jumps
+		SplashUpdater.setProgress(25);
+		FlagsReader.load(this); //Item Flags (Must be loaded before Assets)
+		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
 		SplashUpdater.setProgress(30);
+	//Load data and overwite default values
+		settingsLoaded = SettingsReader.load(this);
 	//Find profiles
 		ProfileReader.load(this);
 		SplashUpdater.setProgress(35);
@@ -477,36 +480,12 @@ public class Settings{
 		this.accounts = accounts;
 	}
 
-	public Map<Integer, Item> getItems() {
-		return items;
-	}
-
-	public void setItems(Map<Integer, Item> items) {
-		this.items = items;
-	}
-
-	public Map<Integer, Location> getLocations() {
-		return locations;
-	}
-
-	public void setLocations(Map<Integer, Location> locations) {
-		this.locations = locations;
-	}
-
 	public Map<Integer, PriceData> getPriceData() {
 		return priceData;
 	}
 
 	public void setPriceData(Map<Integer, PriceData> priceData) {
 		this.priceData = priceData;
-	}
-
-	public Map<Integer, ApiStation> getConquerableStations() {
-		return conquerableStations;
-	}
-
-	public void setConquerableStations(Map<Integer, ApiStation> conquerableStations) {
-		this.conquerableStations = conquerableStations;
 	}
 
 	public Map<String, List<AssetFilter>> getAssetFilters() {
@@ -578,14 +557,6 @@ public class Settings{
 		}
 	}
 
-	public List<Jump> getJumps() {
-		return jumps;
-	}
-
-	public void setJumps(List<Jump> jumps) {
-		this.jumps = jumps;
-	}
-
   /**
    *
    * @param proxy passing 'null' removes proxying.
@@ -653,6 +624,26 @@ public class Settings{
 	public void setApiProxy(String apiProxy) {
 		AbstractApiParser.setEveApiURL(apiProxy);
 		this.apiProxy = apiProxy;
+	}
+
+	public Map<Integer, ApiStation> getConquerableStations() {
+		return conquerableStations;
+	}
+
+	public Map<Integer, ItemFlag> getItemFlags() {
+		return itemFlags;
+	}
+
+	public Map<Integer, Item> getItems() {
+		return items;
+	}
+
+	public List<Jump> getJumps() {
+		return jumps;
+	}
+
+	public Map<Integer, Location> getLocations() {
+		return locations;
 	}
 
 	public boolean isAutoResizeColumnsText() {
@@ -757,6 +748,9 @@ public class Settings{
 	}
 	public static String getPathJumps(){
 		return getLocalFile(Settings.PATH_JUMPS, false);
+	}
+	public static String getPathFlags(){
+		return getLocalFile(Settings.PATH_FLAGS, false);
 	}
 	public static String getPathPriceData(){
 		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);

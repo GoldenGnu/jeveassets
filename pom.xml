@@ -26,6 +26,9 @@
 			<timezone>+1</timezone>
 		</developer>
 		<developer>
+			<id>tryfan</id>
+		</developer>
+		<developer>
 			<id>beders</id>
 			<name>Jochen Bedersdorfer</name>
 		</developer>

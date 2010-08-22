@@ -33,8 +33,10 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.Profile;
@@ -80,11 +82,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, ApiStation> getConquerableStations() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Date getConquerableStationsNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -96,21 +93,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, Boolean> getFlags() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Integer, Item> getItems() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<Jump> getJumps() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Integer, Location> getLocations() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -315,11 +297,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setConquerableStations(Map<Integer, ApiStation> conquerableStations) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setConquerableStationsNextUpdate(Date conquerableStationNextUpdate) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -331,21 +308,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setHighlightSelectedRows(boolean filterOnEnter) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setItems(Map<Integer, Item> items) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setJumps(List<Jump> jumps) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setLocations(Map<Integer, Location> locations) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -431,6 +393,51 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setWindowSize(Dimension windowSize) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Profile getActiveProfile() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Integer, ApiStation> getConquerableStations() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Integer, ItemFlag> getItemFlags() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Integer, Item> getItems() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<Jump> getJumps() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Integer, Location> getLocations() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, OverviewGroup> getOverviewGroups() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIgnoreSecureContainers() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIgnoreSecureContainers(boolean ignoreSecureContainers) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

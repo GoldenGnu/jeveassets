@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests;
+package net.nikr.eve.jeveassets.tests.io;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
@@ -55,7 +55,7 @@ public class TestApiConverter {
 
 	@BeforeClass
 	public static void oneTimeSetUp(){
-		settings = new Settings();
+		settings = new ApiSettings();
 	}
 
 	@AfterClass

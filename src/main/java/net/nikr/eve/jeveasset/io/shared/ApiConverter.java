@@ -38,6 +38,8 @@ public class ApiConverter {
 
 	private static Logger LOG = LoggerFactory.getLogger(ApiConverter.class);;
 
+	private ApiConverter() {}
+
 	public static List<EveAsset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, boolean bCorp, Settings settings){
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
 		for (ApiMarketOrder apiMarketOrder : marketOrders){
@@ -111,7 +113,7 @@ public class ApiConverter {
 		boolean singleton  = false;
 
 		//Calculated:
-		String flag = ApiIdConverter.flag(nFlag);
+		String flag = ApiIdConverter.flag(nFlag, settings.getItemFlags());
 		String name = ApiIdConverter.name(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
@@ -148,7 +150,7 @@ public class ApiConverter {
 	}
 	private static EveAsset apiAssetsToEveAsset(Human human, ApiAsset apiAsset, EveAsset parentEveAsset, boolean bCorp, Settings settings){
 		long count = apiAsset.getQuantity();
-		String flag = ApiIdConverter.flag(apiAsset.getFlag());
+		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
 		long id = apiAsset.getItemID();
 		int typeID = apiAsset.getTypeID();
 		int locationID = apiAsset.getLocationID();

@@ -61,7 +61,8 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 
 	@Override
 	protected void setData(StationListResponse response, boolean bCorp) {
-		settings.setConquerableStations( response.getStations() );
+		settings.getConquerableStations().clear();
+		settings.getConquerableStations().putAll(response.getStations());
 		ConquerableStationsWriter.save(settings);
 	}
 

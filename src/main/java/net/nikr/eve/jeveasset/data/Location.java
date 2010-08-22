@@ -62,10 +62,6 @@ public class Location {
 		return solarSystemID == 0 ? id : solarSystemID;
 	}
 
-	public void setSolarSystemID(int solarSystemID) {
-		this.solarSystemID = solarSystemID;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {

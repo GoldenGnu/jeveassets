@@ -22,11 +22,9 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Jump;
+import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -37,35 +35,37 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class JumpsReader extends AbstractXmlReader {
+public class FlagsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(JumpsReader.class);
+	private final static Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
 
-	public static void load(Settings settings){
+	public static boolean load(Settings settings){
 		try {
-			Element element = getDocumentElement(Settings.getPathJumps());
-			parseJumps(element, settings.getLocations(), settings.getJumps());
+			Element element = getDocumentElement(Settings.getPathFlags());
+			parseFlags(element, settings.getItemFlags());
 		} catch (IOException ex) {
 			LOG.error("Jumps not loaded: "+ex.getMessage(), ex);
 		} catch (XmlException ex) {
 			LOG.error("Jumps not loaded: "+ex.getMessage(), ex);
 		}
-		LOG.info("Jumps loaded");
+		LOG.info("Assets loaded");
+		return true;
 	}
 
-	private static void parseJumps(Element element, Map<Integer, Location> locations, List<Jump> jumps){
+	private static void parseFlags(Element element, Map<Integer, ItemFlag> flags){
 		NodeList nodes = element.getElementsByTagName("row");
-		Jump jump = null;
+		ItemFlag itemFlag = null;
 		for (int a = 0; a < nodes.getLength(); a++){
-			jump = parseEdge(nodes.item(a), locations);
-			jumps.add(jump);
+			Element itemElement = (Element) nodes.item(a);
+			itemFlag = parseFlag(itemElement);
+			flags.put(itemFlag.getFlagID(), itemFlag);
 		}
 	}
 
-	private static Jump parseEdge(Node node, Map<Integer, Location> locations){
-		int from = AttributeGetters.getInt(node, "from");
-		int to = AttributeGetters.getInt(node, "to");
-		Jump j = new Jump(locations.get(from), locations.get(to));
-		return j;
+	private static ItemFlag parseFlag(Node node){
+		int flagID = AttributeGetters.getInt(node, "flagid");
+		String flagName = AttributeGetters.getString(node, "flagname");
+		String flagText = AttributeGetters.getString(node, "flagtext");
+		return new ItemFlag(flagID, flagName, flagText);
 	}
 }
