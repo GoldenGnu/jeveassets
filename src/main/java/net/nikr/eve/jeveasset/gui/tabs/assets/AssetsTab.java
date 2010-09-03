@@ -450,7 +450,7 @@ public class AssetsTab extends JMainTab
 			selectedColumns = jTable.getSelectedColumns();
 		}
 
-
+		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
 
 		jMenuItem = new JMenuItem("Copy");
 		jMenuItem.setIcon(Images.ICON_COPY);
@@ -472,7 +472,6 @@ public class AssetsTab extends JMainTab
 				if (!eveAsset.isBpo()){
 					isBPOs = false;
 				}
-
 			} else {
 				isBPOs = false;
 				isBlueprints = false;
@@ -480,33 +479,37 @@ public class AssetsTab extends JMainTab
 			}
 
 		}
+		
+		if (isSingleCell || isBlueprints){
+			jSubMenu = new JMenu("Edit");
+			jSubMenu.setIcon(Images.ICON_EDIT);
+			jTablePopupMenu.add(jSubMenu);
+			if (isBlueprints){
+				jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
+				jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
+				jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
+				jCheckBoxMenuItem.addActionListener(this);
+				jCheckBoxMenuItem.setSelected(isBPOs);
+				jSubMenu.add(jCheckBoxMenuItem);
+			}
+			if (selectedRows.length == 1 && selectedColumns.length == 1){
+				jMenuItem = new JMenuItem("Price...");
+				jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
+				jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
+				jMenuItem.addActionListener(program);
+				jSubMenu.add(jMenuItem);
 
-		if (selectedRows.length == 1 && selectedColumns.length == 1){
-			jMenuItem = new JMenuItem("Set Price...");
-			jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
-			jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
-			jMenuItem.addActionListener(program);
-			jTablePopupMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem("Set Name...");
-			jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
-			jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
-			jMenuItem.addActionListener(program);
-			jTablePopupMenu.add(jMenuItem);
+				jMenuItem = new JMenuItem("Name...");
+				jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
+				jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
+				jMenuItem.addActionListener(program);
+				jSubMenu.add(jMenuItem);
+			}
 		}
-		if (isBlueprints){
-			jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
-			jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
-			jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
-			jCheckBoxMenuItem.addActionListener(this);
-			jCheckBoxMenuItem.setSelected(isBPOs);
-			jTablePopupMenu.add(jCheckBoxMenuItem);
-		}
-		if (selectedRows.length == 1 && selectedColumns.length == 1){
-
+		
+		if (isSingleCell){
 			jSubMenu = new JMenu("Add Filter");
 			jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
-			//jSubMenu.setMnemonic(KeyEvent.VK_S);
 			jTablePopupMenu.add(jSubMenu);
 
 			jMenuItem = new JMenuItem(AssetFilter.MODE_CONTAIN);
@@ -577,7 +580,7 @@ public class AssetsTab extends JMainTab
 			jSubMenu.add(jMenuItem);
 		}
 
-		if (selectedRows.length == 1 && selectedColumns.length == 1){
+		if (isSingleCell){
 			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[0]);
 			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, eveAsset));
 		}
@@ -742,8 +745,7 @@ public class AssetsTab extends JMainTab
 					}
 				} else {
 					if (program.getSettings().getBpos().contains(eveAsset.getItemId())){
-						int index = program.getSettings().getBpos().indexOf(eveAsset.getItemId());
-						program.getSettings().getBpos().remove(index);
+						program.getSettings().getBpos().remove(eveAsset.getItemId());
 					}
 				}
 			}

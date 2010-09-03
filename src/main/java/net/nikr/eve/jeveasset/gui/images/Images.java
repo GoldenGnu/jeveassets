@@ -56,6 +56,7 @@ public class Images {
 	public final static Icon ICON_COPY = Images.getIcon("page_copy.png");
 	public static final Icon ICON_CUT = Images.getIcon("cut.png");
 	public static final Icon ICON_PASTE = Images.getIcon("page_paste.png");
+	public static final Icon ICON_EDIT = Images.getIcon("edit.png");
 
 	
 	public final static Icon ICON_GROUPS = Images.getIcon("groups.png");
