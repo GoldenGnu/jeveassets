@@ -57,7 +57,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		jRegions = new JComboBox();
 
 		JLabel jPriceTypeLabel = new JLabel("Price to use:");
-		jPriceType = new JComboBox( new Vector<String>(EveAsset.getPriceTypes()));
+		jPriceType = new JComboBox( new Vector<EveAsset.PriceMode>(EveAsset.getPriceTypes()));
 
 		JLabel jSourceLabel = new JLabel("Source to use:");
 		jSource = new JComboBox(PriceDataSettings.SOURCES);
@@ -104,7 +104,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	public boolean save() {
 		//Get data for GUI
 		int region = jRegions.getSelectedIndex();
-		String priceType = (String) jPriceType.getSelectedItem();
+		EveAsset.PriceMode priceType = (EveAsset.PriceMode) jPriceType.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
 		boolean update = !priceType.equals(EveAsset.getPriceType());
 		//Create new settings

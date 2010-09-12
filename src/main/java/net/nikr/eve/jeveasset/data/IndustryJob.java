@@ -18,64 +18,152 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import java.text.ParseException;
 import java.util.Date;
-
+import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob> {
+	public enum IndustryJobState {
+		STATE_ALL() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateAll();
+			}
+		},
+		STATE_DELIVERED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateDelivered();
+			}
+		},
+		STATE_FAILED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateFailed();
+			}
+		},
+		STATE_READY() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateReady();
+			}
+		},
+		STATE_ACTIVE() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateActive();
+			}
+		},
+		STATE_PENDING() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().statePending();
+			}
+		},
+		STATE_ABORTED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateAborted();
+			}
+		},
+		STATE_GM_ABORTED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateGmAborted();
+			}
+		},
+		STATE_IN_FLIGHT() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateInFlight();
+			}
+		},
+		STATE_DESTROYED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateDestroyed();
+			}
+		},;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
 
-	public static final String ALL = "All";
-	public static final String STATE_DELIVERED = "Delivered";
-	public static final String STATE_FAILED = "Failed";
-	public static final String STATE_READY = "Ready";
-	public static final String STATE_ACTIVE = "Active";
-	public static final String STATE_PENDING = "Pending";
-	public static final String STATE_ABORTED = "Aborted";
-	public static final String STATE_GM_ABORTED = "GM aborted";
-	public static final String STATE_IN_FLIGHT = "Inflight unanchored";
-	public static final String STATE_DESTROYED = "Destroyed";
+	public enum IndustryActivity {
+		ACTIVITY_ALL() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityAll();
+			}
+		},
+		ACTIVITY_NONE() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityNone();
+			}
+		},
+		ACTIVITY_MANUFACTURING() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityManufacturing();
+			}
+		},
+		ACTIVITY_RESEARCHING_TECHNOLOGY() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityResearchingTechnology();
+			}
+		},
+		ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityResearchingTimeProductivity();
+			}
+		},
+		ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityResearchingMeterialProductivity();
+			}
+		},
+		ACTIVITY_COPYING() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityCopying();
+			}
+		},
+		ACTIVITY_DUPLICATING() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityDuplicating();
+			}
+		},
+		ACTIVITY_REVERSE_ENGINEERING() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityReverseEngineering();
+			}
+		},
+		ACTIVITY_REVERSE_INVENTION() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().activityReverseInvention();
+			}
+		},;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
 
-	public static final String[] STATES = {ALL
-											,STATE_DELIVERED
-											,STATE_FAILED
-											,STATE_READY
-											,STATE_ACTIVE
-											,STATE_PENDING
-											,STATE_ABORTED
-											,STATE_GM_ABORTED
-											,STATE_IN_FLIGHT
-											,STATE_DESTROYED
-											};
-
-
-	public static final String ACTIVITY_NONE = "None";
-	public static final String ACTIVITY_MANUFACTURING = "Manufacturing";
-	public static final String ACTIVITY_RESEARCHING_TECHNOLOGY = "Researching Technology";
-	public static final String ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY = "Researching Time Productivity";
-	public static final String ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY = "Researching Material Productivity";
-	public static final String ACTIVITY_COPYING = "Copying";
-	public static final String ACTIVITY_DUPLICATING = "Duplicating";
-	public static final String ACTIVITY_REVERSE_ENGINEERING = "Reverse Engineering";
-	public static final String ACTIVITY_REVERSE_INVENTION = "Invention";
-
-	public static final String[] ACTIVITIES = {ALL
-												,ACTIVITY_MANUFACTURING
-												,ACTIVITY_RESEARCHING_TECHNOLOGY
-												,ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY
-												,ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY
-												,ACTIVITY_COPYING
-												,ACTIVITY_DUPLICATING
-												,ACTIVITY_REVERSE_ENGINEERING
-												,ACTIVITY_REVERSE_INVENTION
-												,ACTIVITY_NONE
-												};
-
-	private String activity = "";
-	private String state = "";
+	private IndustryActivity activity;
+	private IndustryJobState state;
 	private String name = "";
 	private String location = "";
 	private String system;
@@ -121,33 +209,33 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.region = region;
 		this.owner = owner;
 
-		switch (this.getActivityID()){
+		switch (this.getActivityID()) {
 			case 0:
-				activity = ACTIVITY_NONE;
+				activity = IndustryActivity.ACTIVITY_NONE;
 				break;
 			case 1:
-				activity = ACTIVITY_MANUFACTURING;
+				activity = IndustryActivity.ACTIVITY_MANUFACTURING;
 				break;
 			case 2:
-				activity = ACTIVITY_RESEARCHING_TECHNOLOGY;
+				activity = IndustryActivity.ACTIVITY_RESEARCHING_TECHNOLOGY;
 				break;
 			case 3:
-				activity = ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY;
+				activity = IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY;
 				break;
 			case 4:
-				activity = ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY;
+				activity = IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY;
 				break;
 			case 5:
-				activity = ACTIVITY_COPYING;
+				activity = IndustryActivity.ACTIVITY_COPYING;
 				break;
 			case 6:
-				activity = ACTIVITY_DUPLICATING;
+				activity = IndustryActivity.ACTIVITY_DUPLICATING;
 				break;
 			case 7:
-				activity = ACTIVITY_REVERSE_ENGINEERING;
+				activity = IndustryActivity.ACTIVITY_REVERSE_ENGINEERING;
 				break;
 			case 8:
-				activity = ACTIVITY_REVERSE_INVENTION;
+				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 				break;
 		}
 		Date start;
@@ -160,34 +248,34 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 			end = Settings.getGmtNow();
 		}
 
-		switch (this.getCompletedStatus()){
+		switch (this.getCompletedStatus()) {
 			case 0:
-				if (this.getCompleted() > 0){
-					state = STATE_FAILED;
-				} else if (start.before(Settings.getGmtNow())){
-					if (end.before(Settings.getGmtNow())){
-						state = STATE_READY;
+				if (this.getCompleted() > 0) {
+					state = IndustryJobState.STATE_FAILED;
+				} else if (start.before(Settings.getGmtNow())) {
+					if (end.before(Settings.getGmtNow())) {
+						state = IndustryJobState.STATE_READY;
 					} else {
-						state = STATE_ACTIVE;
+						state = IndustryJobState.STATE_ACTIVE;
 					}
 				} else {
-					state = STATE_PENDING;
+					state = IndustryJobState.STATE_PENDING;
 				}
 				break;
 			case 1:
-				state = STATE_DELIVERED;
+				state = IndustryJobState.STATE_DELIVERED;
 				break;
 			case 2:
-				state = STATE_ABORTED;
+				state = IndustryJobState.STATE_ABORTED;
 				break;
 			case 3:
-				state = STATE_GM_ABORTED;
+				state = IndustryJobState.STATE_GM_ABORTED;
 				break;
 			case 4:
-				state = STATE_IN_FLIGHT;
+				state = IndustryJobState.STATE_IN_FLIGHT;
 				break;
 			case 5:
-				state = STATE_DESTROYED;
+				state = IndustryJobState.STATE_DESTROYED;
 				break;
 		}
 	}
@@ -197,11 +285,11 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return 0;
 	}
 
-	public String getActivity() {
+	public IndustryActivity getActivity() {
 		return activity;
 	}
 
-	public String getState() {
+	public IndustryJobState getState() {
 		return state;
 	}
 

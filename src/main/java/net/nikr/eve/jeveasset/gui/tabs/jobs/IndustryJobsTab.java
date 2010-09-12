@@ -178,8 +178,8 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 			Collections.sort(characters);
 			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
-			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.ACTIVITIES));
-			jState.setModel( new DefaultComboBoxModel(IndustryJob.STATES));
+			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
+			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
 			jCharacters.setSelectedIndex(0);
 			jActivity.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
@@ -212,13 +212,13 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 					industryJobsInput = jobs.get(selected);
 				}
 				//State
-				String sState = (String) jState.getSelectedItem();
+				IndustryJob.IndustryJobState sState = (IndustryJob.IndustryJobState) jState.getSelectedItem();
 				//Activity
 				String sActivity = (String) jActivity.getSelectedItem();
 				for (int a = 0; a < industryJobsInput.size(); a++){
 					IndustryJob industryJob = industryJobsInput.get(a);
-					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.ALL));
-					boolean bActivity = (industryJob.getActivity().equals(sActivity) || sActivity.equals(IndustryJob.ALL));
+					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.IndustryJobState.STATE_ALL));
+					boolean bActivity = (industryJob.getActivity().equals(sActivity) || sActivity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
 					if (bState && bActivity){
 						industryJobsOutput.add(industryJob);
 					}

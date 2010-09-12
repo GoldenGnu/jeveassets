@@ -2,6 +2,7 @@ package net.nikr.eve.jeveassets.tests.i18n;
 
 import java.util.Locale;
 import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
+import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.junit.Test;
 import uk.me.candle.translations.Bundle;
@@ -30,5 +31,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.modeContain());
+	}
+
+	@Test
+	public void testDataModelEveAssetBundle_en() throws Exception {
+		DataModelEveAsset g = Bundle.load(DataModelEveAsset.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.priceSellMax());
 	}
 }

@@ -21,26 +21,82 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 
 public class EveAsset implements Comparable<EveAsset> {
 
-	private final static String PRICE_SELL_MAX = "Sell Maximum";
-	private final static String PRICE_SELL_AVG = "Sell Average";
-	private final static String PRICE_SELL_MEDIAN = "Sell Median";
-	private final static String PRICE_SELL_MIN = "Sell Minimum";
-	private final static String PRICE_MIDPOINT = "Midpoint";
-	private final static String PRICE_BUY_MAX = "Buy Maximum";
-	private final static String PRICE_BUY_AVG = "Buy Average";
-	private final static String PRICE_BUY_MEDIAN = "Buy Median";
-	private final static String PRICE_BUY_MIN = "Buy Minimum";
-	
+	public enum PriceMode {
+		PRICE_SELL_MAX() {
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyMax();
+			}
+		},
+		PRICE_SELL_AVG {
+			String getI18N() {
+				return DataModelEveAsset.get().priceSellAvg();
+			}
+		},
+		PRICE_SELL_MEDIAN {
+			String getI18N() {
+				return DataModelEveAsset.get().priceSellMedian();
+			}
+		},
+		PRICE_SELL_MIN {
+			String getI18N() {
+				return DataModelEveAsset.get().priceSellMin();
+			}
+		},
+		PRICE_MIDPOINT {
+			String getI18N() {
+				return DataModelEveAsset.get().priceMidpoint();
+			}
+		},
+		PRICE_BUY_MAX {
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyMax();
+			}
+		},
+		PRICE_BUY_AVG {
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyAvg();
+			}
+		},
+		PRICE_BUY_MEDIAN {
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyMedian();
+			}
+		},
+		PRICE_BUY_MIN {
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyMedian();
+			}
+		},
+		;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
+//
+//	private final static String PRICE_SELL_MAX = "Sell Maximum";
+//	private final static String PRICE_SELL_AVG = "Sell Average";
+//	private final static String PRICE_SELL_MEDIAN = "Sell Median";
+//	private final static String PRICE_SELL_MIN = "Sell Minimum";
+//	private final static String PRICE_MIDPOINT = "Midpoint";
+//	private final static String PRICE_BUY_MAX = "Buy Maximum";
+//	private final static String PRICE_BUY_AVG = "Buy Average";
+//	private final static String PRICE_BUY_MEDIAN = "Buy Median";
+//	private final static String PRICE_BUY_MIN = "Buy Minimum";
+//
 	
 	//Default
-	private static String defaultPriceType = PRICE_MIDPOINT;
+	private static PriceMode defaultPriceType = PriceMode.PRICE_MIDPOINT;
 
-	private static String priceType = PRICE_MIDPOINT;
+	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
 
 	private List<EveAsset> assets = new ArrayList<EveAsset>();
 	private String typeName;
@@ -232,22 +288,25 @@ public class EveAsset implements Comparable<EveAsset> {
 		return 0;
 	}
 
+	/*
+	 * These should be methods on the PriceMode enum.
+	 */
 	public static double getDefaultPrice(PriceData priceData) {
 		if (priceData != null) {
-			if (priceType.equals(PRICE_SELL_MAX)) return priceData.getSellMax();
-			if (priceType.equals(PRICE_SELL_AVG)) return priceData.getSellAvg();
-			if (priceType.equals(PRICE_SELL_MEDIAN)) return priceData.getSellMedian();
-			if (priceType.equals(PRICE_SELL_MIN)) return priceData.getSellMin();
-			if (priceType.equals(PRICE_MIDPOINT)) return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
-			if (priceType.equals(PRICE_BUY_MAX)) return priceData.getBuyMax();
-			if (priceType.equals(PRICE_BUY_AVG)) return priceData.getBuyAvg();
-			if (priceType.equals(PRICE_BUY_MEDIAN)) return priceData.getBuyMedian();
-			if (priceType.equals(PRICE_BUY_MIN)) return priceData.getBuyMin();
+			if (priceType.equals(PriceMode.PRICE_SELL_MAX)) return priceData.getSellMax();
+			if (priceType.equals(PriceMode.PRICE_SELL_AVG)) return priceData.getSellAvg();
+			if (priceType.equals(PriceMode.PRICE_SELL_MEDIAN)) return priceData.getSellMedian();
+			if (priceType.equals(PriceMode.PRICE_SELL_MIN)) return priceData.getSellMin();
+			if (priceType.equals(PriceMode.PRICE_MIDPOINT)) return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
+			if (priceType.equals(PriceMode.PRICE_BUY_MAX)) return priceData.getBuyMax();
+			if (priceType.equals(PriceMode.PRICE_BUY_AVG)) return priceData.getBuyAvg();
+			if (priceType.equals(PriceMode.PRICE_BUY_MEDIAN)) return priceData.getBuyMedian();
+			if (priceType.equals(PriceMode.PRICE_BUY_MIN)) return priceData.getBuyMin();
 		}
 		return 0;
 	}
 
-	public static String getDefaultPriceType(){
+	public static PriceMode getDefaultPriceType(){
 		return defaultPriceType;
 	}
 
@@ -351,30 +410,20 @@ public class EveAsset implements Comparable<EveAsset> {
 		return hash;
 	}
 
-	public static String getPriceType() {
+	public static PriceMode getPriceType() {
 		return priceType;
 	}
 
-	public static void setPriceType(String priceSource) {
+	public static void setPriceType(PriceMode priceSource) {
 		if (EveAsset.getPriceTypes().contains(priceSource)){
 			EveAsset.priceType = priceSource;
 		} else {
-			EveAsset.priceType = PRICE_MIDPOINT;
+			EveAsset.priceType = PriceMode.PRICE_MIDPOINT;
 		}
 		
 	}
 
-	public static List<String> getPriceTypes(){
-		List<String> priceSources = new ArrayList<String>();
-		priceSources.add(PRICE_SELL_MAX);
-		priceSources.add(PRICE_SELL_AVG);
-		priceSources.add(PRICE_SELL_MEDIAN);
-		priceSources.add(PRICE_SELL_MIN);
-		priceSources.add(PRICE_MIDPOINT);
-		priceSources.add(PRICE_BUY_MAX);
-		priceSources.add(PRICE_BUY_AVG);
-		priceSources.add(PRICE_BUY_MEDIAN);
-		priceSources.add(PRICE_BUY_MIN);
-		return priceSources;
+	public static List<PriceMode> getPriceTypes(){
+		return Arrays.asList(PriceMode.values());
 	}
 }

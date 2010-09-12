@@ -47,11 +47,13 @@ import org.w3c.dom.NodeList;
 
 
 public class SettingsReader extends AbstractXmlReader {
+	private static final int SETTINGS_VERSION = 2;
 
 	private final static Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
 	public static boolean load(Settings settings){
 		try {
+			// TODO add checks here for the settings version - Candle - 2010-09-12
 			Element element = getDocumentElement(Settings.getPathSettings());
 			parseSettings(element, settings);
 		} catch (IOException ex) {
@@ -68,12 +70,13 @@ public class SettingsReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
-		// check version and update as needed.
-		// XXX - Candle
 
+		// check version and update as needed.
+		// XXX - Candle 2010-09-12
 		// current changes are:
-		// XPath: /settings/filters/filter/row@mode
-		// changed from (e.g.) "Contains" to the enum value name in AssetFilter
+		// XPath: /settings/filters/filter/row[@mode]
+		// changed from (e.g.) "Contains" to the enum value name in AssetFilter.Mode
+		// settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
 
 		//Overview
 		NodeList overviewNodes = element.getElementsByTagName("overview");
@@ -272,9 +275,9 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static void parsePriceDataSettings(Element element, Settings settings){
 		int region = AttributeGetters.getInt(element, "region");
-		String priceType = EveAsset.getDefaultPriceType();
+		EveAsset.PriceMode priceType = EveAsset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
-			priceType = AttributeGetters.getString(element, "defaultprice");
+			priceType = EveAsset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
 		if (AttributeGetters.haveAttribute(element, "source")){
