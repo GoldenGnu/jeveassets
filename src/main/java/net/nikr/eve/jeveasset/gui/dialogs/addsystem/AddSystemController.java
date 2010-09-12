@@ -52,7 +52,6 @@ public class AddSystemController {
 	private static final String DEFAULT_SELECTED_SYSTEM = "None selected";
 
 	private Galaxy model;
-	private SolarSystem selectedSystem;
 	private TreeSelectDialog view;
 	private int leafCount;
 
@@ -149,7 +148,6 @@ public class AddSystemController {
 				}
 				if (regionNode.getChildCount() != 0) {
 					root.add(regionNode);
-					
 				}
 			}
 		}
