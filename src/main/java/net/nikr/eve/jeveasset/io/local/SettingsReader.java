@@ -68,6 +68,12 @@ public class SettingsReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
+		// check version and update as needed.
+		// XXX - Candle
+
+		// current changes are:
+		// XPath: /settings/filters/filter/row@mode
+		// changed from (e.g.) "Contains" to the enum value name in AssetFilter
 
 		//Overview
 		NodeList overviewNodes = element.getElementsByTagName("overview");
@@ -360,7 +366,7 @@ public class SettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "columnmatch")){
 			columnMatch = AttributeGetters.getString(element, "columnmatch");
 		}
-		return new AssetFilter(column, text, mode, and, columnMatch);
+		return new AssetFilter(column, text, AssetFilter.Mode.valueOf(mode), and ? AssetFilter.Junction.AND : AssetFilter.Junction.OR, columnMatch);
 	}
 
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {

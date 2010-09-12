@@ -478,17 +478,17 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
 			for (OverviewLocation location : overviewGroup.getLocations()){
 				if (location.isStation()){
-					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_EQUALS, false, null);
+					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.OR, null);
 					assetFilters.add(assetFilter);
 					program.getAssetsTab().addFilter(assetFilter, true);
 				}
 				if (location.isSystem()){
-					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.MODE_CONTAIN, false, null);
+					AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.OR, null);
 					assetFilters.add(assetFilter);
 					program.getAssetsTab().addFilter(assetFilter, true);
 				}
 				if (location.isRegion()){
-					AssetFilter assetFilter = new AssetFilter("Region", location.getName(), AssetFilter.MODE_EQUALS, false, null);
+					AssetFilter assetFilter = new AssetFilter("Region", location.getName(), AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.OR, null);
 					assetFilters.add(assetFilter);
 					program.getAssetsTab().addFilter(assetFilter, true);
 				}

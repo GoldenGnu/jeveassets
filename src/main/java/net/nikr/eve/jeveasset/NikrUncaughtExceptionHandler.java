@@ -21,7 +21,9 @@
 
 package net.nikr.eve.jeveasset;
 
+import java.util.Locale;
 import javax.swing.JOptionPane;
+import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,14 +31,16 @@ import org.slf4j.LoggerFactory;
 public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private final static Logger LOG = LoggerFactory.getLogger(NikrUncaughtExceptionHandler.class);
 
-	String uncaughtErrorMessage = "Please email jeveassets.log to niklaskr@gmail.com (See the readme.txt for details)";
-
 	public NikrUncaughtExceptionHandler() { }
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		LOG.error("Uncaught Exception (Thread): " + uncaughtErrorMessage, e);
-		JOptionPane.showMessageDialog(null, uncaughtErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		LOG.error("Uncaught Exception (Thread): " + General.get(Locale.ENGLISH).uncaughtErrorMessage(), e);
+		JOptionPane.showMessageDialog(null
+				, General.get().uncaughtErrorMessage()
+				, General.get().error()
+				, JOptionPane.ERROR_MESSAGE
+				);
 		System.exit(-1);
 	}
 	
@@ -52,9 +56,12 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			return;
 		}
 		LOG.error("Uncaught Exception (sun.awt.exception.handler):"
-				+ uncaughtErrorMessage
+				+ General.get(Locale.ENGLISH).uncaughtErrorMessage()
 				, e);
-		JOptionPane.showMessageDialog(null, uncaughtErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null
+				, General.get().uncaughtErrorMessage()
+				, General.get().error()
+				, JOptionPane.ERROR_MESSAGE);
 		System.exit(-1);
 	}
 }

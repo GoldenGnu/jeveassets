@@ -21,37 +21,94 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
+
 
 public class AssetFilter {
+	public enum Mode {
+		MODE_CONTAIN() {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeContain();
+			}
+		},
+		MODE_CONTAIN_NOT {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeContainNot();
+			}
+		},
+		MODE_EQUALS {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeEqual();
+			}
+		},
+		MODE_EQUALS_NOT {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeEqualNot();
+			}
+		},
+		MODE_GREATER_THAN {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeGreaterThan();
+			}
+		},
+		MODE_LESS_THAN {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeLessThan();
+			}
+		},
+		MODE_GREATER_THAN_COLUMN {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeGreaterThanColumn();
+			}
+		},
+		MODE_LESS_THAN_COLUMN {
+			String getI18N() {
+				return DataModelAssetFilter.get().modeLessThanColumn();
+			}
+		},
+		;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
 
-	public static final String MODE_CONTAIN = "Contains";
-	public static final String MODE_CONTAIN_NOT = "Does not contain";
-	public static final String MODE_EQUALS = "Equals";
-	public static final String MODE_EQUALS_NOT = "Does not equal";
-	public static final String MODE_GREATER_THAN = "Greater than";
-	public static final String MODE_LESS_THAN = "Less than";
-	public static final String MODE_GREATER_THAN_COLUMN = "Greater than column";
-	public static final String MODE_LESS_THAN_COLUMN = "Less than column";
-	
-	public static final String AND = "And";
-	public static final String OR = "Or";
+	public enum Junction {
+		AND() {
+			String getI18N() {
+				return DataModelAssetFilter.get().and();
+			}
+		},
+		OR() {
+			String getI18N() {
+				return DataModelAssetFilter.get().or();
+			}
+		}
+		;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
 
 	private String column;
 	private String text;
-	private String mode;
-	private boolean and;
+	private Mode mode;
+	private Junction junction;
 	private String columnMatch;
 
-	public AssetFilter(String column, String text, String mode, boolean and, String columnMatch) {
+	public AssetFilter(String column, String text, Mode mode, Junction junction, String columnMatch) {
 		this.column = column;
 		this.text = text;
 		this.mode = mode;
-		this.and = and;
+		this.junction = junction;
 		this.columnMatch = columnMatch;
 	}
 
 	public boolean isAnd() {
-		return and;
+		return junction == Junction.AND;
 	}
 
 	public String getColumn() {
@@ -62,7 +119,7 @@ public class AssetFilter {
 		return columnMatch;
 	}
 
-	public String getMode() {
+	public Mode getMode() {
 		return mode;
 	}
 
@@ -80,7 +137,7 @@ public class AssetFilter {
 		hash = 59 * hash + (this.column != null ? this.column.hashCode() : 0);
 		hash = 59 * hash + (this.text != null ? this.text.hashCode() : 0);
 		hash = 59 * hash + (this.mode != null ? this.mode.hashCode() : 0);
-		hash = 59 * hash + (this.and ? 1 : 0);
+		hash = 59 * hash + (this.isAnd() ? 1 : 0);
 		hash = 59 * hash + (this.columnMatch != null ? this.columnMatch.hashCode() : 0);
 		return hash;
 	}
@@ -103,7 +160,7 @@ public class AssetFilter {
 		if ((this.mode == null) ? (other.mode != null) : !this.mode.equals(other.mode)) {
 			return false;
 		}
-		if (this.and != other.and) {
+		if (this.isAnd() != other.isAnd()) {
 			return false;
 		}
 		if ((this.columnMatch == null) ? (other.columnMatch != null) : !this.columnMatch.equals(other.columnMatch)) {

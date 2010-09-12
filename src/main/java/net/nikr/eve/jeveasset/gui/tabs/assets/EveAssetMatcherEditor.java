@@ -67,7 +67,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		timer = new Timer(500, this);
 		timer.setActionCommand(ACTION_TIMER);
 
-		jAnd = new JComboBox(new Object[] {AssetFilter.AND, AssetFilter.OR});
+		jAnd = new JComboBox(new Object[] {AssetFilter.Junction.AND, AssetFilter.Junction.OR});
 		jAnd.addActionListener(this);
 
 		Vector<String> columns = new Vector<String>();
@@ -80,10 +80,10 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		jMatchColumn = new JComboBox( new Vector<String>(program.getSettings().getTableNumberColumns()) );
 		jMatchColumn.addActionListener(this);
 
-		jMode = new JComboBox(new Object[] {AssetFilter.MODE_CONTAIN,
-											AssetFilter.MODE_CONTAIN_NOT,
-											AssetFilter.MODE_EQUALS,
-											AssetFilter.MODE_EQUALS_NOT
+		jMode = new JComboBox(new Object[] {AssetFilter.Mode.MODE_CONTAIN,
+											AssetFilter.Mode.MODE_CONTAIN_NOT,
+											AssetFilter.Mode.MODE_EQUALS,
+											AssetFilter.Mode.MODE_EQUALS_NOT
 											});
 
 		jMode.setActionCommand(ACTION_MODE_SELECTED);
@@ -96,8 +96,8 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 	}
 
 	public boolean isAnd(){
-		String s = (String)jAnd.getSelectedItem();
-		return (s.equals(AssetFilter.AND));
+		AssetFilter.Junction s = (AssetFilter.Junction)jAnd.getSelectedItem();
+		return (s.equals(AssetFilter.Junction.AND));
 	}
 
 	public boolean isEmpty(){
@@ -126,9 +126,9 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 
 	public void refilter(){
 		if (columnCompare){
-			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (String) jMode.getSelectedItem(), "", (String) jMatchColumn.getSelectedItem()));
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), "", (String) jMatchColumn.getSelectedItem()));
 		} else {
-			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (String) jMode.getSelectedItem(), jText.getText(), null));
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), jText.getText(), null));
 		}
 	}
 
@@ -139,22 +139,22 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 			int index = jMode.getSelectedIndex();
 			if (program.getSettings().getTableNumberColumns().contains(column)){
 				jMode.setModel( new DefaultComboBoxModel(
-						new Object[] {AssetFilter.MODE_CONTAIN,
-									  AssetFilter.MODE_CONTAIN_NOT,
-									  AssetFilter.MODE_EQUALS,
-									  AssetFilter.MODE_EQUALS_NOT,
-									  AssetFilter.MODE_GREATER_THAN,
-									  AssetFilter.MODE_LESS_THAN,
-									  AssetFilter.MODE_GREATER_THAN_COLUMN,
-									  AssetFilter.MODE_LESS_THAN_COLUMN
+						new Object[] {AssetFilter.Mode.MODE_CONTAIN,
+									  AssetFilter.Mode.MODE_CONTAIN_NOT,
+									  AssetFilter.Mode.MODE_EQUALS,
+									  AssetFilter.Mode.MODE_EQUALS_NOT,
+									  AssetFilter.Mode.MODE_GREATER_THAN,
+									  AssetFilter.Mode.MODE_LESS_THAN,
+									  AssetFilter.Mode.MODE_GREATER_THAN_COLUMN,
+									  AssetFilter.Mode.MODE_LESS_THAN_COLUMN
 				}) );
 				jMode.setSelectedIndex(index);
 			} else {
 				jMode.setModel( new DefaultComboBoxModel(
-						new Object[] {AssetFilter.MODE_CONTAIN,
-									  AssetFilter.MODE_CONTAIN_NOT,
-									  AssetFilter.MODE_EQUALS,
-									  AssetFilter.MODE_EQUALS_NOT
+						new Object[] {AssetFilter.Mode.MODE_CONTAIN,
+									  AssetFilter.Mode.MODE_CONTAIN_NOT,
+									  AssetFilter.Mode.MODE_EQUALS,
+									  AssetFilter.Mode.MODE_EQUALS_NOT
 				}) );
 				if (index > 3){
 					jMode.setSelectedIndex(0);
@@ -164,8 +164,8 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 			}
 		}
 		if (ACTION_MODE_SELECTED.equals(e.getActionCommand())){
-			String column = (String) jMode.getSelectedItem();
-			if (column.equals(AssetFilter.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.MODE_LESS_THAN_COLUMN) ){
+			AssetFilter.Mode column = (AssetFilter.Mode) jMode.getSelectedItem();
+			if (column.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN) ){
 				columnCompare = true;
 				
 			} else {
@@ -222,11 +222,11 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 
 	private class EveAssetMatcher implements Matcher<EveAsset> {
 		private final String column;
-		private final String mode;
+		private final AssetFilter.Mode mode;
 		private final String text;
 		private String columnMatch;
 
-		public EveAssetMatcher(String column, String mode, String text, String columnMatch) {
+		public EveAssetMatcher(String column,  AssetFilter.Mode mode, String text, String columnMatch) {
 			this.column = column;
 			this.mode = mode;
 			this.text = text;

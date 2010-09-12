@@ -512,25 +512,25 @@ public class AssetsTab extends JMainTab
 			jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
 			jTablePopupMenu.add(jSubMenu);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_CONTAIN);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN.toString());
 			jMenuItem.setIcon(Images.ICON_CONTAIN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_CONTAIN_NOT);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN_NOT.toString());
 			jMenuItem.setIcon(Images.ICON_NOT_CONTAIN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_EQUALS);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS.toString());
 			jMenuItem.setIcon(Images.ICON_EQUAL);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_EQUALS_NOT);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS_NOT.toString());
 			jMenuItem.setIcon(Images.ICON_NOT_EQUAL);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
 			jMenuItem.addActionListener(this);
@@ -539,7 +539,7 @@ public class AssetsTab extends JMainTab
 			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
 			boolean numericColumn = program.getSettings().getTableNumberColumns().contains(column);
 			
-			jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
 			jMenuItem.setIcon(Images.ICON_GREATER_THEN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
 			jMenuItem.addActionListener(this);
@@ -549,7 +549,7 @@ public class AssetsTab extends JMainTab
 			}
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
 			jMenuItem.setIcon(Images.ICON_LESS_THEN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
 			jMenuItem.addActionListener(this);
@@ -559,7 +559,7 @@ public class AssetsTab extends JMainTab
 			}
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_GREATER_THAN_COLUMN);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
 			jMenuItem.setIcon(Images.ICON_GREATER_THEN_COLUMN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
 			jMenuItem.addActionListener(this);
@@ -569,7 +569,7 @@ public class AssetsTab extends JMainTab
 			}
 			jSubMenu.add(jMenuItem);
 
-			jMenuItem = new JMenuItem(AssetFilter.MODE_LESS_THAN_COLUMN);
+			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
 			jMenuItem.setIcon(Images.ICON_LESS_THEN_COLUMN);
 			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
 			jMenuItem.addActionListener(this);
@@ -697,40 +697,40 @@ public class AssetsTab extends JMainTab
 		if (ACTION_ADD_FILTER_CONTAIN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_CONTAIN_NOT.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_CONTAIN_NOT, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_CONTAIN_NOT, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_EQUALS.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_EQUALS_NOT.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_EQUALS_NOT, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_EQUALS_NOT, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_GREATER_THEN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_GREATER_THAN, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_GREATER_THAN, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_LESS_THEN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, text, AssetFilter.MODE_LESS_THAN, true, null));
+			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_LESS_THAN, AssetFilter.Junction.AND, null));
 		}
 		if (ACTION_ADD_FILTER_GREATER_THEN_COLUMN.equals(e.getActionCommand())){
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, "", AssetFilter.MODE_GREATER_THAN_COLUMN, true, column));
+			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_GREATER_THAN_COLUMN, AssetFilter.Junction.AND, column));
 		}
 		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, "", AssetFilter.MODE_LESS_THAN_COLUMN, true, column));
+			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_LESS_THAN_COLUMN, AssetFilter.Junction.AND, column));
 		}
 		
 		if (ACTION_BLUEPRINT_ORIGINAL.equals(e.getActionCommand())){

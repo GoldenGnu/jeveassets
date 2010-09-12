@@ -79,22 +79,22 @@ public class JMenuAssetFilter extends JMenuTools implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Location", station, AssetFilter.MODE_EQUALS, true, null);
+			AssetFilter assetFilter = new AssetFilter("Location", station, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
 			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Location", system, AssetFilter.MODE_CONTAIN, true, null);
+			AssetFilter assetFilter = new AssetFilter("Location", system, AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.AND, null);
 			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Region", region, AssetFilter.MODE_EQUALS, true, null);
+			AssetFilter assetFilter = new AssetFilter("Region", region, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
 			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Name", typeName, AssetFilter.MODE_EQUALS, true, null);
+			AssetFilter assetFilter = new AssetFilter("Name", typeName, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
 			program.getAssetsTab().addFilter(assetFilter, true);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}

@@ -39,13 +39,13 @@ public class EveAssetMatching {
 	public boolean matches(EveAsset item, AssetFilter assetFilter) {
 		return matches(item, assetFilter.getColumn(), assetFilter.getMode(), assetFilter.getText(), assetFilter.getColumnMatch());
 	}
-	public boolean matches(EveAsset eveAsset, String column, String mode, String text, String columnMatch) {
+	public boolean matches(EveAsset eveAsset, String column, AssetFilter.Mode mode, String text, String columnMatch) {
 			final String haystack = getString(eveAsset, column);
 			final double value = getDouble(eveAsset, column);
 			if (columnMatch != null){
 				text = getString(eveAsset, columnMatch);
 			}
-			if (mode.equals(AssetFilter.MODE_GREATER_THAN) || mode.equals(AssetFilter.MODE_GREATER_THAN_COLUMN)){
+			if (mode.equals(AssetFilter.Mode.MODE_GREATER_THAN) || mode.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN)){
 				double number;
 				try{
 					number = Double.valueOf(text);
@@ -54,7 +54,7 @@ public class EveAssetMatching {
 				}
 				return (value > number);
 			}
-			if (mode.equals(AssetFilter.MODE_LESS_THAN) || mode.equals(AssetFilter.MODE_LESS_THAN_COLUMN)){
+			if (mode.equals(AssetFilter.Mode.MODE_LESS_THAN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN)){
 				double number;
 				try{
 					number = Double.valueOf(text);
@@ -63,13 +63,13 @@ public class EveAssetMatching {
 				}
 				return (value < number);
 			}
-			if (mode.equals(AssetFilter.MODE_CONTAIN)){
+			if (mode.equals(AssetFilter.Mode.MODE_CONTAIN)){
 				return haystack.toLowerCase().contains(text.toLowerCase());
 			}
-			if (mode.equals(AssetFilter.MODE_CONTAIN_NOT)){
+			if (mode.equals(AssetFilter.Mode.MODE_CONTAIN_NOT)){
 				return !haystack.toLowerCase().contains(text.toLowerCase());
 			}
-			if (mode.equals(AssetFilter.MODE_EQUALS)){
+			if (mode.equals(AssetFilter.Mode.MODE_EQUALS)){
 				if (value >= 0){
 					double number;
 					try{
@@ -87,7 +87,7 @@ public class EveAssetMatching {
 					}
 				}
 			}
-			if (mode.equals(AssetFilter.MODE_EQUALS_NOT)){
+			if (mode.equals(AssetFilter.Mode.MODE_EQUALS_NOT)){
 				if (value >= 0){
 					double number;
 					try{

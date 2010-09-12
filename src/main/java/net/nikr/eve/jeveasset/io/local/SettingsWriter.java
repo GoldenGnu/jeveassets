@@ -205,7 +205,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 				Element childNode = xmldoc.createElementNS(null, "row");
 				childNode.setAttributeNS(null, "text", assetFilter.getText());
 				childNode.setAttributeNS(null, "column", assetFilter.getColumn());
-				childNode.setAttributeNS(null, "mode", assetFilter.getMode());
+				childNode.setAttributeNS(null, "mode", assetFilter.getMode().name());
 				childNode.setAttributeNS(null, "and", String.valueOf(assetFilter.isAnd()));
 				if (assetFilter.getColumnMatch() != null){
 					childNode.setAttributeNS(null, "columnmatch", assetFilter.getColumnMatch());

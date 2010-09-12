@@ -97,11 +97,10 @@ public class FilterPanel extends JGroupLayoutPanel {
 	public AssetFilter getAssetFilter(){
 		String column = (String)jColumn.getSelectedItem();
 		String text = jText.getText();
-		String mode = (String) jMode.getSelectedItem();
-		String sAnd = (String)jAnd.getSelectedItem();
-		boolean and = (sAnd.equals(AssetFilter.AND));
+		AssetFilter.Mode mode = (AssetFilter.Mode) jMode.getSelectedItem();
+		AssetFilter.Junction and = (AssetFilter.Junction)jAnd.getSelectedItem();
 		String columnMatch = null;
-		if (AssetFilter.MODE_GREATER_THAN_COLUMN.equals(mode) || AssetFilter.MODE_LESS_THAN_COLUMN.equals(mode)){
+		if (AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.equals(mode) || AssetFilter.Mode.MODE_LESS_THAN_COLUMN.equals(mode)){
 			columnMatch = (String) jMatchColumn.getSelectedItem();
 		}
 		return new AssetFilter(column, text, mode, and, columnMatch);
@@ -111,9 +110,9 @@ public class FilterPanel extends JGroupLayoutPanel {
 		jColumn.setSelectedItem(assetFilter.getColumn());
 		jMode.setSelectedItem(assetFilter.getMode());
 		if (assetFilter.isAnd()){
-			jAnd.setSelectedItem(AssetFilter.AND);
+			jAnd.setSelectedItem(AssetFilter.Junction.AND);
 		} else {
-			jAnd.setSelectedItem(AssetFilter.OR);
+			jAnd.setSelectedItem(AssetFilter.Junction.OR);
 		}
 		jMatchColumn.setSelectedItem(assetFilter.getColumnMatch());
 	}
