@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
@@ -321,8 +321,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 			return;
 		}
 		if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
-			AddSystemDialog asd = new AddSystemDialog(this.program);
-			asd.setVisible(true);
+			new AddSystemController(this.program);
 		}
 		loadFilter(e.getActionCommand());
 	}
