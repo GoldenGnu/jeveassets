@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JWorking;
+import net.nikr.eve.jeveasset.i18n.Dialogues;
 import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import org.slf4j.Logger;
@@ -64,10 +65,12 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 
 	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
+	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
 	public final static String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
 	public final static String ACTION_NEXT = "ACTION_NEXT";
 	public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 
+	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
 	public final static String TAB_ADD = "TAB_ADD";
 	public final static String TAB_VALIDATE = "TAB_VALIDATE";
 	public final static String TAB_DONE = "TAB_DONE";
@@ -91,7 +94,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private int nTabIndex;
 	
 	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
-		super(program, "Account Import", apiManager.getDialog());
+		super(program, Dialogues.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
 
 		//layout.setAutoCreateGaps(false);
@@ -104,15 +107,15 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		jContent.add(new ValidatePanel(), TAB_VALIDATE);
 		jContent.add(donePanel, TAB_DONE);
 
-		jPrevious = new JButton("< Previous");
+		jPrevious = new JButton(Dialogues.get().previousArrow());
 		jPrevious.setActionCommand(ACTION_PREVIOUS);
 		jPrevious.addActionListener(this);
 
-		jNext = new JButton("Next >");
+		jNext = new JButton(Dialogues.get().nextArrow());
 		jNext.setActionCommand(ACTION_NEXT);
 		jNext.addActionListener(this);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(Dialogues.get().cancel());
 		jCancel.setActionCommand(ACTION_ADD_KEY_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -253,13 +256,13 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				cardLayout.show(jContent, TAB_ADD);
 				jPrevious.setEnabled(false);
 				jNext.setEnabled(true);
-				jNext.setText("Next >");
+				jNext.setText(Dialogues.get().nextArrow());
 				break;
 			case 1:
 				cardLayout.show(jContent, TAB_VALIDATE);
 				jPrevious.setEnabled(true);
 				jNext.setEnabled(false);
-				jNext.setText("Next >");
+				jNext.setText(Dialogues.get().nextArrow());
 				account = new Account(getUserId(), getApiKey());
 				ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
 				validateApiKeyTask.addPropertyChangeListener(this);
@@ -267,7 +270,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				break;
 			case 2:
 				jPrevious.setEnabled(true);
-				jNext.setText("OK");
+				jNext.setText(Dialogues.get().ok());
 				cardLayout.show(jContent, TAB_DONE);
 				break;
 			case 3:
@@ -302,36 +305,21 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 			if (validateApiKeyTask.done){
 				validateApiKeyTask.done = false;
 				if (validateApiKeyTask.result == 10){
-					donePanel.setResult("Account already imported");
-					donePanel.setText("An existing account can not be imported again\r\n"
-							+ "\r\n"
-							+ "\r\n"
-							+"Press \"Previous\" to retry.");
+					donePanel.setResult(Dialogues.get().accountAlreadyImported());
+					donePanel.setText(Dialogues.get().accountAlreadyImportedText());
 				}
 				if (validateApiKeyTask.result == 20){
-					donePanel.setResult("No internet connection");
-					donePanel.setText("Please connect to the internet and retry.\r\n"
-							+ "\r\n"
-							+ "\r\n"
-							+ "Press \"Previous\" to retry."
-							);
+					donePanel.setResult(Dialogues.get().noInternetConnection());
+					donePanel.setText(Dialogues.get().noInternetConnectionText());
 				}
 				if (validateApiKeyTask.result == 30){
-					donePanel.setResult("Account not valid");
-					donePanel.setText("The entered User ID and/or API Key was wrong.\r\n"
-							+ "Note: You must enter a full access api key.\r\n"
-							+ "\r\n"
-							+ "Press \"Previous\" to retry."
-							);
+					donePanel.setResult(Dialogues.get().accountNotValid());
+					donePanel.setText(Dialogues.get().accountNotValid());
 				}
 				if (validateApiKeyTask.result == 100){
 					jNext.setEnabled(true);
-					donePanel.setResult("Account Valid");
-					donePanel.setText("Tip: To get the new account data select: Menu > Update > Update\r\n"
-							+ "	\r\n"
-							+ "\r\n"
-							+ "Press \"OK\" to import."
-							);
+					donePanel.setResult(Dialogues.get().accountValid());
+					donePanel.setText(Dialogues.get().accountValidText());
 				} else {
 					jNext.setEnabled(false);
 					account = null;
@@ -346,24 +334,17 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private class InputPanel extends JCardPanel implements HyperlinkListener{
 
 		public InputPanel() {
-			JLabel jUserIdLabel = new JLabel("User ID");
+			JLabel jUserIdLabel = new JLabel(Dialogues.get().userId());
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
 			jUserId = new JNumberField("");
 			JCopyPopup.install(jUserId);
 
-			JLabel jApiKeyLabel = new JLabel("API Key");
+			JLabel jApiKeyLabel = new JLabel(Dialogues.get().apiKey());
 
 			jApiKey = new JTextField();
 			JCopyPopup.install(jApiKey);
-			JEditorPane jHelp = new JEditorPane(
-					"text/html", "<html>"
-					+ "<div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-					+ "Enter a full access api key.<br>"
-					+ "You can find your api key at: <a href=\"http://www.eveonline.com/api/default.asp\">http://www.eveonline.com/api/default.asp</a><br>"
-					+ "Note: jEveAssets will not work with a limited access api key.<br>"
-					+ "</div>"
-					);
+			JEditorPane jHelp = new JEditorPane("text/html", Dialogues.get().helpText());
 			jHelp.setFont( this.getFont() );
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
@@ -416,7 +397,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private class ValidatePanel extends JCardPanel{
 
 		public ValidatePanel() {
-			JLabel jHelp = new JLabel("Validating API Key");
+			JLabel jHelp = new JLabel(Dialogues.get().validatingMessage());
 			
 			JWorking jWorking = new JWorking();
 

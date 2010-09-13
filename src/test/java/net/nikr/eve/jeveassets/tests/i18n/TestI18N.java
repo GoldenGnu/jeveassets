@@ -1,5 +1,7 @@
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.Dialogues;
+import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
@@ -41,5 +43,25 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.priceSellMax());
+	}
+
+	@Test
+	public void testDataModelPriceDataSettings_en() throws Exception {
+		DataModelPriceDataSettings g = Bundle.load(DataModelPriceDataSettings.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.regionDerelik());
+	}
+
+	@Test
+	public void testDialogues_en() throws Exception {
+		Dialogues g = Bundle.load(Dialogues.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.helpText());
 	}
 }
