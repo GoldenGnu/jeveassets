@@ -23,19 +23,20 @@ package net.nikr.eve.jeveasset.data;
 
 
 public class OverviewLocation {
-	public static final String TYPE_STATION = "TYPE_STATION";
-	public static final String TYPE_SYSTEM = "TYPE_SYSTEM";
-	public static final String TYPE_REGION = "TYPE_REGION";
+	public enum LocationType {
+		TYPE_STATION, TYPE_SYSTEM, TYPE_REGION,
+		;
+	}
 
 	String name;
-	String type;
+	LocationType type;
 
 	public OverviewLocation(String name) {
 		this.name = name;
-		this.type = "";
+		this.type = null;
 	}
 
-	public OverviewLocation(String name, String type) {
+	public OverviewLocation(String name, LocationType type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -44,20 +45,20 @@ public class OverviewLocation {
 		return name;
 	}
 
-	public String getType() {
+	public LocationType getType() {
 		return type;
 	}
 
 	public boolean isStation(){
-		return type.equals(TYPE_STATION);
+		return type.equals(LocationType.TYPE_STATION);
 	}
 
 	public boolean isSystem(){
-		return type.equals(TYPE_SYSTEM);
+		return type.equals(LocationType.TYPE_SYSTEM);
 	}
 
 	public boolean isRegion(){
-		return type.equals(TYPE_REGION);
+		return type.equals(LocationType.TYPE_REGION);
 	}
 
 	public boolean equalsLocation(EveAsset eveAsset){

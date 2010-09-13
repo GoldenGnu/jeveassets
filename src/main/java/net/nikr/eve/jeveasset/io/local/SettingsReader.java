@@ -196,7 +196,7 @@ public class SettingsReader extends AbstractXmlReader {
 				Element locationNode = (Element) locationNodes.item(b);
 				String location = AttributeGetters.getString(locationNode, "name");
 				String type = AttributeGetters.getString(locationNode, "type");
-				overviewGroup.add( new OverviewLocation(location, type));
+				overviewGroup.add( new OverviewLocation(location, OverviewLocation.LocationType.valueOf(type)));
 			}
 		}
 	}

@@ -84,7 +84,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (int a = 0; a < overviewGroup.getLocations().size(); a++){
 				Element nodeLocation = xmldoc.createElementNS(null, "location");
 				nodeLocation.setAttributeNS(null, "name", overviewGroup.getLocations().get(a).getName());
-				nodeLocation.setAttributeNS(null, "type", overviewGroup.getLocations().get(a).getType());
+				nodeLocation.setAttributeNS(null, "type", overviewGroup.getLocations().get(a).getType().name());
 				node.appendChild(nodeLocation);
 			}
 		}

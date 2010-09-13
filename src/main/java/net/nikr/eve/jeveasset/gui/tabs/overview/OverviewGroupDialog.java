@@ -240,9 +240,9 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				}
 				String group = jName.getText();
 				overviewGroup = new OverviewGroup(group);
-				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
-				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
-				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
+				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.LocationType.TYPE_STATION));
+				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.LocationType.TYPE_SYSTEM));
+				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.LocationType.TYPE_REGION));
 				program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 			} else { //Edit/Rename group
 				if (!jName.getText().equals(overviewGroup.getName())){
@@ -263,12 +263,12 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 					overviewGroup.setName(jName.getText());
 					program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
 				}
-				overviewGroup.remove(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
-				overviewGroup.remove(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
-				overviewGroup.remove(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
-				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.TYPE_STATION));
-				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.TYPE_SYSTEM));
-				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.TYPE_REGION));
+				overviewGroup.remove(new OverviewLocation(station, OverviewLocation.LocationType.TYPE_STATION));
+				overviewGroup.remove(new OverviewLocation(system, OverviewLocation.LocationType.TYPE_SYSTEM));
+				overviewGroup.remove(new OverviewLocation(region, OverviewLocation.LocationType.TYPE_REGION));
+				if (jStation.isSelected()) overviewGroup.add(new OverviewLocation(station, OverviewLocation.LocationType.TYPE_STATION));
+				if (jSystem.isSelected()) overviewGroup.add(new OverviewLocation(system, OverviewLocation.LocationType.TYPE_SYSTEM));
+				if (jRegion.isSelected()) overviewGroup.add(new OverviewLocation(region, OverviewLocation.LocationType.TYPE_REGION));
 			}
 			overviewTab.updateTable();
 			this.setVisible(false);
