@@ -44,10 +44,12 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
 
+	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
 	private final static String ACTION_ADD = "ACTION_ADD";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -80,7 +82,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(Program program, Image image) {
-		super(program, "Accounts Management", image);
+		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), image);
 
 		accountImportDialog = new AccountImportDialog(this, program);
 
@@ -99,71 +101,71 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jTable.setSelectionModel(selectionModel);
 
 		//Add Button
-		jAdd = new JButton("Add");
+		jAdd = new JButton(DialoguesAccount.get().add());
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
 
-		jCollapse = new JButton("Collapse");
+		jCollapse = new JButton(DialoguesAccount.get().collapse());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
 
-		jExpand = new JButton("Expand");
+		jExpand = new JButton(DialoguesAccount.get().expand());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
-		jAssets = new JDropDownButton("Show Assets");
+		jAssets = new JDropDownButton(DialoguesAccount.get().showAssets());
 		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
 		JMenuItem menuItem;
 
-		menuItem = new JMenuItem("Check All");
+		menuItem = new JMenuItem(DialoguesAccount.get().checkAll());
 		menuItem.setActionCommand(ACTION_ASSETS_CHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
-		menuItem = new JMenuItem("Uncheck All");
+		menuItem = new JMenuItem(DialoguesAccount.get().uncheckAll());
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
 		jAssets.addSeparator();
 
-		menuItem = new JMenuItem("Check Selected");
+		menuItem = new JMenuItem(DialoguesAccount.get().checkSelected());
 		menuItem.setActionCommand(ACTION_ASSETS_CHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck Selected");
+		menuItem = new JMenuItem(DialoguesAccount.get().uncheckSelected());
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
 		
-		jCorporation = new JDropDownButton("Show Corp.");
+		jCorporation = new JDropDownButton(DialoguesAccount.get().showCorp());
 		//jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
 
-		menuItem = new JMenuItem("Check All");
+		menuItem = new JMenuItem(DialoguesAccount.get().checkAll());
 		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_ALL);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck All");
+		menuItem = new JMenuItem(DialoguesAccount.get().uncheckAll());
 		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_ALL);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
 		jCorporation.addSeparator();
 
-		menuItem = new JMenuItem("Check Selected");
+		menuItem = new JMenuItem(DialoguesAccount.get().checkSelected());
 		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
-		menuItem = new JMenuItem("Uncheck Selected");
+		menuItem = new JMenuItem(DialoguesAccount.get().uncheckSelected());
 		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jCorporation.add(menuItem);
 
 		//Done Button
-		jClose = new JButton("Close");
+		jClose = new JButton(DialoguesAccount.get().close());
 		jClose.setActionCommand(ACTION_CLOSE);
 		jClose.addActionListener(this);
 
@@ -291,7 +293,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			program.updateEventList();
 		}
 		if (showCorporation){
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select: Menu > Update > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
+					, DialoguesAccount.get().corpAssetsChanged()
+					, DialoguesAccount.get().corpAssetSettings()
+					, JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
 	}
@@ -333,7 +338,11 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
-				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete Account?", "Delete Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame()
+						, DialoguesAccount.get().deleteAccountQuestion()
+						, DialoguesAccount.get().deleteAccount()
+						, JOptionPane.YES_NO_OPTION
+						, JOptionPane.PLAIN_MESSAGE);
 				if (nReturn == JOptionPane.YES_OPTION){
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Human human = (Human) separator.first();

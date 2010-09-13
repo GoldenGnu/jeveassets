@@ -54,7 +54,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.gui.shared.JWorking;
-import net.nikr.eve.jeveasset.i18n.Dialogues;
+import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import org.slf4j.Logger;
@@ -94,7 +94,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private int nTabIndex;
 	
 	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
-		super(program, Dialogues.get().dialogueNameAccountImport(), apiManager.getDialog());
+		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
 
 		//layout.setAutoCreateGaps(false);
@@ -107,15 +107,15 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		jContent.add(new ValidatePanel(), TAB_VALIDATE);
 		jContent.add(donePanel, TAB_DONE);
 
-		jPrevious = new JButton(Dialogues.get().previousArrow());
+		jPrevious = new JButton(DialoguesAccount.get().previousArrow());
 		jPrevious.setActionCommand(ACTION_PREVIOUS);
 		jPrevious.addActionListener(this);
 
-		jNext = new JButton(Dialogues.get().nextArrow());
+		jNext = new JButton(DialoguesAccount.get().nextArrow());
 		jNext.setActionCommand(ACTION_NEXT);
 		jNext.addActionListener(this);
 
-		jCancel = new JButton(Dialogues.get().cancel());
+		jCancel = new JButton(DialoguesAccount.get().cancel());
 		jCancel.setActionCommand(ACTION_ADD_KEY_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -256,13 +256,13 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				cardLayout.show(jContent, TAB_ADD);
 				jPrevious.setEnabled(false);
 				jNext.setEnabled(true);
-				jNext.setText(Dialogues.get().nextArrow());
+				jNext.setText(DialoguesAccount.get().nextArrow());
 				break;
 			case 1:
 				cardLayout.show(jContent, TAB_VALIDATE);
 				jPrevious.setEnabled(true);
 				jNext.setEnabled(false);
-				jNext.setText(Dialogues.get().nextArrow());
+				jNext.setText(DialoguesAccount.get().nextArrow());
 				account = new Account(getUserId(), getApiKey());
 				ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
 				validateApiKeyTask.addPropertyChangeListener(this);
@@ -270,7 +270,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				break;
 			case 2:
 				jPrevious.setEnabled(true);
-				jNext.setText(Dialogues.get().ok());
+				jNext.setText(DialoguesAccount.get().ok());
 				cardLayout.show(jContent, TAB_DONE);
 				break;
 			case 3:
@@ -305,21 +305,21 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 			if (validateApiKeyTask.done){
 				validateApiKeyTask.done = false;
 				if (validateApiKeyTask.result == 10){
-					donePanel.setResult(Dialogues.get().accountAlreadyImported());
-					donePanel.setText(Dialogues.get().accountAlreadyImportedText());
+					donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
+					donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
 				}
 				if (validateApiKeyTask.result == 20){
-					donePanel.setResult(Dialogues.get().noInternetConnection());
-					donePanel.setText(Dialogues.get().noInternetConnectionText());
+					donePanel.setResult(DialoguesAccount.get().noInternetConnection());
+					donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
 				}
 				if (validateApiKeyTask.result == 30){
-					donePanel.setResult(Dialogues.get().accountNotValid());
-					donePanel.setText(Dialogues.get().accountNotValid());
+					donePanel.setResult(DialoguesAccount.get().accountNotValid());
+					donePanel.setText(DialoguesAccount.get().accountNotValid());
 				}
 				if (validateApiKeyTask.result == 100){
 					jNext.setEnabled(true);
-					donePanel.setResult(Dialogues.get().accountValid());
-					donePanel.setText(Dialogues.get().accountValidText());
+					donePanel.setResult(DialoguesAccount.get().accountValid());
+					donePanel.setText(DialoguesAccount.get().accountValidText());
 				} else {
 					jNext.setEnabled(false);
 					account = null;
@@ -334,17 +334,17 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private class InputPanel extends JCardPanel implements HyperlinkListener{
 
 		public InputPanel() {
-			JLabel jUserIdLabel = new JLabel(Dialogues.get().userId());
+			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().userId());
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
 			jUserId = new JNumberField("");
 			JCopyPopup.install(jUserId);
 
-			JLabel jApiKeyLabel = new JLabel(Dialogues.get().apiKey());
+			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().apiKey());
 
 			jApiKey = new JTextField();
 			JCopyPopup.install(jApiKey);
-			JEditorPane jHelp = new JEditorPane("text/html", Dialogues.get().helpText());
+			JEditorPane jHelp = new JEditorPane("text/html", DialoguesAccount.get().helpText());
 			jHelp.setFont( this.getFont() );
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
@@ -397,7 +397,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private class ValidatePanel extends JCardPanel{
 
 		public ValidatePanel() {
-			JLabel jHelp = new JLabel(Dialogues.get().validatingMessage());
+			JLabel jHelp = new JLabel(DialoguesAccount.get().validatingMessage());
 			
 			JWorking jWorking = new JWorking();
 

@@ -8,16 +8,16 @@ import uk.me.candle.translations.BundleCache;
  *
  * @author Candle
  */
-public abstract class Dialogues extends Bundle {
-	public static Dialogues get() {
-		return BundleCache.get(Dialogues.class);
+public abstract class DialoguesAccount extends Bundle {
+	public static DialoguesAccount get() {
+		return BundleCache.get(DialoguesAccount.class);
 	}
 
-	public static Dialogues get(Locale locale) {
-		return BundleCache.get(Dialogues.class, locale);
+	public static DialoguesAccount get(Locale locale) {
+		return BundleCache.get(DialoguesAccount.class, locale);
 	}
 
-	public Dialogues(Locale locale) {
+	public DialoguesAccount(Locale locale) {
 		super(locale);
 	}
 
@@ -41,4 +41,24 @@ public abstract class Dialogues extends Bundle {
 	public abstract String apiKey();
 	public abstract String helpText();
 	public abstract String validatingMessage();
+
+	public abstract String dialogueNameAccountManagement();
+
+	public abstract String add();
+	public abstract String collapse();
+	public abstract String expand();
+	public abstract String showAssets();
+	public abstract String checkAll();
+	public abstract String uncheckAll();
+	public abstract String checkSelected();
+	public abstract String uncheckSelected();
+	public abstract String showCorp();
+	public abstract String close();
+
+	public abstract String corpAssetSettings();
+	public abstract String corpAssetsChanged();
+
+
+public abstract String deleteAccountQuestion();
+public abstract String deleteAccount();
 }

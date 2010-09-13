@@ -1,6 +1,6 @@
 package net.nikr.eve.jeveassets.tests.i18n;
 
-import net.nikr.eve.jeveasset.i18n.Dialogues;
+import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
@@ -57,7 +57,7 @@ public class TestI18N {
 
 	@Test
 	public void testDialogues_en() throws Exception {
-		Dialogues g = Bundle.load(Dialogues.class, Locale.ENGLISH,
+		DialoguesAccount g = Bundle.load(DialoguesAccount.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
