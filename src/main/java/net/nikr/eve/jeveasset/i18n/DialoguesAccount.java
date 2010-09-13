@@ -59,6 +59,14 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String corpAssetsChanged();
 
 
-public abstract String deleteAccountQuestion();
-public abstract String deleteAccount();
+	public abstract String deleteAccountQuestion();
+	public abstract String deleteAccount();
+
+	public abstract String delete();
+	public abstract String edit();
+
+	public abstract String tableFormatName();
+	public abstract String tableFormatCorp();
+	public abstract String tableFormatShowAssets();
+	public abstract String tableFormatShowCorp();
 }

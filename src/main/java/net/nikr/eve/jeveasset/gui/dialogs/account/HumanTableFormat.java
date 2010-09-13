@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTableFormat<Object>{
@@ -36,10 +37,10 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	public HumanTableFormat() {
 		columnNames = new ArrayList<String>();
-		columnNames.add("Name");
-		columnNames.add("Corporation");
-		columnNames.add("Show Assets");
-		columnNames.add("Show Corporation");
+		columnNames.add(DialoguesAccount.get().tableFormatName());
+		columnNames.add(DialoguesAccount.get().tableFormatCorp());
+		columnNames.add(DialoguesAccount.get().tableFormatShowAssets());
+		columnNames.add(DialoguesAccount.get().tableFormatShowCorp());
 	}
 
 	public List<String> getColumnNames() {
@@ -58,24 +59,26 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	@Override
 	public Object getColumnValue(Object baseObject, int column) {
-		String sColumn = columnNames.get(column);
 		if (baseObject instanceof Human){
 			Human human = (Human) baseObject;
-			if (sColumn.equals("Name")) return human.getName();
-			if (sColumn.equals("Corporation")) return human.getCorporation();
-			if (sColumn.equals("Show Assets")) return human.isShowAssets();
-			if (sColumn.equals("Show Corporation")) return human.isUpdateCorporationAssets();
+			switch (column) {
+				case 0: return human.getName();
+				case 1: return human.getCorporation();
+				case 2: return human.isShowAssets();
+				case 3: return human.isUpdateCorporationAssets();
+			}
 		}
 		return new Object();
 	}
 
 	@Override
 	public Class getColumnClass(int column) {
-		String sColumn = columnNames.get(column);
-		if (sColumn.equals("Name")) return String.class;
-		if (sColumn.equals("Corporation")) return String.class;
-		if (sColumn.equals("Show Assets")) return Boolean.class;
-		if (sColumn.equals("Show Corporation")) return Boolean.class;
+		switch (column) {
+			case 0: return String.class;
+			case 1: return String.class;
+			case 2: return Boolean.class;
+			case 3: return Boolean.class;
+		}
 		return Object.class;
 	}
 
@@ -86,22 +89,24 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	@Override
 	public boolean isEditable(Object baseObject, int column) {
-		String sColumn = columnNames.get(column);
 		if (baseObject instanceof Human){
-			if (sColumn.equals("Show Assets")) return true;
-			if (sColumn.equals("Show Corporation")) return true;
+			switch(column) {
+				case 2:
+				case 3: return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public Object setColumnValue(Object baseObject, Object editedValue, int column) {
-		String sColumn = columnNames.get(column);
 		if (editedValue instanceof Boolean && baseObject instanceof Human){
 			Human human = (Human) baseObject;
 			boolean value = (Boolean) editedValue;
-			if (sColumn.equals("Show Assets")) human.setShowAssets(value);
-			if (sColumn.equals("Show Corporation")) human.setUpdateCorporationAssets(value);
+			switch(column) {
+				case 2: human.setShowAssets(value); break;
+				case 3: human.setUpdateCorporationAssets(value); break;
+			}
 			return baseObject;
 		}
 		return null;

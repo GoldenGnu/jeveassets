@@ -17,6 +17,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
+import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 /**
  *
@@ -25,6 +26,7 @@ import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
 public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 		implements FocusListener, ActionListener{
 
+	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
 	private final static String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
@@ -44,12 +46,12 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 		jAccountName.setActionCommand(ACTION_ACCOUNT_NAME);
 		jAccountName.addActionListener(this);
 
-		jEdit = new JButton("Edit");
+		jEdit = new JButton(DialoguesAccount.get().edit());
 		jEdit.setOpaque(false);
 		jEdit.setActionCommand(ACTION_EDIT);
 		jEdit.addActionListener(actionListener);
 
-		jDelete = new JButton("Delete");
+		jDelete = new JButton(DialoguesAccount.get().delete());
 		jDelete.setOpaque(false);
 		jDelete.setActionCommand(ACTION_DELETE);
 		jDelete.addActionListener(actionListener);
