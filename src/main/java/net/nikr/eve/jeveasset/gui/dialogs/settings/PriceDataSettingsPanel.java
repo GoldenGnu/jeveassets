@@ -129,7 +129,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
 			String source = (String) jSource.getSelectedItem();
-			String region = (String) jRegions.getSelectedItem();
+			PriceDataSettings.RegionType region = (PriceDataSettings.RegionType) jRegions.getSelectedItem();
 			if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
 				jRegions.setModel( new DefaultComboBoxModel(PriceDataSettings.REGIONS_EVE_CENTRAL));
 			}
