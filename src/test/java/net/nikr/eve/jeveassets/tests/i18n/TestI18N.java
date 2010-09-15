@@ -5,6 +5,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
+import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.junit.Test;
 import uk.me.candle.translations.Bundle;
@@ -56,12 +57,22 @@ public class TestI18N {
 	}
 
 	@Test
-	public void testDialogues_en() throws Exception {
+	public void testDialoguesAccount_en() throws Exception {
 		DialoguesAccount g = Bundle.load(DialoguesAccount.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.helpText());
+	}
+
+	@Test
+	public void testDialoguesAddSystem_en() throws Exception {
+		DialoguesAddSystem g = Bundle.load(DialoguesAddSystem.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.filterResult(5));
 	}
 }

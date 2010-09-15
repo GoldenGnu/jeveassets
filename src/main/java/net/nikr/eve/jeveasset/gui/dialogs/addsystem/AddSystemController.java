@@ -41,15 +41,13 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.model.SolarSystem;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.data.model.Region;
+import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddSystemController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AddSystemController.class);
-
-	private static final String DEFAULT_FILTER_RESULT = "No filter applied";
-	private static final String DEFAULT_SELECTED_SYSTEM = "None selected";
 
 	private Galaxy model;
 	private TreeSelectDialog view;
@@ -59,16 +57,16 @@ public class AddSystemController {
 
 		model = program.getSettings().getGalaxyModel();
 		leafCount = 0;
-		view = new TreeSelectDialog(program, "Add System");
+		view = new TreeSelectDialog(program, DialoguesAddSystem.get().addSystem());
 		view.getDialog().setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		view.getLeafFilterLabel().setText("System Filter:");
-		view.getFilterInfoLabel().setText("Filter status:");
-		view.getFilterInfoResultLabel().setText(DEFAULT_FILTER_RESULT);
-		view.getSelectedLeafLabel().setText("Selected System:");
-		view.getSelectedLeafValueLabel().setText(DEFAULT_SELECTED_SYSTEM);
-		view.getAddButton().setText("Add");
+		view.getLeafFilterLabel().setText(DialoguesAddSystem.get().syetemFilter());
+		view.getFilterInfoLabel().setText(DialoguesAddSystem.get().filterStatus());
+		view.getFilterInfoResultLabel().setText(DialoguesAddSystem.get().defaultFilterResult());
+		view.getSelectedLeafLabel().setText(DialoguesAddSystem.get().selectedSystem());
+		view.getSelectedLeafValueLabel().setText(DialoguesAddSystem.get().defaultSelectedSystem());
+		view.getAddButton().setText(DialoguesAddSystem.get().add());
 		view.getAddButton().setEnabled(false);
-		view.getCancelButton().setText("Cancel");
+		view.getCancelButton().setText(DialoguesAddSystem.get().cancel());
 		view.getTree().setModel(new DefaultTreeModel(buildTree("")));
 		view.getTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		registerListeners();
@@ -111,11 +109,11 @@ public class AddSystemController {
 				JLabel label = view.getSelectedLeafValueLabel();
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 				if (node == null || !node.isLeaf()) {
-					label.setText(DEFAULT_SELECTED_SYSTEM);
+					label.setText(DialoguesAddSystem.get().defaultSelectedSystem());
 					button.setEnabled(false);
 				} else {
 					SolarSystem system = (SolarSystem) node.getUserObject();
-					label.setText("<html><b>" + system.getName() + "</b>");
+					label.setText(DialoguesAddSystem.get().treeLabel(system.getName()));
 					button.setEnabled(true);
 				}
 			}
@@ -157,11 +155,9 @@ public class AddSystemController {
 	private String generateFilterResultString(int resultCount) {
 		JTextField tf = view.getLeafFilterTextField();
 		if ("".equals(tf.getText())) {
-			return DEFAULT_FILTER_RESULT;
-		} else if (resultCount == 1) {
-			return "<html><b>" + resultCount + " system matches</b>";
+			return DialoguesAddSystem.get().defaultFilterResult();
 		} else {
-			return "<html><b>" + resultCount + " systems match</b>";
+			return DialoguesAddSystem.get().filterResult(resultCount);
 		}
 	}
 }
