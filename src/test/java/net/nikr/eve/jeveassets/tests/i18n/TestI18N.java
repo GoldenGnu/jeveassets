@@ -1,5 +1,6 @@
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
@@ -85,5 +86,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.allAssets());
+	}
+
+	@Test
+	public void testDialoguesProfiles_en() throws Exception {
+		DialoguesProfiles g = Bundle.load(DialoguesProfiles.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.deleteProfileConfirm("delete me!"));
 	}
 }

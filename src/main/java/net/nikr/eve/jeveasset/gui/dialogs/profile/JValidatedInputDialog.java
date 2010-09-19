@@ -32,6 +32,7 @@ import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
 public class JValidatedInputDialog extends JDialogCentered implements ActionListener {
@@ -57,11 +58,11 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 
 		jName = new JTextField();
 
-		jOK = new JButton("OK");
+		jOK = new JButton(DialoguesProfiles.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(DialoguesProfiles.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
