@@ -1,6 +1,8 @@
 package net.nikr.eve.jeveasset.io.local.update;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -11,7 +13,9 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.XPath;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +59,18 @@ public class Update {
 			} else {
 				attr.setText(String.valueOf(newVersion));
 			}
+		}
+		
+		try {
+			FileOutputStream fos = new FileOutputStream(xml);
+			OutputFormat outformat = OutputFormat.createPrettyPrint();
+			outformat.setEncoding("UTF-16");
+			XMLWriter writer = new XMLWriter(fos, outformat);
+			writer.write(doc);
+			writer.flush();
+		} catch (IOException ioe) {
+			LOG.error("Failed to update the serttings.xml version number", ioe);
+			throw new RuntimeException(ioe);
 		}
 	}
 
