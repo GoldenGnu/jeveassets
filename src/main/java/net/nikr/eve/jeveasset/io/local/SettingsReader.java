@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -53,7 +54,9 @@ public class SettingsReader extends AbstractXmlReader {
 
 	public static boolean load(Settings settings){
 		try {
-			// TODO add checks here for the settings version - Candle - 2010-09-12
+			Update updater = new Update();
+			updater.performUpdates(SETTINGS_VERSION);
+
 			Element element = getDocumentElement(Settings.getPathSettings());
 			parseSettings(element, settings);
 		} catch (IOException ex) {
@@ -70,13 +73,6 @@ public class SettingsReader extends AbstractXmlReader {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
-
-		// check version and update as needed.
-		// XXX - Candle 2010-09-12
-		// current changes are:
-		// XPath: /settings/filters/filter/row[@mode]
-		// changed from (e.g.) "Contains" to the enum value name in AssetFilter.Mode
-		// settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
 
 		//Overview
 		NodeList overviewNodes = element.getElementsByTagName("overview");
