@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JMultiSelectionList;
+import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
 import org.supercsv.prefs.CsvPreference;
 
@@ -89,8 +90,98 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 	private JCustomFileChooser jCsvFileChooser;
 
+	enum FieldDelimiter {
+		COMMA('.') {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().comma();
+			}
+		},
+		SEMICOLON(';') {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().semicolon();
+			}
+		}
+		;
+		char character;
+		private FieldDelimiter(char character) {
+			this.character = character;
+		}
+		public char getCharacter() {
+			return character;
+		}
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+		abstract String getI18N();
+	}
+	enum LineDelimiter {
+		DOS("\r\n") {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().lineEndingsWindows();
+			}
+		},
+		MAC("\r") {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().lineEndingsMac();
+			}
+		},
+		UNIX("\n") {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().lineEndingsUnix();
+			}
+		}
+		;
+
+		String string;
+		private LineDelimiter(String string) {
+			this.string = string;
+		}
+		public String getString() {
+			return string;
+		}
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+		abstract String getI18N();
+	}
+	enum DecimalSeperator {
+		DOT("Dot") {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().dot();
+			}
+		},
+		COMMA("Comma") {
+			@Override
+			String getI18N() {
+				return DialoguesCsvExport.get().comma();
+			}
+		}
+		;
+
+		String string;
+		private DecimalSeperator(String string) {
+			this.string = string;
+		}
+		public String getString() {
+			return string;
+		}
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+		abstract String getI18N();
+	}
+
 	public CsvExportDialog(Program program, Image image) {
-		super(program, "CSV Export", image);
+		super(program, DialoguesCsvExport.get().csvExport(), image);
 
 		try {
 			jCsvFileChooser = new JCustomFileChooser(program, "csv");
@@ -112,23 +203,23 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		JCopyPopup.install(jPath);
 		jPanel.add(jPath);
 
-		jBrowse = new JButton("Browse...");
+		jBrowse = new JButton(DialoguesCsvExport.get().browse());
 		jBrowse.setActionCommand(ACTION_BROWSE);
 		jBrowse.addActionListener(this);
 		jPanel.add(jBrowse);
 
-		JLabel jAssetsLabel = new JLabel("Assets:");
-		jAllAssets = new JRadioButton("All assets");
+		JLabel jAssetsLabel = new JLabel(DialoguesCsvExport.get().assets());
+		jAllAssets = new JRadioButton(DialoguesCsvExport.get().allAssets());
 		jAllAssets.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
 		jAllAssets.addActionListener(this);
 		jPanel.add(jAllAssets);
 
-		jCurrentFilter = new JRadioButton("Current filter");
+		jCurrentFilter = new JRadioButton(DialoguesCsvExport.get().currentFilter());
 		jCurrentFilter.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
 		jCurrentFilter.addActionListener(this);
 		jPanel.add(jCurrentFilter);
 
-		jSavedFilter = new JRadioButton("Saved filter");
+		jSavedFilter = new JRadioButton(DialoguesCsvExport.get().savedFilter());
 		jSavedFilter.setActionCommand(ACTION_ENABLE_SAVED_FILTERS);
 		jSavedFilter.addActionListener(this);
 		jPanel.add(jSavedFilter);
@@ -141,26 +232,26 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		jFilters = new JComboBox();
 		jPanel.add(jFilters);
 		
-		JLabel jFieldDelimiterLabel = new JLabel("Fields terminated by:");
-		jFieldDelimiter = new JComboBox( new String[]{"Comma", "Semicolon"} );
+		JLabel jFieldDelimiterLabel = new JLabel(DialoguesCsvExport.get().fieldTerminated());
+		jFieldDelimiter = new JComboBox( FieldDelimiter.values() ); //new String[]{"Comma", "Semicolon"} );
 
-		JLabel jLineDelimiterLabel = new JLabel("Lines terminated by:");
-		jLineDelimiter = new JComboBox( new String[]{"\\n", "\\r\\n", "\\r"});
+		JLabel jLineDelimiterLabel = new JLabel(DialoguesCsvExport.get().linesTerminated());
+		jLineDelimiter = new JComboBox( LineDelimiter.values() ); //new String[]{"\\n", "\\r\\n", "\\r"});
 
-		JLabel jDecimalSeparatorLabel = new JLabel("Decimal Separator:");
-		jDecimalSeparator = new JComboBox( new String[]{"Dot", "Comma"});
+		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesCsvExport.get().decimalSeperator());
+		jDecimalSeparator = new JComboBox( DecimalSeperator.values() ); // new String[]{"Dot", "Comma"});
 
-		JLabel jColumnSelectionLabel = new JLabel("Columns:");
+		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
 		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getTableColumnNames()) );
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
 
-		jOK = new JButton("OK");
+		jOK = new JButton(DialoguesCsvExport.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 		jPanel.add(jOK);
 
-		JButton jCancel = new JButton("Cancel");
+		JButton jCancel = new JButton(DialoguesCsvExport.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 		jPanel.add(jCancel);
@@ -282,28 +373,28 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		HashMap<String, ? super Object> line = new HashMap<String, Object>();
 		for (int a = 0; a < header.length; a++){
 			String headerName = header[a];
-			if (headerName.equals("Name")) line.put(headerName, eveAsset.getName());
-			if (headerName.equals("Group")) line.put(headerName, eveAsset.getGroup());
-			if (headerName.equals("Category")) line.put(headerName, eveAsset.getCategory());
-			if (headerName.equals("Owner")) line.put(headerName, eveAsset.getOwner());
-			if (headerName.equals("Count")) line.put(headerName, getValue(eveAsset.getCount(), lang));
-			if (headerName.equals("Location")) line.put(headerName, eveAsset.getLocation());
-			if (headerName.equals("Container")) line.put(headerName, eveAsset.getContainer());
-			if (headerName.equals("Flag")) line.put(headerName, eveAsset.getFlag());
-			if (headerName.equals("Price")) line.put(headerName, getValue(eveAsset.getPrice(), lang));
-			if (headerName.equals("Sell Min")) line.put(headerName, getValue(eveAsset.getPriceSellMin(), lang));
-			if (headerName.equals("Buy Max")) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
-			if (headerName.equals("Value")) line.put(headerName, getValue(eveAsset.getValue(), lang));
-			if (headerName.equals("Meta")) line.put(headerName, eveAsset.getMeta());
-			if (headerName.equals("ID")) line.put(headerName, getValue(eveAsset.getItemId(), lang));
-			if (headerName.equals("Base Price")) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
-			if (headerName.equals("Volume")) line.put(headerName, getValue(eveAsset.getVolume(), lang));
-			if (headerName.equals("Type ID")) line.put(headerName, getValue(eveAsset.getTypeId(), lang));
-			if (headerName.equals("Region")) line.put(headerName, eveAsset.getRegion());
-			if (headerName.equals("Type Count")) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
-			if (headerName.equals("Security")) line.put(headerName, eveAsset.getSecurity());
-			if (headerName.equals("Reprocessed")) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
-			if (headerName.equals("Reprocessed Value")) line.put(headerName, getValue(eveAsset.getValueReprocessed(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameName())) line.put(headerName, eveAsset.getName());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameGroup())) line.put(headerName, eveAsset.getGroup());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameCategory())) line.put(headerName, eveAsset.getCategory());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameOwner())) line.put(headerName, eveAsset.getOwner());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameCount())) line.put(headerName, getValue(eveAsset.getCount(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameLocation())) line.put(headerName, eveAsset.getLocation());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameContainer())) line.put(headerName, eveAsset.getContainer());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameFlag())) line.put(headerName, eveAsset.getFlag());
+			if (headerName.equals(DialoguesCsvExport.get().headerNamePrice())) line.put(headerName, getValue(eveAsset.getPrice(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameSellMin())) line.put(headerName, getValue(eveAsset.getPriceSellMin(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameBuyMax())) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameValue())) line.put(headerName, getValue(eveAsset.getValue(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameMeta())) line.put(headerName, eveAsset.getMeta());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameID())) line.put(headerName, getValue(eveAsset.getItemId(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameBasePrice())) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameVolume())) line.put(headerName, getValue(eveAsset.getVolume(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeID())) line.put(headerName, getValue(eveAsset.getTypeId(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameRegion())) line.put(headerName, eveAsset.getRegion());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeCount())) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameSecurity())) line.put(headerName, eveAsset.getSecurity());
+			if (headerName.equals(DialoguesCsvExport.get().headerNameReprocessed())) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameReprocessedValue())) line.put(headerName, getValue(eveAsset.getValueReprocessed(), lang));
 		}
 		return line;
 	}
@@ -344,7 +435,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		Object[] columns = jColumnSelection.getSelectedValues();
 
 		if (columns.length == 0){
-			JOptionPane.showMessageDialog(getDialog(), "You must select atleast one column", "CSV Export", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getDialog(), DialoguesCsvExport.get().selectOne(), DialoguesCsvExport.get().csvExport(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
@@ -353,40 +444,19 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			header[a] = (String) columns[a];
 		}
 
-		char fieldDelimiter;
-		switch (jFieldDelimiter.getSelectedIndex()){
-			case 0:
-				fieldDelimiter = ',';
-				break;
-			case 1:
-				fieldDelimiter = ';';
-				break;
-			default:
-				fieldDelimiter = ',';
-		}
+		char fieldDelimiter = ((FieldDelimiter)jFieldDelimiter.getSelectedItem()).getCharacter();
 
-		String lineDelimiter;
-		switch (jLineDelimiter.getSelectedIndex()){
-			case 0:
-				lineDelimiter = "\n";
-				break;
-			case 1:
-				lineDelimiter = "\r\n";
-				break;
-			case 2:
-				lineDelimiter = "\n";
-				break;
-			default:
-				lineDelimiter = "\n";
-		}
+		String lineDelimiter = ((LineDelimiter)jLineDelimiter.getSelectedItem()).getString();
 
-		String lang = (String) jDecimalSeparator.getSelectedItem();
+		String lang = ((DecimalSeperator)jDecimalSeparator.getSelectedItem()).getString();
 
 		if (lang.equals("Comma") && fieldDelimiter == ','){
-			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(),
-					"Both the field terminator and the decimal separator is set to comma\r\n" +
-					"With those settings it could be difficult to import the CSV file in other programs\r\n" +
-					"Continue anyway?", "CSV Export", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(
+					program.getMainWindow().getFrame(),
+					DialoguesCsvExport.get().confirmStupidDecision(),
+					DialoguesCsvExport.get().csvExport(),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.NO_OPTION){
 				return;
 			}
@@ -418,7 +488,10 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			}
 		}
 		if (!CsvWriter.save(jPath.getText(), data, header, new CsvPreference('\"', fieldDelimiter, lineDelimiter))){
-			JOptionPane.showMessageDialog(getDialog(), "Failed to save CSV file", "Export CSV", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getDialog(),
+					DialoguesCsvExport.get().failedToSave(),
+					DialoguesCsvExport.get().csvExport(),
+					JOptionPane.PLAIN_MESSAGE);
 		}
 
 		this.setVisible(false);
