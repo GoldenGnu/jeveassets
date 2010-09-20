@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.Attribute;
@@ -86,14 +88,15 @@ public class Update1To2 implements LocalUpdate {
 	private String convertDefaultPriceMode(String oldVal) {
 		if (oldVal.startsWith("PRICE_")) return oldVal;
 		String convert = oldVal.toLowerCase();
-		String out = "PRICE";
-		if (convert.contains("sell")) return out + "_SELL";
-		if (convert.contains("buy")) return out + "_BUY";
-		if (convert.contains("midpoint")) return out + "_MIDPOINT";
-		if (convert.contains("maximum")) return out + "_MAX";
-		if (convert.contains("average")) return out + "_AVG";
-		if (convert.contains("median")) return out + "_MEDIAN";
-		if (convert.contains("minimum")) return out + "_MIN";
+		if (convert.contains("midpoint"))     return EveAsset.PriceMode.PRICE_MIDPOINT.name();
+		if (convert.contains("sell average")) return EveAsset.PriceMode.PRICE_SELL_AVG.name();
+		if (convert.contains("sell median"))  return EveAsset.PriceMode.PRICE_SELL_MEDIAN.name();
+		if (convert.contains("sell minimum")) return EveAsset.PriceMode.PRICE_SELL_MIN.name();
+		if (convert.contains("sell maximum")) return EveAsset.PriceMode.PRICE_SELL_MAX.name();
+		if (convert.contains("buy maximum"))  return EveAsset.PriceMode.PRICE_BUY_MAX.name();
+		if (convert.contains("buy average"))  return EveAsset.PriceMode.PRICE_BUY_AVG.name();
+		if (convert.contains("buy median"))   return EveAsset.PriceMode.PRICE_BUY_MEDIAN.name();
+		if (convert.contains("buy minimum"))  return EveAsset.PriceMode.PRICE_BUY_MIN.name();
 		throw new IllegalArgumentException("Failed to convert the price type " + oldVal);
 	}
 
@@ -101,13 +104,14 @@ public class Update1To2 implements LocalUpdate {
 		if (oldVal.startsWith("MODE_")) return oldVal;
 		String convert = oldVal.toLowerCase();
 		convert = convert.toLowerCase();
-		String out = "MODE";
-		if (convert.contains("equal")) return out + "_EQUALS";
-		if (convert.contains("contain")) return out + "_CONTAIN";
-		if (convert.contains("not")) return out + "_NOT";
-		if (convert.contains("greater")) return out + "_GREATER_THAN";
-		if (convert.contains("less")) return out + "_LESS_THAN";
-		if (convert.contains("column")) return out + "_COLUMN";
+		if (convert.contains("equals"))              return AssetFilter.Mode.MODE_EQUALS.name();
+		if (convert.contains("contains"))            return AssetFilter.Mode.MODE_CONTAIN.name();
+		if (convert.contains("does not contain"))    return AssetFilter.Mode.MODE_CONTAIN_NOT.name();
+		if (convert.contains("does not equal"))      return AssetFilter.Mode.MODE_EQUALS_NOT.name();
+		if (convert.contains("greater than"))        return AssetFilter.Mode.MODE_GREATER_THAN.name();
+		if (convert.contains("less than"))           return AssetFilter.Mode.MODE_LESS_THAN.name();
+		if (convert.contains("greater than column")) return AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.name();
+		if (convert.contains("less than column"))    return AssetFilter.Mode.MODE_LESS_THAN_COLUMN.name();
 		throw new IllegalArgumentException("Failed to convert the mode type " + oldVal);
 	}
 	@Override
