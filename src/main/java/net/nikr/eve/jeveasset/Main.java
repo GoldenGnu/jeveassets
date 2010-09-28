@@ -22,12 +22,14 @@
 package net.nikr.eve.jeveasset;
 
 import java.io.File;
+import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.me.candle.translations.BundleCache;
 
 
 public class Main {
@@ -80,7 +82,11 @@ public class Main {
 		if (isPortable && System.getProperty("log.home") == null) {
 			System.setProperty("log.home", "." + File.separator);
 		} else {
-			System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
+			if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { // preferences are stored in user.home/Library/Preferences
+				System.setProperty("log.home", System.getProperty("user.home")+File.separator+"Library"+File.separator+"Preferences"+File.separator+"JEveAssets"+File.separator+"");
+			} else { //Windows/Linux
+				System.setProperty("log.home", System.getProperty("user.home")+File.separator+".jeveassets"+File.separator);
+			}
 		}
 		// ditto here.
 		if (isDebug && System.getProperty("log.level") == null) {
@@ -88,7 +94,7 @@ public class Main {
 		} else {
 			System.setProperty("log.level", "INFO");
 		}
-
+		
 		// only now can we create the Logger.
 		LOG = LoggerFactory.getLogger(Main.class);
 
@@ -98,6 +104,9 @@ public class Main {
 		Settings.setPortable(isPortable);
 		Program.setForceNoUpdate(hasNoUpdate && Program.isDebug());
 		Program.setForceUpdate(hasUpdate && Program.isDebug());
+
+		//FIXME Workaround for default Danish language
+		BundleCache.setThreadLocale(Locale.ENGLISH);
 
 		// fix the uncaught exception handlers
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
