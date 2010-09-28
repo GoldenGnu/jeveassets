@@ -48,7 +48,8 @@ import org.w3c.dom.NodeList;
 
 
 public class SettingsReader extends AbstractXmlReader {
-	private static final int SETTINGS_VERSION = 2;
+	
+	public static final int SETTINGS_VERSION = 2;
 
 	private final static Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 

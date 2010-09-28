@@ -52,6 +52,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
+		//Add version number
+		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
+
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
