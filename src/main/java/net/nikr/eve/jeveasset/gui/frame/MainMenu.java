@@ -21,14 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 
@@ -56,12 +51,10 @@ public class MainMenu extends JMenuBar {
 	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
-	private JMenu jColumnMenu;
 	private JMenuItem jUpdatable;
-	private Program program;
+	private JMenuItem jTable;
 
 	public MainMenu(Program program) {
-		this.program = program;
 		
 		JMenu menu;
 		JMenuItem menuItem;
@@ -147,6 +140,10 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(jUpdatable);
 
+		jTable = new JMenu("Table");
+		//menu.setActionCommand("Something");
+		this.add(jTable);
+
 		menu = new JMenu("Options");
 		//menu.setActionCommand("Something");
 		this.add(menu);
@@ -165,11 +162,6 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(ACTION_OPEN_PROFILES);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-
-		jColumnMenu = new JMenu("Columns");
-		jColumnMenu.setIcon(Images.ICON_TABLE_SHOW);
-		menu.add(jColumnMenu);
-		updateColumnSelectionMenu();
 
 		menu.addSeparator();
 
@@ -224,57 +216,8 @@ public class MainMenu extends JMenuBar {
 		menu.add(menuItem);
 	}
 
-	final public void updateColumnSelectionMenu(){
-		JMenuItem jMenuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
-		JRadioButtonMenuItem jRadioButtonMenuItem;
-
-		jColumnMenu.removeAll();
-
-		jMenuItem = new JMenuItem("Reset columns to default");
-		jMenuItem.setActionCommand(AssetsTab.ACTION_RESET_COLUMNS_TO_DEFAULT);
-		jMenuItem.addActionListener(program.getAssetsTab());
-		jColumnMenu.add(jMenuItem);
-
-		jColumnMenu.addSeparator();
-
-		ButtonGroup group = new ButtonGroup();
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_TEXT);
-		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
-		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
-		group.add(jRadioButtonMenuItem);
-		jColumnMenu.add(jRadioButtonMenuItem);
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
-		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
-		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
-		group.add(jRadioButtonMenuItem);
-		jColumnMenu.add(jRadioButtonMenuItem);
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(AssetsTab.ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
-		jRadioButtonMenuItem.addActionListener(program.getAssetsTab());
-		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
-		group.add(jRadioButtonMenuItem);
-		jColumnMenu.add(jRadioButtonMenuItem);
-
-		jColumnMenu.addSeparator();
-
-		List<String> columns = program.getSettings().getTableColumnNames();
-		for (int a = 0; a < columns.size(); a++){
-			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
-			jCheckBoxMenuItem.setActionCommand(columns.get(a));
-			jCheckBoxMenuItem.addActionListener(program.getAssetsTab());
-			jCheckBoxMenuItem.setIcon(Images.ICON_TABLE_SHOW);
-			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
-			jColumnMenu.add(jCheckBoxMenuItem);
-		}
+	public JMenuItem getTableMenu() {
+		return jTable;
 	}
 
 	public void timerTicked(boolean updatable){

@@ -26,15 +26,9 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +37,7 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -59,16 +54,17 @@ import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 
 
-public class OverviewTab extends JMainTab implements ActionListener, MouseListener, ClipboardOwner {
+public class OverviewTab extends JMainTab implements ActionListener {
 
 	private final static String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
 	private final static String ACTION_ADD_NEW_GROUP = "ACTION_ADD_NEW_GROUP";
 	private final static String ACTION_DELETE_GROUP = "ACTION_DELETE_GROUP";
 	private final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
-	private final static String ACTION_COPY = "ACTION_COPY";
 	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 	private final static String ALL = "All";
 	private final static String ASSET_FILTER = "Filtered Assets";
@@ -76,7 +72,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
 	private OverviewTableFormat overviewTableFormat;
-	private JOverviewTable jOverviewTable;
+	private JOverviewTable jTable;
 	private JComboBox jViews;
 	private JComboBox jCharacters;
 	private JComboBox jSource;
@@ -114,12 +110,13 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
-		jOverviewTable = new JOverviewTable(overviewTableModel, overviewTableFormat.getColumnNames());
-		jOverviewTable.addMouseListener(this);
+		jTable = new JOverviewTable(overviewTableModel, overviewTableFormat.getColumnNames());
+		//Listeners
+		installTableMenu(jTable);
 		//Sorters
-		TableComparatorChooser.install(jOverviewTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
+		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Scroll Panels
-		JScrollPane jOverviewScrollPanel = jOverviewTable.getScrollPanel();
+		JScrollPane jOverviewScrollPanel = jTable.getScrollPanel();
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -147,33 +144,50 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		);
 	}
 
-	private void showTablePopup(MouseEvent e) {
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
+
+		//Select clicked row
+		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+
+		updateTableMenu(jTablePopupMenu);
+
+		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
 		JMenuItem  jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
 		JMenuItem jSubMenuItem;
 
-		//Select clicked row
-		jOverviewTable.setRowSelectionInterval(jOverviewTable.rowAtPoint(e.getPoint()), jOverviewTable.rowAtPoint(e.getPoint()));
-		jOverviewTable.setColumnSelectionInterval(0, jOverviewTable.getColumnCount()-1);
-		int index = jOverviewTable.getSelectedRow();
-		Overview overview = overviewTableModel.getElementAt(index);
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(Images.ICON_COPY);
-		jMenuItem.setActionCommand(ACTION_COPY);
-		jMenuItem.addActionListener(this);
-		jTablePopupMenu.add(jMenuItem);
+		Overview overview = null;
+		if (isSingleRow){
+			overview = overviewTableModel.getElementAt(jTable.getSelectedRow());
+		}
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
 
-		//Groups
+	//GROUPS
+		jSubMenu = new JMenu("Groups");
+		jSubMenu.setIcon(Images.ICON_GROUPS);
+		jComponent.add(jSubMenu);
 		if (!jViews.getSelectedItem().equals("Groups")){
-			jSubMenu = new JMenu("Groups");
-			jSubMenu.setIcon(Images.ICON_GROUPS);
-			jTablePopupMenu.add(jSubMenu);
-
 			jMenuItem = new JMenuItem("Add to new group...");
 			jMenuItem.setIcon(Images.ICON_ADD);
+			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_ADD_NEW_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -188,7 +202,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				boolean region = false;
 				for (int b = 0; b < overviewGroup.getLocations().size(); b++){
 					OverviewLocation location = overviewGroup.getLocations().get(b);
-					if (location.equalsLocation(overview)){
+					if (overview != null && location.equalsLocation(overview)){
 						found = true;
 						if (location.isStation()) station = true;
 						if (location.isSystem()) system = true;
@@ -199,64 +213,65 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				if (station) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
 				if (system) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
 				if (region) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
+				jCheckBoxMenuItem.setEnabled(isSingleRow);
 				jCheckBoxMenuItem.setActionCommand(overviewGroup.getName());
 				jCheckBoxMenuItem.addActionListener(addToGroup);
 				jCheckBoxMenuItem.setSelected(found);
 				jSubMenu.add(jCheckBoxMenuItem);
 			}
 		}
-		//Groups - Locations
+	//GROUPS (Locations)
 		if (jViews.getSelectedItem().equals("Groups")){
-			jSubMenu = new JMenu("Group");
-			jSubMenu.setIcon(Images.ICON_GROUPS);
-			jTablePopupMenu.add(jSubMenu);
-
 			jMenuItem = new JMenuItem("Rename Group");
 			jMenuItem.setIcon(Images.ICON_RENAME);
+			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_RENAME_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Delete Group");
 			jMenuItem.setIcon(Images.ICON_DELETE);
+			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_DELETE_GROUP);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
 
-			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
-			if (overviewGroup != null){
-				if (!overviewGroup.getLocations().isEmpty()) jSubMenu.addSeparator();
-				for (int a = 0; a < overviewGroup.getLocations().size(); a++){
-					OverviewLocation location = overviewGroup.getLocations().get(a);
-					jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
-					if (location.isStation()) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
-					if (location.isSystem()) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
-					if (location.isRegion()) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
-					jCheckBoxMenuItem.setActionCommand(location.getName());
-					jCheckBoxMenuItem.addActionListener(removeFromGroup);
-					jCheckBoxMenuItem.setSelected(true);
-					jSubMenu.add(jCheckBoxMenuItem);
+			if (isSingleRow){ //Add the group locations
+				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+				if (overviewGroup != null){
+					if (!overviewGroup.getLocations().isEmpty()) jSubMenu.addSeparator();
+					for (int a = 0; a < overviewGroup.getLocations().size(); a++){
+						OverviewLocation location = overviewGroup.getLocations().get(a);
+						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
+						if (location.isStation()) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
+						if (location.isSystem()) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
+						if (location.isRegion()) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
+						jCheckBoxMenuItem.setActionCommand(location.getName());
+						jCheckBoxMenuItem.addActionListener(removeFromGroup);
+						jCheckBoxMenuItem.setSelected(true);
+						jSubMenu.add(jCheckBoxMenuItem);
+					}
 				}
 			}
 		}
 
-		//Asset Filter
-		
-		jSubMenuItem = JMenuTools.getAssetFilterMenu(program, overview);
+		addSeparator(jComponent);
+
+	//FILTERS
+		jSubMenuItem = new JMenuAssetFilter(program, overview);
 		if (jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Locations");
 			jMenuItem.setIcon(Images.ICON_LOCATIONS);
+			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(this);
 			jSubMenuItem.add(jMenuItem);
 		}
-		jTablePopupMenu.add(jSubMenuItem);
+		jComponent.add(jSubMenuItem);
+		
+	//LOOKUP
 		//XXX - you can not lookup group locations
-		if (!overview.isGroup()){
-			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, overview));
-		}
-
-		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+		jComponent.add(new JMenuLookup(program, overview));
 	}
 
 	private List<Overview> getList(List<EveAsset> input, String character, String view){
@@ -330,7 +345,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 				}
 			}
 		}
-		jOverviewTable.setGroupedLocations(groupedLocations);
+		jTable.setGroupedLocations(groupedLocations);
 		return locations;
 	}
 
@@ -377,21 +392,6 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		jSource.setSelectedIndex(0);
 		
 	}
-	
-	private void copyToClipboard(Object o){
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		StringSelection st = new StringSelection(String.valueOf(o));
-		Clipboard cp = tk.getSystemClipboard();
-		cp.setContents(st, this);
-	}
 
 	@Override
 	public void updateData() {
@@ -422,7 +422,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		}
 		//Group
 		if (ACTION_ADD_NEW_GROUP.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
+			int index = jTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			String station = null;
 			String system = null;
@@ -439,7 +439,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			return;
 		}
 		if (ACTION_DELETE_GROUP.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
+			int index = jTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete Group: "+overviewGroup.getName()+"?", "Delete Group", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -450,29 +450,15 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 			return;
 		}
 		if (ACTION_RENAME_GROUP.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
+			int index = jTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 			overviewGroupDialog.groupRename(overviewGroup);
 			return;
 		}
-		//Copy
-		if (ACTION_COPY.equals(e.getActionCommand())){
-			String s = "";
-			int[] selectedRows = jOverviewTable.getSelectedRows();
-			int[] selectedColumns = jOverviewTable.getSelectedColumns();
-			for (int a = 0; a < selectedRows.length; a++){
-				for (int b = 0; b < selectedColumns.length; b++){
-					if (b != 0) s = s + "	";
-					s = s + jOverviewTable.getValueAt(selectedRows[a], selectedColumns[b]);
-				}
-				if ( (a + 1) < selectedRows.length ) s = s + "\r\n";
-			}
-			copyToClipboard(s);
-		}
 		//Filter
 		if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())){
-			int index = jOverviewTable.getSelectedRow();
+			int index = jTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 			List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
@@ -497,41 +483,13 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 		}
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.getSource().equals(jOverviewTable) && e.isPopupTrigger()){
-			showTablePopup(e);
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.getSource().equals(jOverviewTable) && e.isPopupTrigger()){
-			showTablePopup(e);
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
-
-	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable contents) {
-		
-	}
-
 	class AddToGroup implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(e.getActionCommand());
 			if (overviewGroup != null){
-				int index = jOverviewTable.getSelectedRow();
+				int index = jTable.getSelectedRow();
 				Overview overview = overviewTableModel.getElementAt(index);
 				String station = null;
 				String system = null;
@@ -552,7 +510,7 @@ public class OverviewTab extends JMainTab implements ActionListener, MouseListen
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int index = jOverviewTable.getSelectedRow();
+			int index = jTable.getSelectedRow();
 			Overview overview = overviewTableModel.getElementAt(index);
 			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 			String location = e.getActionCommand();

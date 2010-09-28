@@ -21,19 +21,27 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 
 /**
  *
  * @author Niklas
  */
-public abstract class JMainTab {
+public abstract class JMainTab{
 
 	private String title;
 	private Icon icon;
@@ -50,7 +58,7 @@ public abstract class JMainTab {
 		this.title = title;
 		this.icon = icon;
 		this.closeable = closeable;
-		
+
 		jPanel = new JPanel();
 
 		layout = new GroupLayout(jPanel);
@@ -59,6 +67,13 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
+	public abstract void updateTableMenu(JComponent jComponent);
+	/**
+	 * Must be called after setting SelectionModel
+	 * @param e mouse event
+	 */
+	protected abstract void showTablePopupMenu(MouseEvent e);
+
 	public void addStatusbarLabel(JLabel jLabel){
 		statusbarLabels.add(jLabel);
 	}
@@ -66,6 +81,7 @@ public abstract class JMainTab {
 	public List<JLabel> getStatusbarLabels(){
 		return statusbarLabels;
 	}
+
 	public abstract void updateData();
 
 	public Icon getIcon() {
@@ -84,4 +100,64 @@ public abstract class JMainTab {
 		return closeable;
 	}
 
+	protected void addSeparator(JComponent jComponent){
+		if (jComponent instanceof JMenu){
+			JMenu jMenu = (JMenu) jComponent;
+			jMenu.addSeparator();
+		}
+		if (jComponent instanceof JPopupMenu){
+			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+			jPopupMenu.addSeparator();
+		}
+		if (jComponent instanceof JDropDownButton){
+			JDropDownButton jDropDownButton = (JDropDownButton) jComponent;
+			jDropDownButton.addSeparator();
+		}
+	}
+
+	protected void installTableMenu(JTable jTable){
+		TableMenuListener listener = new TableMenuListener(jTable);
+		jTable.addMouseListener(listener);
+		jTable.getSelectionModel().addListSelectionListener(listener);
+		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+	}
+
+	private class TableMenuListener implements MouseListener, ListSelectionListener{
+
+		private JTable jTable;
+
+		public TableMenuListener(JTable jTable) {
+			this.jTable = jTable;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getSource().equals(jTable) && e.isPopupTrigger()){
+				showTablePopupMenu(e);
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (e.getSource().equals(jTable) && e.isPopupTrigger()){
+				showTablePopupMenu(e);
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public void mouseExited(MouseEvent e) {}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if (!e.getValueIsAdjusting()){
+				program.updateTableMenu();
+			}
+		}
+	}
 }

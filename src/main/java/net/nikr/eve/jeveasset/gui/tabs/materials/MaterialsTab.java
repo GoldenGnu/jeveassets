@@ -31,7 +31,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -50,11 +50,13 @@ import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener, MouseListener{
+public class MaterialsTab extends JMainTab implements ActionListener{
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -96,11 +98,14 @@ public class MaterialsTab extends JMainTab implements ActionListener, MouseListe
 		jTable = new JSeparatorTable(materialTableModel, materialTableFormat.getColumnNames());
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
-		jTable.addMouseListener(this);
 		PaddingTableCellRenderer.install(jTable, 3);
+
+		//Selection Model
 		EventSelectionModel<Material> selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		//Listeners
+		installTableMenu(jTable);
 		//Scroll Panels
 		JScrollPane jMaterialScrollPanel = jTable.getScrollPanel();
 
@@ -158,19 +163,40 @@ public class MaterialsTab extends JMainTab implements ActionListener, MouseListe
 		}
 	}
 
-	private void showPopupMenu(MouseEvent e) {
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
 		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
-		int index = jTable.getSelectedRow();
-		Object o = materialTableModel.getElementAt(index);
-		if (o instanceof Material){
-			Material material = (Material)o;
-			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, material));
-			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, material));
-			jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+
+		updateTableMenu(jTablePopupMenu);
+
+		if (jTable.getSelectedRows().length == 1){
+			Object o = materialTableModel.getElementAt(jTable.getSelectedRow());
+			if (o instanceof Material){
+				jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
+
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+
+		Object material = isSingleRow ? materialTableModel.getElementAt(jTable.getSelectedRow()) : null;
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
+		jComponent.add(new JMenuAssetFilter(program, material));
+		jComponent.add(new JMenuLookup(program, material));
+	}
+
 
 	private void updateTable(){
 		String character = (String) jCharacters.getSelectedItem();
@@ -246,26 +272,4 @@ public class MaterialsTab extends JMainTab implements ActionListener, MouseListe
 			jTable.expandSeparators(true, separatorList);
 		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
-
-
-
 }

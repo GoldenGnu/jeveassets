@@ -29,7 +29,6 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,9 +38,12 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -49,11 +51,13 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersTab extends JMainTab implements ActionListener, MouseListener {
+public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	
@@ -99,9 +103,10 @@ public class MarketOrdersTab extends JMainTab implements ActionListener, MouseLi
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
 		jSellOrders = new JAutoColumnTable(sellOrdersTableModel, sellTableFormat.getColumnNames());
-		jSellOrders.addMouseListener(this);
 		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel, buyTableFormat.getColumnNames());
-		jBuyOrders.addMouseListener(this);
+		//Listeners
+		installTableMenu(jSellOrders);
+		installTableMenu(jBuyOrders);
 		//Sorters
 		TableComparatorChooser.install(jSellOrders, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, sellTableFormat);
 		TableComparatorChooser.install(jBuyOrders, buyOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, buyTableFormat);
@@ -153,27 +158,59 @@ public class MarketOrdersTab extends JMainTab implements ActionListener, MouseLi
 		);
 	}
 
-	private void showPopupMenu(MouseEvent e) {
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		MarketOrder marketOrder = null;
-		if (jSellOrders.equals(e.getSource())){
-			jSellOrders.setRowSelectionInterval(jSellOrders.rowAtPoint(e.getPoint()), jSellOrders.rowAtPoint(e.getPoint()));
-			jSellOrders.setColumnSelectionInterval(0, jSellOrders.getColumnCount()-1);
-			int index = jSellOrders.getSelectedRow();
-			marketOrder = sellOrdersTableModel.getElementAt(index);
-		}
-		if (jBuyOrders.equals(e.getSource())){
-			jBuyOrders.setRowSelectionInterval(jBuyOrders.rowAtPoint(e.getPoint()), jBuyOrders.rowAtPoint(e.getPoint()));
-			jBuyOrders.setColumnSelectionInterval(0, jBuyOrders.getColumnCount()-1);
-			int index = jBuyOrders.getSelectedRow();
-			marketOrder = buyOrdersTableModel.getElementAt(index);
-			
-		}
-		if (marketOrder != null){
-			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, marketOrder));
-			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, marketOrder));
+
+		if (e.getSource() instanceof JTable){
+			JTable jTable = (JTable) e.getSource();
+			EventTableModel<?> tableModel = (EventTableModel<?>) jTable.getModel();
+			//Select clicked row
+			jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+			jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+			//is single row selected
+			boolean isSingleRow = jTable.getSelectedRows().length == 1;
+			//COPY
+			if (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0){
+				jTablePopupMenu.add(new JMenuCopy(jTable));
+				addSeparator(jTablePopupMenu);
+			}
+			//FILTER & LOOKUP
+			MarketOrder marketOrder = isSingleRow ? (MarketOrder) tableModel.getElementAt(jTable.getSelectedRow()): null;
+			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
+			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
 		}
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		JMenuItem  jMenuItem;
+		
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		boolean isSellSingleRow = jSellOrders.getSelectedRows().length == 1;
+		boolean isBuySingleRow = jBuyOrders.getSelectedRows().length == 1;
+
+		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellOrders.getSelectedRow()): null;
+		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyOrders.getSelectedRow()) : null;
+
+		jMenuItem = new JMenuItem("Sell Orders:");
+		jMenuItem.setEnabled(false);
+		jComponent.add(jMenuItem);
+
+		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
+		jComponent.add(new JMenuLookup(program, sellMarketOrder));
+
+		addSeparator(jComponent);
+
+		jMenuItem = new JMenuItem("Buy Orders:");
+		jMenuItem.setEnabled(false);
+		jComponent.add(jMenuItem);
+
+		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
+		jComponent.add(new JMenuLookup(program, buyMarketOrder));
 	}
 
 	@Override
@@ -288,27 +325,4 @@ public class MarketOrdersTab extends JMainTab implements ActionListener, MouseLi
 			}
 		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()){
-			showPopupMenu(e);
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()){
-			showPopupMenu(e);
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 }

@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -84,20 +85,28 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		this.setText(text);
 		this.addMouseListener(this);
 		this.addKeyListener(this);
-		clearMenu();
-	}
-
-	final public void clearMenu(){
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(this);
+	}
+
+	@Override
+	public void removeAll(){
+		jPopupMenu.removeAll();
 	}
 
 	public void addSeparator() {
 		jPopupMenu.addSeparator();
 	}
+
+	@Override
+	public Component add(Component component) {
+		if (component instanceof JMenuItem) return add((JMenuItem) component);
+		return super.add(component);
+    }
 	
-	public void add(JMenuItem menuItem){
-		jPopupMenu.add(menuItem);
+	public JMenuItem add(JMenuItem jMenuItem){
+		jPopupMenu.add(jMenuItem);
+		return jMenuItem;
 	}
 
 	public int getPopupHorizontalAlignment() {

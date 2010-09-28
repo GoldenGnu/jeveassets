@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import java.awt.datatransfer.Transferable;
 import javax.swing.event.TableModelEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -37,10 +36,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -51,6 +46,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -74,18 +70,20 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AssetsTab extends JMainTab
-		implements MouseListener, ActionListener, TableColumnModelListener,
-		ClipboardOwner, TableModelListener {
+		implements MouseListener, ActionListener, TableColumnModelListener, TableModelListener {
+	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
 	public final static String ACTION_AUTO_RESIZING_COLUMNS_TEXT = "ACTION_AUTO_RESIZING_COLUMNS_TEXT";
 	public final static String ACTION_AUTO_RESIZING_COLUMNS_WINDOW = "ACTION_AUTO_RESIZING_COLUMNS_WINDOW";
 	public final static String ACTION_DISABLE_AUTO_RESIZING_COLUMNS = "ACTION_DISABLE_AUTO_RESIZING_COLUMNS";
 	public final static String ACTION_RESET_COLUMNS_TO_DEFAULT = "ACTION_SHOW_ALL_COLUMNS";
-	public final static String ACTION_COPY_TABLE_SELECTED_CELLS = "ACTION_COPY_TABLE_SELECTED_CELLS";
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_SET_USER_PRICE = "ACTION_SET_USER_PRICE";
 	public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
@@ -103,7 +101,7 @@ public class AssetsTab extends JMainTab
 	private JTable jTable;
 	private JDropDownButton jColumnsSelection;
 	private JPopupMenu jTablePopupMenu;
-
+	private JMenu jColumnMenu;
 
 	private JLabel jTotalValue;
 	private JLabel jCount;
@@ -138,7 +136,6 @@ public class AssetsTab extends JMainTab
 		//Table Model
 		eveAssetTableModel = new EventTableModel<EveAsset>(filterList, eveAssetTableFormat);
 		eveAssetTableModel.addTableModelListener(this);
-
 		//Table
 		jTable = new JAssetTable(program, eveAssetTableModel);
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
@@ -147,18 +144,17 @@ public class AssetsTab extends JMainTab
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		jTable.getTableHeader().addMouseListener(this);
-		jTable.getColumnModel().addColumnModelListener(this);
-		jTable.addMouseListener(this);
 		//install the sorting/filtering
-		TableComparatorChooser<EveAsset> eveAssetSorter =
-				TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
-
+		TableComparatorChooser<EveAsset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
 		selectionModel = new EventSelectionModel<EveAsset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
-
+		//Listeners
+		jTable.getTableHeader().addMouseListener(this);
+		jTable.getColumnModel().addColumnModelListener(this);
+		jTable.addMouseListener(this);
+		installTableMenu(jTable);
 		//Table Button
 		jColumnsSelection = new JDropDownButton(JDropDownButton.RIGHT);
 		jColumnsSelection.setIcon(Images.ICON_ARROW_DOWN);
@@ -178,7 +174,11 @@ public class AssetsTab extends JMainTab
 		toolPanel = new ToolPanel(program, matcherEditorManager);
 		this.getPanel().add(toolPanel.getPanel());
 
-		updateColumnPopupMenu();
+		//Table Menu
+		jColumnMenu = new JMenu("Columns");
+		jColumnMenu.setIcon(Images.ICON_TABLE_SHOW);
+
+		updateColumnMenus();
 
 
 		jVolume = StatusPanel.createLabel("Total volume of shown assets", Images.ICON_VOLUME);
@@ -192,7 +192,9 @@ public class AssetsTab extends JMainTab
 
 		jTotalValue = StatusPanel.createLabel("Total value of shown assets", Images.ICON_TOOL_VALUES);
 		this.addStatusbarLabel(jTotalValue);
-		
+
+		jTablePopupMenu = new JPopupMenu();
+
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -362,12 +364,13 @@ public class AssetsTab extends JMainTab
 		column.setPreferredWidth(maxWidth+4);
 	}
 	private void updateColumnMenus(){
-		program.getMainWindow().getMenu().updateColumnSelectionMenu();
-		updateColumnPopupMenu();
+		updateColumnMenu(jColumnsSelection);
+		updateColumnMenu(jColumnMenu);
 	}
 
-	private void updateColumnPopupMenu(){
-		jColumnsSelection.clearMenu();
+	private void updateColumnMenu(JComponent jComponent){
+		jComponent.removeAll();
+		
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JRadioButtonMenuItem jRadioButtonMenuItem;
 		JMenuItem  jMenuItem;
@@ -375,9 +378,9 @@ public class AssetsTab extends JMainTab
 		jMenuItem = new JMenuItem("Reset columns to default");
 		jMenuItem.setActionCommand(ACTION_RESET_COLUMNS_TO_DEFAULT);
 		jMenuItem.addActionListener(this);
-		jColumnsSelection.add(jMenuItem);
+		jComponent.add(jMenuItem);
 
-		jColumnsSelection.addSeparator();
+		addSeparator(jComponent);
 		
 		ButtonGroup group = new ButtonGroup();
 
@@ -387,7 +390,7 @@ public class AssetsTab extends JMainTab
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
 		group.add(jRadioButtonMenuItem);
-		jColumnsSelection.add(jRadioButtonMenuItem);
+		jComponent.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
 		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
@@ -395,7 +398,7 @@ public class AssetsTab extends JMainTab
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
 		group.add(jRadioButtonMenuItem);
-		jColumnsSelection.add(jRadioButtonMenuItem);
+		jComponent.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
 		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
@@ -403,9 +406,9 @@ public class AssetsTab extends JMainTab
 		jRadioButtonMenuItem.addActionListener(this);
 		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
 		group.add(jRadioButtonMenuItem);
-		jColumnsSelection.add(jRadioButtonMenuItem);
+		jComponent.add(jRadioButtonMenuItem);
 
-		jColumnsSelection.addSeparator();
+		addSeparator(jComponent);
 
 		List<String> columns = program.getSettings().getTableColumnNames();
 		for (int a = 0; a < columns.size(); a++){
@@ -414,16 +417,12 @@ public class AssetsTab extends JMainTab
 			jCheckBoxMenuItem.addActionListener(this);
 			jCheckBoxMenuItem.setIcon(Images.ICON_TABLE_SHOW);
 			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
-			jColumnsSelection.add(jCheckBoxMenuItem);
+			jComponent.add(jCheckBoxMenuItem);
 		}
 	}
 
-	private void showTablePopup(MouseEvent e){
-		jTablePopupMenu = new JPopupMenu();
-		JMenuItem  jMenuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
-		JMenu jSubMenu;
-
+	@Override
+	protected void showTablePopupMenu(MouseEvent e){
 		boolean clickInRowsSelection = false;
 		int[] selectedRows = jTable.getSelectedRows();
 		for (int a = 0; a < selectedRows.length; a++){
@@ -450,13 +449,25 @@ public class AssetsTab extends JMainTab
 			selectedColumns = jTable.getSelectedColumns();
 		}
 
-		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
+		updateTableMenu(jTablePopupMenu);
 
-		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(Images.ICON_COPY);
-		jMenuItem.setActionCommand(ACTION_COPY_TABLE_SELECTED_CELLS);
-		jMenuItem.addActionListener(this);
-		jTablePopupMenu.add(jMenuItem);
+		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		JMenuItem  jMenuItem;
+		JCheckBoxMenuItem jCheckBoxMenuItem;
+		JMenu jSubMenu;
+
+		int[] selectedRows = jTable.getSelectedRows();
+		int[] selectedColumns = jTable.getSelectedColumns();
+		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
+		boolean isSingleRow = selectedRows.length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
 		boolean isBlueprints = false;
 		boolean isBPOs = true;
@@ -467,7 +478,7 @@ public class AssetsTab extends JMainTab
 				isBPOs = false;
 				break;
 			}
-			if (eveAssetTableModel.getElementAt(selectedRows[0]).isBlueprint()){
+			if (eveAssetTableModel.getElementAt(selectedRows[a]).isBlueprint()){
 				isBlueprints = true;
 				if (!eveAsset.isBpo()){
 					isBPOs = false;
@@ -477,178 +488,180 @@ public class AssetsTab extends JMainTab
 				isBlueprints = false;
 				break;
 			}
-
 		}
-		
-		if (isSingleCell || isBlueprints){
-			jSubMenu = new JMenu("Edit");
-			jSubMenu.setIcon(Images.ICON_EDIT);
-			jTablePopupMenu.add(jSubMenu);
-			if (isBlueprints){
-				jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
-				jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
-				jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
-				jCheckBoxMenuItem.addActionListener(this);
-				jCheckBoxMenuItem.setSelected(isBPOs);
-				jSubMenu.add(jCheckBoxMenuItem);
-			}
-			if (selectedRows.length == 1 && selectedColumns.length == 1){
-				jMenuItem = new JMenuItem("Price...");
-				jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
-				jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
-				jMenuItem.addActionListener(program);
-				jSubMenu.add(jMenuItem);
+		if (!isBlueprints) isBPOs = false;
 
-				jMenuItem = new JMenuItem("Name...");
-				jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
-				jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
-				jMenuItem.addActionListener(program);
-				jSubMenu.add(jMenuItem);
-			}
-		}
-		
+		boolean numericColumn = false;
 		if (isSingleCell){
-			jSubMenu = new JMenu("Add Filter");
-			jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
-			jTablePopupMenu.add(jSubMenu);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN.toString());
-			jMenuItem.setIcon(Images.ICON_CONTAIN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN_NOT.toString());
-			jMenuItem.setIcon(Images.ICON_NOT_CONTAIN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS.toString());
-			jMenuItem.setIcon(Images.ICON_EQUAL);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS_NOT.toString());
-			jMenuItem.setIcon(Images.ICON_NOT_EQUAL);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-
 			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
-			boolean numericColumn = program.getSettings().getTableNumberColumns().contains(column);
-			
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
-			jMenuItem.setIcon(Images.ICON_GREATER_THEN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
-			jMenuItem.addActionListener(this);
-			if (!numericColumn){
-				jMenuItem.setEnabled(false);
-				jMenuItem.setToolTipText("Can only be used with numeric columns");
-			}
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
-			jMenuItem.setIcon(Images.ICON_LESS_THEN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
-			jMenuItem.addActionListener(this);
-			if (!numericColumn){
-				jMenuItem.setEnabled(false);
-				jMenuItem.setToolTipText("Can only be used with numeric columns");
-			}
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
-			jMenuItem.setIcon(Images.ICON_GREATER_THEN_COLUMN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
-			jMenuItem.addActionListener(this);
-			if (!numericColumn){
-				jMenuItem.setEnabled(false);
-				jMenuItem.setToolTipText("Can only be used with numeric columns");
-			}
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
-			jMenuItem.setIcon(Images.ICON_LESS_THEN_COLUMN);
-			jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
-			jMenuItem.addActionListener(this);
-			if (!numericColumn){
-				jMenuItem.setEnabled(false);
-				jMenuItem.setToolTipText("Can only be used with numeric columns");
-			}
-			jSubMenu.add(jMenuItem);
+			numericColumn = program.getSettings().getTableNumberColumns().contains(column);
 		}
-
-		if (isSingleCell){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[0]);
-			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, eveAsset));
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
 		}
-		
-		jTablePopupMenu.addSeparator();
-
-		jMenuItem = new JMenuItem("Selection Information");
-		jMenuItem.setDisabledIcon(Images.ICON_DIALOG_ABOUT);
-		jMenuItem.setEnabled(false);
-		jTablePopupMenu.add(jMenuItem);
-
-		JPanel jSpacePanel = new JPanel();
-		jSpacePanel.setMinimumSize( new Dimension(50, 5) );
-		jSpacePanel.setPreferredSize( new Dimension(50, 5) );
-		jSpacePanel.setMaximumSize( new Dimension(50, 5) );
-		jTablePopupMenu.add(jSpacePanel);
-
-		double total = 0;
-		long count = 0;
-		float volume = 0;
-		for (int a = 0; a < selectedRows.length; a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
-			total = total + (eveAsset.getPrice() * eveAsset.getCount());
-			count = count + eveAsset.getCount();
-			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
+	//COLUMNS
+		if (jComponent instanceof JMenu){
+			jComponent.add(jColumnMenu);
+			addSeparator(jComponent);
 		}
+	//FILTER
+		jSubMenu = new JMenu("Add Filter");
+		jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
+		jComponent.add(jSubMenu);
 
-		jMenuItem = new JMenuItem(Formater.iskFormat(total));
-		jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
-		jMenuItem.setEnabled(false);
-		jMenuItem.setToolTipText("Value of selected assets");
-		jTablePopupMenu.add(jMenuItem);
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN.toString());
+		jMenuItem.setIcon(Images.ICON_CONTAIN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
+		jMenuItem.addActionListener(this);
+		jSubMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.iskFormat(total/count) );
-		jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
-		jMenuItem.setEnabled(false);
-		jMenuItem.setToolTipText("Average value of selected assets");
-		jTablePopupMenu.add(jMenuItem);
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN_NOT.toString());
+		jMenuItem.setIcon(Images.ICON_NOT_CONTAIN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
+		jMenuItem.addActionListener(this);
+		jSubMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.itemsFormat(count));
-		jMenuItem.setDisabledIcon(Images.ICON_ADD);
-		jMenuItem.setEnabled(false);
-		jMenuItem.setToolTipText("Count of selected assets");
-		jTablePopupMenu.add(jMenuItem);
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS.toString());
+		jMenuItem.setIcon(Images.ICON_EQUAL);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
+		jMenuItem.addActionListener(this);
+		jSubMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem( Formater.doubleFormat(volume));
-		jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
-		jMenuItem.setEnabled(false);
-		jMenuItem.setToolTipText("Volume of selected assets");
-		jTablePopupMenu.add(jMenuItem);
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS_NOT.toString());
+		jMenuItem.setIcon(Images.ICON_NOT_EQUAL);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
+		jMenuItem.addActionListener(this);
+		jSubMenu.add(jMenuItem);
 
-		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	}
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
+		jMenuItem.setIcon(Images.ICON_GREATER_THEN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
+		jMenuItem.addActionListener(this);
+		if (!numericColumn && isSingleCell){
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Can only be used with numeric columns");
+		}
+		jSubMenu.add(jMenuItem);
 
-	private void copyToClipboard(Object o){
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
+		jMenuItem.setIcon(Images.ICON_LESS_THEN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
+		jMenuItem.addActionListener(this);
+		if (!numericColumn && isSingleCell){
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Can only be used with numeric columns");
+		}
+		jSubMenu.add(jMenuItem);
+
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
+		jMenuItem.setIcon(Images.ICON_GREATER_THEN_COLUMN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
+		jMenuItem.addActionListener(this);
+		if (!numericColumn && isSingleCell){
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Can only be used with numeric columns");
+		}
+		jSubMenu.add(jMenuItem);
+
+		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
+		jMenuItem.setIcon(Images.ICON_LESS_THEN_COLUMN);
+		jMenuItem.setEnabled(isSingleCell);
+		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
+		jMenuItem.addActionListener(this);
+		if (!numericColumn && isSingleCell){
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Can only be used with numeric columns");
+		}
+		jSubMenu.add(jMenuItem);
+
+	//LOOKUP
+		jComponent.add(new JMenuLookup(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
+
+	//EDIT
+		jSubMenu = new JMenu("Edit");
+		jSubMenu.setIcon(Images.ICON_EDIT);
+		jComponent.add(jSubMenu);
+
+		jMenuItem = new JMenuItem("Price...");
+		jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
+		jMenuItem.setEnabled(isSingleRow);
+		jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
+		jMenuItem.addActionListener(program);
+		jSubMenu.add(jMenuItem);
+
+		jMenuItem = new JMenuItem("Name...");
+		jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
+		jMenuItem.setEnabled(isSingleRow);
+		jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
+		jMenuItem.addActionListener(program);
+		jSubMenu.add(jMenuItem);
+
+		jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
+		jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
+		jCheckBoxMenuItem.setEnabled(isBlueprints);
+		jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
+		jCheckBoxMenuItem.addActionListener(this);
+		jCheckBoxMenuItem.setSelected(isBPOs);
+		jSubMenu.add(jCheckBoxMenuItem);
+
+	//INFO
+		if (jComponent instanceof JPopupMenu){
+			addSeparator(jComponent);
+
+			jMenuItem = new JMenuItem("Selection Information");
+			jMenuItem.setDisabledIcon(Images.ICON_DIALOG_ABOUT);
+			jMenuItem.setEnabled(false);
+			jComponent.add(jMenuItem);
+
+			JPanel jSpacePanel = new JPanel();
+			jSpacePanel.setMinimumSize( new Dimension(50, 5) );
+			jSpacePanel.setPreferredSize( new Dimension(50, 5) );
+			jSpacePanel.setMaximumSize( new Dimension(50, 5) );
+			jComponent.add(jSpacePanel);
+
+			double total = 0;
+			long count = 0;
+			float volume = 0;
+			for (int a = 0; a < selectedRows.length; a++){
+				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
+				total = total + (eveAsset.getPrice() * eveAsset.getCount());
+				count = count + eveAsset.getCount();
+				volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
 			}
+
+			jMenuItem = new JMenuItem(Formater.iskFormat(total));
+			jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Value of selected assets");
+			jComponent.add(jMenuItem);
+
+			jMenuItem = new JMenuItem( Formater.iskFormat(total/count) );
+			jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Average value of selected assets");
+			jComponent.add(jMenuItem);
+
+			jMenuItem = new JMenuItem( Formater.itemsFormat(count));
+			jMenuItem.setDisabledIcon(Images.ICON_ADD);
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Count of selected assets");
+			jComponent.add(jMenuItem);
+
+			jMenuItem = new JMenuItem( Formater.doubleFormat(volume));
+			jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
+			jMenuItem.setEnabled(false);
+			jMenuItem.setToolTipText("Volume of selected assets");
+			jComponent.add(jMenuItem);
 		}
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		StringSelection st =
-		new StringSelection(String.valueOf(o));
-		Clipboard cp = tk.getSystemClipboard();
-		cp.setContents(st, this);
 	}
 
 	@Override
@@ -680,19 +693,6 @@ public class AssetsTab extends JMainTab
 			}
 			updateCoulmnsSize();
 			updateColumnMenus();
-		}
-		if (ACTION_COPY_TABLE_SELECTED_CELLS.equals(e.getActionCommand())){
-			String s = "";
-			int[] selectedRows = jTable.getSelectedRows();
-			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedRows.length; a++){
-				for (int b = 0; b < selectedColumns.length; b++){
-					if (b != 0) s = s + "	";
-					s = s + jTable.getValueAt(selectedRows[a], selectedColumns[b]);
-				}
-				if ( (a + 1) < selectedRows.length ) s = s + "\r\n";
-			}
-			copyToClipboard(s);
 		}
 		if (ACTION_ADD_FILTER_CONTAIN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
@@ -783,9 +783,6 @@ public class AssetsTab extends JMainTab
 			tempMainTableColumnNames = new ArrayList<String>(program.getSettings().getTableColumnNames());
 			tempMainTableColumnVisible = new ArrayList<String>(program.getSettings().getTableColumnVisible());
 		}
-		if (e.getSource().equals(jTable) && e.isPopupTrigger()){
-				showTablePopup(e);
-		}
 	}
 
 	@Override
@@ -796,9 +793,6 @@ public class AssetsTab extends JMainTab
 			program.getSettings().setTableColumnVisible(tempMainTableColumnVisible);
 			updateTableStructure();
 			updateColumnMenus();
-		}
-		if (e.getSource().equals(jTable) && e.isPopupTrigger()){
-			showTablePopup(e);
 		}
 	}
 
@@ -847,12 +841,8 @@ public class AssetsTab extends JMainTab
 	@Override
 	public void columnMarginChanged(ChangeEvent e) {}
 
-
 	@Override
 	public void columnSelectionChanged(ListSelectionEvent e) {}
-
-	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable contents) {}
 	
 	@Override
 	public void tableChanged(TableModelEvent e) { //Filter

@@ -24,11 +24,12 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
 
 
-public class JMenuAssetFilter extends JMenuTools implements ActionListener {
+public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 
 	private final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
 	private final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
@@ -36,44 +37,43 @@ public class JMenuAssetFilter extends JMenuTools implements ActionListener {
 	private final static String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
 
 
-	protected JMenuAssetFilter(Arguments arguments) {
-		super("Add Asset Filter", Images.ICON_TOOL_ASSETS, arguments);
-	}
+	public JMenuAssetFilter(Program program, Object object) {
+		super("Add Asset Filter", program, object);
 
-	@Override
-	protected void createMenu() {
-		if (typeId != 0){
-			jMenuItem = new JMenuItem("Item Type");
-			jMenuItem.setIcon(Images.ICON_ADD);
-			jMenuItem.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-		}
+		this.setIcon(Images.ICON_TOOL_ASSETS);
 
-		if ((station != null || system != null || region != null) && typeId != 0) this.addSeparator();
-		
+		JMenuItem jMenuItem;
 
-		if (station != null){
-			jMenuItem = new JMenuItem("Station");
-			jMenuItem.setIcon(Images.ICON_STATION);
-			jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-		}
-		if (system != null){
-			jMenuItem = new JMenuItem("System");
-			jMenuItem.setIcon(Images.ICON_SYSTEM);
-			jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-		}
-		if (region != null){
-			jMenuItem = new JMenuItem("Region");
-			jMenuItem.setIcon(Images.ICON_REGION);
-			jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-		}
+		jMenuItem = new JMenuItem("Item Type");
+		jMenuItem.setIcon(Images.ICON_ADD);
+		jMenuItem.setEnabled(typeId != 0);
+		jMenuItem.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
+
+		if ((station != null || system != null || region != null) && typeId != 0) addSeparator();
+
+
+		jMenuItem = new JMenuItem("Station");
+		jMenuItem.setIcon(Images.ICON_STATION);
+		jMenuItem.setEnabled(station != null);
+		jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
+
+		jMenuItem = new JMenuItem("System");
+		jMenuItem.setIcon(Images.ICON_SYSTEM);
+		jMenuItem.setEnabled(system != null);
+		jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
+
+		jMenuItem = new JMenuItem("Region");
+		jMenuItem.setIcon(Images.ICON_REGION);
+		jMenuItem.setEnabled(region != null);
+		jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
 	}
 
 	@Override

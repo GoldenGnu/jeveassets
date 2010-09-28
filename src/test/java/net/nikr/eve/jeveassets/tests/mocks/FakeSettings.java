@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -440,4 +441,11 @@ public abstract class FakeSettings extends Settings {
 	public void setIgnoreSecureContainers(boolean ignoreSecureContainers) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Galaxy getGalaxyModel() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+
 }

@@ -29,7 +29,6 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +37,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -48,18 +48,20 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class IndustryJobsTab extends JMainTab implements ActionListener, MouseListener {
+public class IndustryJobsTab extends JMainTab implements ActionListener {
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private JComboBox jActivity;
-	private JAutoColumnTable jJobs;
+	private JAutoColumnTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
@@ -96,12 +98,13 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 		//Table Model
 		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
 		//Tables
-		jJobs = new JAutoColumnTable(jobsTableModel, industryJobsTableFormat.getColumnNames());
-		jJobs.addMouseListener(this);
+		jTable = new JAutoColumnTable(jobsTableModel, industryJobsTableFormat.getColumnNames());
+		//Listeners
+		installTableMenu(jTable);
 		//Sorters
-		TableComparatorChooser.install(jJobs, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
+		TableComparatorChooser.install(jTable, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
-		JScrollPane jJobsScrollPanel = jJobs.getScrollPanel();
+		JScrollPane jJobsScrollPanel = jTable.getScrollPanel();
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -129,17 +132,38 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 		);
 	}
 
-	private void showPopupMenu(MouseEvent e) {
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		jJobs.setRowSelectionInterval(jJobs.rowAtPoint(e.getPoint()), jJobs.rowAtPoint(e.getPoint()));
-		jJobs.setColumnSelectionInterval(0, jJobs.getColumnCount()-1);
-		int index = jJobs.getSelectedRow();
-		IndustryJob industryJob = jobsTableModel.getElementAt(index);
-		jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, industryJob));
-		jTablePopupMenu.add(JMenuTools.getLookupMenu(program, industryJob));
+
+		//Select Single Row
+		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+
+		updateTableMenu(jTablePopupMenu);
+
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
-	
+
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		
+
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+
+		IndustryJob industryJob = isSingleRow ? jobsTableModel.getElementAt(jTable.getSelectedRow()) : null;
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
+		jComponent.add(new JMenuAssetFilter(program, industryJob));
+		jComponent.add(new JMenuLookup(program, industryJob));
+	}
 
 	@Override
 	public void updateData() {
@@ -172,7 +196,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 		}
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
-			jJobs.setEnabled(true);
+			jTable.setEnabled(true);
 			jActivity.setEnabled(true);
 			jState.setEnabled(true);
 			Collections.sort(characters);
@@ -185,7 +209,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 			jState.setSelectedIndex(0);
 		} else {
 			jCharacters.setEnabled(false);
-			jJobs.setEnabled(false);
+			jTable.setEnabled(false);
 			jActivity.setEnabled(false);
 			jState.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
@@ -214,11 +238,11 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 				//State
 				IndustryJob.IndustryJobState sState = (IndustryJob.IndustryJobState) jState.getSelectedItem();
 				//Activity
-				String sActivity = (String) jActivity.getSelectedItem();
+				Object activity = jActivity.getSelectedItem();
 				for (int a = 0; a < industryJobsInput.size(); a++){
 					IndustryJob industryJob = industryJobsInput.get(a);
 					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.IndustryJobState.STATE_ALL));
-					boolean bActivity = (industryJob.getActivity().equals(sActivity) || sActivity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
+					boolean bActivity = (industryJob.getActivity().equals(activity) || activity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
 					if (bState && bActivity){
 						industryJobsOutput.add(industryJob);
 					}
@@ -228,23 +252,4 @@ public class IndustryJobsTab extends JMainTab implements ActionListener, MouseLi
 			}
 		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 }

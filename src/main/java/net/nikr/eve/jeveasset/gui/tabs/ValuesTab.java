@@ -26,12 +26,14 @@ import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
@@ -598,6 +600,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(false);
+	}
+
+	@Override
 	public void updateData() {
 		calcTotal();
 		jOwners.removeAllItems();
@@ -683,6 +691,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 		jAll.setText(output.getOutput());
 	}
+
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {}
 
 	private class Output{
 		private String output;

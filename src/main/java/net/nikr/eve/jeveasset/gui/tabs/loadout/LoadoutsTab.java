@@ -32,7 +32,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +40,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -55,7 +55,9 @@ import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuTools;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
@@ -63,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements ActionListener, MouseListener {
+public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
@@ -142,15 +144,19 @@ public class LoadoutsTab extends JMainTab implements ActionListener, MouseListen
 		moduleFilterList = new FilterList<Module>(moduleEventList);
 		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
-		//Tables 
+		//Tables
 		jTable = new JSeparatorTable(moduleTableModel, materialTableFormat.getColumnNames());
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
-		jTable.addMouseListener(this);
+		//Table Render
 		PaddingTableCellRenderer.install(jTable, 3);
+
+		//Selection Model
 		EventSelectionModel<Module> selectionModel = new EventSelectionModel<Module>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		//Listeners
+		installTableMenu(jTable);
 		//Scroll Panels
 		JScrollPane jModuleScrollPanel = jTable.getScrollPanel();
 
@@ -193,7 +199,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener, MouseListen
 							+File.separator+"EVE"
 							+File.separator+"fittings"
 							);
-		File mac = new File(javax.swing.filechooser.FileSystemView.getFileSystemView().getDefaultDirectory()
+		File mac = new File(System.getProperty("user.home", ".")
 							+File.separator+"Library"
 							+File.separator+"Preferences"
 							+File.separator+"EVE Online Preferences"
@@ -246,20 +252,39 @@ public class LoadoutsTab extends JMainTab implements ActionListener, MouseListen
 		}
 	}
 
-	private void showPopupMenu(MouseEvent e) {
+	@Override
+	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
 		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
-		int index = jTable.getSelectedRow();
-		Object o = moduleTableModel.getElementAt(index);
-		if (o instanceof Module){
-			Module module = (Module)o;
-			jTablePopupMenu.add(JMenuTools.getAssetFilterMenu(program, module));
-			jTablePopupMenu.add(JMenuTools.getLookupMenu(program, module));
-			jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+
+		updateTableMenu(jTablePopupMenu);
+
+		if (jTable.getSelectedRows().length == 1){
+			Object o = moduleTableModel.getElementAt(jTable.getSelectedRow());
+			if (o instanceof Module){
+				jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
 
+	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+
+		Object module = isSingleRow ? moduleTableModel.getElementAt(jTable.getSelectedRow()) : null;
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
+		jComponent.add(new JMenuAssetFilter(program, module));
+		jComponent.add(new JMenuLookup(program, module));
+	}
 
 	private void updateTable(){
 		List<Module> ship = new ArrayList<Module>();
@@ -398,23 +423,4 @@ public class LoadoutsTab extends JMainTab implements ActionListener, MouseListen
 		}
 
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()) showPopupMenu(e);
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 }

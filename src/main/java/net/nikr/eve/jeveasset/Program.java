@@ -401,6 +401,20 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open "+file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
+	/**
+	 * Called when the table menu needs update
+	 */
+	public void updateTableMenu(){
+		this.getMainWindow().getSelectedTab().updateTableMenu(this.getMainWindow().getMenu().getTableMenu());
+	}
+
+	/**
+	 * Called when the active tab is change (close/open/change)
+	 */
+	public void tabChanged(){
+		getStatusPanel().tabChanged();
+		updateTableMenu();
+	}
 
 
 	/**

@@ -231,7 +231,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		program.getStatusPanel().tabChanged();
+		program.tabChanged();
 	}
 
 	private class TabCloseButton extends JPanel{

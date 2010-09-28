@@ -263,7 +263,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	}
 
 	final public void savedFiltersChanged(){
-		jLoadFilter.clearMenu();
+		jLoadFilter.removeAll();
 		JMenuItem jMenuItem;
 		
 		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
