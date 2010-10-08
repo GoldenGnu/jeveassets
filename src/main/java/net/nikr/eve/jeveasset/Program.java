@@ -26,12 +26,9 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
-import java.awt.Desktop;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -71,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -381,26 +379,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		Program.forceUpdate = forceUpdate;
 	}
 
-	private void openFile(String filename){
-		File file = new File(filename);
-		LOG.info("Opening: {}", file.getName());
-		boolean opened = false;
-		if (Desktop.isDesktopSupported()) {
-			Desktop desktop = Desktop.getDesktop();
-			if (desktop.isSupported(Desktop.Action.OPEN)) {
-				try {
-					desktop.open(file);
-					opened = true;
-				} catch (IOException ex) {
-					LOG.warn("	Opening Failed: "+ex.getMessage());
-				}
-			}
-		}
-		if (!opened){
-			LOG.warn("	Opening File Failed");
-			JOptionPane.showMessageDialog(mainWindow.getFrame(), "Could not open "+file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
-		}
-	}
 	/**
 	 * Called when the table menu needs update
 	 */
@@ -500,16 +478,16 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 	//External Files
 		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
-			openFile(Settings.getPathReadme());
+			DesktopUtil.open(Settings.getPathReadme(), this);
 		}
 		if (MainMenu.ACTION_OPEN_LICENSE.equals(e.getActionCommand())) {
-			openFile(Settings.getPathLicense());
+			DesktopUtil.open(Settings.getPathLicense(), this);
 		}
 		if (MainMenu.ACTION_OPEN_CREDITS.equals(e.getActionCommand())) {
-			openFile(Settings.getPathCredits());
+			DesktopUtil.open(Settings.getPathCredits(), this);
 		}
 		if (MainMenu.ACTION_OPEN_CHANGELOG.equals(e.getActionCommand())) {
-			openFile(Settings.getPathChangeLog());
+			DesktopUtil.open(Settings.getPathChangeLog(), this);
 		}
 		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
 			exit();

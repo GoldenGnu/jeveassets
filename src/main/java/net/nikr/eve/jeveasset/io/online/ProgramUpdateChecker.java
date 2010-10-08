@@ -21,14 +21,11 @@
 
 package net.nikr.eve.jeveasset.io.online;
 
-import java.awt.Desktop;
 import java.awt.Window;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,25 +82,13 @@ public class ProgramUpdateChecker {
 		if (isStableUpdateAvailable()){
 			int value = JOptionPane.showConfirmDialog(parent, "A new version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Version Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
-				try {
-					Desktop.getDesktop().browse(new URI(Program.PROGRAM_HOMEPAGE));
-				} catch (IOException ex) {
-					LOG.info("Failed to open browser");
-				} catch (URISyntaxException ex) {
-					LOG.info("Failed to open browser");
-				}
+				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
 			}
 		}
 		if (isDevUpdateAvailable()){
 			int value = JOptionPane.showConfirmDialog(parent, "A new "+dev.getType().toLowerCase()+" version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Build Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
-				try {
-					Desktop.getDesktop().browse(new URI(Program.PROGRAM_HOMEPAGE));
-				} catch (IOException ex) {
-					LOG.info("Failed to open browser");
-				} catch (URISyntaxException ex) {
-					LOG.info("Failed to open browser");
-				}
+				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
 			}
 		}
 		if (requestedUpdate && !isStableUpdateAvailable() && !isDevUpdateAvailable()){

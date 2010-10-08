@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,8 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -328,7 +326,6 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				updateTab();
 			}
 		}
-		
 	}
 
 	private class InputPanel extends JCardPanel implements HyperlinkListener{
@@ -383,13 +380,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		@Override
 		public void hyperlinkUpdate(HyperlinkEvent hle) {
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-				try {
-					Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
+				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
 	}
@@ -494,22 +485,22 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		public Void doInBackground() {
 			setProgress(0);
 			try {
-				boolean ok = !program.getSettings().getAccounts().contains( account );
-				if (!ok){
+				if (program.getSettings().getAccounts().contains( account )){ //account already exist
 					result = 10;
 					return null;
 				}
-				ok = Online.isOnline(program.getSettings());
-				if (!ok){
-					result = 20;
-					return null;
+				humansGetter.load(null, true, account); //Update account
+				if (humansGetter.hasError()){ //Failed to add new account
+					if (!Online.isOnline(program.getSettings())){ //Offline
+						result = 20;
+						return null;
+					} else {
+						result = 30;
+						return null;
+					}
+				} else { //Successfully added new account
+					result = 100;
 				}
-				humansGetter.load(null, true, account);
-				if (humansGetter.hasError()){
-					result = 30;
-					return null;
-				}
-				result = 100;
 			} catch (Throwable ex) {
 				throwable = ex;
 				done = false;

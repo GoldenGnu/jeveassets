@@ -24,14 +24,10 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -43,6 +39,7 @@ import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,13 +229,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		if (o instanceof JEditorPane){
 			JEditorPane jEditorPane = (JEditorPane) o;
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
-				try {
-					Desktop.getDesktop().browse(new URI(hle.getURL().toString()));
-				} catch (URISyntaxException ex) {
-					LOG.warn("URISyntaxException: "+ex.getMessage(), ex);
-				} catch (IOException ex) {
-					LOG.warn("IOException: "+ex.getMessage(), ex);
-				}
+				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
 	}

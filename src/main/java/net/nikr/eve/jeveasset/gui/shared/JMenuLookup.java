@@ -21,17 +21,13 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,51 +114,25 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())){
-			browse("http://www.eve-central.com/home/quicklook.html?typeid="+typeId);
+			DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid="+typeId, program);
 		}
 		if (ACTION_BROWSE_EVE_METRICS.equals(e.getActionCommand())){
-			browse("http://eve-metrics.com/q/"+typeId);
+			DesktopUtil.browse("http://eve-metrics.com/q/"+typeId, program);
 		}
 		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())){
-			browse("http://www.eve-markets.net/detail.php?typeid="+typeId);
+			DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid="+typeId, program);
 		}
 		if (ACTION_BROWSE_GAMES_CHRUKER.equals(e.getActionCommand())){
-			browse("http://games.chruker.dk/eve_online/item.php?type_id="+typeId);
+			DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id="+typeId, program);
 		}
 		if (ACTION_BROWSE_EVEMAPS_DOTLAN_STATION.equals(e.getActionCommand())){
-			browse("http://evemaps.dotlan.net/outpost/"+station.replace(" ", "_"));
+			DesktopUtil.browse("http://evemaps.dotlan.net/outpost/"+station.replace(" ", "_"), program);
 		}
 		if (ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM.equals(e.getActionCommand())){
-			browse("http://evemaps.dotlan.net/system/"+system.replace(" ", "_"));
+			DesktopUtil.browse("http://evemaps.dotlan.net/system/"+system.replace(" ", "_"), program);
 		}
 		if (ACTION_BROWSE_EVEMAPS_DOTLAN_REGION.equals(e.getActionCommand())){
-			browse("http://evemaps.dotlan.net/map/"+region.replace(" ", "_"));
-		}
-	}
-
-	private void browse(String s){
-		boolean opened = false;
-		LOG.info("Opening: {}", s);
-		URI uri;
-		try {
-			uri = new URI(s);
-		} catch (URISyntaxException ex) {
-			uri = null;
-		}
-		if (Desktop.isDesktopSupported() && uri != null) {
-			Desktop desktop = Desktop.getDesktop();
-			if (desktop.isSupported(Desktop.Action.BROWSE)) {
-				try {
-					desktop.browse(uri);
-					opened = true;
-				} catch (IOException ex) {
-					LOG.warn("	Opening Failed: "+ex.getMessage());
-				}
-			}
-		}
-		if (!opened){
-			LOG.warn("	Opening File Failed");
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open "+s, "Open File", JOptionPane.PLAIN_MESSAGE);
+			DesktopUtil.browse("http://evemaps.dotlan.net/map/"+region.replace(" ", "_"), program);
 		}
 	}
 }
