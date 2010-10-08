@@ -81,8 +81,13 @@ public class Update {
 	 * @param requiredVersion
 	 */
 	public void performUpdates(int requiredVersion) {
+		File xml = new File(Settings.getPathSettings());
+		if (!xml.exists()){
+			LOG.info("No settings.xml file found - nothing to update");
+			return;
+		}
 		try {
-			int currentVersion = getVersion(new File(Settings.getPathSettings()));
+			int currentVersion = getVersion(xml);
 			if (requiredVersion > currentVersion) {
 				LOG.info("Data files are out of date, updating.");
 				Update1To2 update = new Update1To2();
