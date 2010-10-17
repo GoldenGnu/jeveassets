@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
 import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
@@ -72,18 +73,18 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
 
 	public UpdateDialog(Program program, Image image) {
-		super(program, "Update", image);
+		super(program, DialoguesUpdate.get().update(), image);
 
-		jCheckAll = new JCheckBox("All");
+		jCheckAll = new JCheckBox(DialoguesUpdate.get().all());
 		jCheckAll.setActionCommand(ACTION_CHECK_ALL);
 		jCheckAll.addActionListener(this);
 
-		jMarketOrders = new JCheckBox("Market Orders");
-		jIndustryJobs = new JCheckBox("Industry Jobs");
-		jAccounts = new JCheckBox("Accounts");
-		jAccountBalance = new JCheckBox("Account Balance");
-		jAssets = new JCheckBox("Assets");
-		jPriceData = new JCheckBox("Price Data");
+		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
+		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
+		jAccounts = new JCheckBox(DialoguesUpdate.get().accounts());
+		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
+		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
+		jPriceData = new JCheckBox(DialoguesUpdate.get().priceData());
 
 		jCheckBoxes.add(jMarketOrders);
 		jCheckBoxes.add(jIndustryJobs);
@@ -95,7 +96,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			jCheckBox.setActionCommand(ACTION_CHANGED);
 			jCheckBox.addActionListener(this);
 		}
-		JLabel jNextUpdateLabel = new JLabel("Next Update:");
+		JLabel jNextUpdateLabel = new JLabel(DialoguesUpdate.get().nextUpdate());
 		jMarketOrdersUpdate = new JLabel();
 		jIndustryJobsUpdate = new JLabel();
 		jAccountsUpdate = new JLabel();
@@ -103,11 +104,11 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jAssetsUpdate = new JLabel();
 		jPriceDataUpdate = new JLabel();
 
-		jUpdate = new JButton("Update");
+		jUpdate = new JButton(DialoguesUpdate.get().update());
 		jUpdate.setActionCommand(ACTION_UPDATE);
 		jUpdate.addActionListener(this);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(DialoguesUpdate.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 		
@@ -261,14 +262,14 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)){
 			if (updateAll){
-				jLabel.setText("Now (All)");
+				jLabel.setText(DialoguesUpdate.get().nowAll());
 			} else {
-				jLabel.setText("Now (Some)");
+				jLabel.setText(DialoguesUpdate.get().nowSome());
 			}
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
-			jLabel.setText(Formater.weekdayAndTime(nextUpdate)+" GMT");
+			jLabel.setText(DialoguesUpdate.get().nextUpdateTime(nextUpdate));
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}
@@ -379,7 +380,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class ConquerableStationsTask extends UpdateTask {
 
 		public ConquerableStationsTask() {
-			super("Conquerable Stations");
+			super(DialoguesUpdate.get().conqStations());
 		}
 
 		@Override
@@ -392,7 +393,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class AccountsTask extends UpdateTask {
 
 		public AccountsTask() {
-			super("Accounts");
+			super(DialoguesUpdate.get().accounts());
 		}
 
 		@Override
@@ -405,7 +406,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class AssetsTask extends UpdateTask {
 
 		public AssetsTask() {
-			super("Assets");
+			super(DialoguesUpdate.get().assets());
 		}
 
 		@Override
@@ -418,7 +419,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class BalanceTask extends UpdateTask {
 
 		public BalanceTask() {
-			super("Balance");
+			super(DialoguesUpdate.get().balance());
 		}
 
 		@Override
@@ -431,7 +432,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class IndustryJobsTask extends UpdateTask {
 
 		public IndustryJobsTask() {
-			super("Industry Jobs");
+			super(DialoguesUpdate.get().industryJobs());
 		}
 
 		@Override
@@ -444,7 +445,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public class MarketOrdersTask extends UpdateTask {
 
 		public MarketOrdersTask() {
-			super("Market Orders");
+			super(DialoguesUpdate.get().marketOrders());
 		}
 
 		@Override
@@ -458,7 +459,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		private boolean update;
 
 		public PriceDataTask(boolean update) {
-			super("Price Data");
+			super(DialoguesUpdate.get().priceData());
 			this.update = update;
 		}
 

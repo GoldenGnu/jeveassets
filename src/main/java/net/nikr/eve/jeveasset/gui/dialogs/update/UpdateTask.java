@@ -43,6 +43,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,7 +167,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			}
 			if (!errors.isEmpty()){
 				jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				jText.setText(name+" (click to show errors)");
+				jText.setText(DialoguesUpdate.get().clickToShow(name));
 			}
 		} else {
 			jText.setIcon(Images.ICON_WORKING);
@@ -179,12 +180,12 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			if (b){
 				errorShown = true;
 				jText.setFont( new Font(font.getName(), Font.BOLD, font.getSize()) );
-				jText.setText(name+" (click to hide errors)");
+				jText.setText(DialoguesUpdate.get().clickToHide(name));
 				
 			} else {
 				errorShown = false;
 				jText.setFont( new Font(font.getName(), Font.PLAIN, font.getSize()) );
-				jText.setText(name+" (click to show errors)");
+				jText.setText(DialoguesUpdate.get().clickToShow(name));
 			}
 		}
 	}
@@ -208,7 +209,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 				time = error.substring(start, end);
 			}
 			error = error.substring(0, start)+time+" GMT"+error.substring(end);
-			error = error.replace("retry after", "\r\nNext Update:");
+			error = error.replace("retry after", "\r\n" + DialoguesUpdate.get().nextUpdate());
 		}
 		return error;
 	}

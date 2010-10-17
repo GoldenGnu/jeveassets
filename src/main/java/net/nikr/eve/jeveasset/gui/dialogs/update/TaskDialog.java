@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 
 
 public class TaskDialog implements PropertyChangeListener, ActionListener, WindowListener{
@@ -87,16 +88,16 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 
 		jWindow.add(jPanel);
 
-		JLabel jUpdate = new JLabel("Updating");
+		JLabel jUpdate = new JLabel(DialoguesUpdate.get().updating());
 		jUpdate.setFont( new Font(jUpdate.getFont().getName(), Font.BOLD, jUpdate.getFont().getSize()+4));
 
 		jProgressBar = new JProgressBar(0, 100);
 
-		jOK = new JButton("OK");
+		jOK = new JButton(DialoguesUpdate.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(DialoguesUpdate.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -232,7 +233,7 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 		if (index >= updateTasks.size()){
 			setVisible(false);
 		} else {
-			int value = JOptionPane.showConfirmDialog(jWindow, "Do you want to cancel the update?", "Cancel Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int value = JOptionPane.showConfirmDialog(jWindow, DialoguesUpdate.get().cancelQuestion(), DialoguesUpdate.get().cancelQuestionTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (value == JOptionPane.YES_OPTION){
 				cancelUpdate();
 				setVisible(false);
@@ -284,7 +285,7 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 					jWindow.pack();
 					mouseTask.showError(true);
 					mouseTask.setError(jErrorMessage);
-					jErrorName.setText(mouseTask.getName()+" Errors");
+					jErrorName.setText(DialoguesUpdate.get().errors(mouseTask.getName()));
 				}
 			}
 		}

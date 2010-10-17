@@ -1,5 +1,7 @@
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import java.util.Date;
+import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -107,5 +109,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.enterFilter());
+	}
+
+	@Test
+	public void testDialoguesUpdate_en() throws Exception {
+		DialoguesUpdate g = Bundle.load(DialoguesUpdate.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.nextUpdateTime(new Date(System.currentTimeMillis())));
 	}
 }
