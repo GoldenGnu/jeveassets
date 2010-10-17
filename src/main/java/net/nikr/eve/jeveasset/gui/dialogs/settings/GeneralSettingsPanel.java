@@ -25,6 +25,7 @@ import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class GeneralSettingsPanel extends JSettingsPanel {
@@ -34,11 +35,11 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 
 	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "General", icon);
+		super(program, optionsDialog, DialoguesSettings.get().general(), icon);
 
-		jStable = new JCheckBox("Automatically search for new "+Program.PROGRAM_NAME+" versions");
+		jStable = new JCheckBox(DialoguesSettings.get().searchForNewVersion(Program.PROGRAM_NAME));
 
-		jDev = new JCheckBox("Include beta releases");
+		jDev = new JCheckBox(DialoguesSettings.get().searchForNewVersionBeta());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)

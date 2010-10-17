@@ -37,6 +37,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 // </editor-fold>
 /**
@@ -54,14 +55,14 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	private JTextField apiProxyField;
 
 	public ProxySettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "Proxy", icon);
+		super(program, optionsDialog, DialoguesSettings.get().proxy(), icon);
 
-		JLabel proxyTypeLabel = new JLabel("Proxy Type");
-		JLabel proxyAddressLabel = new JLabel("Proxy Address");
-		JLabel proxyPortLabel = new JLabel("Proxy Port");
+		JLabel proxyTypeLabel = new JLabel(DialoguesSettings.get().type());
+		JLabel proxyAddressLabel = new JLabel(DialoguesSettings.get().address());
+		JLabel proxyPortLabel = new JLabel(DialoguesSettings.get().port());
 
-		JLabel enableApiLabel = new JLabel("Enable API Proxy");
-		JLabel apiProxyLabel = new JLabel("API Proxy Address");
+		JLabel enableApiLabel = new JLabel(DialoguesSettings.get().enable());
+		JLabel apiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
 
 		proxyTypeField = new JComboBox(new DefaultComboBoxModel(Proxy.Type.values()));
 		proxyTypeField.setEnabled(true);

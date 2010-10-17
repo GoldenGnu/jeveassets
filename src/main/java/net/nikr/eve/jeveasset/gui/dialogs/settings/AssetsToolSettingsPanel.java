@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
@@ -34,13 +35,13 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		private JCheckBox jReprocessColors;
 
 	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, "Assets", icon, parentNode);
+		super(program, settingsDialog, DialoguesSettings.get().assets(), icon, parentNode);
 
-		jEnterFilters = new JCheckBox("Only filter when enter is pressed");
+		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 
-		jMarkSelectedRow = new JCheckBox("Highlight selected row(s)");
+		jMarkSelectedRow = new JCheckBox(DialoguesSettings.get().hilightSelected());
 
-		jReprocessColors = new JCheckBox("Sell/Reprocess colors (Green to sell and red to reprocess)");
+		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)

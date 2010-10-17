@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class OverviewToolSettingsPanel extends JSettingsPanel {
@@ -33,8 +34,8 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 	private JCheckBox jIgnoreSecureContainers;
 
 	public OverviewToolSettingsPanel(Program program, SettingsDialog settingsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, "Overview", icon, parentNode);
-		jIgnoreSecureContainers = new JCheckBox("Ignore Audit Log Secure Containers");
+		super(program, settingsDialog, DialoguesSettings.get().overview(), icon, parentNode);
+		jIgnoreSecureContainers = new JCheckBox(DialoguesSettings.get().ignoreAuditLogContainers());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)

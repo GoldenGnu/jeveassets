@@ -48,6 +48,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class SettingsDialog extends JDialogCentered implements ActionListener, TreeSelectionListener {
@@ -68,12 +69,12 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	private boolean tabSelected = false;
 
 	public SettingsDialog(Program program, Image image) {
-		super(program, Program.PROGRAM_NAME+" Settings", image);
+		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), image);
 
 		settingsPanels = new HashMap<String, JSettingsPanel>();
 		icons = new HashMap<Object, Icon>();
 
-		rootNode = new DefaultMutableTreeNode("root");
+		rootNode = new DefaultMutableTreeNode(DialoguesSettings.get().root());
 		treeModel = new DefaultTreeModel(rootNode);
 		jTree = new JTree(treeModel);
 		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -92,15 +93,15 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 
 		JSeparator jSeparator = new JSeparator();
 
-		jOK = new JButton("OK");
+		jOK = new JButton(DialoguesSettings.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 
-		JButton jApply = new JButton("Apply");
+		JButton jApply = new JButton(DialoguesSettings.get().apply());
 		jApply.setActionCommand(ACTION_APPLY);
 		jApply.addActionListener(this);
 
-		JButton jCancel = new JButton("Cancel");
+		JButton jCancel = new JButton(DialoguesSettings.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 

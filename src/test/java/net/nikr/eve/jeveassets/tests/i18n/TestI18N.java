@@ -8,6 +8,7 @@ import java.util.Locale;
 import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.junit.Test;
 import uk.me.candle.translations.Bundle;
@@ -96,5 +97,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.deleteProfileConfirm("delete me!"));
+	}
+
+	@Test
+	public void testDialoguesSettings_en() throws Exception {
+		DialoguesSettings g = Bundle.load(DialoguesSettings.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.enterFilter());
 	}
 }

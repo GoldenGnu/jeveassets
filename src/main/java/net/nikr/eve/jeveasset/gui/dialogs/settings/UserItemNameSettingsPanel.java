@@ -25,12 +25,18 @@ import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItemName;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class UserItemNameSettingsPanel extends JUserListPanel<Long, UserItemName> {
 
 	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NO_RESTRICTIONS, "Names", "Assets", "Name", "\r\nTo change the name of an asset:\r\n1. Go to the Assets Tab\r\n2. Right click on the asset in the table\r\n3. Select \"Set Name...\" in the popup menu");
+		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NO_RESTRICTIONS,
+				DialoguesSettings.get().names(),
+				DialoguesSettings.get().namesAssets(),
+				DialoguesSettings.get().name(),
+				DialoguesSettings.get().namesInstruction()
+				);
 	}
 
 	@Override

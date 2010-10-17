@@ -36,6 +36,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class WindowSettingsPanel extends JSettingsPanel implements ActionListener {
@@ -58,29 +59,29 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	JButton jDefault;
 
 	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "Window", icon);
+		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), icon);
 
-		jAutoSave = new JRadioButton("Save size on exit");
+		jAutoSave = new JRadioButton(DialoguesSettings.get().windowSaveOnExit());
 		jAutoSave.setActionCommand(ACTION_AUTO_SAVE);
 		jAutoSave.addActionListener(this);
 
-		jFixed = new JRadioButton("Fixed size");
+		jFixed = new JRadioButton(DialoguesSettings.get().windowFixed());
 		jFixed.setActionCommand(ACTION_FIXED);
 		jFixed.addActionListener(this);
 
-		JLabel jWidthLabel = new JLabel("Width: ");
+		JLabel jWidthLabel = new JLabel(DialoguesSettings.get().windowWidth());
 		jWidth = new JNumberField();
 
-		JLabel jHeightLabel = new JLabel("Height: ");
+		JLabel jHeightLabel = new JLabel(DialoguesSettings.get().windowHeight());
 		jHeight = new JNumberField();
 
-		JLabel jXLabel = new JLabel("X Position: ");
+		JLabel jXLabel = new JLabel(DialoguesSettings.get().windowX());
 		jX = new JNumberField();
 
-		JLabel jYLabel = new JLabel("Y Position: ");
+		JLabel jYLabel = new JLabel(DialoguesSettings.get().windowY());
 		jY = new JNumberField();
 
-		JLabel jMaximizedLabel = new JLabel("Maximized: ");
+		JLabel jMaximizedLabel = new JLabel(DialoguesSettings.get().windowMaximised());
 		jMaximized = new JCheckBox();
 
 		ButtonGroup group = new ButtonGroup();

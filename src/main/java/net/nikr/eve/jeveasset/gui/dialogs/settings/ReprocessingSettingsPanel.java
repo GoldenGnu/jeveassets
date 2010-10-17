@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionListener {
@@ -51,30 +52,30 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	private JRadioButton[] jScrapmetalProcessing;
 
 	public ReprocessingSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "Reprocessing", icon);
+		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), icon);
 
-		JLabel jNotes = new JLabel("Note: Station tax is not calculated (0% tax or 6.67+ standing)");
+		JLabel jNotes = new JLabel(DialoguesSettings.get().reprocessingWarning());
 
-		JLabel jStationLabel = new JLabel("Station Refining Equipment:  ");
-		jStation50 = new JRadioButton("50%");
+		JLabel jStationLabel = new JLabel(DialoguesSettings.get().stationEquipment());
+		jStation50 = new JRadioButton(DialoguesSettings.get().fiftyPercent());
 		jStation50.addActionListener(this);
-		jStationOther = new JRadioButton("Custom:");
+		jStationOther = new JRadioButton(DialoguesSettings.get().customPercent());
 		jStationOther.addActionListener(this);
 		jStation = new JNumberField();
-		JLabel jStationPercentLabel = new JLabel("%");
+		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
 
 		ButtonGroup jStationButtonGroup = new ButtonGroup();
 		jStationButtonGroup.add(jStation50);
 		jStationButtonGroup.add(jStationOther);
 
-		JLabel j0 = new JLabel("0");
-		JLabel j1 = new JLabel("1");
-		JLabel j2 = new JLabel("2");
-		JLabel j3 = new JLabel("3");
-		JLabel j4 = new JLabel("4");
-		JLabel j5 = new JLabel("5");
+		JLabel j0 = new JLabel(DialoguesSettings.get().zero());
+		JLabel j1 = new JLabel(DialoguesSettings.get().one());
+		JLabel j2 = new JLabel(DialoguesSettings.get().two());
+		JLabel j3 = new JLabel(DialoguesSettings.get().three());
+		JLabel j4 = new JLabel(DialoguesSettings.get().four());
+		JLabel j5 = new JLabel(DialoguesSettings.get().five());
 
-		JLabel jRefiningLabel = new JLabel("Refining Level: ");
+		JLabel jRefiningLabel = new JLabel(DialoguesSettings.get().refiningLevel());
 		jRefining = new JRadioButton[6];
 		jRefining[LEVEL0] = new JRadioButton();
 		jRefining[LEVEL0].addActionListener(this);
@@ -97,7 +98,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		jRefiningButtonGroup.add(jRefining[LEVEL4]);
 		jRefiningButtonGroup.add(jRefining[LEVEL5]);
 
-		JLabel jRefineryEfficiencyLabel = new JLabel("Refinery Efficiency Level: ");
+		JLabel jRefineryEfficiencyLabel = new JLabel(DialoguesSettings.get().refiningEfficiencyLevel());
 		jRefineryEfficiency = new JRadioButton[6];
 		jRefineryEfficiency[LEVEL0] = new JRadioButton();
 		jRefineryEfficiency[LEVEL0].addActionListener(this);
@@ -120,7 +121,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL4]);
 		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL5]);
 
-		JLabel jScrapmetalProcessingLabel = new JLabel("Scrapmetal Processing Level: ");
+		JLabel jScrapmetalProcessingLabel = new JLabel(DialoguesSettings.get().scrapMetalProcessingLevel());
 		jScrapmetalProcessing = new JRadioButton[6];
 		jScrapmetalProcessing[LEVEL0] = new JRadioButton();
 		jScrapmetalProcessing[LEVEL1] = new JRadioButton();

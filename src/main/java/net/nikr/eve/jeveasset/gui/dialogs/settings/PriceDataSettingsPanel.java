@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class PriceDataSettingsPanel extends JSettingsPanel implements ActionListener {
@@ -44,8 +45,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 	private JComboBox jSource;
 	
 	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, "Price Data", icon);
-		JTextArea jWarning = new JTextArea("Note: When changing the source and/or region, the changes doesn't take effect until next time you update the price data.");
+		super(program, optionsDialog, DialoguesSettings.get().priceData(), icon);
+		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
 		jWarning.setFont(this.getPanel().getFont());
 		jWarning.setBackground(this.getPanel().getBackground());
 		jWarning.setLineWrap(true);
@@ -53,13 +54,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		jWarning.setFocusable(false);
 		jWarning.setEditable(false);
 
-		JLabel jRegionsLabel = new JLabel("Regions to include:");
+		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
 		jRegions = new JComboBox();
 
-		JLabel jPriceTypeLabel = new JLabel("Price to use:");
+		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
 		jPriceType = new JComboBox( new Vector<EveAsset.PriceMode>(EveAsset.getPriceTypes()));
 
-		JLabel jSourceLabel = new JLabel("Source to use:");
+		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceDataSettings.SOURCES);
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
 		jSource.addActionListener(this);
