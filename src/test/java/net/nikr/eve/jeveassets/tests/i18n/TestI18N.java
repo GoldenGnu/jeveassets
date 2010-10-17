@@ -1,5 +1,6 @@
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
@@ -119,5 +120,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.nextUpdateTime(new Date(System.currentTimeMillis())));
+	}
+
+	@Test
+	public void testDialoguesAbout_en() throws Exception {
+		DialoguesAbout g = Bundle.load(DialoguesAbout.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.about());
 	}
 }

@@ -39,6 +39,7 @@ import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
+import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	private JWait jWait;
 	
 	public AboutDialog(Program program, Image image) {
-		super(program, "About", image);
+		super(program, DialoguesAbout.get().about(), image);
 
 		jWait = new JWait(this.getDialog());
 
@@ -114,11 +115,11 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				"<b>Special Thanks</b><br>"
 				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
 		
-		jClose = new JButton("Close");
+		jClose = new JButton(DialoguesAbout.get().close());
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
 
-		jCheckUpdates = new JButton("Check for updates");
+		jCheckUpdates = new JButton(DialoguesAbout.get().updates());
 		jCheckUpdates.setActionCommand(ACTION_UPDATE);
 		jCheckUpdates.addActionListener(this);
 
@@ -214,7 +215,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 			super.setVisible(false);
 		}
 		if (ACTION_UPDATE.equals(e.getActionCommand())){
-			jWait.showWaitDialog("Checking for new program updates");
+			jWait.showWaitDialog(DialoguesAbout.get().updatesInProgress());
 			setEnabledAll(false);
 			CheckProgramUpdate checkProgramUpdate = new CheckProgramUpdate();
 			checkProgramUpdate.addPropertyChangeListener(this);
