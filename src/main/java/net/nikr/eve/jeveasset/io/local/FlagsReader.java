@@ -44,11 +44,11 @@ public class FlagsReader extends AbstractXmlReader {
 			Element element = getDocumentElement(Settings.getPathFlags());
 			parseFlags(element, settings.getItemFlags());
 		} catch (IOException ex) {
-			LOG.error("Jumps not loaded: "+ex.getMessage(), ex);
+			LOG.error("Flags not loaded: "+ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			LOG.error("Jumps not loaded: "+ex.getMessage(), ex);
+			LOG.error("Flags not loaded: "+ex.getMessage(), ex);
 		}
-		LOG.info("Assets loaded");
+		LOG.info("Flags loaded");
 		return true;
 	}
 

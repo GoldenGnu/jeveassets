@@ -45,7 +45,7 @@ public class CsvWriter {
 			}
 			writer.close();
 		} catch (IOException ex){
-			LOG.warn("CSV file saving failed");
+			LOG.warn("CSV file not saved");
 			return false;
 		}
 		LOG.info("CSV file saved");
