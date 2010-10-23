@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
@@ -111,6 +113,10 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
 		jTable = new JOverviewTable(overviewTableModel, overviewTableFormat.getColumnNames());
+		//Table Selection
+		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
 		//Sorters
@@ -166,13 +172,15 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
 		JMenuItem jSubMenuItem;
+		
+		int[] selectedRows = jTable.getSelectedRows();
 
-		boolean isSingleRow = jTable.getSelectedRows().length == 1;
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+		boolean isSingleRow = selectedRows.length == 1;
+		boolean isSelected = (selectedRows.length > 0 && jTable.getSelectedColumns().length > 0);
 
 		Overview overview = null;
 		if (isSingleRow){
-			overview = overviewTableModel.getElementAt(jTable.getSelectedRow());
+			overview = overviewTableModel.getElementAt(selectedRows[0]);
 		}
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
