@@ -44,6 +44,7 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 
 	public JMenuCopy(JTable jTable) {
 		super("Copy");
+		this.jTable = jTable;
 		this.setIcon(Images.ICON_COPY);
 		this.setActionCommand(ACTION_COPY);
 		this.addActionListener(this);
