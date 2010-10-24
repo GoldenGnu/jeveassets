@@ -46,7 +46,7 @@ public class EveAssetTableHeader extends JTableHeader {
 		if (column >= 0){
 			TableColumn aColumn = columnModel.getColumn(column);
 			String sColumn = (String) aColumn.getHeaderValue();
-			tip = program.getSettings().getTableColumnTooltips().get(sColumn);
+			tip = program.getSettings().getAssetTableColumnTooltips().get(sColumn);
 			if (tip == null){
 				tip = sColumn;
 			}

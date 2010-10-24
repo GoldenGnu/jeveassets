@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.TableSettings;
+import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
@@ -64,7 +66,7 @@ public class SettingsReader extends AbstractXmlReader {
 			LOG.info("Settings not loaded");
 			return false;
 		} catch (XmlException ex) {
-			LOG.error("Settings not loaded: ("+Settings.getPathSettings()+")"+ex.getMessage(), ex);
+			LOG.error("Settings parser error: ("+Settings.getPathSettings()+")"+ex.getMessage(), ex);
 		}
 		LOG.info("Settings loaded");
 		return true;
@@ -125,7 +127,6 @@ public class SettingsReader extends AbstractXmlReader {
 			parsePriceDataSettings(priceDataSettingsElement, settings);
 		}
 		
-
 		//Flags
 		NodeList flagNodes = element.getElementsByTagName("flags");
 		if (flagNodes.getLength() != 1){
@@ -134,13 +135,12 @@ public class SettingsReader extends AbstractXmlReader {
 		Element flagsElement = (Element) flagNodes.item(0);
 		parseFlags(flagsElement, settings);
 
-		//Columns
-		NodeList columnNodes = element.getElementsByTagName("columns");
-		if (columnNodes.getLength() != 1){
-			throw new XmlException("Wrong columns element count.");
+		//TableSettings
+		NodeList tableSettingsNodes = element.getElementsByTagName("tables");
+		if (tableSettingsNodes.getLength() == 1){
+			Element tableSettingsElement = (Element) tableSettingsNodes.item(0);
+			parseTableSettings(tableSettingsElement, settings);
 		}
-		Element columnsElement = (Element) columnNodes.item(0);
-		parseColumns(columnsElement, settings);
 
 		//Updates
 		NodeList updateNodes = element.getElementsByTagName("updates");
@@ -293,8 +293,34 @@ public class SettingsReader extends AbstractXmlReader {
 			settings.getFlags().put(key, enabled);
 		}
 	}
+	private static void parseTableSettings(Element element, Settings settings){
+		NodeList tablesNodes = element.getElementsByTagName("table");
+		for (int a = 0; a < tablesNodes.getLength(); a++){
+			Element tableNode = (Element) tablesNodes.item(a);
+			String table = AttributeGetters.getString(tableNode, "name");
+			ResizeMode resize = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
+			NodeList columnNodes = tableNode.getElementsByTagName("column");
+			List<String> tableColumnNames = new ArrayList<String>();
+			List<String> tableColumnVisible = new ArrayList<String>();
+			for (int b = 0; b < columnNodes.getLength(); b++){
+				Element columnNode = (Element) columnNodes.item(b);
+				String name = AttributeGetters.getString(columnNode, "name");
+				boolean visible = AttributeGetters.getBoolean(columnNode, "visible");
+				tableColumnNames.add(name);
+				if (visible) tableColumnVisible.add(name);
+			}
+			TableSettings tableSettings = settings.getTableSettings().get(table);
+			tableSettings.setMode(resize);
+			tableSettings.setTableColumnNames(tableColumnNames);
+			tableSettings.setTableColumnVisible(tableColumnVisible);
 
-	private static void parseColumns(Element element, Settings settings){
+
+		}
+	}
+
+	//FIXME
+	/*
+	private static void parseTableSettings(Element element, Settings settings){
 		NodeList columnNodes = element.getElementsByTagName("column");
 		List<String> mainTableColumnNames = new ArrayList<String>();
 		List<String> mainTableColumnVisible = new ArrayList<String>();
@@ -306,7 +332,7 @@ public class SettingsReader extends AbstractXmlReader {
 			if (visible) mainTableColumnVisible.add(name);
 		}
 		//Add new columns, at the end... (Might not be the defaut location)
-		List<String> mainTableColumnNamesOriginal = settings.getTableColumnNames();
+		List<String> mainTableColumnNamesOriginal = settings.getAssetTableSettings().getTableColumnNames();
 		for (int a = 0; a < mainTableColumnNamesOriginal.size(); a++){
 			if (!mainTableColumnNames.contains(mainTableColumnNamesOriginal.get(a))){
 				mainTableColumnNames.add(mainTableColumnNamesOriginal.get(a));
@@ -314,9 +340,11 @@ public class SettingsReader extends AbstractXmlReader {
 			}
 		}
 
-		settings.setTableColumnNames(mainTableColumnNames);
-		settings.setTableColumnVisible(mainTableColumnVisible);
+		settings.getAssetTableSettings().setTableColumnNames(mainTableColumnNames);
+		settings.getAssetTableSettings().setTableColumnVisible(mainTableColumnVisible);
 	}
+	 * 
+	 */
 
 	private static void parseUpdates(Element element, Settings settings){
 		NodeList updateNodes = element.getElementsByTagName("update");

@@ -21,12 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import javax.swing.event.TableModelEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
@@ -34,16 +30,11 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -52,23 +43,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
@@ -77,13 +58,10 @@ import org.slf4j.LoggerFactory;
 
 
 public class AssetsTab extends JMainTab
-		implements MouseListener, ActionListener, TableColumnModelListener, TableModelListener {
+		implements ActionListener, JColumnTable.ColumnTableListener {
+	
 	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
-	public final static String ACTION_AUTO_RESIZING_COLUMNS_TEXT = "ACTION_AUTO_RESIZING_COLUMNS_TEXT";
-	public final static String ACTION_AUTO_RESIZING_COLUMNS_WINDOW = "ACTION_AUTO_RESIZING_COLUMNS_WINDOW";
-	public final static String ACTION_DISABLE_AUTO_RESIZING_COLUMNS = "ACTION_DISABLE_AUTO_RESIZING_COLUMNS";
-	public final static String ACTION_RESET_COLUMNS_TO_DEFAULT = "ACTION_SHOW_ALL_COLUMNS";
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_SET_USER_PRICE = "ACTION_SET_USER_PRICE";
 	public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
@@ -98,10 +76,10 @@ public class AssetsTab extends JMainTab
 
 	//GUI
 	private ToolPanel toolPanel;
-	private JTable jTable;
-	private JDropDownButton jColumnsSelection;
+	private JAssetTable jTable;
+	
 	private JPopupMenu jTablePopupMenu;
-	private JMenu jColumnMenu;
+	
 
 	private JLabel jTotalValue;
 	private JLabel jCount;
@@ -113,13 +91,6 @@ public class AssetsTab extends JMainTab
 	private EventList<EveAsset> eveAssetEventList;
 	private EventSelectionModel<EveAsset> selectionModel;
 	private FilterList<EveAsset> filterList;
-	
-	//Data
-	private boolean columnMoved = false;
-	private List<String> tempMainTableColumnNames;
-	private List<String> tempMainTableColumnVisible;
-	private int rowsLastTime = 0;
-	private int rowsCount = 0;
 	
 	public AssetsTab(Program program) {
 		super(program, "Assets", Images.ICON_TOOL_ASSETS, false);
@@ -135,9 +106,8 @@ public class AssetsTab extends JMainTab
 		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(filterList, program);
 		//Table Model
 		eveAssetTableModel = new EventTableModel<EveAsset>(filterList, eveAssetTableFormat);
-		eveAssetTableModel.addTableModelListener(this);
 		//Table
-		jTable = new JAssetTable(program, eveAssetTableModel);
+		jTable = new JAssetTable(program, eveAssetTableModel, program.getSettings().getAssetTableSettings());
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
 		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.getTableHeader().setResizingAllowed(true);
@@ -151,35 +121,11 @@ public class AssetsTab extends JMainTab
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		jTable.getTableHeader().addMouseListener(this);
-		jTable.getColumnModel().addColumnModelListener(this);
-		jTable.addMouseListener(this);
+		jTable.addColumnTableListener(this);
 		installTableMenu(jTable);
-		//Table Button
-		jColumnsSelection = new JDropDownButton(JDropDownButton.RIGHT);
-		jColumnsSelection.setIcon(Images.ICON_ARROW_DOWN);
-		jColumnsSelection.setHorizontalAlignment(SwingConstants.RIGHT);
-		jColumnsSelection.setBorder(null);
-		jColumnsSelection.addMouseListener(this);
-
-		//Table Scrollpanel
-		JScrollPane jTableSPanel = new JScrollPane(jTable);
-		jTableSPanel.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, jColumnsSelection);
-		jTableSPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		jTableSPanel.setAutoscrolls(true);
-		jTableSPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,0,0,0), BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)) );
-		this.getPanel().add(jTableSPanel);
 
 		//Filter panel(s)
 		toolPanel = new ToolPanel(program, matcherEditorManager);
-		this.getPanel().add(toolPanel.getPanel());
-
-		//Table Menu
-		jColumnMenu = new JMenu("Columns");
-		jColumnMenu.setIcon(Images.ICON_TABLE_SHOW);
-
-		updateColumnMenus();
-
 
 		jVolume = StatusPanel.createLabel("Total volume of shown assets", Images.ICON_VOLUME);
 		this.addStatusbarLabel(jVolume);
@@ -202,7 +148,7 @@ public class AssetsTab extends JMainTab
 					.addGap(15)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(toolPanel.getPanel())
-						.addComponent(jTableSPanel, 0, 0, Short.MAX_VALUE)
+						.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
 					)
 					.addGap(15)
 				)
@@ -212,9 +158,8 @@ public class AssetsTab extends JMainTab
 			layout.createSequentialGroup()
 				.addGap(5)
 				.addComponent(toolPanel.getPanel())
-				.addComponent(jTableSPanel, 0, 0, Short.MAX_VALUE)
+				.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
 		);
-		
 	}
 
 	private void updateStatusbar(){
@@ -289,137 +234,12 @@ public class AssetsTab extends JMainTab
 		toolPanel.addFilter(assetFilter, unique);
 	}
 
-	private void updateCoulmnsSize(){
-		if (program.getSettings().isAutoResizeColumnsText()){
-			autoResizeColumnsText();
-		}
-		if (program.getSettings().isAutoResizeColumnsWindow()){
-			autoResizeColumnsWindow();
-		}
-		if (!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow()){
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		}
-	}
-
-	private void updateTableStructure(){
-		if (program.getSettings().isAutoResizeColumnsText()){
-			eveAssetTableModel.fireTableStructureChanged();
-			updateCoulmnsSize();
-		} else {
-			Map<String, Integer> widths = new HashMap<String, Integer>();
-			for (int a = 0; a < jTable.getColumnCount(); a++){
-				int width = jTable.getColumnModel().getColumn(a).getPreferredWidth();
-				String name = (String)jTable.getColumnModel().getColumn(a).getHeaderValue();
-				widths.put(name, width);
-			}
-			eveAssetTableModel.fireTableStructureChanged();
-			for (int a = 0; a < jTable.getColumnCount(); a++){
-				String name = (String)jTable.getColumnModel().getColumn(a).getHeaderValue();
-				if (widths.containsKey(name)){
-					int width = widths.get(name);
-					jTable.getColumnModel().getColumn(a).setPreferredWidth(width);
-				} else {
-					autoResizeColumn(jTable.getColumnModel().getColumn(a));
-				}
-			}
-		}
-	}
-
 	public void savedFiltersChanged(){
 		toolPanel.savedFiltersChanged();
 		updateToolPanel();
 	}
 
-	private void autoResizeColumnsWindow() {
-		for (int a = 0; a < jTable.getColumnCount(); a++){
-			jTable.getColumnModel().getColumn(a).setPreferredWidth(75);
-		}
-		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-	}
 	
-	private void autoResizeColumnsText() {
-		if (!eveAssetEventList.isEmpty() && eveAssetTableModel.getRowCount() > 0){
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int i = 0; i < eveAssetTableModel.getColumnCount(); i++) {
-				autoResizeColumn(jTable.getColumnModel().getColumn(i));
-			}
-		} else {
-			autoResizeColumnsWindow();
-		}
-	}
-
-	private void autoResizeColumn(TableColumn column) {
-		int maxWidth = 0;
-		TableCellRenderer renderer = column.getHeaderRenderer();
-		if (renderer == null) {
-			renderer = jTable.getTableHeader().getDefaultRenderer();
-		}
-		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
-		maxWidth = component.getPreferredSize().width;
-		for (int a = 0; a < jTable.getRowCount(); a++){
-			renderer = jTable.getCellRenderer(a, column.getModelIndex());
-			component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, column.getModelIndex()), false, false, a, column.getModelIndex());
-			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
-		}
-		column.setPreferredWidth(maxWidth+4);
-	}
-	private void updateColumnMenus(){
-		updateColumnMenu(jColumnsSelection);
-		updateColumnMenu(jColumnMenu);
-	}
-
-	private void updateColumnMenu(JComponent jComponent){
-		jComponent.removeAll();
-		
-		JCheckBoxMenuItem jCheckBoxMenuItem;
-		JRadioButtonMenuItem jRadioButtonMenuItem;
-		JMenuItem  jMenuItem;
-
-		jMenuItem = new JMenuItem("Reset columns to default");
-		jMenuItem.setActionCommand(ACTION_RESET_COLUMNS_TO_DEFAULT);
-		jMenuItem.addActionListener(this);
-		jComponent.add(jMenuItem);
-
-		addSeparator(jComponent);
-		
-		ButtonGroup group = new ButtonGroup();
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_TEXT);
-		jRadioButtonMenuItem.addActionListener(this);
-		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsText());
-		group.add(jRadioButtonMenuItem);
-		jComponent.add(jRadioButtonMenuItem);
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
-		jRadioButtonMenuItem.addActionListener(this);
-		jRadioButtonMenuItem.setSelected(program.getSettings().isAutoResizeColumnsWindow());
-		group.add(jRadioButtonMenuItem);
-		jComponent.add(jRadioButtonMenuItem);
-
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
-		jRadioButtonMenuItem.setActionCommand(ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
-		jRadioButtonMenuItem.addActionListener(this);
-		jRadioButtonMenuItem.setSelected(!program.getSettings().isAutoResizeColumnsText() && !program.getSettings().isAutoResizeColumnsWindow());
-		group.add(jRadioButtonMenuItem);
-		jComponent.add(jRadioButtonMenuItem);
-
-		addSeparator(jComponent);
-
-		List<String> columns = program.getSettings().getTableColumnNames();
-		for (int a = 0; a < columns.size(); a++){
-			jCheckBoxMenuItem = new JCheckBoxMenuItem(columns.get(a));
-			jCheckBoxMenuItem.setActionCommand(columns.get(a));
-			jCheckBoxMenuItem.addActionListener(this);
-			jCheckBoxMenuItem.setIcon(Images.ICON_TABLE_SHOW);
-			jCheckBoxMenuItem.setSelected(program.getSettings().getTableColumnVisible().contains(columns.get(a)));
-			jComponent.add(jCheckBoxMenuItem);
-		}
-	}
 
 	@Override
 	protected void showTablePopupMenu(MouseEvent e){
@@ -494,7 +314,7 @@ public class AssetsTab extends JMainTab
 		boolean numericColumn = false;
 		if (isSingleCell){
 			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
-			numericColumn = program.getSettings().getTableNumberColumns().contains(column);
+			numericColumn = program.getSettings().getAssetTableNumberColumns().contains(column);
 		}
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
@@ -503,7 +323,7 @@ public class AssetsTab extends JMainTab
 		}
 	//COLUMNS
 		if (jComponent instanceof JMenu){
-			jComponent.add(jColumnMenu);
+			jComponent.add(jTable.getMenu());
 			addSeparator(jComponent);
 		}
 	//FILTER
@@ -666,34 +486,6 @@ public class AssetsTab extends JMainTab
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_RESET_COLUMNS_TO_DEFAULT.equals(e.getActionCommand())){
-			program.getSettings().resetMainTableColumns();
-			updateTableStructure();
-			updateCoulmnsSize();
-			updateColumnMenus();
-		}
-		if (ACTION_AUTO_RESIZING_COLUMNS_TEXT.equals(e.getActionCommand())){
-			program.getSettings().setAutoResizeColumnsText(true);
-			program.getSettings().setAutoResizeColumnsWindow(false);
-			updateCoulmnsSize();
-			updateColumnMenus();
-		}
-		if (ACTION_AUTO_RESIZING_COLUMNS_WINDOW.equals(e.getActionCommand())){
-			program.getSettings().setAutoResizeColumnsText(false);
-			program.getSettings().setAutoResizeColumnsWindow(true);
-			updateCoulmnsSize();
-			updateColumnMenus();
-		}
-		if (ACTION_DISABLE_AUTO_RESIZING_COLUMNS.equals(e.getActionCommand())){
-			program.getSettings().setAutoResizeColumnsText(false);
-			program.getSettings().setAutoResizeColumnsWindow(false);
-			for (int a = 0; a < jTable.getColumnCount(); a++){
-				int width = jTable.getColumnModel().getColumn(a).getWidth();
-				jTable.getColumnModel().getColumn(a).setPreferredWidth(width);
-			}
-			updateCoulmnsSize();
-			updateColumnMenus();
-		}
 		if (ACTION_ADD_FILTER_CONTAIN.equals(e.getActionCommand())){
 			String text = String.valueOf(jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
@@ -752,109 +544,12 @@ public class AssetsTab extends JMainTab
 			program.updateEventList();
 			return;
 		}
-
-		//Hide/show column
-		if (e.getSource() instanceof JCheckBoxMenuItem){
-			if (program.getSettings().getTableColumnVisible().contains(e.getActionCommand())){
-				program.getSettings().getTableColumnVisible().remove(e.getActionCommand());
-			} else {
-				program.getSettings().getTableColumnVisible().add(e.getActionCommand());
-				List<String> mainTableColumnNames = program.getSettings().getTableColumnNames();
-				List<String> mainTableColumnVisible = new ArrayList<String>();
-				for (int a = 0; a < mainTableColumnNames.size(); a++){
-					if (program.getSettings().getTableColumnVisible().contains(mainTableColumnNames.get(a))){
-						mainTableColumnVisible.add(mainTableColumnNames.get(a));
-					}
-				}
-				program.getSettings().setTableColumnVisible(mainTableColumnVisible);
-			}
-			updateTableStructure();
-			updateColumnMenus();
-		}
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.getSource().equals(jTable.getTableHeader())){
-			tempMainTableColumnNames = new ArrayList<String>(program.getSettings().getTableColumnNames());
-			tempMainTableColumnVisible = new ArrayList<String>(program.getSettings().getTableColumnVisible());
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.getSource().equals(jTable.getTableHeader()) && columnMoved){
-			columnMoved = false;
-			program.getSettings().setTableColumnNames(tempMainTableColumnNames);
-			program.getSettings().setTableColumnVisible(tempMainTableColumnVisible);
-			updateTableStructure();
-			updateColumnMenus();
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
-
-	@Override
-	public void columnAdded(TableColumnModelEvent e) {}
-
-	@Override
-	public void columnRemoved(TableColumnModelEvent e) {}
-
-	@Override
-	public void columnMoved(TableColumnModelEvent e) {
-		if (e.getFromIndex() != e.getToIndex()){
-			columnMoved = true;
-			
-			String movingColumnName = tempMainTableColumnVisible.get(e.getFromIndex());
-			String movingToColumnName = tempMainTableColumnVisible.get(e.getToIndex());
-
-			int movingIndex = tempMainTableColumnNames.indexOf(movingColumnName);
-			tempMainTableColumnNames.remove(movingIndex);
-			
-			int movingToIndex = tempMainTableColumnNames.indexOf(movingToColumnName);
-			if (e.getToIndex() > e.getFromIndex()) movingToIndex = movingToIndex + 1;
-			tempMainTableColumnNames.add(movingToIndex, movingColumnName);
-
-			List<String> mainTableColumnVisible = new ArrayList<String>();
-			String columnOrder = "";
-			String columnVisible = "";
-			for (int a = 0; a < tempMainTableColumnNames.size(); a++){
-				columnOrder = columnOrder+tempMainTableColumnNames.get(a)+" ";
-				if (program.getSettings().getTableColumnVisible().contains(tempMainTableColumnNames.get(a))){
-					columnVisible = columnVisible+tempMainTableColumnNames.get(a)+" ";
-					mainTableColumnVisible.add(tempMainTableColumnNames.get(a));
-				}
-			}
-			tempMainTableColumnVisible = mainTableColumnVisible;
-		}
-	}
-
-
-	@Override
-	public void columnMarginChanged(ChangeEvent e) {}
-
-	@Override
-	public void columnSelectionChanged(ListSelectionEvent e) {}
-	
-	@Override
-	public void tableChanged(TableModelEvent e) { //Filter
-		if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
-		if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
-		if (Math.abs(rowsLastTime + rowsCount) == jTable.getRowCount()){ //Last Table Update
-			rowsLastTime = jTable.getRowCount();
-			rowsCount = 0;
-			updateCoulmnsSize();
-			updateStatusbar();
-			updateToolPanel();
-		}
+	public void tableUpdate(){
+		updateStatusbar();
+		updateToolPanel();
 	}
 
 	@Override

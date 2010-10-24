@@ -242,7 +242,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		jDecimalSeparator = new JComboBox( DecimalSeperator.values() ); // new String[]{"Dot", "Comma"});
 
 		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
-		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getTableColumnNames()) );
+		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getAssetTableSettings().getTableColumnNames()) );
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
 

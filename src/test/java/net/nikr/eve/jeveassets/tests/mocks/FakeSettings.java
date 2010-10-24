@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.UserItemName;
 import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
@@ -133,22 +134,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<String> getTableColumnNames() {
+	public Map<String, String> getAssetTableColumnTooltips() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<String, String> getTableColumnTooltips() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<String> getTableColumnVisible() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<String> getTableNumberColumns() {
+	public List<String> getAssetTableNumberColumns() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -179,16 +170,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean hasAssets() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isAutoResizeColumnsText() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isAutoResizeColumnsWindow() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -283,16 +264,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setAutoResizeColumnsText(boolean autoResizeColumns) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setAutoResizeColumnsWindow(boolean autoResizeColumns) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setAutoUpdate(boolean updateStable) {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -349,16 +320,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setReprocessSettings(ReprocessSettings reprocessSettings) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTableColumnNames(List<String> mainTableColumnNames) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setTableColumnVisible(List<String> mainTableColumnVisible) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -447,5 +408,13 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public TableSettings getAssetTableSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 
+	@Override
+	public Map<String, TableSettings> getTableSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

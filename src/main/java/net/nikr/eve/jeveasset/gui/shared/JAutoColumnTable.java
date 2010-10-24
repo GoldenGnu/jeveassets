@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.swing.EventTableModel;
-import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -37,11 +36,10 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
+import net.nikr.eve.jeveasset.gui.shared.JColumnTable.TableColumnUtil;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
@@ -81,42 +79,8 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	private void autoResizeColumns() {
-		if (this.getRowCount() > 0){
-			int size = 0;
-			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int i = 0; i < this.getColumnCount(); i++) {
-				 size = size+autoResizeColumn(this.getColumnModel().getColumn(i));
-			}
-			if (size < jScroll.getSize().width){
-				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			}
-		} else {
-			for (int i = 0; i < this.getColumnCount(); i++) {
-				this.getColumnModel().getColumn(i).setPreferredWidth(75);
-			}
-			this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		}
+		TableColumnUtil.resizeColumnsText(this, jScroll);
 	}
-
-	private int autoResizeColumn(TableColumn column) {
-		int maxWidth = 0;
-		TableCellRenderer renderer = column.getHeaderRenderer();
-		if (renderer == null) {
-			renderer = this.getTableHeader().getDefaultRenderer();
-		}
-		Component component = renderer.getTableCellRendererComponent(this, column.getHeaderValue(), false, false, 0, 0);
-		maxWidth = component.getPreferredSize().width;
-		for (int a = 0; a < this.getRowCount(); a++){
-			renderer = this.getCellRenderer(a, column.getModelIndex());
-			if (renderer instanceof SeparatorTableCell) continue;
-			component = renderer.getTableCellRendererComponent(this, this.getValueAt(a, column.getModelIndex()), false, false, a, column.getModelIndex());
-			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
-		}
-		column.setPreferredWidth(maxWidth+4);
-		return maxWidth+4;
-	}
-
-	
 
 	class ModelListener implements TableModelListener, TableColumnModelListener, MouseListener, ComponentListener {
 

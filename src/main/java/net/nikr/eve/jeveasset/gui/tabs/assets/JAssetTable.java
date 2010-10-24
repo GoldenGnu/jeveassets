@@ -29,15 +29,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.TableSettings;
+import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 
 
-public class JAssetTable extends JTable {
+public class JAssetTable extends JColumnTable {
 
-	private EventTableModel<EveAsset> eveAssetTableModel;
+	private EventTableModel<EveAsset> eventTableModel;
 	private DoubleCellRenderer doubleCellRenderer;
 	private LongCellRenderer longCellRenderer;
 	private TableCellRenderer tableCellRenderer;
@@ -46,10 +48,11 @@ public class JAssetTable extends JTable {
 
 	private Program program;
 
-	public JAssetTable(Program program, EventTableModel<EveAsset> eveAssetTableModel) {
+	public JAssetTable(Program program, EventTableModel<EveAsset> eventTableModel, TableSettings tableSettings) {
+		super(eventTableModel, tableSettings);
 		this.program = program;
-		this.eveAssetTableModel = eveAssetTableModel;
-		this.setModel(eveAssetTableModel);
+		this.eventTableModel = eventTableModel;
+
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();
 		integerCellRenderer = new IntegerCellRenderer();
@@ -82,8 +85,8 @@ public class JAssetTable extends JTable {
 
 		
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		if (eveAssetTableModel.getRowCount() >= row){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(row);
+		if (eventTableModel.getRowCount() >= row){
+			EveAsset eveAsset = eventTableModel.getElementAt(row);
 			//User set price
 			if (eveAsset.isUserPrice() && (eveAsset.isBpo()|| !eveAsset.isBlueprint()) && columnName.equals("Price")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);

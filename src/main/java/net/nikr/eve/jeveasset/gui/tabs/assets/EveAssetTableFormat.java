@@ -40,17 +40,17 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 
 	@Override
 	public int getColumnCount() {
-		return settings.getTableColumnVisible().size();
+		return settings.getAssetTableSettings().getTableColumnVisible().size();
 	}
 
 	@Override
 	public String getColumnName(int i) {
-		return settings.getTableColumnVisible().get(i);
+		return settings.getAssetTableSettings().getTableColumnVisible().get(i);
 	}
 
 	@Override
 	public Class getColumnClass(int i) {
-		String sColumn = settings.getTableColumnVisible().get(i);
+		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Name")) return String.class;
 		if (sColumn.equals("Group")) return String.class;
 		if (sColumn.equals("Category")) return String.class;
@@ -79,7 +79,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 
 	@Override
 	public Comparator getColumnComparator(int i) {
-		String sColumn = settings.getTableColumnVisible().get(i);
+		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Name")) return TableComparators.stringComparator();
 		if (sColumn.equals("Group")) return TableComparators.stringComparator();
 		if (sColumn.equals("Category")) return TableComparators.stringComparator();
@@ -107,7 +107,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 
 	@Override
 	public Object getColumnValue(EveAsset eveAsset, int i) {
-		String sColumn = settings.getTableColumnVisible().get(i);
+		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Name")) return eveAsset.getName();
 		if (sColumn.equals("Group")) return eveAsset.getGroup();
 		if (sColumn.equals("Category")) return eveAsset.getCategory();

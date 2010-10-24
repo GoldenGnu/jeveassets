@@ -1,12 +1,13 @@
 package net.nikr.eve.jeveasset.io.local.update.updates;
 
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.TableSettings;
+import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
@@ -39,14 +40,17 @@ public class Update1To2 implements LocalUpdate {
 		try {
 			// We need to update the settings
 			// current changes are:
-			// XPath: /settings/filters/filter/row[@mode]
+			// 1. XPath: /settings/filters/filter/row[@mode]
 			// changed from (e.g.) "Contains" to the enum value name in AssetFilter.Mode
-			// settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
+			// 2. settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
+			// 3. settings/columns/column --> settings/tables/table/column
+			// settings/flags/flag --> removed two flags (now in settings/tables/table)
 			String settingPath = Settings.getPathSettings();
 			SAXReader xmlReader = new SAXReader();
 			Document doc = xmlReader.read(settingPath);
 			convertDefaultPriceModes(doc);
 			convertModes(doc);
+			convertTableSettings(doc);
 
 			FileOutputStream fos = new FileOutputStream(settingPath);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
@@ -85,6 +89,25 @@ public class Update1To2 implements LocalUpdate {
 		}
 	}
 
+	private void convertTableSettings(Document doc){
+		XPath xpathSelector = DocumentHelper.createXPath("/settings/columns/column");
+		List results = xpathSelector.selectNodes(doc);
+		List<String> tableColumnNames = new ArrayList<String>();
+		List<String> tableColumnVisible = new ArrayList<String>();
+		for (Iterator iter = results.iterator(); iter.hasNext();) {
+			Element element = (Element) iter.next();
+			Attribute name = element.attribute("name");
+			Attribute visible = element.attribute("visible");
+			tableColumnNames.add(name.getText());
+			if (visible.getText().equals("true")) tableColumnVisible.add(name.getText());
+		}
+		TableSettings tableSettings = new TableSettings();
+		tableSettings.setMode(convertFlag(doc));
+		tableSettings.setTableColumnNames(tableColumnNames);
+		tableSettings.setTableColumnVisible(tableColumnVisible);
+		writeTableSettings(doc, tableSettings);
+	}
+
 	private String convertDefaultPriceMode(String oldVal) {
 		if (oldVal.startsWith("PRICE_")) return oldVal;
 		String convert = oldVal.toLowerCase();
@@ -114,6 +137,42 @@ public class Update1To2 implements LocalUpdate {
 		if (convert.contains("less than column"))    return AssetFilter.Mode.MODE_LESS_THAN_COLUMN.name();
 		throw new IllegalArgumentException("Failed to convert the mode type " + oldVal);
 	}
+	
+	private ResizeMode convertFlag(Document doc){
+		XPath flagSelector = DocumentHelper.createXPath("/settings/flags/flag");
+		List flagResults = flagSelector.selectNodes(doc);
+		boolean text = false;
+		boolean window = false;
+		for (Iterator iter = flagResults.iterator(); iter.hasNext();) {
+			Element element = (Element) iter.next();
+			Attribute key = element.attribute("key");
+			Attribute visible = element.attribute("enabled");
+			if (key.getText().equals("FLAG_AUTO_RESIZE_COLUMNS_TEXT")){
+				text = visible.getText().equals("true");
+				element.detach();
+			}
+			if (key.getText().equals("FLAG_AUTO_RESIZE_COLUMNS_WINDOW")){
+				window = visible.getText().equals("true");
+				element.detach();
+			}
+		}
+		if (text) return ResizeMode.TEXT;
+		if (window) return ResizeMode.WINDOW;
+		return ResizeMode.NONE;
+	}
+
+	private void writeTableSettings(Document doc, TableSettings tableSettings){
+		Element tables = doc.getRootElement().addElement("tables");
+		Element table = tables.addElement("table");
+		table.addAttribute("name", Settings.COLUMN_SETTINGS_ASSETS);
+		table.addAttribute("resize", tableSettings.getMode().toString());
+		for (String columnName : tableSettings.getTableColumnNames()){
+			Element column = table.addElement("column");
+			column.addAttribute("name", columnName);
+			column.addAttribute("visible", String.valueOf(tableSettings.getTableColumnVisible().contains(columnName)));
+		}
+	}
+
 	@Override
 	public int getStart() {
 		return 1;

@@ -25,7 +25,9 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -65,7 +67,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
-		writeColumns(xmldoc, settings.getTableColumnNames(), settings.getTableColumnVisible());
+		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
 		writeFilters(xmldoc, settings.getAssetFilters());
 		try {
@@ -168,16 +170,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeColumns(Document xmldoc, List<String> mainTableColumnNames, List<String> mainTableColumnVisible){
-		Element parentNode = xmldoc.createElementNS(null, "columns");
+	public static void writeTableSettings(Document xmldoc, Map<String, TableSettings> tableSettings){
+		Element parentNode = xmldoc.createElementNS(null, "tables");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (int a = 0; a < mainTableColumnNames.size(); a++){
-			String column = mainTableColumnNames.get(a);
-			boolean visible = mainTableColumnVisible.contains(column);
-			Element node = xmldoc.createElementNS(null, "column");
-			node.setAttributeNS(null, "name", column);
-			node.setAttributeNS(null, "visible", String.valueOf(visible));
-			parentNode.appendChild(node);
+		for (Entry<String, TableSettings> entry : tableSettings.entrySet()){
+			Element tableNode = xmldoc.createElementNS(null, "table");
+			tableNode.setAttributeNS(null, "name", entry.getKey());
+			tableNode.setAttributeNS(null, "resize", entry.getValue().getMode().toString());
+			parentNode.appendChild(tableNode);
+			for (String column : entry.getValue().getTableColumnNames()){
+				boolean visible = entry.getValue().getTableColumnVisible().contains(column);
+				Element node = xmldoc.createElementNS(null, "column");
+				node.setAttributeNS(null, "name", column);
+				node.setAttributeNS(null, "visible", String.valueOf(visible));
+				tableNode.appendChild(node);
+			}
 		}
 	}
 

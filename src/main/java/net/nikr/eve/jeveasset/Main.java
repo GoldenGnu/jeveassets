@@ -82,7 +82,7 @@ public class Main {
 		if (isPortable && System.getProperty("log.home") == null) {
 			System.setProperty("log.home", "." + File.separator);
 		} else {
-			if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { // preferences are stored in user.home/Library/Preferences
+			if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
 				System.setProperty("log.home", System.getProperty("user.home")+File.separator+"Library"+File.separator+"Preferences"+File.separator+"JEveAssets"+File.separator+"");
 			} else { //Windows/Linux
 				System.setProperty("log.home", System.getProperty("user.home")+File.separator+".jeveassets"+File.separator);

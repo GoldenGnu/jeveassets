@@ -77,13 +77,13 @@ public class Settings{
 	private final static String PATH_PROFILES = "profiles";
 
 	private final static String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
-	private final static String FLAG_AUTO_RESIZE_COLUMNS_TEXT = "FLAG_AUTO_RESIZE_COLUMNS_TEXT";
-	private final static String FLAG_AUTO_RESIZE_COLUMNS_WINDOW = "FLAG_AUTO_RESIZE_COLUMNS_WINDOW";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	private final static String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
 	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
 	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
 	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
+
+	public final static String COLUMN_SETTINGS_ASSETS = "COLUMN_SETTINGS_ASSETS";
 
 	private static boolean portable = false;
 	
@@ -103,10 +103,10 @@ public class Settings{
 	private Map<Integer, UserPrice> userPrices;
 	private Map<Long, UserItemName> userItemNames;
 	private List<Account> accounts;
-	private List<String> tableColumnNames;
-	private Map<String, String> tableColumnTooltips;
-	private List<String> tableNumberColumns;
-	private List<String> tableColumnVisible;
+	private final List<String> assetTableColumns = new ArrayList<String>();
+	private final Map<String, TableSettings> tableSettings = new HashMap<String, TableSettings>();
+	private Map<String, String> assetTableColumnTooltips;
+	private List<String> assetTableNumberColumns;
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private List<Long> bpos;
@@ -139,14 +139,75 @@ public class Settings{
 		overviewGroups = new HashMap<String, OverviewGroup>();
 		
 		flags = new HashMap<String, Boolean>();
-		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
-		flags.put(FLAG_AUTO_RESIZE_COLUMNS_WINDOW, false);
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 		flags.put(FLAG_AUTO_UPDATE, true);
 		flags.put(FLAG_UPDATE_DEV, false);
 		flags.put(FLAG_REPROCESS_COLORS, false);
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
+
+		//To add new column also update:
+		//		gui.table.EveAssetTableFormat.getColumnClass()
+		//		gui.table.EveAssetTableFormat.getColumnComparator()
+		//		gui.table.EveAssetTableFormat.getColumnValue()
+		//		gui.table.EveAssetMatching.matches()
+		//			remember to add to "All" as well...
+		//		gui.dialogs.CsvExportDialog.getLine()
+		//	If number column:
+		//		add to mainTableNumberColumns bellow
+		assetTableColumns.add("Name");
+		assetTableColumns.add("Group");
+		assetTableColumns.add("Category");
+		assetTableColumns.add("Owner");
+		assetTableColumns.add("Location");
+		assetTableColumns.add("Security");
+		assetTableColumns.add("Region");
+		assetTableColumns.add("Container");
+		assetTableColumns.add("Flag");
+		assetTableColumns.add("Price");
+		assetTableColumns.add("Sell Min");
+		assetTableColumns.add("Buy Max");
+		assetTableColumns.add("Reprocessed");
+		assetTableColumns.add("Base Price");
+		assetTableColumns.add("Reprocessed Value");
+		assetTableColumns.add("Value");
+		assetTableColumns.add("Count");
+		assetTableColumns.add("Type Count");
+		assetTableColumns.add("Meta");
+		assetTableColumns.add("Volume");
+		assetTableColumns.add("ID");
+		assetTableColumns.add("Type ID");
+
+		tableSettings.put(COLUMN_SETTINGS_ASSETS, new TableSettings(assetTableColumns));
+
+		assetTableColumnTooltips = new HashMap<String, String>();
+		assetTableColumnTooltips.put("Security", "System Security Status");
+		assetTableColumnTooltips.put("Price", "Default Price");
+		assetTableColumnTooltips.put("Sell Min", "Minimum Sell Price");
+		assetTableColumnTooltips.put("Buy Max", "Maximum Buy Price");
+		assetTableColumnTooltips.put("Reprocessed", "Value reprocessed materials");
+		assetTableColumnTooltips.put("Reprocessed Value", "Reprocessed Value (Count*Reprocessed)");
+		assetTableColumnTooltips.put("Value", "Value (Count*Price)");
+		assetTableColumnTooltips.put("Type Count", "Type Count (all assets of this type)");
+		assetTableColumnTooltips.put("Meta", "Meta Level");
+		assetTableColumnTooltips.put("ID", "ID (this specific asset)");
+		assetTableColumnTooltips.put("Type ID", "Type ID (this type of asset)");
+
+		assetTableNumberColumns = new ArrayList<String>();
+		assetTableNumberColumns.add("Count");
+		assetTableNumberColumns.add("Price");
+		assetTableNumberColumns.add("Sell Min");
+		assetTableNumberColumns.add("Buy Max");
+		assetTableNumberColumns.add("Base Price");
+		assetTableNumberColumns.add("Value");
+		assetTableNumberColumns.add("Volume");
+		assetTableNumberColumns.add("ID");
+		assetTableNumberColumns.add("Type ID");
+		assetTableNumberColumns.add("Type Count");
+		assetTableNumberColumns.add("Reprocessed");
+		assetTableNumberColumns.add("Reprocessed Value");
+		assetTableNumberColumns.add("Security");
+		assetTableNumberColumns.add("Meta");
 
 
 		reprocessSettings = new ReprocessSettings();
@@ -155,7 +216,6 @@ public class Settings{
 		profiles.add(activeProfile);
 
 		conquerableStationsNextUpdate = Settings.getGmtNow();
-		resetMainTableColumns();
 
 		priceDataSettings = new PriceDataSettings(0, PriceDataSettings.SOURCE_EVE_CENTRAL);
 
@@ -215,73 +275,6 @@ public class Settings{
 
 	public void saveAssets(){
 		AssetsWriter.save(this, activeProfile.getFilename());
-	}
-
-	public final void resetMainTableColumns(){
-		//Also need to update:
-		//		gui.table.EveAssetTableFormat.getColumnClass()
-		//		gui.table.EveAssetTableFormat.getColumnComparator()
-		//		gui.table.EveAssetTableFormat.getColumnValue()
-		//		gui.table.EveAssetMatching.matches()
-		//			remember to add to "All" as well...
-		//		gui.dialogs.CsvExportDialog.getLine()
-		//	If number column:
-		//		add to mainTableNumberColumns bellow
-
-		tableColumnNames = new ArrayList<String>();
-		tableColumnNames.add("Name");
-		tableColumnNames.add("Group");
-		tableColumnNames.add("Category");
-		tableColumnNames.add("Owner");
-		tableColumnNames.add("Location");
-		tableColumnNames.add("Security");
-		tableColumnNames.add("Region");
-		tableColumnNames.add("Container");
-		tableColumnNames.add("Flag");
-		tableColumnNames.add("Price");
-		tableColumnNames.add("Sell Min");
-		tableColumnNames.add("Buy Max");
-		tableColumnNames.add("Reprocessed");
-		tableColumnNames.add("Base Price");
-		tableColumnNames.add("Reprocessed Value");
-		tableColumnNames.add("Value");
-		tableColumnNames.add("Count");
-		tableColumnNames.add("Type Count");
-		tableColumnNames.add("Meta");
-		tableColumnNames.add("Volume");
-		tableColumnNames.add("ID");
-		tableColumnNames.add("Type ID");
-
-		tableColumnTooltips = new HashMap<String, String>();
-		tableColumnTooltips.put("Security", "System Security Status");
-		tableColumnTooltips.put("Price", "Default Price");
-		tableColumnTooltips.put("Sell Min", "Minimum Sell Price");
-		tableColumnTooltips.put("Buy Max", "Maximum Buy Price");
-		tableColumnTooltips.put("Reprocessed", "Value reprocessed materials");
-		tableColumnTooltips.put("Reprocessed Value", "Reprocessed Value (Count*Reprocessed)");
-		tableColumnTooltips.put("Value", "Value (Count*Price)");
-		tableColumnTooltips.put("Type Count", "Type Count (all assets of this type)");
-		tableColumnTooltips.put("Meta", "Meta Level");
-		tableColumnTooltips.put("ID", "ID (this specific asset)");
-		tableColumnTooltips.put("Type ID", "Type ID (this type of asset)");
-		
-		tableColumnVisible = new ArrayList<String>(tableColumnNames);
-
-		tableNumberColumns = new ArrayList<String>();
-		tableNumberColumns.add("Count");
-		tableNumberColumns.add("Price");
-		tableNumberColumns.add("Sell Min");
-		tableNumberColumns.add("Buy Max");
-		tableNumberColumns.add("Base Price");
-		tableNumberColumns.add("Value");
-		tableNumberColumns.add("Volume");
-		tableNumberColumns.add("ID");
-		tableNumberColumns.add("Type ID");
-		tableNumberColumns.add("Type Count");
-		tableNumberColumns.add("Reprocessed");
-		tableNumberColumns.add("Reprocessed Value");
-		tableNumberColumns.add("Security");
-		tableNumberColumns.add("Meta");
 	}
 
 	public PriceDataGetter getPriceDataGetter(){
@@ -496,28 +489,12 @@ public class Settings{
 		this.assetFilters = assetFilters;
 	}
 
-	public void setTableColumnVisible(List<String> mainTableColumnVisible) {
-		this.tableColumnVisible = mainTableColumnVisible;
+	public List<String> getAssetTableNumberColumns() {
+		return assetTableNumberColumns;
 	}
 
-	public List<String> getTableColumnVisible() {
-		return tableColumnVisible;
-	}
-
-	public void setTableColumnNames(List<String> mainTableColumnNames) {
-		this.tableColumnNames = mainTableColumnNames;
-	}
-
-	public List<String> getTableColumnNames(){
-		return tableColumnNames;
-	}
-
-	public List<String> getTableNumberColumns() {
-		return tableNumberColumns;
-	}
-
-	public Map<String, String> getTableColumnTooltips() {
-		return tableColumnTooltips;
+	public Map<String, String> getAssetTableColumnTooltips() {
+		return assetTableColumnTooltips;
 	}
 	
 	public Map<String, Boolean> getFlags() {
@@ -646,18 +623,15 @@ public class Settings{
 		return locations;
 	}
 
-	public boolean isAutoResizeColumnsText() {
-		return flags.get(FLAG_AUTO_RESIZE_COLUMNS_TEXT);
+	public Map<String, TableSettings> getTableSettings() {
+		return tableSettings;
 	}
-	public void setAutoResizeColumnsText(boolean autoResizeColumns) {
-		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, autoResizeColumns);
+
+	public TableSettings getAssetTableSettings(){
+		return tableSettings.get(COLUMN_SETTINGS_ASSETS);
 	}
-	public boolean isAutoResizeColumnsWindow() {
-		return flags.get(FLAG_AUTO_RESIZE_COLUMNS_WINDOW);
-	}
-	public void setAutoResizeColumnsWindow(boolean autoResizeColumns) {
-		flags.put(FLAG_AUTO_RESIZE_COLUMNS_WINDOW, autoResizeColumns);
-	}
+
+
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
 	}

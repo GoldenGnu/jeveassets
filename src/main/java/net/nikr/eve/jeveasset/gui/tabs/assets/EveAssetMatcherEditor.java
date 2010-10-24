@@ -72,12 +72,12 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 
 		Vector<String> columns = new Vector<String>();
 		columns.add("All");
-		columns.addAll( program.getSettings().getTableColumnNames() );
+		columns.addAll( program.getSettings().getAssetTableSettings().getTableColumnNames() );
 		jColumn = new JComboBox(columns);
 		jColumn.setActionCommand(ACTION_COLUMN_SELECTED);
 		jColumn.addActionListener(this);
 
-		jMatchColumn = new JComboBox( new Vector<String>(program.getSettings().getTableNumberColumns()) );
+		jMatchColumn = new JComboBox( new Vector<String>(program.getSettings().getAssetTableNumberColumns()) );
 		jMatchColumn.addActionListener(this);
 
 		jMode = new JComboBox(new Object[] {AssetFilter.Mode.MODE_CONTAIN,
@@ -137,7 +137,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		if (ACTION_COLUMN_SELECTED.equals(e.getActionCommand())){
 			String column = (String) jColumn.getSelectedItem();
 			int index = jMode.getSelectedIndex();
-			if (program.getSettings().getTableNumberColumns().contains(column)){
+			if (program.getSettings().getAssetTableNumberColumns().contains(column)){
 				jMode.setModel( new DefaultComboBoxModel(
 						new Object[] {AssetFilter.Mode.MODE_CONTAIN,
 									  AssetFilter.Mode.MODE_CONTAIN_NOT,
