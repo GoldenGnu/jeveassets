@@ -318,34 +318,6 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	//FIXME
-	/*
-	private static void parseTableSettings(Element element, Settings settings){
-		NodeList columnNodes = element.getElementsByTagName("column");
-		List<String> mainTableColumnNames = new ArrayList<String>();
-		List<String> mainTableColumnVisible = new ArrayList<String>();
-		for (int a = 0; a < columnNodes.getLength(); a++){
-			Element currentNode = (Element) columnNodes.item(a);
-			String name = AttributeGetters.getString(currentNode, "name");
-			boolean visible = AttributeGetters.getBoolean(currentNode, "visible");
-			mainTableColumnNames.add(name);
-			if (visible) mainTableColumnVisible.add(name);
-		}
-		//Add new columns, at the end... (Might not be the defaut location)
-		List<String> mainTableColumnNamesOriginal = settings.getAssetTableSettings().getTableColumnNames();
-		for (int a = 0; a < mainTableColumnNamesOriginal.size(); a++){
-			if (!mainTableColumnNames.contains(mainTableColumnNamesOriginal.get(a))){
-				mainTableColumnNames.add(mainTableColumnNamesOriginal.get(a));
-				mainTableColumnVisible.add(mainTableColumnNamesOriginal.get(a));
-			}
-		}
-
-		settings.getAssetTableSettings().setTableColumnNames(mainTableColumnNames);
-		settings.getAssetTableSettings().setTableColumnVisible(mainTableColumnVisible);
-	}
-	 * 
-	 */
-
 	private static void parseUpdates(Element element, Settings settings){
 		NodeList updateNodes = element.getElementsByTagName("update");
 		for (int a = 0; a < updateNodes.getLength(); a++){
