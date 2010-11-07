@@ -300,8 +300,8 @@ public class RoutingTab extends JMainTab implements ActionListener {
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {
 				SolarSystem s = (SolarSystem)n;
-				if (s.getSolarSystemID() == jump.getFrom().getSolarSystemID()) f = s;
-				if (s.getSolarSystemID() == jump.getTo().getSolarSystemID()) t = s;
+				if (s.getSystemID() == jump.getFrom().getSystemID()) f = s;
+				if (s.getSystemID() == jump.getTo().getSystemID()) t = s;
 			}
 			if (f == null) f = new SolarSystem(jump.getFrom());
 			if (t == null) t = new SolarSystem(jump.getTo());
@@ -321,7 +321,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 			}
 		});
 		for (EveAsset ea : program.getAssetsTab().getFilteredAssets()) {
-			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemId());
+			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemID());
 			if (loc != null) {
 				allLocs.add(loc);
 			} else {
@@ -343,14 +343,14 @@ public class RoutingTab extends JMainTab implements ActionListener {
 	 * @param locationID
 	 * @return null if the system is unreachable (e.g. w-space)
 	 */
-	private SolarSystem findNodeForLocation(Graph g, int locationID) {
+	private SolarSystem findNodeForLocation(Graph g, long locationID) {
 		if (locationID < 0) {
 			throw new RuntimeException("Unknown Location: " + locationID);
 		}
 		for (Node n : g.getNodes()) {
 			if (n instanceof SolarSystem) {
 				SolarSystem ss = (SolarSystem) n;
-				if (ss.getSolarSystemID() == locationID) {
+				if (ss.getSystemID() == locationID) {
 					return ss;
 				}
 			}

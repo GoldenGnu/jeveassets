@@ -120,14 +120,14 @@ public class EveAssetMatching {
 						+ eveAsset.getName() + "\r\n"
 						+ eveAsset.getOwner() + "\r\n"
 						+ eveAsset.getCount() + "\r\n"
-						+ eveAsset.getItemId() + "\r\n"
+						+ eveAsset.getItemID() + "\r\n"
 						+ eveAsset.getPrice() + "\r\n"
 						+ eveAsset.getPriceSellMin() + "\r\n"
 						+ eveAsset.getPriceBuyMax() + "\r\n"
 						+ eveAsset.getValue() + "\r\n"
 						+ eveAsset.getPriceBase() + "\r\n"
 						+ eveAsset.getVolume() + "\r\n"
-						+ eveAsset.getTypeId() + "\r\n"
+						+ eveAsset.getTypeID() + "\r\n"
 						+ eveAsset.getRegion() + "\r\n"
 						+ eveAsset.getTypeCount() + "\r\n"
 						+ eveAsset.getSecurity() + "\r\n"
@@ -145,13 +145,13 @@ public class EveAssetMatching {
 		if (column.equals("Flag")) return eveAsset.getFlag();
 		if (column.equals("Price")) return String.valueOf(eveAsset.getPrice());
 		if (column.equals("Meta")) return eveAsset.getMeta();
-		if (column.equals("ID")) return String.valueOf(eveAsset.getItemId());
+		if (column.equals("ID")) return String.valueOf(eveAsset.getItemID());
 		if (column.equals("Sell Min")) return String.valueOf(eveAsset.getPriceSellMin());
 		if (column.equals("Buy Max")) return String.valueOf(eveAsset.getPriceBuyMax());
 		if (column.equals("Value")) return String.valueOf(eveAsset.getValue());
 		if (column.equals("Base Price")) return String.valueOf(eveAsset.getPriceBase());
 		if (column.equals("Volume")) return String.valueOf(eveAsset.getVolume());
-		if (column.equals("Type ID")) return String.valueOf(eveAsset.getTypeId());
+		if (column.equals("Type ID")) return String.valueOf(eveAsset.getTypeID());
 		if (column.equals("Region")) return eveAsset.getRegion();
 		if (column.equals("Type Count")) return String.valueOf(eveAsset.getTypeCount());
 		if (column.equals("Security")) return eveAsset.getSecurity();
@@ -185,13 +185,13 @@ public class EveAssetMatching {
 			}
 			return -1;
 		}
-		if (column.equals("ID")) return eveAsset.getItemId();
+		if (column.equals("ID")) return eveAsset.getItemID();
 		if (column.equals("Sell Min")) return eveAsset.getPriceSellMin();
 		if (column.equals("Buy Max")) return eveAsset.getPriceBuyMax();
 		if (column.equals("Value")) return eveAsset.getValue();
 		if (column.equals("Base Price")) return eveAsset.getPriceBase();
 		if (column.equals("Volume")) return eveAsset.getVolume();
-		if (column.equals("Type ID")) return eveAsset.getTypeId();
+		if (column.equals("Type ID")) return eveAsset.getTypeID();
 		if (column.equals("Region")) return -1;
 		if (column.equals("Type Count")) return eveAsset.getTypeCount();
 		if (column.equals("Security")){

@@ -30,46 +30,55 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public enum PriceMode {
 		PRICE_SELL_MAX() {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyMax();
 			}
 		},
 		PRICE_SELL_AVG {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceSellAvg();
 			}
 		},
 		PRICE_SELL_MEDIAN {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceSellMedian();
 			}
 		},
 		PRICE_SELL_MIN {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceSellMin();
 			}
 		},
 		PRICE_MIDPOINT {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceMidpoint();
 			}
 		},
 		PRICE_BUY_MAX {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyMax();
 			}
 		},
 		PRICE_BUY_AVG {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyAvg();
 			}
 		},
 		PRICE_BUY_MEDIAN {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyMedian();
 			}
 		},
 		PRICE_BUY_MIN {
+			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyMedian();
 			}
@@ -99,6 +108,10 @@ public class EveAsset implements Comparable<EveAsset> {
 	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
 
 	private List<EveAsset> assets = new ArrayList<EveAsset>();
+	private long locationID; //LocationID : long
+	private long itemID; //ItemID : long
+	private long solarSystemID; //LocationID : long
+	private int typeID; //TypeID : int
 	private String typeName;
 	private String name;
 	private String group;
@@ -106,14 +119,11 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String owner;
 	private long count;
 	private String location;
-	private int locationID;
 	private String container = "";
 	private List<EveAsset> parents;
 	private String flag;
 	private double priceBase;
 	private String meta;
-	private long itemId;
-	private int typeId;
 	private boolean marketGroup;
 	private PriceData priceData;
 	private UserPrice userPrice;
@@ -125,10 +135,10 @@ public class EveAsset implements Comparable<EveAsset> {
 	private boolean singleton;
 	private String security;
 	private double priceReprocessed;
-	private String solarSystem;
-	private int solarSystemId;
+	private String system;
+	
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemId, int typeId, boolean marketGroup, boolean corporationAsset, float volume, String region, int locationID, boolean singleton, String security, String solarSystem, int solarSystemId) {
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporationAsset, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID) {
 		this.typeName = typeName;
 		this.name = typeName;
 		this.group = group;
@@ -140,8 +150,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.flag = flag;
 		this.priceBase = priceBase;
 		this.meta = meta;
-		this.itemId = itemId;
-		this.typeId = typeId;
+		this.itemID = itemID;
+		this.typeID = typeID;
 		this.marketGroup = marketGroup;
 		this.corporationAsset = corporationAsset;
 		this.volume = volume;
@@ -150,8 +160,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.bpo = false;
 		this.singleton = singleton;
 		this.security = security;
-		this.solarSystem = solarSystem;
-		this.solarSystemId = solarSystemId;
+		this.system = system;
+		this.solarSystemID = solarSystemID;
 	}
 
 	public void setPriceData(PriceData priceData) {
@@ -214,15 +224,15 @@ public class EveAsset implements Comparable<EveAsset> {
 		return group;
 	}
 
-	public long getItemId() {
-		return itemId;
+	public long getItemID() {
+		return itemID;
 	}
 
 	public String getLocation() {
 		return location;
 	}
 
-	public int getLocationID() {
+	public long getLocationID() {
 		return locationID;
 	}
 
@@ -350,8 +360,8 @@ public class EveAsset implements Comparable<EveAsset> {
 		return priceBase;
 	}
 
-	public int getTypeId() {
-		return typeId;
+	public int getTypeID() {
+		return typeID;
 	}
 
 	public String getRegion() {
@@ -370,12 +380,12 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.typeCount = typeCount;
 	}
 
-	public String getSolarSystem() {
-		return solarSystem;
+	public String getSystem() {
+		return system;
 	}
 
-	public int getSolarSystemId() {
-		return solarSystemId;
+	public long getSolarSystemID() {
+		return solarSystemID;
 	}
 
 	@Override

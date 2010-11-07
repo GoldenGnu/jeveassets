@@ -41,7 +41,7 @@ public class ApiIdConverter {
 		return itemFlag.getFlagName();
 	}
 
-	public static boolean locationTest(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static boolean locationTest(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -75,7 +75,7 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static String location(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static String location(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -111,7 +111,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String region(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static String region(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -129,7 +129,7 @@ public class ApiIdConverter {
 		if (apiStation != null) {
 			location = locations.get(apiStation.getSolarSystemID());
 			if (location != null) {
-				location = locations.get(location.getRegion());
+				location = locations.get(location.getRegionID());
 				if (location != null) {
 					return location.getName();
 				}
@@ -139,7 +139,7 @@ public class ApiIdConverter {
 		//locations.xml (staStations && mapDenormalize)
 		location = locations.get(locationID);
 		if (location != null) {
-			location = locations.get(location.getRegion());
+			location = locations.get(location.getRegionID());
 			if (location != null) {
 				return location.getName();
 			}
@@ -150,7 +150,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static String security(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -184,7 +184,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static int solarSystemId(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static long solarSystemId(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -202,22 +202,22 @@ public class ApiIdConverter {
 		if (apiStation != null) {
 			location = locations.get(apiStation.getSolarSystemID());
 			if (location != null) {
-				return location.getSolarSystemID();
+				return location.getSystemID();
 			}
 		}
 
 		//locations.xml (staStations && mapDenormalize)
 		location = locations.get(locationID);
 		if (location != null) {
-			return location.getSolarSystemID();
+			return location.getSystemID();
 		}
 		if (parentAsset != null) {
-			return parentAsset.getSolarSystemId();
+			return parentAsset.getSolarSystemID();
 		}
 		return -1;
 	}
 	//PENDING Make Test for ApiIdConverter.solarSystem(...)
-	public static String solarSystem(int locationID, EveAsset parentAsset, Map<Integer, ApiStation> conquerableStations, Map<Integer, Location> locations) {
+	public static String solarSystem(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -242,13 +242,13 @@ public class ApiIdConverter {
 		//locations.xml (staStations && mapDenormalize)
 		location = locations.get(locationID);
 		if (location != null) {
-			location = locations.get(location.getSolarSystemID());
+			location = locations.get(location.getSystemID());
 			if (location != null) {
 				return location.getName();
 			}
 		}
 		if (parentAsset != null) {
-			return parentAsset.getSolarSystem();
+			return parentAsset.getSystem();
 		}
 		return "Error !" + String.valueOf(locationID);
 	}

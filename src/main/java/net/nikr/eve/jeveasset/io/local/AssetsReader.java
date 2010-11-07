@@ -107,7 +107,7 @@ public class AssetsReader extends AbstractXmlReader {
 	}
 	private static Human parseHuman(Node node, Account account){
 		String name = AttributeGetters.getString(node, "name");
-		long characterID = AttributeGetters.getLong(node, "id");
+		int characterID = AttributeGetters.getInt(node, "id");
 		String corporation = AttributeGetters.getString(node, "corporation");
 		boolean updateCorporationAssets = AttributeGetters.getBoolean(node, "corpassets");
 		Date assetsNextUpdate = new Date( AttributeGetters.getLong(node, "assetsnextupdate") );
@@ -184,7 +184,7 @@ public class AssetsReader extends AbstractXmlReader {
 		int volRemaining = AttributeGetters.getInt(element, "volremaining");
 		int minVolume = AttributeGetters.getInt(element, "minvolume");
 		int orderState = AttributeGetters.getInt(element, "orderstate");
-		long typeID = AttributeGetters.getLong(element, "typeid");
+		int typeID = AttributeGetters.getInt(element, "typeid");
 		int range = AttributeGetters.getInt(element, "range");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		int duration = AttributeGetters.getInt(element, "duration");
@@ -248,9 +248,9 @@ public class AssetsReader extends AbstractXmlReader {
 		int charMaterialMultiplier = AttributeGetters.getInt(element, "charmaterialmultiplier");
 		int timeMultiplier = AttributeGetters.getInt(element, "timemultiplier");
 		int charTimeMultiplier = AttributeGetters.getInt(element, "chartimemultiplier");
-		long installedItemTypeID = AttributeGetters.getLong(element, "installeditemtypeid");
-		long outputTypeID = AttributeGetters.getLong(element, "outputtypeid");
-		long containerTypeID = AttributeGetters.getLong(element, "containertypeid");
+		int installedItemTypeID = AttributeGetters.getInt(element, "installeditemtypeid");
+		int outputTypeID = AttributeGetters.getInt(element, "outputtypeid");
+		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");
 		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
 		int completed = AttributeGetters.getInt(element, "completed");
 		int completedSuccessfully = AttributeGetters.getInt(element, "completedsuccessfully");
@@ -322,9 +322,9 @@ public class AssetsReader extends AbstractXmlReader {
 	private static EveAsset parseEveAsset(Node node, EveAsset parentEveAsset, Settings settings){
 		long count = AttributeGetters.getLong(node, "count");
 		String flag = AttributeGetters.getString(node, "flag");
-		long id = AttributeGetters.getLong(node, "id");
+		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
-		int locationID = AttributeGetters.getInt(node, "locationid");
+		long locationID = AttributeGetters.getInt(node, "locationid");
 		if (locationID == 0 && parentEveAsset != null) locationID = parentEveAsset.getLocationID();
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
@@ -343,7 +343,7 @@ public class AssetsReader extends AbstractXmlReader {
 		String region = ApiIdConverter.region(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 		String solarSystem = ApiIdConverter.solarSystem(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		int solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		long solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 }

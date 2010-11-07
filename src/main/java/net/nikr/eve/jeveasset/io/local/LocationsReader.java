@@ -51,7 +51,7 @@ public class LocationsReader extends AbstractXmlReader {
 		LOG.info("Locations loaded");
 	}
 
-	private static void parseLocations(Element element, Map<Integer, Location> locations){
+	private static void parseLocations(Element element, Map<Long, Location> locations){
 		/*
 		Map<Integer, Location> locations;
 		locations = new HashMap<Integer, Location>();
@@ -62,7 +62,7 @@ public class LocationsReader extends AbstractXmlReader {
 		Location location = null;
 		for (int a = 0; a < nodes.getLength(); a++){
 			location = parseLocation(nodes.item(a));
-			locations.put(location.getId(), location);
+			locations.put(location.getLocationID(), location);
 		}
 	}
 	private static Location parseLocation(Node node){

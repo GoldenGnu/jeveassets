@@ -532,12 +532,12 @@ public class AssetsTab extends JMainTab
 			for (int a = 0; a < selectedRows.length; a++){
 				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
 				if (bpo){
-					if (!program.getSettings().getBpos().contains(eveAsset.getItemId())){
-						program.getSettings().getBpos().add(eveAsset.getItemId());
+					if (!program.getSettings().getBpos().contains(eveAsset.getItemID())){
+						program.getSettings().getBpos().add(eveAsset.getItemID());
 					}
 				} else {
-					if (program.getSettings().getBpos().contains(eveAsset.getItemId())){
-						program.getSettings().getBpos().remove(eveAsset.getItemId());
+					if (program.getSettings().getBpos().contains(eveAsset.getItemID())){
+						program.getSettings().getBpos().remove(eveAsset.getItemID());
 					}
 				}
 			}

@@ -23,30 +23,30 @@ package net.nikr.eve.jeveasset.data;
 
 
 public class Location {
-	private int id;
+	private long locationID; //LocationID : long
 	private String name;
-	private int region;
+	private long regionID; //LocationID : long
 	private String security;
-	private int solarSystemID;
+	private long systemID; //LocationID : long
 
-	public Location(int id, String name, int region, String security, int solarSystemID) {
-		this.id = id;
+	public Location(long locationID, String name, long regionID, String security, long systemID) {
+		this.locationID = locationID;
 		this.name = name;
-		this.region = region;
+		this.regionID = regionID;
 		this.security = security;
-		this.solarSystemID = solarSystemID;
+		this.systemID = systemID;
 	}
 
-	public int getId() {
-		return id;
+	public long getLocationID() {
+		return locationID;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public int getRegion() {
-		return region;
+	public long getRegionID() {
+		return regionID;
 	}
 
 	public String getSecurity() {
@@ -58,8 +58,8 @@ public class Location {
 		return name;
 	}
 
-	public int getSolarSystemID() {
-		return solarSystemID == 0 ? id : solarSystemID;
+	public long getSystemID() {
+		return systemID == 0 ? locationID : systemID;
 	}
 
 	@Override
@@ -71,10 +71,10 @@ public class Location {
 			return false;
 		}
 		final Location other = (Location) obj;
-		if (this.id != other.id) {
+		if (this.locationID != other.locationID) {
 			return false;
 		}
-		if (this.solarSystemID != other.solarSystemID) {
+		if (this.systemID != other.systemID) {
 			return false;
 		}
 		return true;
@@ -82,9 +82,9 @@ public class Location {
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 29 * hash + this.id;
-		hash = 29 * hash + this.solarSystemID;
+		int hash = 7;
+		hash = 71 * hash + (int) (this.locationID ^ (this.locationID >>> 32));
+		hash = 71 * hash + (int) (this.systemID ^ (this.systemID >>> 32));
 		return hash;
 	}
 }

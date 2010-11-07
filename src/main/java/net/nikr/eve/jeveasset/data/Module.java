@@ -40,18 +40,18 @@ public class Module implements Comparable<Module> {
 	private double value;
 	private long count;
 	private boolean marketGroup;
-	private long typeID;
+	private int typeID; //TypeID : int
 	private String system;
 	private String region;
 	private boolean first = false;
 
-	public Module(EveAsset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, long typeID) {
+	public Module(EveAsset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, int typeID) {
 		this.name = name;
 		this.typeName = typeName;
 		this.key = key;
 		this.location = eveAsset.getLocation();
 		this.flag = flag;
-		this.system = eveAsset.getSolarSystem();
+		this.system = eveAsset.getSystem();
 		this.region = eveAsset.getRegion();
 		this.owner = eveAsset.getOwner();
 		this.price = price;
@@ -126,7 +126,7 @@ public class Module implements Comparable<Module> {
 		return system;
 	}
 
-	public long getTypeID() {
+	public int getTypeID() {
 		return typeID;
 	}
 

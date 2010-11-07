@@ -27,7 +27,7 @@ import java.util.List;
 
 public class Item {
 
-	private int id;
+	private int typeID; //TypeID : int
 	private String name;
 	private String group;
 	private String category;
@@ -37,8 +37,8 @@ public class Item {
 	private boolean marketGroup;
 	private List<ReprocessedMaterial> reprocessedMaterials;
 
-	public Item(int id, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
-		this.id = id;
+	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
+		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
 		this.category = category;
@@ -65,8 +65,8 @@ public class Item {
 		return group;
 	}
 
-	public int getId() {
-		return id;
+	public int getTypeID() {
+		return typeID;
 	}
 
 	public boolean isMarketGroup() {

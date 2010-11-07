@@ -90,12 +90,12 @@ public class TestApiConverter {
 		for (int a = 0; a < assets.size(); a++){
 			assertFalse("Job asset location not found", assets.get(a).getLocation().contains("Error !"));
 			assertFalse("Job asset location not found", assets.get(a).getLocation().equals("Unknown"));
-			assertFalse("Job asset location not found", assets.get(a).getSolarSystem().contains("Error !"));
-			assertFalse("Job asset location not found", assets.get(a).getSolarSystem().equals("Unknown"));
+			assertFalse("Job asset location not found", assets.get(a).getSystem().contains("Error !"));
+			assertFalse("Job asset location not found", assets.get(a).getSystem().equals("Unknown"));
 			assertFalse("Job asset location not found", assets.get(a).getRegion().contains("Error !"));
 			assertFalse("Job asset location not found", assets.get(a).getRegion().equals("Unknown"));
 			assertFalse("Job asset location not found", assets.get(a).getSecurity().contains("Error !"));
-			assertTrue("Job asset location not found", assets.get(a).getSolarSystemId() > 0);
+			assertTrue("Job asset location not found", assets.get(a).getSolarSystemID() > 0);
 		}
 
 	}

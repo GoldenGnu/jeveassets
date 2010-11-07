@@ -52,19 +52,20 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseConquerableStations(Element element, Map<Integer, ApiStation> conquerableStations) throws XmlException {
+	private static void parseConquerableStations(Element element, Map<Long, ApiStation> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private static void parseStations(Element element, Map<Integer, ApiStation> conquerableStations){
+	private static void parseStations(Element element, Map<Long, ApiStation> conquerableStations){
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element currentNode = (Element) filterNodes.item(a);
 			ApiStation station = parseStation(currentNode);
-			conquerableStations.put(station.getStationID(), station);
+			//FIXME long cast
+			conquerableStations.put((long)station.getStationID(), station);
 			
 		}
 	}

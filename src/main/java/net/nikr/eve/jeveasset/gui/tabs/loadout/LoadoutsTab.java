@@ -235,7 +235,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			EveAsset exportAsset = null;
 			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 			for (EveAsset eveAsset : eveAssetEventList){
-				String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 				if (!selectedShip.equals(key)){
 					continue;
 				} else {
@@ -290,16 +290,16 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		List<Module> ship = new ArrayList<Module>();
 		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 		for (EveAsset eveAsset : eveAssetEventList){
-			String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+			String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 			if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
-			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", 0, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeId());
+			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", 0, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeID());
 			Module moduleModules = new Module(eveAsset, "2Modules", "", key, "Total Value", 0, 0, 0, false, 0);
 			Module moduleTotal = new Module(eveAsset, "3Total", "", key, "Total Value", 0, eveAsset.getPrice(), 0, false, 0);
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
 			for (EveAsset assetModule : eveAsset.getAssets()){
-				Module module = new Module(assetModule, "1"+assetModule.getName(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount(), assetModule.isMarketGroup(), assetModule.getTypeId());
+				Module module = new Module(assetModule, "1"+assetModule.getName(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount(), assetModule.isMarketGroup(), assetModule.getTypeID());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains("HiSlot")
 						|| assetModule.getFlag().contains("MedSlot")
@@ -370,7 +370,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			List<String> charShips = new ArrayList<String>();
 			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 			for (EveAsset eveAsset : eveAssetEventList){
-				String key = eveAsset.getName()+" #"+eveAsset.getItemId();
+				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
 				if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All") ) continue;
 				charShips.add(key);

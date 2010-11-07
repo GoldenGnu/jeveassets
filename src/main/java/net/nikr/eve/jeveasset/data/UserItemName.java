@@ -31,7 +31,7 @@ public class UserItemName extends UserListItem<Long>{
 	}
 
 	public UserItemName(EveAsset eveAsset) {
-		this(eveAsset.getName(), eveAsset.getItemId(), eveAsset.getTypeName());
+		this(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
 	}
 
 	public UserItemName(String name, long itemId, String typeName) {

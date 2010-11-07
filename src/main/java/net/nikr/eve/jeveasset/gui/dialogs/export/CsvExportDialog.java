@@ -386,10 +386,10 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			if (headerName.equals(DialoguesCsvExport.get().headerNameBuyMax())) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameValue())) line.put(headerName, getValue(eveAsset.getValue(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameMeta())) line.put(headerName, eveAsset.getMeta());
-			if (headerName.equals(DialoguesCsvExport.get().headerNameID())) line.put(headerName, getValue(eveAsset.getItemId(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameID())) line.put(headerName, getValue(eveAsset.getItemID(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameBasePrice())) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameVolume())) line.put(headerName, getValue(eveAsset.getVolume(), lang));
-			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeID())) line.put(headerName, getValue(eveAsset.getTypeId(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeID())) line.put(headerName, getValue(eveAsset.getTypeID(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameRegion())) line.put(headerName, eveAsset.getRegion());
 			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeCount())) line.put(headerName, getValue(eveAsset.getTypeCount(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameSecurity())) line.put(headerName, eveAsset.getSecurity());

@@ -364,7 +364,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, ApiStation> getConquerableStations() {
+	public Map<Long, ApiStation> getConquerableStations() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -384,7 +384,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, Location> getLocations() {
+	public Map<Long, Location> getLocations() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

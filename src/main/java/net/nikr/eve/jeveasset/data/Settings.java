@@ -88,28 +88,26 @@ public class Settings{
 	private static boolean portable = false;
 	
 	//Data
-	private Map<Integer, Item> items = new HashMap<Integer, Item>();
-	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>();
-	private Map<Integer, Location> locations = new HashMap<Integer, Location>();
-	private List<Jump> jumps = new ArrayList<Jump>();
-	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
-
-	
-	private List<Integer> uniqueIds = null;
-	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null;
+	private Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
+	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
+	private Map<Long, Location> locations = new HashMap<Long, Location>(); //LocationID : long
+	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
+	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>(); //LocationID : long
+	private List<Integer> uniqueIds = null; //TypeID : int
+	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null; //TypeID : int
+	private Map<Integer, PriceData> priceData; //TypeID : int
+	private Map<Integer, UserPrice> userPrices; //TypeID : int
+	private Map<Long, UserItemName> userItemNames; //ItemID : long
 	private List<EveAsset> eventListAssets = null;
-	private Map<String, List<AssetFilter>> assetFilters;
-	private Map<Integer, PriceData> priceData;
-	private Map<Integer, UserPrice> userPrices;
-	private Map<Long, UserItemName> userItemNames;
 	private List<Account> accounts;
+	private List<Long> bpos; //ItemID : long
+	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
 	private final Map<String, TableSettings> tableSettings = new HashMap<String, TableSettings>();
 	private Map<String, String> assetTableColumnTooltips;
 	private List<String> assetTableNumberColumns;
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
-	private List<Long> bpos;
 	private List<Profile> profiles;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings;
@@ -344,14 +342,14 @@ public class Settings{
 			EveAsset eveAsset = currentAssets.get(a);
 			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
 				//User price
-				if (userPrices.containsKey(eveAsset.getTypeId())){ //Add User Price
-					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeId()));
+				if (userPrices.containsKey(eveAsset.getTypeID())){ //Add User Price
+					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
 				} else { //No user price, clear user price
 					eveAsset.setUserPrice(null);
 				}
 				//User Item Names
-				if (userItemNames.containsKey(eveAsset.getItemId())){
-					eveAsset.setName(userItemNames.get(eveAsset.getItemId()).getName());
+				if (userItemNames.containsKey(eveAsset.getItemID())){
+					eveAsset.setName(userItemNames.get(eveAsset.getItemID()).getName());
 				} else {
 					eveAsset.setName(eveAsset.getTypeName());
 				}
@@ -361,7 +359,7 @@ public class Settings{
 					EveAsset parentEveAsset = eveAsset.getParents().get(b);
 					if (b != 0) sContainer = sContainer + ">";
 					if (parentEveAsset.getName().equals(parentEveAsset.getTypeName())){
-						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemId();
+						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
 					} else {
 						sContainer = sContainer + parentEveAsset.getName();
 					}
@@ -370,31 +368,31 @@ public class Settings{
 
 				//Price data
 				if (eveAsset.isMarketGroup()){ //Add price data
-					eveAsset.setPriceData(priceData.get(eveAsset.getTypeId()));
+					eveAsset.setPriceData(priceData.get(eveAsset.getTypeID()));
 				}
 				//Reprocessed price
 				eveAsset.setPriceReprocessed(0);
-				if (getItems().containsKey(eveAsset.getTypeId())){
-					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeId()).getReprocessedMaterial();
+				if (getItems().containsKey(eveAsset.getTypeID())){
+					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeID()).getReprocessedMaterial();
 					double priceReprocessed = 0;
 					int portionSize = 0;
 					for (int b = 0; b < reprocessedMaterials.size(); b++){
 						//Calculate reprocessed price
 						ReprocessedMaterial material = reprocessedMaterials.get(b);
 						portionSize = material.getPortionSize();
-						if (priceData.containsKey(material.getId())){
-							PriceData priceDatum = priceData.get(material.getId());
+						if (priceData.containsKey(material.getTypeID())){
+							PriceData priceDatum = priceData.get(material.getTypeID());
 							double price = 0;
-							if (userPrices.containsKey(material.getId())){
-								price = userPrices.get(material.getId()).getPrice();
+							if (userPrices.containsKey(material.getTypeID())){
+								price = userPrices.get(material.getTypeID()).getPrice();
 							} else {
 								price = EveAsset.getDefaultPrice(priceDatum);
 							}
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
 						//Unique Ids
-						if (!uniqueIds.contains(material.getId())){
-							uniqueIds.add(material.getId());
+						if (!uniqueIds.contains(material.getTypeID())){
+							uniqueIds.add(material.getTypeID());
 						}
 					}
 					if (priceReprocessed > 0 && portionSize > 0){
@@ -405,16 +403,16 @@ public class Settings{
 
 				//Blueprint
 				if (eveAsset.isBlueprint()){
-					eveAsset.setBpo(bpos.contains(eveAsset.getItemId()));
+					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
 				} else {
 					eveAsset.setBpo(false);
 				}
 				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeId())){
-					uniqueAssetsDuplicates.put(eveAsset.getTypeId(), new ArrayList<EveAsset>());
+				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())){
+					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<EveAsset>());
 				}
 				if (shouldShow) {
-					List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeId());
+					List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeID());
 					long newCount = eveAsset.getCount();
 					if (!dup.isEmpty()){
 						newCount = newCount + dup.get(0).getTypeCount();
@@ -428,8 +426,8 @@ public class Settings{
 				eventListAssets.add(eveAsset);
 			}
 			//Unique Ids
-			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeId())){
-				uniqueIds.add(eveAsset.getTypeId());
+			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeID())){
+				uniqueIds.add(eveAsset.getTypeID());
 			}
 			//Add sub-assets
 			addAssets(eveAsset.getAssets(), shouldShow, shouldShowCorp);
@@ -603,7 +601,7 @@ public class Settings{
 		this.apiProxy = apiProxy;
 	}
 
-	public Map<Integer, ApiStation> getConquerableStations() {
+	public Map<Long, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
 
@@ -619,7 +617,7 @@ public class Settings{
 		return jumps;
 	}
 
-	public Map<Integer, Location> getLocations() {
+	public Map<Long, Location> getLocations() {
 		return locations;
 	}
 

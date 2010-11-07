@@ -31,7 +31,7 @@ public class Material implements Comparable<Material>{
 	private String group;
 	private String typeName;
 	private boolean marketGroup;
-	private long typeID;
+	private int typeID; //TypeID : int
 	private String station;
 	private String system;
 	private String region;
@@ -46,9 +46,9 @@ public class Material implements Comparable<Material>{
 		if (eveAsset != null){
 			this.typeName = eveAsset.getName();
 			this.marketGroup = eveAsset.isMarketGroup();
-			this.typeID = eveAsset.getTypeId();
+			this.typeID = eveAsset.getTypeID();
 			this.station = eveAsset.getLocation();
-			this.system = eveAsset.getSolarSystem();
+			this.system = eveAsset.getSystem();
 			this.region = eveAsset.getRegion();
 		} else {
 			this.typeName = "";
@@ -94,7 +94,7 @@ public class Material implements Comparable<Material>{
 		return system;
 	}
 
-	public long getTypeID() {
+	public int getTypeID() {
 		return typeID;
 	}
 

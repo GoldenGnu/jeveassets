@@ -38,13 +38,13 @@ public class Galaxy {
 
 	private Set<Region> regions;
 
-	public Galaxy(Map<Integer, Location> locations, List<Jump> jumps) {
+	public Galaxy(Map<Long, Location> locations, List<Jump> jumps) {
 		this.regions = new TreeSet<Region>();
 
 		Collection<Location> loc = locations.values();
 		// Add the regions first...
 		for (Location l : loc) {
-			String id = Integer.toString(l.getId());
+			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '1') { // a region
 				String name = l.getName();
 				regions.add(new Region(id, name));
@@ -52,29 +52,29 @@ public class Galaxy {
 		}
 		// ...then systems...
 		for (Location l : loc) {
-			String id = Integer.toString(l.getId());
+			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '3') { // a solar system
 				String name = l.getName();
-				String region = Integer.toString(l.getRegion());
+				String region = Long.toString(l.getRegionID());
 				String sec = l.getSecurity();
 				addSystemToRegion(id, name, sec, region);
 			}
 		}
 		//... and finally the stations.
 		for (Location l : loc) {
-			String id = Integer.toString(l.getId());
+			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '6') { // a station
 				String name = l.getName();
-				String region = Integer.toString(l.getRegion());
-				String system = Integer.toString(l.getSolarSystemID());
+				String region = Long.toString(l.getRegionID());
+				String system = Long.toString(l.getSystemID());
 				addStationToSystem(id, name, region, system);
 			}
 		}
 		// Add the jump associations.
 		Map <String, SolarSystem> systemMap = getAllSolarSystemsAsMap();
 		for (Jump j : jumps) {
-			SolarSystem from = systemMap.get(Integer.toString(j.getFrom().getId()));
-			SolarSystem to = systemMap.get(Integer.toString(j.getTo().getId()));
+			SolarSystem from = systemMap.get(Long.toString(j.getFrom().getLocationID()));
+			SolarSystem to = systemMap.get(Long.toString(j.getTo().getLocationID()));
 			from.addJump(to);
 		}
 	}
@@ -99,6 +99,7 @@ public class Galaxy {
 		return "New Eden (" + getRegionCount() + " regions)";
 	}
 
+	@Override
 	public String toString() {
 		return "New Eden";
 	}

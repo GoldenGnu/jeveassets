@@ -55,10 +55,10 @@ public class ApiConverter {
 	}
 
 	private static EveAsset apiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Human human, boolean bCorp, Settings settings){
-		int typeID = (int)apiMarketOrder.getTypeID();
-		int locationID = (int) apiMarketOrder.getStationID();
+		int typeID = apiMarketOrder.getTypeID();
+		long locationID = apiMarketOrder.getStationID();
 		long count = apiMarketOrder.getVolRemaining();
-		long id = apiMarketOrder.getOrderID();
+		long itemId = apiMarketOrder.getOrderID();
 		String flag = "Market Order";
 		boolean corporationAsset = bCorp;
 		boolean singleton  = true;
@@ -76,10 +76,10 @@ public class ApiConverter {
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		long solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 
 	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, boolean bCorp, Settings settings){
@@ -104,8 +104,8 @@ public class ApiConverter {
 	}
 	
 	private static EveAsset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Human human, boolean bCorp, Settings settings){
-		int typeID = (int) apiIndustryJob.getInstalledItemTypeID();
-		int locationID = (int) apiIndustryJobLocationId(apiIndustryJob, settings);
+		int typeID = apiIndustryJob.getInstalledItemTypeID();
+		long locationID = apiIndustryJobLocationId(apiIndustryJob, settings);
 		long count = apiIndustryJob.getInstalledItemQuantity();
 		long id = apiIndustryJob.getInstalledItemID();
 		int nFlag = apiIndustryJob.getInstalledItemFlag();
@@ -126,7 +126,7 @@ public class ApiConverter {
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		int solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
+		long solarSystemId = ApiIdConverter.solarSystemId(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
 		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
@@ -151,9 +151,9 @@ public class ApiConverter {
 	private static EveAsset apiAssetsToEveAsset(Human human, ApiAsset apiAsset, EveAsset parentEveAsset, boolean bCorp, Settings settings){
 		long count = apiAsset.getQuantity();
 		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
-		long id = apiAsset.getItemID();
+		long itemId = apiAsset.getItemID();
 		int typeID = apiAsset.getTypeID();
-		int locationID = apiAsset.getLocationID();
+		long locationID = apiAsset.getLocationID();
 		boolean singleton  = apiAsset.getSingleton();
 		boolean corporationAsset = bCorp;
 		String owner = ApiIdConverter.owner(human, bCorp);
@@ -170,10 +170,10 @@ public class ApiConverter {
 		String region = ApiIdConverter.region(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String location = ApiIdConverter.location(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.solarSystem(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		int solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		long solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
@@ -183,10 +183,10 @@ public class ApiConverter {
 		return marketOrders;
 	}
 	private static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
-		String name = ApiIdConverter.name((int)apiMarketOrder.getTypeID(), settings.getItems());
-		String location = ApiIdConverter.location((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
-		String system = ApiIdConverter.solarSystem((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
-		String region = ApiIdConverter.region((int)apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
+		String name = ApiIdConverter.name(apiMarketOrder.getTypeID(), settings.getItems());
+		String location = ApiIdConverter.location(apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
+		String system = ApiIdConverter.solarSystem(apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
+		String region = ApiIdConverter.region(apiMarketOrder.getStationID(), null, settings.getConquerableStations(), settings.getLocations());
 		return new MarketOrder(apiMarketOrder, name, location, system, region);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
@@ -198,8 +198,8 @@ public class ApiConverter {
 	}
 
 	private static IndustryJob apiIndustryJobToIndustryJob(ApiIndustryJob apiIndustryJob, String owner, Settings settings){
-		String name = ApiIdConverter.name((int)apiIndustryJob.getInstalledItemTypeID(), settings.getItems());
-		int locationID = (int)apiIndustryJobLocationId(apiIndustryJob, settings);
+		String name = ApiIdConverter.name(apiIndustryJob.getInstalledItemTypeID(), settings.getItems());
+		long locationID = apiIndustryJobLocationId(apiIndustryJob, settings);
 		String location = ApiIdConverter.location(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String system = ApiIdConverter.solarSystem(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.region(locationID, null, settings.getConquerableStations(), settings.getLocations());
@@ -207,9 +207,9 @@ public class ApiConverter {
 	}
 	
 	private static long apiIndustryJobLocationId(ApiIndustryJob apiIndustryJob, Settings settings){
-		boolean location = ApiIdConverter.locationTest((int)apiIndustryJob.getInstalledItemLocationID(), null, settings.getConquerableStations(), settings.getLocations());
+		boolean location = ApiIdConverter.locationTest(apiIndustryJob.getInstalledItemLocationID(), null, settings.getConquerableStations(), settings.getLocations());
 		if (location) return apiIndustryJob.getInstalledItemLocationID();
-		location = ApiIdConverter.locationTest((int)apiIndustryJob.getContainerLocationID(), null, settings.getConquerableStations(), settings.getLocations());
+		location = ApiIdConverter.locationTest(apiIndustryJob.getContainerLocationID(), null, settings.getConquerableStations(), settings.getLocations());
 		if (location) return apiIndustryJob.getContainerLocationID();
 		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: "+apiIndustryJob.getInstalledItemLocationID()+" - ContainerLocationID: "+apiIndustryJob.getContainerLocationID());
 		return -1;

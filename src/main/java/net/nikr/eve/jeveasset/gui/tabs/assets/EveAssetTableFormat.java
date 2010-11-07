@@ -65,7 +65,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Base Price")) return Double.class;
 		if (sColumn.equals("Value")) return Double.class;
 		if (sColumn.equals("Meta")) return String.class;
-		if (sColumn.equals("ID")) return Integer.class;
+		if (sColumn.equals("ID")) return Long.class;
 		if (sColumn.equals("Volume")) return Float.class;
 		if (sColumn.equals("Type ID")) return Integer.class;
 		if (sColumn.equals("Region")) return String.class;
@@ -122,9 +122,9 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Base Price")) return eveAsset.getPriceBase();
 		if (sColumn.equals("Value")) return eveAsset.getValue();
 		if (sColumn.equals("Meta")) return eveAsset.getMeta();
-		if (sColumn.equals("ID")) return eveAsset.getItemId();
+		if (sColumn.equals("ID")) return eveAsset.getItemID();
 		if (sColumn.equals("Volume")) return eveAsset.getVolume();
-		if (sColumn.equals("Type ID")) return eveAsset.getTypeId();
+		if (sColumn.equals("Type ID")) return eveAsset.getTypeID();
 		if (sColumn.equals("Region")) return eveAsset.getRegion();
 		if (sColumn.equals("Type Count")) return eveAsset.getTypeCount();
 		if (sColumn.equals("Security")) return eveAsset.getSecurity();

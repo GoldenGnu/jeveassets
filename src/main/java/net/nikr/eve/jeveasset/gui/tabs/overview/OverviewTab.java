@@ -323,7 +323,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 			if (!view.equals("Groups")){ //Locations
 				String location = "";
 				if (view.equals("Regions")) location = eveAsset.getRegion();
-				if (view.equals("Systems")) location = eveAsset.getSolarSystem();
+				if (view.equals("Systems")) location = eveAsset.getSystem();
 				if (view.equals("Stations")) location = eveAsset.getLocation();
 				if (locationsMap.containsKey(location)){ //Update existing overview
 					Overview overview = locationsMap.get(location);
@@ -332,7 +332,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 					overview.addVolume(volume);
 					overview.addReprocessedValue(reprocessedValue);
 				} else { //Create new overview
-					Overview overview = new Overview(location, eveAsset.getSolarSystem(), eveAsset.getRegion(), reprocessedValue, volume, count, value);
+					Overview overview = new Overview(location, eveAsset.getSystem(), eveAsset.getRegion(), reprocessedValue, volume, count, value);
 					locationsMap.put(location, overview);
 					locations.add(overview);
 				}

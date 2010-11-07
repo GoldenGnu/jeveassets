@@ -24,11 +24,11 @@ package net.nikr.eve.jeveasset.data;
 
 public class UserPrice extends UserListItem<Integer> {
 
-	private int typeID;
+	private int typeID; //TypeID : int
 	private String name;
 
 	public UserPrice(EveAsset eveAsset) {
-		this(eveAsset.getPrice(), eveAsset.getTypeId(), eveAsset.getName());
+		this(eveAsset.getPrice(), eveAsset.getTypeID(), eveAsset.getName());
 	}
 
 	public UserPrice(UserPrice userPrice) {

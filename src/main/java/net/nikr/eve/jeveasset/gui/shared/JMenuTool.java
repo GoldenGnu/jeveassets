@@ -51,23 +51,23 @@ public abstract class JMenuTool extends JMenu {
 		}
 		if (object instanceof Material){
 			Material material = (Material) object;
-			return init(program, material.isMarketGroup(), material.getTypeName(), (int)material.getTypeID(), material.getStation(), material.getSystem(), material.getRegion());
+			return init(program, material.isMarketGroup(), material.getTypeName(), material.getTypeID(), material.getStation(), material.getSystem(), material.getRegion());
 		}
 		if (object instanceof Module){
 			Module module = (Module) object;
-			return init(program, module.isMarketGroup(), module.getTypeName(), (int)module.getTypeID(), module.getLocation(), module.getSystem(), module.getRegion());
+			return init(program, module.isMarketGroup(), module.getTypeName(), module.getTypeID(), module.getLocation(), module.getSystem(), module.getRegion());
 		}
 		if (object instanceof MarketOrder){
 			MarketOrder marketOrder = (MarketOrder) object;
-			return init(program, true, marketOrder.getName(), (int)marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion());
+			return init(program, true, marketOrder.getName(), marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion());
 		}
 		if (object instanceof IndustryJob){
 			IndustryJob industryJob = (IndustryJob) object;
-			return init(program, true, industryJob.getName(), (int)industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion());
+			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion());
 		}
 		if (object instanceof EveAsset){
 			EveAsset eveAsset = (EveAsset) object;
-			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeId(), eveAsset.getLocation(), eveAsset.getSolarSystem(), eveAsset.getRegion());
+			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeID(), eveAsset.getLocation(), eveAsset.getSystem(), eveAsset.getRegion());
 		}
 		if (object instanceof Overview){
 			Overview overview = (Overview) object;

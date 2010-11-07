@@ -38,8 +38,8 @@ import net.nikr.eve.jeveassets.tests.mocks.FakeSettings;
 public class ApiSettings extends FakeSettings {
 	private List<Long> bpos = new ArrayList<Long>();
 	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>();
-	private Map<Integer, Location> locations = new HashMap<Integer, Location>();
-	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
+	private Map<Long, Location> locations = new HashMap<Long, Location>();
+	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
 	private Map<Integer, Item> items = new HashMap<Integer, Item>();
 
 	public ApiSettings() {
@@ -60,12 +60,12 @@ public class ApiSettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<Integer, ApiStation> getConquerableStations() {
+	public Map<Long, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
 
 	@Override
-	public Map<Integer, Location> getLocations() {
+	public Map<Long, Location> getLocations() {
 		return locations;
 	}
 

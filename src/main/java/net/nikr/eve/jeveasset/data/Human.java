@@ -232,8 +232,8 @@ public class Human {
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 23 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		int hash = 7;
+		hash = 67 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
 		return hash;
 	}
 
@@ -241,15 +241,9 @@ public class Human {
 		return getApiAuthorization(account, 0);
 	}
 	public static ApiAuthorization getApiAuthorization(Human human){
-		return getApiAuthorization(human.getParentAccount(), (int)human.getCharacterID());
+		return getApiAuthorization(human.getParentAccount(), human.getCharacterID());
 	}
-	public static ApiAuthorization getApiAuthorization(Account account, Human human){
-		return getApiAuthorization(account, (int)human.getCharacterID());
-	}
-	public static ApiAuthorization getApiAuthorization(Account account, long characterID){
-		return getApiAuthorization(account, (int)characterID);
-	}
-	public static ApiAuthorization getApiAuthorization(Account account, int characterID){
+	private static ApiAuthorization getApiAuthorization(Account account, long characterID){
 		return new ApiAuthorization(account.getUserID(), characterID, account.getApiKey());
 	}
 }

@@ -162,7 +162,7 @@
 		<dependency>
 			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>

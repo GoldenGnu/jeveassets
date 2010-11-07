@@ -59,7 +59,7 @@ public class ItemsReader extends AbstractXmlReader {
 			Element itemElement = (Element) nodes.item(a);
 			item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
-			items.put(item.getId(), item);
+			items.put(item.getTypeID(), item);
 		}
 	}
 	private static Item parseItem(Node node){

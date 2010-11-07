@@ -38,7 +38,7 @@ import net.nikr.eve.jeveassets.tests.mocks.FakeSettings;
 public class RoutingMockSettings extends FakeSettings {
 
 	List<Jump> jumps = new ArrayList<Jump>();
-	Map<Integer, Location> locations = new HashMap<Integer, Location>();
+	Map<Long, Location> locations = new HashMap<Long, Location>();
 
 	public RoutingMockSettings() {
 		LocationsReader.load(this);
@@ -51,7 +51,7 @@ public class RoutingMockSettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<Integer, Location> getLocations() {
+	public Map<Long, Location> getLocations() {
 		return locations;
 	}
 

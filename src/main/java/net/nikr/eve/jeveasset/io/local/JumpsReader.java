@@ -53,7 +53,7 @@ public class JumpsReader extends AbstractXmlReader {
 		LOG.info("Jumps loaded");
 	}
 
-	private static void parseJumps(Element element, Map<Integer, Location> locations, List<Jump> jumps){
+	private static void parseJumps(Element element, Map<Long, Location> locations, List<Jump> jumps){
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump = null;
 		for (int a = 0; a < nodes.getLength(); a++){
@@ -62,9 +62,9 @@ public class JumpsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Jump parseEdge(Node node, Map<Integer, Location> locations){
-		int from = AttributeGetters.getInt(node, "from");
-		int to = AttributeGetters.getInt(node, "to");
+	private static Jump parseEdge(Node node, Map<Long, Location> locations){
+		long from = AttributeGetters.getLong(node, "from");
+		long to = AttributeGetters.getLong(node, "to");
 		Jump j = new Jump(locations.get(from), locations.get(to));
 		return j;
 	}

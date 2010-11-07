@@ -39,16 +39,16 @@ public class SolarSystem extends Node {
 		return location.getSecurity();
 	}
 
-	public int getRegion() {
-		return location.getRegion();
+	public long getRegionID() {
+		return location.getRegionID();
 	}
 
-	public int getId() {
-		return location.getId();
+	public long getLocationID() {
+		return location.getLocationID();
 	}
 
-	public int getSolarSystemID() {
-		return location.getSolarSystemID();
+	public long getSystemID() {
+		return location.getSystemID();
 	}
 
 	@Override
