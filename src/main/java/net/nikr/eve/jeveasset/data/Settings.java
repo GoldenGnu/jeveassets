@@ -104,6 +104,7 @@ public class Settings{
 	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
 	private final Map<String, TableSettings> tableSettings = new HashMap<String, TableSettings>();
+	private final Map<String, Float> packagedVolume = new HashMap<String, Float>();
 	private Map<String, String> assetTableColumnTooltips;
 	private List<String> assetTableNumberColumns;
 	private Date conquerableStationsNextUpdate;
@@ -143,6 +144,44 @@ public class Settings{
 		flags.put(FLAG_UPDATE_DEV, false);
 		flags.put(FLAG_REPROCESS_COLORS, false);
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
+
+		packagedVolume.put("Assault Ship", 2500f);
+		packagedVolume.put("Battlecruiser", 15000f);
+		packagedVolume.put("Battleship", 50000f);
+		packagedVolume.put("Black Ops", 50000f);
+		packagedVolume.put("Capital Industrial Ship", 1000000f);
+		packagedVolume.put("Capsule", 500f);
+		packagedVolume.put("Carrier", 1000000f);
+		packagedVolume.put("Combat Recon Ship", 10000f);
+		packagedVolume.put("Command Ship", 15000f);
+		packagedVolume.put("Covert Ops", 2500f);
+		packagedVolume.put("Cruiser", 10000f);
+		packagedVolume.put("Destroyer", 5000f);
+		packagedVolume.put("Dreadnought", 1000000f);
+		packagedVolume.put("Electronic Attack Ship", 2500f);
+		packagedVolume.put("Elite Battleship", 50000f);
+		packagedVolume.put("Exhumer", 3750f);
+		packagedVolume.put("Force Recon Ship", 10000f);
+		packagedVolume.put("Freighter", 1000000f);
+		packagedVolume.put("Frigate", 2500f);
+		packagedVolume.put("Heavy Assault Ship", 10000f);
+		packagedVolume.put("Heavy Interdictor", 10000f);
+		packagedVolume.put("Industrial", 20000f);
+		packagedVolume.put("Industrial Command Ship", 500000f);
+		packagedVolume.put("Interceptor", 2500f);
+		packagedVolume.put("Interdictor", 5000f);
+		packagedVolume.put("Jump Freighter", 1000000f);
+		packagedVolume.put("Logistics", 10000f);
+		packagedVolume.put("Marauder", 50000f);
+		packagedVolume.put("Mining Barge", 3750f);
+		packagedVolume.put("Prototype Exploration Ship", 500f);
+		packagedVolume.put("Rookie ship", 2500f);
+		packagedVolume.put("Shuttle", 500f);
+		packagedVolume.put("Stealth Bomber", 2500f);
+		packagedVolume.put("Strategic Cruiser", 5000f);
+		packagedVolume.put("Supercarrier", 1000000f);
+		packagedVolume.put("Titan", 10000000f);
+		packagedVolume.put("Transport Ship", 20000f);
 
 		//To add new column also update:
 		//		gui.table.EveAssetTableFormat.getColumnClass()
@@ -422,6 +461,11 @@ public class Settings{
 						dup.get(b).setTypeCount(newCount);
 					}
 				}
+				//Packaged Volume
+				if (!eveAsset.isSingleton() && packagedVolume.containsKey(eveAsset.getGroup())){
+					eveAsset.setVolume(packagedVolume.get(eveAsset.getGroup()));
+				}
+
 				//Add asset
 				eventListAssets.add(eveAsset);
 			}

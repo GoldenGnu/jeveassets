@@ -272,6 +272,12 @@ public class EveAsset implements Comparable<EveAsset> {
 		return owner;
 	}
 
+	/**
+	 * Singleton: Unpackaged
+	 *
+	 * @return true if unpackaged
+	 *         false if packaged
+	 */
 	public boolean isSingleton() {
 		return singleton;
 	}
@@ -370,6 +376,10 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	public float getVolume() {
 		return volume;
+	}
+
+	public void setVolume(float volume) {
+		this.volume = volume;
 	}
 
 	public long getTypeCount() {
