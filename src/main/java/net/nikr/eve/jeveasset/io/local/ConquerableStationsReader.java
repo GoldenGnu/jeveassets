@@ -64,8 +64,7 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element currentNode = (Element) filterNodes.item(a);
 			ApiStation station = parseStation(currentNode);
-			//FIXME long cast
-			conquerableStations.put((long)station.getStationID(), station);
+			conquerableStations.put(station.getStationID(), station);
 			
 		}
 	}

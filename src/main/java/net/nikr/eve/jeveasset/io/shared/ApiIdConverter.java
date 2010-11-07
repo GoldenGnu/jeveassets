@@ -75,7 +75,7 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static String location(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String locationName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -111,7 +111,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String region(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String regionName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -184,7 +184,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static long solarSystemId(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static long systemID(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -217,7 +217,7 @@ public class ApiIdConverter {
 		return -1;
 	}
 	//PENDING Make Test for ApiIdConverter.solarSystem(...)
-	public static String solarSystem(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String systemName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -261,7 +261,7 @@ public class ApiIdConverter {
 		return -1;
 	}
 
-	public static String name(int typeID, Map<Integer, Item> items) {
+	public static String typeName(int typeID, Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getName();

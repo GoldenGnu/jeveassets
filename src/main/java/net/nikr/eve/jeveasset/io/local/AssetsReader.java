@@ -331,7 +331,7 @@ public class AssetsReader extends AbstractXmlReader {
 		String owner = AttributeGetters.getString(node, "owner");
 
 		//Calculated:
-		String name = ApiIdConverter.name(typeID, settings.getItems());
+		String name = ApiIdConverter.typeName(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
 		double priceBase = ApiIdConverter.priceBase(typeID, settings.getItems());
@@ -339,11 +339,11 @@ public class AssetsReader extends AbstractXmlReader {
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
 		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String location = ApiIdConverter.location(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String region = ApiIdConverter.region(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
-		String solarSystem = ApiIdConverter.solarSystem(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		long solarSystemId = ApiIdConverter.solarSystemId(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
 	}
 }
