@@ -148,7 +148,7 @@ public class MainMenu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		menuItem = new JMenuItem("Manage Accounts...");
+		menuItem = new JMenuItem("Accounts...");
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.ICON_DIALOG_ACCOUNT_MANAGER);
 		menuItem.setActionCommand(ACTION_OPEN_ACCOUNT_MANAGER);
