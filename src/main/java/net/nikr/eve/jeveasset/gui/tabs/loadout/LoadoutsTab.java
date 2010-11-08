@@ -276,7 +276,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		Object module = isSingleRow ? moduleTableModel.getElementAt(jTable.getSelectedRow()) : null;
+		Object module = isSingleRow ? (Object) moduleTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));

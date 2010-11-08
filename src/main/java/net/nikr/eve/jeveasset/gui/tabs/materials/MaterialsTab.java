@@ -187,7 +187,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		Object material = isSingleRow ? materialTableModel.getElementAt(jTable.getSelectedRow()) : null;
+		Object material = isSingleRow ? (Object) materialTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
