@@ -140,6 +140,17 @@ License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
 
 ________________________________________________________________________________
+_TRANSLATIONS___________________________________________________________________
+
+jEveAssets use the Translations library for i18n
+
+Link:
+  http://eve.nikr.net/?page=jeveasset
+
+License:
+  GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
+
+________________________________________________________________________________
 _OSXADAPTER_____________________________________________________________________
 
 jEveAssets use OSXAdapter to enhance support for mac os x environments
