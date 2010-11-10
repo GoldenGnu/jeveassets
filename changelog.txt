@@ -16,6 +16,22 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.6.0__________________________________________________________________________
+
+New Features:
+-Lookup locations and items on popular eve websites (from the table menu)
+-Material and Ship Loadout tools have been overhauled
+-Now compatible with the new 64bit inventory changes
+
+Changed:
+-Better handling of the price data update
+-A lot of behind the scene changes
+
+Bug Fixes:
+-jeveassets.log is in the wrong location (Mac only)
+-Packaged ships now have the correct volume
+
+________________________________________________________________________________
 _1.5.0__________________________________________________________________________
 
 -Tools are now tabs in the main window
