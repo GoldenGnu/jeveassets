@@ -80,6 +80,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;Niklas Kyster Rasmussen<br>"
 				+ "&nbsp;Flaming Candle<br>"
 				+ "&nbsp;Jochen Bedersdorfer<br>"
+				+ "&nbsp;TryfanMan<br>"
 				+ "<br>"
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Homepage</a> (download and source)<br>"
