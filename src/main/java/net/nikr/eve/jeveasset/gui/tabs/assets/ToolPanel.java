@@ -118,6 +118,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jLoadFilter.setHorizontalAlignment(JButton.LEFT);
 		jToolBar.add(jLoadFilter);
 
+		//TODO Completly remove "Add System"
 		//Add System
 		JButton jAddSystem = new JButton("Add System");
 		jAddSystem.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
@@ -125,8 +126,8 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jAddSystem.setHorizontalAlignment(JButton.LEFT);
 		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
 		jAddSystem.addActionListener(this);
-		//FIXME Remove "Add System" from Assets Toolbar
-		jToolBar.add(jAddSystem);
+		
+		//jToolBar.add(jAddSystem);
 
 		jRows = new JLabel();
 		this.getPanel().add(jRows);
