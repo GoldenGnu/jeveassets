@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <rows>
     <row category="#System" group="#System" id="0" marketgroup="false" meta="" name="#System" price="0" volume="0.0"/>
     <row category="Owner" group="Corporation" id="2" marketgroup="false" meta="" name="Corporation" price="0" volume="0.0"/>
@@ -2903,9 +2903,16 @@
     <row category="Celestial" group="Secondary Sun" id="2064" marketgroup="false" meta="" name="EVE Gate" price="0" volume="1.0"/>
     <row category="Planetary Resources" group="Planet Organic" id="2073" marketgroup="true" meta="" name="Micro Organisms" price="0" volume="0.01"/>
     <row category="Ship" group="Prototype Exploration Ship" id="2078" marketgroup="false" meta="" name="Zephyr" price="5000" volume="5000.0"/>
+    <row category="Module" group="Magnetic Field Stabilizer" id="2080" marketgroup="false" meta="" name="TEST Damage Mod" price="0" volume="25.0"/>
     <row category="Module" group="Scan Probe Launcher" id="2083" marketgroup="false" meta="4" name="Prototype Iris Probe Launcher" price="2" volume="5.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2084" marketgroup="false" meta="" name="The Jovian Charlatan's DNA" price="0" volume="0.1"/>
+    <row category="Commodity" group="Livestock" id="2087" marketgroup="false" meta="" name="The Fiancee" price="0" volume="1.0"/>
+    <row category="Commodity" group="Livestock" id="2088" marketgroup="false" meta="" name="The Son" price="0" volume="1.0"/>
+    <row category="Commodity" group="Livestock" id="2090" marketgroup="false" meta="" name="Councilor Aramin" price="0" volume="1.0"/>
+    <row category="Commodity" group="Livestock" id="2093" marketgroup="false" meta="" name="Kidnapped Citizens" price="0" volume="1.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2096" marketgroup="false" meta="" name="Caldari Supercarrier Wreckage" price="0" volume="0.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2097" marketgroup="false" meta="" name="Amarr Supercarrier Wreckage" price="0" volume="0.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2100" marketgroup="false" meta="" name="Phenod's DNA" price="0" volume="0.1"/>
     <row category="Celestial" group="Large Collidable Object" id="2101" marketgroup="false" meta="" name="Gallente Supercarrier Wreckage" price="0" volume="0.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2102" marketgroup="false" meta="" name="Minmatar Supercarrier Wreckage" price="0" volume="0.0"/>
     <row category="Module" group="Tracking Link" id="2103" marketgroup="true" meta="" name="Tracking Link I" price="23900" volume="25.0">
@@ -3100,6 +3107,7 @@
     <row category="Blueprint" group="Combat Drone Blueprint" id="2206" marketgroup="true" meta="" name="Acolyte II Blueprint" price="9999999" volume="0.01"/>
     <row category="Planetary Interaction" group="Planetary Customs Offices" id="2233" marketgroup="false" meta="" name="Customs Office" price="0" volume="500.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2234" marketgroup="false" meta="" name="Sansha's Battletower LCO" price="0" volume="1.0E8"/>
+    <row category="Commodity" group="Livestock" id="2241" marketgroup="false" meta="" name="Doctor Untermere" price="0" volume="1.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2252" marketgroup="false" meta="" name="Roden Station" price="600000" volume="1.0"/>
     <row category="Planetary Interaction" group="Command Centers" id="2254" marketgroup="true" meta="" name="Basic Temperate Command Center" price="90000" volume="50.0"/>
     <row category="Planetary Interaction" group="Spaceports" id="2256" marketgroup="false" meta="" name="Temperate Launchpad" price="900000" volume="0.0"/>
@@ -3983,7 +3991,7 @@
     <row category="Blueprint" group="Structures - Hybrid Battery Blueprints" id="2806" marketgroup="true" meta="" name="Medium Blaster Battery Blueprint" price="50000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Projectile Battery Blueprints" id="2807" marketgroup="true" meta="" name="Large AutoCannon Battery Blueprint" price="100000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Hybrid Battery Blueprints" id="2808" marketgroup="true" meta="" name="Medium Railgun Battery Blueprint" price="50000000" volume="0.01"/>
-    <row category="Charge" group="Rocket" id="2809" marketgroup="false" meta="" name="thermal damage" price="2" volume="0.0050"/>
+    <row category="Charge" group="Rocket" id="2809" marketgroup="false" meta="" name="thermal damage" price="0" volume="0.0050"/>
     <row category="Blueprint" group="Structures - Projectile Battery Blueprints" id="2810" marketgroup="true" meta="" name="Medium Artillery Battery Blueprint" price="50000000" volume="0.01"/>
     <row category="Charge" group="Advanced Torpedo" id="2811" marketgroup="true" meta="5 (Tech II)" name="Inferno Rage Torpedo" price="1440725" volume="0.1">
         <material id="34" portionsize="5000" quantity="29520"/>
@@ -4026,10 +4034,15 @@
     <row category="Blueprint" group="Structures - Laser Battery Blueprints" id="2830" marketgroup="true" meta="" name="Large Beam Laser Battery Blueprint" price="100000000" volume="0.01"/>
     <row category="Celestial" group="Large Collidable Object" id="2831" marketgroup="false" meta="" name="Serpentis Fortress" price="0" volume="1.0E8"/>
     <row category="Celestial" group="Large Collidable Object" id="2832" marketgroup="false" meta="" name="Blood Raider Fortress" price="0" volume="1.0E8"/>
-    <row category="Blueprint" group="Frigate Blueprint" id="2835" marketgroup="false" meta="" name="Utu Blueprint" price="0" volume="0.0"/>
+    <row category="Ship" group="Assault Ship" id="2834" marketgroup="false" meta="5" name="Utu" price="220000" volume="29500.0"/>
+    <row category="Ship" group="Heavy Assault Ship" id="2836" marketgroup="false" meta="5" name="Adrestia" price="7400000" volume="112000.0"/>
     <row category="Blueprint" group="Cruiser Blueprint" id="2837" marketgroup="false" meta="" name="Adrestia Blueprint" price="74000000" volume="0.01"/>
-    <row category="Charge" group="Rocket" id="2849" marketgroup="false" meta="" name="explosive long range" price="2" volume="0.0050"/>
-    <row category="Charge" group="Rocket" id="2857" marketgroup="false" meta="" name="kinetic long range" price="2" volume="0.0050"/>
+    <row category="Implant" group="Booster" id="2838" marketgroup="false" meta="" name="Cerebral Accelerator" price="32768" volume="1.0"/>
+    <row category="Blueprint" group="Booster Blueprints" id="2839" marketgroup="false" meta="" name="Cerebral Accelerator Blueprint" price="0" volume="0.01"/>
+    <row category="Charge" group="Rocket" id="2849" marketgroup="false" meta="" name="explosive long range" price="0" volume="0.0050"/>
+    <row category="Charge" group="Rocket" id="2857" marketgroup="false" meta="" name="kinetic long range" price="0" volume="0.0050"/>
+    <row category="Ship" group="Industrial" id="2863" marketgroup="false" meta="" name="Primae" price="0" volume="270000.0"/>
+    <row category="Blueprint" group="Industrial Blueprint" id="2864" marketgroup="false" meta="" name="Primae Blueprint" price="9999999" volume="0.01"/>
     <row category="Module" group="Projectile Weapon" id="2865" marketgroup="true" meta="5 (Tech II)" name="1200mm Artillery Cannon II" price="1987540" volume="20.0">
         <material id="34" portionsize="1" quantity="92050"/>
         <material id="35" portionsize="1" quantity="30506"/>
@@ -4061,6 +4074,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="11399" portionsize="1" quantity="2"/>
     </row>
+    <row category="Commodity" group="Commodities" id="2887" marketgroup="false" meta="" name="Gallente Admiral’s Corpse" price="0" volume="1.0"/>
     <row category="Module" group="Projectile Weapon" id="2889" marketgroup="true" meta="5 (Tech II)" name="200mm AutoCannon II" price="109744" volume="5.0">
         <material id="34" portionsize="1" quantity="1800"/>
         <material id="35" portionsize="1" quantity="180"/>
@@ -4069,6 +4083,7 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2890" marketgroup="true" meta="" name="200mm AutoCannon II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2893" marketgroup="false" meta="" name="Damning Evidence" price="150" volume="1.0"/>
     <row category="Module" group="Projectile Weapon" id="2897" marketgroup="true" meta="5 (Tech II)" name="220mm Vulcan AutoCannon II" price="305136" volume="10.0">
         <material id="34" portionsize="1" quantity="5600"/>
         <material id="35" portionsize="1" quantity="1350"/>
@@ -10816,17 +10831,17 @@
     <row category="Skill" group="Science" id="11453" marketgroup="true" meta="" name="Electronic Engineering" price="10000000" volume="0.01"/>
     <row category="Skill" group="Science" id="11454" marketgroup="true" meta="" name="Caldari Starship Engineering" price="10000000" volume="0.01"/>
     <row category="Skill" group="Science" id="11455" marketgroup="true" meta="" name="Quantum Physics" price="10000000" volume="0.01"/>
-    <row category="Commodity" group="Tool" id="11457" marketgroup="true" meta="" name="R.Db - Viziam" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11458" marketgroup="true" meta="" name="R.Db - Khanid Innovation" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11459" marketgroup="true" meta="" name="R.Db - Carthum Conglomerate" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11460" marketgroup="true" meta="" name="R.Db - Thukker Mix" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11461" marketgroup="true" meta="" name="R.Db - Boundless Creations" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11462" marketgroup="true" meta="" name="R.Db - Core Complexion" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11463" marketgroup="true" meta="" name="R.Db - Ishukone" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11464" marketgroup="true" meta="" name="R.Db - Kaalakiota" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11465" marketgroup="true" meta="" name="R.Db - Roden Shipyards" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11466" marketgroup="true" meta="" name="R.Db - CreoDron" price="58624" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11467" marketgroup="true" meta="" name="R.Db - Duvolle Labs" price="58624" volume="15.0"/>
+    <row category="Commodity" group="Tool" id="11457" marketgroup="true" meta="" name="R.Db - Viziam" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11458" marketgroup="true" meta="" name="R.Db - Khanid Innovation" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11459" marketgroup="true" meta="" name="R.Db - Carthum Conglomerate" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11460" marketgroup="true" meta="" name="R.Db - Thukker Mix" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11461" marketgroup="true" meta="" name="R.Db - Boundless Creations" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11462" marketgroup="true" meta="" name="R.Db - Core Complexion" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11463" marketgroup="true" meta="" name="R.Db - Ishukone" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11464" marketgroup="true" meta="" name="R.Db - Kaalakiota" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11465" marketgroup="true" meta="" name="R.Db - Roden Shipyards" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11466" marketgroup="true" meta="" name="R.Db - CreoDron" price="58624" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11467" marketgroup="true" meta="" name="R.Db - Duvolle Labs" price="58624" volume="4.0"/>
     <row category="Commodity" group="Tool" id="11468" marketgroup="false" meta="" name="Hacker Deck - Codex" price="47872" volume="15.0"/>
     <row category="Commodity" group="Tool" id="11469" marketgroup="false" meta="" name="Hacker Deck - Shaman" price="47872" volume="15.0"/>
     <row category="Commodity" group="Tool" id="11470" marketgroup="false" meta="" name="Hacker Deck - Hermes" price="47872" volume="15.0"/>
@@ -10834,18 +10849,18 @@
     <row category="Commodity" group="Tool" id="11472" marketgroup="false" meta="" name="Hyper Net Uplink" price="92928" volume="15.0"/>
     <row category="Commodity" group="Tool" id="11473" marketgroup="false" meta="" name="Terran Molecular Sequencer" price="50094880" volume="100.0"/>
     <row category="Commodity" group="Tool" id="11474" marketgroup="false" meta="" name="R.A.M.- Industrial Tech" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11475" marketgroup="true" meta="" name="R.A.M.- Armor/Hull Tech" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11476" marketgroup="true" meta="" name="R.A.M.- Ammunition Tech" price="36456" volume="15.0"/>
+    <row category="Commodity" group="Tool" id="11475" marketgroup="true" meta="" name="R.A.M.- Armor/Hull Tech" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11476" marketgroup="true" meta="" name="R.A.M.- Ammunition Tech" price="36456" volume="4.0"/>
     <row category="Commodity" group="Tool" id="11477" marketgroup="false" meta="" name="R.A.M.- Platform Tech" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11478" marketgroup="true" meta="" name="R.A.M.- Starship Tech" price="36456" volume="15.0"/>
+    <row category="Commodity" group="Tool" id="11478" marketgroup="true" meta="" name="R.A.M.- Starship Tech" price="36456" volume="4.0"/>
     <row category="Commodity" group="Tool" id="11479" marketgroup="false" meta="" name="R.A.M.- Cruiser Tech" price="47056" volume="15.0"/>
     <row category="Commodity" group="Tool" id="11480" marketgroup="false" meta="" name="R.A.M.- Battleship Tech" price="68256" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11481" marketgroup="true" meta="" name="R.A.M.- Robotics" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11482" marketgroup="true" meta="" name="R.A.M.- Energy Tech" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11483" marketgroup="true" meta="" name="R.A.M.- Electronics" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11484" marketgroup="true" meta="" name="R.A.M.- Shield Tech" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11485" marketgroup="true" meta="" name="R.A.M.- Cybernetics" price="36456" volume="15.0"/>
-    <row category="Commodity" group="Tool" id="11486" marketgroup="true" meta="" name="R.A.M.- Weapon Tech" price="36456" volume="15.0"/>
+    <row category="Commodity" group="Tool" id="11481" marketgroup="true" meta="" name="R.A.M.- Robotics" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11482" marketgroup="true" meta="" name="R.A.M.- Energy Tech" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11483" marketgroup="true" meta="" name="R.A.M.- Electronics" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11484" marketgroup="true" meta="" name="R.A.M.- Shield Tech" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11485" marketgroup="true" meta="" name="R.A.M.- Cybernetics" price="36456" volume="4.0"/>
+    <row category="Commodity" group="Tool" id="11486" marketgroup="true" meta="" name="R.A.M.- Weapon Tech" price="36456" volume="4.0"/>
     <row category="Skill" group="Science" id="11487" marketgroup="true" meta="" name="Astronautic Engineering" price="10000000" volume="0.01"/>
     <row category="Celestial" group="Secure Cargo Container" id="11488" marketgroup="true" meta="" name="Huge Secure Container" price="67500" volume="1500.0"/>
     <row category="Celestial" group="Secure Cargo Container" id="11489" marketgroup="true" meta="" name="Giant Secure Container" price="152750" volume="3000.0"/>
@@ -11334,7 +11349,7 @@
     <row category="Commodity" group="Livestock" id="11742" marketgroup="false" meta="" name="The Damsel" price="0" volume="0.1"/>
     <row category="Module" group="Cloaking Device" id="11744" marketgroup="false" meta="20" name="GM Cloak" price="475000" volume="100.0"/>
     <row category="Entity" group="Mission Minmatar Republic Frigate" id="11745" marketgroup="false" meta="" name="Republic Fleet Scout" price="0" volume="19100.0"/>
-    <row category="Commodity" group="Tool" id="11746" marketgroup="true" meta="" name="R.Db - Lai Dai" price="58624" volume="15.0"/>
+    <row category="Commodity" group="Tool" id="11746" marketgroup="true" meta="" name="R.Db - Lai Dai" price="58624" volume="4.0"/>
     <row category="Blueprint" group="Co-Processor Blueprint" id="11747" marketgroup="false" meta="" name="Co-Processor II Blueprint" price="0" volume="0.01"/>
     <row category="Blueprint" group="ECCM Blueprint" id="11750" marketgroup="false" meta="" name="ECCM - Gravimetric II Blueprint" price="0" volume="0.01"/>
     <row category="Blueprint" group="ECCM Blueprint" id="11754" marketgroup="false" meta="" name="ECCM - Ladar II Blueprint" price="0" volume="0.01"/>
@@ -17577,7 +17592,7 @@
         <material id="39" portionsize="500" quantity="29"/>
     </row>
     <row category="Asteroid" group="Hemorphite" id="17445" marketgroup="true" meta="" name="Radiant Hemorphite" price="337734" volume="3.0">
-        <material id="34" portionsize="500" quantity="717"/>
+        <material id="34" portionsize="500" quantity="715"/>
         <material id="35" portionsize="500" quantity="286"/>
         <material id="36" portionsize="500" quantity="66"/>
         <material id="37" portionsize="500" quantity="233"/>
@@ -19511,8 +19526,6 @@
     <row category="Blueprint" group="ECM Blueprint" id="19789" marketgroup="false" meta="" name="Pimp ECM - Multispectral Jammer I Blueprint" price="0" volume="0.01"/>
     <row category="Module" group="Remote Sensor Damper" id="19790" marketgroup="false" meta="" name="DELETE Pimp Remote Sensor Dampener I " price="49998" volume="5.0"/>
     <row category="Blueprint" group="Sensor Booster Blueprint" id="19791" marketgroup="false" meta="" name="DELETE Pimp Remote Sensor Dampener I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19792" marketgroup="false" meta="" name="Pimp Warp Scrambler I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19793" marketgroup="false" meta="" name="Pimp Warp Scrambler I Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Spawn Container" id="19794" marketgroup="false" meta="" name="Cruise Missile Storage" price="0" volume="1200.0"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="19795" marketgroup="false" meta="" name="Radio Telescope_Guristas lvl 3 MISSION" price="0" volume="1.0E8"/>
     <row category="Module" group="Stasis Web" id="19804" marketgroup="false" meta="1" name="Pimp Stasis Webifier I" price="22488" volume="5.0"/>
@@ -19548,86 +19561,6 @@
     </row>
     <row category="Blueprint" group="Target Painter Blueprint" id="19815" marketgroup="false" meta="" name="Phased Weapon Navigation Array Generation Extron Blueprint" price="0" volume="0.01"/>
     <row category="Skill" group="Electronics" id="19816" marketgroup="false" meta="" name="Propulsion Stasis Strength" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19841" marketgroup="false" meta="" name="Fusion Warp Scrambler I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19842" marketgroup="false" meta="" name="Fusion Warp Scrambler I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19843" marketgroup="false" meta="1" name="Fusion Warp Scrambler I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19844" marketgroup="false" meta="" name="Fusion Warp Scrambler I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19845" marketgroup="false" meta="2" name="Fusion Warp Scrambler I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19846" marketgroup="false" meta="" name="Fusion Warp Scrambler I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19847" marketgroup="false" meta="3" name="Fusion Warp Scrambler I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19848" marketgroup="false" meta="" name="Fusion Warp Scrambler I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19849" marketgroup="false" meta="4" name="Fusion Warp Scrambler I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19850" marketgroup="false" meta="" name="Fusion Warp Scrambler I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19851" marketgroup="false" meta="" name="Magpulse Warp Scrambler I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19852" marketgroup="false" meta="" name="Magpulse Warp Scrambler I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19853" marketgroup="false" meta="1" name="Magpulse Warp Scrambler I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19854" marketgroup="false" meta="" name="Magpulse Warp Scrambler I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19855" marketgroup="false" meta="2" name="Magpulse Warp Scrambler I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19856" marketgroup="false" meta="" name="Magpulse Warp Scrambler I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19857" marketgroup="false" meta="3" name="Magpulse Warp Scrambler I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19858" marketgroup="false" meta="" name="Magpulse Warp Scrambler I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19859" marketgroup="false" meta="4" name="Magpulse Warp Scrambler I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19860" marketgroup="false" meta="" name="Magpulse Warp Scrambler I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19861" marketgroup="false" meta="" name="Ion Warp Scrambler I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19862" marketgroup="false" meta="" name="Ion Warp Scrambler I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19863" marketgroup="false" meta="1" name="Ion Warp Scrambler I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19864" marketgroup="false" meta="" name="Ion Warp Scrambler I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19865" marketgroup="false" meta="2" name="Ion Warp Scrambler I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19866" marketgroup="false" meta="" name="Ion Warp Scrambler I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19867" marketgroup="false" meta="3" name="Ion Warp Scrambler I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19868" marketgroup="false" meta="" name="Ion Warp Scrambler I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19869" marketgroup="false" meta="4" name="Ion Warp Scrambler I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19870" marketgroup="false" meta="" name="Ion Warp Scrambler I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19871" marketgroup="false" meta="" name="Plasma Warp Scrambler I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19872" marketgroup="false" meta="" name="Plasma Warp Scrambler I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19873" marketgroup="false" meta="1" name="Plasma Warp Scrambler I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19874" marketgroup="false" meta="" name="Plasma Warp Scrambler I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19875" marketgroup="false" meta="2" name="Plasma Warp Scrambler I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19876" marketgroup="false" meta="" name="Plasma Warp Scrambler I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19877" marketgroup="false" meta="3" name="Plasma Warp Scrambler I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19878" marketgroup="false" meta="" name="Plasma Warp Scrambler I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19879" marketgroup="false" meta="4" name="Plasma Warp Scrambler I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19880" marketgroup="false" meta="" name="Plasma Warp Scrambler I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19881" marketgroup="false" meta="" name="Fusion Warp Disruptor I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19882" marketgroup="false" meta="" name="Fusion Warp Disruptor I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19883" marketgroup="false" meta="1" name="Fusion Warp Disruptor I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19884" marketgroup="false" meta="" name="Fusion Warp Disruptor I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19885" marketgroup="false" meta="2" name="Fusion Warp Disruptor I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19886" marketgroup="false" meta="" name="Fusion Warp Disruptor I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19887" marketgroup="false" meta="3" name="Fusion Warp Disruptor I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19888" marketgroup="false" meta="" name="Fusion Warp Disruptor I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19889" marketgroup="false" meta="4" name="Fusion Warp Disruptor I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19890" marketgroup="false" meta="" name="Fusion Warp Disruptor I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19891" marketgroup="false" meta="" name="Magpulse Warp Disruptor I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19892" marketgroup="false" meta="" name="Magpulse Warp Disruptor I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19893" marketgroup="false" meta="1" name="Magpulse Warp Disruptor I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19894" marketgroup="false" meta="" name="Magpulse Warp Disruptor I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19895" marketgroup="false" meta="2" name="Magpulse Warp Disruptor I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19896" marketgroup="false" meta="" name="Magpulse Warp Disruptor I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19897" marketgroup="false" meta="3" name="Magpulse Warp Disruptor I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19898" marketgroup="false" meta="" name="Magpulse Warp Disruptor I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19899" marketgroup="false" meta="4" name="Magpulse Warp Disruptor I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19900" marketgroup="false" meta="" name="Magpulse Warp Disruptor I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19901" marketgroup="false" meta="" name="Ion Warp Disruptor I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19902" marketgroup="false" meta="" name="Ion Warp Disruptor I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19903" marketgroup="false" meta="1" name="Ion Warp Disruptor I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19904" marketgroup="false" meta="" name="Ion Warp Disruptor I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19905" marketgroup="false" meta="2" name="Ion Warp Disruptor I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19906" marketgroup="false" meta="" name="Ion Warp Disruptor I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19907" marketgroup="false" meta="3" name="Ion Warp Disruptor I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19908" marketgroup="false" meta="" name="Ion Warp Disruptor I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19909" marketgroup="false" meta="4" name="Ion Warp Disruptor I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19910" marketgroup="false" meta="" name="Ion Warp Disruptor I Meta4 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19911" marketgroup="false" meta="" name="Plasma Warp Disruptor I" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19912" marketgroup="false" meta="" name="Plasma Warp Disruptor I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19913" marketgroup="false" meta="1" name="Plasma Warp Disruptor I Meta1" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19914" marketgroup="false" meta="" name="Plasma Warp Disruptor I Meta1 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19915" marketgroup="false" meta="2" name="Plasma Warp Disruptor I Meta2" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19916" marketgroup="false" meta="" name="Plasma Warp Disruptor I Meta2 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19917" marketgroup="false" meta="3" name="Plasma Warp Disruptor I Meta3" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19918" marketgroup="false" meta="" name="Plasma Warp Disruptor I Meta3 Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="19919" marketgroup="false" meta="4" name="Plasma Warp Disruptor I Meta4" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="19920" marketgroup="false" meta="" name="Plasma Warp Disruptor I Meta4 Blueprint" price="0" volume="0.01"/>
     <row category="Skill" group="Electronics" id="19921" marketgroup="true" meta="" name="Target Painting" price="90000" volume="0.01"/>
     <row category="Skill" group="Electronics" id="19922" marketgroup="true" meta="" name="Signature Focusing" price="600000" volume="0.01"/>
     <row category="Module" group="ECM" id="19923" marketgroup="true" meta="2 (Tech I)" name="Induced Ion Field ECM I" price="20000" volume="5.0">
@@ -20053,22 +19986,6 @@
     <row category="Entity" group="Deadspace Overseer Battleship" id="20078" marketgroup="false" meta="" name="True Creation's Park Overseer" price="0" volume="100100.0"/>
     <row category="Entity" group="Deadspace Overseer Battleship" id="20079" marketgroup="false" meta="" name="Effotber's Transit Overseer" price="0" volume="100100.0"/>
     <row category="Entity" group="Deadspace Overseer Battleship" id="20080" marketgroup="false" meta="" name="Overseer Skomener Effotber" price="0" volume="100100.0"/>
-    <row category="Module" group="Warp Scrambler" id="20081" marketgroup="false" meta="5" name="Fusion Warp Disruptor II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20082" marketgroup="false" meta="" name="Fusion Warp Disruptor II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20083" marketgroup="false" meta="5" name="Magpulse Warp Disruptor II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20084" marketgroup="false" meta="" name="Magpulse Warp Disruptor II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20085" marketgroup="false" meta="5" name="Ion Warp Disruptor II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20086" marketgroup="false" meta="" name="Ion Warp Disruptor II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20087" marketgroup="false" meta="5" name="Plasma Warp Disruptor II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20088" marketgroup="false" meta="" name="Plasma Warp Disruptor II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20089" marketgroup="false" meta="5" name="Fusion Warp Scrambler II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20090" marketgroup="false" meta="" name="Fusion Warp Scrambler II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20091" marketgroup="false" meta="5" name="Magpulse Warp Scrambler II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20092" marketgroup="false" meta="" name="Magpulse Warp Scrambler II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20093" marketgroup="false" meta="5" name="Ion Warp Scrambler II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20094" marketgroup="false" meta="" name="Ion Warp Scrambler II Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Warp Scrambler" id="20095" marketgroup="false" meta="5" name="Plasma Warp Scrambler II" price="39424" volume="5.0"/>
-    <row category="Blueprint" group="Warp Scrambler Blueprint" id="20096" marketgroup="false" meta="" name="Plasma Warp Scrambler II Blueprint" price="0" volume="0.01"/>
     <row category="Module" group="Projectile Weapon" id="20100" marketgroup="false" meta="5" name="TEST armored 800mm Repeating Artillery I" price="1484776" volume="20.0"/>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="20101" marketgroup="false" meta="" name="TEST armored 800mm Repeating Artillery I Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="20102" marketgroup="false" meta="" name="Guristas War Installation_MISSION Extravaganza lvl 4" price="0" volume="1.0E8"/>
@@ -20387,8 +20304,8 @@
     <row category="Entity" group="Deadspace Overseer's Structure" id="20284" marketgroup="false" meta="" name="Storage Silo_MISSION_Nexus_Guristas" price="0" volume="1.0E8"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="20285" marketgroup="false" meta="" name="Storage Silo_MISSION_Nexus_Serpentis" price="0" volume="1.0E8"/>
     <row category="Structure" group="Electronic Warfare Battery" id="20286" marketgroup="false" meta="" name="New EW Test Tower" price="0" volume="4000.0"/>
-    <row category="Charge" group="Rocket" id="20287" marketgroup="false" meta="" name="thermal long range" price="260" volume="0.0050"/>
-    <row category="Charge" group="Rocket" id="20291" marketgroup="false" meta="" name="kinetic damage" price="260" volume="0.0050"/>
+    <row category="Charge" group="Rocket" id="20287" marketgroup="false" meta="" name="thermal long range" price="0" volume="0.0050"/>
+    <row category="Charge" group="Rocket" id="20291" marketgroup="false" meta="" name="kinetic damage" price="0" volume="0.0050"/>
     <row category="Charge" group="Assault Missile" id="20306" marketgroup="true" meta="" name="Torrent Assault Missile" price="3500" volume="0.015">
         <material id="34" portionsize="100" quantity="446"/>
         <material id="35" portionsize="100" quantity="198"/>
@@ -28935,7 +28852,7 @@
         <material id="25600" portionsize="1" quantity="150"/>
         <material id="25603" portionsize="1" quantity="50"/>
     </row>
-    <row category="Blueprint" group="Rig Blueprint" id="25955" marketgroup="true" meta="" name="Large Semiconductor Memory Cell I Blueprint" price="125000" volume="0.01"/>
+    <row category="Blueprint" group="Rig Blueprint" id="25955" marketgroup="true" meta="" name="Large Semiconductor Memory Cell I Blueprint" price="1250000" volume="0.01"/>
     <row category="Module" group="Rig Energy Grid" id="25956" marketgroup="true" meta="" name="Large Ancillary Current Router I" price="0" volume="20.0">
         <material id="25594" portionsize="1" quantity="60"/>
         <material id="25598" portionsize="1" quantity="235"/>
@@ -34166,7 +34083,7 @@
     <row category="Commodity" group="Commodities" id="29217" marketgroup="false" meta="" name="Hard Currency" price="0" volume="1.0"/>
     <row category="Commodity" group="Livestock" id="29219" marketgroup="false" meta="" name="Miniature Slaver" price="3000" volume="0.01"/>
     <row category="Commodity" group="Commodities" id="29226" marketgroup="false" meta="" name="Basic Robotics" price="1430" volume="2.0"/>
-    <row category="Blueprint" group="Advanced Capital Construction Component Blueprints" id="29227" marketgroup="false" meta="" name="Basic Robotics Blueprint" price="0" volume="0.01"/>
+    <row category="Blueprint" group="Tool Blueprint" id="29227" marketgroup="false" meta="" name="Basic Robotics Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Mission CONCORD Battleship" id="29228" marketgroup="false" meta="" name="Concord Battleship" price="0" volume="1080000.0"/>
     <row category="Commodity" group="Livestock" id="29229" marketgroup="false" meta="" name="Amarrian Diplomat" price="100" volume="1.0"/>
     <row category="Entity" group="Spawn Container" id="29230" marketgroup="false" meta="" name="Cargo Container - Dolls" price="0" volume="27500.0"/>
@@ -35843,8 +35760,11 @@
     <row category="Module" group="Rig Armor" id="31093" marketgroup="false" meta="5" name="Capital Salvage Tackle II" price="0" volume="1000.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31094" marketgroup="false" meta="" name="Capital Salvage Tackle II Blueprint" price="125000" volume="0.01"/>
     <row category="Blueprint" group="Rig Blueprint" id="31096" marketgroup="false" meta="" name="Small Test Rig Blueprint" price="125000" volume="0.01"/>
+    <row category="Module" group="Rig Mining" id="31097" marketgroup="false" meta="" name="Medium Test Rig" price="0" volume="5.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31098" marketgroup="false" meta="" name="Medium Test Rig I Blueprint" price="750000" volume="0.01"/>
+    <row category="Module" group="Rig Mining" id="31099" marketgroup="false" meta="" name="Large Test Rig" price="0" volume="5.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31100" marketgroup="false" meta="" name="Large Test Rig Blueprint" price="1250000" volume="0.01"/>
+    <row category="Module" group="Rig Mining" id="31101" marketgroup="false" meta="" name="Capital Test Rig" price="0" volume="5.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31102" marketgroup="false" meta="" name="Capital Test Rig Blueprint" price="125000" volume="0.01"/>
     <row category="Celestial" group="Agents in Space" id="31103" marketgroup="false" meta="" name="Gian Parele's Pleasure Cruiser" price="0" volume="115000.0"/>
     <row category="Module" group="Rig Astronautic" id="31105" marketgroup="true" meta="" name="Small Auxiliary Thrusters I" price="0" volume="5.0">
@@ -38380,5 +38300,4 @@
     <row category="Module" group="Shield Transporter" id="32467" marketgroup="false" meta="" name="Civilian Remote Shield Transporter" price="4996" volume="5.0"/>
     <row category="Module" group="Armor Repair Projector" id="32469" marketgroup="false" meta="" name="Civilian Remote Armor Repair System" price="4996" volume="5.0"/>
     <row category="Entity" group="Tutorial Drone" id="32471" marketgroup="false" meta="" name="Damaged Vessel" price="0" volume="115000.0"/>
-    <row category="Ship" group="Industrial" id="2863" marketgroup="false" meta="" name="Primae" price="0" volume="270000"/>
 </rows>

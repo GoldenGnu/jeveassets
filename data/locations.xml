@@ -13216,4 +13216,5 @@
     <row id="61000003" name="JZL-VB VIII - duperTum Corp Minmatar Service Outpost" region="10000063" security="0.0" solarsystem="30004952"/>
     <row id="61000004" name="C-PEWN I - T3ch Skunkworks Caldari Research Outpost" region="10000039" security="0.0" solarsystem="30003169"/>
     <row id="61000005" name="WT-2J9 I - T3ch Skunkworks Amarr Factory Outpost" region="10000039" security="0.0" solarsystem="30003166"/>
+    <row id="61000006" name="KZFV-4 II - imtesting stuffleaveme Corp Amarr Factory Outpost" region="10000008" security="0.0" solarsystem="30000710"/>
 </rows>
