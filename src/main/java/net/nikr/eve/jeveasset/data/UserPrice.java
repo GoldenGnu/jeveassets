@@ -65,26 +65,4 @@ public class UserPrice extends UserListItem<Integer> {
 	public String toString() {
 		return getName();
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final UserPrice other = (UserPrice) obj;
-		if (this.typeID != other.typeID) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 37 * hash + this.typeID;
-		return hash;
-	}
 }
