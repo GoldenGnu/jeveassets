@@ -259,8 +259,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 						profile.setName(s);
 					}
 				}
+				program.getMainWindow().updateTitle();
 				jProfiles.updateUI();
-				
 			}
 		}
 		if(ACTION_DELETE_PROFILE.equals(e.getActionCommand())){
@@ -291,6 +291,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 					profile.getFile().delete();
 					profile.getBackupFile().delete();
 					updateProfiles();
+					program.getMainWindow().updateTitle();
 					jProfiles.updateUI();
 				}
 			}
