@@ -91,7 +91,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	private JCustomFileChooser jCsvFileChooser;
 
 	enum FieldDelimiter {
-		COMMA('.') {
+		COMMA(',') {
 			@Override
 			String getI18N() {
 				return DialoguesCsvExport.get().comma();
