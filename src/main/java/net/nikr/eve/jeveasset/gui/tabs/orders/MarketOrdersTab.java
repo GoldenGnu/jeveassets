@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
@@ -104,6 +106,13 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		//Tables
 		jSellOrders = new JAutoColumnTable(sellOrdersTableModel, sellTableFormat.getColumnNames());
 		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel, buyTableFormat.getColumnNames());
+		//Table Selection
+		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersEventList);
+		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jSellOrders.setSelectionModel(sellSelectionModel);
+		EventSelectionModel<MarketOrder> buySelectionModel = new EventSelectionModel<MarketOrder>(buyOrdersEventList);
+		buySelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jBuyOrders.setSelectionModel(buySelectionModel);
 		//Listeners
 		installTableMenu(jSellOrders);
 		installTableMenu(jBuyOrders);
@@ -190,8 +199,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSellSingleRow = jSellOrders.getSelectedRows().length == 1;
-		boolean isBuySingleRow = jBuyOrders.getSelectedRows().length == 1;
+		boolean isSellSingleRow = (jSellOrders.getSelectedRows().length == 1);
+		boolean isBuySingleRow = (jBuyOrders.getSelectedRows().length == 1);
 
 		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellOrders.getSelectedRow()): null;
 		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyOrders.getSelectedRow()) : null;
@@ -318,10 +327,24 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 					}
 
 				}
+				/*
 				sellOrdersEventList.clear();
 				sellOrdersEventList.addAll( sellMarketOrders );
 				buyOrdersEventList.clear();
 				buyOrdersEventList.addAll( buyMarketOrders );
+				 * 
+				 */
+				try {
+					sellOrdersEventList.getReadWriteLock().writeLock().lock();
+					sellOrdersEventList.clear();
+					sellOrdersEventList.addAll( sellMarketOrders );
+					buyOrdersEventList.getReadWriteLock().writeLock().lock();
+					buyOrdersEventList.clear();
+					buyOrdersEventList.addAll( buyMarketOrders );
+				} finally {
+					sellOrdersEventList.getReadWriteLock().writeLock().unlock();
+					buyOrdersEventList.getReadWriteLock().writeLock().unlock();
+				}
 			}
 		}
 	}

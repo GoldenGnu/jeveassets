@@ -89,7 +89,6 @@ public class AssetsTab extends JMainTab
 	//Table Data
 	private EventTableModel<EveAsset> eveAssetTableModel;
 	private EventList<EveAsset> eveAssetEventList;
-	private EventSelectionModel<EveAsset> selectionModel;
 	private FilterList<EveAsset> filterList;
 	
 	public AssetsTab(Program program) {
@@ -117,7 +116,7 @@ public class AssetsTab extends JMainTab
 		//install the sorting/filtering
 		TableComparatorChooser<EveAsset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		selectionModel = new EventSelectionModel<EveAsset>(filterList);
+		EventSelectionModel<EveAsset> selectionModel = new EventSelectionModel<EveAsset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

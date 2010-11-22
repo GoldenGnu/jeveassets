@@ -23,7 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
@@ -99,6 +101,10 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
 		//Tables
 		jTable = new JAutoColumnTable(jobsTableModel, industryJobsTableFormat.getColumnNames());
+		//Table Selection
+		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(jobsEventList);
+		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
+		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
 		//Sorters
@@ -247,8 +253,14 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 						industryJobsOutput.add(industryJob);
 					}
 				}
-				jobsEventList.clear();
-				jobsEventList.addAll( industryJobsOutput );
+				try {
+					jobsEventList.getReadWriteLock().writeLock().lock();
+					jobsEventList.clear();
+					jobsEventList.addAll( industryJobsOutput );
+				} finally {
+					jobsEventList.getReadWriteLock().writeLock().unlock();
+				}
+				
 			}
 		}
 	}
