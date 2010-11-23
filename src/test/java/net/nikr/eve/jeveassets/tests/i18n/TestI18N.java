@@ -160,6 +160,6 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(null);
+		assertNotNull(g.windowTitle("jEveAssets", "1.6.0", 1, 1, "default"));
 	}
 }

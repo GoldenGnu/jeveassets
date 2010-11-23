@@ -54,7 +54,7 @@ public class DocumentFactory {
 				newValue = string;
 			} else {
 				String currentContent = getText(0, length);
-				StringBuffer currentBuffer = new StringBuffer(currentContent);
+				StringBuilder currentBuffer = new StringBuilder(currentContent);
 				currentBuffer.insert(offset, string);
 				newValue = currentBuffer.toString();
 			}
@@ -81,7 +81,7 @@ public class DocumentFactory {
 				newValue = string;
 			} else {
 				String currentContent = getText(0, length);
-				StringBuffer currentBuffer = new StringBuffer(currentContent);
+				StringBuilder currentBuffer = new StringBuilder(currentContent);
 				currentBuffer.insert(offset, string);
 				newValue = currentBuffer.toString();
 			}
@@ -107,7 +107,7 @@ public class DocumentFactory {
 				newValue = string;
 			} else {
 				String currentContent = getText(0, length);
-				StringBuffer currentBuffer = new StringBuffer(currentContent);
+				StringBuilder currentBuffer = new StringBuilder(currentContent);
 				currentBuffer.insert(offset, string);
 				newValue = currentBuffer.toString();
 			}
