@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,7 @@ public class AssetsTab extends JMainTab
 	private FilterList<EveAsset> filterList;
 	
 	public AssetsTab(Program program) {
-		super(program, "Assets", Images.ICON_TOOL_ASSETS, false);
+		super(program, TabsAssets.get().assets(), Images.ICON_TOOL_ASSETS, false);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
@@ -126,16 +127,16 @@ public class AssetsTab extends JMainTab
 		//Filter panel(s)
 		toolPanel = new ToolPanel(program, matcherEditorManager);
 
-		jVolume = StatusPanel.createLabel("Total volume of shown assets", Images.ICON_VOLUME);
+		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ICON_VOLUME);
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel("Total number of shown assets", Images.ICON_ADD); //Add
+		jCount = StatusPanel.createLabel(TabsAssets.get().total1(), Images.ICON_ADD); //Add
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel("Average value of shown assets", Images.ICON_AVERAGE);
+		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ICON_AVERAGE);
 		this.addStatusbarLabel(jAverage);
 
-		jTotalValue = StatusPanel.createLabel("Total value of shown assets", Images.ICON_TOOL_VALUES);
+		jTotalValue = StatusPanel.createLabel(TabsAssets.get().total2(), Images.ICON_TOOL_VALUES);
 		this.addStatusbarLabel(jTotalValue);
 
 		jTablePopupMenu = new JPopupMenu();
@@ -180,9 +181,9 @@ public class AssetsTab extends JMainTab
 	}
 
 	public void updateToolPanel(){
-		String filter = "<i>Untitled</i>";
+		String filter = TabsAssets.get().untitled();
 		if (getAssetFilters().isEmpty()){
-			filter = "<i>Empty</i>";
+			filter = TabsAssets.get().empty();
 		}
 		if (program.getSettings().getAssetFilters().containsValue(getAssetFilters())){
 			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
@@ -192,10 +193,11 @@ public class AssetsTab extends JMainTab
 				}
 			}
 		}
-		toolPanel.setToolbarText(
-				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+"Showing "+jTable.getRowCount()+" of "+program.getEveAssetEventList().size()+" assets"
-				+" ("+filter+")");
+		toolPanel.setToolbarText(TabsAssets.get()
+				.nOfyAssets(jTable.getRowCount(),
+				program.getEveAssetEventList().size(),
+				filter
+				));
 	}
 
 	public EveAsset getSelectedAsset(){
@@ -326,7 +328,7 @@ public class AssetsTab extends JMainTab
 			addSeparator(jComponent);
 		}
 	//FILTER
-		jSubMenu = new JMenu("Add Filter");
+		jSubMenu = new JMenu(TabsAssets.get().addFilter());
 		jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
 		jComponent.add(jSubMenu);
 
@@ -365,7 +367,7 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(this);
 		if (!numericColumn && isSingleCell){
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Can only be used with numeric columns");
+			jMenuItem.setToolTipText(TabsAssets.get().can());
 		}
 		jSubMenu.add(jMenuItem);
 
@@ -376,7 +378,7 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(this);
 		if (!numericColumn && isSingleCell){
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Can only be used with numeric columns");
+			jMenuItem.setToolTipText(TabsAssets.get().can());
 		}
 		jSubMenu.add(jMenuItem);
 
@@ -387,7 +389,7 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(this);
 		if (!numericColumn && isSingleCell){
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Can only be used with numeric columns");
+			jMenuItem.setToolTipText(TabsAssets.get().can());
 		}
 		jSubMenu.add(jMenuItem);
 
@@ -398,7 +400,7 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(this);
 		if (!numericColumn && isSingleCell){
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Can only be used with numeric columns");
+			jMenuItem.setToolTipText(TabsAssets.get().can());
 		}
 		jSubMenu.add(jMenuItem);
 
@@ -406,25 +408,25 @@ public class AssetsTab extends JMainTab
 		jComponent.add(new JMenuLookup(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 
 	//EDIT
-		jSubMenu = new JMenu("Edit");
+		jSubMenu = new JMenu(TabsAssets.get().edit());
 		jSubMenu.setIcon(Images.ICON_EDIT);
 		jComponent.add(jSubMenu);
 
-		jMenuItem = new JMenuItem("Price...");
+		jMenuItem = new JMenuItem(TabsAssets.get().price());
 		jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
 		jMenuItem.setEnabled(isSingleRow);
 		jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
-		jMenuItem = new JMenuItem("Name...");
+		jMenuItem = new JMenuItem(TabsAssets.get().name());
 		jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
 		jMenuItem.setEnabled(isSingleRow);
 		jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
-		jCheckBoxMenuItem = new JCheckBoxMenuItem("Blueprint Original");
+		jCheckBoxMenuItem = new JCheckBoxMenuItem(TabsAssets.get().blueprint());
 		jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
 		jCheckBoxMenuItem.setEnabled(isBlueprints);
 		jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
@@ -436,7 +438,7 @@ public class AssetsTab extends JMainTab
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);
 
-			jMenuItem = new JMenuItem("Selection Information");
+			jMenuItem = new JMenuItem(TabsAssets.get().selection());
 			jMenuItem.setDisabledIcon(Images.ICON_DIALOG_ABOUT);
 			jMenuItem.setEnabled(false);
 			jComponent.add(jMenuItem);
@@ -460,25 +462,25 @@ public class AssetsTab extends JMainTab
 			jMenuItem = new JMenuItem(Formater.iskFormat(total));
 			jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Value of selected assets");
+			jMenuItem.setToolTipText(TabsAssets.get().value());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.iskFormat(total/count) );
 			jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Average value of selected assets");
+			jMenuItem.setToolTipText(TabsAssets.get().average1());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.itemsFormat(count));
 			jMenuItem.setDisabledIcon(Images.ICON_ADD);
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Count of selected assets");
+			jMenuItem.setToolTipText(TabsAssets.get().count());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.doubleFormat(volume));
 			jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
 			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText("Volume of selected assets");
+			jMenuItem.setToolTipText(TabsAssets.get().volume());
 			jComponent.add(jMenuItem);
 		}
 	}

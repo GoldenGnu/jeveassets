@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
@@ -79,7 +80,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.setRollover(true);
 
 		//Add
-		jAddField = new JButton("Add Field");
+		jAddField = new JButton(TabsAssets.get().addField());
 		jAddField.setIcon(Images.ICON_ADD);
 		jAddField.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jAddField.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -89,7 +90,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.add(jAddField);
 
 		//Reset
-		jClearFields = new JButton("Clear Fields");
+		jClearFields = new JButton(TabsAssets.get().clear());
 		jClearFields.setIcon(Images.ICON_CLEAR);
 		jClearFields.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jClearFields.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -101,7 +102,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.addSeparator();
 
 		//Save Filter
-		jSaveFilter = new JButton("Save Filter");
+		jSaveFilter = new JButton(TabsAssets.get().save());
 		jSaveFilter.setIcon(Images.ICON_SAVE);
 		jSaveFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -111,7 +112,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.add(jSaveFilter);
 
 		//Load Filter
-		jLoadFilter = new JDropDownButton("Load Filter");
+		jLoadFilter = new JDropDownButton(TabsAssets.get().load1());
 		jLoadFilter.setIcon( Images.ICON_FOLDER);
 		jLoadFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -120,7 +121,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		//TODO Completly remove "Add System"
 		//Add System
-		JButton jAddSystem = new JButton("Add System");
+		JButton jAddSystem = new JButton(TabsAssets.get().addSystem());
 		jAddSystem.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jAddSystem.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddSystem.setHorizontalAlignment(JButton.LEFT);
@@ -256,7 +257,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	private void saveFilter(){
 		//Tell there is nothing to save
 		if (getAssetFilters().isEmpty()){
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Nothing to save...", "Save Filter", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsAssets.get().nothing(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		//Ask for filter name
@@ -282,7 +283,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		
 		if (list.size() > 0) jLoadFilter.addSeparator();
 
-		jMenuItem = new JMenuItem("Manage Saved Filters");
+		jMenuItem = new JMenuItem(TabsAssets.get().manage());
 		jMenuItem.setActionCommand(ACTION_OPEN_FILTER_MANAGER);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setRolloverEnabled(true);

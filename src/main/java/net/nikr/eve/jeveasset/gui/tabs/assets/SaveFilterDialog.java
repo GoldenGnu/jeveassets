@@ -40,6 +40,7 @@ import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public class SaveFilterDialog extends JDialogCentered implements ActionListener {
@@ -53,9 +54,9 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	private JButton jSave;
 
 	public SaveFilterDialog(Program program) {
-		super(program, "Save Filter");
+		super(program, TabsAssets.get().save());
 		
-		JLabel jText = new JLabel("Enter filter name:");
+		JLabel jText = new JLabel(TabsAssets.get().enter());
 
 		jName = new JComboBox();
 		jName.setActionCommand(ACTION_SELECTED);
@@ -64,11 +65,11 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		filters = new BasicEventList<String>();
 		AutoCompleteSupport support = AutoCompleteSupport.install(jName, filters, new Filterator());
 		
-		jSave = new JButton("Save");
+		jSave = new JButton(TabsAssets.get().save1());
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
 
-		JButton jCancel = new JButton("Cancel");
+		JButton jCancel = new JButton(TabsAssets.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -121,17 +122,17 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	protected void save() {
 		String returnValue = (String) jName.getSelectedItem();
 		if (returnValue == null){
-			JOptionPane.showMessageDialog(this.getDialog(), "You need to enter a name for the filter.", "Save Filter", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(this.getDialog(), TabsAssets.get().you(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-		if (returnValue.equals("")) {
-			JOptionPane.showMessageDialog(this.getDialog(), "You need to enter a name for the filter.", "Save Filter", JOptionPane.PLAIN_MESSAGE);
+		if (returnValue.length() == 0) {
+			JOptionPane.showMessageDialog(this.getDialog(), TabsAssets.get().you(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		
 		//Ask to overwrite...
 		if (program.getSettings().getAssetFilters().containsKey(returnValue)){
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), TabsAssets.get().overwrite(), TabsAssets.get().overwrite2(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.NO_OPTION){
 				return;
 			}
@@ -167,7 +168,7 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	class Filterator implements TextFilterator<String>{
 		@Override
 		public void getFilterStrings(List<String> baseList, String element) {
-			if (!element.equals("")) baseList.add(element);
+			if (element.length() > 0) baseList.add(element);
 		}
 	}
 }

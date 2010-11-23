@@ -101,7 +101,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 	}
 
 	public boolean isEmpty(){
-		return jText.getText().equals("") && !columnCompare;
+		return jText.getText().length() == 0 && !columnCompare;
 	}
 
 	public JComboBox getAnd() {

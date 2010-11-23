@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public class FiltersManagerDialog extends JDialogCentered implements ActionListener, MouseListener {
@@ -57,22 +58,22 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jDone;
 	
 	public FiltersManagerDialog(Program program, Image image) {
-		super(program, "Filter Manager", image);
+		super(program, TabsAssets.get().filter(), image);
 
 		//Load
-		jLoad = new JButton("Load");
+		jLoad = new JButton(TabsAssets.get().load());
 		jLoad.setActionCommand(ACTION_LOAD_FILTER);
 		jLoad.addActionListener(this);
 		jPanel.add(jLoad);
 
 		//Rename
-		jRename = new JButton("Rename");
+		jRename = new JButton(TabsAssets.get().rename());
 		jRename.setActionCommand(ACTION_RENAME_FILTER);
 		jRename.addActionListener(this);
 		jPanel.add(jRename);
 
 		//Delete
-		jDelete = new JButton("Delete");
+		jDelete = new JButton(TabsAssets.get().delete());
 		jDelete.setActionCommand(ACTION_DELETE_FILTER);
 		jDelete.addActionListener(this);
 		jPanel.add(jDelete);
@@ -86,7 +87,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		jPanel.add(jScrollPanel);
 
 		//Done
-		jDone = new JButton("Done");
+		jDone = new JButton(TabsAssets.get().done());
 		jDone.setActionCommand(ACTION_DONE);
 		jDone.addActionListener(this);
 		jPanel.add(jDone);
@@ -138,8 +139,8 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get(filterName);
 		String s = (String)JOptionPane.showInputDialog(
 					program.getMainWindow().getFrame(),
-					"Enter filter name:",
-					"Rename Filter",
+					TabsAssets.get().enter(),
+					TabsAssets.get().rename1(),
 					JOptionPane.PLAIN_MESSAGE,
 					null,
 					null,
@@ -148,12 +149,12 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		if (s == null){ //Cancel
 			return;
 		}
-		if (s.equals("")){ //No input (needed for name)
+		if (s.length() == 0){ //No input (needed for name)
 			renameFilter();
 			return;
 		}
 		if (program.getSettings().getAssetFilters().containsKey(s) && !s.equals(filterName)){
-			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsAssets.get().overwrite(), TabsAssets.get().overwrite1(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.NO_OPTION){
 				bOverwrite = false;
 			}
@@ -169,7 +170,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private void deleteFilter(){
 		String filterName = getSelectedString();
 		if (filterName == null) return;
-		int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Delete filter:\r\n\""+filterName+"\"?", "Delete Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsAssets.get().delete2(filterName), TabsAssets.get().delete3(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (nReturn == JOptionPane.YES_OPTION){
 			program.getSettings().getAssetFilters().remove(filterName);
 			program.savedFiltersChanged();
