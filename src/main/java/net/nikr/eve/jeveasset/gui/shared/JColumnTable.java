@@ -60,6 +60,7 @@ import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JColumnTable extends JTable {
@@ -100,7 +101,7 @@ public class JColumnTable extends JTable {
 		jColumnsSelection.addMouseListener(listenerClass);
 
 		//Table Menu
-		jColumnMenu = new JMenu("Columns");
+		jColumnMenu = new JMenu(GuiShared.get().columns());
 		jColumnMenu.setIcon(Images.ICON_TABLE_SHOW);
 
 		//Table Scrollpanel
@@ -196,7 +197,7 @@ public class JColumnTable extends JTable {
 		JRadioButtonMenuItem jRadioButtonMenuItem;
 		JMenuItem  jMenuItem;
 
-		jMenuItem = new JMenuItem("Reset columns to default");
+		jMenuItem = new JMenuItem(GuiShared.get().reset());
 		jMenuItem.setActionCommand(ACTION_RESET_COLUMNS_TO_DEFAULT);
 		jMenuItem.addActionListener(listenerClass);
 		jComponent.add(jMenuItem);
@@ -205,7 +206,7 @@ public class JColumnTable extends JTable {
 
 		ButtonGroup group = new ButtonGroup();
 
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit text");
+		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().autoText());
 		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_TEXT);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
@@ -213,7 +214,7 @@ public class JColumnTable extends JTable {
 		group.add(jRadioButtonMenuItem);
 		jComponent.add(jRadioButtonMenuItem);
 
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Auto resize columns to fit in window");
+		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().autoWindow());
 		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
@@ -221,7 +222,7 @@ public class JColumnTable extends JTable {
 		group.add(jRadioButtonMenuItem);
 		jComponent.add(jRadioButtonMenuItem);
 
-		jRadioButtonMenuItem = new JRadioButtonMenuItem("Disable columns auto resizing");
+		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().disable());
 		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
 		jRadioButtonMenuItem.setActionCommand(ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
@@ -368,9 +369,11 @@ public class JColumnTable extends JTable {
 				String columnOrder = "";
 				String columnVisible = "";
 				for (int a = 0; a < tempMainTableColumnNames.size(); a++){
-					columnOrder = columnOrder+tempMainTableColumnNames.get(a)+" ";
+					columnOrder = GuiShared.get().whitespace37(columnOrder,
+							tempMainTableColumnNames.get(a));
 					if (columnTableSettings.getTableColumnVisible().contains(tempMainTableColumnNames.get(a))){
-						columnVisible = columnVisible+tempMainTableColumnNames.get(a)+" ";
+						columnVisible = GuiShared.get().whitespace37(columnVisible,
+								tempMainTableColumnNames.get(a));
 						mainTableColumnVisible.add(tempMainTableColumnNames.get(a));
 					}
 				}

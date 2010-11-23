@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.junit.Test;
 import uk.me.candle.translations.Bundle;
 import static org.junit.Assert.*;
@@ -161,5 +162,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.windowTitle("jEveAssets", "1.6.0", 1, 1, "default"));
+	}
+
+	@Test
+	public void testGuiShared_en() throws Exception {
+		GuiShared g = Bundle.load(GuiShared.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.cut());
 	}
 }

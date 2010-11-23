@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class Formater {
@@ -79,7 +80,7 @@ public class Formater {
 
 	public static String weekdayAndTime(Date date){
 		if (today(date)){
-			return "Today "+timeOnly.format(date);
+			return GuiShared.get().today(timeOnly.format(date));
 		} else {
 			return weekdayTime.format(date);
 		}

@@ -26,6 +26,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JCustomFileChooser extends JFileChooser {
@@ -36,7 +37,7 @@ public class JCustomFileChooser extends JFileChooser {
 	private Program program;
 
 	public JCustomFileChooser(Program program, String customExtension) {
-		this(program, customExtension, customExtension.toUpperCase()+" files");
+		this(program, customExtension, GuiShared.get().files(customExtension.toUpperCase()));
 	}
 
 	public JCustomFileChooser(Program program, String customExtension, String customDescription) {
@@ -55,7 +56,13 @@ public class JCustomFileChooser extends JFileChooser {
 			this.setSelectedFile(selectedFile);
 		}
 		if (selectedFile != null && selectedFile.exists()){
-			int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), "Overwrite?", "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(
+					program.getMainWindow().getFrame(),
+					GuiShared.get().overwrite(),
+					GuiShared.get().overwriteFile(),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE
+					);
 			if (nReturn == JOptionPane.NO_OPTION){
 				return;
 			}

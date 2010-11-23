@@ -36,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner {
@@ -68,12 +69,12 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 		boolean canCopy = true;
 		if (s == null){
 			canCopy = false;
-		} else if (s.equals("")){
+		} else if (s.length() == 0){
 			canCopy = false;
 		}
 
 		if (component.isEditable()){
-			jMenuItem = new JMenuItem("Cut");
+			jMenuItem = new JMenuItem(GuiShared.get().cut());
 			jMenuItem.setIcon(Images.ICON_CUT);
 			jMenuItem.setActionCommand(ACTION_CUT);
 			jMenuItem.addActionListener(this);
@@ -81,7 +82,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 			jPopupMenu.add(jMenuItem);
 		}
 
-		jMenuItem = new JMenuItem("Copy");
+		jMenuItem = new JMenuItem(GuiShared.get().copy());
 		jMenuItem.setIcon(Images.ICON_COPY);
 		jMenuItem.setActionCommand(ACTION_COPY);
 		jMenuItem.addActionListener(this);
@@ -89,7 +90,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 		jPopupMenu.add(jMenuItem);
 
 		if (component.isEditable()){
-			jMenuItem = new JMenuItem("Paste");
+			jMenuItem = new JMenuItem(GuiShared.get().paste());
 			jMenuItem.setIcon(Images.ICON_PASTE);
 			jMenuItem.setActionCommand(ACTION_PASTE);
 			jMenuItem.addActionListener(this);
@@ -144,7 +145,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 
 			String s = component.getSelectedText();
 			if (s == null) return;
-			if (s.equals("")) return;
+			if (s.length() == 0) return;
 			String text = component.getText();
 			String before = text.substring(0, component.getSelectionStart());
 			String after = text.substring(component.getSelectionEnd(), text.length());
@@ -165,7 +166,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 			}
 			String s = component.getSelectedText();
 			if (s == null) return;
-			if (s.equals("")) return;
+			if (s.length() == 0) return;
 			StringSelection st = new StringSelection(s);
 			clipboard.setContents(st, this);
 		}

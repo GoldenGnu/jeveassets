@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.NumberToStringCellRenderer;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JAutoColumnTable extends JTable {
@@ -114,12 +115,14 @@ public class JAutoColumnTable extends JTable {
 				tempMainTableColumnNames.add(movingToIndex, movingColumnName);
 
 				List<String> mainTableColumnVisible = new ArrayList<String>();
-				String columnOrder = "";
-				String columnVisible = "";
+				String columnOrder = GuiShared.get().emptyString();
+				String columnVisible = GuiShared.get().emptyString();
 				for (int a = 0; a < tempMainTableColumnNames.size(); a++){
-					columnOrder = columnOrder+tempMainTableColumnNames.get(a)+" ";
+					columnOrder = GuiShared.get().whitespace37(columnOrder,
+							tempMainTableColumnNames.get(a));
 					if (columnNames.contains(tempMainTableColumnNames.get(a))){
-						columnVisible = columnVisible+tempMainTableColumnNames.get(a)+" ";
+						columnVisible = GuiShared.get().whitespace37(columnVisible,
+								tempMainTableColumnNames.get(a));
 						mainTableColumnVisible.add(tempMainTableColumnNames.get(a));
 					}
 				}

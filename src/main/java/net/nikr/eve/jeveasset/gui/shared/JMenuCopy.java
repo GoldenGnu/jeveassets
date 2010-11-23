@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 /**
  *
@@ -43,7 +44,7 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 	private JTable jTable;
 
 	public JMenuCopy(JTable jTable) {
-		super("Copy");
+		super(GuiShared.get().copy());
 		this.jTable = jTable;
 		this.setIcon(Images.ICON_COPY);
 		this.setActionCommand(ACTION_COPY);

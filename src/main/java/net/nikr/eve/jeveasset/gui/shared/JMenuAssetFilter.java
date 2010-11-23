@@ -27,6 +27,7 @@ import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JMenuAssetFilter extends JMenuTool implements ActionListener {
@@ -38,13 +39,13 @@ public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 
 
 	public JMenuAssetFilter(Program program, Object object) {
-		super("Add Asset Filter", program, object);
+		super(GuiShared.get().add(), program, object);
 
 		this.setIcon(Images.ICON_TOOL_ASSETS);
 
 		JMenuItem jMenuItem;
 
-		jMenuItem = new JMenuItem("Item Type");
+		jMenuItem = new JMenuItem(GuiShared.get().item());
 		jMenuItem.setIcon(Images.ICON_ADD);
 		jMenuItem.setEnabled(typeId != 0);
 		jMenuItem.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
@@ -54,21 +55,21 @@ public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 		if ((station != null || system != null || region != null) && typeId != 0) addSeparator();
 
 
-		jMenuItem = new JMenuItem("Station");
+		jMenuItem = new JMenuItem(GuiShared.get().station());
 		jMenuItem.setIcon(Images.ICON_STATION);
 		jMenuItem.setEnabled(station != null);
 		jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
-		jMenuItem = new JMenuItem("System");
+		jMenuItem = new JMenuItem(GuiShared.get().system());
 		jMenuItem.setIcon(Images.ICON_SYSTEM);
 		jMenuItem.setEnabled(system != null);
 		jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
-		jMenuItem = new JMenuItem("Region");
+		jMenuItem = new JMenuItem(GuiShared.get().region());
 		jMenuItem.setIcon(Images.ICON_REGION);
 		jMenuItem.setEnabled(region != null);
 		jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);

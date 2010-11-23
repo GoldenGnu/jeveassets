@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JDropDownButton extends JButton implements PopupMenuListener, MouseListener, KeyListener {
@@ -47,7 +48,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	private JPopupMenu jPopupMenu;
 
 	public JDropDownButton() {
-		this("", null, LEFT, BOTTOM);
+		this(GuiShared.get().emptyString(), null, LEFT, BOTTOM);
 	}
 
 	public JDropDownButton(String text) {
@@ -59,10 +60,10 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	public JDropDownButton(int popupHorizontalAlignment) throws IllegalArgumentException {
-		this("", null, popupHorizontalAlignment, BOTTOM);
+		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, BOTTOM);
 	}
 	public JDropDownButton(int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
-		this("", null, popupHorizontalAlignment, popupVerticalAlignment);
+		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
 
 	public JDropDownButton(String text, int popupHorizontalAlignment) throws IllegalArgumentException {

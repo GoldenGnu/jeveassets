@@ -47,16 +47,14 @@ public class JNumberField extends JTextField implements FocusListener{
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		if (super.getText().equals("")){
+		if (super.getText().length() == 0){
 			super.setText(defaultValue);
 		}
 	}
 
 	@Override
 	public String getText() {
-		if (super.getText().equals("")) super.setText(defaultValue);
+		if (super.getText().length() == 0) super.setText(defaultValue);
 		return super.getText();
 	}
-
-	
 }

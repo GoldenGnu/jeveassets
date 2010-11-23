@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Overview;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public abstract class JMenuTool extends JMenu {
@@ -47,7 +48,7 @@ public abstract class JMenuTool extends JMenu {
 
 	private boolean init(Program program, Object object){
 		if (object == null){
-			return init(program, false, "", 0, null, null, null);
+			return init(program, false, GuiShared.get().emptyString(), 0, null, null, null);
 		}
 		if (object instanceof Material){
 			Material material = (Material) object;
@@ -73,7 +74,7 @@ public abstract class JMenuTool extends JMenu {
 			Overview overview = (Overview) object;
 			return init(program, false, null, 0, overview.isStation() && !overview.isGroup() ? overview.getName() : null, !overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, !overview.isGroup() ? overview.getRegion() : null);
 		}
-		return init(program, false, "", 0, null, null, null);
+		return init(program, false, GuiShared.get().emptyString(), 0, null, null, null);
 	}
 
 	private boolean init(Program program, boolean isMarketGroup, String typeName, int typeId, String station, String system, String region){
