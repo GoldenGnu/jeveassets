@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
 public class StatusPanel extends JGroupLayoutPanel {
@@ -58,9 +59,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 		
 		
 
-		jUpdatable = createIcon(Images.ICON_UPDATE, "Updatable");
+		jUpdatable = createIcon(Images.ICON_UPDATE, GuiFrame.get().updatable());
 		programStatus.add(jUpdatable);
-		jEveTime = createLabel("Eve Server Time", Images.ICON_EVE);
+		jEveTime = createLabel(GuiFrame.get().eve(), Images.ICON_EVE);
 		programStatus.add(jEveTime);
 
 		layout.setHorizontalGroup(
@@ -94,12 +95,12 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public void timerTicked(boolean updatable){
-		jEveTime.setText( Formater.timeOnly(Settings.getGmtNow())+" GMT" );
+		jEveTime.setText(GuiFrame.get().eveTime(Settings.getGmtNow()));
 		jUpdatable.setEnabled(updatable);
 		if (updatable){
-			jUpdatable.setToolTipText("Updatable");
+			jUpdatable.setToolTipText(GuiFrame.get().updatable());
 		} else {
-			jUpdatable.setToolTipText("Not Updatable");
+			jUpdatable.setToolTipText(GuiFrame.get().not());
 		}
 	}
 

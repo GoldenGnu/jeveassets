@@ -30,7 +30,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -46,6 +48,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,14 +107,13 @@ public class MainWindow implements WindowListener, ChangeListener {
 	}
 
 	final public void updateTitle(){
-		String title = Program.PROGRAM_NAME+" "+Program.PROGRAM_VERSION;
-		if (Settings.isPortable()){
-			title = title+" portable";
-		}
-		if (program.getSettings().getProfiles().size() > 1){
-			title = title+" - "+program.getSettings().getActiveProfile().getName();
-		}
-		jFrame.setTitle(title);
+    jFrame.setTitle(GuiFrame.get().windowTitle(
+            Program.PROGRAM_NAME,
+            Program.PROGRAM_VERSION,
+            Settings.isPortable() ? 1 : 0,
+            program.getSettings().getProfiles().size(),
+            program.getSettings().getActiveProfile().getName()
+            ));
 	}
 
 	public void addTab(JMainTab jMainTab){
@@ -244,7 +246,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 			add(jTitle);
 			if (jMainTab.isCloseable()){
 				JButton jClose = new JButton();
-				jClose.setToolTipText("Close Tab");
+				jClose.setToolTipText(GuiFrame.get().close());
 				jClose.setIcon(Images.ICON_CLOSE);
 				jClose.setRolloverIcon(Images.ICON_CLOSE_ACTIVE);
 				jClose.setUI(new BasicButtonUI());

@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -150,5 +151,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.about());
+	}
+
+	@Test
+	public void testGuiFrame_en() throws Exception {
+		GuiFrame g = Bundle.load(GuiFrame.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(null);
 	}
 }
