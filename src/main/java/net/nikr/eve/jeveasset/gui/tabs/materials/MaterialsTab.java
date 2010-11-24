@@ -218,7 +218,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			}
 			Material material = uniqueMaterials.get(key);
 			//Summary
-			if (!summary.containsKey(eveAsset.getGroup())){ //New
+			if (!summary.containsKey(eveAsset.getName())){ //New
 				Material summaryMaterial = new Material("1"+eveAsset.getName(), "2Summary", "1"+eveAsset.getGroup(), eveAsset);
 				summary.put(eveAsset.getName(), summaryMaterial);
 				materials.add(summaryMaterial);
