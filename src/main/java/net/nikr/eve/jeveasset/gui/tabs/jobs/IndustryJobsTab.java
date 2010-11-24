@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
@@ -73,7 +74,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private Vector<String> characters;
 
 	public IndustryJobsTab(Program program) {
-		super(program, "Industry Jobs", Images.ICON_TOOL_INDUSTRY_JOBS, true);
+		super(program, TabsJobs.get().industry(), Images.ICON_TOOL_INDUSTRY_JOBS, true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -87,9 +88,9 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		jActivity.setActionCommand(ACTION_SELECTED);
 		jActivity.addActionListener(this);
 
-		JLabel jCharactersLabel = new JLabel("Character");
-		JLabel jStateLabel = new JLabel("State");
-		JLabel jActivityLabel = new JLabel("Activity");
+		JLabel jCharactersLabel = new JLabel(TabsJobs.get().character());
+		JLabel jStateLabel = new JLabel(TabsJobs.get().state());
+		JLabel jActivityLabel = new JLabel(TabsJobs.get().activity());
 
 		//Table format
 		IndustryJobTableFormat industryJobsTableFormat = new IndustryJobTableFormat();
@@ -188,7 +189,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 					jobs.put(human.getName(), characterIndustryJobs);
 					all.addAll(characterIndustryJobs);
 					if (human.isUpdateCorporationAssets()){
-						String corpKey = "["+human.getCorporation()+"]";
+						String corpKey = TabsJobs.get().whitespace(human.getCorporation());
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
 							jobs.put(corpKey, new ArrayList<IndustryJob>());
@@ -206,7 +207,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jActivity.setEnabled(true);
 			jState.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characters.add(0, TabsJobs.get().all());
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
 			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
 			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
@@ -219,11 +220,11 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jActivity.setEnabled(false);
 			jState.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem("No character found");
+			jCharacters.getModel().setSelectedItem(TabsJobs.get().no());
 			jActivity.setModel( new DefaultComboBoxModel());
-			jActivity.getModel().setSelectedItem("No character found");
+			jActivity.getModel().setSelectedItem(TabsJobs.get().no());
 			jState.setModel( new DefaultComboBoxModel());
-			jState.getModel().setSelectedItem("No character found");
+			jState.getModel().setSelectedItem(TabsJobs.get().no());
 			jobsEventList.clear();
 		}
 	}
@@ -236,7 +237,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 				List<IndustryJob> industryJobsInput;
 				List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
 				//Characters
-				if (selected.equals("All")){
+				if (selected.equals(TabsJobs.get().all())){
 					industryJobsInput = all;
 				} else {
 					industryJobsInput = jobs.get(selected);
