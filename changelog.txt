@@ -16,7 +16,7 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
-_1.6.0__________________________________________________________________________
+_1.6.1__________________________________________________________________________
 
 New Features:
 -Lookup locations and items on popular eve websites (from the table menu)
@@ -30,6 +30,7 @@ Changed:
 Bug Fixes:
 -jeveassets.log is in the wrong location (Mac only)
 -Packaged ships now have the correct volume
+-Materials tool contained duplicates in the summary
 
 ________________________________________________________________________________
 _1.5.0__________________________________________________________________________
