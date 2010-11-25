@@ -144,7 +144,7 @@ public class JAssetTable extends JColumnTable {
 			if (eveAsset.getPriceReprocessed() > eveAsset.getPrice() && columnName.equals("Reprocessed")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
-					c.setBackground( new Color(255,255,230) );
+					c.setBackground( new Color(255,255,200) );
 				} else {
 					c.setBackground( this.getSelectionBackground().darker() );
 				}
