@@ -208,7 +208,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
 		for (EveAsset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material")) continue;
-			if (!eveAsset.getOwner().equals(character) && !eveAsset.getOwner().equals("["+character+"]") && !character.equals("All")) continue;
+			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All")) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
 			//Locations
 			if (!uniqueMaterials.containsKey(key)){ //New
