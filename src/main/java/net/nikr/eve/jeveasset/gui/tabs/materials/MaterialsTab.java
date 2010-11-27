@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
 public class MaterialsTab extends JMainTab implements ActionListener{
@@ -74,7 +75,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private SeparatorList<Material> separatorList;
 
 	public MaterialsTab(Program program) {
-		super(program, "Materials", Images.ICON_TOOL_MATERIALS, true);
+		super(program, TabsMaterials.get().materials(), Images.ICON_TOOL_MATERIALS, true);
 		//Category: Asteroid
 		//Category: Material
 
@@ -82,11 +83,11 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		jCharacters.setActionCommand(ACTION_SELECTED);
 		jCharacters.addActionListener(this);
 
-		jCollapse = new JButton("Collapse");
+		jCollapse = new JButton(TabsMaterials.get().collapse());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
 
-		jExpand = new JButton("Expand");
+		jExpand = new JButton(TabsMaterials.get().expand());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
@@ -138,7 +139,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 				if (human.isShowAssets()){
 					characters.add(human.getName());
 					if (human.isUpdateCorporationAssets()){
-						String corpKey = "["+human.getCorporation()+"]";
+						String corpKey = TabsMaterials.get().whitespace(human.getCorporation());
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
 						}
@@ -159,7 +160,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(false);
 			jCharacters.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem("No character found");
+			jCharacters.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}
 
