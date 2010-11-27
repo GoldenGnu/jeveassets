@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
 public class OverviewGroupDialog extends JDialogCentered implements ActionListener{
@@ -61,12 +62,12 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 	private OverviewTab overviewTab;
 
 	public OverviewGroupDialog(Program program, OverviewTab overviewTab) {
-		super(program, "", Images.IMAGE_DIALOG_OVERVIEW_GROUPS);
+		super(program, TabsOverview.get().whitespace(), Images.IMAGE_DIALOG_OVERVIEW_GROUPS);
 		this.overviewTab = overviewTab;
 		
 		jNameLabel = new JLabel();
 
-		jNone = new JRadioButton("None");
+		jNone = new JRadioButton(TabsOverview.get().none());
 		jStation = new JRadioButton();
 		jSystem = new JRadioButton();
 		jRegion = new JRadioButton();
@@ -79,11 +80,11 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 
 		jName = new JTextField();
 
-		jOK = new JButton("OK");
+		jOK = new JButton(TabsOverview.get().oK());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 
-		jCancel = new JButton("Cancel");
+		jCancel = new JButton(TabsOverview.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -146,14 +147,14 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 				if (location.getName().equals(region)) jRegion.setSelected(true);
 			}
 			if (station == null && system == null && region == null){
-				this.getDialog().setTitle("Rename Group");
-				jNameLabel.setText("Group Name:");
+				this.getDialog().setTitle(TabsOverview.get().rename());
+				jNameLabel.setText(TabsOverview.get().group());
 				jNameLabel.setFont(jName.getFont());
 				jName.setText(overviewGroup.getName());
 				jName.setVisible(true);
 				jName.requestFocusInWindow();
 			} else {
-				this.getDialog().setTitle("Edit Group");
+				this.getDialog().setTitle(TabsOverview.get().edit());
 				jNameLabel.setText(overviewGroup.getName());
 				Font font = jName.getFont();
 				jNameLabel.setFont( new Font(font.getName(), Font.BOLD, font.getSize()+2));
@@ -162,29 +163,29 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			}
 			
 		} else { //Create new group
-			this.getDialog().setTitle("New Group");
-			jNameLabel.setText("Group Name:");
+			this.getDialog().setTitle(TabsOverview.get().new_());
+			jNameLabel.setText(TabsOverview.get().group());
 			jNameLabel.setFont(jName.getFont());
-			jName.setText("");
+			jName.setText(TabsOverview.get().whitespace());
 			jName.setVisible(true);
 			jName.requestFocusInWindow();
 		}
 		if (station != null){
 			jStation.setVisible(true);
-			jStation.setText(station+" (Station)");
+			jStation.setText(TabsOverview.get().whitespace1(station));
 		} else {
 			jStation.setVisible(false);
 		}
 		if (system != null){
 			jSystem.setVisible(true);
-			jSystem.setText(system+" (System)");
+			jSystem.setText(TabsOverview.get().whitespace2(system));
 
 		} else {
 			jSystem.setVisible(false);
 		}
 		if (region != null){
 			jRegion.setVisible(true);
-			jRegion.setText(region+" (Region)");
+			jRegion.setText(TabsOverview.get().whitespace3(region));
 		} else {
 			jRegion.setVisible(false);
 		}
@@ -228,13 +229,13 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			if (overviewGroup == null){ //new group
 				//Check for empty name
 				if (jName.getText().isEmpty()){
-					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name can not be empty...", "New Group", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOverview.get().the(), TabsOverview.get().new_(), JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
 				//Check for duplicates
 				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
 					if (entry.getKey().toLowerCase().equals(jName.getText().toLowerCase())){
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name already exist...", "New Group", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOverview.get().the1(), TabsOverview.get().new_(), JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 				}
@@ -247,7 +248,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 			} else { //Edit/Rename group
 				if (!jName.getText().equals(overviewGroup.getName())){
 					if (jName.getText().isEmpty()){
-						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name can not be empty...", "Rename Group", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOverview.get().the(), TabsOverview.get().rename(), JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 					//Check for duplicates
@@ -255,7 +256,7 @@ public class OverviewGroupDialog extends JDialogCentered implements ActionListen
 							//Check if it's just a case change
 						if (entry.getKey().toLowerCase().equals(jName.getText().toLowerCase())
 										&& !jName.getText().toLowerCase().equals(overviewGroup.getName().toLowerCase())){
-							JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "The group name already exist...", "Rename Group", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsOverview.get().the1(), TabsOverview.get().rename(), JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}
 					}
