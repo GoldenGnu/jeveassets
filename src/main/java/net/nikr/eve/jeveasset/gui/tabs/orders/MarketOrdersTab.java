@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
@@ -81,7 +82,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
 	public MarketOrdersTab(Program program) {
-		super(program, "Market Orders", Images.ICON_TOOL_MARKET_ORDERS, true);
+		super(program, TabsOrders.get().market(), Images.ICON_TOOL_MARKET_ORDERS, true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -120,10 +121,10 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		TableComparatorChooser.install(jSellOrders, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, sellTableFormat);
 		TableComparatorChooser.install(jBuyOrders, buyOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, buyTableFormat);
 		//Labels
-		JLabel jCharactersLabel = new JLabel("Character");
-		JLabel jStateLabel = new JLabel("State");
-		JLabel jSellLabel = new JLabel("Sell Orders");
-		JLabel jBuyLabel = new JLabel("Buy Orders");
+		JLabel jCharactersLabel = new JLabel(TabsOrders.get().character());
+		JLabel jStateLabel = new JLabel(TabsOrders.get().state());
+		JLabel jSellLabel = new JLabel(TabsOrders.get().sell());
+		JLabel jBuyLabel = new JLabel(TabsOrders.get().buy());
 		//Scroll Panels
 		JScrollPane jSellOrdersScrollPanel = jSellOrders.getScrollPanel();
 		JScrollPane jBuyOrdersScrollPanel = jBuyOrders.getScrollPanel();
@@ -205,7 +206,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellOrders.getSelectedRow()): null;
 		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyOrders.getSelectedRow()) : null;
 
-		jMenuItem = new JMenuItem("Sell Orders:");
+		jMenuItem = new JMenuItem(TabsOrders.get().sell1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
@@ -214,7 +215,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 		addSeparator(jComponent);
 
-		jMenuItem = new JMenuItem("Buy Orders:");
+		jMenuItem = new JMenuItem(TabsOrders.get().buy1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
@@ -240,7 +241,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 					orders.put(human.getName(), characterMarketOrders);
 					all.addAll(characterMarketOrders);
 					if (human.isUpdateCorporationAssets()){
-						String corpKey = "["+human.getCorporation()+"]";
+						String corpKey = TabsOrders.get().whitespace(human.getCorporation());
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
 							orders.put(corpKey, new ArrayList<MarketOrder>());
@@ -269,13 +270,12 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			jSellOrders.setEnabled(false);
 			jBuyOrders.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem("No character found");
+			jCharacters.getModel().setSelectedItem(TabsOrders.get().no());
 			jState.setModel( new DefaultComboBoxModel());
-			jState.getModel().setSelectedItem("No character found");
+			jState.getModel().setSelectedItem(TabsOrders.get().no());
 			sellOrdersEventList.clear();
 			buyOrdersEventList.clear();
 		}
-		
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 				if (sState.equals("All")) state = -1;
 				if (sState.equals("Active")) state = 0;
 				if (sState.equals("Closed")) state = 1;
-				if (sState.equals("Expired") 
+				if (sState.equals("Expired")
 						|| sState.equals("Fulfilled")
 						|| sState.equals("Partially Fulfilled")) state = 2;
 				if (sState.equals("Cancelled")) state = 3;
