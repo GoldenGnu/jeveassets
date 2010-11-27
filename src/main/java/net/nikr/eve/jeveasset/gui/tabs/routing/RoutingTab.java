@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.graph.DisconnectedGraphException;
@@ -100,13 +101,13 @@ public class RoutingTab extends JMainTab implements ActionListener {
 	}
 
 	public RoutingTab(Program program) {
-		super(program, "Routing", Images.ICON_TOOL_ROUTING, true);
+		super(program, TabsRouting.get().routing(), Images.ICON_TOOL_ROUTING, true);
 
-		add = new JButton(">>>");
-		remove = new JButton("<<<");
-		calculate = new JButton("Calculate Route");
-		addRandom = new JButton("Other");
-		cancel = new JButton("Cancel");
+		add = new JButton(TabsRouting.get().whitespace());
+		remove = new JButton(TabsRouting.get().whitespace1());
+		calculate = new JButton(TabsRouting.get().calculate());
+		addRandom = new JButton(TabsRouting.get().other());
+		cancel = new JButton(TabsRouting.get().cancel());
 
 		add.setActionCommand(ACTION_ADD);
 		remove.setActionCommand(ACTION_REMOVE);
@@ -245,7 +246,8 @@ public class RoutingTab extends JMainTab implements ActionListener {
 
 	private void setAlgorithmDescriptionText() {
 		RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) algorithm.getSelectedItem());
-		description.setText(rac.getBasicDescription() + "\n\n" + rac.getTechnicalDescription());
+		description.setText(TabsRouting.get().whitespace2(rac.getBasicDescription(),
+				rac.getTechnicalDescription()));
 		description.setCaretPosition(0); //This should work
 //		description.scrollRectToVisible(new Rectangle(1,1,1,1)); This has no effect. WHY?!
 	}
@@ -263,13 +265,13 @@ public class RoutingTab extends JMainTab implements ActionListener {
 		} else {
 			waypointsRemaining.setForeground(Color.BLACK);
 		}
-		waypointsRemaining.setText(cur + " of " + max + " allowed.");
+		waypointsRemaining.setText(TabsRouting.get().whitespace3(cur, max));
 	}
 
 	private void updateAvailableRemaining() {
 		int cur = available.getModel().getSize();
 		int tot = cur + waypoints.getModel().getSize();
-		availableRemaining.setText(cur + " of " + tot + " total");
+		availableRemaining.setText(TabsRouting.get().whitespace4(cur, tot));
 	}
 
 	private void windowShownInner() {
@@ -345,7 +347,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 	 */
 	private SolarSystem findNodeForLocation(Graph g, long locationID) {
 		if (locationID < 0) {
-			throw new RuntimeException("Unknown Location: " + locationID);
+			throw new RuntimeException(TabsRouting.get().unknown(locationID));
 		}
 		for (Node n : g.getNodes()) {
 			if (n instanceof SolarSystem) {
@@ -395,14 +397,12 @@ public class RoutingTab extends JMainTab implements ActionListener {
 			public void run() {
 				processRouteInner();
 			}
-		}, "Route Processor").start();
+		}, TabsRouting.get().route()).start();
 	}
 
 	private void processRouteInner() {
 		if (waypoints.getModel().getSize() <= 2) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "There is little point in trying to calculate the\n" +
-							"optimal route between two or fewer points, since there is only\n" +
-							"one possible solution", "Not calculating", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().there(), TabsRouting.get().not(), JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 
@@ -419,21 +419,21 @@ public class RoutingTab extends JMainTab implements ActionListener {
 				sb.append('\n');
 			}
 			int time = (int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000);
-			sb.append("Generating this route took ");
-			sb.append(time);
-			sb.append(" second");
-			if (time != 1) {
-				sb.append("s");
-			}
-			sb.append(".");
+			sb.append(TabsRouting.get().generating());
+			sb.append(TabsRouting.get().second(time));
+			sb.append(TabsRouting.get().whitespace5());
 
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, "A route consisting of " +
-							  ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastDistance() +
-							  " jumps has been found.\nIt took " +
-							  (int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000) +
-							  " seconds"
-							, "Route"
+							, TabsRouting
+									.get()
+									.a(((RoutingAlgorithmContainer) algorithm
+											.getSelectedItem())
+											.getLastDistance(),
+											(int) Math
+													.floor(((RoutingAlgorithmContainer) algorithm
+															.getSelectedItem())
+															.getLastTimeTaken() / 1000))
+							, TabsRouting.get().route1()
 							, JOptionPane.INFORMATION_MESSAGE);
 
 			lastResultArea.setText(sb.toString());
@@ -442,7 +442,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, dce.getMessage()
-							, "Error"
+							, TabsRouting.get().error()
 							, JOptionPane.ERROR_MESSAGE);
 		} finally {
 			setUIEnabled(true);
@@ -490,7 +490,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 		available.getEditableModel().clear();
 		waypoints.getEditableModel().clear();
 		algorithm.setSelectedIndex(0);
-		lastResultArea.setText("Once a route has been found,\nit will be displayed here.");
+		lastResultArea.setText(TabsRouting.get().once());
 		lastResultArea.setCaretPosition(0);
 		lastResultArea.setEnabled(false);
 		updateRemaining();
@@ -502,7 +502,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 			public void run() {
 				windowShownInner();
 			}
-		}, "routing dialogue ");
+		}, TabsRouting.get().routing1());
 		updateDataThread.start();
 	}
 
@@ -510,7 +510,7 @@ public class RoutingTab extends JMainTab implements ActionListener {
 	protected void showTablePopupMenu(MouseEvent e) {}
 
 	/**
-	 * A GUI compatable container for the routing algorithms.
+	 * A GUI compatible container for the routing algorithms.
 	 */
 	private static class RoutingAlgorithmContainer {
 

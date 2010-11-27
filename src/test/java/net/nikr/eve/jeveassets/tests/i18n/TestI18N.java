@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
@@ -238,5 +239,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.add());
+	}
+
+	@Test
+	public void testTabsRouting_en() throws Exception {
+		TabsRouting g = Bundle.load(TabsRouting.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.calculate());
 	}
 }
