@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
 public class ValuesTab extends JMainTab implements ActionListener {
@@ -51,14 +52,14 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	public final static String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
 	public final static String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
 
-	private final String NAME_TOTAL = "Total";
-	private final String NAME_WALLET_BALANCE = "Wallet balance";
-	private final String NAME_ASSETS_VALUE = "Assets";
-	private final String NAME_ASSETS_SELL_ORDERS = "Sell Orders";
-	private final String NAME_ASSETS_ESCROWS = "Escrows";
-	private final String NAME_BEST_ASSET = "Best asset";
-	private final String NAME_BEST_SHIP = "Best ship";
-	private final String NAME_BEST_MODULE = "Best module";
+	private final String NAME_TOTAL = TabsValues.get().total();
+	private final String NAME_WALLET_BALANCE = TabsValues.get().wallet();
+	private final String NAME_ASSETS_VALUE = TabsValues.get().assets();
+	private final String NAME_ASSETS_SELL_ORDERS = TabsValues.get().sell();
+	private final String NAME_ASSETS_ESCROWS = TabsValues.get().escrows();
+	private final String NAME_BEST_ASSET = TabsValues.get().best();
+	private final String NAME_BEST_SHIP = TabsValues.get().best1();
+	private final String NAME_BEST_MODULE = TabsValues.get().best2();
 
 	private final int COLUMN_WIDTH = 243;
 
@@ -104,7 +105,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private String gridHexColor;
 
 	public ValuesTab(Program program) {
-		super(program, "Values", Images.ICON_TOOL_VALUES, true);
+		super(program, TabsValues.get().values(), Images.ICON_TOOL_VALUES, true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
@@ -218,7 +219,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			EveAsset eveAsset = eveAssetEventList.get(a);
 
 			//Skip market orders
-			if (eveAsset.getFlag().equals("Market Order"))	continue;
+			if (eveAsset.getFlag().equals(TabsValues.get().market()))	continue;
 			
 			if (eveAsset.isCorporationAsset()){ //Corp Asset
 				//Corp Total Value
@@ -448,12 +449,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
 			String s = (String)jOwners.getSelectedItem();
-			if (s == null || s.equals("Select a charecter...")){
+			if (s == null || s.equals(TabsValues.get().select())){
 				jOwner.setText("<html>");
 				return;
 			}
 			
-			Output output = new Output("Character");
+			Output output = new Output(TabsValues.get().character());
 
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
@@ -524,11 +525,11 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (ACTION_CORP_SELECTED.equals(e.getActionCommand())) {
 			//String output = "";
 			String s = (String)jCorps.getSelectedItem();
-			if (s == null || s.equals("Select a charecter...")){
+			if (s == null || s.equals(TabsValues.get().select())){
 				jCorp.setText("<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11px;\"></div>");
 				return;
 			}
-			Output output = new Output("Corporation");
+			Output output = new Output(TabsValues.get().corporation());
 
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
@@ -615,7 +616,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (jOwners.getModel().getSize() > 0){
 			jOwners.setEnabled(true);
 		} else {
-			jOwners.addItem("No character found");
+			jOwners.addItem(TabsValues.get().no());
 			jOwners.setEnabled(false);
 		}
 		jOwners.setSelectedIndex(0);
@@ -627,12 +628,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (jCorps.getModel().getSize() > 0){
 			jCorps.setEnabled(true);
 		} else {
-			jCorps.addItem("No corporation found");
+			jCorps.addItem(TabsValues.get().no1());
 			jCorps.setEnabled(false);
 		}
 		jCorps.setSelectedIndex(0);
 
-		Output output = new Output("Grand Total");
+		Output output = new Output(TabsValues.get().grand());
 		output.addHeading(NAME_TOTAL);
 		if (totalAccountBalance != 0
 				|| totalItemsValue != 0
@@ -718,12 +719,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		}
 
 		public void addNone(int i){
-			if (moduleOutput.equals("")){
+			if (moduleOutput.isEmpty()){
 				String temp = "";
 				for (int a = 1; a < i; a++){
 					temp = temp + "<br/>";
 				}
-				addValue("<i>none</i><br/>"+temp);
+				addValue("<i>"+TabsValues.get().none()+"</i><br/>"+temp);
 				
 			}
 			output = output+moduleOutput;
