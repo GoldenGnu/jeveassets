@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private SeparatorList<Module> separatorList;
 
 	public LoadoutsTab(Program program) {
-		super(program, "Ship Loadouts", Images.ICON_TOOL_SHIP_LOADOUTS, true);
+		super(program, TabsLoadout.get().ship(), Images.ICON_TOOL_SHIP_LOADOUTS, true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
@@ -113,29 +114,29 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jXmlFileChooser = new JCustomFileChooser(program, "xml");
 			}
 		}
-		JLabel jCharactersLabel = new JLabel("Character");
+		JLabel jCharactersLabel = new JLabel(TabsLoadout.get().character());
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_CHARACTERS);
 		jCharacters.addActionListener(this);
 
-		JLabel jShipsLabel = new JLabel("Ship");
+		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jShips = new JComboBox();
 		jShips.setActionCommand(ACTION_FILTER);
 		jShips.addActionListener(this);
 
-		jCollapse = new JButton("Collapse");
+		jCollapse = new JButton(TabsLoadout.get().collapse());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
 
-		jExpand = new JButton("Expand");
+		jExpand = new JButton(TabsLoadout.get().expand());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
-		jExport = new JButton("Export");
+		jExport = new JButton(TabsLoadout.get().export1());
 		jExport.setActionCommand(ACTION_EXPORT_LOADOUT);
 		jExport.addActionListener(this);
 
-		jExportAll = new JButton("Export All");
+		jExportAll = new JButton(TabsLoadout.get().export2());
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 		
@@ -230,7 +231,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	public void export(){
 		String fitName = loadoutsExportDialog.getFittingName();
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
-		if (!fitName.equals("")){
+		if (!fitName.isEmpty()){
 			String selectedShip = (String)jShips.getSelectedItem();
 			EveAsset exportAsset = null;
 			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
@@ -248,7 +249,10 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			String filename = browse();
 			if (filename != null) EveFittingWriter.save(Collections.singletonList(exportAsset), filename, fitName, fitDescription);
 		} else {
-			JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(), "Name can not be empty...", "Empty Name", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(loadoutsExportDialog.getDialog(),
+					TabsLoadout.get().name1(),
+					TabsLoadout.get().empty(),
+					JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
@@ -339,7 +343,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				if (human.isShowAssets()){
 					characters.add(human.getName());
 					if (human.isUpdateCorporationAssets()){
-						String corpKey = "["+human.getCorporation()+"]";
+						String corpKey = TabsLoadout.get().whitespace9(human.getCorporation());
 						if (!characters.contains(corpKey)){
 							characters.add(corpKey);
 						}
@@ -356,9 +360,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		} else {
 			jCharacters.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem("No character found");
+			jCharacters.getModel().setSelectedItem(TabsLoadout.get().no());
 			jShips.setModel( new DefaultComboBoxModel());
-			jShips.getModel().setSelectedItem("No character found");
+			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
 		updateTable();
 	}
@@ -371,8 +375,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
 			for (EveAsset eveAsset : eveAssetEventList){
 				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
-				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
-				if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All") ) continue;
+				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) {
+					continue;
+				}
+				if (!character.equals(eveAsset.getOwner())
+						&& !character.equals("["+eveAsset.getOwner()+"]")
+						&& !character.equals("All") ) {
+					continue;
+				}
 				charShips.add(key);
 			}
 			if (!charShips.isEmpty()){
@@ -392,7 +402,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jExportAll.setEnabled(false);
 				jShips.setEnabled(false);
 				jShips.setModel( new DefaultComboBoxModel());
-				jShips.getModel().setSelectedItem("No ships found");
+				jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 			}
 			
 			

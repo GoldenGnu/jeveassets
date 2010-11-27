@@ -39,6 +39,7 @@ import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
 public class LoadoutsExportDialog extends JDialogCentered implements ActionListener {
@@ -53,10 +54,10 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	private LoadoutsTab loadoutsDialog;
 
 	public LoadoutsExportDialog(Program program, LoadoutsTab loadoutsDialog) {
-		super(program, "Export Fitting", Images.IMAGE_DIALOG_LOADOUT_EXPORT);
+		super(program, TabsLoadout.get().export(), Images.IMAGE_DIALOG_LOADOUT_EXPORT);
 		this.loadoutsDialog = loadoutsDialog;
 
-		JLabel jNameLabel = new JLabel("Name:");
+		JLabel jNameLabel = new JLabel(TabsLoadout.get().name());
 		jPanel.add(jNameLabel);
 
 		jName = new JTextField();
@@ -64,7 +65,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		jName.setDocument( new MaxLengthPlainDocument(40) ); //max length: 40
 		jPanel.add(jName);
 
-		JLabel jDescriptionLabel = new JLabel("Description:");
+		JLabel jDescriptionLabel = new JLabel(TabsLoadout.get().description());
 		jPanel.add(jDescriptionLabel);
 
 		jDescription = new JTextPane();
@@ -73,12 +74,12 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		JScrollPane jDescriptionScrollPane = new JScrollPane(jDescription);
 		jPanel.add(jDescriptionScrollPane);
 
-		jOK = new JButton("OK");
+		jOK = new JButton(TabsLoadout.get().oK());
 		jOK.setActionCommand(ACTION_EXPORT_OK);
 		jOK.addActionListener(this);
 		jPanel.add(jOK);
 
-		JButton jCancel = new JButton("Cancel");
+		JButton jCancel = new JButton(TabsLoadout.get().cancel());
 		jCancel.setActionCommand(ACTION_EXPORT_CANCEL);
 		jCancel.addActionListener(this);
 		jPanel.add(jCancel);

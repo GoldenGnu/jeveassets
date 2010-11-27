@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
+import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 /**
  *
@@ -85,9 +86,9 @@ public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 		Module module = (Module) separator.first();
 		if(module == null) return; // handle 'late' rendering calls after this separator is invalid
 		jLocation.setVisible(module.isFirst());
-		jLocation.setText("  "+module.getLocation());
+		jLocation.setText(TabsLoadout.get().whitespace10(module.getLocation()));
 		jOwner.setVisible(module.isFirst());
-		jOwner.setText("  "+module.getOwner());
+		jOwner.setText(TabsLoadout.get().whitespace10(module.getOwner()));
 		jFlag.setText(module.getFlag());
 	}
 

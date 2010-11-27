@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveassets.tests.i18n;
 
+import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
@@ -194,5 +195,15 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.activity());
+	}
+
+	@Test
+	public void testTabsLoadout_en() throws Exception {
+		TabsLoadout g = Bundle.load(TabsLoadout.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.empty());
 	}
 }
