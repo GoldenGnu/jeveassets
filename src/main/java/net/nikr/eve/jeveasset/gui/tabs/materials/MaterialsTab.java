@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
@@ -91,7 +92,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
-		MaterialTableFormat materialTableFormat = new MaterialTableFormat();
+		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
 		materialEventList = new BasicEventList<Material>();
 		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
 		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);

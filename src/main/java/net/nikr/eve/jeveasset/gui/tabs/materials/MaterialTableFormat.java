@@ -22,75 +22,58 @@
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.gui.WritableTableFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.Material;
+import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-public class MaterialTableFormat implements AdvancedTableFormat<Object>, WritableTableFormat<Object> {
-
-	List<String> columnNames;
-
-	public MaterialTableFormat() {
-		columnNames = new ArrayList<String>();
-		columnNames.add("Count");
-		columnNames.add("Name");
-		columnNames.add("Value");
-	}
-
-	public List<String> getColumnNames() {
-		return columnNames;
-	}
-	
-	@Override
-	public int getColumnCount() {
-		return columnNames.size();
-	}
-
-	@Override
-	public String getColumnName(int column) {
-		return columnNames.get(column);
-	}
-
-	@Override
-	public Comparator getColumnComparator(int column) {
-		return GlazedLists.comparableComparator();
-	}
-
-	@Override
-	public Class getColumnClass(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return String.class;
-		if (columnName.equals("Count")) return Long.class;
-		if (columnName.equals("Value")) return ISK.class;
-		return Object.class;
-	}
-
-
-	@Override
-	public Object getColumnValue(Object baseObject, int column) {
-		String columnName = columnNames.get(column);
-		if (baseObject instanceof Material){
-			Material material = (Material) baseObject;
-			if (columnName.equals("Name")) return material.getName();
-			if (columnName.equals("Count")) return material.getCount();
-			if (columnName.equals("Value")) return new ISK(material.getValue());
+enum MaterialTableFormat implements TableColumn<Material> {
+	NAME(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMaterials.get().columnName();
 		}
-		return new Object();
-	}
+		@Override
+		public Object getColumnValue(Material from) {
+			return from.getName();
+		}
+	},
+	COUNT(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMaterials.get().columnCount();
+		}
+		@Override
+		public Object getColumnValue(Material from) {
+			return from.getCount();
+		}
+	},
+	VALUE(ISK.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMaterials.get().columnValue();
+		}
+		@Override
+		public Object getColumnValue(Material from) {
+			return new ISK(from.getValue());
+		}
+	},
+	;
 
+	Class type;
+	Comparator<?> comparator;
+	private MaterialTableFormat(Class type, Comparator<?> comparator) {
+		this.type = type;
+		this.comparator = comparator;
+	}
 	@Override
-	public boolean isEditable(Object baseObject, int column) {
-		return false;
+	public Class getType() {
+		return type;
 	}
-
 	@Override
-	public Object setColumnValue(Object baseObject, Object editedValue, int column) {
-		return null;
+	public Comparator getComparator() {
+		return comparator;
 	}
-
 }
