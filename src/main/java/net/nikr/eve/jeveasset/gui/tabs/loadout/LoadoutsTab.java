@@ -60,6 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
@@ -140,7 +141,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 		
-		ModuleTableFormat materialTableFormat = new ModuleTableFormat();
+		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
 		moduleEventList = new BasicEventList<Module>();
 		moduleFilterList = new FilterList<Module>(moduleEventList);
 		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
