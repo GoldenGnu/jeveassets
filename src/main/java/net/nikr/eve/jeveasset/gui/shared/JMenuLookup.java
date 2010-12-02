@@ -41,6 +41,7 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	private static final String ACTION_BROWSE_EVE_METRICS = "ACTION_BROWSE_EVE_METRICS";
 	private static final String ACTION_BROWSE_EVE_MARKETS = "ACTION_BROWSE_EVE_MARKETS";
 	private static final String ACTION_BROWSE_GAMES_CHRUKER = "ACTION_BROWSE_GAMES_CHRUKER";
+	private static final String ACTION_BROWSE_EVE_ITEM_DATABASE = "ACTION_BROWSE_EVE_ITEM_DATABASE";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_STATION = "ACTION_BROWSE_EVEMAPS_DOTLAN_STATION";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM = "ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_REGION = "ACTION_BROWSE_EVEMAPS_DOTLAN_REGION";
@@ -80,7 +81,7 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		menuItem.addActionListener(this);
 		jSubMenu.add(menuItem);
 
-		if ((station != null || system != null || region != null) && typeId != 0) addSeparator();
+		addSeparator();
 
 		menuItem = new JMenuItem(GuiShared.get().eveCentral());
 		menuItem.setIcon(Images.ICON_EVE_CENTRAL);
@@ -103,10 +104,19 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		menuItem.addActionListener(this);
 		add(menuItem);
 
+		addSeparator();
+
 		menuItem = new JMenuItem(GuiShared.get().chruker());
 		menuItem.setIcon(Images.ICON_CHRUKER);
 		menuItem.setEnabled(typeId != 0);
 		menuItem.setActionCommand(ACTION_BROWSE_GAMES_CHRUKER);
+		menuItem.addActionListener(this);
+		add(menuItem);
+
+		menuItem = new JMenuItem(GuiShared.get().eveOnline());
+		menuItem.setIcon(Images.ICON_EVE_ONLINE);
+		menuItem.setEnabled(typeId != 0);
+		menuItem.setActionCommand(ACTION_BROWSE_EVE_ITEM_DATABASE);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
@@ -125,6 +135,9 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		}
 		if (ACTION_BROWSE_GAMES_CHRUKER.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id="+typeId, program);
+		}
+		if (ACTION_BROWSE_EVE_ITEM_DATABASE.equals(e.getActionCommand())){
+			DesktopUtil.browse("http://wiki.eveonline.com/wiki/"+typeName.replace(" ", "_"), program);
 		}
 		if (ACTION_BROWSE_EVEMAPS_DOTLAN_STATION.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://evemaps.dotlan.net/outpost/"+station.replace(" ", "_"), program);

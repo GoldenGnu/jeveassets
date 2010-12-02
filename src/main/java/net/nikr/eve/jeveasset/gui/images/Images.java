@@ -78,6 +78,7 @@ public class Images {
 	public final static Icon ICON_EVE_CENTRAL = Images.getIcon("eve_central.png");
 	public final static Icon ICON_EVE_METRICS = Images.getIcon("eve_metrics.png");
 	public final static Icon ICON_CHRUKER = Images.getIcon("chruker.png");
+	public final static Icon ICON_EVE_ONLINE = Images.getIcon("eve_online.png");
 
 
 	public final static Icon ICON_NOT_CONTAIN = Images.getIcon("not_contain.png");
