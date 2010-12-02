@@ -20,6 +20,8 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String cancel();
 	public abstract String character();
 	public abstract String collapse();
+	public abstract String columnValue();
+	public abstract String columnName();
 	public abstract String description();
 	public abstract String empty();
 	public abstract String expand();

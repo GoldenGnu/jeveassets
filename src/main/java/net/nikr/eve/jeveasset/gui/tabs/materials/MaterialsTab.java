@@ -96,7 +96,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
 		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
 		//Tables
-		jTable = new JSeparatorTable(materialTableModel, materialTableFormat.getColumnNames());
+		jTable = new JSeparatorTable(materialTableModel);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);

@@ -91,7 +91,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
 		HumanTableFormat humanTableFormat = new HumanTableFormat();
 		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
-		jTable = new JSeparatorTable(tableModel, humanTableFormat.getColumnNames());
+		jTable = new JSeparatorTable(tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
 		jTable.setSeparatorEditor(new HumanSeparatorTableCell(this, jTable, separatorList));

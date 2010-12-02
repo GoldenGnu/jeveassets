@@ -30,7 +30,7 @@ public class JSeparatorTable extends JAutoColumnTable {
     private TableCellEditor separatorEditor;
 
 	
-    public JSeparatorTable(EventTableModel tableModel, List<String> columnNames) {
+    public JSeparatorTable(EventTableModel tableModel) {
         super(tableModel);
         setUI(new SpanTableUI());
 

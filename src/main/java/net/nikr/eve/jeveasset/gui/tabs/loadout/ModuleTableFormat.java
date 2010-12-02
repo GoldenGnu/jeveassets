@@ -34,6 +34,46 @@ import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
  *
  * @author Niklas
  */
+/*
+enum ModuleTableFormat implements TableColumn<Module> {
+	NAME(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLoadout.get().columnName();
+		}
+		@Override
+		public Object getColumnValue(Module from) {
+			return from.getName();
+		}
+	},
+	VALUE(ModulePriceValue.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLoadout.get().columnValue();
+		}
+		@Override
+		public Object getColumnValue(Module from) {
+			return from.getModulePriceValue();
+		}
+	},
+	;
+
+	Class type;
+	Comparator<?> comparator;
+	private ModuleTableFormat(Class type, Comparator<?> comparator) {
+		this.type = type;
+		this.comparator = comparator;
+	}
+	@Override
+	public Class getType() {
+		return type;
+	}
+	@Override
+	public Comparator getComparator() {
+		return comparator;
+	}
+}
+*/
 public class ModuleTableFormat implements AdvancedTableFormat<Object>, WritableTableFormat<Object> {
 
 	List<String> columnNames;
