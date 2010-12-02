@@ -47,7 +47,7 @@ class JOverviewTable extends JAutoColumnTable{
 	private List<String> groupedLocations = new ArrayList<String>();
 
 	public JOverviewTable(EventTableModel dm, List<String> columnNames) {
-		super(dm, columnNames);
+		super(dm);
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();
 		integerCellRenderer = new IntegerCellRenderer();

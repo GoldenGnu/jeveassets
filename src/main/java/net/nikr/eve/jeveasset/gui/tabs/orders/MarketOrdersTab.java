@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
@@ -63,7 +66,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
-	
+
 	
 	private JComboBox jCharacters;
 	private JComboBox jState;
@@ -93,8 +96,10 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		jState.addActionListener(this);
 
 		//Table format
-		MarketOrderTableFormat sellTableFormat = new MarketOrderTableFormat();
-		MarketOrderTableFormat buyTableFormat = new MarketOrderTableFormat();
+		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat =
+				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat =
+				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		//Backend
 		sellOrdersEventList = new BasicEventList<MarketOrder>();
 		buyOrdersEventList = new BasicEventList<MarketOrder>();
@@ -105,8 +110,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
-		jSellOrders = new JAutoColumnTable(sellOrdersTableModel, sellTableFormat.getColumnNames());
-		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel, buyTableFormat.getColumnNames());
+		jSellOrders = new JAutoColumnTable(sellOrdersTableModel);
+		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel);
 		//Table Selection
 		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersEventList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);

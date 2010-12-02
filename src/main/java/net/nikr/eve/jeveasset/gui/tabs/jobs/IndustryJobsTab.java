@@ -101,7 +101,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		//Table Model
 		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
 		//Tables
-		jTable = new JAutoColumnTable(jobsTableModel, industryJobsTableFormat.getColumnNames());
+		jTable = new JAutoColumnTable(jobsTableModel);
 		//Table Selection
 		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(jobsEventList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);

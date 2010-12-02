@@ -20,6 +20,14 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String buy();
 	public abstract String buy1();
 	public abstract String character();
+	public abstract String columnName();
+	public abstract String columnQuantity();
+	public abstract String columnPrice();
+	public abstract String columnExpiresIn();
+	public abstract String columnRange();
+	public abstract String columnStatus();
+	public abstract String columnMinVolume();
+	public abstract String columnLocation();
 	public abstract String market();
 	public abstract String no();
 	public abstract String sell();

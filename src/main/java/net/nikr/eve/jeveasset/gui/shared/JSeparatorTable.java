@@ -31,7 +31,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 	
     public JSeparatorTable(EventTableModel tableModel, List<String> columnNames) {
-        super(tableModel, columnNames);
+        super(tableModel);
         setUI(new SpanTableUI());
 
         // use a toString() renderer for the separator
