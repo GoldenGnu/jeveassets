@@ -22,11 +22,16 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.swing.EventTableModel;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
+import net.nikr.eve.jeveasset.gui.shared.JColumnTable.TableColumnUtil;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
@@ -37,13 +42,19 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.NumberToStringCellRe
 public class JAutoColumnTable extends JTable {
 
 	private JScrollPane jScroll;
-	protected EventTableModel dm;
 
-	public JAutoColumnTable(EventTableModel dm) {
-		setModel(dm);
-		this.dm = dm;
+	public JAutoColumnTable(EventTableModel eventTableModel) {
+		setModel(eventTableModel);
 
+		//Scroll
 		jScroll = new JScrollPane(this);
+
+		//Listeners
+		ModelListener modelListener = new ModelListener();
+		jScroll.addComponentListener(modelListener);
+		eventTableModel.addTableModelListener(modelListener);
+
+		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
@@ -55,5 +66,33 @@ public class JAutoColumnTable extends JTable {
 
 	public JScrollPane getScrollPanel() {
 		return jScroll;
+	}
+
+	private void autoResizeColumns() {
+		TableColumnUtil.resizeColumnsText(this, jScroll);
+	}
+
+	class ModelListener implements TableModelListener, ComponentListener {
+
+		boolean columnMoved;
+
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			autoResizeColumns();
+		}
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			autoResizeColumns();
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {}
+
+		@Override
+		public void componentShown(ComponentEvent e) {}
+
+		@Override
+		public void componentHidden(ComponentEvent e) {}
 	}
 }

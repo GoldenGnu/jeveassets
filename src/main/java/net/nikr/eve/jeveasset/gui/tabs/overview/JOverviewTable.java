@@ -45,9 +45,11 @@ class JOverviewTable extends JAutoColumnTable{
 	private IntegerCellRenderer integerCellRenderer;
 	private FloatCellRenderer floatCellRenderer;
 	private List<String> groupedLocations = new ArrayList<String>();
+	private EventTableModel eventTableModel;
 
-	public JOverviewTable(EventTableModel dm, List<String> columnNames) {
-		super(dm);
+	public JOverviewTable(EventTableModel eventTableModel, List<String> columnNames) {
+		super(eventTableModel);
+		this.eventTableModel = eventTableModel;
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();
 		integerCellRenderer = new IntegerCellRenderer();
@@ -78,8 +80,8 @@ class JOverviewTable extends JAutoColumnTable{
 			hasFocus = (rowIsLead && colIsLead) && isFocusOwner();
 		}
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		if (dm.getRowCount() >= row){
-			Overview overview = (Overview) dm.getElementAt(row);
+		if (eventTableModel.getRowCount() >= row){
+			Overview overview = (Overview) eventTableModel.getElementAt(row);
 			if (groupedLocations.contains(overview.getName()) && columnName.equals("Name")){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){

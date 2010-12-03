@@ -179,7 +179,7 @@ public class JColumnTable extends JTable {
 					int width = widths.get(name);
 					this.getColumnModel().getColumn(a).setPreferredWidth(width);
 				} else {
-					TableColumnUtil.resizeColumn(this, this.getColumnModel().getColumn(a));
+					TableColumnUtil.resizeColumn(this, this.getColumnModel().getColumn(a), a);
 				}
 			}
 		}
@@ -442,7 +442,7 @@ public class JColumnTable extends JTable {
 				int size = 0;
 				jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 				for (int i = 0; i < jTable.getColumnCount(); i++) {
-					 size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i));
+					 size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
 				}
 				if (size < jScroll.getSize().width){
 					jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -462,7 +462,7 @@ public class JColumnTable extends JTable {
 			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		}
 
-		public static int resizeColumn(JTable jTable, TableColumn column) {
+		public static int resizeColumn(JTable jTable, TableColumn column, int columnIndex) {
 			int maxWidth = 0;
 			TableCellRenderer renderer = column.getHeaderRenderer();
 			if (renderer == null) {
@@ -471,9 +471,9 @@ public class JColumnTable extends JTable {
 			Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
 			maxWidth = component.getPreferredSize().width;
 			for (int a = 0; a < jTable.getRowCount(); a++){
-				renderer = jTable.getCellRenderer(a, column.getModelIndex());
+				renderer = jTable.getCellRenderer(a, columnIndex);
 				if (renderer instanceof SeparatorTableCell) continue;
-				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, column.getModelIndex()), false, false, a, column.getModelIndex());
+				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
 				maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
 			}
 			column.setPreferredWidth(maxWidth+4);
