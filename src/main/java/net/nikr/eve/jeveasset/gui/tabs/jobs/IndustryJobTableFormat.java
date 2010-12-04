@@ -21,88 +21,118 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import java.util.ArrayList;
+import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.gui.shared.TableComparators;
+import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobTableFormat implements AdvancedTableFormat<IndustryJob> {
+enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
+	STATE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnState();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getState();
+		}
+	},
+	ACTIVITY(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnActivity();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getActivity();
+		}
+	},
+	NAME(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnName();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getName();
+		}
+	},
+	LOCATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnLocation();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getLocation();
+		}
+	},
+	OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOwner();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getOwner();
+		}
+	},
+	INSTALL_DATE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnInstallDate();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getInstallTime();
+		}
+	},
+	END_DATE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnEndDate();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getEndProductionTime();
+		}
+	},
+	BP_ME(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnBpMe();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getInstalledItemMaterialLevel();
+		}
+	},
+	BP_PE(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnBpPe();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getInstalledItemProductivityLevel();
+		}
+	},
+	;
 
-	List<String> columnNames;
-
-	public IndustryJobTableFormat() {
-		columnNames = new ArrayList<String>();
-		columnNames.add("State");
-		columnNames.add("Activity");
-		columnNames.add("Name");
-		columnNames.add("Location");
-		columnNames.add("Owner");
-		columnNames.add("Install Date");
-		columnNames.add("End Date");
-		columnNames.add("BP ME");
-		columnNames.add("BP PE");
-
+	Class type;
+	Comparator<?> comparator;
+	private IndustryJobTableFormat(Class type, Comparator<?> comparator) {
+		this.type = type;
+		this.comparator = comparator;
 	}
-
 	@Override
-	public int getColumnCount() {
-		return columnNames.size();
+	public Class getType() {
+		return type;
 	}
-
 	@Override
-	public String getColumnName(int column) {
-		return columnNames.get(column);
-	}
-
-	@Override
-	public Class getColumnClass(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("State")) return String.class;
-		if (columnName.equals("Activity")) return String.class;
-		if (columnName.equals("Name")) return String.class;
-		if (columnName.equals("Location")) return String.class;
-		if (columnName.equals("Owner")) return String.class;
-		if (columnName.equals("Install Date")) return String.class;
-		if (columnName.equals("End Date")) return String.class;
-		if (columnName.equals("BP ME")) return Integer.class;
-		if (columnName.equals("BP PE")) return Integer.class;
-		return Object.class;
-	}
-
-	@Override
-	public Comparator getColumnComparator(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("State")) return TableComparators.stringComparator();
-		if (columnName.equals("Activity")) return TableComparators.stringComparator();
-		if (columnName.equals("Name")) return TableComparators.stringComparator();
-		if (columnName.equals("Location")) return TableComparators.stringComparator();
-		if (columnName.equals("Owner")) return TableComparators.stringComparator();
-		if (columnName.equals("Install Date")) return TableComparators.stringComparator();
-		if (columnName.equals("End Date")) return TableComparators.stringComparator();
-		if (columnName.equals("BP ME")) return TableComparators.numberComparator();
-		if (columnName.equals("BP PE")) return TableComparators.numberComparator();
-		return null;
-	}
-
-	@Override
-	public Object getColumnValue(IndustryJob baseObject, int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("State")) return baseObject.getState();
-		if (columnName.equals("Activity")) return baseObject.getActivity();
-		if (columnName.equals("Name")) return baseObject.getName();
-		if (columnName.equals("Location")) return baseObject.getLocation();
-		if (columnName.equals("Owner")) return baseObject.getOwner();
-		if (columnName.equals("Install Date")) return baseObject.getInstallTime();
-		if (columnName.equals("End Date")) return baseObject.getEndProductionTime();
-		if (columnName.equals("BP ME")) return baseObject.getInstalledItemMaterialLevel();
-		if (columnName.equals("BP PE")) return baseObject.getInstalledItemProductivityLevel();
-		return new Object();
-	}
-
-	public List<String> getColumnNames() {
-		return columnNames;
+	public Comparator getComparator() {
+		return comparator;
 	}
 }

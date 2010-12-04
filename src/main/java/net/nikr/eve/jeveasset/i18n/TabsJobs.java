@@ -25,4 +25,13 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String no();
 	public abstract String state();
 	public abstract String whitespace(Object arg0);
+	public abstract String columnState();
+	public abstract String columnActivity();
+	public abstract String columnName();
+	public abstract String columnLocation();
+	public abstract String columnOwner();
+	public abstract String columnInstallDate();
+	public abstract String columnEndDate();
+	public abstract String columnBpMe();
+	public abstract String columnBpPe();
 }

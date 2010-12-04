@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -93,7 +94,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		JLabel jActivityLabel = new JLabel(TabsJobs.get().activity());
 
 		//Table format
-		IndustryJobTableFormat industryJobsTableFormat = new IndustryJobTableFormat();
+		EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
 		jobsEventList = new BasicEventList<IndustryJob>();
 		//For soring the table
