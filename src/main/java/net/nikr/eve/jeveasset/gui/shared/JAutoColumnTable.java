@@ -24,10 +24,13 @@ package net.nikr.eve.jeveasset.gui.shared;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
@@ -53,6 +56,7 @@ public class JAutoColumnTable extends JTable {
 		ModelListener modelListener = new ModelListener();
 		jScroll.addComponentListener(modelListener);
 		eventTableModel.addTableModelListener(modelListener);
+		this.addPropertyChangeListener("model", modelListener);
 
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
@@ -72,9 +76,7 @@ public class JAutoColumnTable extends JTable {
 		TableColumnUtil.resizeColumnsText(this, jScroll);
 	}
 
-	class ModelListener implements TableModelListener, ComponentListener {
-
-		boolean columnMoved;
+	class ModelListener implements TableModelListener, ComponentListener, PropertyChangeListener {
 
 		@Override
 		public void tableChanged(TableModelEvent e) {
@@ -94,5 +96,18 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void componentHidden(ComponentEvent e) {}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			Object newValue = evt.getNewValue();
+			Object oldValue = evt.getOldValue();
+			if (newValue instanceof TableModel && oldValue instanceof TableModel){
+				TableModel newModel = (TableModel) newValue;
+				TableModel oldModel = (TableModel) oldValue;
+				oldModel.removeTableModelListener(this);
+				newModel.addTableModelListener(this);
+
+			}
+		}
 	}
 }
