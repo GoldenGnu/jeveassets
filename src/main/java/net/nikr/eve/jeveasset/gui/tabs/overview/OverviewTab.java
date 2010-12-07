@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -74,7 +75,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
-	private OverviewTableFormat overviewTableFormat;
+	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
 	private JOverviewTable jTable;
 	private JComboBox jViews;
 	private JComboBox jCharacters;
@@ -105,7 +106,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		jSource.addActionListener(this);
 
 		//Table format
-		overviewTableFormat = new OverviewTableFormat();
+		overviewTableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
 		//Backend
 		overviewEventList = new BasicEventList<Overview>();
 		//For soring the table
@@ -113,7 +114,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
-		jTable = new JOverviewTable(overviewTableModel, overviewTableFormat.getColumnNames());
+		jTable = new JOverviewTable(overviewTableModel, overviewTableFormat);
 		//Table Selection
 		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -368,22 +369,24 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		String view = (String) jViews.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
 		if (view.equals(TabsOverview.get().regions())){
-			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
+			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
 			overviewTableModel.fireTableStructureChanged();
-			
 		}
 		if (view.equals(TabsOverview.get().systems())){
-			overviewTableFormat.setColumnNames(overviewTableFormat.getSystemColumns());
+			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
 			overviewTableModel.fireTableStructureChanged();
 			
 		}
 		if (view.equals(TabsOverview.get().stations())){
-			overviewTableFormat.setColumnNames(overviewTableFormat.getStationColumns());
+			overviewTableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
 			overviewTableModel.fireTableStructureChanged();
-			
 		}
 		if (view.equals(TabsOverview.get().groups())){
-			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
+			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
 			overviewTableModel.fireTableStructureChanged();
 		}
 		overviewEventList.getReadWriteLock().writeLock().lock();

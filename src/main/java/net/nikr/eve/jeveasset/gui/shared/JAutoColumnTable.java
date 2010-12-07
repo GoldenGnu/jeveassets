@@ -21,13 +21,20 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -40,14 +47,23 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.NumberToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
 public class JAutoColumnTable extends JTable {
 
 	private JScrollPane jScroll;
+	private EventTableModel eventTableModel;
+	private EnumTableFormatAdaptor formatAdaptor = null;
 
 	public JAutoColumnTable(EventTableModel eventTableModel) {
 		setModel(eventTableModel);
+		this.eventTableModel = eventTableModel;
+
+		TableFormat tableFormat = eventTableModel.getTableFormat();
+		if (tableFormat instanceof EnumTableFormatAdaptor){
+			formatAdaptor = (EnumTableFormatAdaptor) tableFormat;
+		}
 
 		//Scroll
 		jScroll = new JScrollPane(this);
@@ -57,6 +73,8 @@ public class JAutoColumnTable extends JTable {
 		jScroll.addComponentListener(modelListener);
 		eventTableModel.addTableModelListener(modelListener);
 		this.addPropertyChangeListener("model", modelListener);
+		this.getColumnModel().addColumnModelListener(modelListener);
+		this.getTableHeader().addMouseListener(modelListener);
 
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
@@ -76,7 +94,9 @@ public class JAutoColumnTable extends JTable {
 		TableColumnUtil.resizeColumnsText(this, jScroll);
 	}
 
-	class ModelListener implements TableModelListener, ComponentListener, PropertyChangeListener {
+	class ModelListener implements TableModelListener, ComponentListener, PropertyChangeListener, TableColumnModelListener, MouseListener{
+
+		boolean columnMoved = false;
 
 		@Override
 		public void tableChanged(TableModelEvent e) {
@@ -109,5 +129,49 @@ public class JAutoColumnTable extends JTable {
 
 			}
 		}
+
+		@Override
+		public void columnAdded(TableColumnModelEvent e) {}
+
+		@Override
+		public void columnRemoved(TableColumnModelEvent e) {}
+
+		@Override
+		public void columnMoved(TableColumnModelEvent e) {
+			if (e.getFromIndex() != e.getToIndex()){
+				if (formatAdaptor != null) formatAdaptor.moveColumn(e.getFromIndex(), e.getToIndex());
+				columnMoved = true;
+			}
+		}
+
+		@Override
+		public void columnMarginChanged(ChangeEvent e) {}
+
+		@Override
+		public void columnSelectionChanged(ListSelectionEvent e) {}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			columnMoved = false;
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (columnMoved){
+				columnMoved = false;
+				if (formatAdaptor != null) formatAdaptor.moved();
+				eventTableModel.fireTableStructureChanged();
+				autoResizeColumns();
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public void mouseExited(MouseEvent e) {}
 	}
 }

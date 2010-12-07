@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
 class JOverviewTable extends JAutoColumnTable{
@@ -46,10 +47,13 @@ class JOverviewTable extends JAutoColumnTable{
 	private FloatCellRenderer floatCellRenderer;
 	private List<String> groupedLocations = new ArrayList<String>();
 	private EventTableModel eventTableModel;
+	private EnumTableFormatAdaptor formatAdaptor;
 
-	public JOverviewTable(EventTableModel eventTableModel, List<String> columnNames) {
+	public JOverviewTable(EventTableModel eventTableModel, EnumTableFormatAdaptor formatAdaptor) {
 		super(eventTableModel);
 		this.eventTableModel = eventTableModel;
+		this.formatAdaptor = formatAdaptor;
+
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();
 		integerCellRenderer = new IntegerCellRenderer();
@@ -79,10 +83,10 @@ class JOverviewTable extends JAutoColumnTable{
 
 			hasFocus = (rowIsLead && colIsLead) && isFocusOwner();
 		}
-		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+		OverviewTableFormat columnFormat = (OverviewTableFormat) formatAdaptor.getColumn(column);
 		if (eventTableModel.getRowCount() >= row){
 			Overview overview = (Overview) eventTableModel.getElementAt(row);
-			if (groupedLocations.contains(overview.getName()) && columnName.equals("Name")){ //In group
+			if (groupedLocations.contains(overview.getName()) && columnFormat.equals(OverviewTableFormat.NAME)){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
@@ -91,7 +95,7 @@ class JOverviewTable extends JAutoColumnTable{
 				}
 				return c;
 			}
-			if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals("Solar System")){ //In group
+			if (groupedLocations.contains(overview.getSolarSystem()) && columnFormat.equals(OverviewTableFormat.SYSTEM)){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
@@ -100,7 +104,7 @@ class JOverviewTable extends JAutoColumnTable{
 				}
 				return c;
 			}
-			if (groupedLocations.contains(overview.getRegion()) && columnName.equals("Region")){ //In group
+			if (groupedLocations.contains(overview.getRegion()) && columnFormat.equals(OverviewTableFormat.REGION)){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );

@@ -21,124 +21,108 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import java.util.ArrayList;
+import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import java.util.List;
 import net.nikr.eve.jeveasset.data.Overview;
-import net.nikr.eve.jeveasset.gui.shared.TableComparators;
+import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
-public class OverviewTableFormat implements AdvancedTableFormat<Overview> {
+enum OverviewTableFormat implements TableColumn<Overview> {
+	NAME(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnName();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getName();
+		}
+	},
+	SYSTEM(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnSystem();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getSolarSystem();
+		}
+	},
+	REGION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnRegion();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getRegion();
+		}
+	},
+	VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnVolume();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getVolume();
+		}
+	},
+	VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnValue();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getValue();
+		}
+	},
+	COUNT(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnCount();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getCount();
+		}
+	},
+	AVERAGE_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnAverageValue();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getAverageValue();
+		}
+	},
+	REPROCESSED_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnReprocessedValue();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getReprocessedValue();
+		}
+	},
+	;
 
-	List<String> columnNames;
-
-	public OverviewTableFormat() {
-		columnNames = new ArrayList<String>();
-		columnNames.add("Name");
-		columnNames.add("Solar System");
-		columnNames.add("Region");
-		columnNames.add("Volume");
-		columnNames.add("Value");
-		columnNames.add("Reprocessed Value");
-		columnNames.add("Count");
-		columnNames.add("Average Value");
+	Class type;
+	Comparator<?> comparator;
+	private OverviewTableFormat(Class type, Comparator<?> comparator) {
+		this.type = type;
+		this.comparator = comparator;
 	}
-
-	public List<String> getStationColumns(){
-		List<String> temp = new ArrayList<String>();
-		temp.add("Name");
-		temp.add("Solar System");
-		temp.add("Region");
-		temp.add("Volume");
-		temp.add("Value");
-		temp.add("Reprocessed Value");
-		temp.add("Count");
-		temp.add("Average Value");
-		return temp;
-	}
-
-	public List<String> getSystemColumns(){
-		List<String> temp = new ArrayList<String>();
-		temp.add("Name");
-		temp.add("Region");
-		temp.add("Volume");
-		temp.add("Value");
-		temp.add("Reprocessed Value");
-		temp.add("Count");
-		temp.add("Average Value");
-		return temp;
-	}
-
-	public List<String> getRegionColumns(){
-		List<String> temp = new ArrayList<String>();
-		temp.add("Name");
-		temp.add("Volume");
-		temp.add("Value");
-		temp.add("Reprocessed Value");
-		temp.add("Count");
-		temp.add("Average Value");
-		return temp;
-	}
-
-	public List<String> getColumnNames() {
-		return columnNames;
-	}
-
-	public void setColumnNames(List<String> columnNames) {
-		this.columnNames = columnNames;
-	}
-
 	@Override
-	public int getColumnCount() {
-		return columnNames.size();
+	public Class getType() {
+		return type;
 	}
-
 	@Override
-	public String getColumnName(int column) {
-		return columnNames.get(column);
+	public Comparator getComparator() {
+		return comparator;
 	}
-
-	@Override
-	public Class getColumnClass(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return String.class;
-		if (columnName.equals("Solar System")) return String.class;
-		if (columnName.equals("Region")) return String.class;
-		if (columnName.equals("Volume")) return Double.class;
-		if (columnName.equals("Count")) return Long.class;
-		if (columnName.equals("Average Value")) return Double.class;
-		if (columnName.equals("Value")) return Double.class;
-		if (columnName.equals("Reprocessed Value")) return Double.class;
-		return Object.class;
-	}
-
-	@Override
-	public Comparator getColumnComparator(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return TableComparators.stringComparator();
-		if (columnName.equals("Solar System")) return TableComparators.stringComparator();
-		if (columnName.equals("Region")) return TableComparators.stringComparator();
-		if (columnName.equals("Volume")) return TableComparators.numberComparator();
-		if (columnName.equals("Count")) return TableComparators.numberComparator();
-		if (columnName.equals("Average Value")) return TableComparators.numberComparator();
-		if (columnName.equals("Value")) return TableComparators.numberComparator();
-		if (columnName.equals("Reprocessed Value")) return TableComparators.numberComparator();
-		return null;
-	}
-
-	@Override
-	public Object getColumnValue(Overview baseObject, int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return baseObject.getName();
-		if (columnName.equals("Solar System")) return baseObject.getSolarSystem();
-		if (columnName.equals("Region")) return baseObject.getRegion();
-		if (columnName.equals("Volume")) return baseObject.getVolume();
-		if (columnName.equals("Count")) return baseObject.getCount();
-		if (columnName.equals("Average Value")) return baseObject.getAverageValue();
-		if (columnName.equals("Value")) return baseObject.getValue();
-		if (columnName.equals("Reprocessed Value")) return baseObject.getReprocessedValue();
-		return new Object();
-	}
-
 }
