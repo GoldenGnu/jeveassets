@@ -97,6 +97,8 @@ public class JAutoColumnTable extends JTable {
 	class ModelListener implements TableModelListener, ComponentListener, PropertyChangeListener, TableColumnModelListener, MouseListener{
 
 		boolean columnMoved = false;
+		int from = 0;
+		int to = 0;
 
 		@Override
 		public void tableChanged(TableModelEvent e) {
@@ -139,7 +141,8 @@ public class JAutoColumnTable extends JTable {
 		@Override
 		public void columnMoved(TableColumnModelEvent e) {
 			if (e.getFromIndex() != e.getToIndex()){
-				if (formatAdaptor != null) formatAdaptor.moveColumn(e.getFromIndex(), e.getToIndex());
+				if (!columnMoved) from = e.getFromIndex();
+				to = e.getToIndex();
 				columnMoved = true;
 			}
 		}
@@ -162,7 +165,7 @@ public class JAutoColumnTable extends JTable {
 		public void mouseReleased(MouseEvent e) {
 			if (columnMoved){
 				columnMoved = false;
-				if (formatAdaptor != null) formatAdaptor.moved();
+				if (formatAdaptor != null) formatAdaptor.moveColumn(from, to);
 				eventTableModel.fireTableStructureChanged();
 				autoResizeColumns();
 			}

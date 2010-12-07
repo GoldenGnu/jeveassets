@@ -17,7 +17,6 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 	private static final Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 
 	List<T> shownColumns;
-	List<T> movingColumns = null;
 	List<T> orderColumns;
 	ColumnComparator columnComparator;
 
@@ -35,12 +34,8 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 		return orderColumns;
 	}
 
-	public void moved(){
-		movingColumns = null;
-		updateColumns();
-	}
-
 	public void moveColumn(int from, int to){
+		if (from == to) return;
 		T fromColumn = getColumn(from);
 		T toColumn = getColumn(to);
 
@@ -51,8 +46,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 		if (to > from) toIndex++;
 		orderColumns.add(toIndex, fromColumn);
 
-		movingColumns = new ArrayList<T>(shownColumns);
-		Collections.sort(movingColumns, columnComparator);
+		updateColumns();
 	}
 
 	public void hideColumn(T column){
@@ -67,12 +61,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 		updateColumns();
 	}
 
-	public T getColumn(int i){
-		if (movingColumns != null) return movingColumns.get(i);
-		return getFixedColumn(i);
-	}
-
-	private T getFixedColumn(int i) {
+	private T getColumn(int i){
 		return shownColumns.get(i);
 	}
 
@@ -85,11 +74,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 	}
 
 	@Override public Class getColumnClass(int i) {
-		return getFixedColumn(i).getType();
+		return getColumn(i).getType();
 	}
 
 	@Override public Comparator getColumnComparator(int i) {
-		return getFixedColumn(i).getComparator();
+		return getColumn(i).getComparator();
 	}
 
 	@Override public int getColumnCount() {
@@ -97,11 +86,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 	}
 
 	@Override public String getColumnName(int i) {
-		return getFixedColumn(i).getColumnName();
+		return getColumn(i).getColumnName();
 	}
 
 	@Override public Object getColumnValue(Q e, int i) {
-		return getFixedColumn(i).getColumnValue(e);
+		return getColumn(i).getColumnValue(e);
 	}
 
 	class ColumnComparator implements Comparator<T>{

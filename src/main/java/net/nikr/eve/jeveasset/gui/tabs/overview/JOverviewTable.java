@@ -83,10 +83,10 @@ class JOverviewTable extends JAutoColumnTable{
 
 			hasFocus = (rowIsLead && colIsLead) && isFocusOwner();
 		}
-		OverviewTableFormat columnFormat = (OverviewTableFormat) formatAdaptor.getColumn(column);
+		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		if (eventTableModel.getRowCount() >= row){
 			Overview overview = (Overview) eventTableModel.getElementAt(row);
-			if (groupedLocations.contains(overview.getName()) && columnFormat.equals(OverviewTableFormat.NAME)){ //In group
+			if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
@@ -95,7 +95,7 @@ class JOverviewTable extends JAutoColumnTable{
 				}
 				return c;
 			}
-			if (groupedLocations.contains(overview.getSolarSystem()) && columnFormat.equals(OverviewTableFormat.SYSTEM)){ //In group
+			if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
@@ -104,7 +104,7 @@ class JOverviewTable extends JAutoColumnTable{
 				}
 				return c;
 			}
-			if (groupedLocations.contains(overview.getRegion()) && columnFormat.equals(OverviewTableFormat.REGION)){ //In group
+			if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())){ //In group
 				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
