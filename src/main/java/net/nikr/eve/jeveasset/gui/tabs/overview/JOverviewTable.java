@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
 class JOverviewTable extends JAutoColumnTable{
@@ -47,12 +46,10 @@ class JOverviewTable extends JAutoColumnTable{
 	private FloatCellRenderer floatCellRenderer;
 	private List<String> groupedLocations = new ArrayList<String>();
 	private EventTableModel eventTableModel;
-	private EnumTableFormatAdaptor formatAdaptor;
 
-	public JOverviewTable(EventTableModel eventTableModel, EnumTableFormatAdaptor formatAdaptor) {
+	public JOverviewTable(EventTableModel eventTableModel) {
 		super(eventTableModel);
 		this.eventTableModel = eventTableModel;
-		this.formatAdaptor = formatAdaptor;
 
 		doubleCellRenderer = new DoubleCellRenderer();
 		longCellRenderer = new LongCellRenderer();

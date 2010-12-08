@@ -114,7 +114,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
-		jTable = new JOverviewTable(overviewTableModel, overviewTableFormat);
+		jTable = new JOverviewTable(overviewTableModel);
 		//Table Selection
 		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
