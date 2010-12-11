@@ -3092,6 +3092,12 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Combat Drone Blueprint" id="2196" marketgroup="true" meta="" name="Praetor II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2197" marketgroup="false" meta="" name="Environmentally-friendly Mining Equipment" price="0" volume="32.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2198" marketgroup="false" meta="" name="Crate of Environmentally-friendly Mining Equipment" price="0" volume="450.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2199" marketgroup="false" meta="" name="Prototype Body Armor Fabric " price="0" volume="20.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2200" marketgroup="false" meta="" name="Crate of Prototype Body Armor Fabric " price="0" volume="2000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2201" marketgroup="false" meta="" name="Riot Interdiction Team" price="0" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2202" marketgroup="false" meta="" name="Riot Interdiction Teams" price="0" volume="300.0"/>
     <row category="Drone" group="Combat Drone" id="2203" marketgroup="true" meta="" name="Acolyte I" price="2000" volume="5.0">
         <material id="34" portionsize="1" quantity="424"/>
         <material id="36" portionsize="1" quantity="4"/>
@@ -3105,6 +3111,11 @@
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Combat Drone Blueprint" id="2206" marketgroup="true" meta="" name="Acolyte II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2215" marketgroup="false" meta="" name="Amarr TIL-1A Nexus Chips " price="0" volume="12.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2216" marketgroup="false" meta="" name="Crate of Amarr TIL-1A Nexus Chips" price="0" volume="120.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2219" marketgroup="false" meta="" name="Large Group of Civilian Workers and Dependents" price="0" volume="125.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2220" marketgroup="false" meta="" name="Civilian Workers and Dependents" price="0" volume="12.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2221" marketgroup="false" meta="" name="Manportable Electromagnetic Pulse Weapons " price="0" volume="25.0"/>
     <row category="Planetary Interaction" group="Planetary Customs Offices" id="2233" marketgroup="false" meta="" name="Customs Office" price="0" volume="500.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2234" marketgroup="false" meta="" name="Sansha's Battletower LCO" price="0" volume="1.0E8"/>
     <row category="Commodity" group="Livestock" id="2241" marketgroup="false" meta="" name="Doctor Untermere" price="0" volume="1.0"/>
@@ -3991,7 +4002,6 @@
     <row category="Blueprint" group="Structures - Hybrid Battery Blueprints" id="2806" marketgroup="true" meta="" name="Medium Blaster Battery Blueprint" price="50000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Projectile Battery Blueprints" id="2807" marketgroup="true" meta="" name="Large AutoCannon Battery Blueprint" price="100000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Hybrid Battery Blueprints" id="2808" marketgroup="true" meta="" name="Medium Railgun Battery Blueprint" price="50000000" volume="0.01"/>
-    <row category="Charge" group="Rocket" id="2809" marketgroup="false" meta="" name="thermal damage" price="0" volume="0.0050"/>
     <row category="Blueprint" group="Structures - Projectile Battery Blueprints" id="2810" marketgroup="true" meta="" name="Medium Artillery Battery Blueprint" price="50000000" volume="0.01"/>
     <row category="Charge" group="Advanced Torpedo" id="2811" marketgroup="true" meta="5 (Tech II)" name="Inferno Rage Torpedo" price="1440725" volume="0.1">
         <material id="34" portionsize="5000" quantity="29520"/>
@@ -4034,13 +4044,26 @@
     <row category="Blueprint" group="Structures - Laser Battery Blueprints" id="2830" marketgroup="true" meta="" name="Large Beam Laser Battery Blueprint" price="100000000" volume="0.01"/>
     <row category="Celestial" group="Large Collidable Object" id="2831" marketgroup="false" meta="" name="Serpentis Fortress" price="0" volume="1.0E8"/>
     <row category="Celestial" group="Large Collidable Object" id="2832" marketgroup="false" meta="" name="Blood Raider Fortress" price="0" volume="1.0E8"/>
-    <row category="Ship" group="Assault Ship" id="2834" marketgroup="false" meta="5" name="Utu" price="220000" volume="29500.0"/>
-    <row category="Ship" group="Heavy Assault Ship" id="2836" marketgroup="false" meta="5" name="Adrestia" price="7400000" volume="112000.0"/>
+    <row category="Ship" group="Assault Ship" id="2834" marketgroup="true" meta="5" name="Utu" price="220000" volume="29500.0">
+        <material id="34" portionsize="1" quantity="11528"/>
+        <material id="35" portionsize="1" quantity="9882"/>
+        <material id="36" portionsize="1" quantity="3656"/>
+        <material id="37" portionsize="1" quantity="7"/>
+    </row>
+    <row category="Ship" group="Heavy Assault Ship" id="2836" marketgroup="true" meta="5" name="Adrestia" price="7400000" volume="112000.0">
+        <material id="34" portionsize="1" quantity="524216"/>
+        <material id="35" portionsize="1" quantity="131210"/>
+        <material id="36" portionsize="1" quantity="34124"/>
+        <material id="37" portionsize="1" quantity="8270"/>
+        <material id="38" portionsize="1" quantity="2035"/>
+        <material id="39" portionsize="1" quantity="510"/>
+        <material id="40" portionsize="1" quantity="130"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="2837" marketgroup="false" meta="" name="Adrestia Blueprint" price="74000000" volume="0.01"/>
     <row category="Implant" group="Booster" id="2838" marketgroup="false" meta="" name="Cerebral Accelerator" price="32768" volume="1.0"/>
     <row category="Blueprint" group="Booster Blueprints" id="2839" marketgroup="false" meta="" name="Cerebral Accelerator Blueprint" price="0" volume="0.01"/>
-    <row category="Charge" group="Rocket" id="2849" marketgroup="false" meta="" name="explosive long range" price="0" volume="0.0050"/>
-    <row category="Charge" group="Rocket" id="2857" marketgroup="false" meta="" name="kinetic long range" price="0" volume="0.0050"/>
+    <row category="Commodity" group="Miscellaneous" id="2861" marketgroup="false" meta="" name="Crate of Manportable Electromagnetic Pulse Weapons" price="0" volume="250.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2862" marketgroup="false" meta="" name="Special Forces Weapons and Equipment " price="0" volume="25.0"/>
     <row category="Ship" group="Industrial" id="2863" marketgroup="false" meta="" name="Primae" price="0" volume="270000.0"/>
     <row category="Blueprint" group="Industrial Blueprint" id="2864" marketgroup="false" meta="" name="Primae Blueprint" price="9999999" volume="0.01"/>
     <row category="Module" group="Projectile Weapon" id="2865" marketgroup="true" meta="5 (Tech II)" name="1200mm Artillery Cannon II" price="1987540" volume="20.0">
@@ -4125,6 +4148,7 @@
         <material id="40" portionsize="1" quantity="15"/>
         <material id="11399" portionsize="1" quantity="13"/>
     </row>
+    <row category="Commodity" group="Miscellaneous" id="2930" marketgroup="false" meta="" name="Crate of Special Forces Weapons and Equipment" price="0" volume="250.0"/>
     <row category="Module" group="Projectile Weapon" id="2937" marketgroup="true" meta="5 (Tech II)" name="Dual 180mm AutoCannon II" price="220508" volume="10.0">
         <material id="34" portionsize="1" quantity="890"/>
         <material id="35" portionsize="1" quantity="645"/>
@@ -4132,6 +4156,8 @@
         <material id="11399" portionsize="1" quantity="6"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2938" marketgroup="true" meta="" name="Dual 180mm AutoCannon II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2943" marketgroup="false" meta="" name="Hybrid Slaver Hounds" price="0" volume="20.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2944" marketgroup="false" meta="" name="Kennel of Hybrid Slaver Hounds" price="0" volume="200.0"/>
     <row category="Module" group="Projectile Weapon" id="2945" marketgroup="true" meta="5 (Tech II)" name="Dual 425mm AutoCannon II" price="605200" volume="20.0">
         <material id="34" portionsize="1" quantity="15060"/>
         <material id="35" portionsize="1" quantity="4153"/>
@@ -4141,6 +4167,8 @@
         <material id="11399" portionsize="1" quantity="11"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2946" marketgroup="true" meta="" name="Dual 425mm AutoCannon II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2951" marketgroup="false" meta="" name="Large Crate of Improved Inertial Compensation Systems" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2952" marketgroup="false" meta="" name="Crate of Unidentified Fibrous Compound" price="0" volume="10.0"/>
     <row category="Module" group="Projectile Weapon" id="2953" marketgroup="true" meta="5 (Tech II)" name="Dual 650mm Repeating Artillery II" price="1109234" volume="20.0">
         <material id="34" portionsize="1" quantity="45605"/>
         <material id="35" portionsize="1" quantity="12005"/>
@@ -4151,6 +4179,12 @@
         <material id="11399" portionsize="1" quantity="12"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2954" marketgroup="true" meta="" name="Dual 650mm Repeating Artillery II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2955" marketgroup="false" meta="" name="Large Crate of Unidentified Fibrous Compound" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2956" marketgroup="false" meta="" name="Large Crate of Refurbished Mining Drones" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2957" marketgroup="false" meta="" name="Crate of Refurbished Mining Drones" price="0" volume="10.0"/>
+    <row category="Commodity" group="Livestock" id="2958" marketgroup="false" meta="" name="Civilian SIGINT Contractors" price="0" volume="30.0"/>
+    <row category="Commodity" group="Livestock" id="2959" marketgroup="false" meta="" name="Group of Civilian SIGINT Contractors" price="0" volume="300.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2960" marketgroup="false" meta="" name="Spools of Quantrium Wiring" price="0" volume="300.0"/>
     <row category="Module" group="Projectile Weapon" id="2961" marketgroup="true" meta="5 (Tech II)" name="1400mm Howitzer Artillery II" price="2320888" volume="20.0">
         <material id="34" portionsize="1" quantity="126068"/>
         <material id="35" portionsize="1" quantity="31506"/>
@@ -4162,6 +4196,11 @@
         <material id="11399" portionsize="1" quantity="15"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2962" marketgroup="true" meta="" name="1400mm Howitzer Artillery II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2963" marketgroup="false" meta="" name="Quantrium Wiring" price="0" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2964" marketgroup="false" meta="" name="Aerogel Counteragent" price="0" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2965" marketgroup="false" meta="" name="Crate of Aerogel Counteragent" price="0" volume="300.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2967" marketgroup="false" meta="" name="Crate of Target Painter Deflection Plating" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2968" marketgroup="false" meta="" name="Large Crate of Target Painter Deflection Plating" price="0" volume="100.0"/>
     <row category="Module" group="Projectile Weapon" id="2969" marketgroup="true" meta="5 (Tech II)" name="720mm Howitzer Artillery II" price="517456" volume="10.0">
         <material id="34" portionsize="1" quantity="9256"/>
         <material id="35" portionsize="1" quantity="3456"/>
@@ -4171,11 +4210,23 @@
         <material id="11399" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2970" marketgroup="true" meta="" name="720mm Howitzer Artillery II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2971" marketgroup="false" meta="" name="Group of Haakar’s Striking Hawks" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2972" marketgroup="false" meta="" name="Ditanium Metal Plates" price="0" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2973" marketgroup="false" meta="" name="Pallet of Ditanium Metal Plates" price="0" volume="300.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2974" marketgroup="false" meta="" name="Large Group of The Hooded Men" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="2975" marketgroup="false" meta="" name="Arctic Warfare Marines" price="50000" volume="32.0"/>
+    <row category="Commodity" group="Livestock" id="2976" marketgroup="false" meta="" name="Arctic Warfare Marine Squads" price="50000" volume="320.0"/>
     <row category="Module" group="Projectile Weapon" id="2977" marketgroup="true" meta="5 (Tech II)" name="280mm Howitzer Artillery II" price="1976" volume="5.0">
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="49"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2978" marketgroup="true" meta="" name="280mm Howitzer Artillery II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2979" marketgroup="false" meta="" name="Crate of Industrial-Grade Tritanium-Alloy Scraps" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2980" marketgroup="false" meta="" name="Large Crate of Industrial-Grade Tritanium-Alloy Scraps" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2981" marketgroup="false" meta="" name="Crate of Architectural-Quality Plagioclase Paneling" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2982" marketgroup="false" meta="" name="Large Crate of Architectural-Quality Plagioclase Paneling" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="2983" marketgroup="false" meta="" name="Corporate Assassin" price="100" volume="30.0"/>
+    <row category="Commodity" group="Livestock" id="2984" marketgroup="false" meta="" name="Deep Cover Corporate Assassin" price="100" volume="300.0"/>
     <row category="Module" group="Energy Weapon" id="2985" marketgroup="true" meta="5 (Tech II)" name="Dual Heavy Beam Laser II" price="1081840" volume="20.0">
         <material id="34" portionsize="1" quantity="45060"/>
         <material id="35" portionsize="1" quantity="12005"/>
@@ -4187,6 +4238,12 @@
         <material id="11399" portionsize="1" quantity="12"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="2986" marketgroup="true" meta="" name="Dual Heavy Beam Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2987" marketgroup="false" meta="" name="Crate of Harvester Components" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2988" marketgroup="false" meta="" name="Large Crate of Harvester Components" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2989" marketgroup="false" meta="" name="Decoy Prototype Cloaking Devices" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2990" marketgroup="false" meta="" name="Crate of Decoy Prototype Cloaking Devices" price="0" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2991" marketgroup="false" meta="" name="Crate of Amarr Scripture Educational Study Packages (Matari translation)" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2992" marketgroup="false" meta="" name="Large Crate of Amarr Scripture Educational Study Packages (Matari translation)" price="0" volume="100.0"/>
     <row category="Module" group="Energy Weapon" id="2993" marketgroup="true" meta="5 (Tech II)" name="Dual Light Beam Laser II" price="110698" volume="5.0">
         <material id="34" portionsize="1" quantity="1885"/>
         <material id="35" portionsize="1" quantity="6"/>
@@ -4196,6 +4253,20 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="2994" marketgroup="true" meta="" name="Dual Light Beam Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="2995" marketgroup="false" meta="" name="Blue Paradise" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2996" marketgroup="false" meta="" name="Crate of Blue Paradise" price="0" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2997" marketgroup="false" meta="" name="Crate of Refined C-86 Epoxy Resin" price="0" volume="10.0"/>
+    <row category="Ship" group="Industrial" id="2998" marketgroup="true" meta="" name="Noctis" price="62135324" volume="270000.0">
+        <material id="34" portionsize="1" quantity="3349410"/>
+        <material id="35" portionsize="1" quantity="936043"/>
+        <material id="36" portionsize="1" quantity="276936"/>
+        <material id="37" portionsize="1" quantity="50713"/>
+        <material id="38" portionsize="1" quantity="24630"/>
+        <material id="39" portionsize="1" quantity="3438"/>
+        <material id="40" portionsize="1" quantity="1580"/>
+    </row>
+    <row category="Commodity" group="Livestock" id="2999" marketgroup="false" meta="" name="Amarr Marine Counter-Boarding Team" price="50000" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3000" marketgroup="false" meta="" name="Group of Angel Cartel VIPs" price="0" volume="10.0"/>
     <row category="Module" group="Energy Weapon" id="3001" marketgroup="true" meta="5 (Tech II)" name="Dual Light Pulse Laser II" price="74920" volume="5.0">
         <material id="34" portionsize="1" quantity="1156"/>
         <material id="35" portionsize="1" quantity="156"/>
@@ -4205,6 +4276,12 @@
         <material id="11399" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3002" marketgroup="true" meta="" name="Dual Light Pulse Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3003" marketgroup="false" meta="" name="Large Group of Angel Cartel VIPs" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="3004" marketgroup="false" meta="" name="Amarr Marine Counter-Boarding Company" price="50000" volume="300.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3005" marketgroup="false" meta="" name="Crate of Feille d’Marnne Champagne" price="0" volume="10.0"/>
+    <row category="Commodity" group="Livestock" id="3006" marketgroup="false" meta="" name="Conditioned House Slaves" price="4000" volume="30.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3007" marketgroup="false" meta="" name="Large Crate of Feille d’Marnne Champagne" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="3008" marketgroup="false" meta="" name="Herd of Conditioned House Slaves" price="4000" volume="300.0"/>
     <row category="Module" group="Energy Weapon" id="3009" marketgroup="true" meta="5 (Tech II)" name="Focused Medium Beam Laser II" price="366626" volume="10.0">
         <material id="34" portionsize="1" quantity="4561"/>
         <material id="35" portionsize="1" quantity="1568"/>
@@ -4213,12 +4290,24 @@
         <material id="11399" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3010" marketgroup="true" meta="" name="Focused Medium Beam Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3011" marketgroup="false" meta="" name="Crate of Bootleg Holoreels" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3012" marketgroup="false" meta="" name="Large Crate of Suspicious Holoreels" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3013" marketgroup="false" meta="" name="Amarr Religious Holoreels" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3014" marketgroup="false" meta="" name="Crate of Amarr Religious Holoreels" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3015" marketgroup="false" meta="" name="Crate of Cryo-Stored Luminaire Skippers" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3016" marketgroup="false" meta="" name="Large Crate of Cryo-Stored Luminaire Skippers" price="0" volume="100.0"/>
     <row category="Module" group="Energy Weapon" id="3017" marketgroup="true" meta="5 (Tech II)" name="Gatling Pulse Laser II" price="35690" volume="5.0">
         <material id="34" portionsize="1" quantity="305"/>
         <material id="35" portionsize="1" quantity="289"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3018" marketgroup="true" meta="" name="Gatling Pulse Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3019" marketgroup="false" meta="" name="Crate of Unidentified Ancient Technology" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3020" marketgroup="false" meta="" name="Large Crate of Talocan Station Life-Support Cores" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3021" marketgroup="false" meta="" name="Crate of Portable Emergency Heating Units" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3022" marketgroup="false" meta="" name="Large Crate of Portable Emergency Heating Units" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3023" marketgroup="false" meta="" name="Crate of Archaeological Lot GV87-426-D Artifacts" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3024" marketgroup="false" meta="" name="Large Crate of Archaeological Lot GV87-426-E Artifacts" price="0" volume="100.0"/>
     <row category="Module" group="Energy Weapon" id="3025" marketgroup="true" meta="5 (Tech II)" name="Heavy Beam Laser II" price="514516" volume="10.0">
         <material id="34" portionsize="1" quantity="11050"/>
         <material id="35" portionsize="1" quantity="3664"/>
@@ -4228,6 +4317,12 @@
         <material id="11399" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3026" marketgroup="true" meta="" name="Heavy Beam Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3027" marketgroup="false" meta="" name="Crate of Contained Cerrocentite" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3028" marketgroup="false" meta="" name="Large Crate of Contained Mesarchonite" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3029" marketgroup="false" meta="" name="Group of Coriault Couture Collective Display Employees" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3030" marketgroup="false" meta="" name="Large Group of Mannar Textile Institute International Representatives" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3031" marketgroup="false" meta="" name="Crate of Exclusive Simo Reshar Fitness Holoreels" price="0" volume="10.0"/>
+    <row category="Commodity" group="Livestock" id="3032" marketgroup="false" meta="" name="Amarr Forensic Investigative Team" price="0" volume="65.0"/>
     <row category="Module" group="Energy Weapon" id="3033" marketgroup="true" meta="5 (Tech II)" name="Medium Beam Laser II" price="183776" volume="5.0">
         <material id="34" portionsize="1" quantity="2460"/>
         <material id="35" portionsize="1" quantity="925"/>
@@ -4237,6 +4332,11 @@
         <material id="11399" portionsize="1" quantity="5"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3034" marketgroup="true" meta="" name="Medium Beam Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3035" marketgroup="false" meta="" name="Large Crate of Exclusive Simo Reshar Fitness Holoreels" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="3036" marketgroup="false" meta="" name="Amarr Forensic Investigative Deployment" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3037" marketgroup="false" meta="" name="Crate of Experimental ECM Hybrid Rounds" price="0" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3038" marketgroup="false" meta="" name="Large Crate of Experimental ECM Hybrid Rounds" price="0" volume="100.0"/>
+    <row category="Blueprint" group="Industrial Blueprint" id="3039" marketgroup="true" meta="" name="Noctis Blueprint" price="390000000" volume="0.01"/>
     <row category="Module" group="Energy Weapon" id="3041" marketgroup="true" meta="5 (Tech II)" name="Medium Pulse Laser II" price="145544" volume="5.0">
         <material id="34" portionsize="1" quantity="1684"/>
         <material id="35" portionsize="1" quantity="1256"/>
@@ -4392,6 +4492,7 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Hybrid Weapon Blueprint" id="3179" marketgroup="true" meta="" name="Light Neutron Blaster II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Skill" group="Spaceship Command" id="3184" marketgroup="true" meta="" name="ORE Industrial" price="1600000" volume="0.01"/>
     <row category="Module" group="Hybrid Weapon" id="3186" marketgroup="true" meta="5 (Tech II)" name="Neutron Blaster Cannon II" price="1446592" volume="20.0">
         <material id="34" portionsize="1" quantity="93056"/>
         <material id="35" portionsize="1" quantity="25608"/>
@@ -9746,7 +9847,15 @@
     <row category="Entity" group="Convoy Drone" id="11000" marketgroup="false" meta="" name="Convoy Protector" price="0" volume="19400.0"/>
     <row category="Entity" group="Convoy Drone" id="11001" marketgroup="false" meta="" name="Convoy Guard" price="0" volume="19700.0"/>
     <row category="Entity" group="Convoy Drone" id="11002" marketgroup="false" meta="" name="Convoy Sentry" price="0" volume="16500.0"/>
-    <row category="Ship" group="Cruiser" id="11011" marketgroup="false" meta="4 (Faction)" name="Guardian-Vexor" price="4377500" volume="115000.0"/>
+    <row category="Ship" group="Cruiser" id="11011" marketgroup="true" meta="4 (Faction)" name="Guardian-Vexor" price="4377500" volume="115000.0">
+        <material id="34" portionsize="1" quantity="307734"/>
+        <material id="35" portionsize="1" quantity="77202"/>
+        <material id="36" portionsize="1" quantity="26179"/>
+        <material id="37" portionsize="1" quantity="5349"/>
+        <material id="38" portionsize="1" quantity="1276"/>
+        <material id="39" portionsize="1" quantity="261"/>
+        <material id="40" portionsize="1" quantity="53"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="11012" marketgroup="false" meta="" name="Guardian-Vexor Blueprint" price="43775000" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="11013" marketgroup="false" meta="" name="Drug Contact List" price="0" volume="0.1"/>
     <row category="Module" group="Gang Coordinator" id="11014" marketgroup="true" meta="" name="Command Processor I" price="179664" volume="5.0">
@@ -17832,7 +17941,15 @@
     <row category="Entity" group="Deadspace Overseer Cruiser" id="17615" marketgroup="false" meta="" name="Corpus Crimson Commander" price="0" volume="118000.0"/>
     <row category="Entity" group="Deadspace Overseer Cruiser" id="17616" marketgroup="false" meta="" name="Mul-Zatah Gatekeeper" price="0" volume="118000.0"/>
     <row category="Module" group="Cheat Module Group" id="17617" marketgroup="false" meta="20" name="STOP" price="24998" volume="5.0"/>
-    <row category="Ship" group="Frigate" id="17619" marketgroup="false" meta="" name="Caldari Navy Hookbill" price="285000" volume="16500.0"/>
+    <row category="Ship" group="Frigate" id="17619" marketgroup="true" meta="" name="Caldari Navy Hookbill" price="285000" volume="16500.0">
+        <material id="34" portionsize="1" quantity="18964"/>
+        <material id="35" portionsize="1" quantity="8444"/>
+        <material id="36" portionsize="1" quantity="2814"/>
+        <material id="37" portionsize="1" quantity="531"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17620" marketgroup="false" meta="" name="Caldari Navy Hookbill Blueprint" price="0" volume="0.01"/>
     <row category="Structure" group="Corporate Hangar Array" id="17621" marketgroup="true" meta="" name="Corporate Hangar Array" price="10000000" volume="4000.0"/>
     <row category="Entity" group="Mission Generic Frigates" id="17622" marketgroup="false" meta="" name="Jenmai Hirokan" price="0" volume="16500.0"/>
@@ -17853,9 +17970,25 @@
     <row category="Entity" group="Deadspace Overseer's Structure" id="17631" marketgroup="false" meta="" name="Deadspace Synchronization HQ" price="0" volume="1.0E8"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="17632" marketgroup="false" meta="" name="CreoCorp Main Factory" price="0" volume="1.0E8"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="17633" marketgroup="false" meta="" name="UNUSED_HabMod_Residential_LCS" price="0" volume="1.0E8"/>
-    <row category="Ship" group="Cruiser" id="17634" marketgroup="false" meta="4 (Faction)" name="Caracal Navy Issue" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17634" marketgroup="true" meta="4 (Faction)" name="Caracal Navy Issue" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17635" marketgroup="false" meta="" name="Caracal Navy Issue Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17636" marketgroup="false" meta="4 (Faction)" name="Raven Navy Issue" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17636" marketgroup="true" meta="4 (Faction)" name="Raven Navy Issue" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17637" marketgroup="false" meta="" name="Raven Navy Issue Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Destructible Sentry Gun" id="17638" marketgroup="false" meta="" name="Sentinel Bloodraider" price="0" volume="1000.0"/>
     <row category="Commodity" group="Empire Insignia Drops" id="17639" marketgroup="false" meta="" name="Taisu Magdesh's Insignia" price="0" volume="0.1"/>
@@ -18046,43 +18179,147 @@
     <row category="Structure" group="Shield Hardening Array" id="17700" marketgroup="false" meta="" name="Ultra Fast Photon Scattering Array" price="100000" volume="100.0"/>
     <row category="Structure" group="Tracking Array" id="17701" marketgroup="false" meta="" name="Tracking Array" price="5000000" volume="4000.0"/>
     <row category="Structure" group="Tracking Array" id="17702" marketgroup="false" meta="" name="Ultra Fast Test Tracking Array" price="0" volume="100.0"/>
-    <row category="Ship" group="Frigate" id="17703" marketgroup="false" meta="" name="Imperial Navy Slicer" price="285000" volume="16500.0"/>
+    <row category="Ship" group="Frigate" id="17703" marketgroup="true" meta="" name="Imperial Navy Slicer" price="285000" volume="16500.0">
+        <material id="34" portionsize="1" quantity="18964"/>
+        <material id="35" portionsize="1" quantity="8444"/>
+        <material id="36" portionsize="1" quantity="2814"/>
+        <material id="37" portionsize="1" quantity="531"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17704" marketgroup="false" meta="" name="Imperial Navy Slicer Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Frigate" id="17705" marketgroup="false" meta="" name="Khanid Navy Frigate" price="285000" volume="16500.0"/>
     <row category="Blueprint" group="Frigate Blueprint" id="17706" marketgroup="false" meta="" name="Khanid Navy Frigate Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Frigate" id="17707" marketgroup="false" meta="" name="Mordus Frigate" price="285000" volume="16500.0"/>
     <row category="Blueprint" group="Frigate Blueprint" id="17708" marketgroup="false" meta="" name="Mordus Frigate Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17709" marketgroup="false" meta=" (Faction)" name="Omen Navy Issue" price="8147424" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17709" marketgroup="true" meta=" (Faction)" name="Omen Navy Issue" price="8147424" volume="101000.0">
+        <material id="34" portionsize="1" quantity="553460"/>
+        <material id="35" portionsize="1" quantity="138967"/>
+        <material id="36" portionsize="1" quantity="46018"/>
+        <material id="37" portionsize="1" quantity="9630"/>
+        <material id="38" portionsize="1" quantity="2296"/>
+        <material id="39" portionsize="1" quantity="496"/>
+        <material id="40" portionsize="1" quantity="126"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17710" marketgroup="false" meta="" name="Omen Navy Issue Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Cruiser" id="17711" marketgroup="false" meta="4" name="Ammatar Navy Cruiser" price="8000000" volume="101000.0"/>
     <row category="Blueprint" group="Cruiser Blueprint" id="17712" marketgroup="false" meta="" name="Ammatar Navy Cruiser Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17713" marketgroup="false" meta="4 (Faction)" name="Stabber Fleet Issue" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17713" marketgroup="true" meta="4 (Faction)" name="Stabber Fleet Issue" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17714" marketgroup="false" meta="" name="Stabber Fleet Issue Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17715" marketgroup="false" meta="4 (Faction)" name="Gila" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17715" marketgroup="true" meta="4 (Faction)" name="Gila" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17716" marketgroup="false" meta="" name="Gila Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17718" marketgroup="false" meta="4" name="Phantasm" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17718" marketgroup="true" meta="4" name="Phantasm" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17719" marketgroup="false" meta="" name="Phantasm Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17720" marketgroup="false" meta="4" name="Cynabal" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17720" marketgroup="true" meta="4" name="Cynabal" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17721" marketgroup="false" meta="" name="Cynabal Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17722" marketgroup="false" meta="4 (Faction)" name="Vigilant" price="8000000" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="17722" marketgroup="true" meta="4 (Faction)" name="Vigilant" price="8000000" volume="101000.0">
+        <material id="34" portionsize="1" quantity="552920"/>
+        <material id="35" portionsize="1" quantity="138810"/>
+        <material id="36" portionsize="1" quantity="35916"/>
+        <material id="37" portionsize="1" quantity="8718"/>
+        <material id="38" portionsize="1" quantity="2148"/>
+        <material id="39" portionsize="1" quantity="541"/>
+        <material id="40" portionsize="1" quantity="160"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17723" marketgroup="false" meta="" name="Vigilant Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Cruiser" id="17724" marketgroup="false" meta="" name="Mordus Cruiser" price="8000000" volume="101000.0"/>
     <row category="Blueprint" group="Cruiser Blueprint" id="17725" marketgroup="false" meta="" name="Mordus Cruiser Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17726" marketgroup="false" meta="4 (Faction)" name="Apocalypse Navy Issue" price="108750000" volume="495000.0"/>
+    <row category="Ship" group="Battleship" id="17726" marketgroup="true" meta="4 (Faction)" name="Apocalypse Navy Issue" price="108750000" volume="495000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17727" marketgroup="false" meta="" name="Apocalypse Navy Issue Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17728" marketgroup="false" meta="4 (Faction)" name="Megathron Navy Issue" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17728" marketgroup="true" meta="4 (Faction)" name="Megathron Navy Issue" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17729" marketgroup="false" meta="" name="Megathron Navy Issue Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Battleship" id="17730" marketgroup="false" meta="4" name="Ammatar Navy Battleship" price="108750000" volume="486000.0"/>
     <row category="Blueprint" group="Battleship Blueprint" id="17731" marketgroup="false" meta="" name="Ammatar Navy Battleship Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17732" marketgroup="false" meta="4 (Faction)" name="Tempest Fleet Issue" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17732" marketgroup="true" meta="4 (Faction)" name="Tempest Fleet Issue" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17733" marketgroup="false" meta="" name="Tempest Fleet Issue Blueprint" price="0" volume="0.01"/>
     <row category="Ship" group="Battleship" id="17734" marketgroup="false" meta="" name="Mordus Battleship" price="108750000" volume="486000.0"/>
     <row category="Blueprint" group="Battleship Blueprint" id="17735" marketgroup="false" meta="" name="Mordus Battleship Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17736" marketgroup="false" meta="4" name="Nightmare" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17736" marketgroup="true" meta="4" name="Nightmare" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17737" marketgroup="false" meta="" name="Nightmare Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17738" marketgroup="false" meta="4" name="Machariel" price="108750000" volume="595000.0"/>
+    <row category="Ship" group="Battleship" id="17738" marketgroup="true" meta="4" name="Machariel" price="108750000" volume="595000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17739" marketgroup="false" meta="" name="Machariel Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17740" marketgroup="false" meta="4 (Faction)" name="Vindicator" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17740" marketgroup="true" meta="4 (Faction)" name="Vindicator" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17741" marketgroup="false" meta="" name="Vindicator Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Mission Generic Frigates" id="17742" marketgroup="false" meta="" name="Uleen Bloodsworn" price="0" volume="28600.0"/>
     <row category="Commodity" group="Criminal Tags" id="17743" marketgroup="true" meta="" name="Uleen Bloodsworn's Tag" price="0" volume="0.1">
@@ -18138,15 +18375,23 @@
     <row category="Commodity" group="Empire Insignia Drops" id="17801" marketgroup="false" meta="" name="Akori's Insignia" price="0" volume="0.1"/>
     <row category="Commodity" group="Empire Insignia Drops" id="17802" marketgroup="false" meta="" name="Ibrahim's Insignia" price="0" volume="0.1"/>
     <row category="Commodity" group="Empire Insignia Drops" id="17803" marketgroup="false" meta="" name="Karothas's Insignia" price="0" volume="0.1"/>
-    <row category="Module" group="Afterburner" id="17804" marketgroup="false" meta="" name="5MN Afterburner I" price="6450" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="17804" marketgroup="false" meta="" name="5MN Afterburner I" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="17805" marketgroup="false" meta="" name="5MN Afterburner I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="17806" marketgroup="false" meta="" name="25MN Afterburner I" price="32256" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="17806" marketgroup="false" meta="" name="25MN Afterburner I" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="17807" marketgroup="false" meta="" name="25MN Afterburner I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="17808" marketgroup="false" meta="" name="5MN MicroWarpdrive I" price="31636" volume="10.0"/>
+    <row category="Module" group="Afterburner" id="17808" marketgroup="false" meta="" name="5MN MicroWarpdrive I" price="0" volume="10.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="17809" marketgroup="false" meta="" name="5MN MicroWarpdrive I Blueprint" price="0" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="17810" marketgroup="false" meta="" name="25MN MicroWarpdrive I" price="158188" volume="10.0"/>
+    <row category="Module" group="Afterburner" id="17810" marketgroup="false" meta="" name="25MN MicroWarpdrive I" price="0" volume="10.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="17811" marketgroup="false" meta="" name="25MN MicroWarpdrive I Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17812" marketgroup="false" meta="" name="Republic Fleet Firetail" price="285000" volume="16500.0"/>
+    <row category="Ship" group="Frigate" id="17812" marketgroup="true" meta="" name="Republic Fleet Firetail" price="285000" volume="16500.0">
+        <material id="34" portionsize="1" quantity="18964"/>
+        <material id="35" portionsize="1" quantity="8444"/>
+        <material id="36" portionsize="1" quantity="2814"/>
+        <material id="37" portionsize="1" quantity="531"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17813" marketgroup="false" meta="" name="Republic Fleet Firetail Blueprint" price="0" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="17814" marketgroup="true" meta="" name="Minmatar UUC Nexus Chip" price="8000000" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="17815" marketgroup="true" meta="" name="Minmatar UUA Nexus Chip" price="500000" volume="0.1"/>
@@ -18173,9 +18418,25 @@
     <row category="Module" group="Armor Hardener" id="17838" marketgroup="false" meta="9 (Faction)" name="Federation Navy Armor Thermic Hardener" price="250000" volume="5.0"/>
     <row category="Blueprint" group="Armor Hardener Blueprint" id="17839" marketgroup="false" meta="" name="Federation Navy Armor Thermic Hardener Blueprint" price="0" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="17840" marketgroup="true" meta="" name="Zor's DNA" price="0" volume="0.1"/>
-    <row category="Ship" group="Frigate" id="17841" marketgroup="false" meta="" name="Federation Navy Comet" price="282500" volume="26500.0"/>
+    <row category="Ship" group="Frigate" id="17841" marketgroup="true" meta="" name="Federation Navy Comet" price="282500" volume="26500.0">
+        <material id="34" portionsize="1" quantity="20974"/>
+        <material id="35" portionsize="1" quantity="5661"/>
+        <material id="36" portionsize="1" quantity="2654"/>
+        <material id="37" portionsize="1" quantity="358"/>
+        <material id="38" portionsize="1" quantity="74"/>
+        <material id="39" portionsize="1" quantity="9"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17842" marketgroup="false" meta="" name="Federation Navy Comet Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17843" marketgroup="false" meta="4 (Faction)" name="Vexor Navy Issue" price="7400000" volume="112000.0"/>
+    <row category="Ship" group="Cruiser" id="17843" marketgroup="true" meta="4 (Faction)" name="Vexor Navy Issue" price="7400000" volume="112000.0">
+        <material id="34" portionsize="1" quantity="524216"/>
+        <material id="35" portionsize="1" quantity="131210"/>
+        <material id="36" portionsize="1" quantity="34124"/>
+        <material id="37" portionsize="1" quantity="8270"/>
+        <material id="38" portionsize="1" quantity="2035"/>
+        <material id="39" portionsize="1" quantity="510"/>
+        <material id="40" portionsize="1" quantity="130"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17844" marketgroup="false" meta="" name="Vexor Navy Issue Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Mission Generic Frigates" id="17846" marketgroup="false" meta="" name="Lazarus Trezun" price="0" volume="26500.0"/>
     <row category="Commodity" group="Criminal Tags" id="17847" marketgroup="true" meta="" name="Lazarus's Tag" price="0" volume="0.1">
@@ -18302,21 +18563,83 @@
     <row category="Charge" group="Mining Crystal" id="17914" marketgroup="false" meta="" name="Built-in DCM Crysta not used" price="0" volume="50.0"/>
     <row category="Commodity" group="Acceleration Gate Keys" id="17916" marketgroup="false" meta="" name="Tritan's Forked Key" price="0" volume="0.1"/>
     <row category="Entity" group="Mission Generic Frigates" id="17917" marketgroup="false" meta="" name="Rogue Pirate Grunt" price="0" volume="17400.0"/>
-    <row category="Ship" group="Battleship" id="17918" marketgroup="false" meta="4 (Faction)" name="Rattlesnake" price="108750000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17918" marketgroup="true" meta="4 (Faction)" name="Rattlesnake" price="108750000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577632"/>
+        <material id="35" portionsize="1" quantity="1894802"/>
+        <material id="36" portionsize="1" quantity="474675"/>
+        <material id="37" portionsize="1" quantity="118519"/>
+        <material id="38" portionsize="1" quantity="29595"/>
+        <material id="39" portionsize="1" quantity="7060"/>
+        <material id="40" portionsize="1" quantity="2254"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17919" marketgroup="false" meta="" name="Rattlesnake Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="17920" marketgroup="false" meta="4 (Faction)" name="Bhaalgorn" price="112500000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="17920" marketgroup="true" meta="4 (Faction)" name="Bhaalgorn" price="112500000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="7577636"/>
+        <material id="35" portionsize="1" quantity="1894803"/>
+        <material id="36" portionsize="1" quantity="474674"/>
+        <material id="37" portionsize="1" quantity="118524"/>
+        <material id="38" portionsize="1" quantity="29622"/>
+        <material id="39" portionsize="1" quantity="7168"/>
+        <material id="40" portionsize="1" quantity="2683"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="17921" marketgroup="false" meta="" name="Bhaalgorn Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="17922" marketgroup="false" meta="" name="Ashimmu" price="8375000" volume="118000.0"/>
+    <row category="Ship" group="Cruiser" id="17922" marketgroup="true" meta="" name="Ashimmu" price="8375000" volume="118000.0">
+        <material id="34" portionsize="1" quantity="593884"/>
+        <material id="35" portionsize="1" quantity="149060"/>
+        <material id="36" portionsize="1" quantity="39028"/>
+        <material id="37" portionsize="1" quantity="9357"/>
+        <material id="38" portionsize="1" quantity="2306"/>
+        <material id="39" portionsize="1" quantity="576"/>
+        <material id="40" portionsize="1" quantity="145"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="17923" marketgroup="false" meta="" name="Ashimmu Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17924" marketgroup="false" meta="" name="Succubus" price="287500" volume="28600.0"/>
+    <row category="Ship" group="Frigate" id="17924" marketgroup="true" meta="" name="Succubus" price="287500" volume="28600.0">
+        <material id="34" portionsize="1" quantity="20518"/>
+        <material id="35" portionsize="1" quantity="5520"/>
+        <material id="36" portionsize="1" quantity="2654"/>
+        <material id="37" portionsize="1" quantity="361"/>
+        <material id="38" portionsize="1" quantity="79"/>
+        <material id="39" portionsize="1" quantity="15"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17925" marketgroup="false" meta="" name="Succubus Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17926" marketgroup="false" meta="" name="Cruor" price="287500" volume="28600.0"/>
+    <row category="Ship" group="Frigate" id="17926" marketgroup="true" meta="" name="Cruor" price="287500" volume="28600.0">
+        <material id="34" portionsize="1" quantity="20518"/>
+        <material id="35" portionsize="1" quantity="5520"/>
+        <material id="36" portionsize="1" quantity="2654"/>
+        <material id="37" portionsize="1" quantity="361"/>
+        <material id="38" portionsize="1" quantity="79"/>
+        <material id="39" portionsize="1" quantity="15"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17927" marketgroup="false" meta="" name="Cruor Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17928" marketgroup="false" meta="" name="Daredevil" price="282500" volume="26500.0"/>
+    <row category="Ship" group="Frigate" id="17928" marketgroup="true" meta="" name="Daredevil" price="282500" volume="26500.0">
+        <material id="34" portionsize="1" quantity="20974"/>
+        <material id="35" portionsize="1" quantity="5661"/>
+        <material id="36" portionsize="1" quantity="2654"/>
+        <material id="37" portionsize="1" quantity="358"/>
+        <material id="38" portionsize="1" quantity="74"/>
+        <material id="39" portionsize="1" quantity="9"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17929" marketgroup="false" meta="" name="Daredevil Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17930" marketgroup="false" meta=" (Faction)" name="Worm" price="285000" volume="16500.0"/>
+    <row category="Ship" group="Frigate" id="17930" marketgroup="true" meta=" (Faction)" name="Worm" price="285000" volume="16500.0">
+        <material id="34" portionsize="1" quantity="18964"/>
+        <material id="35" portionsize="1" quantity="8444"/>
+        <material id="36" portionsize="1" quantity="2814"/>
+        <material id="37" portionsize="1" quantity="531"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17931" marketgroup="false" meta="" name="Worm Blueprint" price="0" volume="0.01"/>
-    <row category="Ship" group="Frigate" id="17932" marketgroup="false" meta="" name="Dramiel" price="280000" volume="27289.0"/>
+    <row category="Ship" group="Frigate" id="17932" marketgroup="true" meta="" name="Dramiel" price="280000" volume="27289.0">
+        <material id="34" portionsize="1" quantity="20524"/>
+        <material id="35" portionsize="1" quantity="5529"/>
+        <material id="36" portionsize="1" quantity="1841"/>
+        <material id="37" portionsize="1" quantity="317"/>
+        <material id="38" portionsize="1" quantity="118"/>
+        <material id="39" portionsize="1" quantity="13"/>
+        <material id="40" portionsize="1" quantity="1"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="17933" marketgroup="false" meta="" name="Dramiel Blueprint" price="0" volume="0.01"/>
     <row category="Module" group="Scan Probe Launcher" id="17938" marketgroup="true" meta="" name="Core Probe Launcher I" price="6000" volume="5.0">
         <material id="34" portionsize="1" quantity="424"/>
@@ -19139,7 +19462,7 @@
     <row category="Charge" group="Modifications" id="19468" marketgroup="false" meta="" name="'Longbow' Servitor" price="0" volume="5.0"/>
     <row category="Blueprint" group="Frequency Crystal Blueprint" id="19469" marketgroup="false" meta="" name="'Longbow' Servitor Blueprint" price="0" volume="0.01"/>
     <row category="Structure" group="Refining Array" id="19470" marketgroup="true" meta="" name="Intensive Refining Array" price="75000000" volume="6000.0"/>
-    <row category="Module" group="Afterburner" id="19483" marketgroup="false" meta="" name="Gistum A-Type 10MN Afterburner Adds Mass" price="161280" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="19483" marketgroup="false" meta="" name="Gistum A-Type 10MN Afterburner Adds Mass" price="0" volume="5.0"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="19487" marketgroup="false" meta="" name="Angel Battlestation - MISSION station" price="0" volume="1.0E8"/>
     <row category="Module" group="Shield Extender" id="19489" marketgroup="false" meta="9" name="Thukker Modified Medium Shield Extender" price="114760" volume="10.0"/>
     <row category="Module" group="Afterburner" id="19491" marketgroup="false" meta="16 (Faction)" name="Thukker Modified 100MN Afterburner" price="161280" volume="5.0"/>
@@ -19189,7 +19512,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Afterburner" id="19541" marketgroup="false" meta="" name="TEST CONSUMPTION 1MN MicroWarpdrive I" price="31636" volume="10.0"/>
+    <row category="Module" group="Afterburner" id="19541" marketgroup="false" meta="" name="TEST CONSUMPTION 1MN MicroWarpdrive I" price="0" volume="10.0"/>
     <row category="Charge" group="Fuel" id="19543" marketgroup="false" meta="" name="Cap Saving Fuel" price="10000" volume="10.0"/>
     <row category="Blueprint" group="Capacitor Booster Charge Blueprint" id="19544" marketgroup="false" meta="" name="Cap Saving Fuel Blueprint" price="0" volume="0.01"/>
     <row category="Charge" group="Fuel" id="19545" marketgroup="false" meta="" name="Power Boosting Fuel" price="10000" volume="10.0"/>
@@ -20304,8 +20627,6 @@
     <row category="Entity" group="Deadspace Overseer's Structure" id="20284" marketgroup="false" meta="" name="Storage Silo_MISSION_Nexus_Guristas" price="0" volume="1.0E8"/>
     <row category="Entity" group="Deadspace Overseer's Structure" id="20285" marketgroup="false" meta="" name="Storage Silo_MISSION_Nexus_Serpentis" price="0" volume="1.0E8"/>
     <row category="Structure" group="Electronic Warfare Battery" id="20286" marketgroup="false" meta="" name="New EW Test Tower" price="0" volume="4000.0"/>
-    <row category="Charge" group="Rocket" id="20287" marketgroup="false" meta="" name="thermal long range" price="0" volume="0.0050"/>
-    <row category="Charge" group="Rocket" id="20291" marketgroup="false" meta="" name="kinetic damage" price="0" volume="0.0050"/>
     <row category="Charge" group="Assault Missile" id="20306" marketgroup="true" meta="" name="Torrent Assault Missile" price="3500" volume="0.015">
         <material id="34" portionsize="100" quantity="446"/>
         <material id="35" portionsize="100" quantity="198"/>
@@ -30333,7 +30654,7 @@
     <row category="Implant" group="Booster" id="26987" marketgroup="false" meta="" name="Enhanced Ratu (tester)" price="32768" volume="1.0"/>
     <row category="Module" group="Nanofiber Internal Structure" id="26993" marketgroup="false" meta="5" name="test Nanofiber Internal Structure II" price="35200" volume="5.0"/>
     <row category="Blueprint" group="Hull Mods Blueprint" id="26994" marketgroup="false" meta="" name="test Nanofiber Internal Structure II b Blueprint" price="9999999" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="26995" marketgroup="false" meta="5" name="TEST 100MN MicroWarpdrive II" price="1340852" volume="20.0"/>
+    <row category="Module" group="Afterburner" id="26995" marketgroup="false" meta="" name="TEST 100MN MicroWarpdrive II" price="0" volume="20.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="26996" marketgroup="false" meta="" name="TEST 100MN MicroWarpdrive II Blueprint" price="0" volume="0.01"/>
     <row category="Commodity" group="Livestock" id="26998" marketgroup="false" meta="" name="Hejilmar the Slave" price="0" volume="3.0"/>
     <row category="Module" group="Stasis Web" id="26999" marketgroup="false" meta="4" name="TEST Stasis Webifier II" price="190098" volume="5.0"/>
@@ -30360,13 +30681,13 @@
     <row category="Blueprint" group="Tool Blueprint" id="27027" marketgroup="false" meta="" name="Civilian Data Interface Blueprint" price="0" volume="0.01"/>
     <row category="Asteroid" group="Veldspar" id="27028" marketgroup="false" meta="" name="Chondrite" price="1000" volume="0.1"/>
     <row category="Material" group="Mineral" id="27029" marketgroup="false" meta="" name="Chalcopyrite" price="2" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="27030" marketgroup="false" meta="1" name="Test Civilian Module Meta I" price="6450" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="27030" marketgroup="false" meta="" name="Test Civilian Module Meta I" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="27031" marketgroup="false" meta="" name="Test Civilian Module Meta I Blueprint" price="64500" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="27032" marketgroup="false" meta="2" name="Test Civilian Module Meta 2" price="6450" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="27032" marketgroup="false" meta="" name="Test Civilian Module Meta 2" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="27033" marketgroup="false" meta="" name="Test Civilian Module Meta 2 Blueprint" price="64500" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="27034" marketgroup="false" meta="3" name="Test Civilian Module Meta 3" price="6450" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="27034" marketgroup="false" meta="" name="Test Civilian Module Meta 3" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="27035" marketgroup="false" meta="" name="Test Civilian Module Meta 3 Blueprint" price="64500" volume="0.01"/>
-    <row category="Module" group="Afterburner" id="27036" marketgroup="false" meta="4" name="Test Civilian Module Meta 4" price="6450" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="27036" marketgroup="false" meta="" name="Test Civilian Module Meta 4" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="27037" marketgroup="false" meta="" name="Test Civilian Module Meta 4 Blueprint" price="64500" volume="0.01"/>
     <row category="Commodity" group="Commodities" id="27038" marketgroup="false" meta="" name="Clay Pigeon" price="2000" volume="1.0"/>
     <row category="Blueprint" group="Tool Blueprint" id="27039" marketgroup="false" meta="" name="Clay Pigeon Blueprint" price="0" volume="0.01"/>
@@ -31923,7 +32244,7 @@
     <row category="Charge" group="Torpedo" id="27892" marketgroup="false" meta="" name="True Sansha Mjolnir Torpedo" price="35000" volume="0.1"/>
     <row category="Charge" group="Cruise Missile" id="27893" marketgroup="false" meta="" name="Sansha Paradise Cruise Missile" price="15000" volume="0.05"/>
     <row category="Charge" group="Cruise Missile" id="27894" marketgroup="false" meta="" name="True Sansha Paradise Cruise Missile" price="15000" volume="0.05"/>
-    <row category="Module" group="Afterburner" id="27895" marketgroup="false" meta="5" name="TEST 10MN Bumperburner I" price="103248" volume="5.0"/>
+    <row category="Module" group="Afterburner" id="27895" marketgroup="false" meta="" name="TEST 10MN Bumperburner I" price="0" volume="5.0"/>
     <row category="Blueprint" group="Afterburner Blueprint" id="27896" marketgroup="false" meta="" name="TEST 10MN Bumperburner I Blueprint" price="0" volume="0.01"/>
     <row category="Structure" group="Jump Portal Array" id="27897" marketgroup="true" meta="" name="Jump Bridge" price="100000000" volume="100000.0"/>
     <row category="Entity" group="Mission Fighter Drone" id="27898" marketgroup="false" meta="" name="Imperial Fighter" price="0" volume="5000.0"/>
@@ -32693,14 +33014,14 @@
         <material id="38" portionsize="1" quantity="3885"/>
         <material id="39" portionsize="1" quantity="120"/>
     </row>
-    <row category="Asteroid" group="Jaspet" id="28407" marketgroup="true" meta="" name="Compressed Pristine Jaspet" price="2802510" volume="750.0">
+    <row category="Asteroid" group="Jaspet" id="28407" marketgroup="true" meta="" name="Compressed Pristine Jaspet" price="2805150" volume="750.0">
         <material id="34" portionsize="1" quantity="4275"/>
         <material id="35" portionsize="1" quantity="6885"/>
         <material id="36" portionsize="1" quantity="8550"/>
         <material id="38" portionsize="1" quantity="4275"/>
         <material id="39" portionsize="1" quantity="135"/>
     </row>
-    <row category="Asteroid" group="Jaspet" id="28408" marketgroup="true" meta="" name="Compressed Pure Jaspet" price="2661720" volume="750.0">
+    <row category="Asteroid" group="Jaspet" id="28408" marketgroup="true" meta="" name="Compressed Pure Jaspet" price="2659080" volume="750.0">
         <material id="34" portionsize="1" quantity="4080"/>
         <material id="35" portionsize="1" quantity="7215"/>
         <material id="36" portionsize="1" quantity="8160"/>
@@ -34163,13 +34484,45 @@
     <row category="Blueprint" group="Shuttle Blueprint" id="29333" marketgroup="false" meta="" name="Gallente Media Shuttle Blueprint" price="50000" volume="0.01"/>
     <row category="Ship" group="Shuttle" id="29334" marketgroup="false" meta="" name="Minmatar Media Shuttle" price="5000" volume="5000.0"/>
     <row category="Blueprint" group="Shuttle Blueprint" id="29335" marketgroup="false" meta="" name="Minmatar Media Shuttle Blueprint" price="50000" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="29336" marketgroup="false" meta=" (Faction)" name="Scythe Fleet Issue" price="5177344" volume="89000.0"/>
-    <row category="Ship" group="Cruiser" id="29337" marketgroup="false" meta="4 (Faction)" name="Augoror Navy Issue" price="5228052" volume="101000.0"/>
+    <row category="Ship" group="Cruiser" id="29336" marketgroup="true" meta=" (Faction)" name="Scythe Fleet Issue" price="5177344" volume="89000.0">
+        <material id="34" portionsize="1" quantity="368708"/>
+        <material id="35" portionsize="1" quantity="92891"/>
+        <material id="36" portionsize="1" quantity="25441"/>
+        <material id="37" portionsize="1" quantity="5949"/>
+        <material id="38" portionsize="1" quantity="1519"/>
+        <material id="39" portionsize="1" quantity="340"/>
+        <material id="40" portionsize="1" quantity="79"/>
+    </row>
+    <row category="Ship" group="Cruiser" id="29337" marketgroup="true" meta="4 (Faction)" name="Augoror Navy Issue" price="5228052" volume="101000.0">
+        <material id="34" portionsize="1" quantity="368722"/>
+        <material id="35" portionsize="1" quantity="92890"/>
+        <material id="36" portionsize="1" quantity="26825"/>
+        <material id="37" portionsize="1" quantity="6067"/>
+        <material id="38" portionsize="1" quantity="1522"/>
+        <material id="39" portionsize="1" quantity="343"/>
+        <material id="40" portionsize="1" quantity="77"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="29338" marketgroup="false" meta="" name="Augoror Navy Issue Blueprint" price="0" volume="0.01"/>
     <row category="Blueprint" group="Cruiser Blueprint" id="29339" marketgroup="false" meta="" name="Scythe Fleet Issue Blueprint" price="28775000" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="29340" marketgroup="false" meta=" (Faction)" name="Osprey Navy Issue" price="5173744" volume="107000.0"/>
+    <row category="Ship" group="Cruiser" id="29340" marketgroup="true" meta=" (Faction)" name="Osprey Navy Issue" price="5173744" volume="107000.0">
+        <material id="34" portionsize="1" quantity="367984"/>
+        <material id="35" portionsize="1" quantity="92890"/>
+        <material id="36" portionsize="1" quantity="23106"/>
+        <material id="37" portionsize="1" quantity="5760"/>
+        <material id="38" portionsize="1" quantity="1512"/>
+        <material id="39" portionsize="1" quantity="345"/>
+        <material id="40" portionsize="1" quantity="90"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="29341" marketgroup="false" meta="" name="Osprey Navy Issue Blueprint" price="28750000" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="29344" marketgroup="false" meta=" (Faction)" name="Exequror Navy Issue" price="5328366" volume="112000.0"/>
+    <row category="Ship" group="Cruiser" id="29344" marketgroup="true" meta=" (Faction)" name="Exequror Navy Issue" price="5328366" volume="112000.0">
+        <material id="34" portionsize="1" quantity="368723"/>
+        <material id="35" portionsize="1" quantity="92889"/>
+        <material id="36" portionsize="1" quantity="27284"/>
+        <material id="37" portionsize="1" quantity="6100"/>
+        <material id="38" portionsize="1" quantity="1521"/>
+        <material id="39" portionsize="1" quantity="347"/>
+        <material id="40" portionsize="1" quantity="86"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="29345" marketgroup="false" meta="" name="Exequror Navy Issue Blueprint" price="74000000" volume="0.01"/>
     <row category="Entity" group="Large Collidable Structure" id="29346" marketgroup="false" meta="" name="Starbase Auxiliary Power Array III" price="0" volume="100.0"/>
     <row category="Celestial" group="Wreck" id="29347" marketgroup="false" meta="" name="Mission Faction Vessels Wreck" price="0" volume="27500.0"/>
@@ -38037,9 +38390,33 @@
     <row category="Commodity" group="Miscellaneous" id="32204" marketgroup="false" meta="" name="Wildfire Khumaak" price="10000" volume="0.3"/>
     <row category="Entity" group="Spawn Container" id="32205" marketgroup="false" meta="" name="Central Burial Tomb" price="0" volume="27500.0"/>
     <row category="Entity" group="Mission Container" id="32206" marketgroup="false" meta="" name="Defiants Storage Facility" price="0" volume="27500.0"/>
-    <row category="Ship" group="Assault Ship" id="32207" marketgroup="false" meta="5" name="Freki" price="2736368" volume="27289.0"/>
+    <row category="Ship" group="Assault Ship" id="32207" marketgroup="true" meta="5" name="Freki" price="2736368" volume="27289.0">
+        <material id="34" portionsize="1" quantity="24600"/>
+        <material id="35" portionsize="1" quantity="6158"/>
+        <material id="36" portionsize="1" quantity="2170"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="5"/>
+        <material id="40" portionsize="1" quantity="5"/>
+        <material id="3828" portionsize="1" quantity="25"/>
+        <material id="11399" portionsize="1" quantity="30"/>
+        <material id="11530" portionsize="1" quantity="30"/>
+        <material id="11536" portionsize="1" quantity="20"/>
+        <material id="11538" portionsize="1" quantity="20"/>
+        <material id="11542" portionsize="1" quantity="40"/>
+        <material id="11548" portionsize="1" quantity="40"/>
+        <material id="11551" portionsize="1" quantity="30"/>
+        <material id="11555" portionsize="1" quantity="40"/>
+    </row>
     <row category="Blueprint" group="Frigate Blueprint" id="32208" marketgroup="false" meta="" name="Freki Blueprint" price="1500000" volume="0.01"/>
-    <row category="Ship" group="Heavy Assault Ship" id="32209" marketgroup="false" meta="5" name="Mimir" price="6875000" volume="96000.0"/>
+    <row category="Ship" group="Heavy Assault Ship" id="32209" marketgroup="true" meta="5" name="Mimir" price="6875000" volume="96000.0">
+        <material id="34" portionsize="1" quantity="450484"/>
+        <material id="35" portionsize="1" quantity="112774"/>
+        <material id="36" portionsize="1" quantity="29243"/>
+        <material id="37" portionsize="1" quantity="7053"/>
+        <material id="38" portionsize="1" quantity="1747"/>
+        <material id="39" portionsize="1" quantity="454"/>
+        <material id="40" portionsize="1" quantity="172"/>
+    </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="32210" marketgroup="false" meta="" name="Mimir Blueprint" price="68750000" volume="0.01"/>
     <row category="Entity" group="Spawn Container" id="32211" marketgroup="false" meta="" name="Archives" price="0" volume="27500.0"/>
     <row category="Celestial" group="Large Collidable Object" id="32216" marketgroup="false" meta="" name="LCO Amarr Cathedral" price="0" volume="0.0"/>
@@ -38126,13 +38503,45 @@
     <row category="Sovereignty Structures" group="Sovereignty Blockade Units" id="32302" marketgroup="false" meta="" name="TEST Sovereignty Blockade Unit" price="250000000" volume="90.0"/>
     <row category="Blueprint" group="Structures - Control Tower Blueprints" id="32303" marketgroup="false" meta="" name="TEST Territorial Disruption Unit Blueprint" price="0" volume="0.01"/>
     <row category="Celestial" group="Agents in Space" id="32304" marketgroup="false" meta="" name="Harkan's Apocalypse" price="0" volume="0.0"/>
-    <row category="Ship" group="Battleship" id="32305" marketgroup="false" meta="4 (Faction)" name="Armageddon Navy Issue" price="66250000" volume="486000.0"/>
+    <row category="Ship" group="Battleship" id="32305" marketgroup="true" meta="4 (Faction)" name="Armageddon Navy Issue" price="66250000" volume="486000.0">
+        <material id="34" portionsize="1" quantity="4300840"/>
+        <material id="35" portionsize="1" quantity="1075896"/>
+        <material id="36" portionsize="1" quantity="271172"/>
+        <material id="37" portionsize="1" quantity="67405"/>
+        <material id="38" portionsize="1" quantity="16816"/>
+        <material id="39" portionsize="1" quantity="3952"/>
+        <material id="40" portionsize="1" quantity="1835"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="32306" marketgroup="false" meta="" name="Armageddon Navy Issue Blueprint" price="662500000" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="32307" marketgroup="false" meta="4 (Faction)" name="Dominix Navy Issue" price="62500000" volume="454500.0"/>
+    <row category="Ship" group="Battleship" id="32307" marketgroup="true" meta="4 (Faction)" name="Dominix Navy Issue" price="62500000" volume="454500.0">
+        <material id="34" portionsize="1" quantity="4300840"/>
+        <material id="35" portionsize="1" quantity="1075894"/>
+        <material id="36" portionsize="1" quantity="270905"/>
+        <material id="37" portionsize="1" quantity="67399"/>
+        <material id="38" portionsize="1" quantity="16790"/>
+        <material id="39" portionsize="1" quantity="3844"/>
+        <material id="40" portionsize="1" quantity="1407"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="32308" marketgroup="false" meta="" name="Dominix Navy Issue Blueprint" price="625000000" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="32309" marketgroup="false" meta="4 (Faction)" name="Scorpion Navy Issue" price="71250000" volume="468000.0"/>
+    <row category="Ship" group="Battleship" id="32309" marketgroup="true" meta="4 (Faction)" name="Scorpion Navy Issue" price="71250000" volume="468000.0">
+        <material id="34" portionsize="1" quantity="5324832"/>
+        <material id="35" portionsize="1" quantity="1131610"/>
+        <material id="36" portionsize="1" quantity="303530"/>
+        <material id="37" portionsize="1" quantity="83100"/>
+        <material id="38" portionsize="1" quantity="18013"/>
+        <material id="39" portionsize="1" quantity="4022"/>
+        <material id="40" portionsize="1" quantity="1677"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="32310" marketgroup="false" meta="" name="Scorpion Navy Issue Blueprint" price="712500000" volume="0.01"/>
-    <row category="Ship" group="Battleship" id="32311" marketgroup="false" meta="4 (Faction)" name="Typhoon Fleet Issue" price="75000000" volume="414000.0"/>
+    <row category="Ship" group="Battleship" id="32311" marketgroup="true" meta="4 (Faction)" name="Typhoon Fleet Issue" price="75000000" volume="414000.0">
+        <material id="34" portionsize="1" quantity="5120040"/>
+        <material id="35" portionsize="1" quantity="1280694"/>
+        <material id="36" portionsize="1" quantity="322370"/>
+        <material id="37" portionsize="1" quantity="80265"/>
+        <material id="38" portionsize="1" quantity="19995"/>
+        <material id="39" portionsize="1" quantity="4678"/>
+        <material id="40" portionsize="1" quantity="1722"/>
+    </row>
     <row category="Blueprint" group="Battleship Blueprint" id="32312" marketgroup="false" meta="" name="Typhoon Fleet Issue Blueprint" price="750000000" volume="0.01"/>
     <row category="Sovereignty Structures" group="Infrastructure Hubs" id="32313" marketgroup="false" meta="" name="Test Infrastructure Hub" price="40" volume="80.0"/>
     <row category="Sovereignty Structures" group="Defense Bunkers" id="32314" marketgroup="false" meta="" name="Test Defense Bunker" price="1020480" volume="80.0"/>
