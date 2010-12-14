@@ -92,6 +92,16 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getLocation();
 		}
 	},
+	VALUE(Double.class, TableComparators.numberComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnRemainingValue();
+		}
+		@Override
+		public Object getColumnValue(MarketOrder from) {
+			return Double.valueOf(from.getQuantity().getQuantityRemaining() * from.getPrice());
+		}
+	},
 	;
 	Class type;
 	Comparator<?> comparator;
