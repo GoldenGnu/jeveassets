@@ -4524,6 +4524,7 @@
         <material id="11399" portionsize="1" quantity="5"/>
     </row>
     <row category="Blueprint" group="Warp Scrambler Blueprint" id="3245" marketgroup="false" meta="" name="Warp Disruptor II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Wreck" id="3260" marketgroup="false" meta="" name="Sanshas Supercarrier Wreck" price="0" volume="27500.0"/>
     <row category="Module" group="Energy Weapon" id="3285" marketgroup="true" meta="5 (Tech II)" name="Quad Light Beam Laser II" price="218020" volume="10.0">
         <material id="34" portionsize="1" quantity="10"/>
         <material id="35" portionsize="1" quantity="650"/>
@@ -4611,12 +4612,12 @@
     <row category="Skill" group="Corporation Management" id="3371" marketgroup="false" meta="" name="Public Relations" price="50000" volume="0.01"/>
     <row category="Skill" group="Corporation Management" id="3372" marketgroup="false" meta="" name="Intelligence Analyst" price="2000000" volume="0.01"/>
     <row category="Skill" group="Corporation Management" id="3373" marketgroup="true" meta="" name="Starbase Defense Management" price="1000000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3374" marketgroup="true" meta="" name="Learning" price="35000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3375" marketgroup="true" meta="" name="Iron Will" price="50000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3376" marketgroup="true" meta="" name="Empathy" price="50000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3377" marketgroup="true" meta="" name="Analytical Mind" price="50000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3378" marketgroup="true" meta="" name="Instant Recall" price="50000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="3379" marketgroup="true" meta="" name="Spatial Awareness" price="50000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3374" marketgroup="false" meta="" name="'Learning'" price="35000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3375" marketgroup="false" meta="" name="'Iron Will'" price="50000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3376" marketgroup="false" meta="" name="'Empathy'" price="50000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3377" marketgroup="false" meta="" name="'Analytical Mind'" price="50000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3378" marketgroup="false" meta="" name="'Instant Recall'" price="50000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="3379" marketgroup="false" meta="" name="'Spatial Awareness'" price="50000" volume="0.01"/>
     <row category="Skill" group="Industry" id="3380" marketgroup="true" meta="" name="Industry" price="20000" volume="0.01"/>
     <row category="Skill" group="Industry" id="3381" marketgroup="false" meta="" name="Amarr Tech" price="100000" volume="0.01"/>
     <row category="Skill" group="Industry" id="3382" marketgroup="false" meta="" name="Caldari Tech" price="100000" volume="0.01"/>
@@ -4781,6 +4782,8 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Armor Repair Unit Blueprint" id="3531" marketgroup="false" meta="" name="Medium Armor Repairer II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Ship" group="Frigate" id="3532" marketgroup="false" meta="" name="Echelon" price="0" volume="28100.0"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="3533" marketgroup="false" meta="" name="Echelon Blueprint" price="300000" volume="0.01"/>
     <row category="Module" group="Armor Repair Unit" id="3538" marketgroup="true" meta="" name="Large Armor Repairer I" price="80000" volume="50.0">
         <material id="34" portionsize="1" quantity="4196"/>
         <material id="35" portionsize="1" quantity="1671"/>
@@ -4859,6 +4862,11 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Capacitor Booster Blueprint" id="3579" marketgroup="false" meta="" name="Heavy Capacitor Booster II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Module" group="Data Miners" id="3581" marketgroup="false" meta="6 (Storyline)" name="Purloined Sansha Codebreaker" price="33264" volume="5.0"/>
+    <row category="Blueprint" group="Data Miner Blueprint" id="3582" marketgroup="false" meta="" name="Purloined Sansha Codebreaker Blueprint" price="332640" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3583" marketgroup="false" meta="" name="Badly Mangled Components" price="0" volume="4.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3584" marketgroup="false" meta="" name="True Slave Decryption Node" price="0" volume="4.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3585" marketgroup="false" meta="" name="Mangled Sansha Codebreaker" price="33264" volume="5.0"/>
     <row category="Module" group="Shield Transporter" id="3586" marketgroup="true" meta="" name="Small Shield Transporter I" price="4996" volume="5.0">
         <material id="34" portionsize="1" quantity="806"/>
         <material id="35" portionsize="1" quantity="3"/>
@@ -4874,6 +4882,7 @@
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3589" marketgroup="false" meta="" name="Small Shield Transporter II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Blueprint" group="Data Miner Blueprint" id="3590" marketgroup="false" meta="" name="Mangled Sansha Codebreaker Blueprint" price="332640" volume="0.01"/>
     <row category="Module" group="Shield Transporter" id="3596" marketgroup="true" meta="" name="Medium Shield Transporter I" price="12470" volume="10.0">
         <material id="34" portionsize="1" quantity="1355"/>
         <material id="35" portionsize="1" quantity="832"/>
@@ -4912,6 +4921,7 @@
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3617" marketgroup="true" meta="" name="Capital Shield Transporter I Blueprint" price="24659510" volume="0.01"/>
     <row category="Module" group="Shield Transporter" id="3618" marketgroup="false" meta="5" name="Capital Shield Transporter II" price="155242" volume="1000.0"/>
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3619" marketgroup="false" meta="" name="Capital Shield Transporter II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Ship" group="Supercarrier" id="3628" marketgroup="false" meta="" name="Nation" price="0" volume="6.2E7"/>
     <row category="Module" group="Energy Weapon" id="3634" marketgroup="false" meta="" name="Civilian Gatling Pulse Laser" price="0" volume="5.0"/>
     <row category="Module" group="Energy Weapon" id="3636" marketgroup="false" meta="" name="Civilian Gatling Autocannon" price="0" volume="5.0"/>
     <row category="Module" group="Energy Weapon" id="3638" marketgroup="false" meta="" name="Civilian Gatling Railgun" price="0" volume="5.0"/>
@@ -12492,18 +12502,18 @@
     <row category="Commodity" group="Ship Logs" id="12373" marketgroup="false" meta="" name="Blood Raider Log 137393941" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12374" marketgroup="false" meta="" name="Blood Raider Log 118338758" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12375" marketgroup="false" meta="" name="Blood Raider Log 114019732" price="0" volume="0.1"/>
-    <row category="Skill" group="Learning" id="12376" marketgroup="true" meta="" name="Logic" price="5000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="12376" marketgroup="false" meta="" name="'Logic'" price="5000000" volume="0.01"/>
     <row category="Commodity" group="Ship Logs" id="12377" marketgroup="false" meta="" name="Blood Raider Log 189897223" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12378" marketgroup="false" meta="" name="Blood Raider Log 167593883" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12379" marketgroup="false" meta="" name="Blood Raider Log 397001231" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12380" marketgroup="false" meta="" name="Blood Raider Log 335499422" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12381" marketgroup="false" meta="" name="Blood Raider Log 389314943" price="0" volume="0.1"/>
     <row category="Commodity" group="Ship Logs" id="12382" marketgroup="false" meta="" name="Blood Raider Log 534970023" price="0" volume="0.1"/>
-    <row category="Skill" group="Learning" id="12383" marketgroup="true" meta="" name="Presence" price="5000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="12383" marketgroup="false" meta="" name="'Presence'" price="5000000" volume="0.01"/>
     <row category="Commodity" group="Ship Logs" id="12384" marketgroup="false" meta="" name="Blood Raider Log 518719843" price="0" volume="0.1"/>
-    <row category="Skill" group="Learning" id="12385" marketgroup="true" meta="" name="Eidetic Memory" price="5000000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="12386" marketgroup="true" meta="" name="Focus" price="5000000" volume="0.01"/>
-    <row category="Skill" group="Learning" id="12387" marketgroup="true" meta="" name="Clarity" price="5000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="12385" marketgroup="false" meta="" name="'Eidetic Memory'" price="5000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="12386" marketgroup="false" meta="" name="'Focus'" price="5000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="12387" marketgroup="false" meta="" name="'Clarity'" price="5000000" volume="0.01"/>
     <row category="Entity" group="Mission Amarr Empire Battleship" id="12388" marketgroup="false" meta="" name="Imperial Navy Apocalypse" price="0" volume="1150000.0"/>
     <row category="Entity" group="Mission Minmatar Republic Battleship" id="12389" marketgroup="false" meta="" name="Republic Fleet Tempest" price="0" volume="850000.0"/>
     <row category="Entity" group="Mission Gallente Federation Battleship" id="12390" marketgroup="false" meta="" name="Federation Navy Megathron" price="0" volume="1140000.0"/>
