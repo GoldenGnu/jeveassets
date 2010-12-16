@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Proxy;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,9 +54,9 @@ public class PriceDataGetter implements PricingListener {
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 1*60*60*1000l; // 1 hour (hours*min*sec*ms)
 	private Map<Integer, PriceData> priceDataList;
-	private List<Integer> failedIds;
-	private final int attemptCount = 1;
+	private final int attemptCount = 5;
 	private boolean update;
+	private boolean failed;
 
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
@@ -98,7 +97,7 @@ public class PriceDataGetter implements PricingListener {
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
-		failedIds = new ArrayList<Integer>();
+		failed = false;
 
 		//Get all price ids
 		List<Integer> ids = settings.getUniqueIds();
@@ -119,7 +118,7 @@ public class PriceDataGetter implements PricingListener {
 			createPriceData(id, pricing);
 		}
 		//Wait to complete
-		while (ids.size() >  (priceDataList.size() + failedIds.size())){
+		while (ids.size() >  (priceDataList.size()) && !failed){
 			try {
 				synchronized(this) {
                     wait();
@@ -136,7 +135,7 @@ public class PriceDataGetter implements PricingListener {
 				return false;
 			}
 		}
-		boolean updated = (!priceDataList.isEmpty() && failedIds.isEmpty());
+		boolean updated = (!priceDataList.isEmpty() && !failed);
 		if (updated){ //All Updated
 			if (update) {
 				LOG.info("	Price data updated");
@@ -145,15 +144,19 @@ public class PriceDataGetter implements PricingListener {
 			}
 			//We only set the price data if everthing worked (AKA all updated)
 			settings.setPriceData( priceDataList );
+			try {
+				pricing.writeCache();
+				LOG.info("	Price data cached saved");
+			} catch (IOException ex) {
+				LOG.error("Failed to write price data cache", ex);
+			}
 		} else { //None or some updated
 			LOG.info("	Failed to update price data");
-			if (updateTask != null) this.updateTask.addError("Price data", "Failed to update price data");
-		}
-		try {
-			pricing.writeCache();
-			LOG.info("	Price data cached saved");
-		} catch (IOException ex) {
-			LOG.error("Failed to write price data cache", ex);
+			if (updateTask != null){
+				updateTask.addError("Price data", "Failed to update price data");
+				updateTask.setTaskProgress(100, 100, 0, 100);
+				updateTask = null;
+			}
 		}
 		return updated;
 	}
@@ -172,7 +175,8 @@ public class PriceDataGetter implements PricingListener {
 
 	@Override
 	public void priceUpdateFailed(int typeID, Pricing pricing) {
-		failedIds.add(typeID);
+		pricing.cancelAll();
+		failed = true;
 		synchronized(this) {
 			notify();
 		}
