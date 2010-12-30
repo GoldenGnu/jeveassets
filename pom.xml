@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -110,6 +111,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -136,6 +138,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -146,19 +149,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>2.5</version>
-        <configuration>
-          <linkXref>true</linkXref>
-          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-          <minimumTokens>100</minimumTokens>
-          <targetJdk>${project.build.sourceVersion}</targetJdk>
-          <excludes>
-            <exclude>**/*Bean.java</exclude>
-            <exclude>**/generated/*.java</exclude>
-          </excludes>
-          <excludeRoots>
-            <excludeRoot>target/generated-sources/stubs</excludeRoot>
-          </excludeRoots>
-        </configuration>
+				<configuration>
+					<linkXref>true</linkXref>
+					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>${project.build.sourceVersion}</targetJdk>
+					<excludes>
+						<exclude>**/*Bean.java</exclude>
+						<exclude>**/generated/*.java</exclude>
+					</excludes>
+					<excludeRoots>
+						<excludeRoot>target/generated-sources/stubs</excludeRoot>
+					</excludeRoots>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -247,11 +250,11 @@
 			<version>1.2.16</version>
 			<scope>runtime</scope>
 		</dependency>
-	 <dependency>
-	  <groupId>jfree</groupId>
-	  <artifactId>jfreechart</artifactId>
-	  <version>1.0.13</version>
-	 </dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.13</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
