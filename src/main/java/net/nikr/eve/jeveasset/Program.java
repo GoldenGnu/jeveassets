@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
@@ -110,6 +111,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
 	private IndustryJobsTab industryJobsTab;
+	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 
@@ -163,8 +165,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
 		SplashUpdater.setProgress(55);
-		LOG.info("Loading: Industry Jobs Tab");
+		LOG.info("Loading: Industry Jobs Tabs");
 		industryJobsTab = new IndustryJobsTab(this);
+		industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
@@ -430,6 +433,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
+		}
+		if (MainMenu.ACTION_OPEN_INDUSTRY_PLOT.equals(e.getActionCommand())) {
+			mainWindow.addTab(industryPlotTab);
 		}
 		if (MainMenu.ACTION_OPEN_OVERVIEW.equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);

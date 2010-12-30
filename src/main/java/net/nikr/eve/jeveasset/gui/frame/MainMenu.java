@@ -38,6 +38,7 @@ public class MainMenu extends JMenuBar {
 	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public final static String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
 	public final static String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
+	public final static String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
 	public final static String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
 	public final static String ACTION_OPEN_MATERIALS = "ACTION_OPEN_METERIALS";
 	public final static String ACTION_OPEN_ACCOUNT_MANAGER = "ACTION_OPEN_API_MANAGER";
@@ -113,6 +114,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
 		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_JOBS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().industryPlot());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
+		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_PLOT);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

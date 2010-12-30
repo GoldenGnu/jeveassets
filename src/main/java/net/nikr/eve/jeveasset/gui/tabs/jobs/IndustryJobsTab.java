@@ -33,10 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -44,8 +41,6 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -55,7 +50,6 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class IndustryJobsTab extends JMainTab implements ActionListener {
@@ -70,9 +64,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
 
-	private List<IndustryJob> all;
-	private Map<String, List<IndustryJob>> jobs;
-	private Vector<String> characters;
+	private IndustryJobData data;
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.ICON_TOOL_INDUSTRY_JOBS, true);
@@ -154,62 +146,21 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent){
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		
-
-		boolean isSingleRow = jTable.getSelectedRows().length == 1;
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-		IndustryJob industryJob = isSingleRow ? jobsTableModel.getElementAt(jTable.getSelectedRow()) : null;
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu){
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-		jComponent.add(new JMenuAssetFilter(program, industryJob));
-		jComponent.add(new JMenuLookup(program, industryJob));
-	}
-
-	@Override
 	public void updateData() {
-		characters = new Vector<String>();
-		//characters.add("All");
-		jobs = new HashMap<String, List<IndustryJob>>();
-		all = new ArrayList<IndustryJob>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++){
-			List<Human> tempHumans = accounts.get(a).getHumans();
-			for (int b = 0; b < tempHumans.size(); b++){
-				Human human = tempHumans.get(b);
-				if (human.isShowAssets()){
-					characters.add(human.getName());
-					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-					jobs.put(human.getName(), characterIndustryJobs);
-					all.addAll(characterIndustryJobs);
-					if (human.isUpdateCorporationAssets()){
-						String corpKey = TabsJobs.get().whitespace(human.getCorporation());
-						if (!characters.contains(corpKey)){
-							characters.add(corpKey);
-							jobs.put(corpKey, new ArrayList<IndustryJob>());
-						}
-						List<IndustryJob> corporationIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), human.getCorporation(), program.getSettings());
-						jobs.get(corpKey).addAll(corporationIndustryJobs);
-						all.addAll(corporationIndustryJobs);
-					}
-				}
-			}
+
+		if (data == null) {
+			data = new IndustryJobData(program);
 		}
-		if (!characters.isEmpty()){
+		data.updateData();
+
+		if (!data.getCharacters().isEmpty()){
 			jCharacters.setEnabled(true);
 			jTable.setEnabled(true);
 			jActivity.setEnabled(true);
 			jState.setEnabled(true);
-			Collections.sort(characters);
-			characters.add(0, TabsJobs.get().all());
-			jCharacters.setModel( new DefaultComboBoxModel(characters));
+			Collections.sort(data.getCharacters());
+			data.getCharacters().add(0, TabsJobs.get().all());
+			jCharacters.setModel( new DefaultComboBoxModel(data.getCharacters()));
 			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
 			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
 			jCharacters.setSelectedIndex(0);
@@ -231,17 +182,34 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+
+		IndustryJob industryJob = isSingleRow ? jobsTableModel.getElementAt(jTable.getSelectedRow()) : null;
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
+		jComponent.add(new JMenuAssetFilter(program, industryJob));
+		jComponent.add(new JMenuLookup(program, industryJob));
+	}
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_SELECTED.equals(e.getActionCommand())) {
 			String selected = (String) jCharacters.getSelectedItem();
-			if (characters.size() > 1){
+			if (data.getCharacters().size() > 1){
 				List<IndustryJob> industryJobsInput;
 				List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
 				//Characters
 				if (selected.equals(TabsJobs.get().all())){
-					industryJobsInput = all;
+					industryJobsInput = data.getAll();
 				} else {
-					industryJobsInput = jobs.get(selected);
+					industryJobsInput = data.getJobs().get(selected);
 				}
 				//State
 				IndustryJob.IndustryJobState sState = (IndustryJob.IndustryJobState) jState.getSelectedItem();
