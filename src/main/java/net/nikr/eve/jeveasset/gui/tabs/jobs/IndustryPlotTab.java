@@ -2,16 +2,23 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -25,8 +32,6 @@ import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.gantt.XYTaskDataset;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.Hour;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +51,12 @@ public class IndustryPlotTab extends JMainTab {
 		super(program, "Industry Plot", Images.ICON_TOOL_INDUSTRY_JOBS, true);
 
 		panel = new JPanel(new BorderLayout());
+		panel.add(new JButton(new AbstractAction("Update") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateData();
+			}
+		}), BorderLayout.NORTH);
 
 		layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -82,45 +93,50 @@ public class IndustryPlotTab extends JMainTab {
 
 	}
 
-	private static JFreeChart createChart(IntervalXYDataset paramIntervalXYDataset) {
-		JFreeChart localJFreeChart = ChartFactory.createXYBarChart(
+	private JFreeChart createChart(IntervalXYDataset dataset) {
+		JFreeChart chart = ChartFactory.createXYBarChart(
 				null, // title
 				null, // x-axis label
 				true, // show x-axis as dates.
 				"Timing", // y-axis label
-				paramIntervalXYDataset, // dataset
+				dataset, // dataset
 				PlotOrientation.HORIZONTAL, // orientation
 				false, // legend
 				false, // tooltips
 				false // URLs
 				);
-		localJFreeChart.setBackgroundPaint(new Color(0,0,0,0));
-		XYPlot localXYPlot = (XYPlot) localJFreeChart.getPlot();
-	//	localXYPlot.setRangePannable(true); // XXX not available in 1.0.12, but available in 1.0.13? - Candle, 2010-12-27
-//		SymbolAxis localSymbolAxis = new SymbolAxis("Series", new String[]{"Team A", "Team B", "Team C", "Team D"});
-//		localSymbolAxis.setGridBandsVisible(false);
-//		localXYPlot.setDomainAxis(localSymbolAxis);
-		XYBarRenderer localXYBarRenderer = (XYBarRenderer) localXYPlot.getRenderer();
-		localXYBarRenderer.setUseYInterval(true);
-		localXYPlot.setRangeAxis(new DateAxis("Timing"));
-//		localXYPlot.setDomainPannable(true);  // XXX not available in 1.0.12, but available in 1.0.13? - Candle, 2010-12-27
-		ChartUtilities.applyCurrentTheme(localJFreeChart);
-		return localJFreeChart;
+		Color transparant = new Color(0,0,0,0);
+		chart.setBackgroundPaint(transparant);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setRangePannable(true);
+		SymbolAxis symbolAxis = new SymbolAxis(null, seriesNames.toArray(new String[]{}));
+		plot.setDomainAxis(symbolAxis);
+		plot.setBackgroundPaint(transparant);
+		XYBarRenderer barRenderer = (XYBarRenderer) plot.getRenderer();
+		
+		barRenderer.setUseYInterval(true);
+		barRenderer.setShadowVisible(false);
+		plot.setRangeAxis(new DateAxis(null));
+		//ChartUtilities.applyCurrentTheme(chart);
+		return chart;
 	}
 
 	public JPanel createPanel() {
-		JFreeChart localJFreeChart = createChart(createDataset());
-		ChartPanel localChartPanel = new ChartPanel(localJFreeChart);
-	//	localChartPanel.setMouseWheelEnabled(true); // XXX not available in 1.0.12, but available in 1.0.13? - Candle, 2010-12-27
-		return localChartPanel;
+		JFreeChart chart = createChart(createDataset());
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setMouseWheelEnabled(true);
+		return chartPanel;
 	}
 
 	private IntervalXYDataset createDataset() {
 		return new XYTaskDataset(createTasks());
 	}
 
+	List<String> seriesNames;
+
 	private TaskSeriesCollection createTasks() {
-		TaskSeriesCollection localTaskSeriesCollection = new TaskSeriesCollection();
+		TaskSeriesCollection seriesList = new TaskSeriesCollection();
+		seriesNames = new ArrayList<String>();
 
 		Map<Long, TaskSeries> seriesMap = new HashMap<Long, TaskSeries>();
 
@@ -129,7 +145,9 @@ public class IndustryPlotTab extends JMainTab {
 			if (!seriesMap.containsKey(id)) {
 				TaskSeries series = new TaskSeries(String.valueOf(id));
 				seriesMap.put(id, series);
-				localTaskSeriesCollection.add(series);
+				seriesList.add(series);
+				String name = " ";//ApiIdConverter.locationName(id, null, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
+				seriesNames.add(name);
 			}
 			try {
 				seriesMap.get(id).add(new Task(String.valueOf(id), job.getBeginProductionTimeDate(), job.getEndProductionTimeDate()));
@@ -138,7 +156,7 @@ public class IndustryPlotTab extends JMainTab {
 			}
 		}
 
-		return localTaskSeriesCollection;
+		return seriesList;
 	}
 
 }
