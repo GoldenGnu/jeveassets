@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import java.text.ParseException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
@@ -193,8 +192,8 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setOutputTypeID(apiIndustryJob.getOutputTypeID());
 		this.setContainerTypeID(apiIndustryJob.getContainerTypeID());
 		this.setInstalledItemCopy(apiIndustryJob.getInstalledItemCopy());
-		this.setCompleted(apiIndustryJob.getCompleted());
-		this.setCompletedSuccessfully(apiIndustryJob.getCompletedSuccessfully());
+		this.setCompletedStatus(apiIndustryJob.getCompletedStatus());
+		this.setCompletedSuccessfully(apiIndustryJob.isCompletedSuccessfully());
 		this.setInstalledItemFlag(apiIndustryJob.getInstalledItemFlag());
 		this.setOutputFlag(apiIndustryJob.getOutputFlag());
 		this.setActivityID(apiIndustryJob.getActivityID());
@@ -238,19 +237,12 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				activity = IndustryActivity.ACTIVITY_REVERSE_INVENTION;
 				break;
 		}
-		Date start;
-		Date end;
-		try {
-			start = this.getBeginProductionTimeDate();
-			end = this.getEndProductionTimeDate();
-		} catch (ParseException ex) {
-			start = Settings.getGmtNow();
-			end = Settings.getGmtNow();
-		}
+		Date start = this.getBeginProductionTime();
+		Date end = this.getEndProductionTime();
 
 		switch (this.getCompletedStatus()) {
 			case 0:
-				if (this.getCompleted() > 0) {
+				if (this.getCompletedStatus() > 0) {
 					state = IndustryJobState.STATE_FAILED;
 				} else if (start.before(Settings.getGmtNow())) {
 					if (end.before(Settings.getGmtNow())) {

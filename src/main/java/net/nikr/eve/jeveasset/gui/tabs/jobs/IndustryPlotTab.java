@@ -4,13 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -18,10 +16,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.SymbolAxis;
@@ -88,6 +84,7 @@ public class IndustryPlotTab extends JMainTab {
 		data.updateData();
 
 		panel.setBackground(Color.RED);
+		panel.removeAll();
 		panel.add(createPanel());
 		// TODO update the plot data.
 
@@ -141,7 +138,7 @@ public class IndustryPlotTab extends JMainTab {
 		Map<Long, TaskSeries> seriesMap = new HashMap<Long, TaskSeries>();
 
 		for (IndustryJob job : data.getAll()) {
-			Long id = job.getContainerID();
+			Long id = job.getJobID();
 			if (!seriesMap.containsKey(id)) {
 				TaskSeries series = new TaskSeries(String.valueOf(id));
 				seriesMap.put(id, series);
@@ -149,11 +146,7 @@ public class IndustryPlotTab extends JMainTab {
 				String name = " ";//ApiIdConverter.locationName(id, null, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
 				seriesNames.add(name);
 			}
-			try {
-				seriesMap.get(id).add(new Task(String.valueOf(id), job.getBeginProductionTimeDate(), job.getEndProductionTimeDate()));
-			} catch (ParseException pe) {
-				LOG.error(pe.getMessage(), pe);
-			}
+				seriesMap.get(id).add(new Task(String.valueOf(id), job.getBeginProductionTime(), job.getEndProductionTime()));
 		}
 
 		return seriesList;

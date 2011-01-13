@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.shared.assetlist.ApiAsset;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import java.io.IOException;
@@ -50,11 +51,15 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
-	protected AssetListResponse getResponse(boolean bCorp) throws IOException, SAXException {
+	protected AssetListResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp){
-			return com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance().getAssetListResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.corporation
+					.assetlist.AssetListParser.getInstance()
+					.getResponse(Human.getApiAuthorization(getHuman()));
 		} else {
-			return com.beimin.eveapi.character.assetlist.AssetListParser.getInstance().getAssetListResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.character
+					.assetlist.AssetListParser.getInstance()
+					.getResponse(Human.getApiAuthorization(getHuman()));
 		}
 	}
 

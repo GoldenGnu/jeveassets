@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
-import org.xml.sax.SAXException;
 
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
@@ -46,11 +45,15 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	}
 
 	@Override
-	protected IndustryJobsResponse getResponse(boolean bCorp) throws IOException, SAXException {
+	protected IndustryJobsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp){
-			return com.beimin.eveapi.corporation.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.corporation
+					.industryjobs.IndustryJobsParser.getInstance()
+					.getResponse(Human.getApiAuthorization(getHuman()));
 		} else {
-			return com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.character
+					.industryjobs.IndustryJobsParser.getInstance()
+					.getResponse(Human.getApiAuthorization(getHuman()));
 		}
 	}
 

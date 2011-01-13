@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import java.text.ParseException;
 import javax.management.timer.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,21 +105,16 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public String getExpireIn(){
 		long timeRemaining;
-		try {
-			timeRemaining = (this.getIssuedDate().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
-			if (timeRemaining > 0){
-				//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
-				long min = (timeRemaining/(1000*60)) % 60;
-				long hours = (timeRemaining/(1000*60*60)) % 24;
-				long days = (timeRemaining/(1000*60*60*24));
-				return days+"d "+hours+"h "+min+"m ";
-			} else {
-				return "Expired";
-			}
-		} catch (ParseException ex) {
-			LOG.error("Failed to parse IssuedDate", ex);
+		timeRemaining = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
+		if (timeRemaining > 0){
+			//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
+			long min = (timeRemaining/(1000*60)) % 60;
+			long hours = (timeRemaining/(1000*60*60)) % 24;
+			long days = (timeRemaining/(1000*60*60*24));
+			return days+"d "+hours+"h "+min+"m ";
+		} else {
+			return "Expired";
 		}
-		return "";
 	}
 
 	public String getName() {

@@ -21,9 +21,9 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.ApiError;
-import com.beimin.eveapi.ApiResponse;
-import java.io.IOException;
+import com.beimin.eveapi.core.ApiError;
+import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.core.ApiResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +34,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 
 abstract public class AbstractApiGetter<T extends ApiResponse> {
@@ -172,12 +171,9 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 						LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{name, updateName, apiError.getCode(), apiError.getError()});
 					}
 				}
-			} catch (IOException ex) {
-				addError(updateName, "IO error", updateCorporation);
-				LOG.info("	{} failed to update for: {} (IOException: {})", new Object[]{name, updateName, ex.getMessage()});
-			} catch (SAXException ex) {
+			} catch (ApiException ex) {
 				addError(updateName, "Parser error", updateCorporation);
-				LOG.info("	{} failed to update for: {} (SAXException: {})", new Object[]{name, updateName, ex.getMessage()});
+				LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{name, updateName, ex.getMessage()});
 			}
 		} else {
 			addError(updateName, "Not allowed yet", updateCorporation);
@@ -228,7 +224,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 	
-	abstract protected T getResponse(boolean bCorp) throws IOException, SAXException;
+	abstract protected T getResponse(boolean bCorp) throws ApiException;
 	abstract protected Date getNextUpdate();
 	abstract protected void setNextUpdate(Date nextUpdate);
 	abstract protected void setData(T response, boolean bCorp);

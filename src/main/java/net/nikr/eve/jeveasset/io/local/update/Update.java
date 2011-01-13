@@ -80,7 +80,7 @@ public class Update {
 				attr.setText(String.valueOf(newVersion));
 			}
 		}
-		
+
 		try {
 			FileOutputStream fos = new FileOutputStream(xml);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
@@ -110,10 +110,10 @@ public class Update {
 			int currentVersion = getVersion(xml);
 			if (requiredVersion > currentVersion) {
 				LOG.info("Data files are out of date, updating.");
-				Update1To2 update = new Update1To2();
-				update.performUpdate();
+					Update1To2 update = new Update1To2();
+					update.performUpdate();
 				setVersion(new File(Settings.getPathSettings()), requiredVersion);
-			}
+				}
 		} catch (DocumentException ex) {
 			LOG.error("", ex);
 			throw new RuntimeException(ex);

@@ -22,6 +22,11 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import net.nikr.eve.jeveasset.data.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -46,6 +51,39 @@ public class AttributeGetters {
 			return "";
 		}
 		return attributeNode.getNodeValue();
+	}
+
+	public static Date getDateFromLong(Node node, String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null){
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
+			return Settings.getGmtNow();
+		}
+		String dTemp = null;
+		try {
+			dTemp = attributeNode.getNodeValue();
+			return new Date(Long.parseLong(dTemp));
+		} catch(NumberFormatException ex){
+			LOG.warn("Failed to convert string to long (date): {} from node: {} > {}",new Object[]{dTemp, node.getNodeName(), attributeName});
+			return Settings.getGmtNow();
+		}
+	}
+
+	public static Date getDate(Node node, String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null){
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
+			return Settings.getGmtNow();
+		}
+		String dTemp = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		try {
+			dTemp = attributeNode.getNodeValue();
+			return format.parse(dTemp);
+		} catch(ParseException ex){
+			LOG.warn("Failed to convert string to date: {} from node: {} > {}",new Object[]{dTemp, node.getNodeName(), attributeName});
+			return Settings.getGmtNow();
+		}
 	}
 
 	public static int getInt(Node node, String attributeName){

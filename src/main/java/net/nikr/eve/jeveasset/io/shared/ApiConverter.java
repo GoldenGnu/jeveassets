@@ -86,7 +86,7 @@ public class ApiConverter {
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
 		for (ApiIndustryJob apiIndustryJob : industryJobs){
 			long id = apiIndustryJob.getInstalledItemID();
-			if (apiIndustryJob.getCompleted() == 0){
+			if (apiIndustryJob.getCompletedStatus() == 0){
 				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, bCorp, settings);
 				eveAssets.add(eveAsset);
 			}

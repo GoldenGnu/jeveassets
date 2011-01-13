@@ -191,7 +191,7 @@ public class AssetsReader extends AbstractXmlReader {
 		double escrow = AttributeGetters.getDouble(element, "escrow");
 		double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
-		String issued = AttributeGetters.getString(element, "issued");
+		Date issued = AttributeGetters.getDateFromLong(element, "issued");
 		apiMarketOrder.setOrderID(orderID);
 		apiMarketOrder.setCharID(charID);
 		apiMarketOrder.setStationID(stationID);
@@ -253,15 +253,15 @@ public class AssetsReader extends AbstractXmlReader {
 		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");
 		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
 		int completed = AttributeGetters.getInt(element, "completed");
-		int completedSuccessfully = AttributeGetters.getInt(element, "completedsuccessfully");
+		boolean completedSuccessfully = 1 == AttributeGetters.getInt(element, "completedsuccessfully");
 		int installedItemFlag = AttributeGetters.getInt(element, "installeditemflag");
 		int outputFlag = AttributeGetters.getInt(element, "outputflag");
 		int activityID = AttributeGetters.getInt(element, "activityid");
 		int completedStatus = AttributeGetters.getInt(element, "completedstatus");
-		String installTime = AttributeGetters.getString(element, "installtime");
-		String beginProductionTime = AttributeGetters.getString(element, "beginproductiontime");
-		String endProductionTime = AttributeGetters.getString(element, "endproductiontime");
-		String pauseProductionTime = AttributeGetters.getString(element, "pauseproductiontime");
+		Date installTime = AttributeGetters.getDateFromLong(element, "installtime");
+		Date beginProductionTime = AttributeGetters.getDateFromLong(element, "beginproductiontime");
+		Date endProductionTime = AttributeGetters.getDateFromLong(element, "endproductiontime");
+		Date pauseProductionTime = AttributeGetters.getDateFromLong(element, "pauseproductiontime");
 
 		apiIndustryJob.setJobID(jobID);
 		apiIndustryJob.setContainerID(containerID);
@@ -285,7 +285,7 @@ public class AssetsReader extends AbstractXmlReader {
 		apiIndustryJob.setOutputTypeID(outputTypeID);
 		apiIndustryJob.setContainerTypeID(containerTypeID);
 		apiIndustryJob.setInstalledItemCopy(installedItemCopy);
-		apiIndustryJob.setCompleted(completed);
+		apiIndustryJob.setCompletedStatus(completed);
 		apiIndustryJob.setCompletedSuccessfully(completedSuccessfully);
 		apiIndustryJob.setInstalledItemFlag(installedItemFlag);
 		apiIndustryJob.setOutputFlag(outputFlag);

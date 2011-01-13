@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.account.characters.ApiCharacter;
 import com.beimin.eveapi.account.characters.CharactersResponse;
-import java.io.IOException;
+import com.beimin.eveapi.core.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
-import org.xml.sax.SAXException;
 
 
 public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
@@ -54,8 +53,10 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 	}
 
 	@Override
-	protected CharactersResponse getResponse(boolean bCorp) throws IOException, SAXException {
-		return com.beimin.eveapi.account.characters.CharactersParser.getInstance().getEveCharacters(Human.getApiAuthorization(getAccount()));
+	protected CharactersResponse getResponse(boolean bCorp) throws ApiException {
+		return com.beimin.eveapi.account.characters
+				.CharactersParser.getInstance()
+				.getResponse(Human.getApiAuthorization(getAccount()));
 	}
 
 	@Override

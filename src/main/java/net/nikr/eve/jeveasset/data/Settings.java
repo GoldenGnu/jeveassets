@@ -21,7 +21,9 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.AbstractApiParser;
+import com.beimin.eveapi.EveApi;
+import com.beimin.eveapi.connectors.ApiConnector;
+import com.beimin.eveapi.connectors.ProxyConnector;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -32,6 +34,8 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -262,6 +266,7 @@ public class Settings{
 		windowAutoSave = true;
 		loadSettings();
 		model = new Galaxy(this.locations, this.jumps);
+		constructEveApiConnector();
 	}
 
 	/**
@@ -296,6 +301,7 @@ public class Settings{
 	//Find profiles
 		ProfileReader.load(this);
 		SplashUpdater.setProgress(35);
+		constructEveApiConnector();
 	}
 
 	public void loadActiveProfile(){
@@ -308,6 +314,7 @@ public class Settings{
 		clearEveAssetList(); //Must be cleared to update uniqueIds
 		priceDataGetter.load(); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(45);
+		constructEveApiConnector();
 	}
 
 	public void saveAssets(){
@@ -583,7 +590,7 @@ public class Settings{
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
 		// pass the new proxy onto the API framework.
-		AbstractApiParser.setHttpProxy(proxy);
+		constructEveApiConnector();
 	}
 
   /**
@@ -641,8 +648,26 @@ public class Settings{
 	 * @param apiProxy pass null to disable any API proxy, and use the default: http://api.eve-online.com
 	 */
 	public void setApiProxy(String apiProxy) {
-		AbstractApiParser.setEveApiURL(apiProxy);
 		this.apiProxy = apiProxy;
+		constructEveApiConnector();
+	}
+
+	/**
+	 * build the API Connector and set it in the library.
+	 */
+	private void constructEveApiConnector() {
+		String apiProxy = getApiProxy();
+		Proxy proxy = getProxy();
+		ApiConnector connector;
+		if (apiProxy != null) {
+			connector = new ApiConnector(apiProxy);
+		} else {
+			connector = new ApiConnector(apiProxy);
+		}
+		if (proxy != null) {
+			connector = new ProxyConnector(proxy, connector);
+		}
+		EveApi.setConnector(connector);
 	}
 
 	public Map<Long, ApiStation> getConquerableStations() {
@@ -863,6 +888,10 @@ public class Settings{
 			}
 		}
 		return ret;
+	}
+
+	public static DateFormat getSettingsDateFormat() {
+		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
 	public boolean isUpdatable(Date date){
