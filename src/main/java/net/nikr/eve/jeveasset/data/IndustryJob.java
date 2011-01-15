@@ -135,6 +135,15 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 			String getI18N() {
 				return DataModelIndustryJob.get().activityCopying();
 			}
+			@Override
+			public String getDescriptionOf(IndustryJob job) {
+				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
+				return DataModelIndustryJob.get().descriptionCopying(
+						String.valueOf(job.getInstalledItemTypeID()),
+						job.getRuns(),
+						job.getLicensedProductionRuns()
+						);
+			}
 		},
 		ACTIVITY_DUPLICATING() {
 			@Override
@@ -159,6 +168,14 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		public String toString() {
 			return getI18N();
 		}
+		/**
+		 *
+		 * @param job
+		 * @return a single line, human readable description of the job.
+		 */
+		public String getDescriptionOf(IndustryJob job) {
+			return toString();
+		}
 	}
 
 	private IndustryActivity activity;
@@ -181,6 +198,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setOutputLocationID(apiIndustryJob.getOutputLocationID());
 		this.setInstallerID(apiIndustryJob.getInstallerID());
 		this.setRuns(apiIndustryJob.getRuns());
+		this.setAssemblyLineID(apiIndustryJob.getAssemblyLineID());
 		this.setLicensedProductionRuns(apiIndustryJob.getLicensedProductionRuns());
 		this.setInstalledInSolarSystemID(apiIndustryJob.getInstalledInSolarSystemID());
 		this.setContainerLocationID(apiIndustryJob.getContainerLocationID());

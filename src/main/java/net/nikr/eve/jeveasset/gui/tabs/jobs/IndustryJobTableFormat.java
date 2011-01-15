@@ -29,6 +29,49 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
 enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
+	JOB_ID(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Job ID";
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getJobID();
+		}
+	},
+	CONTAINER_ID(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Container ID";
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getContainerID();
+		}
+	},
+	CONTAINER_LOCATION_ID(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Container Location";
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getContainerLocationID();
+		}
+	},
+	LINE_ID(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Line ID";
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getAssemblyLineID();
+		}
+	},
+
+	//
+
 	STATE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -87,6 +130,16 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 		@Override
 		public Object getColumnValue(IndustryJob from) {
 			return from.getInstallTime();
+		}
+	},
+	START_DATE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Start Date";
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getBeginProductionTime();
 		}
 	},
 	END_DATE(String.class, GlazedLists.comparableComparator()) {

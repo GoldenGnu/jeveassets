@@ -262,6 +262,7 @@ public class AssetsReader extends AbstractXmlReader {
 		Date beginProductionTime = AttributeGetters.getDateFromLong(element, "beginproductiontime");
 		Date endProductionTime = AttributeGetters.getDateFromLong(element, "endproductiontime");
 		Date pauseProductionTime = AttributeGetters.getDateFromLong(element, "pauseproductiontime");
+		long assemblyLineId = AttributeGetters.getLong(element, "assemblylineid");
 
 		apiIndustryJob.setJobID(jobID);
 		apiIndustryJob.setContainerID(containerID);
@@ -295,6 +296,7 @@ public class AssetsReader extends AbstractXmlReader {
 		apiIndustryJob.setBeginProductionTime(beginProductionTime);
 		apiIndustryJob.setEndProductionTime(endProductionTime);
 		apiIndustryJob.setPauseProductionTime(pauseProductionTime);
+		apiIndustryJob.setAssemblyLineID(assemblyLineId);
 
 		return apiIndustryJob;
 	}

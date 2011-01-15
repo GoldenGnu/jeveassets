@@ -205,6 +205,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "beginproductiontime", String.valueOf(apiIndustryJob.getBeginProductionTime().getTime()));
 			childNode.setAttributeNS(null, "endproductiontime", String.valueOf(apiIndustryJob.getEndProductionTime().getTime()));
 			childNode.setAttributeNS(null, "pauseproductiontime", String.valueOf(apiIndustryJob.getPauseProductionTime().getTime()));
+			childNode.setAttributeNS(null, "assemblylineid", String.valueOf(apiIndustryJob.getAssemblyLineID()));
 			node.appendChild(childNode);
 		}
 	}
