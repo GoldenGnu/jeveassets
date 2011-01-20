@@ -42,6 +42,8 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
@@ -59,7 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AccountImportDialog extends JDialogCentered implements ActionListener, PropertyChangeListener {
+public class AccountImportDialog extends JDialogCentered {
 
 	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
@@ -84,6 +86,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	private JPanel jContent;
 	private Account account;
 	private boolean bEditAccount;
+	private ListenerClass listener;
 
 	private DonePanel donePanel;
 
@@ -94,6 +97,8 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
+
+		listener = new ListenerClass();
 
 		//layout.setAutoCreateGaps(false);
 
@@ -107,15 +112,15 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 
 		jPrevious = new JButton(DialoguesAccount.get().previousArrow());
 		jPrevious.setActionCommand(ACTION_PREVIOUS);
-		jPrevious.addActionListener(this);
+		jPrevious.addActionListener(listener);
 
 		jNext = new JButton(DialoguesAccount.get().nextArrow());
 		jNext.setActionCommand(ACTION_NEXT);
-		jNext.addActionListener(this);
+		jNext.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesAccount.get().cancel());
 		jCancel.setActionCommand(ACTION_ADD_KEY_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -231,22 +236,9 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ADD_KEY_CANCEL.equals(e.getActionCommand())) {
-			setVisible(false);
-		}
-		if (ACTION_PREVIOUS.equals(e.getActionCommand())) {
-			nTabIndex = 0;
-			updateTab();
-		}
+	
 
-
-		if (ACTION_NEXT.equals(e.getActionCommand())) {
-			nTabIndex++;
-			updateTab();
-		}
-	}
+	
 
 	private void updateTab(){
 		switch (nTabIndex){
@@ -263,7 +255,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 				jNext.setText(DialoguesAccount.get().nextArrow());
 				account = new Account(getUserId(), getApiKey());
 				ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
-				validateApiKeyTask.addPropertyChangeListener(this);
+				validateApiKeyTask.addPropertyChangeListener(listener);
 				validateApiKeyTask.execute();
 				break;
 			case 2:
@@ -292,43 +284,70 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 		}
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		Object o = evt.getSource();
-		if (o instanceof ValidateApiKeyTask){
-			ValidateApiKeyTask validateApiKeyTask = (ValidateApiKeyTask) o;
-			if (validateApiKeyTask.throwable != null){
-				LOG.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", validateApiKeyTask.throwable);
+	private class ListenerClass implements ActionListener, PropertyChangeListener, HyperlinkListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_ADD_KEY_CANCEL.equals(e.getActionCommand())) {
+				setVisible(false);
 			}
-			if (validateApiKeyTask.done){
-				validateApiKeyTask.done = false;
-				if (validateApiKeyTask.result == 10){
-					donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
-					donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
-				}
-				if (validateApiKeyTask.result == 20){
-					donePanel.setResult(DialoguesAccount.get().noInternetConnection());
-					donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
-				}
-				if (validateApiKeyTask.result == 30){
-					donePanel.setResult(DialoguesAccount.get().accountNotValid());
-					donePanel.setText(DialoguesAccount.get().accountNotValid());
-				}
-				if (validateApiKeyTask.result == 100){
-					jNext.setEnabled(true);
-					donePanel.setResult(DialoguesAccount.get().accountValid());
-					donePanel.setText(DialoguesAccount.get().accountValidText());
-				} else {
-					jNext.setEnabled(false);
-					account = null;
-				}
-				nTabIndex = 2;
+			if (ACTION_PREVIOUS.equals(e.getActionCommand())) {
+				nTabIndex = 0;
 				updateTab();
+			}
+
+
+			if (ACTION_NEXT.equals(e.getActionCommand())) {
+				nTabIndex++;
+				updateTab();
+			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			Object o = evt.getSource();
+			if (o instanceof ValidateApiKeyTask){
+				ValidateApiKeyTask validateApiKeyTask = (ValidateApiKeyTask) o;
+				if (validateApiKeyTask.throwable != null){
+					LOG.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", validateApiKeyTask.throwable);
+				}
+				if (validateApiKeyTask.done){
+					validateApiKeyTask.done = false;
+					if (validateApiKeyTask.result == 10){
+						donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
+						donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
+					}
+					if (validateApiKeyTask.result == 20){
+						donePanel.setResult(DialoguesAccount.get().noInternetConnection());
+						donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
+					}
+					if (validateApiKeyTask.result == 30){
+						donePanel.setResult(DialoguesAccount.get().accountNotValid());
+						donePanel.setText(DialoguesAccount.get().accountNotValidText());
+					}
+					if (validateApiKeyTask.result == 100){
+						jNext.setEnabled(true);
+						donePanel.setResult(DialoguesAccount.get().accountValid());
+						donePanel.setText(DialoguesAccount.get().accountValidText());
+					} else {
+						jNext.setEnabled(false);
+						account = null;
+					}
+					nTabIndex = 2;
+					updateTab();
+				}
+			}
+		}
+
+		@Override
+		public void hyperlinkUpdate(HyperlinkEvent hle) {
+			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
 	}
 
-	private class InputPanel extends JCardPanel implements HyperlinkListener{
+	private class InputPanel extends JCardPanel {
 
 		public InputPanel() {
 			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().userId());
@@ -345,7 +364,7 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 			jHelp.setFont( this.getFont() );
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(this);
+			jHelp.addHyperlinkListener(listener);
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createSequentialGroup()
@@ -375,13 +394,6 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 					.addComponent(jApiKey, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 			);
-		}
-
-		@Override
-		public void hyperlinkUpdate(HyperlinkEvent hle) {
-			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-				DesktopUtil.browse(hle.getURL().toString(), program);
-			}
 		}
 	}
 
@@ -419,20 +431,23 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 
 		private JLabel jResult;
 
-		private JEditorPane jHelp;
+		private JTextArea jHelp;
 
 		public DonePanel() {
 			jResult = new JLabel();
 			jResult.setFont( new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
 
-			jHelp = new JEditorPane();
-			jHelp.setFont( this.getFont() );
+			jHelp = new JTextArea();
+			jHelp.setLineWrap(true);
+			jHelp.setWrapStyleWord(true);
+			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
 			jHelp.setFocusable(false);
-			jHelp.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(this.getBackground().darker(), 1),
-				BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+			jHelp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+			JScrollPane jScroll = new JScrollPane(jHelp,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createParallelGroup()
@@ -440,12 +455,12 @@ public class AccountImportDialog extends JDialogCentered implements ActionListen
 						.addGap(5)
 						.addComponent(jResult)
 					)
-					.addComponent(jHelp)
+					.addComponent(jScroll, 350, 350, 350)
 			);
 			cardLayout.setVerticalGroup(
 				cardLayout.createSequentialGroup()
-					.addComponent(jResult)
-					.addComponent(jHelp)
+					.addComponent(jResult, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jScroll, 78, 78, 78)
 			);
 		}
 
