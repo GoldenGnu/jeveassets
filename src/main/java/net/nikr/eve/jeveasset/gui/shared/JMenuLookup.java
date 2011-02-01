@@ -37,7 +37,7 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	private final static Logger LOG = LoggerFactory.getLogger(JMenuLookup.class);
 
 	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";
-	private static final String ACTION_BROWSE_EVE_METRICS = "ACTION_BROWSE_EVE_METRICS";
+	private static final String ACTION_BROWSE_EVE_MARKETDATA= "ACTION_BROWSE_EVE_MARKETDATA";
 	private static final String ACTION_BROWSE_EVE_MARKETS = "ACTION_BROWSE_EVE_MARKETS";
 	private static final String ACTION_BROWSE_GAMES_CHRUKER = "ACTION_BROWSE_GAMES_CHRUKER";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_STATION = "ACTION_BROWSE_EVEMAPS_DOTLAN_STATION";
@@ -88,10 +88,10 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		menuItem.addActionListener(this);
 		add(menuItem);
 
-		menuItem = new JMenuItem("Eve-Metrics");
-		menuItem.setIcon(Images.ICON_EVE_METRICS);
+		menuItem = new JMenuItem("Eve-Marketdata");
+		menuItem.setIcon(Images.ICON_EVE_MARKETDATA);
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
-		menuItem.setActionCommand(ACTION_BROWSE_EVE_METRICS);
+		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
@@ -116,8 +116,8 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid="+typeId, program);
 		}
-		if (ACTION_BROWSE_EVE_METRICS.equals(e.getActionCommand())){
-			DesktopUtil.browse("http://eve-metrics.com/q/"+typeId, program);
+		if (ACTION_BROWSE_EVE_MARKETDATA.equals(e.getActionCommand())){
+			DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id="+typeId, program);
 		}
 		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid="+typeId, program);

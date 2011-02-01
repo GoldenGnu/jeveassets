@@ -76,7 +76,7 @@ public class Images {
 	public final static Icon ICON_EVE_MARKETS = Images.getIcon("eve_markets.png");
 	public final static Icon ICON_DOTLAN_EVEMAPS = Images.getIcon("dotlan_evemaps.png");
 	public final static Icon ICON_EVE_CENTRAL = Images.getIcon("eve_central.png");
-	public final static Icon ICON_EVE_METRICS = Images.getIcon("eve_metrics.png");
+	public final static Icon ICON_EVE_MARKETDATA = Images.getIcon("eve-marketdata.png");
 	public final static Icon ICON_CHRUKER = Images.getIcon("chruker.png");
 
 
