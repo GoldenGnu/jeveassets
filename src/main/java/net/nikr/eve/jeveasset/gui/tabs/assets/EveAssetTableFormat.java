@@ -93,7 +93,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 		if (sColumn.equals("Buy Max")) return TableComparators.numberComparator();
 		if (sColumn.equals("Base Price")) return TableComparators.numberComparator();
 		if (sColumn.equals("Value")) return TableComparators.numberComparator();
-		if (sColumn.equals("Meta")) return TableComparators.stringComparator();
+		if (sColumn.equals("Meta")) return TableComparators.metaComparator();
 		if (sColumn.equals("ID")) return TableComparators.numberComparator();
 		if (sColumn.equals("Volume")) return TableComparators.numberComparator();
 		if (sColumn.equals("Type ID")) return TableComparators.numberComparator();
