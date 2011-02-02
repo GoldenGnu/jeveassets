@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.ApiAuthorization;
+import com.beimin.eveapi.core.ApiAuthorization;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;

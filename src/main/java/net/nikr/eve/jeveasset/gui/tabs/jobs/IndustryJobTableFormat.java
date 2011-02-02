@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
@@ -67,8 +68,8 @@ public class IndustryJobTableFormat implements AdvancedTableFormat<IndustryJob> 
 		if (columnName.equals("Name")) return String.class;
 		if (columnName.equals("Location")) return String.class;
 		if (columnName.equals("Owner")) return String.class;
-		if (columnName.equals("Install Date")) return String.class;
-		if (columnName.equals("End Date")) return String.class;
+		if (columnName.equals("Install Date")) return Date.class;
+		if (columnName.equals("End Date")) return Date.class;
 		if (columnName.equals("BP ME")) return Integer.class;
 		if (columnName.equals("BP PE")) return Integer.class;
 		return Object.class;
@@ -76,17 +77,7 @@ public class IndustryJobTableFormat implements AdvancedTableFormat<IndustryJob> 
 
 	@Override
 	public Comparator getColumnComparator(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("State")) return GlazedLists.comparableComparator();
-		if (columnName.equals("Activity")) return GlazedLists.comparableComparator();
-		if (columnName.equals("Name")) return TableComparators.stringComparator();
-		if (columnName.equals("Location")) return TableComparators.stringComparator();
-		if (columnName.equals("Owner")) return TableComparators.stringComparator();
-		if (columnName.equals("Install Date")) return TableComparators.stringComparator();
-		if (columnName.equals("End Date")) return TableComparators.stringComparator();
-		if (columnName.equals("BP ME")) return TableComparators.numberComparator();
-		if (columnName.equals("BP PE")) return TableComparators.numberComparator();
-		return null;
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override

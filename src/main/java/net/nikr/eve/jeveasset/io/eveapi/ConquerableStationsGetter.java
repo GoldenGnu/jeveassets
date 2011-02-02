@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import java.io.IOException;
 import java.util.Date;
@@ -45,8 +46,8 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 
 	@Override
-	protected StationListResponse getResponse(boolean bCorp) throws IOException, SAXException {
-		return com.beimin.eveapi.eve.conquerablestationlist.ConquerableStationListParser.getInstance().getStationList();
+	protected StationListResponse getResponse(boolean bCorp) throws ApiException {
+		return com.beimin.eveapi.eve.conquerablestationlist.ConquerableStationListParser.getInstance().getResponse();
 	}
 
 	@Override

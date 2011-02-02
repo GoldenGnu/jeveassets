@@ -22,6 +22,10 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import net.nikr.eve.jeveasset.data.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -46,6 +50,31 @@ public class AttributeGetters {
 			return "";
 		}
 		return attributeNode.getNodeValue();
+	}
+	
+	public static Date getDate(Node node, String attributeName) {
+		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+		if (attributeNode == null){
+			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
+			return Settings.getGmtNow();
+		}
+		String dTemp = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		Date date = null;
+		try {
+			dTemp = attributeNode.getNodeValue();
+			date = format.parse(dTemp);
+		} catch(ParseException ex){}
+		try {
+			dTemp = attributeNode.getNodeValue();
+			date = new Date(Long.parseLong(dTemp));
+		} catch(NumberFormatException ex){}
+		if (date != null){
+			return date;
+		} else {
+			LOG.warn("Failed to convert string to date: {} from node: {} > {}",new Object[]{dTemp, node.getNodeName(), attributeName});
+			return Settings.getGmtNow();
+		}
 	}
 
 	public static int getInt(Node node, String attributeName){
@@ -123,7 +152,7 @@ public class AttributeGetters {
 			return false;
 		}
 		String sTemp = attributeNode.getNodeValue();
-		return (sTemp.equals("true"));
+		return (sTemp.equals("true") || sTemp.equals("1"));
 	}
 
 

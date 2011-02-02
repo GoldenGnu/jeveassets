@@ -70,6 +70,17 @@ public class TableCellRenderers {
 			setText((value == null) ? "" : Formater.floatFormat(value));
 		}
 	}
+
+	public static class DateCellRenderer extends DefaultTableCellRenderer {
+		public DateCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : Formater.defaultDate(value));
+		}
+	}
 	
 	public static class NumberToStringCellRenderer extends DefaultTableCellRenderer {
 		public NumberToStringCellRenderer() {

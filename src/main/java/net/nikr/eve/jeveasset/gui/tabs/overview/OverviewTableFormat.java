@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Overview;
-import net.nikr.eve.jeveasset.gui.shared.TableComparators;
 
 
 public class OverviewTableFormat implements AdvancedTableFormat<Overview> {
@@ -115,16 +115,7 @@ public class OverviewTableFormat implements AdvancedTableFormat<Overview> {
 
 	@Override
 	public Comparator getColumnComparator(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return TableComparators.stringComparator();
-		if (columnName.equals("Solar System")) return TableComparators.stringComparator();
-		if (columnName.equals("Region")) return TableComparators.stringComparator();
-		if (columnName.equals("Volume")) return TableComparators.numberComparator();
-		if (columnName.equals("Count")) return TableComparators.numberComparator();
-		if (columnName.equals("Average Value")) return TableComparators.numberComparator();
-		if (columnName.equals("Value")) return TableComparators.numberComparator();
-		if (columnName.equals("Reprocessed Value")) return TableComparators.numberComparator();
-		return null;
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override

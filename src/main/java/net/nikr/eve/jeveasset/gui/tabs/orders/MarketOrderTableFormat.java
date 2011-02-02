@@ -22,13 +22,13 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.gui.shared.TableComparators;
 
 
 public class MarketOrderTableFormat implements AdvancedTableFormat<MarketOrder> {
@@ -74,16 +74,7 @@ public class MarketOrderTableFormat implements AdvancedTableFormat<MarketOrder> 
 
 	@Override
 	public Comparator getColumnComparator(int column) {
-		String columnName = columnNames.get(column);
-		if (columnName.equals("Name")) return TableComparators.stringComparator();
-		if (columnName.equals("Quantity")) return TableComparators.quantityComparator();
-		if (columnName.equals("Price")) return TableComparators.numberComparator();
-		if (columnName.equals("Expire In")) return TableComparators.stringComparator();
-		if (columnName.equals("Location")) return TableComparators.stringComparator();
-		if (columnName.equals("Range")) return TableComparators.stringComparator();
-		if (columnName.equals("Min. Volume")) return TableComparators.numberComparator();
-		if (columnName.equals("Status")) return TableComparators.stringComparator();
-		return null;
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override

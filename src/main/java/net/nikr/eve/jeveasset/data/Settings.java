@@ -21,7 +21,10 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.AbstractApiParser;
+import com.beimin.eveapi.EveApi;
+import com.beimin.eveapi.connectors.ApiConnector;
+import com.beimin.eveapi.connectors.ProxyConnector;
+import com.beimin.eveapi.core.AbstractApiParser;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -583,7 +586,7 @@ public class Settings{
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
 		// pass the new proxy onto the API framework.
-		AbstractApiParser.setHttpProxy(proxy);
+		constructEveApiConnector();
 	}
 
   /**
@@ -641,8 +644,26 @@ public class Settings{
 	 * @param apiProxy pass null to disable any API proxy, and use the default: http://api.eve-online.com
 	 */
 	public void setApiProxy(String apiProxy) {
-		AbstractApiParser.setEveApiURL(apiProxy);
 		this.apiProxy = apiProxy;
+		constructEveApiConnector();
+	}
+
+	/**
+	 * build the API Connector and set it in the library.
+	 */
+	private void constructEveApiConnector() {
+		String apiProxy = getApiProxy();
+		Proxy proxy = getProxy();
+		ApiConnector connector;
+		if (apiProxy != null) {
+			connector = new ApiConnector(apiProxy);
+		} else {
+			connector = new ApiConnector(apiProxy);
+		}
+		if (proxy != null) {
+			connector = new ProxyConnector(proxy, connector);
+		}
+		EveApi.setConnector(connector);
 	}
 
 	public Map<Long, ApiStation> getConquerableStations() {

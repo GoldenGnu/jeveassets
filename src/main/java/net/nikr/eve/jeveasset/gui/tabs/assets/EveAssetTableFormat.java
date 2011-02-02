@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -80,29 +81,8 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 	@Override
 	public Comparator getColumnComparator(int i) {
 		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
-		if (sColumn.equals("Name")) return TableComparators.stringComparator();
-		if (sColumn.equals("Group")) return TableComparators.stringComparator();
-		if (sColumn.equals("Category")) return TableComparators.stringComparator();
-		if (sColumn.equals("Owner")) return TableComparators.stringComparator();
-		if (sColumn.equals("Count")) return TableComparators.numberComparator();
-		if (sColumn.equals("Location")) return TableComparators.stringComparator();
-		if (sColumn.equals("Container")) return TableComparators.stringComparator();
-		if (sColumn.equals("Flag")) return TableComparators.stringComparator();
-		if (sColumn.equals("Price")) return TableComparators.numberComparator();
-		if (sColumn.equals("Sell Min")) return TableComparators.numberComparator();
-		if (sColumn.equals("Buy Max")) return TableComparators.numberComparator();
-		if (sColumn.equals("Base Price")) return TableComparators.numberComparator();
-		if (sColumn.equals("Value")) return TableComparators.numberComparator();
 		if (sColumn.equals("Meta")) return TableComparators.metaComparator();
-		if (sColumn.equals("ID")) return TableComparators.numberComparator();
-		if (sColumn.equals("Volume")) return TableComparators.numberComparator();
-		if (sColumn.equals("Type ID")) return TableComparators.numberComparator();
-		if (sColumn.equals("Region")) return TableComparators.stringComparator();
-		if (sColumn.equals("Type Count")) return TableComparators.numberComparator();
-		if (sColumn.equals("Security")) return TableComparators.stringComparator();
-		if (sColumn.equals("Reprocessed")) return TableComparators.numberComparator();
-		if (sColumn.equals("Reprocessed Value")) return TableComparators.numberComparator();
-		return null;
+		return GlazedLists.comparableComparator();
 	}
 
 	@Override

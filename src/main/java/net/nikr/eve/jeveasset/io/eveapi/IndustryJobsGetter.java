@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
+import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
 import java.io.IOException;
@@ -46,11 +47,11 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	}
 
 	@Override
-	protected IndustryJobsResponse getResponse(boolean bCorp) throws IOException, SAXException {
+	protected IndustryJobsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp){
-			return com.beimin.eveapi.corporation.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.corporation.industryjobs.IndustryJobsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()));
 		} else {
-			return com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getIndustryJobsResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()));
 		}
 	}
 

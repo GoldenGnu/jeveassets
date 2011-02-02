@@ -191,7 +191,7 @@ public class AssetsReader extends AbstractXmlReader {
 		double escrow = AttributeGetters.getDouble(element, "escrow");
 		double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
-		String issued = AttributeGetters.getString(element, "issued");
+		Date issued = AttributeGetters.getDate(element, "issued");
 		apiMarketOrder.setOrderID(orderID);
 		apiMarketOrder.setCharID(charID);
 		apiMarketOrder.setStationID(stationID);
@@ -252,16 +252,16 @@ public class AssetsReader extends AbstractXmlReader {
 		int outputTypeID = AttributeGetters.getInt(element, "outputtypeid");
 		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");
 		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
-		int completed = AttributeGetters.getInt(element, "completed");
-		int completedSuccessfully = AttributeGetters.getInt(element, "completedsuccessfully");
+		boolean completed = AttributeGetters.getBoolean(element, "completed");
+		boolean completedSuccessfully = AttributeGetters.getBoolean(element, "completedsuccessfully");
 		int installedItemFlag = AttributeGetters.getInt(element, "installeditemflag");
 		int outputFlag = AttributeGetters.getInt(element, "outputflag");
 		int activityID = AttributeGetters.getInt(element, "activityid");
 		int completedStatus = AttributeGetters.getInt(element, "completedstatus");
-		String installTime = AttributeGetters.getString(element, "installtime");
-		String beginProductionTime = AttributeGetters.getString(element, "beginproductiontime");
-		String endProductionTime = AttributeGetters.getString(element, "endproductiontime");
-		String pauseProductionTime = AttributeGetters.getString(element, "pauseproductiontime");
+		Date installTime = AttributeGetters.getDate(element, "installtime");
+		Date beginProductionTime = AttributeGetters.getDate(element, "beginproductiontime");
+		Date endProductionTime = AttributeGetters.getDate(element, "endproductiontime");
+		Date pauseProductionTime = AttributeGetters.getDate(element, "pauseproductiontime");
 
 		apiIndustryJob.setJobID(jobID);
 		apiIndustryJob.setContainerID(containerID);

@@ -22,10 +22,7 @@
 package net.nikr.eve.jeveassets.tests.io;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -37,7 +34,6 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -51,7 +47,7 @@ public class TestApiConverter {
 	private final static Logger LOG = LoggerFactory.getLogger(TestApiConverter.class);
 
 	static Settings settings;
-	List<ApiIndustryJob> industryJobs;
+	List<ApiIndustryJob> industryJobs =  new ArrayList<ApiIndustryJob>();
 
 	@BeforeClass
 	public static void oneTimeSetUp(){
@@ -65,16 +61,10 @@ public class TestApiConverter {
 
 	@Before
 	public void setUp() {
-		InputStream is = TestApiConverter.class.getResourceAsStream("jobs.xml");
-		IndustryJobsResponse response;
-		try {
-			response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
-			industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
-		} catch (IOException ex) {
-			fail("IOException: "+ex.getMessage());
-		} catch (SAXException ex) {
-			fail("SAXException: "+ex.getMessage());
-		}
+		//InputStream is = TestApiConverter.class.getResourceAsStream("jobs.xml");
+		//IndustryJobsResponse response;
+		//response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
+		//industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
 	}
 
 	@After
