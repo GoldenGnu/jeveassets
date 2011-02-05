@@ -83,7 +83,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;TryfanMan<br>"
 				+ "<br>"
 				+ "<b>www</b><br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Homepage</a> (download and source)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/iNgameboard.asp?a=topic&threadID=1103224/\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
@@ -106,10 +106,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
 				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/1.2/\">log4j</a> (logging)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">OSXAdapter</a> (native mac os x support)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Translations</a> (i18n)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">OSXAdapter</a> (native mac os x support)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Pricing</a> (parsing price data api)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Routing</a> (routing tool)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Translations</a> (i18n)<br>"
 				//+ "<br>"
 				);
 

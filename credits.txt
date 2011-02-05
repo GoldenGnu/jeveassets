@@ -124,7 +124,7 @@ _PRICING________________________________________________________________________
 jEveAssets use the Pricing library to get price data
 
 Link:
-  http://eve.nikr.net/?page=jeveasset
+  http://eve.nikr.net/jeveasset
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -135,7 +135,7 @@ _ROUTING________________________________________________________________________
 jEveAssets use the Routing library in the routing tool
 
 Link:
-  http://eve.nikr.net/?page=jeveasset
+  http://eve.nikr.net/jeveasset
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -146,7 +146,7 @@ _TRANSLATIONS___________________________________________________________________
 jEveAssets use the Translations library for i18n
 
 Link:
-  http://eve.nikr.net/?page=jeveasset
+  http://eve.nikr.net/jeveasset
 
 License:
   GNU General Public License (http://www.gnu.org/copyleft/gpl.html)
@@ -157,7 +157,7 @@ _OSXADAPTER_____________________________________________________________________
 jEveAssets use OSXAdapter to enhance support for mac os x environments
 
 Link:
-  http://eve.nikr.net/?page=jeveasset
+  http://eve.nikr.net/jeveasset
 
 License:
   Property (Copyright by Apple)

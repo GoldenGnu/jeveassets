@@ -7,7 +7,7 @@
 	<version>1.6.4-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
-	<url>http://eve.nikr.net/?page=jeveasset</url>
+	<url>http://eve.nikr.net/jeveasset</url>
 	<issueManagement>
 		<system>Google Code</system>
 		<url>http://code.google.com/p/jeveassets/issues/list</url>

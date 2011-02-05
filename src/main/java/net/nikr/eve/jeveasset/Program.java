@@ -79,7 +79,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	public static final String PROGRAM_VERSION = "1.6.3";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
-	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/?page=jeveasset";
+	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
 
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
