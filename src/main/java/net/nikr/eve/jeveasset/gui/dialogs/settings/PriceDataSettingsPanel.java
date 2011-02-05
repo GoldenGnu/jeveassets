@@ -23,8 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -36,7 +34,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class PriceDataSettingsPanel extends JSettingsPanel implements ActionListener {
+public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
 
@@ -55,15 +53,15 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 		jWarning.setEditable(false);
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
-		jRegions = new JComboBox();
+		jRegions = new JComboBox(PriceDataSettings.REGIONS_EVE_CENTRAL);
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox( new Vector<EveAsset.PriceMode>(EveAsset.getPriceTypes()));
+		jPriceType = new JComboBox(EveAsset.getPriceTypes().toArray());
 
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceDataSettings.SOURCES);
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
-		jSource.addActionListener(this);
+		jSource.addActionListener(new ListenerClass());
 
 
 
@@ -103,41 +101,60 @@ public class PriceDataSettingsPanel extends JSettingsPanel implements ActionList
 
 	@Override
 	public boolean save() {
-		//Get data for GUI
+		//Get Region
 		int region = jRegions.getSelectedIndex();
-		EveAsset.PriceMode priceType = (EveAsset.PriceMode) jPriceType.getSelectedItem();
+		if (region < 0) region = program.getSettings().getPriceDataSettings().getRegion();
+
+		//Price Type
+		Object o = jPriceType.getSelectedItem();
+		EveAsset.PriceMode priceType;
+		if (o  instanceof EveAsset.PriceMode){
+			priceType = (EveAsset.PriceMode) o;
+		} else {
+			priceType = EveAsset.getPriceType();
+		}
+
+		//Source
 		String source = (String) jSource.getSelectedItem();
-		boolean update = !priceType.equals(EveAsset.getPriceType());
-		//Create new settings
-		PriceDataSettings newPriceDataSettings = new PriceDataSettings(region, source);
-		//Set new settings
-		program.getSettings().setPriceDataSettings( newPriceDataSettings );
+
+		//Eval if table need to be updated
+		boolean updateTable = !priceType.equals(EveAsset.getPriceType());
+
+		//Update settings
+		program.getSettings().setPriceDataSettings( new PriceDataSettings(region, source) );
 		EveAsset.setPriceType(priceType);
+		
 		//Update table if needed
-		return update;
+		return updateTable;
 	}
 
 	@Override
 	public void load(){
 		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
-		jSource.setSelectedItem(priceDataSettings.getSource());
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
 		jPriceType.setSelectedItem(EveAsset.getPriceType());
-		
+		jSource.setSelectedItem(priceDataSettings.getSource());
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
-			String source = (String) jSource.getSelectedItem();
-			PriceDataSettings.RegionType region = (PriceDataSettings.RegionType) jRegions.getSelectedItem();
-			if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
-				jRegions.setModel( new DefaultComboBoxModel(PriceDataSettings.REGIONS_EVE_CENTRAL));
+	private class ListenerClass  implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
+				String source = (String) jSource.getSelectedItem();
+				if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
+					jRegions.setSelectedIndex(program.getSettings().getPriceDataSettings().getRegion());
+					jPriceType.setSelectedItem(EveAsset.getPriceType());
+					jRegions.setEnabled(true);
+					jPriceType.setEnabled(true);
+				}
+				if (source.equals(PriceDataSettings.SOURCE_EVE_MARKETDATA)){
+					jRegions.getModel().setSelectedItem("Not Configurable");
+					jPriceType.getModel().setSelectedItem("Not Configurable");
+					jRegions.setEnabled(false);
+					jPriceType.setEnabled(false);
+				}
 			}
-			if (source.equals(PriceDataSettings.SOURCE_EVE_METRICS)){
-				jRegions.setModel( new DefaultComboBoxModel(PriceDataSettings.REGIONS_EVE_METRICS));
-			}
-			jRegions.setSelectedItem(region);
 		}
 	}
 }

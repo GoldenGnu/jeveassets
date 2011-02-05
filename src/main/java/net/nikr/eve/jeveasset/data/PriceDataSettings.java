@@ -34,9 +34,10 @@ public class PriceDataSettings {
 
 	// should re-factor these two into an emum. - Candle 2010-09-13
 	public final static String SOURCE_EVE_CENTRAL = "eve-central";
-	public final static String SOURCE_EVE_METRICS = "eve-metrics";
+	private final static String SOURCE_EVE_METRICS = "eve-metrics";
+	public final static String SOURCE_EVE_MARKETDATA = "eve-marketdata";
 
-	public final static String[] SOURCES = {SOURCE_EVE_CENTRAL, SOURCE_EVE_METRICS};
+	public final static String[] SOURCES = {SOURCE_EVE_CENTRAL, SOURCE_EVE_MARKETDATA};
 
 
 	public enum RegionType {
@@ -252,7 +253,7 @@ public class PriceDataSettings {
 											,RegionType.REGION_VERGE_VENDOR
 											};
 
-	public final static RegionType[] REGIONS_EVE_METRICS = {
+	private final static RegionType[] REGIONS_EVE_METRICS = {
 											RegionType.REGION_ARIDIA
 											,RegionType.REGION_BLACK_RISE
 											,RegionType.REGION_DERELIK
@@ -277,13 +278,26 @@ public class PriceDataSettings {
 											,RegionType.REGION_THE_FORGE
 											,RegionType.REGION_VERGE_VENDOR
 											};
-
 	private int region;
 	private String source;
 
 	public PriceDataSettings(int region, String source) {
 		this.region = region;
 		this.source = source;
+		if (this.source.equals(SOURCE_EVE_METRICS)){
+			LOG.warn("PriceDataSettings: source is set to "+SOURCE_EVE_METRICS+" using "+SOURCE_EVE_CENTRAL+" instead");
+			this.source = SOURCE_EVE_CENTRAL;
+			RegionType metrics = REGIONS_EVE_METRICS[region];
+			for (int i = 0; i < REGIONS_EVE_CENTRAL.length; i++){
+				RegionType eveCentral = REGIONS_EVE_CENTRAL[i];
+				if (metrics.equals(eveCentral)){
+					this.region = i;
+					break;
+				}
+			}
+			
+		}
+		
 	}
 
 	public int getRegion() {
@@ -291,8 +305,8 @@ public class PriceDataSettings {
 			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-central)");
 			return 0;
 		}
-		if (source.equals(SOURCE_EVE_METRICS) && region >= REGIONS_EVE_METRICS.length){
-			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-metrics)");
+		if (source.equals(SOURCE_EVE_MARKETDATA) && region >= REGIONS_EVE_CENTRAL.length){
+			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-marketdata)");
 			return 0;
 		}
 		return region;
@@ -304,15 +318,15 @@ public class PriceDataSettings {
 
 	public List<Long> getRegions(){
 		List<Long> regions = new ArrayList<Long>();
-		RegionType region = null;
+		RegionType regionType = null;
 		if (source.equals(SOURCE_EVE_CENTRAL)){
-			region = REGIONS_EVE_CENTRAL[getRegion()];
+			regionType = REGIONS_EVE_CENTRAL[getRegion()];
 		}
-		if (source.equals(SOURCE_EVE_METRICS)){
-			region = REGIONS_EVE_METRICS[getRegion()];
+		if (source.equals(SOURCE_EVE_MARKETDATA)){
+			regionType = REGIONS_EVE_CENTRAL[getRegion()];
 		}
 		// TODO (Candle, 2010-09-13) move all these numbers into the regiontype enum above.
-		if (region.equals(RegionType.REGION_EMPIRE)){
+		if (regionType.equals(RegionType.REGION_EMPIRE)){
 		//Amarr
 			regions.add(10000054l); //Amarr: Aridia
 			regions.add(10000036l); //Amarr: Devoid
@@ -342,14 +356,14 @@ public class PriceDataSettings {
 			regions.add(10000001l); //Ammatar: Derelik
 			regions.add(10000049l); //Khanid: Khanid
 		}
-		if (region.equals(RegionType.REGION_MARKET_HUBS)){
+		if (regionType.equals(RegionType.REGION_MARKET_HUBS)){
 			regions.add(10000002l); //Caldari: The Forge (Jita)
 			regions.add(10000042l); //Minmatar : Metropolis (Hek)
 			regions.add(10000030l); //Minmatar : Heimatar (Rens)
 			regions.add(10000064l); //Gallente: Essence (Oursalert)
 			regions.add(10000043l); //Amarr: Domain (Amarr)
 		}
-		if (region.equals(RegionType.REGION_ALL_AMARR)){
+		if (regionType.equals(RegionType.REGION_ALL_AMARR)){
 			regions.add(10000054l); //Amarr: Aridia
 			regions.add(10000036l); //Amarr: Devoid
 			regions.add(10000043l); //Amarr: Domain
@@ -359,7 +373,7 @@ public class PriceDataSettings {
 			regions.add(10000020l); //Amarr: Tash-Murkon
 			regions.add(10000038l); //Amarr: The Bleak Lands
 		}
-		if (region.equals(RegionType.REGION_ALL_GALLENTE)){
+		if (regionType.equals(RegionType.REGION_ALL_GALLENTE)){
 			regions.add(10000064l); //Gallente: Essence
 			regions.add(10000037l); //Gallente: Everyshore
 			regions.add(10000048l); //Gallente: Placid
@@ -367,86 +381,86 @@ public class PriceDataSettings {
 			regions.add(10000044l); //Gallente: Solitude
 			regions.add(10000068l); //Gallente: Verge Vendor
 		}
-		if (region.equals(RegionType.REGION_ALL_MINMATAR)){
+		if (regionType.equals(RegionType.REGION_ALL_MINMATAR)){
 			regions.add(10000042l); //Minmatar : Metropolis
 			regions.add(10000030l); //Minmatar : Heimatar
 			regions.add(10000028l); //Minmatar : Molden Heath
 		}
-		if (region.equals(RegionType.REGION_ALL_CALDARI)){
+		if (regionType.equals(RegionType.REGION_ALL_CALDARI)){
 			regions.add(10000069l); //Caldari: Black Rise
 			regions.add(10000016l); //Caldari: Lonetrek
 			regions.add(10000033l); //Caldari: The Citadel
 			regions.add(10000002l); //Caldari: The Forge
 		}
-		if (region.equals(RegionType.REGION_ARIDIA)){
+		if (regionType.equals(RegionType.REGION_ARIDIA)){
 			//Amarr: Aridia
 			regions.add(10000054l);
 		}
-		if (region.equals(RegionType.REGION_DEVOID)){
+		if (regionType.equals(RegionType.REGION_DEVOID)){
 			//Amarr: Devoid
 			regions.add(10000036l);
 		}
-		if (region.equals(RegionType.REGION_DOMAIN)){
+		if (regionType.equals(RegionType.REGION_DOMAIN)){
 			regions.add(10000043l); //Amarr: Domain
 		}
-		if (region.equals(RegionType.REGION_GENESIS)){
+		if (regionType.equals(RegionType.REGION_GENESIS)){
 			regions.add(10000067l); //Amarr: Genesis
 		}
-		if (region.equals(RegionType.REGION_KADOR)){
+		if (regionType.equals(RegionType.REGION_KADOR)){
 			regions.add(10000052l); //Amarr: Kador
 		}
-		if (region.equals(RegionType.REGION_KOR_AZOR)){
+		if (regionType.equals(RegionType.REGION_KOR_AZOR)){
 			regions.add(10000065l); //Amarr: Kor-Azor
 		}
-		if (region.equals(RegionType.REGION_TASH_MURKON)){
+		if (regionType.equals(RegionType.REGION_TASH_MURKON)){
 			regions.add(10000020l); //Amarr: Tash-Murkon
 		}
-		if (region.equals(RegionType.REGION_THE_BLEAK_LANDS)){
+		if (regionType.equals(RegionType.REGION_THE_BLEAK_LANDS)){
 			regions.add(10000038l); //Amarr: The Bleak Lands
 		}
-		if (region.equals(RegionType.REGION_BLACK_RISE)){
+		if (regionType.equals(RegionType.REGION_BLACK_RISE)){
 			regions.add(10000069l); //Caldari: Black Rise
 		}
-		if (region.equals(RegionType.REGION_LONETREK)){
+		if (regionType.equals(RegionType.REGION_LONETREK)){
 			regions.add(10000016l); //Caldari: Lonetrek
 		}
-		if (region.equals(RegionType.REGION_THE_CITADEL)){
+		if (regionType.equals(RegionType.REGION_THE_CITADEL)){
 			regions.add(10000033l); //Caldari: The Citadel
 		}
-		if (region.equals(RegionType.REGION_THE_FORGE)){
+		if (regionType.equals(RegionType.REGION_THE_FORGE)){
 			regions.add(10000002l); //Caldari: The Forge
 		}
-		if (region.equals(RegionType.REGION_ESSENCE)){
+		if (regionType.equals(RegionType.REGION_ESSENCE)){
 			regions.add(10000064l); //Gallente: Essence
 		}
-		if (region.equals(RegionType.REGION_EVERYSHORE)){
+		if (regionType.equals(RegionType.REGION_EVERYSHORE)){
 			regions.add(10000037l); //Gallente: Everyshore
 		}
-		if (region.equals(RegionType.REGION_PLACID)){
+		if (regionType.equals(RegionType.REGION_PLACID)){
 			regions.add(10000048l); //Gallente: Placid
 		}
-		if (region.equals(RegionType.REGION_SINQ_LAISON)){
+		if (regionType.equals(RegionType.REGION_SINQ_LAISON)){
 			regions.add(10000032l); //Gallente: Sinq Laison
 		}
-		if (region.equals(RegionType.REGION_SOLITUDE)){
+		if (regionType.equals(RegionType.REGION_SOLITUDE)){
 			regions.add(10000044l); //Gallente: Solitude
 		}
-		if (region.equals(RegionType.REGION_VERGE_VENDOR)){
+		if (regionType.equals(RegionType.REGION_VERGE_VENDOR)){
 			regions.add(10000068l); //Gallente: Verge Vendor
 		}
-		if (region.equals(RegionType.REGION_METROPOLIS)){
+		if (regionType.equals(RegionType.REGION_METROPOLIS)){
 			regions.add(10000042l); //Minmatar : Metropolis
 		}
-		if (region.equals(RegionType.REGION_HEIMATAR)){
+		if (regionType.equals(RegionType.REGION_HEIMATAR)){
 			regions.add(10000030l); //Minmatar : Heimatar
 		}
-		if (region.equals(RegionType.REGION_MOLDEN_HEATH)){
+		if (regionType.equals(RegionType.REGION_MOLDEN_HEATH)){
 			regions.add(10000028l); //Minmatar : Molden Heath
 		}
-		if (region.equals(RegionType.REGION_DERELIK)){
+		if (regionType.equals(RegionType.REGION_DERELIK)){
 			regions.add(10000001l); //Ammatar: Derelik
 		}
-		if (region.equals(RegionType.REGION_KHANID)){
+		if (regionType.equals(RegionType.REGION_KHANID)){
 			regions.add(10000049l); //Khanid: Khanid
 		}
 		return regions;
