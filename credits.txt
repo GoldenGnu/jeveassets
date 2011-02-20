@@ -62,12 +62,12 @@ Link:
   http://eve-central.com/
 
 ________________________________________________________________________________
-_EVE-METRICS____________________________________________________________________
+_EVE-MARKETDATA_________________________________________________________________
 
-jEveAssets use eve-metrics API to get price data
+jEveAssets use eve-marketdata.com API to get price data
 
 Link:
-  http://www.eve-metrics.com/
+  http://eve-marketdata.com/
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
@@ -199,7 +199,7 @@ License:
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009, 2010 Contributors (see above)
+Copyright 2009, 2010, 2011 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

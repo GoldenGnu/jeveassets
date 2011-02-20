@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.6.4__________________________________________________________________________
+
+Bug Fixes:
+-Fixed missing buttons in the import dialog (Mac Only)
+-Fixed crash bug in the Industry Jobs tool (When sorting by Activity or Status)
+-Fixed meta column sorting
+-Fixed bug that made upgrading from very early version impossible
+
+Changed:
+-Removed Eve-Metrics and Added Eve-Marketdata
+-Updated static data to Incursion 1.1.0.37959
+-Now use EVEAPI 3.0.0 (https!)
+-Made the yellow cell background darker
+
+________________________________________________________________________________
 _1.6.3__________________________________________________________________________
 
 Bug Fixes:
