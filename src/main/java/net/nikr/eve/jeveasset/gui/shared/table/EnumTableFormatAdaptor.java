@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.gui.WritableTableFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Candle
  */
-public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> implements AdvancedTableFormat<Q> {
+public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
 	private static final Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 
 	List<T> shownColumns;
@@ -113,6 +114,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 	@Override public Object getColumnValue(Q e, int i) {
 		return getColumn(i).getColumnValue(e);
 	}
+
+
+	//XXX Workaround for JSeparatorTable
+	@Override public boolean isEditable(Q baseObject, int column) { return false; }
+	@Override public Q setColumnValue(Q baseObject, Object editedValue, int column) { return null; }
 
 	class ColumnComparator implements Comparator<T>{
 
