@@ -216,7 +216,7 @@ public class ApiIdConverter {
 		}
 		return -1;
 	}
-	//PENDING Make Test for ApiIdConverter.solarSystem(...)
+
 	public static String systemName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
