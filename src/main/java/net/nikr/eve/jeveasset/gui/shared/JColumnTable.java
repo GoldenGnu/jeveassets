@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -95,14 +95,14 @@ public class JColumnTable extends JTable {
 
 		//Table Button
 		jColumnsSelection = new JDropDownButton(JDropDownButton.RIGHT);
-		jColumnsSelection.setIcon(Images.ICON_ARROW_DOWN);
+		jColumnsSelection.setIcon(Images.TABLE_COLUMN_SETTINGS.getIcon());
 		jColumnsSelection.setHorizontalAlignment(SwingConstants.RIGHT);
 		jColumnsSelection.setBorder(null);
 		jColumnsSelection.addMouseListener(listenerClass);
 
 		//Table Menu
 		jColumnMenu = new JMenu(GuiShared.get().columns());
-		jColumnMenu.setIcon(Images.ICON_TABLE_SHOW);
+		jColumnMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
 
 		//Table Scrollpanel
 		jTableScroll = new JScrollPane(this);
@@ -207,7 +207,7 @@ public class JColumnTable extends JTable {
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().autoText());
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.TABLE_COLUMN_RESIZE.getIcon());
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_TEXT);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
 		jRadioButtonMenuItem.setSelected(columnTableSettings.getMode().equals(ResizeMode.TEXT));
@@ -215,7 +215,7 @@ public class JColumnTable extends JTable {
 		jComponent.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().autoWindow());
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.TABLE_COLUMN_RESIZE.getIcon());
 		jRadioButtonMenuItem.setActionCommand(ACTION_AUTO_RESIZING_COLUMNS_WINDOW);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
 		jRadioButtonMenuItem.setSelected(columnTableSettings.getMode().equals(ResizeMode.WINDOW));
@@ -223,7 +223,7 @@ public class JColumnTable extends JTable {
 		jComponent.add(jRadioButtonMenuItem);
 
 		jRadioButtonMenuItem = new JRadioButtonMenuItem(GuiShared.get().disable());
-		jRadioButtonMenuItem.setIcon(Images.ICON_TABLE_RESIZE);
+		jRadioButtonMenuItem.setIcon(Images.TABLE_COLUMN_RESIZE.getIcon());
 		jRadioButtonMenuItem.setActionCommand(ACTION_DISABLE_AUTO_RESIZING_COLUMNS);
 		jRadioButtonMenuItem.addActionListener(listenerClass);
 		jRadioButtonMenuItem.setSelected(!columnTableSettings.getMode().equals(ResizeMode.TEXT) && !columnTableSettings.getMode().equals(ResizeMode.WINDOW));
@@ -236,7 +236,7 @@ public class JColumnTable extends JTable {
 			jCheckBoxMenuItem = new JCheckBoxMenuItem(columnName);
 			jCheckBoxMenuItem.setActionCommand(columnName);
 			jCheckBoxMenuItem.addActionListener(listenerClass);
-			jCheckBoxMenuItem.setIcon(Images.ICON_TABLE_SHOW);
+			jCheckBoxMenuItem.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
 			jCheckBoxMenuItem.setSelected(columnTableSettings.getTableColumnVisible().contains(columnName));
 			jComponent.add(jCheckBoxMenuItem);
 		}

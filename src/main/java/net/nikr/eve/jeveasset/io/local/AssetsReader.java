@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -191,7 +191,7 @@ public class AssetsReader extends AbstractXmlReader {
 		double escrow = AttributeGetters.getDouble(element, "escrow");
 		double price = AttributeGetters.getDouble(element, "price");
 		int bid = AttributeGetters.getInt(element, "bid");
-		Date issued = AttributeGetters.getDateFromLong(element, "issued");
+		Date issued = AttributeGetters.getDate(element, "issued");
 		apiMarketOrder.setOrderID(orderID);
 		apiMarketOrder.setCharID(charID);
 		apiMarketOrder.setStationID(stationID);
@@ -252,16 +252,16 @@ public class AssetsReader extends AbstractXmlReader {
 		int outputTypeID = AttributeGetters.getInt(element, "outputtypeid");
 		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");
 		long installedItemCopy = AttributeGetters.getLong(element, "installeditemcopy");
-		int completed = AttributeGetters.getInt(element, "completed");
-		boolean completedSuccessfully = 1 == AttributeGetters.getInt(element, "completedsuccessfully");
+		boolean completed = AttributeGetters.getBoolean(element, "completed");
+		boolean completedSuccessfully = AttributeGetters.getBoolean(element, "completedsuccessfully");
 		int installedItemFlag = AttributeGetters.getInt(element, "installeditemflag");
 		int outputFlag = AttributeGetters.getInt(element, "outputflag");
 		int activityID = AttributeGetters.getInt(element, "activityid");
 		int completedStatus = AttributeGetters.getInt(element, "completedstatus");
-		Date installTime = AttributeGetters.getDateFromLong(element, "installtime");
-		Date beginProductionTime = AttributeGetters.getDateFromLong(element, "beginproductiontime");
-		Date endProductionTime = AttributeGetters.getDateFromLong(element, "endproductiontime");
-		Date pauseProductionTime = AttributeGetters.getDateFromLong(element, "pauseproductiontime");
+		Date installTime = AttributeGetters.getDate(element, "installtime");
+		Date beginProductionTime = AttributeGetters.getDate(element, "beginproductiontime");
+		Date endProductionTime = AttributeGetters.getDate(element, "endproductiontime");
+		Date pauseProductionTime = AttributeGetters.getDate(element, "pauseproductiontime");
 		long assemblyLineId = AttributeGetters.getLong(element, "assemblylineid");
 
 		apiIndustryJob.setJobID(jobID);
@@ -286,7 +286,7 @@ public class AssetsReader extends AbstractXmlReader {
 		apiIndustryJob.setOutputTypeID(outputTypeID);
 		apiIndustryJob.setContainerTypeID(containerTypeID);
 		apiIndustryJob.setInstalledItemCopy(installedItemCopy);
-		apiIndustryJob.setCompletedStatus(completed);
+		apiIndustryJob.setCompleted(completed);
 		apiIndustryJob.setCompletedSuccessfully(completedSuccessfully);
 		apiIndustryJob.setInstalledItemFlag(installedItemFlag);
 		apiIndustryJob.setOutputFlag(outputFlag);

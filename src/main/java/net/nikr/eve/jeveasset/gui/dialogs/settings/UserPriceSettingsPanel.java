@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,52 +21,79 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Map;
-import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class UserPriceSettingsPanel extends JUserListPanel<Integer, UserPrice> {
+public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
-	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NUMBERS_ONLY,
-				DialoguesSettings.get().pricePrice(),
-				DialoguesSettings.get().priceAssets(),
+	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, DefaultMutableTreeNode parentNode) {
+		super(program, optionsDialog, Images.SETTINGS_USER_PRICE.getIcon(), parentNode,
 				DialoguesSettings.get().pricePrices(),
+				DialoguesSettings.get().pricePrice(),
 				DialoguesSettings.get().priceInstructions()
 				);
 	}
 
 	@Override
-	protected Map<Integer, UserPrice> getItems() {
+	protected Map<Integer, UserItem<Integer,Double>> getItems() {
 		return program.getSettings().getUserPrices();
 	}
 
 	@Override
-	protected void setItems(Map<Integer, UserPrice> items) {
+	protected void setItems(Map<Integer, UserItem<Integer,Double>> items) {
 		program.getSettings().setUserPrices(items);
 	}
 
 	@Override
-	protected UserPrice newItem(UserPrice item) {
-		return new UserPrice(item);
-	}
-
-	@Override
-	protected UserPrice valueOf(Object o) {
-		if (o instanceof UserPrice){
-			return (UserPrice) o;
+	protected Double valueOf(String value) {
+		try {
+			return Double.valueOf(value);
+		}  catch (NumberFormatException ex) {
+			return null;
 		}
-		return null;
 	}
 
 	@Override
-	protected String getDefault(UserPrice item) {
-		return String.valueOf(EveAsset.getDefaultPrice(program.getSettings().getPriceData().get(item.getTypeID())));
+	protected UserItem<Integer, Double> newUserItem(UserItem<Integer, Double> userItem) {
+		return new UserPrice(userItem);
 	}
 
+	public static class UserPrice extends UserItem<Integer, Double>{
+
+		private DecimalFormat simpleFormat  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
+
+		public UserPrice(UserItem<Integer, Double> userItem) {
+			super(userItem);
+		}
+		public UserPrice(EveAsset eveAsset) {
+			super(eveAsset.getPrice(), (eveAsset.isBlueprint() && !eveAsset.isBpo()) ? -eveAsset.getTypeID() : eveAsset.getTypeID(), eveAsset.isBlueprint() ? eveAsset.isBpo() ? eveAsset.getTypeName()+" (Original)" : eveAsset.getTypeName()+" (Copy)" : eveAsset.getTypeName());
+		}
+		public UserPrice(Double value, Integer key, String name) {
+			super(value, key, name);
+		}
+
+		@Override
+		public String toString(){
+			return getName();
+		}
+
+		@Override
+		public String getValueFormated() {
+			return simpleFormat.format(getValue());
+		}
+
+		@Override
+		public int compare(UserItem<Integer, Double> o1, UserItem<Integer, Double> o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -78,7 +78,7 @@ public class TestRouting {
 
 	  RoutingMockSettings rms = new RoutingMockSettings();
 		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(rms), null, ra);
-		frd.buildGraph(rms, new FakeProgress());
+		frd.buildTestGraph(rms);
 		List<Node> initial = frd.getNodesFromNames(waypointNames);
 		List<Node> routeBF = ra.execute(new FakeProgress(), frd.getGraph(), new ArrayList<Node>(initial));
 

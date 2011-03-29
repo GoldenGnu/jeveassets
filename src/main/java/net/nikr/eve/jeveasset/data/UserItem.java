@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,40 +22,44 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public abstract class UserListItem<K> implements Comparable<UserListItem> {
+public abstract class UserItem<K, V extends Comparable<V>> implements Comparable<UserItem<K,V>> {
 
-	private String value;
+	private V value;
+	private String name;
 	private K key;
 
-	public UserListItem(String value, K key) {
+	public UserItem(UserItem<K, V> item) {
+		this(item.getValue(), item.getKey(), item.getName());
+	}
+
+	public UserItem(V value, K key, String name) {
 		this.value = value;
 		this.key = key;
+		this.name = name;
 	}
 
 	public K getKey() {
 		return key;
 	}
 
-	public void setKey(K key) {
-		this.key = key;
-	}
-
-	public String getValue() {
+	public V getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(V value) {
 		this.value = value;
 	}
 
-	@Override
-	public int compareTo(UserListItem o) {
-		return value.compareTo(o.getValue());
+	public String getName() {
+		return name;
 	}
 
+	abstract public String getValueFormated();
+	abstract public int compare(UserItem<K,V> o1, UserItem<K,V> o2);
+
 	@Override
-	public String toString(){
-		return String.valueOf(value);
+	public int compareTo(UserItem<K,V> o) {
+		return compare(this, o);
 	}
 
 	@Override
@@ -66,8 +70,8 @@ public abstract class UserListItem<K> implements Comparable<UserListItem> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final UserListItem<?> other = (UserListItem<?>) obj;
-		if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+		final UserItem<?, ?> other = (UserItem<?, ?>) obj;
+		if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
 			return false;
 		}
 		if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
@@ -79,10 +83,8 @@ public abstract class UserListItem<K> implements Comparable<UserListItem> {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
-		hash = 29 * hash + (this.key != null ? this.key.hashCode() : 0);
+		hash = 41 * hash + (this.value != null ? this.value.hashCode() : 0);
+		hash = 41 * hash + (this.key != null ? this.key.hashCode() : 0);
 		return hash;
 	}
-
-	
 }

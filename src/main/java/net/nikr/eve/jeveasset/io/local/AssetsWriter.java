@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -195,8 +195,8 @@ public class AssetsWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "outputtypeid", String.valueOf(apiIndustryJob.getOutputTypeID()));
 			childNode.setAttributeNS(null, "containertypeid", String.valueOf(apiIndustryJob.getContainerTypeID()));
 			childNode.setAttributeNS(null, "installeditemcopy", String.valueOf(apiIndustryJob.getInstalledItemCopy()));
-			childNode.setAttributeNS(null, "completed", String.valueOf(apiIndustryJob.getCompletedStatus()));
-			childNode.setAttributeNS(null, "completedsuccessfully", apiIndustryJob.isCompletedSuccessfully() ? "1" : "0");
+			childNode.setAttributeNS(null, "completed", String.valueOf(apiIndustryJob.isCompleted()));
+			childNode.setAttributeNS(null, "completedsuccessfully", String.valueOf(apiIndustryJob.isCompletedSuccessfully()));
 			childNode.setAttributeNS(null, "installeditemflag", String.valueOf(apiIndustryJob.getInstalledItemFlag()));
 			childNode.setAttributeNS(null, "outputflag", String.valueOf(apiIndustryJob.getOutputFlag()));
 			childNode.setAttributeNS(null, "activityid", String.valueOf(apiIndustryJob.getActivityID()));

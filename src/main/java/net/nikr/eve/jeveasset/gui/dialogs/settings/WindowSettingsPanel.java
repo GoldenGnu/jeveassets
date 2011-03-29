@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -35,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -58,8 +58,8 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	JCheckBox jMaximized;
 	JButton jDefault;
 
-	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), icon);
+	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog) {
+		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), Images.SETTINGS_WINDOW.getIcon());
 
 		jAutoSave = new JRadioButton(DialoguesSettings.get().windowSaveOnExit());
 		jAutoSave.setActionCommand(ACTION_AUTO_SAVE);

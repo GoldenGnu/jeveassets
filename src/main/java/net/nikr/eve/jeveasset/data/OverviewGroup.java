@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,11 +35,21 @@ public class OverviewGroup {
 	}
 
 	public void add(OverviewLocation location){
+		if (locations.contains(location)) locations.remove(location);
 		locations.add(location);
+	}
+
+	public void addAll(List<OverviewLocation> list){
+		for (OverviewLocation location : list){
+			add(location);
+		}
 	}
 
 	public void remove(OverviewLocation location){
 		locations.remove(location);
+	}
+	public void removeAll(List<OverviewLocation> list){
+		locations.removeAll(list);
 	}
 
 	public List<OverviewLocation> getLocations() {

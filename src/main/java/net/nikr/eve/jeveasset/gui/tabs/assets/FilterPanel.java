@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -36,6 +37,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 	public final static String ACTION_REMOVE_FILTER = "ACTION_REMOVE_FILTER";
 
+	private JCheckBox jEnabled;
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
@@ -46,7 +48,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 	private EveAssetMatcherEditor eveAssetMatcherEditor;
 	
-	public FilterPanel(Program program, ToolPanel filtersPanel) {
+	public FilterPanel(Program program, ToolPanel toolPanel) {
 		super(program);
 
 		layout.setAutoCreateGaps(true);
@@ -56,26 +58,22 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 		eveAssetMatcherEditor = new EveAssetMatcherEditor(program, this);
 
+		jEnabled = eveAssetMatcherEditor.getEnabled();
+
 		jAnd = eveAssetMatcherEditor.getAnd();
-		this.getPanel().add(jAnd);
 
 		jColumn = eveAssetMatcherEditor.getColumn();
-		this.getPanel().add(jColumn);
 
 		jMode = eveAssetMatcherEditor.getMode();
-		this.getPanel().add(jMode);
 
 		jMatchColumn = eveAssetMatcherEditor.getMatchColumn();
-		this.getPanel().add(jMatchColumn);
 
 		jText = eveAssetMatcherEditor.getText();
-		this.getPanel().add(jText);
 		
 		jRemove = new JButton();
-		jRemove.setIcon(Images.ICON_DELETE);
+		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.setActionCommand(ACTION_REMOVE_FILTER);
-		jRemove.addActionListener(filtersPanel);
-		this.getPanel().add(jRemove);
+		jRemove.addActionListener(toolPanel.getListener());
 
 		this.textCompareLayout();
 	}
@@ -125,6 +123,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 		this.getPanel().remove(jText);
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -133,15 +132,14 @@ public class FilterPanel extends JGroupLayoutPanel {
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAnd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMatchColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(space, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-			)
 		);
 	}
 	private void textCompareLayout(){
@@ -149,21 +147,22 @@ public class FilterPanel extends JGroupLayoutPanel {
 		this.getPanel().remove(space);
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 150, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addGap(5)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAnd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-			)
 		);
 	}
 }

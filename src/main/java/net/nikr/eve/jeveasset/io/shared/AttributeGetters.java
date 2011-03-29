@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,23 +51,7 @@ public class AttributeGetters {
 		}
 		return attributeNode.getNodeValue();
 	}
-
-	public static Date getDateFromLong(Node node, String attributeName) {
-		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
-		if (attributeNode == null){
-			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return Settings.getGmtNow();
-		}
-		String dTemp = null;
-		try {
-			dTemp = attributeNode.getNodeValue();
-			return new Date(Long.parseLong(dTemp));
-		} catch(NumberFormatException ex){
-			LOG.warn("Failed to convert string to long (date): {} from node: {} > {}",new Object[]{dTemp, node.getNodeName(), attributeName});
-			return Settings.getGmtNow();
-		}
-	}
-
+	
 	public static Date getDate(Node node, String attributeName) {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null){
@@ -77,10 +60,18 @@ public class AttributeGetters {
 		}
 		String dTemp = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		Date date = null;
 		try {
 			dTemp = attributeNode.getNodeValue();
-			return format.parse(dTemp);
-		} catch(ParseException ex){
+			date = format.parse(dTemp);
+		} catch(ParseException ex){}
+		try {
+			dTemp = attributeNode.getNodeValue();
+			date = new Date(Long.parseLong(dTemp));
+		} catch(NumberFormatException ex){}
+		if (date != null){
+			return date;
+		} else {
 			LOG.warn("Failed to convert string to date: {} from node: {} > {}",new Object[]{dTemp, node.getNodeName(), attributeName});
 			return Settings.getGmtNow();
 		}
@@ -161,7 +152,7 @@ public class AttributeGetters {
 			return false;
 		}
 		String sTemp = attributeNode.getNodeValue();
-		return (sTemp.equals("true"));
+		return (sTemp.equals("true") || sTemp.equals("1"));
 	}
 
 

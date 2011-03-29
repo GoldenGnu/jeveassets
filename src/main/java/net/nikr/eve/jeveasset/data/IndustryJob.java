@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -210,7 +210,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setOutputTypeID(apiIndustryJob.getOutputTypeID());
 		this.setContainerTypeID(apiIndustryJob.getContainerTypeID());
 		this.setInstalledItemCopy(apiIndustryJob.getInstalledItemCopy());
-		this.setCompletedStatus(apiIndustryJob.getCompletedStatus());
+		this.setCompleted(apiIndustryJob.isCompleted());
 		this.setCompletedSuccessfully(apiIndustryJob.isCompletedSuccessfully());
 		this.setInstalledItemFlag(apiIndustryJob.getInstalledItemFlag());
 		this.setOutputFlag(apiIndustryJob.getOutputFlag());
@@ -257,10 +257,9 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		}
 		Date start = this.getBeginProductionTime();
 		Date end = this.getEndProductionTime();
-
 		switch (this.getCompletedStatus()) {
 			case 0:
-				if (this.getCompletedStatus() > 0) {
+				if (this.isCompleted()) {
 					state = IndustryJobState.STATE_FAILED;
 				} else if (start.before(Settings.getGmtNow())) {
 					if (end.before(Settings.getGmtNow())) {

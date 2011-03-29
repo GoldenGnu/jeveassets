@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -167,6 +167,8 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 			updateTask.execute();
 		} else {
 			program.updateEventList();
+			//XXX save settings after updating (if we crash later)
+			program.saveSettings();
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
 		}

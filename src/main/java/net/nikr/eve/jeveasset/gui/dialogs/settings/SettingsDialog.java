@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,7 +22,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -47,6 +46,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -68,8 +68,8 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 
 	private boolean tabSelected = false;
 
-	public SettingsDialog(Program program, Image image) {
-		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), image);
+	public SettingsDialog(Program program) {
+		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
 		settingsPanels = new HashMap<String, JSettingsPanel>();
 		icons = new HashMap<Object, Icon>();

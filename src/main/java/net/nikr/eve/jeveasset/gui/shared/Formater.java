@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -42,6 +42,7 @@ public class Formater {
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
 	private static DateFormat weekdayTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
+	private static DateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
 
 	private Formater() {
@@ -92,6 +93,9 @@ public class Formater {
 
 	public static String simpleDate(Date date){
 		return simpleDate.format(date);
+	}
+	public static String defaultDate(Object date){
+		return defaultDate.format(date);
 	}
 
 	private static boolean today(Date date){

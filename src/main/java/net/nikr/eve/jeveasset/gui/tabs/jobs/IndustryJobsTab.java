@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,7 +68,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private IndustryJobData data;
 
 	public IndustryJobsTab(Program program) {
-		super(program, TabsJobs.get().industry(), Images.ICON_TOOL_INDUSTRY_JOBS, true);
+		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);

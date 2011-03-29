@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.export;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
-import java.awt.Image;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import java.awt.event.ActionEvent;
@@ -54,6 +53,7 @@ import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
@@ -180,8 +180,8 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		abstract String getI18N();
 	}
 
-	public CsvExportDialog(Program program, Image image) {
-		super(program, DialoguesCsvExport.get().csvExport(), image);
+	public CsvExportDialog(Program program) {
+		super(program, DialoguesCsvExport.get().csvExport(), Images.DIALOG_CSV_EXPORT.getImage());
 
 		try {
 			jCsvFileChooser = new JCustomFileChooser(program, "csv");

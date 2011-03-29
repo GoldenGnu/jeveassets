@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.profile;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -45,6 +44,7 @@ import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Profile;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
@@ -73,8 +73,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private JWait jWait;
 	private JValidatedInputDialog jValidatedInputDialog;
 
-	public ProfileDialog(Program program, Image image) {
-		super(program, DialoguesProfiles.get().profiles(), image);
+	public ProfileDialog(Program program) {
+		super(program, DialoguesProfiles.get().profiles(), Images.DIALOG_PROFILES.getImage());
 
 		jWait = new JWait(this.getDialog());
 		jValidatedInputDialog = new JValidatedInputDialog(program, this);

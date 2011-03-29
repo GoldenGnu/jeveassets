@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Date;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
@@ -42,6 +43,7 @@ import net.nikr.eve.jeveasset.data.ISK;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.shared.JColumnTable.TableColumnUtil;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
@@ -81,6 +83,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
+		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(Quantity.class, new NumberToStringCellRenderer());
 		this.setDefaultRenderer(ISK.class, new NumberToStringCellRenderer());
 		this.setDefaultRenderer(ModulePriceValue.class, new NumberToStringCellRenderer());

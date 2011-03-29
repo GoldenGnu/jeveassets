@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,7 +46,7 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 	public JMenuCopy(JTable jTable) {
 		super(GuiShared.get().copy());
 		this.jTable = jTable;
-		this.setIcon(Images.ICON_COPY);
+		this.setIcon(Images.EDIT_COPY.getIcon());
 		this.setActionCommand(ACTION_COPY);
 		this.addActionListener(this);
 	}

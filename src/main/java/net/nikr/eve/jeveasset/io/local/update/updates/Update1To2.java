@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -104,8 +104,10 @@ public class Update1To2 implements LocalUpdate {
 		for (Iterator iter = results.iterator(); iter.hasNext();) {
 			Element elem = (Element) iter.next();
 			Attribute attr = elem.attribute("defaultprice");
-			String currentValue = attr.getText();
-			attr.setText(convertDefaultPriceMode(currentValue));
+			if (attr != null){ //May not exist (in early versions)
+				String currentValue = attr.getText();
+				attr.setText(convertDefaultPriceMode(currentValue));
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,7 +25,6 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
 import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +32,6 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
-import org.xml.sax.SAXException;
 
 
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {

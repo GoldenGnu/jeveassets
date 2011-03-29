@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,189 +23,162 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Map.Entry;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.UserListItem;
-import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.data.UserItem;
 
 
-public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSettingsPanel implements ActionListener, FocusListener {
+public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettingsPanel {
 
-	public final static String ACTION_DEFAULT = "ACTION_DEFAULT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";
-	public final static String ACTION_SELECTED = "ACTION_SELECTED";
-
-	public final static int FILTER_NO_RESTRICTIONS = 0;
-	public final static int FILTER_WORDS_ONLY = 1;
-	public final static int FILTER_INTEGERS_ONLY = 2;
-	public final static int FILTER_NUMBERS_ONLY = 3;
-
+	public final static String ACTION_EDIT = "ACTION_EDIT";
 
 	private JComboBox jItems;
-	private JTextField jItem;
-	private JButton jDefault;
+	private JButton jEdit;
 	private JButton jDelete;
 
-	private Map<K, I> items;
-	private I lastItem = null;
-	private I newItem = null;
+	private Map<K, UserItem<K,V>> items;
+	private List<UserItem<K,V>> listItems;
+	private String type;
 
-
-
-	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode, int filter, String title, String list, String item, String help) {
+	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode, String title, String type, String help) {
 		super(program, optionsDialog, title, icon, parentNode);
+		this.type = type;
 
-		JLabel jSetPriceLable = new JLabel(list+":");
+		ListenerClass listener = new ListenerClass();
+
 		jItems = new JComboBox();
-		jItems.setActionCommand(ACTION_SELECTED);
-		jItems.addActionListener(this);
 
-		JLabel jPriceLable = new JLabel(item+":");
-		jItem = new JTextField();
-		switch (filter){
-			case FILTER_WORDS_ONLY:
-				jItem.setDocument( DocumentFactory.getWordPlainDocument() );
-				break;
-			case FILTER_INTEGERS_ONLY:
-				jItem.setDocument( DocumentFactory.getIntegerPlainDocument() );
-				break;
-			case FILTER_NUMBERS_ONLY:
-				jItem.setDocument( DocumentFactory.getDoublePlainDocument() );
-				break;
-			case FILTER_NO_RESTRICTIONS:
-			default:
-				jItem.setDocument( new PlainDocument() );
-		}
-		JCopyPopup.install(jItem);
-		jItem.addFocusListener(this);
-		//jPanel.add(jItem);
+		jEdit = new JButton("Edit");
+		jEdit.setActionCommand(ACTION_EDIT);
+		jEdit.addActionListener(listener);
 
 		jDelete = new JButton("Delete");
 		jDelete.setActionCommand(ACTION_DELETE);
-		jDelete.addActionListener(this);
-		//jPanel.add(jDelete);
-
-		jDefault = new JButton("Default");
-		jDefault.setActionCommand(ACTION_DEFAULT);
-		jDefault.addActionListener(this);
-		//jPanel.add(jDefault);
+		jDelete.addActionListener(listener);
 
 		JTextArea jHelp = new JTextArea(help);
 		jHelp.setEditable(false);
 		jHelp.setFocusable(false);
 		jHelp.setOpaque(false);
-		jHelp.setFont(jSetPriceLable.getFont() );
+		jHelp.setFont(jPanel.getFont());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(jItems)
 				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jPriceLable)
-						.addComponent(jSetPriceLable)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jItems, 200, 200, 200)
-						.addComponent(jItem, 200, 200, 200)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jDelete, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-
-					)
+					.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jDelete, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 				.addComponent(jHelp)
-
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jItems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jSetPriceLable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jItems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jPriceLable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jItem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jHelp)
 		);
 	}
 
-	protected abstract Map<K, I> getItems();
-	protected abstract void setItems(Map<K, I> items);
-	protected abstract I newItem(I item);
-	protected abstract I valueOf(Object o);
-	protected abstract String getDefault(I item);
-	
+	abstract protected Map<K, UserItem<K,V>> getItems();
+	abstract protected void setItems(Map<K, UserItem<K,V>> items);
+	abstract protected V valueOf(String value) ;
+	abstract protected UserItem<K,V> newUserItem(UserItem<K,V> userItem);
+
 	private void setEnabledAll(boolean b){
 		jItems.setEnabled(b);
-		jItem.setEnabled(b);
-		jDefault.setEnabled(b);
+		jEdit.setEnabled(b);
 		jDelete.setEnabled(b);
 	}
 
-	private void updateItem(){
-		if (lastItem != null){
-			lastItem.setValue(jItem.getText());
-			//updating last UserPrice
-			if (items.containsKey(lastItem.getKey())){
-				items.remove(lastItem.getKey());
+	public void edit(UserItem<K,V> userItem){
+		edit(userItem, true);
+	}
+
+	private void edit(UserItem<K,V> userItem, boolean save){
+		edit(userItem, save, null);
+	}
+
+	private void edit(UserItem<K,V> userItem, boolean save, String oldValue){
+		if (save) load();
+		String value = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit "+type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
+		if (value != null){
+			V v = valueOf(value);
+			if (v != null){
+				//Add if needed
+				if (!items.containsKey(userItem.getKey())){
+					items.put(userItem.getKey(), userItem);
+					listItems.add(userItem);
+				}
+				//Update Value
+				userItem.setValue(v);
+				//Update GUI
+				updateGUI();
+				if (save){ //Save (if not in setttings dialog)
+					boolean update = save();
+					if (update) program.updateEventList();
+				}
+			} else {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Input not valid", "Bad input", JOptionPane.PLAIN_MESSAGE);
+				edit(userItem, save, value);
 			}
-			items.put(lastItem.getKey(), lastItem);
 		}
 	}
 
-	private void update(){
-		Vector<I> names = new Vector<I>();
-		lastItem = null;
-		for (Map.Entry<K, I> entry : items.entrySet()){
-			I item = entry.getValue();
-			names.add(item);
+	public void delete(UserItem<K,V> userItem){
+		delete(userItem, true);
+	}
+
+	private void delete(UserItem<K,V> userItem, boolean save){
+		if (save) load();
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName()+"\n["+userItem.getValueFormated()+"]", "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (value == JOptionPane.OK_OPTION){
+			items.remove(userItem.getKey());
+			listItems.remove(userItem);
+			updateGUI();
+			if (save){
+				boolean update = save();
+				if (update) program.updateEventList();
+			}
 		}
-		Collections.sort(names);
-		if (!items.isEmpty()){
-			lastItem = names.get(0);
-			jItems.setModel( new DefaultComboBoxModel(names) );
-			jItem.setText(lastItem.getValue());
-			setEnabledAll(true);
-		} else {
-			jItems.setModel( new DefaultComboBoxModel() );
-			jItems.addItem("No values found");
-			jItem.setText("");
+	}
+
+	private void updateGUI(){
+		if (items.isEmpty()){
 			setEnabledAll(false);
+			jItems.setModel( new DefaultComboBoxModel() );
+			jItems.getModel().setSelectedItem("Empty");
+		} else {
+			setEnabledAll(true);
+			Collections.sort(listItems);
+			jItems.setModel( new DefaultComboBoxModel(listItems.toArray()) );
 		}
-	}
-
-	public void setNewItem(I newItem){
-		this.newItem = newItem;
 	}
 
 	@Override
 	public boolean save() {
-		updateItem();
 		boolean update = !getItems().equals(items);
 		//Update Settings
 		setItems(items);
 		//Update this
 		int selected = jItems.getSelectedIndex();
-		load();
+		if (update) load();
 		if (selected >= 0) jItems.setSelectedIndex(selected);
 		//Update table if needed
 		return update;
@@ -213,61 +186,28 @@ public abstract class JUserListPanel<K, I extends UserListItem<K>> extends JSett
 
 	@Override
 	public void load(){
-		//Clear temp settings
-		items = new HashMap<K, I>();
-		if (newItem != null
-						&& !getItems().containsKey(newItem.getKey())){
-			items.put(newItem.getKey(), newItem);
+		items = new HashMap<K, UserItem<K,V>>();
+		listItems = new ArrayList<UserItem<K,V>>();
+		for (Entry<K, UserItem<K,V>> entry : getItems().entrySet()){
+			UserItem<K,V> userItem = newUserItem(entry.getValue());
+			items.put(entry.getKey(), userItem);
+			listItems.add(userItem);
 		}
-		for (Map.Entry<K, I> entry : getItems().entrySet()){
-			I item = newItem(entry.getValue());
-			items.put(item.getKey(), item);
-		}
-		update();
-		if (newItem != null){
-			jItems.setSelectedItem(newItem);
-		}
-		this.newItem = null;
+		updateGUI();
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_DEFAULT.equals(e.getActionCommand())){
-			I item = valueOf(jItems.getSelectedItem());
-			jItem.setText( getDefault(item) );
-		}
-		if (ACTION_DELETE.equals(e.getActionCommand())){
-			I item = valueOf(jItems.getSelectedItem());
-			if (items.containsKey(item.getKey())){
-				items.remove(item.getKey());
+	private class ListenerClass implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_DELETE.equals(e.getActionCommand())){
+				int index = jItems.getSelectedIndex();
+				if (index >= 0) delete(listItems.get(index), false);
 			}
-			update();
-		}
-		if (ACTION_SELECTED.equals(e.getActionCommand())){
-			I item = valueOf(jItems.getSelectedItem());
-			if (item == null) return;
-			if (items.containsKey(item.getKey())){
-				item = items.get(item.getKey());
+			if (ACTION_EDIT.equals(e.getActionCommand())){
+				int index = jItems.getSelectedIndex();
+				if (index >= 0) edit(listItems.get(index), false);
 			}
-			if (!lastItem.equals(item)){
-				updateItem();
-				lastItem = item;
-			}
-			jItem.setText(item.getValue());
 		}
 	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		if (jItem.equals(e.getSource())){
-			jItem.selectAll();
-		}
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-
-	}
-
-
 }

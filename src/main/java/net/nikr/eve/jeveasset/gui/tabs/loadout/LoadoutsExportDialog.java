@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -54,7 +54,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	private LoadoutsTab loadoutsDialog;
 
 	public LoadoutsExportDialog(Program program, LoadoutsTab loadoutsDialog) {
-		super(program, TabsLoadout.get().export(), Images.IMAGE_DIALOG_LOADOUT_EXPORT);
+		super(program, TabsLoadout.get().export(), Images.TOOL_SHIP_LOADOUTS.getImage());
 		this.loadoutsDialog = loadoutsDialog;
 
 		JLabel jNameLabel = new JLabel(TabsLoadout.get().name());

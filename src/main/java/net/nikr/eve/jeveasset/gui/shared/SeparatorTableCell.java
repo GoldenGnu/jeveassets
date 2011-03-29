@@ -57,11 +57,11 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
 
-		jExpand = new JButton(Images.ICON_EXPANDED);
+		jExpand = new JButton(Images.MISC_EXPANDED.getIcon());
 		jExpand.setOpaque(false);
 		jExpand.setContentAreaFilled(false);
 		jExpand.setBorder(EMPTY_TWO_PIXEL_BORDER);
-		jExpand.setIcon(Images.ICON_EXPANDED);
+		jExpand.setIcon(Images.MISC_EXPANDED.getIcon());
 		jExpand.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -91,7 +91,7 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		if (value instanceof SeparatorList.Separator<?>){
 			this.row = row;
 			this.separator = (SeparatorList.Separator<?>)value;
-			jExpand.setIcon(separator.getLimit() == 0 ? Images.ICON_EXPANDED : Images.ICON_COLLAPSED);
+			jExpand.setIcon(separator.getLimit() == 0 ? Images.MISC_EXPANDED.getIcon() : Images.MISC_COLLAPSED.getIcon());
 			configure(separator);
 			jTable.setRowHeight(row, jPanel.getPreferredSize().height);
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -104,8 +104,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	public String getExpireIn(){
-		long timeRemaining;
-		timeRemaining = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
+		long timeRemaining = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
 		if (timeRemaining > 0){
 			//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
 			long min = (timeRemaining/(1000*60)) % 60;

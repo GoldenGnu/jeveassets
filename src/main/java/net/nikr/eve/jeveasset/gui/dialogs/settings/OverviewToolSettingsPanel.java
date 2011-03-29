@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,10 +22,10 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -33,8 +33,8 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 
 	private JCheckBox jIgnoreSecureContainers;
 
-	public OverviewToolSettingsPanel(Program program, SettingsDialog settingsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, DialoguesSettings.get().overview(), icon, parentNode);
+	public OverviewToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
+		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon(), parentNode);
 		jIgnoreSecureContainers = new JCheckBox(DialoguesSettings.get().ignoreAuditLogContainers());
 
 		layout.setHorizontalGroup(

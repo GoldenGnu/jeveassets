@@ -1,5 +1,5 @@
 /* 
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,8 +34,6 @@ import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.export.CsvExportDialog;
@@ -47,8 +45,10 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu;
@@ -77,10 +77,10 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "1.6.2";
+	public static final String PROGRAM_VERSION = "1.6.4";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
-	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/?page=jeveasset";
+	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
 
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
@@ -120,7 +120,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
 	private UserPriceSettingsPanel userPriceSettingsPanel;
-	private UserItemNameSettingsPanel userItemNameSettingsPanel;
+	private UserNameSettingsPanel userNameSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
 	private AssetsToolSettingsPanel assetsToolSettingsPanel;
@@ -157,6 +157,8 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	//GUI
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
+		LOG.info("Loading: Images");
+		Images.preload();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);
@@ -192,55 +194,55 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		saveFilterDialog = new SaveFilterDialog(this);
 		SplashUpdater.setProgress(74);
 		LOG.info("Loading: Filters Manager Dialog");
-		filtersManagerDialog = new FiltersManagerDialog(this, Images.IMAGE_FOLDER);
+		filtersManagerDialog = new FiltersManagerDialog(this);
 		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Account Manager Dialog");
-		accountManagerDialog = new AccountManagerDialog(this, Images.IMAGE_DIALOG_ACCOUNT_MANAGER);
+		accountManagerDialog = new AccountManagerDialog(this);
 		SplashUpdater.setProgress(78);
 		LOG.info("Loading: About Dialog");
-		aboutDialog = new AboutDialog(this, Images.IMAGE_DIALOG_ABOUT);
+		aboutDialog = new AboutDialog(this);
 		SplashUpdater.setProgress(80);
 		LOG.info("Loading: Csv Export Dialog");
-		csvExportDialog = new CsvExportDialog(this, Images.IMAGE_DIALOG_CSV_EXPORT);
+		csvExportDialog = new CsvExportDialog(this);
 		SplashUpdater.setProgress(82);
 		LOG.info("Loading: Profiles Dialog");
-		profileDialog = new ProfileDialog(this, Images.IMAGE_DIALOG_PROFILES);
+		profileDialog = new ProfileDialog(this);
 		SplashUpdater.setProgress(84);
 		LOG.info("Loading: Update Dialog");
-		updateDialog = new UpdateDialog(this, Images.IMAGE_DIALOG_UPDATE);
+		updateDialog = new UpdateDialog(this);
 		SplashUpdater.setProgress(86);
 	//Settings
 		LOG.info("Loading: Options Dialog");
-		settingsDialog = new SettingsDialog(this, Images.IMAGE_DIALOG_SETTINGS);
+		settingsDialog = new SettingsDialog(this);
 		SplashUpdater.setProgress(87);
 		LOG.info("Loading: General Settings Panel");
-		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog, Images.ICON_DIALOG_SETTINGS);
+		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(88);
-		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.ICON_TOOLS);
+		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
 		LOG.info("Loading: Assets Tool Settings Panel");
-		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, Images.ICON_TOOL_ASSETS, toolNode);
+		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
 		SplashUpdater.setProgress(89);
 		LOG.info("Loading: Overview Tool Settings Panel");
-		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, Images.ICON_TOOL_OVERVIEW, toolNode);
+		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
 		SplashUpdater.setProgress(90);
-		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.ICON_MODIFIED_ASSETS);
+		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
-		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_PRICE, modifiedAssetsNode);
+		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
 		SplashUpdater.setProgress(91);
 		LOG.info("Loading: Assets Name Settings Panel");
-		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_NAME, modifiedAssetsNode);
+		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
 		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Price Data Settings Panel");
-		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, Images.ICON_PRICE_DATA);
+		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(93);
 		LOG.info("Loading: Reprocessing Settings Panel");
-		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog, Images.ICON_REPROCESSING);
+		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Proxy Settings Panel");
-		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog, Images.ICON_PROXY);
+		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(95);
 		LOG.info("Loading: Window Settings Panel");
-		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog, Images.ICON_WINDOW);
+		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(96);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
@@ -383,6 +385,14 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 
 	/**
+	 * Called when Overview Groups are changed
+	 */
+	public void overviewGroupsChanged(){
+		routingTab.updateData();
+		
+	}
+
+	/**
 	 * Called when the table menu needs update
 	 */
 	public void updateTableMenu(){
@@ -442,8 +452,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			overviewTab.resetViews();
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			// XXX Although the line above should be removed for production, removing it makes the GUI flicker.
-			routingTab = new RoutingTab(this);
 			mainWindow.addTab(routingTab);
 		}
 	//Settings
@@ -456,21 +464,13 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
 			showSettings();
 		}
-		if (AssetsTab.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
+		if (AssetsTab.ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
-			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
-				JOptionPane.showMessageDialog(mainWindow.getFrame(),
-						"You can not set price for Blueprint Copies.\r\n" +
-						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			userPriceSettingsPanel.setNewItem(new UserPrice(eveAsset));
-			settingsDialog.setVisible(userPriceSettingsPanel);
+			userPriceSettingsPanel.edit(new UserPrice(eveAsset));
 		}
-		if (AssetsTab.ACTION_SET_ITEM_NAME.equals(e.getActionCommand())){
+		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
-			userItemNameSettingsPanel.setNewItem(new UserItemName(eveAsset));
-			settingsDialog.setVisible(userItemNameSettingsPanel);
+			userNameSettingsPanel.edit(new UserName(eveAsset));
 		}
 	//Others
 		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {

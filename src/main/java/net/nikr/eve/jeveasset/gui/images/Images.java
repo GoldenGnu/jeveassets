@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,122 +27,133 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import net.nikr.eve.jeveasset.SplashUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Images {
+public enum Images {
+	ASSETS_CLEAR_FIELDS ("assets_clear_fields.png"),
+	ASSETS_SAVE_FILTERS ("assets_save_filters.png"),
+	ASSETS_LOAD_FILTER ("assets_load_filter.png"),
+	ASSETS_AVERAGE ("assets_average.png"),
+	ASSETS_VOLUME ("assets_volume.png"),
+
+	DIALOG_UPDATE ("dialog_update.png"),
+	DIALOG_ACCOUNTS ("dialog_accounts.png"),
+	DIALOG_PROFILES ("dialog_profiles.png"),
+	DIALOG_SETTINGS ("dialog_settings.png"),
+	DIALOG_ABOUT ("dialog_about.png"),
+	DIALOG_CSV_EXPORT ("dialog_csv_export.png"),
+
+	EDIT_COPY ("edit_copy.png"),
+	EDIT_CUT ("edit_cut.png"),
+	EDIT_PASTE ("edit_paste.png"),
+	EDIT_EDIT ("edit_edit.png"),
+	EDIT_RENAME ("edit_rename.png"),
+	EDIT_DELETE ("edit_delete.png"),
+	EDIT_ADD ("edit_add.png"),
+
+	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
+	FILTER_CONTAIN ("filter_contain.png"),
+	FILTER_NOT_EQUAL ("filter_not_equal.png"),
+	FILTER_EQUAL ("filter_equal.png"),
+	FILTER_GREATER_THEN ("filter_greater_then.png"),
+	FILTER_GREATER_THEN_COLUMN ("filter_greater_then_column.png"),
+	FILTER_LESS_THEN ("filter_less_then.png"),
+	FILTER_LESS_THEN_COLUMN ("filter_less_then_column.png"),
+
+	LINK_LOOKUP ("link_lookup.png"),
+	LINK_EVE_MARKETS ("link_eve_markets.png"),
+	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
+	LINK_EVE_CENTRAL ("link_eve_central.png"),
+	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
+	LINK_CHRUKER ("link_chruker.png"),
+
+	LOC_GROUPS ("loc_groups.png"),
+	LOC_STATION ("loc_station.png"),
+	LOC_SYSTEM ("loc_system.png"),
+	LOC_REGION ("loc_region.png"),
+	LOC_LOCATIONS ("loc_locations.png"),
+
+	MISC_EVE ("misc_eve.png"),
+	MISC_EXIT ("misc_exit.png"),
+	MISC_HELP ("misc_help.png"),
+	MISC_EXPANDED ("misc_expanded.png"),
+	MISC_COLLAPSED ("misc_collapsed.png"),
+	MISC_ASSETS_64 ("misc_assets_64.png"),
+
+	SETTINGS_TOOLS ("settings_tools.png"),
+	SETTINGS_PRICE_DATA ("settings_price_data.png"),
+	SETTINGS_USER_PRICE ("settings_user_price.png"),
+	SETTINGS_USER_NAME ("settings_user_name.png"),
+	SETTINGS_REPROCESSING ("settings_reprocessing.png"),
+	SETTINGS_PROXY ("settings_proxy.png"),
+	SETTINGS_WINDOW ("settings_window.png"),
+
+	TAB_CLOSE ("tab_close.png"),
+	TAB_CLOSE_ACTIVE ("tab_close_active.png"),
+
+	TABLE_COLUMN_RESIZE ("table_column_resize.png"),
+	TABLE_COLUMN_SHOW ("table_column_show.png"),
+	TABLE_COLUMN_SETTINGS ("table_column_settings.png"),
+
+	TOOL_ASSETS ("tool_assets.png"),
+	TOOL_OVERVIEW ("tool_overview.png"),
+	TOOL_MARKET_ORDERS ("tool_market_orders.png"),
+	TOOL_VALUES ("tool_values.png"),
+	TOOL_INDUSTRY_JOBS ("tool_industry_jobs.png"),
+	TOOL_ROUTING ("tool_routing.png"),
+	TOOL_MATERIALS ("tool_materials.png"),
+	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),
+
+	UPDATE_NOT_STARTED ("update_not_started.png"),
+	UPDATE_WORKING ("update_working.png"),
+	UPDATE_CANCELLED ("update_cancelled.png"),
+	UPDATE_DONE_OK ("update_done_ok.png"),
+	UPDATE_DONE_SOME ("update_done_some.png"),
+	UPDATE_DONE_ERROR ("update_done_error.png"),
+	;
 
 	private static Logger LOG = LoggerFactory.getLogger(Images.class);
+	private final String filename;   // in kilograms
+	private BufferedImage image = null;
 
-	public final static Icon ICON_NOT_STARTED = Images.getIcon("bullet_black.png");
-	public final static Icon ICON_WORKING = Images.getIcon("bullet_go.png");
-	public final static Icon ICON_CANCELLED = Images.getIcon("bullet_red.png");
-	public final static Icon ICON_DONE_OK = Images.getIcon("bullet_green.png");
-	public final static Icon ICON_DONE_SOME = Images.getIcon("bullet_orange.png");
-	public final static Icon ICON_DONE_ERROR = Images.getIcon("bullet_error.png");
-
-	public final static Icon ICON_TABLE_RESIZE = Images.getIcon("application_view_detail.png");
-	public final static Icon ICON_TABLE_SHOW = Images.getIcon("application_view_columns.png");
-	public final static Icon ICON_TABLE_SAVE = Images.getIcon("table_save.png");
-
-	public final static Icon ICON_PRICE_DATA = Images.getIcon("coins.png");
-	public final static Icon ICON_USER_ITEM_PRICE = Images.getIcon("money.png");
-	public final static Icon ICON_USER_ITEM_NAME = Images.getIcon("set_name.png");
-
-	public final static Icon ICON_REPROCESSING = Images.getIcon("reprocessing.png");
-	public final static Icon ICON_PROXY = Images.getIcon("server_connect.png");
-	public final static Icon ICON_WINDOW = Images.getIcon("application.png");
-
-	public final static Icon ICON_COPY = Images.getIcon("page_copy.png");
-	public static final Icon ICON_CUT = Images.getIcon("cut.png");
-	public static final Icon ICON_PASTE = Images.getIcon("page_paste.png");
-	public static final Icon ICON_EDIT = Images.getIcon("edit.png");
-
-	
-	public final static Icon ICON_GROUPS = Images.getIcon("groups.png");
-	public final static Icon ICON_RENAME = Images.getIcon("textfield_rename.png");
-	public final static Icon ICON_DELETE = Images.getIcon("delete.png");
-	public final static Icon ICON_ADD = Images.getIcon("add.png");
-	public final static Icon ICON_STATION = Images.getIcon("station.png");
-	public final static Icon ICON_SYSTEM = Images.getIcon("system.png");
-	public final static Icon ICON_REGION = Images.getIcon("region.png");
-	public final static Icon ICON_LOCATIONS = Images.getIcon("locations.png");
-	public final static Icon ICON_UPDATE = Images.getIcon("update.png");
-	public final static Icon ICON_EVE = Images.getIcon("eve.png");
-	public final static Icon ICON_ARROW_DOWN = Images.getIcon("bullet_arrow_down.png");
-	public final static Icon ICON_TOOLS = Images.getIcon("bricks.png");
-	public final static Icon ICON_MODIFIED_ASSETS = Images.getIcon("textfield_rename.png");
-	public final static Icon ICON_EXTERNAL_LINK = Images.getIcon("world_link.png");
-	public final static Icon ICON_EVE_MARKETS = Images.getIcon("eve_markets.png");
-	public final static Icon ICON_DOTLAN_EVEMAPS = Images.getIcon("dotlan_evemaps.png");
-	public final static Icon ICON_EVE_CENTRAL = Images.getIcon("eve_central.png");
-	public final static Icon ICON_EVE_METRICS = Images.getIcon("eve_metrics.png");
-	public final static Icon ICON_CHRUKER = Images.getIcon("chruker.png");
-	public final static Icon ICON_EVE_ONLINE = Images.getIcon("eve_online.png");
-
-
-	public final static Icon ICON_NOT_CONTAIN = Images.getIcon("not_contain.png");
-	public final static Icon ICON_CONTAIN = Images.getIcon("contain.png");
-	public final static Icon ICON_NOT_EQUAL = Images.getIcon("not_equal.png");
-	public final static Icon ICON_EQUAL = Images.getIcon("equal.png");
-	public final static Icon ICON_GREATER_THEN = Images.getIcon("greater_then.png");
-	public final static Icon ICON_GREATER_THEN_COLUMN = Images.getIcon("greater_then_column.png");
-	public final static Icon ICON_LESS_THEN = Images.getIcon("less_then.png");
-	public final static Icon ICON_LESS_THEN_COLUMN = Images.getIcon("less_then_column.png");
-
-	public final static Icon ICON_AVERAGE =  Images.getIcon("shape_align_middle.png");
-	public final static Icon ICON_VOLUME =  Images.getIcon("volume.png");
-
-	public static final Icon ICON_EXPANDED =  Images.getIcon("expanded.png");
-	public static final Icon ICON_COLLAPSED = Images.getIcon("collapsed.png");
-
-	public final static Icon ICON_CLOSE = Images.getIcon("close.png");
-	public final static Icon ICON_CLOSE_ACTIVE = Images.getIcon("close_active.png");
-	public final static Icon ICON_CLOSE_CROSS = Images.getIcon("cross.png");
-	public final static Icon ICON_CLEAR = Images.getIcon("page_white.png");
-	public final static Icon ICON_SAVE = Images.getIcon("disk.png");
-	public final static Icon ICON_FOLDER = Images.getIcon("folder.png");
-
-	public final static Icon ICON_TOOL_ASSETS = Images.getIcon("safe16.png");
-	public final static Icon ICON_TOOL_OVERVIEW = Images.getIcon("icon03_13.png");
-	public final static Icon ICON_TOOL_MARKET_ORDERS = Images.getIcon("icon07_12.png");
-	public final static Icon ICON_TOOL_VALUES = Images.getIcon("icon07_02.png");
-	public final static Icon ICON_TOOL_INDUSTRY_JOBS = Images.getIcon("icon33_02.png");
-	public final static Icon ICON_TOOL_ROUTING = Images.getIcon("routing.png");
-	public final static Icon ICON_TOOL_MATERIALS = Images.getIcon("icon23_16.png");
-	public final static Icon ICON_TOOL_SHIP_LOADOUTS = Images.getIcon("icon26_02.png");
-
-	public final static Icon ICON_DIALOG_ACCOUNT_MANAGER = Images.getIcon("key.png");
-	public final static Icon ICON_DIALOG_PROFILES = Images.getIcon("profile.png");
-	public final static Icon ICON_DIALOG_SETTINGS = Images.getIcon("cog.png");
-	public final static Icon ICON_DIALOG_ABOUT = Images.getIcon("information.png");
-
-	public final static Icon ICON_TXT_HELP = Images.getIcon("help.png");
-	
-	public final static Icon ICON_JEVEASSETS64 = Images.getIcon("icon07_13.png");
-	public final static Image IMAGE_JEVEASSETS16 = Images.getImage("safe16.png");
-
-	public final static Image IMAGE_FOLDER = Images.getImage("folder.png");
-	public final static Image IMAGE_DIALOG_ACCOUNT_MANAGER = Images.getImage("key.png");
-	public final static Image IMAGE_DIALOG_ABOUT = Images.getImage("information.png");
-	public final static Image IMAGE_DIALOG_CSV_EXPORT = Images.getImage("table_save.png");
-	public final static Image IMAGE_DIALOG_PROFILES = Images.getImage("profile.png");
-	public final static Image IMAGE_DIALOG_UPDATE = Images.getImage("update.png");
-	public final static Image IMAGE_DIALOG_SETTINGS = Images.getImage("cog.png");
-	public final static Image IMAGE_DIALOG_OVERVIEW_GROUPS = Images.getImage("groups.png");
-	public final static Image IMAGE_DIALOG_LOADOUT_EXPORT = Images.getImage("icon26_02.png");
-
-
-	private Images() {
+	Images(String filename) {
+		this.filename = filename;
 	}
 
-	private static ImageIcon getIcon(String s){
-		return new ImageIcon(getBufferedImage(s));
+	public Icon getIcon(){
+		load();
+		return new ImageIcon(image);
 	}
 
-	public static Image getImage(String s) {
-		return getBufferedImage(s);
-		
+	public Image getImage() {
+		load();
+		return image;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	private boolean load(){
+		if (image == null){
+			image = getBufferedImage(filename);
+		}
+		return (image != null);
+	}
+
+	public static boolean preload(){
+		int count = 0;
+		boolean ok = true;
+		for (Images i : Images.values()){
+			if (!i.load()){
+				ok = false;
+			}
+			count++;
+			SplashUpdater.setSubProgress((int)(count * 100 / Images.values().length));
+		}
+		return ok;
 	}
 
 	public static BufferedImage getBufferedImage(String s) {

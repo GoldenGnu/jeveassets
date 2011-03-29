@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -68,6 +68,17 @@ public class TableCellRenderers {
 		@Override
 		public void setValue(Object value) {
 			setText((value == null) ? "" : Formater.floatFormat(value));
+		}
+	}
+
+	public static class DateCellRenderer extends DefaultTableCellRenderer {
+		public DateCellRenderer() {
+			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
+			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		}
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : Formater.defaultDate(value));
 		}
 	}
 	

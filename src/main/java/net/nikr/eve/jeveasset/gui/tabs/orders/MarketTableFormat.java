@@ -1,18 +1,15 @@
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
+import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
-import net.nikr.eve.jeveasset.gui.shared.TableComparators;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
-/**
- * Describes the market orders table format.
- * @author Candle
- */
+
 enum MarketTableFormat implements TableColumn<MarketOrder> {
-	NAME(String.class, TableComparators.stringComparator()) {
+	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnName();
@@ -22,7 +19,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getName();
 		}
 	},
-	QUANTITY(Quantity.class, TableComparators.quantityComparator()) {
+	QUANTITY(Quantity.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnQuantity();
@@ -32,7 +29,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getQuantity();
 		}
 	},
-	PRICE(Double.class, TableComparators.numberComparator()) {
+	PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnPrice();
@@ -42,7 +39,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getPrice();
 		}
 	},
-	EXPIRES_IN(String.class, TableComparators.stringComparator()) {
+	EXPIRES_IN(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnExpiresIn();
@@ -52,7 +49,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getExpireIn();
 		}
 	},
-	RANGE(String.class, TableComparators.stringComparator()) {
+	RANGE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnRange();
@@ -62,7 +59,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getRangeFormated();
 		}
 	},
-	STATUS(String.class, TableComparators.stringComparator()) {
+	STATUS(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnStatus();
@@ -72,7 +69,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getStatus();
 		}
 	},
-	MIN_VOLUME(Integer.class, TableComparators.numberComparator()) {
+	MIN_VOLUME(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnMinVolume();
@@ -82,7 +79,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getMinVolume();
 		}
 	},
-	LOCATION(String.class, TableComparators.stringComparator()) {
+	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnLocation();
@@ -92,7 +89,7 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 			return from.getLocation();
 		}
 	},
-	VALUE(Double.class, TableComparators.numberComparator()) {
+	VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnRemainingValue();

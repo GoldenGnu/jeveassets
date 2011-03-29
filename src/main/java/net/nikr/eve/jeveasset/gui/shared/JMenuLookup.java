@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,7 +38,7 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	private final static Logger LOG = LoggerFactory.getLogger(JMenuLookup.class);
 
 	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";
-	private static final String ACTION_BROWSE_EVE_METRICS = "ACTION_BROWSE_EVE_METRICS";
+	private static final String ACTION_BROWSE_EVE_MARKETDATA= "ACTION_BROWSE_EVE_MARKETDATA";
 	private static final String ACTION_BROWSE_EVE_MARKETS = "ACTION_BROWSE_EVE_MARKETS";
 	private static final String ACTION_BROWSE_GAMES_CHRUKER = "ACTION_BROWSE_GAMES_CHRUKER";
 	private static final String ACTION_BROWSE_EVE_ITEM_DATABASE = "ACTION_BROWSE_EVE_ITEM_DATABASE";
@@ -50,32 +50,32 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	public JMenuLookup(Program program, Object object) {
 		super(GuiShared.get().lookup(), program, object);
 		
-		this.setIcon(Images.ICON_EXTERNAL_LINK);
+		this.setIcon(Images.LINK_LOOKUP.getIcon());
 
 		JMenuItem menuItem;
 		JMenu jSubMenu;
 
 		jSubMenu = new JMenu(GuiShared.get().dotlan());
-		jSubMenu.setIcon(Images.ICON_DOTLAN_EVEMAPS);
+		jSubMenu.setIcon(Images.LINK_DOTLAN_EVEMAPS.getIcon());
 		jSubMenu.setEnabled(station != null || system != null || region != null);
 		add(jSubMenu);
 
 		menuItem = new JMenuItem(GuiShared.get().station());
-		menuItem.setIcon(Images.ICON_STATION);
+		menuItem.setIcon(Images.LOC_STATION.getIcon());
 		menuItem.setEnabled(station != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_STATION);
 		menuItem.addActionListener(this);
 		jSubMenu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiShared.get().system());
-		menuItem.setIcon(Images.ICON_SYSTEM);
+		menuItem.setIcon(Images.LOC_SYSTEM.getIcon());
 		menuItem.setEnabled(system != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM);
 		menuItem.addActionListener(this);
 		jSubMenu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiShared.get().region());
-		menuItem.setIcon(Images.ICON_REGION);
+		menuItem.setIcon(Images.LOC_REGION.getIcon());
 		menuItem.setEnabled(region != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_REGION);
 		menuItem.addActionListener(this);
@@ -84,21 +84,21 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		addSeparator();
 
 		menuItem = new JMenuItem(GuiShared.get().eveCentral());
-		menuItem.setIcon(Images.ICON_EVE_CENTRAL);
+		menuItem.setIcon(Images.LINK_EVE_CENTRAL.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_CENTRAL);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
-		menuItem = new JMenuItem(GuiShared.get().eveMetrics());
-		menuItem.setIcon(Images.ICON_EVE_METRICS);
+		menuItem = new JMenuItem(GuiShared.get().eveMarketdata());
+		menuItem.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
-		menuItem.setActionCommand(ACTION_BROWSE_EVE_METRICS);
+		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
 		menuItem = new JMenuItem(GuiShared.get().eveMarkets());
-		menuItem.setIcon(Images.ICON_EVE_MARKETS);
+		menuItem.setIcon(Images.LINK_EVE_MARKETS.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETS);
 		menuItem.addActionListener(this);
@@ -107,14 +107,14 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		addSeparator();
 
 		menuItem = new JMenuItem(GuiShared.get().chruker());
-		menuItem.setIcon(Images.ICON_CHRUKER);
+		menuItem.setIcon(Images.LINK_CHRUKER.getIcon());
 		menuItem.setEnabled(typeId != 0);
 		menuItem.setActionCommand(ACTION_BROWSE_GAMES_CHRUKER);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
 		menuItem = new JMenuItem(GuiShared.get().eveOnline());
-		menuItem.setIcon(Images.ICON_EVE_ONLINE);
+		menuItem.setIcon(Images.MISC_EVE.getIcon());
 		menuItem.setEnabled(typeId != 0);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_ITEM_DATABASE);
 		menuItem.addActionListener(this);
@@ -127,8 +127,8 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid="+typeId, program);
 		}
-		if (ACTION_BROWSE_EVE_METRICS.equals(e.getActionCommand())){
-			DesktopUtil.browse("http://eve-metrics.com/q/"+typeId, program);
+		if (ACTION_BROWSE_EVE_MARKETDATA.equals(e.getActionCommand())){
+			DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id="+typeId, program);
 		}
 		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid="+typeId, program);

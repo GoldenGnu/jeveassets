@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -64,8 +64,8 @@ public class AssetsTab extends JMainTab
 	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
-	public final static String ACTION_SET_USER_PRICE = "ACTION_SET_USER_PRICE";
-	public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
+	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
+	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";
@@ -93,7 +93,7 @@ public class AssetsTab extends JMainTab
 	private FilterList<EveAsset> filterList;
 	
 	public AssetsTab(Program program) {
-		super(program, TabsAssets.get().assets(), Images.ICON_TOOL_ASSETS, false);
+		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
@@ -127,16 +127,16 @@ public class AssetsTab extends JMainTab
 		//Filter panel(s)
 		toolPanel = new ToolPanel(program, matcherEditorManager);
 
-		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ICON_VOLUME);
+		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsAssets.get().total1(), Images.ICON_ADD); //Add
+		jCount = StatusPanel.createLabel(TabsAssets.get().total1(), Images.EDIT_ADD.getIcon()); //Add
 		this.addStatusbarLabel(jCount);
 
-		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ICON_AVERAGE);
+		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
 		this.addStatusbarLabel(jAverage);
 
-		jTotalValue = StatusPanel.createLabel(TabsAssets.get().total2(), Images.ICON_TOOL_VALUES);
+		jTotalValue = StatusPanel.createLabel(TabsAssets.get().total2(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jTotalValue);
 
 		jTablePopupMenu = new JPopupMenu();
@@ -283,7 +283,7 @@ public class AssetsTab extends JMainTab
 		JMenuItem  jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
-
+	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
 		int[] selectedColumns = jTable.getSelectedColumns();
 		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
@@ -329,39 +329,39 @@ public class AssetsTab extends JMainTab
 		}
 	//FILTER
 		jSubMenu = new JMenu(TabsAssets.get().addFilter());
-		jSubMenu.setIcon(Images.ICON_TOOL_ASSETS);
+		jSubMenu.setIcon(Images.TOOL_ASSETS.getIcon());
 		jComponent.add(jSubMenu);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN.toString());
-		jMenuItem.setIcon(Images.ICON_CONTAIN);
+		jMenuItem.setIcon(Images.FILTER_CONTAIN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
 		jMenuItem.addActionListener(this);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN_NOT.toString());
-		jMenuItem.setIcon(Images.ICON_NOT_CONTAIN);
+		jMenuItem.setIcon(Images.FILTER_NOT_CONTAIN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
 		jMenuItem.addActionListener(this);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS.toString());
-		jMenuItem.setIcon(Images.ICON_EQUAL);
+		jMenuItem.setIcon(Images.FILTER_EQUAL.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
 		jMenuItem.addActionListener(this);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS_NOT.toString());
-		jMenuItem.setIcon(Images.ICON_NOT_EQUAL);
+		jMenuItem.setIcon(Images.FILTER_NOT_EQUAL.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
 		jMenuItem.addActionListener(this);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
-		jMenuItem.setIcon(Images.ICON_GREATER_THEN);
+		jMenuItem.setIcon(Images.FILTER_GREATER_THEN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
 		jMenuItem.addActionListener(this);
@@ -372,7 +372,7 @@ public class AssetsTab extends JMainTab
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
-		jMenuItem.setIcon(Images.ICON_LESS_THEN);
+		jMenuItem.setIcon(Images.FILTER_LESS_THEN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
 		jMenuItem.addActionListener(this);
@@ -383,7 +383,7 @@ public class AssetsTab extends JMainTab
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.ICON_GREATER_THEN_COLUMN);
+		jMenuItem.setIcon(Images.FILTER_GREATER_THEN_COLUMN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
 		jMenuItem.addActionListener(this);
@@ -394,7 +394,7 @@ public class AssetsTab extends JMainTab
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.ICON_LESS_THEN_COLUMN);
+		jMenuItem.setIcon(Images.FILTER_LESS_THEN_COLUMN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
 		jMenuItem.addActionListener(this);
@@ -409,25 +409,25 @@ public class AssetsTab extends JMainTab
 
 	//EDIT
 		jSubMenu = new JMenu(TabsAssets.get().edit());
-		jSubMenu.setIcon(Images.ICON_EDIT);
+		jSubMenu.setIcon(Images.EDIT_EDIT.getIcon());
 		jComponent.add(jSubMenu);
 
 		jMenuItem = new JMenuItem(TabsAssets.get().price());
-		jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
+		jMenuItem.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
 		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
+		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(TabsAssets.get().name());
-		jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
+		jMenuItem.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
+		jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
 		jCheckBoxMenuItem = new JCheckBoxMenuItem(TabsAssets.get().blueprint());
-		jCheckBoxMenuItem.setIcon(Images.ICON_TOOL_INDUSTRY_JOBS);
+		jCheckBoxMenuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		jCheckBoxMenuItem.setEnabled(isBlueprints);
 		jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
 		jCheckBoxMenuItem.addActionListener(this);
@@ -439,7 +439,7 @@ public class AssetsTab extends JMainTab
 			addSeparator(jComponent);
 
 			jMenuItem = new JMenuItem(TabsAssets.get().selection());
-			jMenuItem.setDisabledIcon(Images.ICON_DIALOG_ABOUT);
+			jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
 			jMenuItem.setEnabled(false);
 			jComponent.add(jMenuItem);
 
@@ -460,25 +460,25 @@ public class AssetsTab extends JMainTab
 			}
 
 			jMenuItem = new JMenuItem(Formater.iskFormat(total));
-			jMenuItem.setDisabledIcon(Images.ICON_TOOL_VALUES);
+			jMenuItem.setDisabledIcon(Images.TOOL_VALUES.getIcon());
 			jMenuItem.setEnabled(false);
 			jMenuItem.setToolTipText(TabsAssets.get().value());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.iskFormat(total/count) );
-			jMenuItem.setDisabledIcon(Images.ICON_AVERAGE);
+			jMenuItem.setDisabledIcon(Images.ASSETS_AVERAGE.getIcon());
 			jMenuItem.setEnabled(false);
 			jMenuItem.setToolTipText(TabsAssets.get().average1());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.itemsFormat(count));
-			jMenuItem.setDisabledIcon(Images.ICON_ADD);
+			jMenuItem.setDisabledIcon(Images.EDIT_ADD.getIcon());
 			jMenuItem.setEnabled(false);
 			jMenuItem.setToolTipText(TabsAssets.get().count());
 			jComponent.add(jMenuItem);
 
 			jMenuItem = new JMenuItem( Formater.doubleFormat(volume));
-			jMenuItem.setDisabledIcon(Images.ICON_VOLUME);
+			jMenuItem.setDisabledIcon(Images.ASSETS_VOLUME.getIcon());
 			jMenuItem.setEnabled(false);
 			jMenuItem.setToolTipText(TabsAssets.get().volume());
 			jComponent.add(jMenuItem);

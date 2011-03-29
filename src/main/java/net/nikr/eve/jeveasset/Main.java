@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  * 
  * This file is part of jEveAssets.
  *
@@ -105,7 +105,10 @@ public class Main {
 		Program.setForceNoUpdate(hasNoUpdate && Program.isDebug());
 		Program.setForceUpdate(hasUpdate && Program.isDebug());
 
-		//FIXME Workaround for default Danish language
+		File f = new File("");
+		LOG.info(f.getPath());
+
+		//XXX Workaround for default language
 		BundleCache.setThreadLocale(Locale.ENGLISH);
 
 		// fix the uncaught exception handlers

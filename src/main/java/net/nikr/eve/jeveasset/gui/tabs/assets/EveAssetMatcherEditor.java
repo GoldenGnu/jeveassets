@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,12 +23,15 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -41,12 +44,14 @@ import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 
 
-public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> implements ActionListener, DocumentListener, KeyListener{
+public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 
 	public final static String ACTION_COLUMN_SELECTED = "ACTION_COLUMN_SELECTED";
 	public final static String ACTION_MODE_SELECTED = "ACTION_MODE_SELECTED";
 	public final static String ACTION_TIMER = "ACTION_TIMER";
+	private final static String ACTION_ENABLED = "ACTION_ENABLED";
 
+	private JCheckBox jEnabled;
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
@@ -64,21 +69,28 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		this.program = program;
 		this.filterPanel = filterPanel;
 
-		timer = new Timer(500, this);
+		Listener listener = new Listener();
+
+		timer = new Timer(500, listener);
 		timer.setActionCommand(ACTION_TIMER);
 
-		jAnd = new JComboBox(new Object[] {AssetFilter.Junction.AND, AssetFilter.Junction.OR});
-		jAnd.addActionListener(this);
+		jEnabled = new JCheckBox();
+		jEnabled.setSelected(true);
+		jEnabled.setActionCommand(ACTION_ENABLED);
+		jEnabled.addActionListener(listener);
 
-		Vector<String> columns = new Vector<String>();
+		jAnd = new JComboBox(new Object[] {AssetFilter.Junction.AND, AssetFilter.Junction.OR});
+		jAnd.addActionListener(listener);
+
+		List<String> columns = new ArrayList<String>();
 		columns.add("All");
 		columns.addAll( program.getSettings().getAssetTableSettings().getTableColumnNames() );
-		jColumn = new JComboBox(columns);
+		jColumn = new JComboBox(columns.toArray());
 		jColumn.setActionCommand(ACTION_COLUMN_SELECTED);
-		jColumn.addActionListener(this);
+		jColumn.addActionListener(listener);
 
-		jMatchColumn = new JComboBox( new Vector<String>(program.getSettings().getAssetTableNumberColumns()) );
-		jMatchColumn.addActionListener(this);
+		jMatchColumn = new JComboBox( program.getSettings().getAssetTableNumberColumns().toArray() );
+		jMatchColumn.addActionListener(listener);
 
 		jMode = new JComboBox(new Object[] {AssetFilter.Mode.MODE_CONTAIN,
 											AssetFilter.Mode.MODE_CONTAIN_NOT,
@@ -87,12 +99,16 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 											});
 
 		jMode.setActionCommand(ACTION_MODE_SELECTED);
-		jMode.addActionListener(this);
+		jMode.addActionListener(listener);
 
 		jText = new JTextField();
 		JCopyPopup.install(jText);
-		jText.getDocument().addDocumentListener(this);
-		jText.addKeyListener(this);
+		jText.getDocument().addDocumentListener(listener);
+		jText.addKeyListener(listener);
+	}
+
+	public JCheckBox getEnabled() {
+		return jEnabled;
 	}
 
 	public boolean isAnd(){
@@ -101,7 +117,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 	}
 
 	public boolean isEmpty(){
-		return jText.getText().length() == 0 && !columnCompare;
+		return (jText.getText().equals("") && !columnCompare) || !jEnabled.isSelected();
 	}
 
 	public JComboBox getAnd() {
@@ -132,92 +148,102 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset> imple
 		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_COLUMN_SELECTED.equals(e.getActionCommand())){
-			String column = (String) jColumn.getSelectedItem();
-			int index = jMode.getSelectedIndex();
-			if (program.getSettings().getAssetTableNumberColumns().contains(column)){
-				jMode.setModel( new DefaultComboBoxModel(
-						new Object[] {AssetFilter.Mode.MODE_CONTAIN,
-									  AssetFilter.Mode.MODE_CONTAIN_NOT,
-									  AssetFilter.Mode.MODE_EQUALS,
-									  AssetFilter.Mode.MODE_EQUALS_NOT,
-									  AssetFilter.Mode.MODE_GREATER_THAN,
-									  AssetFilter.Mode.MODE_LESS_THAN,
-									  AssetFilter.Mode.MODE_GREATER_THAN_COLUMN,
-									  AssetFilter.Mode.MODE_LESS_THAN_COLUMN
-				}) );
-				jMode.setSelectedIndex(index);
-			} else {
-				jMode.setModel( new DefaultComboBoxModel(
-						new Object[] {AssetFilter.Mode.MODE_CONTAIN,
-									  AssetFilter.Mode.MODE_CONTAIN_NOT,
-									  AssetFilter.Mode.MODE_EQUALS,
-									  AssetFilter.Mode.MODE_EQUALS_NOT
-				}) );
-				if (index > 3){
-					jMode.setSelectedIndex(0);
+	class Listener implements ActionListener, DocumentListener, KeyListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_ENABLED.equals(e.getActionCommand())){
+				if (jEnabled.isSelected()){
+					jText.setBackground(Color.WHITE);
 				} else {
-					jMode.setSelectedIndex(index);
+					jText.setBackground(new Color(255, 200, 200));
 				}
 			}
-		}
-		if (ACTION_MODE_SELECTED.equals(e.getActionCommand())){
-			AssetFilter.Mode column = (AssetFilter.Mode) jMode.getSelectedItem();
-			if (column.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN) ){
-				columnCompare = true;
-				
-			} else {
-				columnCompare = false;
+			if (ACTION_COLUMN_SELECTED.equals(e.getActionCommand())){
+				String column = (String) jColumn.getSelectedItem();
+				int index = jMode.getSelectedIndex();
+				if (program.getSettings().getAssetTableNumberColumns().contains(column)){
+					jMode.setModel( new DefaultComboBoxModel(
+							new Object[] {AssetFilter.Mode.MODE_CONTAIN,
+										  AssetFilter.Mode.MODE_CONTAIN_NOT,
+										  AssetFilter.Mode.MODE_EQUALS,
+										  AssetFilter.Mode.MODE_EQUALS_NOT,
+										  AssetFilter.Mode.MODE_GREATER_THAN,
+										  AssetFilter.Mode.MODE_LESS_THAN,
+										  AssetFilter.Mode.MODE_GREATER_THAN_COLUMN,
+										  AssetFilter.Mode.MODE_LESS_THAN_COLUMN
+					}) );
+					jMode.setSelectedIndex(index);
+				} else {
+					jMode.setModel( new DefaultComboBoxModel(
+							new Object[] {AssetFilter.Mode.MODE_CONTAIN,
+										  AssetFilter.Mode.MODE_CONTAIN_NOT,
+										  AssetFilter.Mode.MODE_EQUALS,
+										  AssetFilter.Mode.MODE_EQUALS_NOT
+					}) );
+					if (index > 3){
+						jMode.setSelectedIndex(0);
+					} else {
+						jMode.setSelectedIndex(index);
+					}
+				}
 			}
-			filterPanel.columnCompare(columnCompare);
-		}
-		if (ACTION_TIMER.equals(e.getActionCommand())){
-			timer.stop();
-		}
-		refilter();
-	}
+			if (ACTION_MODE_SELECTED.equals(e.getActionCommand())){
+				AssetFilter.Mode column = (AssetFilter.Mode) jMode.getSelectedItem();
+				if (column.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN) ){
+					columnCompare = true;
 
-	@Override
-	public void insertUpdate(DocumentEvent e) {
-		if (!program.getSettings().isFilterOnEnter()){
-			timer.stop();
-			timer.start();
-		}
-	}
-
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-		if (!program.getSettings().isFilterOnEnter()){
-			timer.stop();
-			timer.start();
-		}
-	}
-
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-		if (!program.getSettings().isFilterOnEnter()){
-			timer.stop();
-			timer.start();
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				} else {
+					columnCompare = false;
+				}
+				filterPanel.columnCompare(columnCompare);
+			}
+			if (ACTION_TIMER.equals(e.getActionCommand())){
+				timer.stop();
+			}
 			refilter();
 		}
-	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			if (!program.getSettings().isFilterOnEnter()){
+				timer.stop();
+				timer.start();
+			}
+		}
 
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			if (!program.getSettings().isFilterOnEnter()){
+				timer.stop();
+				timer.start();
+			}
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			if (!program.getSettings().isFilterOnEnter()){
+				timer.stop();
+				timer.start();
+			}
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				refilter();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+
+		}
 	}
 
 	private class EveAssetMatcher implements Matcher<EveAsset> {

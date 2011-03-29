@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -172,7 +172,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 					}
 				}
 			} catch (ApiException ex) {
-				addError(updateName, "Parser error", updateCorporation);
+				addError(updateName, "Api Error ("+ex.getMessage()+")", updateCorporation);
 				LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{name, updateName, ex.getMessage()});
 			}
 		} else {

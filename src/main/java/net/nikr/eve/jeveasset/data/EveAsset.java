@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -126,7 +126,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String meta;
 	private boolean marketGroup;
 	private PriceData priceData;
-	private UserPrice userPrice;
+	private UserItem<Integer,Double> userPrice;
 	private boolean corporationAsset;
 	private float volume;
 	private String region;
@@ -168,7 +168,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.priceData = priceData;
 	}
 
-	public void setUserPrice(UserPrice userPrice) {
+	public void setUserPrice(UserItem<Integer,Double> userPrice) {
 		this.userPrice = userPrice;
 	}
 
@@ -248,7 +248,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		return priceData;
 	}
 
-	public UserPrice getUserPrice() {
+	public UserItem<Integer,Double> getUserPrice() {
 		return userPrice;
 	}
 
@@ -283,18 +283,22 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public double getPrice() {
-		if (isBlueprint() && !isBpo()) {
-			return 0;
-		}
+		//UserPrice
+		if (this.getUserPrice() != null) return this.getUserPrice().getValue();
 
-		if (this.getUserPrice() != null) {
-			return this.getUserPrice().getPrice();
-		}
+		//Blueprint Copy (Default Zero)
+		if (isBlueprint() && !isBpo()) return 0;
+
+		//PriceData
 		return getDefaultPrice();
 	}
 
 	public boolean isUserPrice() {
 		return (this.getUserPrice() != null);
+	}
+
+	public boolean isUserName(){
+		return !getName().equals(getTypeName());
 	}
 
 	public double getDefaultPrice() {

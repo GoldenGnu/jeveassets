@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -88,7 +88,7 @@ public class JAssetTable extends JColumnTable {
 		if (eventTableModel.getRowCount() >= row){
 			EveAsset eveAsset = eventTableModel.getElementAt(row);
 			//User set price
-			if (eveAsset.isUserPrice() && (eveAsset.isBpo()|| !eveAsset.isBlueprint()) && columnName.equals("Price")){
+			if (eveAsset.isUserPrice() && columnName.equals("Price")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(230,230,230) );

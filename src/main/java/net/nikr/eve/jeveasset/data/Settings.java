@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -100,8 +100,9 @@ public class Settings{
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceData; //TypeID : int
-	private Map<Integer, UserPrice> userPrices; //TypeID : int
-	private Map<Long, UserItemName> userItemNames; //ItemID : long
+	private final Map<Integer, PriceData> priceFactionData = new HashMap<Integer, PriceData>(); //TypeID : int
+	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
+	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<EveAsset> eventListAssets = null;
 	private List<Account> accounts;
 	private List<Long> bpos; //ItemID : long
@@ -136,9 +137,9 @@ public class Settings{
 		profiles = new ArrayList<Profile>();
 
 		//Settings
-		userPrices = new HashMap<Integer, UserPrice>();
+		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
 		bpos = new ArrayList<Long>();
-		userItemNames = new HashMap<Long, UserItemName>();
+		userNames = new HashMap<Long, UserItem<Long,String>>();
 		overviewGroups = new HashMap<String, OverviewGroup>();
 		
 		flags = new HashMap<String, Boolean>();
@@ -387,15 +388,23 @@ public class Settings{
 		for (int a = 0; a < currentAssets.size(); a++){
 			EveAsset eveAsset = currentAssets.get(a);
 			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
-				//User price
-				if (userPrices.containsKey(eveAsset.getTypeID())){ //Add User Price
-					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
-				} else { //No user price, clear user price
-					eveAsset.setUserPrice(null);
+				//Blueprint (Must be before user price)
+				if (eveAsset.isBlueprint()){
+					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
+				} else {
+					eveAsset.setBpo(false);
 				}
+
+				//User price
+				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
+					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
+				} else { //All other
+					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
+				}
+				
 				//User Item Names
-				if (userItemNames.containsKey(eveAsset.getItemID())){
-					eveAsset.setName(userItemNames.get(eveAsset.getItemID()).getName());
+				if (userNames.containsKey(eveAsset.getItemID())){
+					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
 				} else {
 					eveAsset.setName(eveAsset.getTypeName());
 				}
@@ -413,9 +422,14 @@ public class Settings{
 				eveAsset.setContainer(sContainer);
 
 				//Price data
-				if (eveAsset.isMarketGroup()){ //Add price data
+				if (eveAsset.isMarketGroup() && priceData.containsKey(eveAsset.getTypeID()) && !priceData.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
 					eveAsset.setPriceData(priceData.get(eveAsset.getTypeID()));
+				} else if (priceFactionData.containsKey(eveAsset.getTypeID())){ //Faction Price
+					eveAsset.setPriceData(priceFactionData.get(eveAsset.getTypeID()));
+				} else { //No Price :(
+					eveAsset.setPriceData(null);
 				}
+				
 				//Reprocessed price
 				eveAsset.setPriceReprocessed(0);
 				if (getItems().containsKey(eveAsset.getTypeID())){
@@ -430,7 +444,7 @@ public class Settings{
 							PriceData priceDatum = priceData.get(material.getTypeID());
 							double price = 0;
 							if (userPrices.containsKey(material.getTypeID())){
-								price = userPrices.get(material.getTypeID()).getPrice();
+								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
 								price = EveAsset.getDefaultPrice(priceDatum);
 							}
@@ -447,12 +461,6 @@ public class Settings{
 					eveAsset.setPriceReprocessed(priceReprocessed);
 				}
 
-				//Blueprint
-				if (eveAsset.isBlueprint()){
-					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
-				} else {
-					eveAsset.setBpo(false);
-				}
 				//Type Count
 				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())){
 					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<EveAsset>());
@@ -502,17 +510,17 @@ public class Settings{
 	public Date getPriceDataNextUpdate(){
 		return priceDataGetter.getNextUpdate();
 	}
-	public Map<Integer, UserPrice> getUserPrices() {
+	public Map<Integer, UserItem<Integer,Double>> getUserPrices() {
 		return userPrices;
 	}
-	public void setUserPrices(Map<Integer, UserPrice> userPrices) {
+	public void setUserPrices(Map<Integer, UserItem<Integer,Double>> userPrices) {
 		this.userPrices = userPrices;
 	}
-	public Map<Long, UserItemName> getUserItemNames() {
-		return userItemNames;
+	public Map<Long, UserItem<Long,String>> getUserItemNames() {
+		return userNames;
 	}
-	public void setUserItemNames(Map<Long, UserItemName> userItemNames) {
-		this.userItemNames = userItemNames;
+	public void setUserItemNames(Map<Long, UserItem<Long,String>> userItemNames) {
+		this.userNames = userItemNames;
 	}
 	public List<Account> getAccounts() {
 		return accounts;
@@ -524,6 +532,10 @@ public class Settings{
 
 	public Map<Integer, PriceData> getPriceData() {
 		return priceData;
+	}
+
+	public Map<Integer, PriceData> getPriceFactionData() {
+		return priceFactionData;
 	}
 
 	public void setPriceData(Map<Integer, PriceData> priceData) {
@@ -656,17 +668,9 @@ public class Settings{
 	 * build the API Connector and set it in the library.
 	 */
 	private void constructEveApiConnector() {
-		String apiProxy = getApiProxy();
-		Proxy proxy = getProxy();
-		ApiConnector connector;
-		if (apiProxy != null) {
-			connector = new ApiConnector(apiProxy);
-		} else {
-			connector = new ApiConnector(apiProxy);
-		}
-		if (proxy != null) {
-			connector = new ProxyConnector(proxy, connector);
-		}
+		ApiConnector connector = new ApiConnector(); //Default
+		if (getApiProxy() != null) connector = new ApiConnector(getApiProxy()); //API Proxy
+		if (getProxy() != null) connector = new ProxyConnector(getProxy(), connector); //Real Proxy
 		EveApi.setConnector(connector);
 	}
 

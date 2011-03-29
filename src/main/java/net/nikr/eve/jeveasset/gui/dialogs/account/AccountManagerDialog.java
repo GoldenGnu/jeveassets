@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,7 +30,6 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Dimension;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
@@ -81,8 +81,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private Map<Human, Boolean> corpAssets;
 	private boolean forceUpdate = false;
 
-	public AccountManagerDialog(Program program, Image image) {
-		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), image);
+	public AccountManagerDialog(Program program) {
+		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
 

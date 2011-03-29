@@ -8,7 +8,7 @@
 	<version>1.7.0-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<description>jEveAssets is an out-of-game asset manager for Eve-Online, written in Java</description>
-	<url>http://eve.nikr.net/?page=jeveasset</url>
+	<url>http://eve.nikr.net/jeveasset</url>
 	<issueManagement>
 		<system>Google Code</system>
 		<url>http://code.google.com/p/jeveassets/issues/list</url>
@@ -92,7 +92,7 @@
 					<execution>
 						<phase>process-resources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<mkdir dir="${project.build.directory}/data"/>
 								<copy todir="${project.build.directory}/data">
 									<fileset dir="data" includes="*.xml"/>
@@ -100,7 +100,7 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 								</copy>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -185,7 +185,7 @@
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>1.0.5</version>
+			<version>1.0.7-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xmlParserAPIs</artifactId>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,13 +21,8 @@
 
 package net.nikr.eve.jeveassets.tests.io;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.industryjobs.IndustryJobsResponse;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.EveAsset;
@@ -36,9 +31,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +39,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Niklas
  */
-@Ignore
 public class TestApiConverter {
 	static {
 		System.setProperty("log.home", "."+File.separator);
@@ -55,7 +47,7 @@ public class TestApiConverter {
 	private final static Logger LOG = LoggerFactory.getLogger(TestApiConverter.class);
 
 	static Settings settings;
-	List<ApiIndustryJob> industryJobs;
+	List<ApiIndustryJob> industryJobs =  new ArrayList<ApiIndustryJob>();
 
 	@BeforeClass
 	public static void oneTimeSetUp(){
@@ -69,10 +61,10 @@ public class TestApiConverter {
 
 	@Before
 	public void setUp() {
-		InputStream is = TestApiConverter.class.getResourceAsStream("jobs.xml");
-		IndustryJobsResponse response;
-//		response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
-//		industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
+		//InputStream is = TestApiConverter.class.getResourceAsStream("jobs.xml");
+		//IndustryJobsResponse response;
+		//response = com.beimin.eveapi.character.industryjobs.IndustryJobsParser.getInstance().getResponse(is);
+		//industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
 	}
 
 	@After

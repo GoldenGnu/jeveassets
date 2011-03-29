@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,12 +25,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -51,8 +51,8 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	private JRadioButton[] jRefineryEfficiency;
 	private JRadioButton[] jScrapmetalProcessing;
 
-	public ReprocessingSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), icon);
+	public ReprocessingSettingsPanel(Program program, SettingsDialog optionsDialog) {
+		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), Images.SETTINGS_REPROCESSING.getIcon());
 
 		JLabel jNotes = new JLabel(DialoguesSettings.get().reprocessingWarning());
 

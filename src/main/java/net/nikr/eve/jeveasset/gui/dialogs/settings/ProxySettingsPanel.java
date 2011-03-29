@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,7 +28,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -37,6 +36,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 // </editor-fold>
@@ -54,8 +54,8 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	private JCheckBox enableApiProxy;
 	private JTextField apiProxyField;
 
-	public ProxySettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, DialoguesSettings.get().proxy(), icon);
+	public ProxySettingsPanel(Program program, SettingsDialog optionsDialog) {
+		super(program, optionsDialog, DialoguesSettings.get().proxy(), Images.SETTINGS_PROXY.getIcon());
 
 		JLabel proxyTypeLabel = new JLabel(DialoguesSettings.get().type());
 		JLabel proxyAddressLabel = new JLabel(DialoguesSettings.get().address());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -59,17 +59,17 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	private JEditorPane jThanks;
 	private JWait jWait;
 	
-	public AboutDialog(Program program, Image image) {
-		super(program, DialoguesAbout.get().about(), image);
+	public AboutDialog(Program program) {
+		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
 		jWait = new JWait(this.getDialog());
 
 		JLabel jIcon = new JLabel();
-		jIcon.setIcon(Images.ICON_JEVEASSETS64);
+		jIcon.setIcon(Images.MISC_ASSETS_64.getIcon());
 
 		JEditorPane jProgram = createEditorPane(false, 
 				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
-				+ "Copyright &copy; 2009, 2010 Contributors<br>"
+				+ "Copyright &copy; 2009, 2010, 2011 Contributors<br>"
 				);
 
 		jInfo = createEditorPane(
@@ -82,22 +82,24 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;Jochen Bedersdorfer<br>"
 				+ "&nbsp;TryfanMan<br>"
 				+ "<br>"
+				+ "<b>License</b><br>"
+				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
+				+ "<br>"
 				+ "<b>www</b><br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Homepage</a> (download and source)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/iNgameboard.asp?a=topic&threadID=1103224/\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
-				+ "<b>License</b><br>"
-				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
 				);
 
 		jExternal = createEditorPane(
 				  "<b>Content</b><br>"
-				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
+				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
-				+ "&nbsp;<a href=\"http://www.eve-metrics.com\">EVE-Metrics.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"http://prices.c0rporation.com/\">Prices.c0rporation.com/</a> (faction prices)<br>"
+				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"
 				+ "<b>Libraries</b><br>"
 				+ "&nbsp;<a href=\"http://publicobject.com/glazedlists/\">Glazed Lists</a> (table sorting and filtering)<br> "
@@ -106,10 +108,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
 				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/1.2/\">log4j</a> (logging)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">OSXAdapter</a> (native mac os x support)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Pricing</a> (parsing price data api)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Routing</a> (routing tool)<br>"
-				+ "&nbsp;<a href=\"http://eve.nikr.net/?page=jeveasset\">Translations</a> (i18n)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">OSXAdapter</a> (native mac os x support)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Pricing</a> (parsing price data api)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Routing</a> (routing tool)<br>"
+				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Translations</a> (i18n)<br>"
 				//+ "<br>"
 				);
 

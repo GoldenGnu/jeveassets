@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -65,7 +65,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		this.name = name;
 		this.addPropertyChangeListener(this);
 		jText = new JLabel(name);
-		jText.setIcon(Images.ICON_NOT_STARTED);
+		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
 		errors = new HashMap<String, String>();
 	}
@@ -151,7 +151,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	}
 
 	public void cancelled(){
-		jText.setIcon(Images.ICON_CANCELLED);
+		jText.setIcon(Images.UPDATE_CANCELLED.getIcon());
 	}
 
 	@Override
@@ -159,18 +159,18 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		int value = getProgress();
 		if (value == 100){
 			if (errors.isEmpty()){
-				jText.setIcon(Images.ICON_DONE_OK);
+				jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
 			} else if (isCancelled()){
-				jText.setIcon(Images.ICON_DONE_SOME);
+				jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
 			} else {
-				jText.setIcon(Images.ICON_DONE_ERROR);
+				jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			}
 			if (!errors.isEmpty()){
 				jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				jText.setText(DialoguesUpdate.get().clickToShow(name));
 			}
 		} else {
-			jText.setIcon(Images.ICON_WORKING);
+			jText.setIcon(Images.UPDATE_WORKING.getIcon());
 		}
 	}
 

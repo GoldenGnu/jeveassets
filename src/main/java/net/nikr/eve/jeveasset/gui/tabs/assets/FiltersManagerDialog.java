@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
+import javax.swing.event.ListSelectionEvent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -37,12 +37,14 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
+import net.nikr.eve.jeveasset.gui.images.Images;
 
 
-public class FiltersManagerDialog extends JDialogCentered implements ActionListener, MouseListener {
+public class FiltersManagerDialog extends JDialogCentered {
 
 	public final static String ACTION_DONE = "ACTION_DONE";
 	public final static String ACTION_LOAD_FILTER = "ACTION_LOAD_FILTER";
@@ -56,40 +58,43 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jLoad;
 	private JButton jRename;
 	private JButton jDone;
+
+	private ListenerClass listener = new ListenerClass();
 	
-	public FiltersManagerDialog(Program program, Image image) {
-		super(program, TabsAssets.get().filter(), image);
+	public FiltersManagerDialog(Program program) {
+		super(program, TabsAssets.get().filter(), Images.ASSETS_LOAD_FILTER.getImage());
 
 		//Load
 		jLoad = new JButton(TabsAssets.get().load());
 		jLoad.setActionCommand(ACTION_LOAD_FILTER);
-		jLoad.addActionListener(this);
+		jLoad.addActionListener(listener);
 		jPanel.add(jLoad);
 
 		//Rename
 		jRename = new JButton(TabsAssets.get().rename());
 		jRename.setActionCommand(ACTION_RENAME_FILTER);
-		jRename.addActionListener(this);
+		jRename.addActionListener(listener);
 		jPanel.add(jRename);
 
 		//Delete
 		jDelete = new JButton(TabsAssets.get().delete());
 		jDelete.setActionCommand(ACTION_DELETE_FILTER);
-		jDelete.addActionListener(this);
+		jDelete.addActionListener(listener);
 		jPanel.add(jDelete);
 
 
 		//List
 		listModel = new DefaultListModel();
 		jFilters = new JList(listModel);
-		jFilters.addMouseListener(this);
+		jFilters.addMouseListener(listener);
+		jFilters.addListSelectionListener(listener);
 		JScrollPane jScrollPanel = new JScrollPane(jFilters);
 		jPanel.add(jScrollPanel);
 
 		//Done
 		jDone = new JButton(TabsAssets.get().done());
 		jDone.setActionCommand(ACTION_DONE);
-		jDone.addActionListener(this);
+		jDone.addActionListener(listener);
 		jPanel.add(jDone);
 
 		layout.setHorizontalGroup(
@@ -146,9 +151,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 					null,
 					filterName
 					);
-		if (s == null){ //Cancel
-			return;
-		}
+		if (s == null) return;  //Cancel
 		if (s.length() == 0){ //No input (needed for name)
 			renameFilter();
 			return;
@@ -170,7 +173,7 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 	private void deleteFilter(){
 		String filterName = getSelectedString();
 		if (filterName == null) return;
-		int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsAssets.get().delete2(filterName), TabsAssets.get().delete3(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), TabsAssets.get().delete2(filterName), TabsAssets.get().delete3(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (nReturn == JOptionPane.YES_OPTION){
 			program.getSettings().getAssetFilters().remove(filterName);
 			program.savedFiltersChanged();
@@ -185,7 +188,36 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		this.setVisible(false);
 	}
 
-	public void savedFiltersChanged() {
+	private void mergeFilters(){
+		mergeFilters("");
+	}
+
+	private void mergeFilters(String oldValue){
+		String s = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), "Enter filter name:", "Merge Filters", JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
+		boolean bOK = true;
+		if (s == null) return; //Cancel
+		if (s.equals("")) bOK = false; //No input (needed for name)
+		if (program.getSettings().getAssetFilters().containsKey(s)){
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), "Overwrite?", "Overwrite Filter", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION){
+				bOK = false;
+			}
+		}
+		if (bOK){
+			List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
+			for (Object obj : jFilters.getSelectedValues()){
+				for (AssetFilter assetFilter : program.getSettings().getAssetFilters().get( (String)obj )){
+					if (!assetFilters.contains(assetFilter)) assetFilters.add(assetFilter);
+				}
+			}
+			program.getSettings().getAssetFilters().put(s, assetFilters);
+			program.savedFiltersChanged();
+		} else {
+			mergeFilters(s);
+		}
+	}
+
+	public final void savedFiltersChanged() {
 		listModel.clear();
 		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
 		Collections.sort(list);
@@ -225,40 +257,61 @@ public class FiltersManagerDialog extends JDialogCentered implements ActionListe
 		this.setVisible(false);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_DONE.equals(e.getActionCommand())) {
-			save();
+	private class ListenerClass implements ActionListener, MouseListener, ListSelectionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_DONE.equals(e.getActionCommand())) {
+				save();
+			}
+			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
+				if (jFilters.getSelectedIndices().length == 1){
+					loadFilter();
+				} else {
+					mergeFilters();
+				}
+			}
+			if (ACTION_RENAME_FILTER.equals(e.getActionCommand())) {
+				renameFilter();
+			}
+			if (ACTION_DELETE_FILTER.equals(e.getActionCommand())) {
+				deleteFilter();
+			}
 		}
-		if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
-			loadFilter();
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			Object o = e.getSource();
+			if (o instanceof JList && e.getClickCount() == 2
+					&& !e.isControlDown() && !e.isShiftDown()){
+				loadFilter();
+			}
 		}
-		if (ACTION_RENAME_FILTER.equals(e.getActionCommand())) {
-			renameFilter();
-		}
-		if (ACTION_DELETE_FILTER.equals(e.getActionCommand())) {
-			deleteFilter();
+
+		@Override
+		public void mousePressed(MouseEvent e) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public void mouseExited(MouseEvent e) {}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if (jFilters.getSelectedIndices().length > 1){
+				jLoad.setText("Merge");
+				jRename.setEnabled(false);
+				jDelete.setEnabled(false);
+			} else {
+				jLoad.setText("Load");
+				jRename.setEnabled(true);
+				jDelete.setEnabled(true);
+			}
 		}
 	}
-	
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		Object o = e.getSource();
-		if (o instanceof JList && e.getClickCount() == 2){
-			loadFilter();
-		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,6 +37,7 @@ public class SplashUpdater extends Thread{
 	private final static Logger LOG = LoggerFactory.getLogger(SplashUpdater.class);
 
 	private static int nProgress = 0;
+	private static int nSubProgress = 0;
 	private static String sText = "";
 	private static int currentLoadingImage = 0;
 	private static BufferedImage[] loadingImages;
@@ -79,24 +80,27 @@ public class SplashUpdater extends Thread{
 	 */
 	public static void setText(String s){
 		sText = s;
-		update();
 	}
+
+	public static void setSubProgress(int n) {
+		if (n >= 100) n = 0;
+		nSubProgress = n;
+	}
+
 	/**
 	 * Set progress of splash screen progressbar in the range 0-100
 	 * @param n	 Set progress in the range 0-100
 	 */
 	public static void setProgress(int n){
-		if (n > 100){
-			n = 100;
-		}
+		if (n > 100) n = 100;
 		nProgress = n;
-		update();
 	}
 
 	private static void update(){
 		if (splash != null){
 			try {
 				Graphics2D g = splash.createGraphics();
+				//Clear Screen
 				g.setComposite(AlphaComposite.Clear);
 				Dimension size = splash.getSize();
 				g.fillRect(0, 0, size.width, size.height);
@@ -115,6 +119,10 @@ public class SplashUpdater extends Thread{
 				}
 				g.setColor(Color.WHITE);
 				g.fillRect(106, 242, (int) (nProgress*2.6), 12);
+				if (nSubProgress > 0){
+					g.setColor(Color.LIGHT_GRAY);
+					g.fillRect(106, 248, (int) (nSubProgress*2.6), 6);
+				}
 				if (loadingImages[currentLoadingImage] != null) g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
 				splash.update();
 			} catch (IllegalStateException ex) {

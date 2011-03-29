@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -61,8 +61,6 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private final String NAME_BEST_SHIP = TabsValues.get().best1();
 	private final String NAME_BEST_MODULE = TabsValues.get().best2();
 
-	private final int COLUMN_WIDTH = 243;
-
 	//GUI
 	private JComboBox jOwners;
 	private JEditorPane jOwner;
@@ -79,6 +77,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private Map<String, Long> ownersTotalItemsCount;
 	private Map<String, Double> ownersTotalSellOrders;
 	private Map<String, Double> ownersTotalBuyOrders;
+	private Map<String, Double> ownersTotalBuyOrdersNotPaid;
 	private Map<String, EveAsset> ownersBestItem;
 	private Map<String, EveAsset> ownersBestModule;
 	private Map<String, EveAsset> ownersBestShip;
@@ -87,6 +86,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private Map<String, Long> corpsTotalItemsCount;
 	private Map<String, Double> corpsTotalSellOrders;
 	private Map<String, Double> corpsTotalBuyOrders;
+	private Map<String, Double> corpsTotalBuyOrdersNotPaid;
 	private Map<String, EveAsset> corpsBestItem;
 	private Map<String, EveAsset> corpsBestModule;
 	private Map<String, EveAsset> corpsBestShip;
@@ -105,7 +105,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private String gridHexColor;
 
 	public ValuesTab(Program program) {
-		super(program, TabsValues.get().values(), Images.ICON_TOOL_VALUES, true);
+		super(program, TabsValues.get().values(), Images.TOOL_VALUES.getIcon(), true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
@@ -195,6 +195,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		ownersTotalItemsCount = new HashMap<String, Long>();
 		ownersTotalSellOrders = new HashMap<String, Double>();
 		ownersTotalBuyOrders = new HashMap<String, Double>();
+		ownersTotalBuyOrdersNotPaid = new HashMap<String, Double>();
 		ownersBestItem = new HashMap<String, EveAsset>();
 		ownersBestModule = new HashMap<String, EveAsset>();
 		ownersBestShip = new HashMap<String, EveAsset>();
@@ -203,6 +204,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		corpsTotalItemsCount = new HashMap<String, Long>();
 		corpsTotalSellOrders = new HashMap<String, Double>();
 		corpsTotalBuyOrders = new HashMap<String, Double>();
+		corpsTotalBuyOrdersNotPaid = new HashMap<String, Double>();
 		corpsBestItem = new HashMap<String, EveAsset>();
 		corpsBestModule = new HashMap<String, EveAsset>();
 		corpsBestShip = new HashMap<String, EveAsset>();
@@ -215,9 +217,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		bestItem = null;
 		bestShip = null;
 		bestModule = null;
-		for (int a = 0; a < eveAssetEventList.size(); a++){
-			EveAsset eveAsset = eveAssetEventList.get(a);
-
+		for (EveAsset eveAsset : eveAssetEventList){
 			//Skip market orders
 			if (eveAsset.getFlag().equals(TabsValues.get().market()))	continue;
 			
@@ -363,8 +363,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (int a = 0; a < accounts.size(); a++){
 			List<Human> humans = accounts.get(a).getHumans();
-			for (int b = 0; b < humans.size(); b++){
-				Human human = humans.get(b);
+			for (Human human : humans){
 				if (human.isShowAssets()){
 					if (!owners.contains(human.getName())){
 						owners.add(human.getName());
@@ -383,13 +382,14 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						List<ApiMarketOrder> marketOrders = human.getMarketOrders();
 						double ownerTotalSellOrders = 0;
 						double ownerTotalBuyOrders = 0;
-						for (int c = 0; c < marketOrders.size(); c++){
-							ApiMarketOrder apiMarketOrder = marketOrders.get(c);
+						double ownerTotalBuyOrdersNotPaid = 0;
+						for (ApiMarketOrder apiMarketOrder : marketOrders){
 							if (apiMarketOrder.getOrderState() == 0){
 								if (apiMarketOrder.getBid() < 1){ //Sell Orders
 									ownerTotalSellOrders = ownerTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
 									ownerTotalBuyOrders = ownerTotalBuyOrders + apiMarketOrder.getEscrow();
+									ownerTotalBuyOrdersNotPaid = ownerTotalBuyOrdersNotPaid + ((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
 								}
 							}
 						}
@@ -398,6 +398,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						}
 						if (ownerTotalBuyOrders != 0){
 							ownersTotalBuyOrders.put(human.getName(), ownerTotalBuyOrders);
+						}
+						if (ownerTotalBuyOrdersNotPaid != 0){
+							ownersTotalBuyOrdersNotPaid.put(human.getName(), ownerTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + ownerTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + ownerTotalBuyOrders;
@@ -420,13 +423,14 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						List<ApiMarketOrder> marketOrders = human.getMarketOrdersCorporation();
 						double corpTotalSellOrders = 0;
 						double corpTotalBuyOrders = 0;
-						for (int c = 0; c < marketOrders.size(); c++){
-							ApiMarketOrder apiMarketOrder = marketOrders.get(c);
+						double corpTotalBuyOrdersNotPaid = 0;
+						for (ApiMarketOrder apiMarketOrder : marketOrders){
 							if (apiMarketOrder.getOrderState() == 0){
 								if (apiMarketOrder.getBid() < 1){ //Sell Orders
 									corpTotalSellOrders = corpTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
 									corpTotalBuyOrders = corpTotalBuyOrders + apiMarketOrder.getEscrow();
+									corpTotalBuyOrdersNotPaid = corpTotalBuyOrdersNotPaid + ( (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
 								}
 							}
 						}
@@ -435,6 +439,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						}
 						if (corpTotalBuyOrders  != 0){
 							corpsTotalBuyOrders.put(human.getCorporation(), corpTotalBuyOrders);
+						}
+						if (corpTotalBuyOrdersNotPaid  != 0){
+							corpsTotalBuyOrdersNotPaid.put(human.getCorporation(), corpTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + corpTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + corpTotalBuyOrders;
@@ -464,7 +471,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			if (ownersTotalItemsValue.containsKey(s)) total = total + ownersTotalItemsValue.get(s);
 			//Sell Orders
 			if (ownersTotalSellOrders.containsKey(s)) total = total + ownersTotalSellOrders.get(s);
-			//Buy Orders
+			//Buy Orders (Escrows)
 			if (ownersTotalBuyOrders.containsKey(s)) total = total + ownersTotalBuyOrders.get(s);
 			if (total != 0){
 				output.addValue(Formater.iskFormat(total));
@@ -494,8 +501,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
 			if (ownersTotalBuyOrders.containsKey(s)){
-				double l = ownersTotalBuyOrders.get(s);
-				output.addValue(Formater.iskFormat(l));
+				String value = Formater.iskFormat(ownersTotalBuyOrders.get(s));
+				if (ownersTotalBuyOrdersNotPaid.containsKey(s)) value = value +" ("+Formater.iskFormat(ownersTotalBuyOrdersNotPaid.get(s))+")";
+				output.addValue(value);
 			}
 			output.addNone();
 			
@@ -569,8 +577,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
 			if (corpsTotalBuyOrders.containsKey(s)){
-				double l = corpsTotalBuyOrders.get(s);
-				output.addValue(Formater.iskFormat(l));
+				String value = Formater.iskFormat(corpsTotalBuyOrders.get(s));
+				if (corpsTotalBuyOrdersNotPaid.containsKey(s)) value = value + " (" +Formater.iskFormat(corpsTotalBuyOrdersNotPaid.get(s))+")";
+				output.addValue(value);
 			}
 			output.addNone();
 

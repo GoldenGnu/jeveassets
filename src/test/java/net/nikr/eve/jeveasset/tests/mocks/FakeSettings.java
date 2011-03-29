@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -43,8 +43,7 @@ import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
@@ -149,12 +148,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, UserItemName> getUserItemNames() {
+	public Map<Long, UserItem<Long,String>> getUserItemNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Integer, UserPrice> getUserPrices() {
+	public Map<Integer, UserItem<Integer,Double>> getUserPrices() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -329,12 +328,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setUserItemNames(Map<Long, UserItemName> userItemNames) {
+	public void setUserItemNames(Map<Long, UserItem<Long,String>> userItemNames) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUserPrices(Map<Integer, UserPrice> userPrices) {
+	public void setUserPrices(Map<Integer, UserItem<Integer,Double>> userPrices) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -417,4 +416,6 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, TableSettings> getTableSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+
 }

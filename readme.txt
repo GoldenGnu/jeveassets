@@ -80,7 +80,7 @@ ________________________________________________________________________________
 
 Q: The [...] library is missing
 
-A: Please re-download jEveAssets from http://eve.nikr.net/?page=jeveasset
+A: Please re-download jEveAssets from http://eve.nikr.net/jeveasset
    And leave the unzipped folder intact
 ________________________________________________________________________________
 
@@ -110,7 +110,7 @@ ________________________________________________________________________________
 _CONTACT________________________________________________________________________
 
 www:
-  http://eve.nikr.net/?page=jeveasset
+  http://eve.nikr.net/jeveasset
 
 email:
   niklaskr@gmail.com (English or Danish)

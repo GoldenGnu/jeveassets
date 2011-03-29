@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -86,7 +86,7 @@ public class ApiConverter {
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
 		for (ApiIndustryJob apiIndustryJob : industryJobs){
 			long id = apiIndustryJob.getInstalledItemID();
-			if (apiIndustryJob.getCompletedStatus() == 0){
+			if (!apiIndustryJob.isCompleted()){
 				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, bCorp, settings);
 				eveAssets.add(eveAsset);
 			}

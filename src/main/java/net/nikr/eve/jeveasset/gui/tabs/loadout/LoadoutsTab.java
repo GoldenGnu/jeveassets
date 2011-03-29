@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -96,7 +96,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private SeparatorList<Module> separatorList;
 
 	public LoadoutsTab(Program program) {
-		super(program, TabsLoadout.get().ship(), Images.ICON_TOOL_SHIP_LOADOUTS, true);
+		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 

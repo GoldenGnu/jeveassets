@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,25 +32,25 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
+public class ToolPanel extends JGroupLayoutPanel {
 	
-	public final static String ACTION_ADD_FIELD = "ACTION_ADD_FILTER";
-	public final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
-	public final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
-	public final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
-	public final static String ACTION_ADD_SYSTEM = "ADD_SYSTEM";
+	private final static String ACTION_ADD_FIELD = "ACTION_ADD_FILTER";
+	private final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
+	private final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
+	private final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
+	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
 
 	//Data
 	private List<FilterPanel> filters;
@@ -58,18 +58,19 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	int rowCount;
 
 	//GUI
-	private JButton jAddField;
-	private JButton jClearFields;
-	private JButton jSaveFilter;
 	private JDropDownButton jLoadFilter;
 	private JLabel jRows;
 	private JToolBar jToolBar;
+	private JCheckBox jShowFilters;
+
+	private Listener listener;
 
 	public ToolPanel(Program program, MatcherEditorManager matcherEditorManager) {
 		super(program);
 		this. matcherEditorManager = matcherEditorManager;
 		filters = new ArrayList<FilterPanel>();
 		
+		listener = new Listener();
 
 		//Layout setup
 		layout.setAutoCreateGaps(true);
@@ -80,55 +81,55 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.setRollover(true);
 
 		//Add
-		jAddField = new JButton(TabsAssets.get().addField());
-		jAddField.setIcon(Images.ICON_ADD);
-		jAddField.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		JButton jAddField = new JButton(TabsAssets.get().addField());
+		jAddField.setIcon(Images.EDIT_ADD.getIcon());
+		jAddField.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setHorizontalAlignment(JButton.LEFT);
 		jAddField.setActionCommand(ACTION_ADD_FIELD);
-		jAddField.addActionListener(this);
+		jAddField.addActionListener(listener);
 		jToolBar.add(jAddField);
 
 		//Reset
-		jClearFields = new JButton(TabsAssets.get().clear());
-		jClearFields.setIcon(Images.ICON_CLEAR);
-		jClearFields.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		JButton jClearFields = new JButton(TabsAssets.get().clear());
+		jClearFields.setIcon(Images.ASSETS_CLEAR_FIELDS.getIcon());
+		jClearFields.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setHorizontalAlignment(JButton.LEFT);
 		jClearFields.setActionCommand(ACTION_CLEAR_FIELDS);
-		jClearFields.addActionListener(this);
+		jClearFields.addActionListener(listener);
 		jToolBar.add(jClearFields);
 
 		jToolBar.addSeparator();
 
 		//Save Filter
-		jSaveFilter = new JButton(TabsAssets.get().save());
-		jSaveFilter.setIcon(Images.ICON_SAVE);
-		jSaveFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		JButton jSaveFilter = new JButton(TabsAssets.get().save());
+		jSaveFilter.setIcon(Images.ASSETS_SAVE_FILTERS.getIcon());
+		jSaveFilter.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setHorizontalAlignment(JButton.LEFT);
 		jSaveFilter.setActionCommand(ACTION_SAVE_FILTER);
-		jSaveFilter.addActionListener(this);
+		jSaveFilter.addActionListener(listener);
 		jToolBar.add(jSaveFilter);
 
 		//Load Filter
 		jLoadFilter = new JDropDownButton(TabsAssets.get().load1());
-		jLoadFilter.setIcon( Images.ICON_FOLDER);
-		jLoadFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
+		jLoadFilter.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setHorizontalAlignment(JButton.LEFT);
 		jToolBar.add(jLoadFilter);
 
-		//TODO Completly remove "Add System"
-		//Add System
-		JButton jAddSystem = new JButton(TabsAssets.get().addSystem());
-		jAddSystem.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
-		jAddSystem.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
-		jAddSystem.setHorizontalAlignment(JButton.LEFT);
-		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
-		jAddSystem.addActionListener(this);
-		
-		//jToolBar.add(jAddSystem);
+		jToolBar.addSeparator();
+
+		jShowFilters = new JCheckBox("Show");
+		jShowFilters.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jShowFilters.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jShowFilters.setHorizontalAlignment(JButton.LEFT);
+		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
+		jShowFilters.addActionListener(listener);
+		jShowFilters.setSelected(true);
+		jToolBar.add(jShowFilters);
 
 		jRows = new JLabel();
 		this.getPanel().add(jRows);
@@ -136,6 +137,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		//Add one filterPanel
 		addFilter();
 		savedFiltersChanged();
+	}
+
+	public Listener getListener() {
+		return listener;
 	}
 
 	public List<AssetFilter> getAssetFilters(){
@@ -223,8 +228,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		pg = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		pg.addGroup(sg);
-		for (int a = 0; a < filters.size(); a++){
-			pg.addComponent(filters.get(a).getPanel());
+		if (jShowFilters.isSelected()){
+			for (int a = 0; a < filters.size(); a++){
+				pg.addComponent(filters.get(a).getPanel());
+			}
 		}
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -239,9 +246,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		pg.addComponent(jRows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		sg = layout.createSequentialGroup();
 		sg.addGroup(pg);
-		//sg.addComponent(buttons);
-		for (int a = 0; a < filters.size(); a++){
-			sg.addComponent(filters.get(a).getPanel());
+		if (jShowFilters.isSelected()){
+			for (int a = 0; a < filters.size(); a++){
+				sg.addComponent(filters.get(a).getPanel());
+			}
 		}
 		layout.setVerticalGroup(sg);
 	}
@@ -275,9 +283,9 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 			String s = list.get(a);
 			jMenuItem = new JMenuItem(s);
 			jMenuItem.setRolloverEnabled(true);
-			jMenuItem.setIcon( Images.ICON_FOLDER);
+			jMenuItem.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(this);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 		
@@ -285,7 +293,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		jMenuItem = new JMenuItem(TabsAssets.get().manage());
 		jMenuItem.setActionCommand(ACTION_OPEN_FILTER_MANAGER);
-		jMenuItem.addActionListener(this);
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 		jLoadFilter.add(jMenuItem);
@@ -295,37 +303,40 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jRows.setText(text);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (FilterPanel.ACTION_REMOVE_FILTER.equals(e.getActionCommand())) {
-			JButton button = (JButton)e.getSource();
-			for (int a = 0; a < filters.size(); a++){
-				if (button.getParent().equals(filters.get(a).getPanel())){
-					this.removeFilter(filters.get(a));
-					return;
+	public class Listener  implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (FilterPanel.ACTION_REMOVE_FILTER.equals(e.getActionCommand())) {
+				JButton button = (JButton)e.getSource();
+				for (int a = 0; a < filters.size(); a++){
+					if (button.getParent().equals(filters.get(a).getPanel())){
+						removeFilter(filters.get(a));
+						return;
+					}
 				}
+				return;
 			}
-			return;
+			if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())) {
+				updateLayout();
+			}
+			if (ACTION_ADD_FIELD.equals(e.getActionCommand())) {
+				addFilter();
+				return;
+			}
+			if (ACTION_CLEAR_FIELDS.equals(e.getActionCommand())) {
+				clearFilters();
+				return;
+			}
+			if (ACTION_SAVE_FILTER.equals(e.getActionCommand())) {
+				saveFilter();
+				return;
+			}
+			if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
+				program.getFiltersManagerDialog().setVisible(true);
+				return;
+			}
+			loadFilter(e.getActionCommand());
 		}
-		if (ACTION_ADD_FIELD.equals(e.getActionCommand())) {
-			this.addFilter();
-			return;
-		}
-		if (ACTION_CLEAR_FIELDS.equals(e.getActionCommand())) {
-			this.clearFilters();
-			return;
-		}
-		if (ACTION_SAVE_FILTER.equals(e.getActionCommand())) {
-			saveFilter();
-			return;
-		}
-		if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
-			program.getFiltersManagerDialog().setVisible(true);
-			return;
-		}
-		if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
-			new AddSystemController(this.program);
-		}
-		loadFilter(e.getActionCommand());
 	}
 }

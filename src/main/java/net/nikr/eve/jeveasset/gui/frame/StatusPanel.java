@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,7 +32,6 @@ import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
@@ -59,9 +58,10 @@ public class StatusPanel extends JGroupLayoutPanel {
 		
 		
 
-		jUpdatable = createIcon(Images.ICON_UPDATE, GuiFrame.get().updatable());
+		jUpdatable = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jUpdatable);
-		jEveTime = createLabel(GuiFrame.get().eve(), Images.ICON_EVE);
+		
+		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
 		layout.setHorizontalGroup(

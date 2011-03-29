@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -19,41 +19,46 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveassets.tests.mocks;
 
+import uk.me.candle.eve.routing.Progress;
 
-public class UserItemName extends UserListItem<Long>{
+/**
+ *
+ * @author Candle
+ */
+public class FakeProgress implements Progress {
+	int value;
+	int min;
+	int max;
 
-	private String typeName;
-
-	public UserItemName(UserItemName userItemName) {
-		this(userItemName.getValue(), userItemName.getKey(), userItemName.getTypeName());
-	}
-
-	public UserItemName(EveAsset eveAsset) {
-		this(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
-	}
-
-	public UserItemName(String name, long itemId, String typeName) {
-		super(name, itemId);
-		this.typeName = typeName;
-	}
-
-	public String getName(){
-		return this.getValue();
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public long getItemID(){
-		return this.getKey();
+	@Override
+	public int getMaximum() {
+		return max;
 	}
 
 	@Override
-	public String toString(){
-		return typeName;
+	public void setMaximum(int max) {
+		this.max = max;
 	}
 
+	@Override
+	public int getMinimum() {
+		return min;
+	}
+
+	@Override
+	public void setMinimum(int min) {
+		this.min = min;
+	}
+
+	@Override
+	public int getValue() {
+		return value;
+	}
+
+	@Override
+	public void setValue(int value) {
+		this.value = value;
+	}
 }

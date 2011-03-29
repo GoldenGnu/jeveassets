@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,9 +22,9 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -34,8 +34,8 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private JCheckBox jDev;
 
 
-	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, DialoguesSettings.get().general(), icon);
+	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog) {
+		super(program, optionsDialog, DialoguesSettings.get().general(),  Images.DIALOG_SETTINGS.getIcon());
 
 		jStable = new JCheckBox(DialoguesSettings.get().searchForNewVersion(Program.PROGRAM_NAME));
 

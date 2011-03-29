@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -18,17 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveassets.tests.i18n;
+package net.nikr.eve.jeveasset.tests.i18n;
 
-import net.nikr.eve.jeveasset.i18n.TabsValues;
-import net.nikr.eve.jeveasset.i18n.TabsRouting;
-import net.nikr.eve.jeveasset.i18n.TabsOverview;
-import net.nikr.eve.jeveasset.i18n.TabsOrders;
-import net.nikr.eve.jeveasset.i18n.TabsMaterials;
-import net.nikr.eve.jeveasset.i18n.TabsLoadout;
-import net.nikr.eve.jeveasset.i18n.TabsJobs;
-import net.nikr.eve.jeveasset.i18n.TabsAssets;
-import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -42,7 +33,6 @@ import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.junit.Test;
 import uk.me.candle.translations.Bundle;
 import static org.junit.Assert.*;
@@ -160,105 +150,5 @@ public class TestI18N {
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
 		assertNotNull(g.about());
-	}
-
-	@Test
-	public void testGuiFrame_en() throws Exception {
-		GuiFrame g = Bundle.load(GuiFrame.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.windowTitle("jEveAssets", "1.6.0", 1, 1, "default"));
-	}
-
-	@Test
-	public void testGuiShared_en() throws Exception {
-		GuiShared g = Bundle.load(GuiShared.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.cut());
-	}
-
-	@Test
-	public void testTabsAssets_en() throws Exception {
-		TabsAssets g = Bundle.load(TabsAssets.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.addFilter());
-	}
-
-	@Test
-	public void testTabsJobs_en() throws Exception {
-		TabsJobs g = Bundle.load(TabsJobs.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.activity());
-	}
-
-	@Test
-	public void testTabsLoadout_en() throws Exception {
-		TabsLoadout g = Bundle.load(TabsLoadout.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.empty());
-	}
-
-	@Test
-	public void testTabsMaterials_en() throws Exception {
-		TabsMaterials g = Bundle.load(TabsMaterials.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.collapse());
-	}
-
-	@Test
-	public void testTabsOrders_en() throws Exception {
-		TabsOrders g = Bundle.load(TabsOrders.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.buy());
-	}
-
-	@Test
-	public void testTabsOverview_en() throws Exception {
-		TabsOverview g = Bundle.load(TabsOverview.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.add());
-	}
-
-	@Test
-	public void testTabsRouting_en() throws Exception {
-		TabsRouting g = Bundle.load(TabsRouting.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.calculate());
-	}
-
-	@Test
-	public void testTabsValues_en() throws Exception {
-		TabsValues g = Bundle.load(TabsValues.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.assets());
 	}
 }

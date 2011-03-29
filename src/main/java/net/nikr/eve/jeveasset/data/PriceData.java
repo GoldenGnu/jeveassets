@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -97,5 +97,13 @@ public class PriceData {
 
 	public void setSellMin(double sellMin) {
 		this.sellMin = sellMin;
+	}
+
+	public boolean isEmpty(){
+		if (sellMax > 0 || sellAvg > 0 || sellMedian > 0 || sellMin > 0 || buyMax > 0 || buyAvg > 0 || buyMedian > 0 || buyMin > 0){
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
