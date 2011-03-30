@@ -185,7 +185,7 @@
 		<dependency>
 			<groupId>uk.me.candle</groupId>
 			<artifactId>pricing</artifactId>
-			<version>1.0.7-SNAPSHOT</version>
+			<version>1.0.7</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xmlParserAPIs</artifactId>

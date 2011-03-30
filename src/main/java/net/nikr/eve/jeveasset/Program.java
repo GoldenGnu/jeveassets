@@ -445,6 +445,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			mainWindow.addTab(industryJobsTab);
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_PLOT.equals(e.getActionCommand())) {
+			industryPlotTab.updateData();
 			mainWindow.addTab(industryPlotTab);
 		}
 		if (MainMenu.ACTION_OPEN_OVERVIEW.equals(e.getActionCommand())) {

@@ -96,14 +96,14 @@ public class IndustryPlotTab extends JMainTab {
 	public IndustryPlotTab(Program program) {
 		super(program, "Industry Plot", Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 		jobColours = new EnumMap<IndustryJob.IndustryActivity, List<Color>>(IndustryJob.IndustryActivity.class);
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(200, 200, 0)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(180, 180, 0)));
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_DUPLICATING, Arrays.asList(Color.LIGHT_GRAY));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING, Arrays.asList(Color.GREEN, new Color(0, 200, 0)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY, Arrays.asList(Color.BLUE, new Color(0, 0, 200)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TECHNOLOGY, Arrays.asList(Color.CYAN, new Color(0, 200, 200)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY, Arrays.asList(Color.MAGENTA, new Color(200, 0, 200)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING, Arrays.asList(Color.GREEN, new Color(0, 180, 0)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY, Arrays.asList(Color.BLUE, new Color(0, 0, 180)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TECHNOLOGY, Arrays.asList(Color.CYAN, new Color(0, 180, 180)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY, Arrays.asList(Color.MAGENTA, new Color(180, 0, 180)));
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_REVERSE_ENGINEERING, Arrays.asList(Color.DARK_GRAY));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION, Arrays.asList(Color.RED, new Color(200, 0, 0)));
+		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION, Arrays.asList(Color.RED, new Color(180, 0, 0)));
 
 		infoPanel = new JPanel();
 		panel = new JPanel(new BorderLayout());
@@ -151,8 +151,8 @@ public class IndustryPlotTab extends JMainTab {
 		data.updateData();
 		panel.removeAll();
 		panel.add(createPanel(), BorderLayout.CENTER);
-		panel.add(updateButton, BorderLayout.NORTH);
-		panel.add(infoPanel, BorderLayout.WEST);
+		panel.add(updateButton, BorderLayout.SOUTH);
+		panel.add(infoPanel, BorderLayout.NORTH);
 		doLayout();
 	}
 
@@ -195,7 +195,7 @@ public class IndustryPlotTab extends JMainTab {
 		XYBarRendererImpl barRenderer = new XYBarRendererImpl(chartDataInformation);
 		barRenderer.setUseYInterval(true);
 		barRenderer.setShadowVisible(false);
-		barRenderer.setDrawBarOutline(true);
+		barRenderer.setDrawBarOutline(false);
 
 		StandardXYItemLabelGenerator labelGenerator
 				= new StandardXYItemLabelGenerator("{0} , {1}, {2}",
@@ -397,10 +397,13 @@ public class IndustryPlotTab extends JMainTab {
 		}
 
 		final void doStandardLayout() {
-			setLayout(new GridLayout(9, 2, 5, 2));
-			add(new JLabel(TabsJobs.get().columnOwner())); add(owner);
-			add(new JLabel(TabsJobs.get().columnName())); add(name);
-			add(new JLabel(TabsJobs.get().columnActivity())); add(activity);
+			setLayout(new GridLayout(2, 9, 5, 2));
+			add(new JLabel(TabsJobs.get().columnOwner()));
+			add(new JLabel(TabsJobs.get().columnName()));
+			add(new JLabel(TabsJobs.get().columnActivity()));
+			add(name);
+			add(owner);
+			add(activity);
 		}
 
 		/**

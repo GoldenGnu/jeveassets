@@ -278,6 +278,33 @@ public class PriceDataSettings {
 											,RegionType.REGION_THE_FORGE
 											,RegionType.REGION_VERGE_VENDOR
 											};
+
+	public final static RegionType[] REGIONS_EVE_MARKETDATA = {
+											RegionType.REGION_ARIDIA
+											,RegionType.REGION_BLACK_RISE
+											,RegionType.REGION_DERELIK
+											,RegionType.REGION_DEVOID
+											,RegionType.REGION_DOMAIN
+											,RegionType.REGION_ESSENCE
+											,RegionType.REGION_EVERYSHORE
+											,RegionType.REGION_GENESIS
+											,RegionType.REGION_HEIMATAR
+											,RegionType.REGION_KADOR
+											,RegionType.REGION_KHANID
+											,RegionType.REGION_KOR_AZOR
+											,RegionType.REGION_LONETREK
+											,RegionType.REGION_METROPOLIS
+											,RegionType.REGION_MOLDEN_HEATH
+											,RegionType.REGION_PLACID
+											,RegionType.REGION_SINQ_LAISON
+											,RegionType.REGION_SOLITUDE
+											,RegionType.REGION_TASH_MURKON
+											,RegionType.REGION_THE_BLEAK_LANDS
+											,RegionType.REGION_THE_CITADEL
+											,RegionType.REGION_THE_FORGE
+											,RegionType.REGION_VERGE_VENDOR
+											};
+
 	private int region;
 	private String source;
 
@@ -309,6 +336,10 @@ public class PriceDataSettings {
 			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-marketdata)");
 			return 0;
 		}
+		if (source.equals(SOURCE_EVE_MARKETDATA) && region >= REGIONS_EVE_MARKETDATA.length){
+			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-marketdata)");
+			return 0;
+		}
 		return region;
 	}
 
@@ -322,8 +353,11 @@ public class PriceDataSettings {
 		if (source.equals(SOURCE_EVE_CENTRAL)){
 			regionType = REGIONS_EVE_CENTRAL[getRegion()];
 		}
+		if (source.equals(SOURCE_EVE_METRICS)){
+			regionType = REGIONS_EVE_METRICS[getRegion()];
+		}
 		if (source.equals(SOURCE_EVE_MARKETDATA)){
-			regionType = REGIONS_EVE_CENTRAL[getRegion()];
+			regionType = REGIONS_EVE_MARKETDATA[getRegion()];
 		}
 		// TODO (Candle, 2010-09-13) move all these numbers into the regiontype enum above.
 		if (regionType.equals(RegionType.REGION_EMPIRE)){
