@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JComponent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -88,7 +87,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
-				+ "&nbsp;<a href=\"http://www.eveonline.com/iNgameboard.asp?a=topic&threadID=1103224/\">Forum Thread</a> (feedback)<br>"
+				+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=4254\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<br>"
 				);
@@ -98,7 +97,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
 				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
-				+ "&nbsp;<a href=\"http://prices.c0rporation.com/\">Prices.c0rporation.com/</a> (faction prices)<br>"
+				+ "&nbsp;<a href=\"http://prices.c0rporation.com/\">Prices.c0rporation.com</a> (faction prices)<br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"
 				+ "<b>Libraries</b><br>"
