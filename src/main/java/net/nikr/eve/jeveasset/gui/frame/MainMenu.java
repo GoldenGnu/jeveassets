@@ -117,12 +117,15 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+		//XXX Removed Industry Plot from the Main Menu (until after release)
+		/*
 		menuItem = new JMenuItem(GuiFrame.get().industryPlot());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_PLOT);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
+		 */
 
 		menuItem = new JMenuItem(GuiFrame.get().overview());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
