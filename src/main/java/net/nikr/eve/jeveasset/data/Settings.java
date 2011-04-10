@@ -355,14 +355,14 @@ public class Settings{
 	private void updateAssetLists(){
 		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
 			eventListAssets = new ArrayList<EveAsset>();
+			//XXX Not all orders and jobs are added to uniqueIds
+			//Only the one that are assets AKA no buy orders and completed jobs
 			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
 			List<String> corporations = new ArrayList<String>();
-			for (int a = 0; a < accounts.size(); a++){
-				Account account = accounts.get(a);
-				List<Human> humans = account.getHumans();
-				for (int b = 0; b < humans.size(); b++){
-					Human human = humans.get(b);
+			for (Account account : accounts){
+				for (Human human : account.getHumans()){
+					
 					//Market Orders
 					List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, this);
 					addAssets(marketOrdersAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
@@ -385,8 +385,7 @@ public class Settings{
 		}
 	}
 	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow, boolean shouldShowCorp){
-		for (int a = 0; a < currentAssets.size(); a++){
-			EveAsset eveAsset = currentAssets.get(a);
+		for (EveAsset eveAsset : currentAssets){
 			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
 				//Blueprint (Must be before user price)
 				if (eveAsset.isBlueprint()){
