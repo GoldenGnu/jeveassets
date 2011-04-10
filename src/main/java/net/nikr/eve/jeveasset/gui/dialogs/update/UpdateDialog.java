@@ -384,7 +384,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			ConquerableStationsGetter conquerableStationsGetter = new ConquerableStationsGetter();
 			conquerableStationsGetter.load(this, program.getSettings());
 		}
@@ -397,7 +397,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			HumansGetter humansGetter = new HumansGetter();
 			humansGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
@@ -410,7 +410,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			AssetsGetter assetsGetter = new AssetsGetter();
 			assetsGetter.load(this, program.getSettings());
 		}
@@ -423,7 +423,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
 			accountBalanceGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
@@ -436,7 +436,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
 			industryJobsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
@@ -449,7 +449,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
 			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
@@ -464,7 +464,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 
 		@Override
-		public void update() throws Throwable {
+		public void update() {
 			program.getSettings().clearEveAssetList();
 			//Price
 			FactionGetter.load(program.getSettings().getPriceFactionData(), program.getSettings().getProxy());

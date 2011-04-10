@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
@@ -52,9 +53,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
 	private boolean done = false;
-	private Throwable throwable = null;
 	private JLabel jText;
-	//private JTextPane jError;
 	private Map<String, String> errors;
 	private String name;
 	private boolean errorShown = false;
@@ -86,27 +85,27 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		return !errors.isEmpty();
 	}
 
-	public abstract void update() throws Throwable;
+	public abstract void update();
 
 	@Override
 	public Void doInBackground() {
 		setProgress(0);
-		try {
-			update();
-		} catch (Throwable ex) {
-			throwable = ex;
-		}
+		update();
 		return null;
 	}
 
 	@Override
 	public void done() {
+		try {
+			get();
+		} catch (CancellationException ex) {
+			LOG.info("Update cancelled by user");
+		} catch (Exception ex) { //InterruptedException, ExecutionException
+			LOG.error(ex.getMessage(), ex);
+			throw new RuntimeException(ex);
+		}
 		done = true;
 		setProgress(100);
-	}
-
-	public Throwable getThrowable() {
-		return throwable;
 	}
 
 	public boolean isTaskDone(){
@@ -195,6 +194,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 	}
 
 	private String processError(String error){
+		if (error == null) return "";
 		Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Matcher m = p.matcher(error);
