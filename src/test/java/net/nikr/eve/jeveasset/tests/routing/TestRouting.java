@@ -19,14 +19,14 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.routing;
+package net.nikr.eve.jeveasset.tests.routing;
 
+import net.nikr.eve.jeveasset.tests.mocks.FakeProgress;
+import net.nikr.eve.jeveasset.tests.routing.mocks.FakeRoutingTab;
+import net.nikr.eve.jeveasset.tests.routing.mocks.RoutingMockProgram;
+import net.nikr.eve.jeveasset.tests.routing.mocks.RoutingMockSettings;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveassets.tests.mocks.FakeProgress;
-import net.nikr.eve.jeveassets.tests.routing.mocks.FakeRoutingTab;
-import net.nikr.eve.jeveassets.tests.routing.mocks.RoutingMockProgram;
-import net.nikr.eve.jeveassets.tests.routing.mocks.RoutingMockSettings;
 import org.junit.Test;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;

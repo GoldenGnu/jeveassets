@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests;
+package net.nikr.eve.jeveasset.tests;
 
 import net.nikr.eve.jeveasset.gui.tabs.routing.EditableListModel;
 import java.util.ArrayList;

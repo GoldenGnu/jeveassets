@@ -19,11 +19,11 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.routing.mocks;
+package net.nikr.eve.jeveasset.tests.routing.mocks;
 
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveassets.tests.mocks.FakeProgram;
-import net.nikr.eve.jeveassets.tests.mocks.FakeSettings;
+import net.nikr.eve.jeveasset.tests.mocks.FakeProgram;
+import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 /**
  *

@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.mocks;
+package net.nikr.eve.jeveasset.tests.mocks;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;

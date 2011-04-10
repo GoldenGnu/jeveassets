@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.routing.mocks;
+package net.nikr.eve.jeveasset.tests.routing.mocks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
-import net.nikr.eve.jeveassets.tests.mocks.FakeSettings;
+import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 /**
  *

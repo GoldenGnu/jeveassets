@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.routing.mocks;
+package net.nikr.eve.jeveasset.tests.routing.mocks;
 
 import java.awt.Image;
 import java.util.ArrayList;

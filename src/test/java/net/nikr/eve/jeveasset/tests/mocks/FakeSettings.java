@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.mocks;
+package net.nikr.eve.jeveasset.tests.mocks;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
@@ -417,5 +417,8 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-
+	@Override
+	public Map<Integer, PriceData> getPriceFactionData() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

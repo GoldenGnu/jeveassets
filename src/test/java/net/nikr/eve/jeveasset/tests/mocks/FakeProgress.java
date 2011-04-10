@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveassets.tests.mocks;
+package net.nikr.eve.jeveasset.tests.mocks;
 
 import uk.me.candle.eve.routing.Progress;
 
