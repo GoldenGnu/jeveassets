@@ -153,7 +153,8 @@ public class ApiConverter {
 		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
 		long itemId = apiAsset.getItemID();
 		int typeID = apiAsset.getTypeID();
-		long locationID = apiAsset.getLocationID();
+		long locationID = 0;
+		if (apiAsset.getLocationID() != null) locationID = apiAsset.getLocationID();
 		boolean singleton  = apiAsset.getSingleton();
 		boolean corporationAsset = bCorp;
 		String owner = ApiIdConverter.owner(human, bCorp);
@@ -166,9 +167,9 @@ public class ApiConverter {
 		String meta = ApiIdConverter.meta(apiAsset.getTypeID(), settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(apiAsset.getTypeID(), settings.getItems());
 		float volume = ApiIdConverter.volume(apiAsset.getTypeID(), settings.getItems());
-		String security = ApiIdConverter.security(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String region = ApiIdConverter.regionName(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String location = ApiIdConverter.locationName(apiAsset.getLocationID(), parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);

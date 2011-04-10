@@ -74,10 +74,11 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected void setData(AssetListResponse response, boolean bCorp) {
 		List<ApiAsset> apiAssets = new ArrayList<ApiAsset>(response.getAssets());
+		List<EveAsset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, bCorp, settings);
 		if (bCorp){
-			getHuman().setAssetsCorporation(ApiConverter.apiAsset(getHuman(), apiAssets, true, settings));
+			getHuman().setAssetsCorporation(assets);
 		} else {
-			getHuman().setAssets(ApiConverter.apiAsset(getHuman(), apiAssets, false, settings));
+			getHuman().setAssets(assets);
 		}
 	}
 
