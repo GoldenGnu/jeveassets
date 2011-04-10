@@ -116,7 +116,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 	}
 
 
-	//XXX Workaround for JSeparatorTable
+	//Used by the JSeparatorTable
 	@Override public boolean isEditable(Q baseObject, int column) { return false; }
 	@Override public Q setColumnValue(Q baseObject, Object editedValue, int column) { return null; }
 
