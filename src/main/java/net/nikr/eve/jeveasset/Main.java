@@ -105,9 +105,6 @@ public class Main {
 		Program.setForceNoUpdate(hasNoUpdate && Program.isDebug());
 		Program.setForceUpdate(hasUpdate && Program.isDebug());
 
-		File f = new File("");
-		LOG.info(f.getPath());
-
 		//XXX Workaround for default language
 		BundleCache.setThreadLocale(Locale.ENGLISH);
 
