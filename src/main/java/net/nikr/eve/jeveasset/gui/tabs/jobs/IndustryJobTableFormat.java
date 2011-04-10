@@ -23,12 +23,15 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
 enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
+	//XXX Removed extra id columns from IndustryJobTableFormat (Industry Plot Releated?)
+	/*
 	JOB_ID(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -69,9 +72,9 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 			return from.getAssemblyLineID();
 		}
 	},
-
-	//
-
+	 */
+	
+	
 	STATE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -122,7 +125,7 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 			return from.getOwner();
 		}
 	},
-	INSTALL_DATE(String.class, GlazedLists.comparableComparator()) {
+	INSTALL_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnInstallDate();
@@ -132,7 +135,7 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 			return from.getInstallTime();
 		}
 	},
-	START_DATE(String.class, GlazedLists.comparableComparator()) {
+	START_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return "Start Date";
@@ -142,7 +145,7 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 			return from.getBeginProductionTime();
 		}
 	},
-	END_DATE(String.class, GlazedLists.comparableComparator()) {
+	END_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnEndDate();
