@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public class ProfileReader {
 
 	private final static Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
+	
+	private ProfileReader() {}
 
 	public static boolean load(Settings settings){
 		backwardCompatibility();
@@ -68,7 +70,7 @@ public class ProfileReader {
 				profiles.get(0).setActiveProfile(true);
 				settings.setActiveProfile(profiles.get(0));
 			} else if (!defaultProfileFound && profiles.isEmpty()){
-				LOG.info("No default profile found: Using default settings)");
+				LOG.info("No default profile found: Using default settings");
 			}
 			if (!profiles.isEmpty()) settings.setProfiles(profiles);
 			return true;
@@ -133,5 +135,4 @@ public class ProfileReader {
 			return !file.isDirectory() && file.getName().endsWith(".xml");
 		}
 	}
-	
 }
