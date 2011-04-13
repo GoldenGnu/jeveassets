@@ -3764,12 +3764,12 @@
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
     <row category="Commodity" group="Miscellaneous" id="2595" marketgroup="false" meta="" name="Encoded Data Chip" price="0" volume="0.1"/>
-    <row category="Commodity" group="Miscellaneous" id="2596" marketgroup="false" meta="" name="Crates Of Clothing" price="0" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2597" marketgroup="false" meta="" name="Crates Of Command Reports" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2598" marketgroup="false" meta="" name="Crates Of Coolant" price="0" volume="80.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2599" marketgroup="false" meta="" name="Crates Of Corporate Documents" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2601" marketgroup="false" meta="" name="Crates Of Data Sheets" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2602" marketgroup="false" meta="" name="Crates Of Drill Parts" price="0" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2596" marketgroup="false" meta="" name="Crates of Clothing" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2597" marketgroup="false" meta="" name="Crates of Command Reports" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2598" marketgroup="false" meta="" name="Crates of Coolant" price="0" volume="80.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2599" marketgroup="false" meta="" name="Crates of Corporate Documents" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2601" marketgroup="false" meta="" name="Crates of Data Sheets" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2602" marketgroup="false" meta="" name="Crates of Drill Parts" price="0" volume="90.0"/>
     <row category="Module" group="Nanofiber Internal Structure" id="2603" marketgroup="true" meta="" name="Nanofiber Internal Structure I" price="1664" volume="5.0">
         <material id="37" portionsize="1" quantity="9"/>
         <material id="38" portionsize="1" quantity="1"/>
@@ -3781,8 +3781,8 @@
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Hull Mods Blueprint" id="2606" marketgroup="false" meta="" name="Nanofiber Internal Structure II Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2608" marketgroup="false" meta="" name="Crates Of Fertilizer" price="0" volume="80.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2610" marketgroup="false" meta="" name="Crates Of Frozen Food" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2608" marketgroup="false" meta="" name="Crates of Fertilizer" price="0" volume="80.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2610" marketgroup="false" meta="" name="Crates of Frozen Food" price="0" volume="40.0"/>
     <row category="Celestial" group="Large Collidable Object" id="2612" marketgroup="false" meta="" name="Hollow Asteroid" price="0" volume="0.0"/>
     <row category="Charge" group="Advanced Light Missile" id="2613" marketgroup="true" meta="5 (Tech II)" name="Sabretooth Fury Light Missile" price="95240" volume="0.015">
         <material id="34" portionsize="5000" quantity="2992"/>
@@ -3795,12 +3795,12 @@
         <material id="16680" portionsize="5000" quantity="8"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2614" marketgroup="false" meta="" name="Sabretooth Fury Light Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2615" marketgroup="false" meta="" name="Crates Of Garbage" price="0" volume="90.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2616" marketgroup="false" meta="" name="Large Crates Of Coolant" price="0" volume="800.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2617" marketgroup="false" meta="" name="Crates Of Guidance Systems" price="0" volume="100.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2618" marketgroup="false" meta="" name="Crates Of Harroule Dryweed" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2619" marketgroup="false" meta="" name="Crates Of High-Tech Small Arms" price="0" volume="80.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2620" marketgroup="false" meta="" name="Crates Of Liparer Cheese" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2615" marketgroup="false" meta="" name="Crates of Garbage" price="0" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2616" marketgroup="false" meta="" name="Large Crates of Coolant" price="0" volume="800.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2617" marketgroup="false" meta="" name="Crates of Guidance Systems" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2618" marketgroup="false" meta="" name="Crates of Harroule Dryweed" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2619" marketgroup="false" meta="" name="Crates of High-Tech Small Arms" price="0" volume="80.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2620" marketgroup="false" meta="" name="Crates of Liparer Cheese" price="0" volume="100.0"/>
     <row category="Charge" group="Advanced Cruise Missile" id="2621" marketgroup="true" meta="5 (Tech II)" name="Cataclysm Fury Cruise Missile" price="810600" volume="0.05">
         <material id="34" portionsize="5000" quantity="20080"/>
         <material id="36" portionsize="5000" quantity="300"/>
@@ -3812,11 +3812,11 @@
         <material id="16680" portionsize="5000" quantity="39"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2622" marketgroup="false" meta="" name="Cataclysm Fury Cruise Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2623" marketgroup="false" meta="" name="Crates Of Listening Post Recordings" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2624" marketgroup="false" meta="" name="Crates Of Mechanical Parts" price="0" volume="100.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2626" marketgroup="false" meta="" name="Crates Of Missile Guidance Systems" price="0" volume="90.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2627" marketgroup="false" meta="" name="Crates Of Mono-Cell Batteries" price="0" volume="80.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2628" marketgroup="false" meta="" name="Crates Of Odd Data Crystals" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2623" marketgroup="false" meta="" name="Crates of Listening Post Recordings" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2624" marketgroup="false" meta="" name="Crates of Mechanical Parts" price="0" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2626" marketgroup="false" meta="" name="Crates of Missile Guidance Systems" price="0" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2627" marketgroup="false" meta="" name="Crates of Mono-Cell Batteries" price="0" volume="80.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2628" marketgroup="false" meta="" name="Crates of Odd Data Crystals" price="0" volume="40.0"/>
     <row category="Charge" group="Advanced Heavy Missile" id="2629" marketgroup="true" meta="5 (Tech II)" name="Scourge Fury Heavy Missile" price="574400" volume="0.03">
         <material id="34" portionsize="5000" quantity="10112"/>
         <material id="38" portionsize="5000" quantity="22"/>
@@ -3828,11 +3828,11 @@
         <material id="16680" portionsize="5000" quantity="12"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2630" marketgroup="false" meta="" name="Scourge Fury Heavy Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2631" marketgroup="false" meta="" name="Crates Of OP Insecticide" price="0" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2632" marketgroup="false" meta="" name="Crates Of Oxygen" price="0" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2633" marketgroup="false" meta="" name="Crates Of Planetary Vehicles" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2635" marketgroup="false" meta="" name="Crates Of Protein Delicacies" price="0" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2636" marketgroup="false" meta="" name="Crates Of Raggy Dolls" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2631" marketgroup="false" meta="" name="Crates of OP Insecticide" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2632" marketgroup="false" meta="" name="Crates of Oxygen" price="0" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2633" marketgroup="false" meta="" name="Crates of Planetary Vehicles" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2635" marketgroup="false" meta="" name="Crates of Protein Delicacies" price="0" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2636" marketgroup="false" meta="" name="Crates of Raggy Dolls" price="0" volume="40.0"/>
     <row category="Charge" group="Advanced Cruise Missile" id="2637" marketgroup="true" meta="5 (Tech II)" name="Cataclysm Precision Cruise Missile" price="810600" volume="0.05">
         <material id="34" portionsize="5000" quantity="20080"/>
         <material id="36" portionsize="5000" quantity="300"/>
@@ -3844,13 +3844,13 @@
         <material id="16680" portionsize="5000" quantity="39"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2638" marketgroup="false" meta="" name="Cataclysm Precision Cruise Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2639" marketgroup="false" meta="" name="Crates Of Repair Parts" price="0" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2640" marketgroup="false" meta="" name="Crates Of Replacement Parts" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2641" marketgroup="false" meta="" name="Crates Of Reports" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2642" marketgroup="false" meta="" name="Crates Of Robotics" price="0" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2644" marketgroup="false" meta="" name="Crates Of Small Arms" price="0" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2645" marketgroup="false" meta="" name="Crates Of Soil" price="0" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2646" marketgroup="false" meta="" name="Crates Of Spiced Wine" price="0" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2639" marketgroup="false" meta="" name="Crates of Repair Parts" price="0" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2640" marketgroup="false" meta="" name="Crates of Replacement Parts" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2641" marketgroup="false" meta="" name="Crates of Reports" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2642" marketgroup="false" meta="" name="Crates of Robotics" price="0" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2644" marketgroup="false" meta="" name="Crates of Small Arms" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2645" marketgroup="false" meta="" name="Crates of Soil" price="0" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2646" marketgroup="false" meta="" name="Crates of Spiced Wine" price="0" volume="90.0"/>
     <row category="Charge" group="Advanced Light Missile" id="2647" marketgroup="true" meta="5 (Tech II)" name="Flameburst Precision Light Missile" price="95240" volume="0.015">
         <material id="34" portionsize="5000" quantity="2992"/>
         <material id="36" portionsize="5000" quantity="20"/>
@@ -3862,9 +3862,9 @@
         <material id="16680" portionsize="5000" quantity="8"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2648" marketgroup="false" meta="" name="Flameburst Precision Light Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2652" marketgroup="false" meta="" name="Crates Of Synthetic Oil" price="0" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2653" marketgroup="false" meta="" name="Crates Of Vaccine Injectors" price="0" volume="90.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2654" marketgroup="false" meta="" name="Crates Of Viral Agent" price="0" volume="80.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2652" marketgroup="false" meta="" name="Crates of Synthetic Oil" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2653" marketgroup="false" meta="" name="Crates of Vaccine Injectors" price="0" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2654" marketgroup="false" meta="" name="Crates of Viral Agent" price="0" volume="80.0"/>
     <row category="Charge" group="Advanced Heavy Missile" id="2655" marketgroup="true" meta="5 (Tech II)" name="Havoc Precision Heavy Missile" price="574400" volume="0.03">
         <material id="34" portionsize="5000" quantity="10112"/>
         <material id="38" portionsize="5000" quantity="22"/>
@@ -3876,24 +3876,24 @@
         <material id="16680" portionsize="5000" quantity="12"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2656" marketgroup="false" meta="" name="Havoc Precision Heavy Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2657" marketgroup="false" meta="" name="Crates Of Vitoc" price="0" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2659" marketgroup="false" meta="" name="Crates Of Water" price="0" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2660" marketgroup="false" meta="" name="Crates Of Zemnar" price="0" volume="40.0"/>
-    <row category="Commodity" group="Livestock" id="2662" marketgroup="false" meta="" name="Group Of Army Recruits" price="0" volume="60.0"/>
-    <row category="Commodity" group="Livestock" id="2663" marketgroup="false" meta="" name="Group Of Cattle" price="0" volume="100.0"/>
-    <row category="Commodity" group="Livestock" id="2665" marketgroup="false" meta="" name="Group Of Elite Slaves" price="0" volume="60.0"/>
-    <row category="Commodity" group="Livestock" id="2666" marketgroup="false" meta="" name="Group Of Exotic Dancers" price="0" volume="40.0"/>
-    <row category="Commodity" group="Livestock" id="2668" marketgroup="false" meta="" name="Group Of Genetically Enhanced Livestock" price="0" volume="100.0"/>
-    <row category="Commodity" group="Livestock" id="2669" marketgroup="false" meta="" name="Group Of Kameiras" price="0" volume="70.0"/>
-    <row category="Commodity" group="Livestock" id="2670" marketgroup="false" meta="" name="Group Of Marines" price="0" volume="60.0"/>
-    <row category="Commodity" group="Livestock" id="2671" marketgroup="false" meta="" name="Group Of Militants" price="0" volume="60.0"/>
-    <row category="Commodity" group="Livestock" id="2672" marketgroup="false" meta="" name="Group Of Miners" price="0" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2673" marketgroup="false" meta="" name="Large Crates Of Data Sheets" price="0" volume="400.0"/>
-    <row category="Commodity" group="Livestock" id="2674" marketgroup="false" meta="" name="Group Of Refugees" price="0" volume="40.0"/>
-    <row category="Commodity" group="Livestock" id="2675" marketgroup="false" meta="" name="Group Of Science Graduates" price="0" volume="50.0"/>
-    <row category="Commodity" group="Livestock" id="2676" marketgroup="false" meta="" name="Group Of Security Personnel" price="0" volume="60.0"/>
-    <row category="Commodity" group="Livestock" id="2677" marketgroup="false" meta="" name="Group Of Slaves" price="0" volume="50.0"/>
-    <row category="Commodity" group="Livestock" id="2678" marketgroup="false" meta="" name="Group Of Tourists" price="0" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2657" marketgroup="false" meta="" name="Crates of Vitoc" price="0" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2659" marketgroup="false" meta="" name="Crates of Water" price="0" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2660" marketgroup="false" meta="" name="Crates of Zemnar" price="0" volume="40.0"/>
+    <row category="Commodity" group="Livestock" id="2662" marketgroup="false" meta="" name="Group of Army Recruits" price="0" volume="60.0"/>
+    <row category="Commodity" group="Livestock" id="2663" marketgroup="false" meta="" name="Group of Cattle" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="2665" marketgroup="false" meta="" name="Group of Elite Slaves" price="0" volume="60.0"/>
+    <row category="Commodity" group="Livestock" id="2666" marketgroup="false" meta="" name="Group of Exotic Dancers" price="0" volume="40.0"/>
+    <row category="Commodity" group="Livestock" id="2668" marketgroup="false" meta="" name="Group of Genetically Enhanced Livestock" price="0" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="2669" marketgroup="false" meta="" name="Group of Kameiras" price="0" volume="70.0"/>
+    <row category="Commodity" group="Livestock" id="2670" marketgroup="false" meta="" name="Group of Marines" price="0" volume="60.0"/>
+    <row category="Commodity" group="Livestock" id="2671" marketgroup="false" meta="" name="Group of Militants" price="0" volume="60.0"/>
+    <row category="Commodity" group="Livestock" id="2672" marketgroup="false" meta="" name="Group of Miners" price="0" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2673" marketgroup="false" meta="" name="Large Crates of Data Sheets" price="0" volume="400.0"/>
+    <row category="Commodity" group="Livestock" id="2674" marketgroup="false" meta="" name="Group of Refugees" price="0" volume="40.0"/>
+    <row category="Commodity" group="Livestock" id="2675" marketgroup="false" meta="" name="Group of Science Graduates" price="0" volume="50.0"/>
+    <row category="Commodity" group="Livestock" id="2676" marketgroup="false" meta="" name="Group of Security Personnel" price="0" volume="60.0"/>
+    <row category="Commodity" group="Livestock" id="2677" marketgroup="false" meta="" name="Group of Slaves" price="0" volume="50.0"/>
+    <row category="Commodity" group="Livestock" id="2678" marketgroup="false" meta="" name="Group of Tourists" price="0" volume="50.0"/>
     <row category="Charge" group="Advanced Assault Missile" id="2679" marketgroup="true" meta="5 (Tech II)" name="Terror Rage Assault Missile" price="120240" volume="0.015">
         <material id="34" portionsize="5000" quantity="3172"/>
         <material id="36" portionsize="5000" quantity="30"/>
@@ -3906,58 +3906,58 @@
         <material id="16680" portionsize="5000" quantity="8"/>
     </row>
     <row category="Blueprint" group="Missile Blueprint" id="2680" marketgroup="false" meta="" name="Terror Rage Assault Missile Blueprint" price="9999999" volume="0.01"/>
-    <row category="Commodity" group="Livestock" id="2681" marketgroup="false" meta="" name="Group Of VIPs" price="0" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2682" marketgroup="false" meta="" name="Large Crates Of Galeptos Medicine" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2683" marketgroup="false" meta="" name="Large Crates Of Guidance Systems" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2684" marketgroup="false" meta="" name="Large Crates Of Harroule Dryweed" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2685" marketgroup="false" meta="" name="Large Crates Of Holoreels" price="250" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2686" marketgroup="false" meta="" name="Large Crates Of Liparer Cheese" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2687" marketgroup="false" meta="" name="Large Crates Of Mechanical Parts" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2688" marketgroup="false" meta="" name="Large Crates Of Mono-Cell Batteries" price="0" volume="800.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2689" marketgroup="false" meta="" name="Large Crates Of Oxygen" price="0" volume="700.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2690" marketgroup="false" meta="" name="Large Crates Of Planetary Vehicles" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2691" marketgroup="false" meta="" name="Large Crates Of Polytextiles" price="0" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2692" marketgroup="false" meta="" name="Large Crates Of Protein Delicacies" price="0" volume="700.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2693" marketgroup="false" meta="" name="Large Crates Of Reports" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2694" marketgroup="false" meta="" name="Large Crates Of Small Arms" price="0" volume="600.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2695" marketgroup="false" meta="" name="Large Crates Of Soil" price="0" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2696" marketgroup="false" meta="" name="Large Crates Of Spirits" price="455" volume="600.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2697" marketgroup="false" meta="" name="Large Crates Of Synthetic Oil" price="0" volume="600.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2698" marketgroup="false" meta="" name="Large Crates Of Vitoc" price="0" volume="700.0"/>
-    <row category="Commodity" group="Livestock" id="2699" marketgroup="false" meta="" name="Large Group Of Civilians" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2700" marketgroup="false" meta="" name="Large Group Of Exotic Dancers" price="0" volume="400.0"/>
-    <row category="Commodity" group="Livestock" id="2701" marketgroup="false" meta="" name="Large Group Of Genetically Enhanced Livestock" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Livestock" id="2702" marketgroup="false" meta="" name="Large Group Of Homeless" price="0" volume="400.0"/>
-    <row category="Commodity" group="Livestock" id="2703" marketgroup="false" meta="" name="Large Group Of Kameiras" price="0" volume="700.0"/>
-    <row category="Commodity" group="Livestock" id="2704" marketgroup="false" meta="" name="Large Group Of Marines" price="0" volume="600.0"/>
-    <row category="Commodity" group="Livestock" id="2705" marketgroup="false" meta="" name="Large Group Of Militants" price="0" volume="600.0"/>
-    <row category="Commodity" group="Livestock" id="2706" marketgroup="false" meta="" name="Large Group Of Science Graduates" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2707" marketgroup="false" meta="" name="Large Group Of Slaves" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2708" marketgroup="false" meta="" name="Large Group Of Tourists" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2709" marketgroup="false" meta="" name="Large Group Of VIPs" price="0" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2710" marketgroup="false" meta="" name="Large Crates Of Construction Blocks" price="500" volume="700.0"/>
-    <row category="Commodity" group="Drugs" id="2711" marketgroup="false" meta="" name="Large Crates Of Crystal Eggs" price="5000" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2712" marketgroup="false" meta="" name="Large Crates Of Drill Parts" price="0" volume="900.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2713" marketgroup="false" meta="" name="Large Crates Of Electronic Parts" price="750" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2714" marketgroup="false" meta="" name="Large Crates Of Fertilizer" price="0" volume="800.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2715" marketgroup="false" meta="" name="Large Crates Of Frozen Food" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2716" marketgroup="false" meta="" name="Large Crates Of Frozen Plant Seeds" price="75" volume="500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2717" marketgroup="false" meta="" name="Large Crates Of Garbage" price="0" volume="900.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2718" marketgroup="false" meta="" name="Large Crates Of Long-limb Roes" price="2400" volume="1000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2719" marketgroup="false" meta="" name="Large Crates Of Raggy Dolls" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2720" marketgroup="false" meta="" name="Large Crates Of Rocket Fuel" price="505" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2721" marketgroup="false" meta="" name="Large Crates Of Tobacco" price="48" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2722" marketgroup="false" meta="" name="Large Crates Of Transmitters" price="313" volume="600.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2723" marketgroup="false" meta="" name="Large Crates Of Viral Agent" price="0" volume="800.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2724" marketgroup="false" meta="" name="Large Crates Of Water" price="0" volume="600.0"/>
-    <row category="Commodity" group="Livestock" id="2725" marketgroup="false" meta="" name="Large Group Of Cattle" price="0" volume="1000.0"/>
-    <row category="Commodity" group="Livestock" id="2726" marketgroup="false" meta="" name="Large Group Of Janitors" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2727" marketgroup="false" meta="" name="Large Group Of Miners" price="0" volume="500.0"/>
-    <row category="Commodity" group="Livestock" id="2728" marketgroup="false" meta="" name="Large Group Of Refugees" price="0" volume="400.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2729" marketgroup="false" meta="" name="Crates Of Consumer Electronics" price="750" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2730" marketgroup="false" meta="" name="Crates Of Enriched Uranium" price="500" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2731" marketgroup="false" meta="" name="Crates Of Silicon" price="500" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="2732" marketgroup="false" meta="" name="Crates Of Silicate Glass" price="500" volume="50.0"/>
+    <row category="Commodity" group="Livestock" id="2681" marketgroup="false" meta="" name="Group of VIPs" price="0" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2682" marketgroup="false" meta="" name="Large Crates of Galeptos Medicine" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2683" marketgroup="false" meta="" name="Large Crates of Guidance Systems" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2684" marketgroup="false" meta="" name="Large Crates of Harroule Dryweed" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2685" marketgroup="false" meta="" name="Large Crates of Holoreels" price="250" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2686" marketgroup="false" meta="" name="Large Crates of Liparer Cheese" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2687" marketgroup="false" meta="" name="Large Crates of Mechanical Parts" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2688" marketgroup="false" meta="" name="Large Crates of Mono-Cell Batteries" price="0" volume="800.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2689" marketgroup="false" meta="" name="Large Crates of Oxygen" price="0" volume="700.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2690" marketgroup="false" meta="" name="Large Crates of Planetary Vehicles" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2691" marketgroup="false" meta="" name="Large Crates of Polytextiles" price="0" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2692" marketgroup="false" meta="" name="Large Crates of Protein Delicacies" price="0" volume="700.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2693" marketgroup="false" meta="" name="Large Crates of Reports" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2694" marketgroup="false" meta="" name="Large Crates of Small Arms" price="0" volume="600.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2695" marketgroup="false" meta="" name="Large Crates of Soil" price="0" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2696" marketgroup="false" meta="" name="Large Crates of Spirits" price="455" volume="600.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2697" marketgroup="false" meta="" name="Large Crates of Synthetic Oil" price="0" volume="600.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2698" marketgroup="false" meta="" name="Large Crates of Vitoc" price="0" volume="700.0"/>
+    <row category="Commodity" group="Livestock" id="2699" marketgroup="false" meta="" name="Large Group of Civilians" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2700" marketgroup="false" meta="" name="Large Group of Exotic Dancers" price="0" volume="400.0"/>
+    <row category="Commodity" group="Livestock" id="2701" marketgroup="false" meta="" name="Large Group of Genetically Enhanced Livestock" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Livestock" id="2702" marketgroup="false" meta="" name="Large Group of Homeless" price="0" volume="400.0"/>
+    <row category="Commodity" group="Livestock" id="2703" marketgroup="false" meta="" name="Large Group of Kameiras" price="0" volume="700.0"/>
+    <row category="Commodity" group="Livestock" id="2704" marketgroup="false" meta="" name="Large Group of Marines" price="0" volume="600.0"/>
+    <row category="Commodity" group="Livestock" id="2705" marketgroup="false" meta="" name="Large Group of Militants" price="0" volume="600.0"/>
+    <row category="Commodity" group="Livestock" id="2706" marketgroup="false" meta="" name="Large Group of Science Graduates" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2707" marketgroup="false" meta="" name="Large Group of Slaves" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2708" marketgroup="false" meta="" name="Large Group of Tourists" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2709" marketgroup="false" meta="" name="Large Group of VIPs" price="0" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2710" marketgroup="false" meta="" name="Large Crates of Construction Blocks" price="500" volume="700.0"/>
+    <row category="Commodity" group="Drugs" id="2711" marketgroup="false" meta="" name="Large Crates of Crystal Eggs" price="5000" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2712" marketgroup="false" meta="" name="Large Crates of Drill Parts" price="0" volume="900.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2713" marketgroup="false" meta="" name="Large Crates of Electronic Parts" price="750" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2714" marketgroup="false" meta="" name="Large Crates of Fertilizer" price="0" volume="800.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2715" marketgroup="false" meta="" name="Large Crates of Frozen Food" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2716" marketgroup="false" meta="" name="Large Crates of Frozen Plant Seeds" price="75" volume="500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2717" marketgroup="false" meta="" name="Large Crates of Garbage" price="0" volume="900.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2718" marketgroup="false" meta="" name="Large Crates of Long-limb Roes" price="2400" volume="1000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2719" marketgroup="false" meta="" name="Large Crates of Raggy Dolls" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2720" marketgroup="false" meta="" name="Large Crates of Rocket Fuel" price="505" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2721" marketgroup="false" meta="" name="Large Crates of Tobacco" price="48" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2722" marketgroup="false" meta="" name="Large Crates of Transmitters" price="313" volume="600.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2723" marketgroup="false" meta="" name="Large Crates of Viral Agent" price="0" volume="800.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2724" marketgroup="false" meta="" name="Large Crates of Water" price="0" volume="600.0"/>
+    <row category="Commodity" group="Livestock" id="2725" marketgroup="false" meta="" name="Large Group of Cattle" price="0" volume="1000.0"/>
+    <row category="Commodity" group="Livestock" id="2726" marketgroup="false" meta="" name="Large Group of Janitors" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2727" marketgroup="false" meta="" name="Large Group of Miners" price="0" volume="500.0"/>
+    <row category="Commodity" group="Livestock" id="2728" marketgroup="false" meta="" name="Large Group of Refugees" price="0" volume="400.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2729" marketgroup="false" meta="" name="Crates of Consumer Electronics" price="750" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2730" marketgroup="false" meta="" name="Crates of Enriched Uranium" price="500" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2731" marketgroup="false" meta="" name="Crates of Silicon" price="500" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2732" marketgroup="false" meta="" name="Crates of Silicate Glass" price="500" volume="50.0"/>
     <row category="Abstract" group="Decorations" id="2733" marketgroup="false" meta="" name="Schematic" price="0" volume="0.0"/>
     <row category="Blueprint" group="Sovereignty Structure Blueprint" id="2735" marketgroup="true" meta="" name="Infrastructure Hub Blueprint" price="500000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Warp Scrambling Battery Blueprints" id="2736" marketgroup="true" meta="" name="Warp Disruption Battery Blueprint" price="50000000" volume="0.01"/>
@@ -4259,8 +4259,8 @@
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2946" marketgroup="true" meta="" name="Dual 425mm AutoCannon II Blueprint" price="9999999" volume="0.01"/>
     <row category="Charge" group="Compact Citadel Torpedo" id="2947" marketgroup="false" meta="" name="Compact Shade Torpedo" price="300000" volume="0.3"/>
-    <row category="Drone" group="Fighter Bomber" id="2948" marketgroup="false" meta="" name="Shadow" price="25060456" volume="5000.0"/>
-    <row category="Blueprint" group="Combat Drone Blueprint" id="2949" marketgroup="false" meta="" name="Sansha Fighter Bomber Blueprint" price="300000000" volume="0.01"/>
+    <row category="Drone" group="Fighter Bomber" id="2948" marketgroup="false" meta="" name="Shadow" price="25425808" volume="5000.0"/>
+    <row category="Blueprint" group="Combat Drone Blueprint" id="2949" marketgroup="false" meta="" name="Shadow Blueprint" price="300000000" volume="0.01"/>
     <row category="Entity" group="Incursion Sansha's Nation Cruiser" id="2950" marketgroup="false" meta="" name="Lirsautton Parichaya" price="0" volume="5000.0"/>
     <row category="Commodity" group="Miscellaneous" id="2951" marketgroup="false" meta="" name="Large Crate of Improved Inertial Compensation Systems" price="0" volume="100.0"/>
     <row category="Commodity" group="Miscellaneous" id="2952" marketgroup="false" meta="" name="Crate of Unidentified Fibrous Compound" price="0" volume="10.0"/>
@@ -5817,7 +5817,7 @@
     </row>
     <row category="Blueprint" group="Capacitor Battery Blueprint" id="3505" marketgroup="false" meta="" name="Large Capacitor Battery II Blueprint" price="9999999" volume="0.01"/>
     <row category="Entity" group="Spawn Container" id="3506" marketgroup="false" meta="" name="Central Control Nexus" price="0" volume="27500.0"/>
-    <row category="Commodity" group="Commodities" id="3507" marketgroup="false" meta="" name="Tactical Response Trasmitter" price="0" volume="7500.0"/>
+    <row category="Commodity" group="Commodities" id="3507" marketgroup="false" meta="" name="Tactical Response Transmitter" price="0" volume="7500.0"/>
     <row category="Entity" group="Mission Container" id="3508" marketgroup="false" meta="" name="Sansha Control Relay" price="0" volume="1.0E8"/>
     <row category="Celestial" group="Large Collidable Object" id="3509" marketgroup="false" meta="" name="LCO Sansha Logistics Control Array" price="0" volume="1.0E8"/>
     <row category="Celestial" group="Large Collidable Object" id="3510" marketgroup="false" meta="" name="Sansha Remote Logistics Station" price="0" volume="1.0E8"/>
@@ -6027,7 +6027,7 @@
         <material id="2872" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3562" marketgroup="false" meta="" name="Dual Giga Modal Laser I Blueprint" price="43006260" volume="0.01"/>
-    <row category="Module" group="Missile Launcher Citadel" id="3563" marketgroup="true" meta="2 (Tech I)" name="Limos' Citadel Cruise Launcher I" price="46052412" volume="4000.0">
+    <row category="Module" group="Missile Launcher Citadel" id="3563" marketgroup="true" meta="2 (Tech I)" name="'Limos' Citadel Cruise Launcher I" price="46052412" volume="4000.0">
         <material id="34" portionsize="1" quantity="2887026"/>
         <material id="35" portionsize="1" quantity="749991"/>
         <material id="36" portionsize="1" quantity="297741"/>
@@ -6039,7 +6039,7 @@
         <material id="2871" portionsize="1" quantity="10"/>
         <material id="2876" portionsize="1" quantity="5"/>
     </row>
-    <row category="Blueprint" group="Missile Launcher Blueprint" id="3564" marketgroup="false" meta="" name="Limos' Citadel Cruise Launcher I Blueprint" price="54371388" volume="0.01"/>
+    <row category="Blueprint" group="Missile Launcher Blueprint" id="3564" marketgroup="false" meta="" name="'Limos' Citadel Cruise Launcher I Blueprint" price="54371388" volume="0.01"/>
     <row category="Module" group="Missile Launcher Citadel" id="3565" marketgroup="true" meta="2 (Tech I)" name="Shock 'Limos' Citadel Torpedo Bay I" price="46052412" volume="4000.0">
         <material id="34" portionsize="1" quantity="2887026"/>
         <material id="35" portionsize="1" quantity="749991"/>
@@ -6316,6 +6316,7 @@
     <row category="Planetary Commodities" group="Refined Commodities" id="3775" marketgroup="true" meta="" name="Viral Agent" price="850" volume="1.5"/>
     <row category="Commodity" group="Frozen" id="3777" marketgroup="true" meta="" name="Long-limb Roes" price="2400" volume="1.0"/>
     <row category="Planetary Commodities" group="Basic Commodities" id="3779" marketgroup="true" meta="" name="Biomass" price="1" volume="0.38"/>
+    <row category="Entity" group="Deadspace Overseer's Sentry" id="3795" marketgroup="false" meta="" name="Blood Raider Central Bastion" price="0" volume="1000.0"/>
     <row category="Celestial" group="Sun" id="3796" marketgroup="false" meta="" name="Sun O1 (Blue Bright)" price="0" volume="1.0"/>
     <row category="Celestial" group="Sun" id="3797" marketgroup="false" meta="" name="Sun G5 (Pink)" price="0" volume="1.0"/>
     <row category="Celestial" group="Sun" id="3798" marketgroup="false" meta="" name="Sun K5 (Orange Bright)" price="0" volume="1.0"/>
@@ -6325,16 +6326,22 @@
     <row category="Celestial" group="Sun" id="3802" marketgroup="false" meta="" name="Sun K3 (Yellow Small)" price="0" volume="1.0"/>
     <row category="Celestial" group="Sun" id="3803" marketgroup="false" meta="" name="Sun B5 (White Dwarf)" price="0" volume="1.0"/>
     <row category="Commodity" group="Livestock" id="3804" marketgroup="false" meta="" name="VIPs" price="1000" volume="3.0"/>
+    <row category="Entity" group="Deadspace Overseer's Sentry" id="3805" marketgroup="false" meta="" name="Sansha's Nation Central Bastion" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3806" marketgroup="true" meta="" name="Refugees" price="0" volume="1.0"/>
     <row category="Commodity" group="Livestock" id="3808" marketgroup="false" meta="" name="Prisoners" price="100" volume="7.5"/>
+    <row category="Entity" group="Deadspace Overseer's Sentry" id="3809" marketgroup="false" meta="" name="Serpentis Retention Facility" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3810" marketgroup="true" meta="" name="Marines" price="1000" volume="2.0"/>
     <row category="Commodity" group="General" id="3812" marketgroup="true" meta="" name="Data Sheets" price="150" volume="1.0"/>
     <row category="Commodity" group="General" id="3814" marketgroup="true" meta="" name="Reports" price="30" volume="0.1"/>
     <row category="Commodity" group="Drugs" id="3818" marketgroup="true" meta="" name="Exile" price="15500" volume="1.0"/>
     <row category="Commodity" group="Drugs" id="3820" marketgroup="true" meta="" name="Sooth Sayer" price="8900" volume="1.0"/>
+    <row category="Entity" group="Deadspace Overseer Battleship" id="3821" marketgroup="false" meta="" name="Dread Guristas Commanding Officer" price="0" volume="1.9E7"/>
     <row category="Commodity" group="Drugs" id="3822" marketgroup="true" meta="" name="Frentix" price="1400" volume="0.2"/>
+    <row category="Entity" group="Deadspace Overseer Battleship" id="3823" marketgroup="false" meta="" name="True Sansha Archduke" price="0" volume="1.9E7"/>
     <row category="Commodity" group="Drugs" id="3824" marketgroup="true" meta="" name="Crystal Egg" price="5000" volume="0.5"/>
+    <row category="Entity" group="Deadspace Overseer Battleship" id="3825" marketgroup="false" meta="" name="Dark Blood Hunter" price="0" volume="1.9E7"/>
     <row category="Commodity" group="Drugs" id="3826" marketgroup="true" meta="" name="Mindflood" price="1500" volume="0.2"/>
+    <row category="Entity" group="Deadspace Overseer Battleship" id="3827" marketgroup="false" meta="" name="Shadow Serpentis Big Boss" price="0" volume="1.9E7"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3828" marketgroup="true" meta="" name="Construction Blocks" price="500" volume="1.5"/>
     <row category="Module" group="Shield Extender" id="3829" marketgroup="true" meta="" name="Medium Shield Extender I" price="12474" volume="10.0">
         <material id="34" portionsize="1" quantity="1701"/>
@@ -6421,6 +6428,7 @@
         <material id="36" portionsize="1" quantity="146"/>
         <material id="39" portionsize="1" quantity="2"/>
     </row>
+    <row category="Implant" group="Booster" id="3898" marketgroup="false" meta="" name="Quafe Zero" price="0" volume="1.0"/>
     <row category="Module" group="Smart Bomb" id="3899" marketgroup="true" meta=" (Tech II)" name="Micro Proton Smartbomb II" price="60288" volume="2.5">
         <material id="34" portionsize="1" quantity="3200"/>
         <material id="35" portionsize="1" quantity="1800"/>
@@ -11151,7 +11159,7 @@
         <material id="16681" portionsize="1" quantity="20"/>
         <material id="16682" portionsize="1" quantity="10"/>
     </row>
-    <row category="Ship" group="Frigate" id="11019" marketgroup="false" meta="" name="BH Mega Cargo Ship" price="220000" volume="100.0"/>
+    <row category="Ship" group="Frigate" id="11019" marketgroup="false" meta="" name="Cockroach" price="220000" volume="100.0"/>
     <row category="Entity" group="Asteroid Angel Cartel Frigate" id="11021" marketgroup="false" meta="" name="Angel Thug" price="0" volume="26005.0"/>
     <row category="Entity" group="Asteroid Angel Cartel Frigate" id="11022" marketgroup="false" meta="" name="Angel Ruffian" price="0" volume="17660.0"/>
     <row category="Entity" group="Asteroid Angel Cartel Frigate" id="11023" marketgroup="false" meta="" name="Angel Ambusher" price="0" volume="19100.0"/>
@@ -12643,7 +12651,7 @@
         <material id="16680" portionsize="1" quantity="6"/>
         <material id="16681" portionsize="1" quantity="2"/>
     </row>
-    <row category="Commodity" group="Construction Components" id="11694" marketgroup="true" meta="" name="Emp Pulse Generator" price="5200" volume="1.0">
+    <row category="Commodity" group="Construction Components" id="11694" marketgroup="true" meta="" name="EMP Generator" price="5200" volume="1.0">
         <material id="16672" portionsize="1" quantity="20"/>
         <material id="16680" portionsize="1" quantity="6"/>
         <material id="16681" portionsize="1" quantity="2"/>
@@ -18884,7 +18892,7 @@
     <row category="Blueprint" group="Construction Component Blueprints" id="17332" marketgroup="true" meta="" name="Graviton Pulse Generator Blueprint" price="5000000" volume="0.01"/>
     <row category="Blueprint" group="Construction Component Blueprints" id="17333" marketgroup="true" meta="" name="Ladar Sensor Cluster Blueprint" price="5000000" volume="0.01"/>
     <row category="Blueprint" group="Construction Component Blueprints" id="17334" marketgroup="true" meta="" name="Tesseract Capacitor Unit Blueprint" price="5000000" volume="0.01"/>
-    <row category="Blueprint" group="Construction Component Blueprints" id="17335" marketgroup="true" meta="" name="Emp Pulse Generator Blueprint" price="5000000" volume="0.01"/>
+    <row category="Blueprint" group="Construction Component Blueprints" id="17335" marketgroup="true" meta="" name="EMP Generator Blueprint" price="5000000" volume="0.01"/>
     <row category="Blueprint" group="Construction Component Blueprints" id="17336" marketgroup="true" meta="" name="Radar Sensor Cluster Blueprint" price="5000000" volume="0.01"/>
     <row category="Blueprint" group="Construction Component Blueprints" id="17337" marketgroup="true" meta="" name="Oscillator Capacitor Unit Blueprint" price="5000000" volume="0.01"/>
     <row category="Blueprint" group="Construction Component Blueprints" id="17338" marketgroup="true" meta="" name="Antimatter Reactor Unit Blueprint" price="5000000" volume="0.01"/>
@@ -27465,7 +27473,7 @@
     <row category="Commodity" group="Commodities" id="23604" marketgroup="false" meta="" name="Isone Flosins's Corpse" price="0" volume="1.0"/>
     <row category="Commodity" group="Commodities" id="23605" marketgroup="false" meta="" name="Isone Flosin's DNA" price="0" volume="0.1"/>
     <row category="Skill" group="Drones" id="23606" marketgroup="true" meta="" name="Drone Sharpshooting" price="150000" volume="0.01"/>
-    <row category="Entity" group="Spawn Container" id="23607" marketgroup="false" meta="" name="Wreckage Of Isone's Ship" price="0" volume="1.0E8"/>
+    <row category="Entity" group="Spawn Container" id="23607" marketgroup="false" meta="" name="Wreckage of Isone's Ship" price="0" volume="1.0E8"/>
     <row category="Celestial" group="Agents in Space" id="23608" marketgroup="false" meta="" name="Nilla Elermare's Shuttle" price="0" volume="5000.0"/>
     <row category="Entity" group="Storyline Mission Cruiser" id="23609" marketgroup="false" meta="" name="Don Rico's Henchman" price="0" volume="112000.0"/>
     <row category="Commodity" group="Livestock" id="23610" marketgroup="false" meta="" name="Jark Makon" price="0" volume="1.0"/>
@@ -29566,7 +29574,7 @@
     <row category="Entity" group="Mission Gallente Federation Battleship" id="25196" marketgroup="false" meta="" name="Federation Praktor Hexeris" price="0" volume="1140000.0"/>
     <row category="Entity" group="Mission Gallente Federation Battleship" id="25198" marketgroup="false" meta="" name="Federation Praktor Praeses" price="0" volume="1140000.0"/>
     <row category="Entity" group="Mission Gallente Federation Battleship" id="25201" marketgroup="false" meta="" name="Federation Praktor Phanix" price="0" volume="1140000.0"/>
-    <row category="Entity" group="Mission Gallente Federation Battleship" id="25202" marketgroup="false" meta="" name="Federation Praktor Hyperion" price="0" volume="1140000.0"/>
+    <row category="Entity" group="Mission Gallente Federation Battleship" id="25202" marketgroup="false" meta="" name="Federation Praktor Magister" price="0" volume="1140000.0"/>
     <row category="Charge" group="Obsolete Probes" id="25207" marketgroup="false" meta="" name="Scan Probe Test 1" price="22862" volume="0.125"/>
     <row category="Entity" group="Pirate Drone" id="25209" marketgroup="false" meta="" name="Tempest 50ms 1000m" price="0" volume="1.9E7"/>
     <row category="Entity" group="Pirate Drone" id="25210" marketgroup="false" meta="" name="Rupture 100ms 625m" price="0" volume="109000.0"/>
@@ -31731,26 +31739,26 @@
     <row category="Entity" group="Deadspace Overseer Battleship" id="26770" marketgroup="false" meta="" name="Independence Queen" price="0" volume="1010000.0"/>
     <row category="Entity" group="Deadspace Overseer Battleship" id="26771" marketgroup="false" meta="" name="Radiant Hive Mother" price="0" volume="1010000.0"/>
     <row category="Entity" group="Deadspace Overseer Battleship" id="26772" marketgroup="false" meta="" name="Hierarchy Hive Queen" price="0" volume="1010000.0"/>
-    <row category="Commodity" group="Livestock" id="26773" marketgroup="false" meta="" name="Regiment Of Marines" price="1000" volume="2000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26774" marketgroup="false" meta="" name="Crates Of Long-limb Roes" price="2400" volume="100.0"/>
-    <row category="Commodity" group="Livestock" id="26775" marketgroup="false" meta="" name="Group Of Janitors" price="0" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26776" marketgroup="false" meta="" name="Barrels Of Soil" price="80" volume="8000.0"/>
+    <row category="Commodity" group="Livestock" id="26773" marketgroup="false" meta="" name="Regiment of Marines" price="1000" volume="2000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26774" marketgroup="false" meta="" name="Crates of Long-limb Roes" price="2400" volume="100.0"/>
+    <row category="Commodity" group="Livestock" id="26775" marketgroup="false" meta="" name="Group of Janitors" price="0" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26776" marketgroup="false" meta="" name="Barrels of Soil" price="80" volume="8000.0"/>
     <row category="Commodity" group="Biohazard" id="26777" marketgroup="false" meta="" name="Barrels Of Viral Agent" price="850" volume="5000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26778" marketgroup="false" meta="" name="Crates Of Holoreels" price="250" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26779" marketgroup="false" meta="" name="Crates Of Electronic Parts" price="750" volume="40.0"/>
-    <row category="Commodity" group="Drugs" id="26780" marketgroup="false" meta="" name="Crates Of Crystal Eggs" price="5000" volume="90.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26781" marketgroup="false" meta="" name="Crates Of Transmitters" price="313" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26782" marketgroup="false" meta="" name="Barrels Of Fertilizer" price="200" volume="6000.0"/>
-    <row category="Commodity" group="Livestock" id="26783" marketgroup="false" meta="" name="Group Of Homeless" price="0" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26784" marketgroup="false" meta="" name="Heap-Load Of Garbage" price="20" volume="2500.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26785" marketgroup="false" meta="" name="Crates Of Frozen Plant Seeds" price="75" volume="50.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26786" marketgroup="false" meta="" name="Crates Of Spirits" price="455" volume="60.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26787" marketgroup="false" meta="" name="Crates Of Rocket Fuel" price="505" volume="40.0"/>
-    <row category="Commodity" group="Livestock" id="26788" marketgroup="false" meta="" name="Gang Of Miners" price="0" volume="6000.0"/>
-    <row category="Commodity" group="Commodities" id="26789" marketgroup="false" meta="" name="Cache Of Pistols" price="0" volume="2000.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26790" marketgroup="false" meta="" name="Crates Of Tobacco" price="48" volume="40.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26791" marketgroup="false" meta="" name="Crates Of Construction Blocks" price="500" volume="70.0"/>
-    <row category="Commodity" group="Miscellaneous" id="26792" marketgroup="false" meta="" name="Barrels Of Water" price="35" volume="2500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26778" marketgroup="false" meta="" name="Crates of Holoreels" price="250" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26779" marketgroup="false" meta="" name="Crates of Electronic Parts" price="750" volume="40.0"/>
+    <row category="Commodity" group="Drugs" id="26780" marketgroup="false" meta="" name="Crates of Crystal Eggs" price="5000" volume="90.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26781" marketgroup="false" meta="" name="Crates of Transmitters" price="313" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26782" marketgroup="false" meta="" name="Barrels of Fertilizer" price="200" volume="6000.0"/>
+    <row category="Commodity" group="Livestock" id="26783" marketgroup="false" meta="" name="Group of Homeless" price="0" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26784" marketgroup="false" meta="" name="Heap-Load of Garbage" price="20" volume="2500.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26785" marketgroup="false" meta="" name="Crates of Frozen Plant Seeds" price="75" volume="50.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26786" marketgroup="false" meta="" name="Crates of Spirits" price="455" volume="60.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26787" marketgroup="false" meta="" name="Crates of Rocket Fuel" price="505" volume="40.0"/>
+    <row category="Commodity" group="Livestock" id="26788" marketgroup="false" meta="" name="Gang of Miners" price="0" volume="6000.0"/>
+    <row category="Commodity" group="Commodities" id="26789" marketgroup="false" meta="" name="Cache of Pistols" price="0" volume="2000.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26790" marketgroup="false" meta="" name="Crates of Tobacco" price="48" volume="40.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26791" marketgroup="false" meta="" name="Crates of Construction Blocks" price="500" volume="70.0"/>
+    <row category="Commodity" group="Miscellaneous" id="26792" marketgroup="false" meta="" name="Barrels of Water" price="35" volume="2500.0"/>
     <row category="Entity" group="Deadspace Overseer Battleship" id="26793" marketgroup="false" meta="" name="Colonial Master Diabolus Maytor" price="0" volume="100100.0"/>
     <row category="Celestial" group="Large Collidable Object" id="26794" marketgroup="false" meta="" name="LCO Viator" price="0" volume="190000.0"/>
     <row category="Entity" group="Storyline Mission Cruiser" id="26795" marketgroup="false" meta="" name="Ours De Soin" price="0" volume="190000.0"/>
@@ -31936,9 +31944,9 @@
     <row category="Celestial" group="Wreck" id="26972" marketgroup="false" meta="" name="Faction Drone Wreck" price="0" volume="27500.0"/>
     <row category="Entity" group="Asteroid Angel Cartel Commander Frigate" id="26973" marketgroup="false" meta="" name="Domination Wang Chunger" price="0" volume="19100.0"/>
     <row category="Commodity" group="Miscellaneous" id="26974" marketgroup="false" meta="" name="Antiviral Drugs" price="325" volume="0.2"/>
-    <row category="Entity" group="Spawn Container" id="26975" marketgroup="false" meta="" name="Cargo Warehouse - Crates Of Synthetic Oil" price="0" volume="1150.0"/>
+    <row category="Entity" group="Spawn Container" id="26975" marketgroup="false" meta="" name="Cargo Warehouse - Crates of Synthetic Oil" price="0" volume="1150.0"/>
     <row category="Entity" group="Spawn Container" id="26976" marketgroup="false" meta="" name="Cargo Warehouse - Spiced Wine" price="0" volume="1150.0"/>
-    <row category="Entity" group="Spawn Container" id="26977" marketgroup="false" meta="" name="Cargo Warehouse - Crates Of Silicate Glass" price="0" volume="1150.0"/>
+    <row category="Entity" group="Spawn Container" id="26977" marketgroup="false" meta="" name="Cargo Warehouse - Crates of Silicate Glass" price="0" volume="1150.0"/>
     <row category="Entity" group="Spawn Container" id="26978" marketgroup="false" meta="" name="Cargo Warehouse - Quafe Ultra" price="0" volume="1150.0"/>
     <row category="Module" group="Overdrive Injector System" id="26979" marketgroup="false" meta="5" name="TEST Overdrive Injector System II" price="35200" volume="5.0"/>
     <row category="Blueprint" group="Hull Mods Blueprint" id="26980" marketgroup="false" meta="" name="TEST Nanofiber Internal Structure II Blueprint" price="9999999" volume="0.01"/>
@@ -35397,12 +35405,12 @@
         <material id="16681" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Advanced Capital Construction Component Blueprints" id="29046" marketgroup="true" meta="" name="Capital Electrolytic Capacitor Unit Blueprint" price="15000000" volume="0.01"/>
-    <row category="Commodity" group="Advanced Capital Construction Components" id="29047" marketgroup="true" meta="" name="Capital Emp Pulse Generator" price="70000" volume="10.0">
+    <row category="Commodity" group="Advanced Capital Construction Components" id="29047" marketgroup="true" meta="" name="Capital EMP Generator" price="70000" volume="10.0">
         <material id="16672" portionsize="1" quantity="2000"/>
         <material id="16680" portionsize="1" quantity="60"/>
         <material id="16681" portionsize="1" quantity="20"/>
     </row>
-    <row category="Blueprint" group="Advanced Capital Construction Component Blueprints" id="29048" marketgroup="true" meta="" name="Capital Emp Pulse Generator Blueprint" price="15000000" volume="0.01"/>
+    <row category="Blueprint" group="Advanced Capital Construction Component Blueprints" id="29048" marketgroup="true" meta="" name="Capital EMP Generator Blueprint" price="15000000" volume="0.01"/>
     <row category="Commodity" group="Advanced Capital Construction Components" id="29049" marketgroup="true" meta="" name="Capital Fernite Carbide Composite Armor Plate" price="50000" volume="10.0">
         <material id="16673" portionsize="1" quantity="2000"/>
         <material id="16678" portionsize="1" quantity="1500"/>
@@ -37388,7 +37396,6 @@
     <row category="Blueprint" group="Rig Blueprint" id="31092" marketgroup="false" meta="" name="Medium Salvage Tackle II Blueprint" price="750000" volume="0.01"/>
     <row category="Module" group="Rig Armor" id="31093" marketgroup="false" meta="5" name="Capital Salvage Tackle II" price="0" volume="1000.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="31094" marketgroup="false" meta="" name="Capital Salvage Tackle II Blueprint" price="125000" volume="0.01"/>
-    <row category="Blueprint" group="Rig Blueprint" id="31096" marketgroup="false" meta="" name="Small Test Rig Blueprint" price="125000" volume="0.01"/>
     <row category="Celestial" group="Agents in Space" id="31103" marketgroup="false" meta="" name="Gian Parele's Pleasure Cruiser" price="0" volume="115000.0"/>
     <row category="Module" group="Rig Astronautic" id="31105" marketgroup="true" meta="" name="Small Auxiliary Thrusters I" price="0" volume="5.0">
         <material id="25599" portionsize="1" quantity="3"/>

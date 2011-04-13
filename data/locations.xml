@@ -12971,10 +12971,10 @@
     <row id="60014830" name="Frulegur IV - Moon 1 - Pator Tech School" region="10000042" security="0.4" solarsystem="30003467"/>
     <row id="60014833" name="Illinfrik VII - Moon 12 - Pator Tech School" region="10000030" security="0.8" solarsystem="30002527"/>
     <row id="60014836" name="Todifrauan VII - Moon 19 - Pator Tech School" region="10000042" security="0.1" solarsystem="30002062"/>
-    <row id="60014839" name="ISD STAR Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014839" name="Polaris I - ISD STAR Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
     <row id="60014842" name="Polaris II - Station" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014845" name="Auxiliary Union for Rallying Observation Recording and Analysis" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014848" name="ISD CRC Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014845" name="Polaris III - Auxiliary Union for Rallying Observation Recording and Analysis" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014848" name="Polaris IV - ISD CRC Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
     <row id="60014851" name="M-FDTD I - Material Institute" region="10000017" security="0.2" solarsystem="30001479"/>
     <row id="60014854" name="HD3-JK I - Academy of Aggressive Behaviour" region="10000017" security="0.1" solarsystem="30001482"/>
     <row id="60014857" name="Crielere I - Ishukone Corporation Research Center" region="10000032" security="0.4" solarsystem="30002691"/>
@@ -12986,7 +12986,7 @@
     <row id="60014865" name="28Y9-P V - Moon 1 - Manufacturing Outpost" region="10000008" security="0.0" solarsystem="30000714"/>
     <row id="60014866" name="N7-BIY IV - Moon 1 - Manufacturing Outpost" region="10000009" security="0.0" solarsystem="30000811"/>
     <row id="60014867" name="IMK-K1 IX - Moon 1 - Manufacturing Outpost" region="10000010" security="0.0" solarsystem="30000895"/>
-    <row id="60014868" name="gdsfgsdfgdsfg" region="10000014" security="0.0" solarsystem="30001256"/>
+    <row id="60014868" name="FAT-6P VIII - Moon 1 - gdsfgsdfgdsfg" region="10000014" security="0.0" solarsystem="30001256"/>
     <row id="60014869" name="Z-H2MA IV - Moon 1 - Manufacturing Outpost" region="10000025" security="0.0" solarsystem="30002141"/>
     <row id="60014870" name="Z-N9IP VII - Moon 2 - Manufacturing Outpost" region="10000031" security="0.0" solarsystem="30002617"/>
     <row id="60014871" name="CZDJ-1 X - Moon 4 - Manufacturing Outpost" region="10000035" security="0.0" solarsystem="30002953"/>
@@ -13008,7 +13008,7 @@
     <row id="60014887" name="M53-1V VI - Moon 4 - Refining Outpost" region="10000007" security="0.0" solarsystem="30000633"/>
     <row id="60014888" name="JLO-Z3 IX - Moon 4 - Refining Outpost" region="10000008" security="0.0" solarsystem="30000708"/>
     <row id="60014889" name="F2A-GX IV - Moon 4 - Refining Outpost" region="10000009" security="0.0" solarsystem="30000804"/>
-    <row id="60014890" name="Matt's Testing Station" region="10000010" security="0.0" solarsystem="30000867"/>
+    <row id="60014890" name="D7-ZAC VIII - Moon 1 - Matt's Testing Station" region="10000010" security="0.0" solarsystem="30000867"/>
     <row id="60014891" name="5-N2EY VIII - Moon 5 - Refining Outpost" region="10000014" security="0.0" solarsystem="30001241"/>
     <row id="60014892" name="E8-YS9 VI - Moon 4 - Refining Outpost" region="10000025" security="0.0" solarsystem="30002163"/>
     <row id="60014893" name="FR-B1H VII - Moon 1 - Refining Outpost" region="10000031" security="0.0" solarsystem="30002630"/>
@@ -13038,13 +13038,13 @@
     <row id="60014917" name="VFK-IV VI - Moon 1 - Cloning Outpost" region="10000035" security="0.0" solarsystem="30002904"/>
     <row id="60014918" name="C9N-CC I - Moon 2 - Cloning Outpost" region="10000039" security="0.0" solarsystem="30003109"/>
     <row id="60014919" name="S-EVIQ III - Moon 1 - Cloning Outpost" region="10000045" security="0.0" solarsystem="30003611"/>
-    <row id="60014920" name="Allah Ackhbar" region="10000046" security="0.0" solarsystem="30003689"/>
+    <row id="60014920" name="L-C3O7 VII - Moon 5 - Allah Ackhbar" region="10000046" security="0.0" solarsystem="30003689"/>
     <row id="60014921" name="9CG6-H VIII - Moon 4 - Cloning Outpost" region="10000050" security="0.0" solarsystem="30003979"/>
     <row id="60014922" name="9-4RP2 IV - Moon 2 - Cloning Outpost" region="10000051" security="0.0" solarsystem="30004059"/>
     <row id="60014923" name="K-8SQS VI - Moon 2 - Cloning Outpost" region="10000055" security="0.0" solarsystem="30004379"/>
-    <row id="60014924" name="Colins Palace of Love" region="10000056" security="0.0" solarsystem="30004453"/>
+    <row id="60014924" name="VNGJ-U V - Moon 1 - Colins Palace of Love" region="10000056" security="0.0" solarsystem="30004453"/>
     <row id="60014925" name="H8-ZTO VI - Moon 5 - Cloning Outpost" region="10000059" security="0.0" solarsystem="30004678"/>
-    <row id="60014926" name="TIS MINE BIATCHES" region="10000060" security="0.0" solarsystem="30004712"/>
+    <row id="60014926" name="NOL-M9 VI - Moon 2 - TIS MINE BIATCHES" region="10000060" security="0.0" solarsystem="30004712"/>
     <row id="60014927" name="DZ6-I5 IV - Moon 1 - Cloning Outpost" region="10000061" security="0.0" solarsystem="30004852"/>
     <row id="60014928" name="6T3I-L VII - Moon 5 - Cloning Outpost" region="10000062" security="0.0" solarsystem="30004908"/>
     <row id="60014929" name="Polaris VI - Manufacturing Outpost" region="10000004" security="0.0" solarsystem="30000380"/>
