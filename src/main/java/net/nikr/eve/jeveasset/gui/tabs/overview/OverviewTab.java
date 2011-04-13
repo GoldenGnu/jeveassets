@@ -526,11 +526,8 @@ public class OverviewTab extends JMainTab {
 		public void actionPerformed(ActionEvent e) {
 			OverviewGroup overviewGroup = getSelectGroup();
 			String location = e.getActionCommand();
-			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOverview.get().removeTheLocation(location), TabsOverview.get().removeLocation(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION){
-				overviewGroup.remove(new OverviewLocation(location));
-				updateTable();
-			}
+			overviewGroup.remove(new OverviewLocation(location));
+			updateTable();
 		}
 	}
 }
