@@ -34,6 +34,7 @@ public class JSeparatorTable extends JAutoColumnTable {
         super(tableModel);
         setUI(new SpanTableUI());
 
+		this.getTableHeader().setReorderingAllowed(false);
         // use a toString() renderer for the separator
         this.separatorRenderer = getDefaultRenderer(Object.class);
     }
