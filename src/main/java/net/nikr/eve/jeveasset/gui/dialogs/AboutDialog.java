@@ -87,7 +87,10 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "<b>www</b><br>"
 				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
-				+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=4254\">Forum Thread</a> (feedback)<br>"
+				//New forum
+				//+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=4254\">Forum Thread</a> (feedback)<br>"
+				//Old forum
+				+ "&nbsp;<a href=\"http://www.eveonline.com/ingameboard.asp?a=topic&threadID=1103224\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
 				+ "<br>"
 				);
