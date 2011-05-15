@@ -16,6 +16,25 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.7.0__________________________________________________________________________
+
+New Features:
+-Hide Filters
+-AssetFilter On/Off
+-Overview to Routing coupling
+-Faster Overview Groups
+-Faction Prices (prices.c0rporation.com)
+-Set price for BPC
+-Isk-to-cover
+-Progress monitor when updating price data on startup
+-Merge Filters
+
+Changed:
+-Updated the set price/name GUI
+-Save settings after updating
+-A lot of i18n
+
+________________________________________________________________________________
 _1.6.4__________________________________________________________________________
 
 Bug Fixes:
