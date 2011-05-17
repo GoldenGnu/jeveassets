@@ -281,6 +281,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 	
 	final public void updateEventList(){
+		LOG.info("Updating EventList");
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
