@@ -302,10 +302,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public double getDefaultPrice() {
-		if (this.isMarketGroup()) {
-			return getDefaultPrice(getPriceData());
-		}
-		return 0;
+		return getDefaultPrice(getPriceData());
 	}
 
 	/*
@@ -331,22 +328,18 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public double getPriceSellMin() {
-		if (isBlueprint() && !isBpo()) {
-			return 0;
-		}
-		if (this.isMarketGroup() && this.getPriceData() != null) {
-			return this.getPriceData().getSellMin();
-		}
+		if (isBlueprint() && !isBpo()) return 0;
+		
+		if (this.getPriceData() != null) return this.getPriceData().getSellMin();
+		
 		return 0;
 	}
 
 	public double getPriceBuyMax() {
-		if (isBlueprint() && !isBpo()) {
-			return 0;
-		}
-		if (this.isMarketGroup() && this.getPriceData() != null) {
-			return this.getPriceData().getBuyMax();
-		}
+		if (isBlueprint() && !isBpo()) return 0;
+		
+		if (this.getPriceData() != null) return this.getPriceData().getBuyMax();
+		
 		return 0;
 	}
 
