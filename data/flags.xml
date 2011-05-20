@@ -3,6 +3,7 @@
     <row flagid="0" flagname="None" flagtext="None"/>
     <row flagid="1" flagname="Wallet" flagtext="Wallet"/>
     <row flagid="2" flagname="Factory" flagtext="Factory"/>
+    <row flagid="3" flagname="Wardrobe" flagtext="Wardrobe"/>
     <row flagid="4" flagname="Hangar" flagtext="Hangar"/>
     <row flagid="5" flagname="Cargo" flagtext="Cargo"/>
     <row flagid="6" flagname="Briefcase" flagtext="Briefcase"/>
@@ -126,4 +127,5 @@
     <row flagid="148" flagname="SpecializedCommandCenterHold" flagtext="Specialized Command Center Hold"/>
     <row flagid="149" flagname="SpecializedPlanetaryCommoditiesHold" flagtext="Specialized Planetary Commodities Hold"/>
     <row flagid="150" flagname="PlanetSurface" flagtext="Planet Surface"/>
+    <row flagid="151" flagname="SpecializedMaterialBay" flagtext="Specialized Material Bay"/>
 </rows>

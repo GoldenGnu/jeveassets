@@ -3151,7 +3151,7 @@
     <row category="Entity" group="Mission Faction Cruiser" id="2224" marketgroup="false" meta="" name="Tolmak's Zealots" price="0" volume="115000.0"/>
     <row category="Commodity" group="Livestock" id="2226" marketgroup="false" meta="" name="Sisters of Eve Negotiator" price="0" volume="1.0"/>
     <row category="Entity" group="Spawn Container" id="2232" marketgroup="false" meta="" name="Life pod" price="0" volume="1200.0"/>
-    <row category="Planetary Interaction" group="Planetary Customs Offices" id="2233" marketgroup="false" meta="" name="Customs Office" price="0" volume="1.0E8"/>
+    <row category="Planetary Interaction" group="Planetary Customs Offices" id="2233" marketgroup="false" meta="" name="Customs Office" price="25137350" volume="1.0E8"/>
     <row category="Celestial" group="Large Collidable Object" id="2234" marketgroup="false" meta="" name="Sansha's Battletower LCO" price="0" volume="1.0E8"/>
     <row category="Commodity" group="Livestock" id="2239" marketgroup="false" meta="" name="Oura Madusaari" price="0" volume="3.0"/>
     <row category="Commodity" group="Livestock" id="2240" marketgroup="false" meta="" name="Harroken Ikero" price="0" volume="3.0"/>
@@ -6329,7 +6329,7 @@
     <row category="Entity" group="Deadspace Overseer's Sentry" id="3805" marketgroup="false" meta="" name="Sansha's Nation Central Bastion" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3806" marketgroup="true" meta="" name="Refugees" price="0" volume="1.0"/>
     <row category="Commodity" group="Livestock" id="3808" marketgroup="false" meta="" name="Prisoners" price="100" volume="7.5"/>
-    <row category="Entity" group="Deadspace Overseer's Sentry" id="3809" marketgroup="false" meta="" name="Serpentis Retention Facility" price="0" volume="1000.0"/>
+    <row category="Entity" group="Deadspace Overseer's Sentry" id="3809" marketgroup="false" meta="" name="Serpentis Administration Facility" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3810" marketgroup="true" meta="" name="Marines" price="1000" volume="2.0"/>
     <row category="Commodity" group="General" id="3812" marketgroup="true" meta="" name="Data Sheets" price="150" volume="1.0"/>
     <row category="Commodity" group="General" id="3814" marketgroup="true" meta="" name="Reports" price="30" volume="0.1"/>
@@ -6422,6 +6422,9 @@
         <material id="38" portionsize="1" quantity="6"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
+    <row category="Skill" group="Social" id="3893" marketgroup="true" meta="" name="Mining Connections" price="20000000" volume="0.01"/>
+    <row category="Skill" group="Social" id="3894" marketgroup="true" meta="" name="Distribution Connections" price="20000000" volume="0.01"/>
+    <row category="Skill" group="Social" id="3895" marketgroup="true" meta="" name="Security Connections" price="20000000" volume="0.01"/>
     <row category="Module" group="Smart Bomb" id="3897" marketgroup="true" meta="" name="Micro Proton Smartbomb I" price="20000" volume="2.5">
         <material id="34" portionsize="1" quantity="2800"/>
         <material id="35" portionsize="1" quantity="704"/>
@@ -6529,6 +6532,7 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3950" marketgroup="true" meta="" name="Medium Plasma Smartbomb II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3952" marketgroup="false" meta="" name="LCO Archon" price="0" volume="0.0"/>
     <row category="Module" group="Smart Bomb" id="3953" marketgroup="true" meta="" name="Medium EMP Smartbomb I" price="180000" volume="25.0">
         <material id="34" portionsize="1" quantity="20488"/>
         <material id="35" portionsize="1" quantity="16510"/>
@@ -6545,6 +6549,7 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3956" marketgroup="true" meta="" name="Medium EMP Smartbomb II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3957" marketgroup="false" meta="" name="LCO Serpentis Stronghold" price="0" volume="1.0E8"/>
     <row category="Module" group="Smart Bomb" id="3977" marketgroup="true" meta="" name="Large Proton Smartbomb I" price="300000" volume="50.0">
         <material id="34" portionsize="1" quantity="34156"/>
         <material id="35" portionsize="1" quantity="27305"/>
@@ -17875,13 +17880,13 @@
         <material id="38" portionsize="1" quantity="133"/>
     </row>
     <row category="Entity" group="Mission Generic Cruisers" id="16545" marketgroup="false" meta="" name="Pleasure Cruiser" price="0" volume="115000.0"/>
-    <row category="Skill" group="Social" id="16546" marketgroup="true" meta="" name="Bureaucratic Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16547" marketgroup="true" meta="" name="Financial Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16548" marketgroup="true" meta="" name="Political Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16549" marketgroup="true" meta="" name="Military Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16550" marketgroup="true" meta="" name="Labor Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16551" marketgroup="true" meta="" name="Trade Connections" price="20000000" volume="0.01"/>
-    <row category="Skill" group="Social" id="16552" marketgroup="true" meta="" name="High Tech Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16546" marketgroup="false" meta="" name="Bureaucratic Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16547" marketgroup="false" meta="" name="Financial Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16548" marketgroup="false" meta="" name="Political Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16549" marketgroup="false" meta="" name="Military Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16550" marketgroup="false" meta="" name="Labor Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16551" marketgroup="false" meta="" name="Trade Connections" price="20000000" volume="0.01"/>
+    <row category="Commodity" group="Obsolete Books" id="16552" marketgroup="false" meta="" name="High Tech Connections" price="20000000" volume="0.01"/>
     <row category="Entity" group="Mission Generic Frigates" id="16553" marketgroup="false" meta="" name="Wallekon Nezmar" price="0" volume="18100.0"/>
     <row category="Entity" group="Mission Generic Frigates" id="16554" marketgroup="false" meta="" name="Velzion Drekin" price="0" volume="18100.0"/>
     <row category="Entity" group="Mission Generic Cruisers" id="16555" marketgroup="false" meta="" name="Terrens Glokuir" price="0" volume="120000.0"/>
