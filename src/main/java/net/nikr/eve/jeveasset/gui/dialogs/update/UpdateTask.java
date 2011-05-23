@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class UpdateTask extends SwingWorker<Void, Void> implements PropertyChangeListener {
+public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
 	private boolean done = false;
@@ -62,7 +62,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 
 	public UpdateTask(String name) {
 		this.name = name;
-		this.addPropertyChangeListener(this);
+		this.addPropertyChangeListener(new Listener());
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
@@ -153,26 +153,6 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 		jText.setIcon(Images.UPDATE_CANCELLED.getIcon());
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		int value = getProgress();
-		if (value == 100){
-			if (errors.isEmpty()){
-				jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
-			} else if (isCancelled()){
-				jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
-			} else {
-				jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
-			}
-			if (!errors.isEmpty()){
-				jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				jText.setText(DialoguesUpdate.get().clickToShow(name));
-			}
-		} else {
-			jText.setIcon(Images.UPDATE_WORKING.getIcon());
-		}
-	}
-
 	public void showError(boolean b){
 		if (!errors.isEmpty()){
 			Font font = jText.getFont();
@@ -212,5 +192,28 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> implements Prop
 			error = error.replace("retry after", "\r\n" + DialoguesUpdate.get().nextUpdate());
 		}
 		return error;
+	}
+	
+	class Listener implements PropertyChangeListener{
+	
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int value = getProgress();
+			if (value == 100){
+				if (errors.isEmpty()){
+					jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
+				} else if (isCancelled()){
+					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
+				} else {
+					jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+				}
+				if (!errors.isEmpty()){
+					jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					jText.setText(DialoguesUpdate.get().clickToShow(name));
+				}
+			} else {
+				jText.setIcon(Images.UPDATE_WORKING.getIcon());
+			}
+		}
 	}
 }

@@ -48,23 +48,29 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 
 
-public class TaskDialog implements PropertyChangeListener, ActionListener, WindowListener{
+public class TaskDialog {
 
 	public final static String ACTION_OK = "ACTION_OK";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static int WIDTH = 260;
 
-	private List<UpdateTask> updateTasks;
-	private int index;
-	private UpdateTask updateTask;
+	//GUI
 	private JDialog jWindow;
-	private Program program;
 	private JProgressBar jProgressBar;
 	private JButton jOK;
 	private JButton jCancel;
 	private JTextPane jErrorMessage;
 	private JLabel jErrorName;
 	private JScrollPane jErrorScroll;
+	
+	private Listener listener;
+	
+	private Program program;
+	
+	//Data
+	private List<UpdateTask> updateTasks;
+	private int index;
+	private UpdateTask updateTask;
 
 	public TaskDialog(Program program, UpdateTask updateTask) {
 		this(program, Collections.singletonList(updateTask));
@@ -73,11 +79,13 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 	public TaskDialog(Program program, List<UpdateTask> updateTasks) {
 		this.program = program;
 		this.updateTasks = updateTasks;
+		
+		listener = new Listener();
 
 		jWindow = new JDialog(program.getMainWindow().getFrame());
 		jWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		jWindow.setResizable(false);
-		jWindow.addWindowListener(this);
+		jWindow.addWindowListener(listener);
 
 		JPanel jPanel = new JPanel();
 
@@ -95,12 +103,12 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 
 		jOK = new JButton(DialoguesUpdate.get().ok());
 		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesUpdate.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
-
+		jCancel.addActionListener(listener);
+		
 		jErrorName = new JLabel("");
 		jErrorName.setFont( new Font(jErrorName.getFont().getName(), Font.BOLD, jErrorName.getFont().getSize()+4));
 		jErrorName.setVisible(false);
@@ -163,7 +171,7 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 		if (index < updateTasks.size()){
 			jOK.setEnabled(false);
 			updateTask = updateTasks.get(index);
-			updateTask.addPropertyChangeListener(this);
+			updateTask.addPropertyChangeListener(listener);
 			updateTask.execute();
 		} else {
 			program.updateEventList();
@@ -198,66 +206,79 @@ public class TaskDialog implements PropertyChangeListener, ActionListener, Windo
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);
 	}
+	
+	class Listener implements PropertyChangeListener, ActionListener, WindowListener {
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		int value = updateTask.getProgress();
-		if (value == 100 && updateTask.isTaskDone()){
-			updateTask.setTaskDone(false);
-			jProgressBar.setValue(100);
-			jProgressBar.setIndeterminate(false);
-			index++;
-			update();
-		} else if (value > 0) {
-			jProgressBar.setIndeterminate(false);
-			jProgressBar.setValue(value);
-		} else {
-			jProgressBar.setIndeterminate(true);
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())){
-			setVisible(false);
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			cancelUpdate();
-		}
-
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		if (index >= updateTasks.size()){
-			setVisible(false);
-		} else {
-			int value = JOptionPane.showConfirmDialog(jWindow, DialoguesUpdate.get().cancelQuestion(), DialoguesUpdate.get().cancelQuestionTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION){
-				cancelUpdate();
-				setVisible(false);
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			int value = updateTask.getProgress();
+			if (value == 100 && updateTask.isTaskDone()){
+				updateTask.setTaskDone(false);
+				jProgressBar.setValue(100);
+				jProgressBar.setIndeterminate(false);
+				index++;
+				update();
+			} else if (value > 0) {
+				jProgressBar.setIndeterminate(false);
+				jProgressBar.setValue(value);
+			} else {
+				jProgressBar.setIndeterminate(true);
 			}
 		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (ACTION_OK.equals(e.getActionCommand())){
+				setVisible(false);
+				//Memory
+				for (UpdateTask task : updateTasks){
+					for (MouseListener mouseListener :task.getTextLabel().getMouseListeners()){
+						task.getTextLabel().removeMouseListener(mouseListener);
+					}
+				}
+				jWindow.removeWindowListener(listener);
+				jOK.removeActionListener(listener);
+				jCancel.removeActionListener(listener);
+				updateTask.removePropertyChangeListener(listener);
+			}
+			if (ACTION_CANCEL.equals(e.getActionCommand())){
+				cancelUpdate();
+			}
+
+		}
+
+		@Override
+		public void windowOpened(WindowEvent e) {}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			if (index >= updateTasks.size()){
+				setVisible(false);
+			} else {
+				int value = JOptionPane.showConfirmDialog(jWindow, DialoguesUpdate.get().cancelQuestion(), DialoguesUpdate.get().cancelQuestionTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (value == JOptionPane.YES_OPTION){
+					cancelUpdate();
+					setVisible(false);
+				}
+			}
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {}
+
+		@Override
+		public void windowIconified(WindowEvent e) {}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {}
+
+		@Override
+		public void windowActivated(WindowEvent e) {}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {}
+		
 	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {}
-
-	@Override
-	public void windowIconified(WindowEvent e) {}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {}
-
-	@Override
-	public void windowActivated(WindowEvent e) {}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {}
-
 
 	class ErrorMouseListener implements MouseListener{
 

@@ -157,9 +157,9 @@ public class PriceDataGetter implements PricingListener {
 			if (updateTask != null){
 				updateTask.addError("Price data", "Failed to update price data");
 				updateTask.setTaskProgress(100, 100, 0, 100);
-				updateTask = null;
 			}
 		}
+		updateTask = null; //Memory
 		return updated;
 	}
 
