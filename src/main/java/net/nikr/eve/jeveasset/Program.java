@@ -167,8 +167,9 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
 		SplashUpdater.setProgress(55);
-		LOG.info("Loading: Industry Jobs Tabs");
+		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
+		LOG.info("Loading: Industry Plot Tab");
 		industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Market Orders Tab");
