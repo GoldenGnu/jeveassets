@@ -193,7 +193,19 @@ public class TaskDialog {
 			centerWindow();
 		}
 		jWindow.setVisible(b);
-		if (b) jWindow.requestFocus();
+		if (b){
+			jWindow.requestFocus();
+		} else { //Memory
+			for (UpdateTask task : updateTasks){
+				for (MouseListener mouseListener :task.getTextLabel().getMouseListeners()){
+					task.getTextLabel().removeMouseListener(mouseListener);
+				}
+			}
+			jWindow.removeWindowListener(listener);
+			jOK.removeActionListener(listener);
+			jCancel.removeActionListener(listener);
+			updateTask.removePropertyChangeListener(listener);
+		}
 	}
 
 	private void cancelUpdate(){
@@ -230,16 +242,6 @@ public class TaskDialog {
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_OK.equals(e.getActionCommand())){
 				setVisible(false);
-				//Memory
-				for (UpdateTask task : updateTasks){
-					for (MouseListener mouseListener :task.getTextLabel().getMouseListeners()){
-						task.getTextLabel().removeMouseListener(mouseListener);
-					}
-				}
-				jWindow.removeWindowListener(listener);
-				jOK.removeActionListener(listener);
-				jCancel.removeActionListener(listener);
-				updateTask.removePropertyChangeListener(listener);
 			}
 			if (ACTION_CANCEL.equals(e.getActionCommand())){
 				cancelUpdate();
