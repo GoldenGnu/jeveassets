@@ -39,6 +39,7 @@ public enum Images {
 	ASSETS_VOLUME ("assets_volume.png"),
 
 	DIALOG_UPDATE ("dialog_update.png"),
+	DIALOG_UPDATE_DISABLED ("dialog_update_disabled.png"),
 	DIALOG_ACCOUNTS ("dialog_accounts.png"),
 	DIALOG_PROFILES ("dialog_profiles.png"),
 	DIALOG_SETTINGS ("dialog_settings.png"),

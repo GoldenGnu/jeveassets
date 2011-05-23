@@ -96,10 +96,11 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 	public void timerTicked(boolean updatable){
 		jEveTime.setText(GuiFrame.get().eveTime(Settings.getGmtNow()));
-		jUpdatable.setEnabled(updatable);
 		if (updatable){
+			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());
 		} else {
+			jUpdatable.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().not());
 		}
 	}
