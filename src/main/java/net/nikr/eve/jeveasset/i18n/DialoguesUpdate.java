@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.i18n;
 
-import java.util.Date;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 import uk.me.candle.translations.BundleCache;
@@ -59,10 +58,9 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String nextUpdate();
 	public abstract String nowAll();
 	public abstract String nowSome();
-	public abstract String nextUpdateTime(Date datetime);
 	public abstract String conqStations();
 	public abstract String balance();
-	
+
 	public abstract String clickToShow(String name);
 	public abstract String clickToHide(String name);
 }

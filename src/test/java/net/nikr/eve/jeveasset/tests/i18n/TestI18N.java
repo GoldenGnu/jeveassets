@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.tests.i18n;
 
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
-import java.util.Date;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
@@ -139,7 +138,7 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.nextUpdateTime(new Date(System.currentTimeMillis())));
+		assertNotNull(g.accountBlances());
 	}
 
 	@Test
