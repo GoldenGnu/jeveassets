@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -289,8 +290,12 @@ public class SettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "source")){
 			source = AttributeGetters.getString(element, "source");
 		}
+		FactionPrice factionPrice = PriceDataSettings.FactionPrice.PRICES_C0RPORATION;
+		if (AttributeGetters.haveAttribute(element, "faction")){
+			factionPrice = FactionPrice.valueOf(AttributeGetters.getString(element, "faction"));
+		}
 		EveAsset.setPriceType(priceType);
-		settings.setPriceDataSettings( new PriceDataSettings(region, source) );
+		settings.setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

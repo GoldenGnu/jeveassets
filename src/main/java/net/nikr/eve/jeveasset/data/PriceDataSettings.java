@@ -38,7 +38,27 @@ public class PriceDataSettings {
 	public final static String SOURCE_EVE_MARKETDATA = "eve-marketdata";
 
 	public final static String[] SOURCES = {SOURCE_EVE_CENTRAL, SOURCE_EVE_MARKETDATA};
-
+	
+	public enum FactionPrice {
+		PRICES_C0RPORATION() {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().factionPriceC0rporation();
+			}
+		},
+		NONE() {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().factionPriceNone();
+			}
+		},
+		;
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
 
 	public enum RegionType {
 		REGION_EMPIRE() {
@@ -307,10 +327,12 @@ public class PriceDataSettings {
 
 	private int region;
 	private String source;
+	private FactionPrice factionPrice;
 
-	public PriceDataSettings(int region, String source) {
+	public PriceDataSettings(int region, String source, FactionPrice factionPrice) {
 		this.region = region;
 		this.source = source;
+		this.factionPrice = factionPrice;
 		if (this.source.equals(SOURCE_EVE_METRICS)){
 			LOG.warn("PriceDataSettings: source is set to "+SOURCE_EVE_METRICS+" using "+SOURCE_EVE_CENTRAL+" instead");
 			this.source = SOURCE_EVE_CENTRAL;
@@ -345,6 +367,10 @@ public class PriceDataSettings {
 
 	public String getSource(){
 		return source;
+	}
+
+	public FactionPrice getFactionPrice() {
+		return factionPrice;
 	}
 
 	public List<Long> getRegions(){
@@ -501,23 +527,32 @@ public class PriceDataSettings {
 	}
 
 	@Override
-	public boolean equals(Object obj){
-		if (obj instanceof PriceDataSettings){
-			return equals( (PriceDataSettings) obj);
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
 		}
-		return false;
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final PriceDataSettings other = (PriceDataSettings) obj;
+		if (this.region != other.region) {
+			return false;
+		}
+		if ((this.source == null) ? (other.source != null) : !this.source.equals(other.source)) {
+			return false;
+		}
+		if (this.factionPrice != other.factionPrice) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 79 * hash + this.region;
-		hash = 79 * hash + (this.source != null ? this.source.hashCode() : 0);
+		int hash = 5;
+		hash = 53 * hash + this.region;
+		hash = 53 * hash + (this.source != null ? this.source.hashCode() : 0);
+		hash = 53 * hash + (this.factionPrice != null ? this.factionPrice.hashCode() : 0);
 		return hash;
-	}
-
-	public boolean equals(PriceDataSettings priceDataSettings){
-		if (priceDataSettings.getRegion() == this.getRegion() && priceDataSettings.getSource().equals(this.source) ) return true;
-		return false;
 	}
 }

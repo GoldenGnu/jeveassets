@@ -172,6 +172,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "region", String.valueOf(priceDataSettings.getRegion()));
 		parentNode.setAttributeNS(null, "defaultprice", EveAsset.getPriceType().name());
 		parentNode.setAttributeNS(null, "source", priceDataSettings.getSource());
+		parentNode.setAttributeNS(null, "faction", priceDataSettings.getFactionPrice().name());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

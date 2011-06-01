@@ -259,7 +259,7 @@ public class Settings{
 
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 
-		priceDataSettings = new PriceDataSettings(0, PriceDataSettings.SOURCE_EVE_CENTRAL);
+		priceDataSettings = new PriceDataSettings(0, PriceDataSettings.SOURCE_EVE_CENTRAL, PriceDataSettings.FactionPrice.PRICES_C0RPORATION);
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -423,7 +423,7 @@ public class Settings{
 				//Price data
 				if (eveAsset.isMarketGroup() && priceData.containsKey(eveAsset.getTypeID()) && !priceData.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
 					eveAsset.setPriceData(priceData.get(eveAsset.getTypeID()));
-				} else if (priceFactionData.containsKey(eveAsset.getTypeID())){ //Faction Price
+				} else if (priceFactionData.containsKey(eveAsset.getTypeID()) && (getPriceDataSettings().getFactionPrice() == PriceDataSettings.FactionPrice.PRICES_C0RPORATION)){ //Faction Price
 					eveAsset.setPriceData(priceFactionData.get(eveAsset.getTypeID()));
 				} else { //No Price :(
 					eveAsset.setPriceData(null);
