@@ -3521,7 +3521,7 @@
     <row category="Planetary Interaction" group="Processors" id="2472" marketgroup="false" meta="" name="Plasma Advanced Industry Facility" price="250000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2473" marketgroup="false" meta="" name="Barren Basic Industry Facility" price="75000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2474" marketgroup="false" meta="" name="Barren Advanced Industry Facility" price="250000" volume="0.0"/>
-    <row category="Planetary Interaction" group="Processors" id="2475" marketgroup="false" meta="" name="Barren High Tech Production Plant" price="525000" volume="0.0"/>
+    <row category="Planetary Interaction" group="Processors" id="2475" marketgroup="false" meta="" name="Barren High-Tech Production Plant" price="525000" volume="0.0"/>
     <row category="Drone" group="Combat Drone" id="2476" marketgroup="true" meta="" name="Berserker I" price="40000" volume="25.0">
         <material id="34" portionsize="1" quantity="6408"/>
         <material id="35" portionsize="1" quantity="806"/>
@@ -3541,7 +3541,7 @@
     <row category="Blueprint" group="Combat Drone Blueprint" id="2479" marketgroup="true" meta="" name="Berserker II Blueprint" price="9999999" volume="0.01"/>
     <row category="Planetary Interaction" group="Processors" id="2480" marketgroup="false" meta="" name="Temperate Advanced Industry Facility" price="250000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2481" marketgroup="false" meta="" name="Temperate Basic Industry Facility" price="75000" volume="0.0"/>
-    <row category="Planetary Interaction" group="Processors" id="2482" marketgroup="false" meta="" name="Temperate High Tech Production Plant" price="525000" volume="0.0"/>
+    <row category="Planetary Interaction" group="Processors" id="2482" marketgroup="false" meta="" name="Temperate High-Tech Production Plant" price="525000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2483" marketgroup="false" meta="" name="Storm Basic Industry Facility" price="75000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2484" marketgroup="false" meta="" name="Storm Advanced Industry Facility" price="250000" volume="0.0"/>
     <row category="Planetary Interaction" group="Processors" id="2485" marketgroup="false" meta="" name="Oceanic Advanced Industry Facility" price="250000" volume="0.0"/>
@@ -3959,6 +3959,7 @@
     <row category="Commodity" group="Miscellaneous" id="2731" marketgroup="false" meta="" name="Crates of Silicon" price="500" volume="50.0"/>
     <row category="Commodity" group="Miscellaneous" id="2732" marketgroup="false" meta="" name="Crates of Silicate Glass" price="500" volume="50.0"/>
     <row category="Abstract" group="Decorations" id="2733" marketgroup="false" meta="" name="Schematic" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="2734" marketgroup="false" meta="" name="Gallente Vexor Cruiser" price="0" volume="0.0"/>
     <row category="Blueprint" group="Sovereignty Structure Blueprint" id="2735" marketgroup="true" meta="" name="Infrastructure Hub Blueprint" price="500000000" volume="0.01"/>
     <row category="Blueprint" group="Structures - Warp Scrambling Battery Blueprints" id="2736" marketgroup="true" meta="" name="Warp Disruption Battery Blueprint" price="50000000" volume="0.01"/>
     <row category="Blueprint" group="Sovereignty Structure Blueprint" id="2737" marketgroup="true" meta="" name="Territorial Claim Unit Blueprint" price="250000000" volume="0.01"/>
@@ -5845,6 +5846,10 @@
         <material id="24560" portionsize="1" quantity="200"/>
     </row>
     <row category="Blueprint" group="Supercarrier Blueprints" id="3515" marketgroup="false" meta="" name="Revenant Blueprint" price="18500000000" volume="0.01"/>
+    <row category="Ship" group="Assault Ship" id="3516" marketgroup="false" meta="5" name="Malice" price="2793904" volume="28600.0"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="3517" marketgroup="false" meta="" name="Malice Blueprint" price="2875000" volume="0.01"/>
+    <row category="Ship" group="Heavy Assault Ship" id="3518" marketgroup="false" meta="5" name="Vangel" price="16185200" volume="118000.0"/>
+    <row category="Blueprint" group="Cruiser Blueprint" id="3519" marketgroup="false" meta="" name="Vangel Blueprint" price="0" volume="0.01"/>
     <row category="Module" group="Energy Weapon" id="3520" marketgroup="true" meta="5 (Tech II)" name="Heavy Pulse Laser II" price="449908" volume="10.0">
         <material id="34" portionsize="1" quantity="11050"/>
         <material id="35" portionsize="1" quantity="3156"/>
@@ -5854,6 +5859,7 @@
         <material id="11399" portionsize="1" quantity="9"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3521" marketgroup="true" meta="" name="Heavy Pulse Laser II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3523" marketgroup="false" meta="" name="Caldari Chimera Carrier" price="0" volume="0.0"/>
     <row category="Entity" group="Incursion Sansha's Nation Frigate" id="3524" marketgroup="false" meta="" name="Jel Rhomben" price="0" volume="20000.0"/>
     <row category="Entity" group="Incursion Sansha's Nation Frigate" id="3525" marketgroup="false" meta="" name="Youl Meten" price="0" volume="20000.0"/>
     <row category="Entity" group="Incursion Sansha's Nation Frigate" id="3526" marketgroup="false" meta="" name="Orkashu Myelen" price="0" volume="20000.0"/>
@@ -6146,6 +6152,10 @@
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3589" marketgroup="false" meta="" name="Small Shield Transporter II Blueprint" price="9999999" volume="0.01"/>
     <row category="Blueprint" group="Data Miner Blueprint" id="3590" marketgroup="false" meta="" name="Mangled Sansha Codebreaker Blueprint" price="332640" volume="0.01"/>
     <row category="Entity" group="Large Collidable Structure" id="3591" marketgroup="false" meta="" name="LCS Angel Control Tower" price="0" volume="1150.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3592" marketgroup="false" meta="" name="Caldari Wyvern Carrier " price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3593" marketgroup="false" meta="" name="Caldari Phoenix Dreadnough" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3594" marketgroup="false" meta="" name="Caldari Leviathan Titan" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3595" marketgroup="false" meta="" name="Caldari Badger Industrial Ship" price="0" volume="0.0"/>
     <row category="Module" group="Shield Transporter" id="3596" marketgroup="true" meta="" name="Medium Shield Transporter I" price="12470" volume="10.0">
         <material id="34" portionsize="1" quantity="1355"/>
         <material id="35" portionsize="1" quantity="832"/>
@@ -6159,6 +6169,12 @@
         <material id="11399" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3599" marketgroup="false" meta="" name="Medium Shield Transporter II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3600" marketgroup="false" meta="" name="Caldari Badger mark II Industrial Ship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3601" marketgroup="false" meta="" name="Caldari Charon Freighter" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3602" marketgroup="false" meta="" name="Gallente Atron Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3603" marketgroup="false" meta="" name="Gallente Imicus Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3604" marketgroup="false" meta="" name="Gallente Incursus Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3605" marketgroup="false" meta="" name="Gallente Maulus Frigate" price="0" volume="0.0"/>
     <row category="Module" group="Shield Transporter" id="3606" marketgroup="true" meta="" name="Large Shield Transporter I" price="31244" volume="25.0">
         <material id="34" portionsize="1" quantity="3886"/>
         <material id="35" portionsize="1" quantity="2930"/>
@@ -6172,6 +6188,12 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Shield Transporter Blueprint" id="3609" marketgroup="false" meta="" name="Large Shield Transporter II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3610" marketgroup="false" meta="" name="Gallente Navitas Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3611" marketgroup="false" meta="" name="Gallente Tristan Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3612" marketgroup="false" meta="" name="Gallente Catalyst Destroyer" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3613" marketgroup="false" meta="" name="Gallente Celestis Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3614" marketgroup="false" meta="" name="Gallente Exequror Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3615" marketgroup="false" meta="" name="Gallente Thorax Cruiser" price="0" volume="0.0"/>
     <row category="Module" group="Shield Transporter" id="3616" marketgroup="true" meta="" name="Capital Shield Transporter I" price="24659510" volume="4000.0">
         <material id="34" portionsize="1" quantity="1425827"/>
         <material id="35" portionsize="1" quantity="230006"/>
@@ -6189,14 +6211,30 @@
     <row category="Celestial" group="Large Collidable Object" id="3626" marketgroup="false" meta="" name="Sansha Station Ruins" price="0" volume="0.0"/>
     <row category="Commodity" group="Miscellaneous" id="3627" marketgroup="false" meta="" name="Construction Materials" price="500" volume="70.0"/>
     <row category="Ship" group="Supercarrier" id="3628" marketgroup="false" meta="" name="Nation" price="0" volume="6.2E7"/>
+    <row category="Entity" group="Spawn Container" id="3629" marketgroup="false" meta="" name="Amarr Academy Office" price="0" volume="27500.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3630" marketgroup="false" meta="" name="Amarr Crucifier Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3631" marketgroup="false" meta="" name="Amarr Executioner Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3632" marketgroup="false" meta="" name="Amarr Inquisitor Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3633" marketgroup="false" meta="" name="Amarr Magnate Frigate" price="0" volume="0.0"/>
     <row category="Module" group="Energy Weapon" id="3634" marketgroup="false" meta="" name="Civilian Gatling Pulse Laser" price="0" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3635" marketgroup="false" meta="" name="Amarr Punisher Frigate" price="0" volume="0.0"/>
     <row category="Module" group="Energy Weapon" id="3636" marketgroup="false" meta="" name="Civilian Gatling Autocannon" price="0" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3637" marketgroup="false" meta="" name="Amarr Tormentor Frigate" price="0" volume="0.0"/>
     <row category="Module" group="Energy Weapon" id="3638" marketgroup="false" meta="" name="Civilian Gatling Railgun" price="0" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3639" marketgroup="false" meta="" name="Amarr Coercer Destroyer" price="0" volume="0.0"/>
     <row category="Module" group="Energy Weapon" id="3640" marketgroup="false" meta="" name="Civilian Light Electron Blaster" price="0" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3641" marketgroup="false" meta="" name="Amarr Arbitrator Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3642" marketgroup="false" meta="" name="Amarr Augoror Cruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3643" marketgroup="true" meta="" name="Soil" price="80" volume="1.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3644" marketgroup="false" meta="" name="Amarr Omen Cruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3645" marketgroup="true" meta="" name="Water" price="35" volume="0.38"/>
+    <row category="Celestial" group="Large Collidable Object" id="3646" marketgroup="false" meta="" name="Amarr Harbinger Battlecruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3647" marketgroup="true" meta="" name="Holoreels" price="250" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3648" marketgroup="false" meta="" name="Amarr Prophecy Battlecruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3649" marketgroup="false" meta="" name="Amarr Abaddon Battleship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3650" marketgroup="false" meta="" name="Amarr Apocalypse Battleship" price="0" volume="0.0"/>
     <row category="Module" group="Mining Laser" id="3651" marketgroup="true" meta="" name="Civilian Miner" price="0" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3652" marketgroup="false" meta="" name="Amarr Bestower Industrial Ship" price="0" volume="0.0"/>
     <row category="Module" group="Hull Repair Unit" id="3653" marketgroup="true" meta="" name="Medium Hull Repairer I" price="125000" volume="25.0">
         <material id="34" portionsize="1" quantity="460"/>
         <material id="35" portionsize="1" quantity="6294"/>
@@ -6212,6 +6250,12 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Hull Repair Unit Blueprint" id="3656" marketgroup="false" meta="" name="Medium Hull Repairer II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3657" marketgroup="false" meta="" name="Amarr Sigil Industrial Ship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3658" marketgroup="false" meta="" name="Amarr Maller Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3659" marketgroup="false" meta="" name="Amarr Aeon Carrier" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3660" marketgroup="false" meta="" name="Amarr Archon Carrier" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3661" marketgroup="false" meta="" name="Amarr Revelation Dreadnought" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3662" marketgroup="false" meta="" name="Amarr Avatar Titan" price="0" volume="0.0"/>
     <row category="Module" group="Hull Repair Unit" id="3663" marketgroup="true" meta="" name="Large Hull Repairer I" price="312500" volume="50.0">
         <material id="34" portionsize="1" quantity="466"/>
         <material id="35" portionsize="1" quantity="6306"/>
@@ -6229,11 +6273,30 @@
         <material id="11399" portionsize="1" quantity="5"/>
     </row>
     <row category="Blueprint" group="Hull Repair Unit Blueprint" id="3666" marketgroup="false" meta="" name="Large Hull Repairer II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3667" marketgroup="false" meta="" name="Amarr Providence Freighter" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3668" marketgroup="false" meta="" name="Gallente Brutix Battlecruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3669" marketgroup="false" meta="" name="Gallente Myrmidon Battlecruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3670" marketgroup="false" meta="" name="Caldari Bantam Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3671" marketgroup="false" meta="" name="Caldari Condor Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3672" marketgroup="false" meta="" name="Caldari Griffin Frigate" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3673" marketgroup="true" meta="" name="Wheat" price="100" volume="1.15"/>
+    <row category="Celestial" group="Large Collidable Object" id="3674" marketgroup="false" meta="" name="Caldari Heron Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3675" marketgroup="false" meta="" name="Caldari Kestrel Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3676" marketgroup="false" meta="" name="Caldari Merlin Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3677" marketgroup="false" meta="" name="Caldari Cormorant Destroyer" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3678" marketgroup="false" meta="" name="Caldari Blackbird Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3679" marketgroup="false" meta="" name="Caldari Caracal Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3680" marketgroup="false" meta="" name="Caldari Moa Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3681" marketgroup="false" meta="" name="Caldari Osprey Cruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3682" marketgroup="false" meta="" name="Caldari Drake Battlecruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3683" marketgroup="true" meta="" name="Oxygen" price="95" volume="0.38"/>
+    <row category="Celestial" group="Large Collidable Object" id="3684" marketgroup="false" meta="" name="Caldari Ferox Battlecruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3685" marketgroup="true" meta="" name="Hydrogen Batteries" price="500" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3686" marketgroup="false" meta="" name="Caldari Raven Battleship" price="0" volume="0.0"/>
     <row category="Commodity" group="General" id="3687" marketgroup="true" meta="" name="Electronic Parts" price="750" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3688" marketgroup="false" meta="" name="Caldari Rokh Battleship" price="0" volume="0.0"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3689" marketgroup="true" meta="" name="Mechanical Parts" price="600" volume="1.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3690" marketgroup="false" meta="" name="Caldari Scorpion Battleship " price="0" volume="0.0"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3691" marketgroup="true" meta="" name="Synthetic Oil" price="320" volume="1.5"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3693" marketgroup="true" meta="" name="Fertilizer" price="200" volume="1.5"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3695" marketgroup="true" meta="" name="Polytextiles" price="400" volume="1.5"/>
@@ -6241,19 +6304,33 @@
     <row category="Commodity" group="General" id="3699" marketgroup="true" meta="" name="Quafe" price="50" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="3701" marketgroup="false" meta="" name="Certification Results" price="0" volume="0.1"/>
     <row category="Commodity" group="Drugs" id="3703" marketgroup="true" meta="" name="Nerve Sticks" price="2500" volume="0.2"/>
+    <row category="Celestial" group="Large Collidable Object" id="3704" marketgroup="false" meta="" name="Gallente Dominix Battleship" price="0" volume="0.0"/>
     <row category="Commodity" group="Drugs" id="3705" marketgroup="true" meta="" name="Crash" price="1100" volume="0.2"/>
+    <row category="Celestial" group="Large Collidable Object" id="3706" marketgroup="false" meta="" name="Gallente Hyperion Battleship" price="0" volume="0.0"/>
     <row category="Commodity" group="Drugs" id="3707" marketgroup="true" meta="" name="Blue Pill" price="2200" volume="0.2"/>
+    <row category="Celestial" group="Large Collidable Object" id="3708" marketgroup="false" meta="" name="Gallente Megathron Battleship" price="0" volume="0.0"/>
     <row category="Commodity" group="Drugs" id="3709" marketgroup="true" meta="" name="Drop" price="1000" volume="0.2"/>
+    <row category="Celestial" group="Large Collidable Object" id="3710" marketgroup="false" meta="" name="Gallente Nyx Carrier" price="0" volume="0.0"/>
     <row category="Commodity" group="Drugs" id="3711" marketgroup="true" meta="" name="X-Instinct" price="13500" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3712" marketgroup="false" meta="" name="Gallente Thanatos Carrier" price="0" volume="0.0"/>
     <row category="Commodity" group="Drugs" id="3713" marketgroup="true" meta="" name="Vitoc" price="9300" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3714" marketgroup="false" meta="" name="Gallente Moros Dreadnought" price="0" volume="0.0"/>
     <row category="Commodity" group="Frozen" id="3715" marketgroup="true" meta="" name="Frozen Food" price="98" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3716" marketgroup="false" meta="" name="Gallente Erebus Titan" price="0" volume="0.0"/>
     <row category="Commodity" group="Frozen" id="3717" marketgroup="true" meta="" name="Dairy Products" price="160" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3718" marketgroup="false" meta="" name="Gallente Iteron Mark I Industrial Ship" price="0" volume="0.0"/>
     <row category="Commodity" group="Livestock" id="3719" marketgroup="true" meta="" name="Tourists" price="100" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3720" marketgroup="false" meta="" name="Gallente Iteron Mark II Industrial Ship" price="0" volume="0.0"/>
     <row category="Commodity" group="Livestock" id="3721" marketgroup="true" meta="" name="Slaves" price="750" volume="5.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3722" marketgroup="false" meta="" name="Gallente Iteron Mark III Industrial Ship" price="0" volume="0.0"/>
     <row category="Commodity" group="Livestock" id="3723" marketgroup="true" meta="" name="Slaver Hound" price="3000" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3724" marketgroup="false" meta="" name="Gallente Iteron Mark IV Industrial Ship" price="0" volume="0.0"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3725" marketgroup="true" meta="" name="Livestock" price="850" volume="1.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3726" marketgroup="false" meta="" name="Gallente Iteron Mark V Industrial Ship" price="0" volume="0.0"/>
     <row category="Commodity" group="Radioactive" id="3727" marketgroup="true" meta="" name="Plutonium" price="12000" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3728" marketgroup="false" meta="" name="Gallente Obelisk Freighter" price="0" volume="0.0"/>
     <row category="Commodity" group="Radioactive" id="3729" marketgroup="true" meta="" name="Toxic Waste" price="150" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3730" marketgroup="false" meta="" name="Minmatar Breacher Frigate" price="0" volume="0.0"/>
     <row category="Skill" group="Corporation Management" id="3731" marketgroup="true" meta="" name="Megacorp Management" price="400000" volume="0.01"/>
     <row category="Skill" group="Corporation Management" id="3732" marketgroup="true" meta="" name="Empire Control" price="8000000" volume="0.01"/>
     <row category="Charge" group="Mine" id="3733" marketgroup="false" meta="" name="Cobra Mine" price="1364" volume="0.15"/>
@@ -6280,7 +6357,13 @@
     <row category="Blueprint" group="Frigate Blueprint" id="3754" marketgroup="false" meta="" name="SOCT 2 Blueprint" price="9999999" volume="0.01"/>
     <row category="Skill" group="Spaceship Command" id="3755" marketgroup="false" meta="" name="Jove Frigate" price="120000" volume="0.01"/>
     <row category="Ship" group="Cruiser" id="3756" marketgroup="false" meta="" name="SOCT Cruiser" price="0" volume="101000.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3757" marketgroup="false" meta="" name="Minmatar Burst Frigate" price="0" volume="0.0"/>
     <row category="Skill" group="Spaceship Command" id="3758" marketgroup="false" meta="" name="Jove Cruiser" price="1500000" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3759" marketgroup="false" meta="" name="Minmatar Probe Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3760" marketgroup="false" meta="" name="Minmatar Rifter Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3761" marketgroup="false" meta="" name="Minmatar Slasher Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3762" marketgroup="false" meta="" name="Minmatar Vigil Frigate" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3763" marketgroup="false" meta="" name="Minmatar Thrasher Destroyer" price="0" volume="0.0"/>
     <row category="Ship" group="Titan" id="3764" marketgroup="true" meta="" name="Leviathan" price="49100550200" volume="1.325E8">
         <material id="21009" portionsize="1" quantity="100"/>
         <material id="21013" portionsize="1" quantity="500"/>
@@ -6311,11 +6394,29 @@
     <row category="Blueprint" group="Frigate Blueprint" id="3767" marketgroup="true" meta="" name="Vigil Blueprint" price="1725000" volume="0.01"/>
     <row category="Ship" group="Frigate" id="3768" marketgroup="false" meta="" name="Amarr Police Frigate" price="0" volume="18100.0"/>
     <row category="Blueprint" group="Frigate Blueprint" id="3769" marketgroup="false" meta="" name="Amarr Police Frigate Blueprint" price="9999999" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="3770" marketgroup="false" meta="" name="Minmatar Bellicose Cruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="Biohazard" id="3771" marketgroup="true" meta="" name="Ectoplasm" price="900" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3772" marketgroup="false" meta="" name="Minmatar Rupture Cruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="Biohazard" id="3773" marketgroup="true" meta="" name="Hydrochloric Acid" price="630" volume="0.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3774" marketgroup="false" meta="" name="Minmatar Scythe Cruiser" price="0" volume="0.0"/>
     <row category="Planetary Commodities" group="Refined Commodities" id="3775" marketgroup="true" meta="" name="Viral Agent" price="850" volume="1.5"/>
+    <row category="Celestial" group="Large Collidable Object" id="3776" marketgroup="false" meta="" name="Minmatar Stabber Cruiser" price="0" volume="0.0"/>
     <row category="Commodity" group="Frozen" id="3777" marketgroup="true" meta="" name="Long-limb Roes" price="2400" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3778" marketgroup="false" meta="" name="Minmatar Cyclone Battlecruiser" price="0" volume="0.0"/>
     <row category="Planetary Commodities" group="Basic Commodities" id="3779" marketgroup="true" meta="" name="Biomass" price="1" volume="0.38"/>
+    <row category="Celestial" group="Large Collidable Object" id="3780" marketgroup="false" meta="" name="Minmatar Hurricane Battlecruiser" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3781" marketgroup="false" meta="" name="Minmatar Maelstrom Battleship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3782" marketgroup="false" meta="" name="Minmatar Tempest Battleship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3783" marketgroup="false" meta="" name="Minmatar Typhoon Battleship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3784" marketgroup="false" meta="" name="Minmatar Hel Carrier" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3785" marketgroup="false" meta="" name="Minmatar Nidhoggur Carrier" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3786" marketgroup="false" meta="" name="Minmatar Naglfar Dreadnought" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3787" marketgroup="false" meta="" name="Minmatar Ragnarok Titan" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3788" marketgroup="false" meta="" name="Minmatar Hoarder Industrial Ship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3789" marketgroup="false" meta="" name="Minmatar Mammoth Industrial Ship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3790" marketgroup="false" meta="" name="Minmatar Wreathe Industrial Ship" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3791" marketgroup="false" meta="" name="Minmatar Fenrir Freighter" price="0" volume="0.0"/>
+    <row category="Entity" group="Spawn Container" id="3792" marketgroup="false" meta="" name="Caldari Academy Office " price="0" volume="27500.0"/>
     <row category="Entity" group="Deadspace Overseer's Sentry" id="3795" marketgroup="false" meta="" name="Blood Raider Central Bastion" price="0" volume="1000.0"/>
     <row category="Celestial" group="Sun" id="3796" marketgroup="false" meta="" name="Sun O1 (Blue Bright)" price="0" volume="1.0"/>
     <row category="Celestial" group="Sun" id="3797" marketgroup="false" meta="" name="Sun G5 (Pink)" price="0" volume="1.0"/>
@@ -6328,9 +6429,11 @@
     <row category="Commodity" group="Livestock" id="3804" marketgroup="false" meta="" name="VIPs" price="1000" volume="3.0"/>
     <row category="Entity" group="Deadspace Overseer's Sentry" id="3805" marketgroup="false" meta="" name="Sansha's Nation Central Bastion" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3806" marketgroup="true" meta="" name="Refugees" price="0" volume="1.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3807" marketgroup="false" meta="" name="Miniball hax" price="0" volume="0.0"/>
     <row category="Commodity" group="Livestock" id="3808" marketgroup="false" meta="" name="Prisoners" price="100" volume="7.5"/>
     <row category="Entity" group="Deadspace Overseer's Sentry" id="3809" marketgroup="false" meta="" name="Serpentis Administration Facility" price="0" volume="1000.0"/>
     <row category="Commodity" group="Livestock" id="3810" marketgroup="true" meta="" name="Marines" price="1000" volume="2.0"/>
+    <row category="Entity" group="Spawn Container" id="3811" marketgroup="false" meta="" name="Minmatar Academy Office" price="0" volume="27500.0"/>
     <row category="Commodity" group="General" id="3812" marketgroup="true" meta="" name="Data Sheets" price="150" volume="1.0"/>
     <row category="Commodity" group="General" id="3814" marketgroup="true" meta="" name="Reports" price="30" volume="0.1"/>
     <row category="Commodity" group="Drugs" id="3818" marketgroup="true" meta="" name="Exile" price="15500" volume="1.0"/>
@@ -6359,6 +6462,10 @@
         <material id="11399" portionsize="1" quantity="3"/>
     </row>
     <row category="Blueprint" group="Shield Extender Blueprint" id="3832" marketgroup="true" meta="" name="Medium Shield Extender II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Entity" group="Spawn Container" id="3835" marketgroup="false" meta="" name="Gallente Academy Office" price="0" volume="27500.0"/>
+    <row category="Commodity" group="Commodities" id="3836" marketgroup="false" meta="" name="Pilot Certification Documents" price="0" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="3837" marketgroup="false" meta="" name="Token of Submission" price="0" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="3838" marketgroup="false" meta="" name="Clearance Documents" price="0" volume="0.1"/>
     <row category="Module" group="Shield Extender" id="3839" marketgroup="true" meta="" name="Large Shield Extender I" price="31242" volume="20.0">
         <material id="34" portionsize="1" quantity="3045"/>
         <material id="35" portionsize="1" quantity="2492"/>
@@ -6373,6 +6480,12 @@
         <material id="11399" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Shield Extender Blueprint" id="3842" marketgroup="true" meta="" name="Large Shield Extender II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="3843" marketgroup="false" meta="" name="Tribal Sponsorship" price="0" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="3844" marketgroup="false" meta="" name="Freedom of Operation License" price="0" volume="0.1"/>
+    <row category="Entity" group="Spawn Container" id="3845" marketgroup="false" meta="" name="Amarr Cargo Rig" price="0" volume="27500.0"/>
+    <row category="Entity" group="Spawn Container" id="3846" marketgroup="false" meta="" name="Caldari Cargo Rig" price="0" volume="27500.0"/>
+    <row category="Entity" group="Spawn Container" id="3847" marketgroup="false" meta="" name="Gallente Cargo Rig" price="0" volume="27500.0"/>
+    <row category="Entity" group="Spawn Container" id="3848" marketgroup="false" meta="" name="Minmatar Cargo Rig" price="0" volume="27500.0"/>
     <row category="Module" group="Shield Extender" id="3849" marketgroup="true" meta="" name="Micro Shield Extender I" price="2000" volume="2.5">
         <material id="34" portionsize="1" quantity="204"/>
         <material id="35" portionsize="1" quantity="163"/>
@@ -6385,6 +6498,8 @@
         <material id="38" portionsize="1" quantity="4"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
+    <row category="Entity" group="Large Collidable Structure" id="3858" marketgroup="false" meta="" name="Tutorial Fuel Depot" price="0" volume="1.0E8"/>
+    <row category="Abstract" group="Audio" id="3859" marketgroup="false" meta="" name="genericAudioEmitter" price="0" volume="0.0"/>
     <row category="Entity" group="Concord Drone" id="3863" marketgroup="false" meta="" name="CONCORD Police Officer" price="0" volume="20400.0"/>
     <row category="Station" group="Station" id="3864" marketgroup="false" meta="" name="Amarr Citadel" price="600000" volume="0.0"/>
     <row category="Station" group="Station" id="3865" marketgroup="false" meta="" name="Station ( Gallente 3 )" price="600000" volume="1.0"/>
@@ -6455,6 +6570,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
+    <row category="Placeables" group="Furniture" id="3906" marketgroup="false" meta="" name="Caldari Undock Button" price="0" volume="0.0"/>
     <row category="Module" group="Smart Bomb" id="3907" marketgroup="true" meta="" name="Micro Plasma Smartbomb I" price="25000" volume="2.5">
         <material id="34" portionsize="1" quantity="3296"/>
         <material id="35" portionsize="1" quantity="1213"/>
@@ -6469,11 +6585,15 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
+    <row category="Placeables" group="Furniture" id="3910" marketgroup="false" meta="" name="Caldari Sofa" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3911" marketgroup="false" meta="" name="Caldari Ship Interface" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3912" marketgroup="false" meta="" name="Caldari Agent Finder" price="0" volume="0.0"/>
     <row category="Module" group="Smart Bomb" id="3913" marketgroup="true" meta="" name="Micro EMP Smartbomb I" price="27500" volume="2.5">
         <material id="34" portionsize="1" quantity="50"/>
         <material id="35" portionsize="1" quantity="529"/>
         <material id="36" portionsize="1" quantity="724"/>
     </row>
+    <row category="Placeables" group="Furniture" id="3914" marketgroup="false" meta="" name="Caldari Main Screen" price="0" volume="0.0"/>
     <row category="Module" group="Smart Bomb" id="3915" marketgroup="true" meta=" (Tech II)" name="Micro EMP Smartbomb II" price="60288" volume="2.5">
         <material id="34" portionsize="1" quantity="3200"/>
         <material id="35" portionsize="1" quantity="1800"/>
@@ -6482,6 +6602,15 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="11399" portionsize="1" quantity="1"/>
     </row>
+    <row category="Placeables" group="Furniture" id="3916" marketgroup="false" meta="" name="Caldari Planetary Interaction" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3919" marketgroup="false" meta="" name="Caldari Corporation Recruitment" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="3920" marketgroup="false" meta="" name="Amarr Industrial Station LCO" price="0" volume="0.0"/>
+    <row category="Entity" group="Mission Generic Frigates" id="3921" marketgroup="false" meta="" name="Pirate Saboteur" price="0" volume="24500.0"/>
+    <row category="Placeables" group="Furniture" id="3930" marketgroup="false" meta="" name="Minmatar Sofa" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3931" marketgroup="false" meta="" name="Minmatar Ship Interface" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3932" marketgroup="false" meta="" name="Minmatar Main Screen" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3933" marketgroup="false" meta="" name="Minmatar Corporation Recruitment" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="3934" marketgroup="false" meta="" name="Minmatar Planetary Interaction" price="0" volume="0.0"/>
     <row category="Module" group="Smart Bomb" id="3937" marketgroup="true" meta="" name="Medium Proton Smartbomb I" price="150000" volume="25.0">
         <material id="34" portionsize="1" quantity="16948"/>
         <material id="35" portionsize="1" quantity="14049"/>
@@ -6550,6 +6679,20 @@
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3956" marketgroup="true" meta="" name="Medium EMP Smartbomb II Blueprint" price="9999999" volume="0.01"/>
     <row category="Celestial" group="Large Collidable Object" id="3957" marketgroup="false" meta="" name="LCO Serpentis Stronghold" price="0" volume="1.0E8"/>
+    <row category="Apparel" group="Eyewear" id="3958" marketgroup="true" meta="" name="GDN-9 &quot;Nightstalker&quot; Combat Goggles" price="0" volume="0.1"/>
+    <row category="Entity" group="Mission Generic Frigates" id="3959" marketgroup="false" meta="" name="Criminal Saboteur" price="0" volume="24500.0"/>
+    <row category="Entity" group="Mission Generic Frigates" id="3960" marketgroup="false" meta="" name="Bandit Saboteur" price="0" volume="24500.0"/>
+    <row category="Entity" group="Mission Generic Frigates" id="3961" marketgroup="false" meta="" name="Rogue Saboteur" price="0" volume="24500.0"/>
+    <row category="Apparel" group="Footwear" id="3966" marketgroup="true" meta="" name="Men's 'Precision' Boots" price="0" volume="0.1"/>
+    <row category="Celestial" group="Large Collidable Object" id="3967" marketgroup="false" meta="" name="Gallente Station 7 LCO" price="0" volume="0.0"/>
+    <row category="Apparel" group="Makeup" id="3968" marketgroup="false" meta="" name="TEST - Makeup" price="0" volume="0.1"/>
+    <row category="Celestial" group="Large Collidable Object" id="3970" marketgroup="false" meta="" name="Gallente Administrative Outpost LCO" price="0" volume="0.0"/>
+    <row category="Apparel" group="Piercings" id="3971" marketgroup="false" meta="" name="TEST - Piercing" price="0" volume="0.1"/>
+    <row category="Apparel" group="Scars" id="3972" marketgroup="false" meta="" name="TEST - Scar" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="3973" marketgroup="false" meta="" name="TEST - Tattoo" price="0" volume="0.1"/>
+    <row category="Celestial" group="Large Collidable Object" id="3974" marketgroup="false" meta="" name="Minmatar Service Outpost Structure" price="0" volume="0.0"/>
+    <row category="Apparel" group="Outer" id="3975" marketgroup="false" meta="" name="Women's 'Structure' Dress (navy)" price="0" volume="0.1"/>
+    <row category="Charge" group="Nanite Repair Paste" id="3976" marketgroup="false" meta="" name="Nano Paint" price="6500" volume="0.01"/>
     <row category="Module" group="Smart Bomb" id="3977" marketgroup="true" meta="" name="Large Proton Smartbomb I" price="300000" volume="50.0">
         <material id="34" portionsize="1" quantity="34156"/>
         <material id="35" portionsize="1" quantity="27305"/>
@@ -6584,6 +6727,7 @@
         <material id="11399" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3984" marketgroup="true" meta="" name="Large Graviton Smartbomb II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Blueprint" group="Script Blueprint" id="3985" marketgroup="false" meta="" name="Nano Paint Blueprint" price="50000000" volume="0.01"/>
     <row category="Module" group="Smart Bomb" id="3987" marketgroup="true" meta="" name="Large Plasma Smartbomb I" price="340000" volume="50.0">
         <material id="34" portionsize="1" quantity="36832"/>
         <material id="35" portionsize="1" quantity="12888"/>
@@ -6602,6 +6746,7 @@
         <material id="11399" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3990" marketgroup="true" meta="" name="Large Plasma Smartbomb II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Apparel" group="Bottoms" id="3992" marketgroup="true" meta="" name="Men's 'Commando' Pants (black wax)" price="0" volume="0.1"/>
     <row category="Module" group="Smart Bomb" id="3993" marketgroup="true" meta="" name="Large EMP Smartbomb I" price="360000" volume="50.0">
         <material id="34" portionsize="1" quantity="41696"/>
         <material id="35" portionsize="1" quantity="32848"/>
@@ -6619,6 +6764,18 @@
         <material id="11399" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Smart Bomb Blueprint" id="3996" marketgroup="true" meta="" name="Large EMP Smartbomb II Blueprint" price="9999999" volume="0.01"/>
+    <row category="Apparel" group="Bottoms" id="3997" marketgroup="true" meta="" name="Women's 'Excursion' Pants (black/gray)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Bottoms" id="3998" marketgroup="true" meta="" name="Women's 'Impress' Skirt (gray)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Bottoms" id="3999" marketgroup="true" meta="" name="Women's 'Impress' Skirt (black wax)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Footwear" id="4001" marketgroup="true" meta="" name="Men's 'Trench' Boots" price="0" volume="0.1"/>
+    <row category="Apparel" group="Footwear" id="4002" marketgroup="true" meta="" name="Women's 'Minima' Heels" price="0" volume="0.1"/>
+    <row category="Apparel" group="Footwear" id="4003" marketgroup="true" meta="" name="Women's 'Greave' Knee-Boots" price="0" volume="0.1"/>
+    <row category="Apparel" group="Footwear" id="4004" marketgroup="true" meta="" name="Women's 'Mystrioso' Boots" price="0" volume="0.1"/>
+    <row category="Ship" group="Battleship" id="4005" marketgroup="false" meta="" name="Scorpion Ishukone Watch" price="71250000" volume="468000.0"/>
+    <row category="Blueprint" group="Battleship Blueprint" id="4006" marketgroup="false" meta="" name="Scorpion Ishukone Watch Blueprint" price="712500000" volume="0.01"/>
+    <row category="Celestial" group="Large Collidable Object" id="4007" marketgroup="false" meta="" name="Minmatar Station LCO" price="0" volume="0.0"/>
+    <row category="Apparel" group="Footwear" id="4008" marketgroup="true" meta="" name="Men's 'Lockstep' Boots" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4009" marketgroup="true" meta="" name="Looking Glass Ocular Implant (right/gold)" price="0" volume="0.1"/>
     <row category="Module" group="Sensor Backup Array" id="4013" marketgroup="true" meta="" name="RADAR Backup Array I" price="12494" volume="5.0">
         <material id="34" portionsize="1" quantity="2147"/>
         <material id="35" portionsize="1" quantity="129"/>
@@ -6660,6 +6817,44 @@
         <material id="37" portionsize="1" quantity="4"/>
         <material id="40" portionsize="1" quantity="0"/>
     </row>
+    <row category="Apparel" group="Eyewear" id="4037" marketgroup="true" meta="" name="Odin Synthetic Eye (right/dark)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4038" marketgroup="true" meta="" name="Odin Synthetic Eye (right/gray)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4039" marketgroup="true" meta="" name="Odin Synthetic Eye (right/gold)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4042" marketgroup="true" meta="" name="Looking Glass Ocular Implant (right/gray)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4043" marketgroup="true" meta="" name="Odin Synthetic Eye (left/dark)" price="0" volume="0.1"/>
+    <row category="Module" group="Energy Weapon" id="4044" marketgroup="false" meta="" name="Sleeper Turret Small" price="0" volume="5.0"/>
+    <row category="Module" group="Energy Weapon" id="4045" marketgroup="false" meta="" name="Sleeper Turret Medium" price="0" volume="25.0"/>
+    <row category="Apparel" group="Eyewear" id="4046" marketgroup="true" meta="" name="Odin Synthetic Eye (left/gold)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4048" marketgroup="true" meta="" name="Odin Synthetic Eye (left/gray)" price="0" volume="0.1"/>
+    <row category="Module" group="Energy Weapon" id="4049" marketgroup="false" meta="" name="Sleeper Turret Large" price="0" volume="50.0"/>
+    <row category="Apparel" group="Eyewear" id="4050" marketgroup="true" meta="" name="Looking Glass Ocular Implant (left/gold)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Eyewear" id="4052" marketgroup="true" meta="" name="Looking Glass Ocular Implant (left/gray)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Outer" id="4054" marketgroup="true" meta="" name="Women's 'Executor' Coat" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4057" marketgroup="true" meta="" name="Men's 'Sterling' Dress Shirt (black)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4058" marketgroup="true" meta="" name="Men's 'Sterling' Dress Shirt (navy)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4059" marketgroup="true" meta="" name="Men's 'Sterling' Dress Shirt (dust)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4060" marketgroup="true" meta="" name="Men's 'Sterling' Dress Shirt (olive)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4061" marketgroup="true" meta="" name="Women's 'Sterling' Dress Blouse (black)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4062" marketgroup="true" meta="" name="Women's 'Sterling' Dress Blouse (navy)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4063" marketgroup="true" meta="" name="Women's 'Sterling' Dress Blouse (dust)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4064" marketgroup="true" meta="" name="Women's 'Sterling' Dress Blouse (olive)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4065" marketgroup="true" meta="" name="Women's 'Sterling' Dress Blouse (platinum)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4066" marketgroup="true" meta="" name="Women's 'Quafe' T-shirt" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4067" marketgroup="true" meta="" name="Men's 'Quafe' T-shirt" price="0" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4068" marketgroup="true" meta="" name="Men's 'Sterling' Dress Shirt (Ishukone Special Edition)" price="0" volume="0.1"/>
+    <row category="Celestial" group="Warp Gate" id="4077" marketgroup="false" meta="" name="Targeted Acceleration Gate" price="0" volume="0.0"/>
+    <row category="Apparel" group="Bottoms" id="4078" marketgroup="true" meta="" name="Women's 'Structure' Skirt (camoflage)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Bottoms" id="4085" marketgroup="true" meta="" name="Women's 'Structure' Skirt (black)" price="0" volume="0.1"/>
+    <row category="Apparel" group="Hair Styles" id="4086" marketgroup="false" meta="" name="Short Pixie Hair" price="0" volume="0.1"/>
+    <row category="Apparel" group="Hair Styles" id="4088" marketgroup="false" meta="" name="Curly Shoulder Length" price="0" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="4089" marketgroup="false" meta="" name="Clearance Papers" price="0" volume="0.1"/>
+    <row category="Commodity" group="General" id="4090" marketgroup="false" meta="" name="Large Crates of Quafe" price="50" volume="500.0"/>
+    <row category="Commodity" group="Biohazard" id="4091" marketgroup="false" meta="" name="Large Crates of Ectoplasm" price="900" volume="500.0"/>
+    <row category="Apparel" group="Hair Styles" id="4096" marketgroup="false" meta="" name="Hair_Stubble_01" price="0" volume="0.1"/>
+    <row category="Apparel" group="Outer" id="4097" marketgroup="true" meta="" name="Men's 'Field Marshal' Coat" price="0" volume="0.1"/>
+    <row category="Apparel" group="Outer" id="4098" marketgroup="true" meta="" name="Men's 'Esquire' Coat" price="0" volume="0.1"/>
+    <row category="Celestial" group="Large Collidable Object" id="4099" marketgroup="false" meta="" name="Amarr Factory Outpost LCO" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="4100" marketgroup="false" meta="" name="Caldari Research Outpost LCO" price="0" volume="1.0E8"/>
     <row category="Module" group="Energy Weapon" id="4147" marketgroup="true" meta="5 (Tech II)" name="Dual Heavy Pulse Laser II" price="620708" volume="20.0">
         <material id="34" portionsize="1" quantity="13506"/>
         <material id="35" portionsize="1" quantity="4260"/>
@@ -26291,7 +26486,7 @@
     <row category="Celestial" group="Agents in Space" id="22775" marketgroup="false" meta="" name="Hokoru's Blackbird" price="0" volume="0.0"/>
     <row category="Deployable" group="Mobile Warp Disruptor" id="22776" marketgroup="false" meta="" name="Test Warp Disrupt Beacon" price="11976448" volume="585.0"/>
     <row category="Blueprint" group="Mobile Warp Disruptor Blueprint" id="22777" marketgroup="false" meta="" name="Test Warp Disrupt Beacon Blueprint" price="0" volume="0.01"/>
-    <row category="Charge" group="Warp Disruption Probe" id="22778" marketgroup="true" meta="" name="Warp Disrupt Probe" price="22862" volume="5.0">
+    <row category="Charge" group="Interdiction Probe" id="22778" marketgroup="true" meta="" name="Warp Disrupt Probe" price="22862" volume="5.0">
         <material id="34" portionsize="2" quantity="5"/>
         <material id="35" portionsize="2" quantity="15"/>
         <material id="36" portionsize="2" quantity="20"/>
@@ -29799,7 +29994,7 @@
     <row category="Celestial" group="Agents in Space" id="25425" marketgroup="false" meta="" name="Nemphad Azbias's Prorator" price="0" volume="0.0"/>
     <row category="Ship" group="Assault Ship" id="25426" marketgroup="false" meta="5" name="Hawk 2" price="2886188" volume="16500.0"/>
     <row category="Blueprint" group="Frigate Blueprint" id="25427" marketgroup="false" meta="" name="Hawk 2 Blueprint" price="1500000" volume="0.01"/>
-    <row category="Charge" group="Warp Disruption Probe" id="25428" marketgroup="false" meta="" name="Warp Disrupt Probe test" price="22862" volume="10.0"/>
+    <row category="Charge" group="Interdiction Probe" id="25428" marketgroup="false" meta="" name="Warp Disrupt Probe test" price="22862" volume="10.0"/>
     <row category="Celestial" group="Agents in Space" id="25430" marketgroup="false" meta="" name="Goligere Debanelis's Viator" price="0" volume="0.0"/>
     <row category="Celestial" group="Agents in Space" id="25431" marketgroup="false" meta="" name="Gomosabin Zerdanne's Viator" price="0" volume="0.0"/>
     <row category="Celestial" group="Agents in Space" id="25432" marketgroup="false" meta="" name="Juvoire Sche's Viator" price="0" volume="0.0"/>
@@ -30295,7 +30490,7 @@
     <row category="Blueprint" group="Tool Blueprint" id="25858" marketgroup="false" meta="" name="Cryptic Ship Data Interface Blueprint" price="0" volume="0.01"/>
     <row category="Entity" group="Large Collidable Structure" id="25859" marketgroup="false" meta="" name="Amarr Battlestation_2" price="0" volume="0.0"/>
     <row category="Entity" group="Temporary Cloud" id="25860" marketgroup="false" meta="" name="Argon Gas Environment_Damage" price="0" volume="0.0"/>
-    <row category="Module" group="Data Miners" id="25861" marketgroup="true" meta="" name="Salvager I" price="33264" volume="5.0">
+    <row category="Module" group="Tractor Beam" id="25861" marketgroup="true" meta="" name="Salvager I" price="33264" volume="5.0">
         <material id="34" portionsize="1" quantity="756"/>
         <material id="35" portionsize="1" quantity="165"/>
         <material id="36" portionsize="1" quantity="423"/>
@@ -37063,7 +37258,7 @@
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Data Miner Blueprint" id="30835" marketgroup="false" meta="" name="Codebreaker II Blueprint" price="332640" volume="0.01"/>
-    <row category="Module" group="Data Miners" id="30836" marketgroup="true" meta="5 (Tech II)" name="Salvager II" price="33264" volume="5.0">
+    <row category="Module" group="Tractor Beam" id="30836" marketgroup="true" meta="5 (Tech II)" name="Salvager II" price="33264" volume="5.0">
         <material id="34" portionsize="1" quantity="756"/>
         <material id="35" portionsize="1" quantity="165"/>
         <material id="36" portionsize="1" quantity="423"/>
@@ -37116,7 +37311,7 @@
     <row category="Celestial" group="Agents in Space" id="30887" marketgroup="false" meta="" name="Tevis Jak's Iteron Mark III" price="0" volume="0.0"/>
     <row category="Entity" group="Pirate Drone" id="30888" marketgroup="false" meta="" name="TEST RMT Assistance" price="0" volume="16450.0"/>
     <row category="Celestial" group="Planet" id="30889" marketgroup="false" meta="" name="Planet (Shattered)" price="0" volume="1.0"/>
-    <row category="Celestial" group="Large Collidable Object" id="30894" marketgroup="false" meta="" name="LCO Armageddon" price="0" volume="0.0"/>
+    <row category="Celestial" group="Large Collidable Object" id="30894" marketgroup="false" meta="" name="Amarr Armageddon Battleship" price="0" volume="0.0"/>
     <row category="Celestial" group="Large Collidable Object" id="30895" marketgroup="false" meta="" name="LCO Raven" price="0" volume="0.0"/>
     <row category="Celestial" group="Large Collidable Object" id="30896" marketgroup="false" meta="" name="LCO Tempest" price="0" volume="0.0"/>
     <row category="Celestial" group="Large Collidable Object" id="30897" marketgroup="false" meta="" name="LCO Dominix" price="0" volume="1010000.0"/>
@@ -39991,4 +40186,67 @@
     <row category="Module" group="Shield Transporter" id="32467" marketgroup="false" meta="" name="Civilian Remote Shield Transporter" price="4996" volume="5.0"/>
     <row category="Module" group="Armor Repair Projector" id="32469" marketgroup="false" meta="" name="Civilian Remote Armor Repair System" price="4996" volume="5.0"/>
     <row category="Entity" group="Tutorial Drone" id="32471" marketgroup="false" meta="" name="Damaged Vessel" price="0" volume="115000.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32571" marketgroup="false" meta="" name="TempPublish_01" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32574" marketgroup="false" meta="" name="Amarr Establishment" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32575" marketgroup="false" meta="" name="Caldari Establishment" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32576" marketgroup="false" meta="" name="Gallente Establishment" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32577" marketgroup="false" meta="" name="Minmatar Establishment" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32578" marketgroup="false" meta="" name="Amarr Captains Quarters" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32579" marketgroup="false" meta="" name="Gallente Captains Quarters" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32580" marketgroup="false" meta="" name="Minmatar Captains Quarters" price="0" volume="0.0"/>
+    <row category="WorldSpace" group="WorldSpace" id="32581" marketgroup="false" meta="" name="Caldari Captains Quarters" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32614" marketgroup="false" meta="" name="C_Blue_Long_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32615" marketgroup="false" meta="" name="Test Steam" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32617" marketgroup="false" meta="" name="Universal Agent Finder" price="0" volume="0.0"/>
+    <row category="Effects" group="Animated Lights" id="32618" marketgroup="false" meta="" name="Animated Loaded Lights" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32619" marketgroup="false" meta="" name="Gallente Sofa" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32620" marketgroup="false" meta="" name="Gallente Corporation Recruitment" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32621" marketgroup="false" meta="" name="Gallente Planetary Interaction" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32622" marketgroup="false" meta="" name="Gallente Main Screen" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32623" marketgroup="false" meta="" name="Falling Vapor" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32624" marketgroup="false" meta="" name="Soft Myst" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32627" marketgroup="false" meta="" name="Gallente Character Recustomization" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32628" marketgroup="false" meta="" name="Pressure Steam" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32630" marketgroup="false" meta="" name="Universal Undock Button" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32636" marketgroup="false" meta="" name="Right_Balcony_Mist_01_Min" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32637" marketgroup="false" meta="" name="Left_Balcony_Mist_01_Min" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32638" marketgroup="false" meta="" name="Large_Atmo_Cloud_01" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32640" marketgroup="false" meta="" name="Amarr Ship Interface" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32641" marketgroup="false" meta="" name="Gallente Ship Interface" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32642" marketgroup="false" meta="" name="S_Orange_Round_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32644" marketgroup="false" meta="" name="PressureSteam02" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32646" marketgroup="false" meta="" name="Simple Flare Long 01" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32650" marketgroup="false" meta="" name="Minmatar Character Recustomization" price="0" volume="0.0"/>
+    <row category="Placeables" group="Generic" id="32652" marketgroup="false" meta="" name="Dummy Ship Lookat Object" price="0" volume="0.0"/>
+    <row category="Placeables" group="Generic" id="32653" marketgroup="false" meta="" name="Station Logo" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32654" marketgroup="false" meta="" name="Caldari Character Recustomization" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32658" marketgroup="false" meta="" name="C_Orange_Long_01" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32665" marketgroup="false" meta="" name="Universal Station Door Button" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32666" marketgroup="false" meta="" name="Left_Walkway_Steam_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32667" marketgroup="false" meta="" name="Right_Walkway_Steam_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32669" marketgroup="false" meta="" name="S_Orange_Long_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32670" marketgroup="false" meta="" name="Simple Flare 03" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32673" marketgroup="false" meta="" name="S_Orange_Oval_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32674" marketgroup="false" meta="" name="S_Orange_Oval_H_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32675" marketgroup="false" meta="" name="C_Blue_long_ns_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32678" marketgroup="false" meta="" name="S_Orange_Small_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Particle Systems" id="32679" marketgroup="false" meta="" name="Pod_Smoke_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32680" marketgroup="false" meta="" name="S_Orange_Small_H_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32681" marketgroup="false" meta="" name="S_Orange_Fixed_01" price="0" volume="0.0"/>
+    <row category="Abstract" group="Perception Points" id="32682" marketgroup="false" meta="" name="Ship Perception Point" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32683" marketgroup="false" meta="" name="C_Blue_Long_02" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32684" marketgroup="false" meta="" name="Minmatar Balcony Ship Interface" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32685" marketgroup="false" meta="" name="C_Orange_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32686" marketgroup="false" meta="" name="C_Blue_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32687" marketgroup="false" meta="" name="S_Blue_Fixed_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32688" marketgroup="false" meta="" name="S_Blue_Fixed_Chack" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32689" marketgroup="false" meta="" name="S_Blue_Fixed_Large" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32690" marketgroup="false" meta="" name="S_Blue_Oval_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32691" marketgroup="false" meta="" name="S_Blue_Small_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32692" marketgroup="false" meta="" name="S_Blue_VStretch_01" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32693" marketgroup="false" meta="" name="S_Blue_Oval_02" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32694" marketgroup="false" meta="" name="S_Blue_Oval_03" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32695" marketgroup="false" meta="" name="C_Blue_Long_03" price="0" volume="0.0"/>
+    <row category="Effects" group="Lens Flares" id="32696" marketgroup="false" meta="" name="C_Blue_Long_04" price="0" volume="0.0"/>
+    <row category="Placeables" group="Furniture" id="32697" marketgroup="false" meta="" name="Caldari Balcony Ship Interface" price="0" volume="0.0"/>
 </rows>
