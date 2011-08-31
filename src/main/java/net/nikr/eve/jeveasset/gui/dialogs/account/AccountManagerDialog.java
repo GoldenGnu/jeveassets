@@ -39,11 +39,15 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -58,11 +62,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
 	private final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
 	private final static String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
-	private final static String ACTION_CORPORATION_CHECK_ALL = "ACTION_CORPORATION_CHECK_ALL";
-	private final static String ACTION_CORPORATION_UNCHECK_ALL = "ACTION_CORPORATION_UNCHECK_ALL";
-	private final static String ACTION_CORPORATION_CHECK_SELECTED = "ACTION_CORPORATION_CHECK_SELECTED";
-	private final static String ACTION_CORPORATION_UNCHECK_SELECTED = "ACTION_CORPORATION_UNCHECK_SELECTED";
-
+	
 	//GUI
 	private AccountImportDialog accountImportDialog;
 	private JSeparatorTable jTable;
@@ -70,7 +70,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JDropDownButton jAssets;
-	private JDropDownButton jCorporation;
 	private JButton jClose;
 	private EventList<Human> eventList;
 	private EventTableModel<Human> tableModel;
@@ -78,7 +77,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private EventSelectionModel<Human> selectionModel;
 
 	private Map<Human, Boolean> shownAssets;
-	private Map<Human, Boolean> corpAssets;
 	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(Program program) {
@@ -95,6 +93,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
 		jTable.setSeparatorEditor(new HumanSeparatorTableCell(this, jTable, separatorList));
+		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
+		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		selectionModel = new EventSelectionModel<Human>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -138,31 +138,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_SELECTED);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
-		
-		jCorporation = new JDropDownButton(DialoguesAccount.get().showCorp());
-		//jCorporation.setIcon( ImageGetter.getIcon( "building_edit.png"));
-
-		menuItem = new JMenuItem(DialoguesAccount.get().checkAll());
-		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_ALL);
-		menuItem.addActionListener(this);
-		jCorporation.add(menuItem);
-
-		menuItem = new JMenuItem(DialoguesAccount.get().uncheckAll());
-		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_ALL);
-		menuItem.addActionListener(this);
-		jCorporation.add(menuItem);
-
-		jCorporation.addSeparator();
-
-		menuItem = new JMenuItem(DialoguesAccount.get().checkSelected());
-		menuItem.setActionCommand(ACTION_CORPORATION_CHECK_SELECTED);
-		menuItem.addActionListener(this);
-		jCorporation.add(menuItem);
-
-		menuItem = new JMenuItem(DialoguesAccount.get().uncheckSelected());
-		menuItem.setActionCommand(ACTION_CORPORATION_UNCHECK_SELECTED);
-		menuItem.addActionListener(this);
-		jCorporation.add(menuItem);
 
 		//Done Button
 		jClose = new JButton(DialoguesAccount.get().close());
@@ -172,7 +147,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-					.addComponent(jTable.getScrollPanel(), 550, 550, Short.MAX_VALUE)
+					.addComponent(jTable.getScrollPanel(), 700, 700, Short.MAX_VALUE)
 					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -181,7 +156,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addGap(0, 0, Short.MAX_VALUE)
 					.addComponent(jAssets, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
-					.addComponent(jCorporation, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
 				)
 		);
 		layout.setVerticalGroup(
@@ -191,9 +165,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCorporation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jTable.getScrollPanel(), 200, 200, Short.MAX_VALUE)
+				.addComponent(jTable.getScrollPanel(), 300, 300, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				
 		);
@@ -210,54 +183,41 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	public void updateTable(){
 		//Update rows (Add all rows)
-		shownAssets = new HashMap<Human, Boolean>();
-		corpAssets = new HashMap<Human, Boolean>();
+		
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
 				eventList.add(human);
-				shownAssets.put(human, human.isShowAssets());
-				corpAssets.put(human, human.isUpdateCorporationAssets());
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
 		if (eventList.size() > 1){
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
-			jCorporation.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jExpand.setEnabled(true);
 		} else {
 			jAssets.setEnabled(false);
-			jCorporation.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jExpand.setEnabled(false);
 		}
 	}
 
-	private void checkAssets(boolean selected, boolean check, boolean assets){
-		if (selected){
+	private void checkAssets(boolean selected, boolean check){
+		if (selected){ //Set selected to check value
 			int[] selectedRows = jTable.getSelectedRows();
 			for (int a = 0; a < selectedRows.length; a++){
 				Object o = tableModel.getElementAt(selectedRows[a]);
 				if (o instanceof Human){
 					Human human = (Human) o;
-					if (assets){
-						human.setShowAssets(check);
-					} else {
-						human.setUpdateCorporationAssets(check);
-					}
+					human.setShowAssets(check);
 				}
 			}
-		} else {
+		} else { //Set all the check value
 			for (Account account : program.getSettings().getAccounts()){
 				for (Human human : account.getHumans()){
-					if (assets){
-						human.setShowAssets(check);
-					} else {
-						human.setUpdateCorporationAssets(check);
-					}
+					human.setShowAssets(check);
 				}
 			}
 		}
@@ -281,22 +241,18 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected void save() {
-		boolean showAssets = false;
-		boolean showCorporation = false;
+		boolean changed = false;
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				if (human.isShowAssets() != shownAssets.get(human)) showAssets = true;
-				if (human.isUpdateCorporationAssets() != corpAssets.get(human)) showCorporation = true;
+				if (!shownAssets.containsKey(human)){ //New account
+					if (human.isShowAssets())  changed = true; //if shown: Updated
+				} else if (human.isShowAssets() != shownAssets.get(human)){ //Old account changed: Update
+					changed = true;
+				}
 			}
 		}
-		if (showAssets || showCorporation || forceUpdate){
+		if (changed || forceUpdate){
 			program.updateEventList();
-		}
-		if (showCorporation){
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-					, DialoguesAccount.get().corpAssetsChanged()
-					, DialoguesAccount.get().corpAssetSettings()
-					, JOptionPane.PLAIN_MESSAGE);
 		}
 		this.setVisible(false);
 	}
@@ -306,6 +262,12 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (b){
 			forceUpdate = false;
 			updateTable();
+			shownAssets = new HashMap<Human, Boolean>();
+			for (Account account : program.getSettings().getAccounts()){
+				for (Human human : account.getHumans()){
+					shownAssets.put(human, human.isShowAssets());
+				}
+			}
 		}
 		super.setVisible(b);
 	}
@@ -331,7 +293,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				Human human = (Human) separator.first();
 				Account account = human.getParentAccount();
-				accountImportDialog.show(String.valueOf(account.getUserID()), account.getApiKey());
+				accountImportDialog.show(String.valueOf(account.getKeyID()), account.getVCode());
 			}
 		}
 		if (HumanSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
@@ -354,35 +316,19 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			}
 		}
 		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())){
-			checkAssets(false, true, true);
+			checkAssets(false, true);
 		}
 
 		if (ACTION_ASSETS_UNCHECK_ALL.equals(e.getActionCommand())){
-			checkAssets(false, false, true);
+			checkAssets(false, false);
 		}
 
 		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())){
-			checkAssets(true, true, true);
+			checkAssets(true, true);
 		}
 
 		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())){
-			checkAssets(true, false, true);
-		}
-
-		if (ACTION_CORPORATION_CHECK_ALL.equals(e.getActionCommand())){
-			checkAssets(false, true, false);
-		}
-
-		if (ACTION_CORPORATION_UNCHECK_ALL.equals(e.getActionCommand())){
-			checkAssets(false, false, false);
-		}
-
-		if (ACTION_CORPORATION_CHECK_SELECTED.equals(e.getActionCommand())){
-			checkAssets(true, true, false);
-		}
-
-		if (ACTION_CORPORATION_UNCHECK_SELECTED.equals(e.getActionCommand())){
-			checkAssets(true, false, false);
+			checkAssets(true, false);
 		}
 	}
 }

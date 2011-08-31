@@ -127,7 +127,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private boolean marketGroup;
 	private PriceData priceData;
 	private UserItem<Integer,Double> userPrice;
-	private boolean corporationAsset;
+	private boolean corporation;
 	private float volume;
 	private String region;
 	private long typeCount = 0;
@@ -138,7 +138,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private String system;
 	
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporationAsset, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID) {
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID) {
 		this.typeName = typeName;
 		this.name = typeName;
 		this.group = group;
@@ -153,7 +153,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.itemID = itemID;
 		this.typeID = typeID;
 		this.marketGroup = marketGroup;
-		this.corporationAsset = corporationAsset;
+		this.corporation = corporation;
 		this.volume = volume;
 		this.region = region;
 		this.locationID = locationID;
@@ -209,7 +209,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public boolean isCorporationAsset() {
-		return corporationAsset;
+		return corporation;
 	}
 
 	public long getCount() {

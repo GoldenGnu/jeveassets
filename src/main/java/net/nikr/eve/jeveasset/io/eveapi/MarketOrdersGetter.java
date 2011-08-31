@@ -36,7 +36,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
 	public MarketOrdersGetter() {
-		super("Market Orders", true, false);
+		super("Market Orders", 4096, true, false);
 	}
 
 	@Override
@@ -68,21 +68,18 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	}
 
 	@Override
-	protected void setData(MarketOrdersResponse response, boolean bCorp) {
+	protected void setData(MarketOrdersResponse response) {
 		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getMarketOrders());
-		if (bCorp){
-			getHuman().setMarketOrdersCorporation(marketOrders);
-		} else {
-			getHuman().setMarketOrders(marketOrders);
-		}
+		getHuman().setMarketOrders(marketOrders);
+	}
+	
+	@Override
+	protected void setData(Human human){
+		getHuman().setMarketOrders(human.getMarketOrders());
 	}
 
 	@Override
-	protected void clearData(boolean bCorp){
-		if (bCorp){
-			getHuman().setMarketOrdersCorporation(new ArrayList<ApiMarketOrder>());
-		} else {
-			getHuman().setMarketOrders(new ArrayList<ApiMarketOrder>());
-		}
+	protected void clearData(){
+		getHuman().setMarketOrders(new ArrayList<ApiMarketOrder>());
 	}
 }

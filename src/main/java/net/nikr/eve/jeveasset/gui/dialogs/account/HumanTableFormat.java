@@ -26,8 +26,11 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.gui.WritableTableFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -37,10 +40,14 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	public HumanTableFormat() {
 		columnNames = new ArrayList<String>();
+		columnNames.add("");
 		columnNames.add(DialoguesAccount.get().tableFormatName());
-		columnNames.add(DialoguesAccount.get().tableFormatCorp());
-		columnNames.add(DialoguesAccount.get().tableFormatShowAssets());
-		columnNames.add(DialoguesAccount.get().tableFormatShowCorp());
+		columnNames.add(DialoguesAccount.get().tableFormatCorporation());
+		columnNames.add(DialoguesAccount.get().tableFormatAssetList());
+		columnNames.add(DialoguesAccount.get().tableFormatAccountBalance());
+		columnNames.add(DialoguesAccount.get().tableFormatIndustryJobs());
+		columnNames.add(DialoguesAccount.get().tableFormatMarketOrders());
+		columnNames.add(DialoguesAccount.get().tableFormatExpires());
 	}
 
 	public List<String> getColumnNames() {
@@ -62,10 +69,14 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 		if (baseObject instanceof Human){
 			Human human = (Human) baseObject;
 			switch (column) {
-				case 0: return human.getName();
-				case 1: return human.getCorporation();
-				case 2: return human.isShowAssets();
-				case 3: return human.isUpdateCorporationAssets();
+				case 0: return human.isShowAssets();
+				case 1: return human.getName();
+				case 2: return new YesNo(human.isCorporation());
+				case 3: return new YesNo(human.getParentAccount().isAssetList());
+				case 4: return new YesNo(human.getParentAccount().isAccountBalance());
+				case 5: return new YesNo(human.getParentAccount().isIndustryJobs());
+				case 6: return new YesNo(human.getParentAccount().isMarketOrders());
+				case 7: return new ExpirerDate(human.getParentAccount().getExpires());
 			}
 		}
 		return new Object();
@@ -74,10 +85,14 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 	@Override
 	public Class getColumnClass(int column) {
 		switch (column) {
-			case 0: return String.class;
+			case 0: return Boolean.class;
 			case 1: return String.class;
-			case 2: return Boolean.class;
-			case 3: return Boolean.class;
+			case 2: return YesNo.class;
+			case 3: return YesNo.class;
+			case 4: return YesNo.class;
+			case 5: return YesNo.class;
+			case 6: return YesNo.class;
+			case 7: return ExpirerDate.class;
 		}
 		return Object.class;
 	}
@@ -89,28 +104,56 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	@Override
 	public boolean isEditable(Object baseObject, int column) {
-		if (baseObject instanceof Human){
-			switch(column) {
-				case 2:
-				case 3: return true;
-			}
+		if (baseObject instanceof Human && column == 0){
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override
 	public Object setColumnValue(Object baseObject, Object editedValue, int column) {
-		if (editedValue instanceof Boolean && baseObject instanceof Human){
+		if (editedValue instanceof Boolean && baseObject instanceof Human && column == 0){
 			Human human = (Human) baseObject;
 			boolean value = (Boolean) editedValue;
-			switch(column) {
-				case 2: human.setShowAssets(value); break;
-				case 3: human.setUpdateCorporationAssets(value); break;
-			}
+			human.setShowAssets(value);
 			return baseObject;
 		}
-		return null;
+		return null;	
+	}
+	
+	public class YesNo{
+
+		private boolean b;
+
+		public YesNo(boolean b) {
+			this.b = b;
+		}
 		
+		@Override
+		public String toString(){
+			return b ? DialoguesAccount.get().tableFormatYes() : DialoguesAccount.get().tableFormatNo();
+		}
+		
+	}
+	
+	public class ExpirerDate{
+		private Date expirer;
+
+		public ExpirerDate(Date expirer) {
+			this.expirer = expirer;
+		}
+		
+		@Override
+		public String toString(){
+			if (expirer == null){
+				return "Never";
+			} else if (Settings.getGmtNow().after(expirer)){
+				return "Expired";
+			} else {
+				return Formater.dateOnly(expirer);
+			}
+		}
 	}
 
 }

@@ -64,10 +64,13 @@ public class AssetsWriter extends AbstractXmlWriter {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			Element node = xmldoc.createElementNS(null, "account");
-			node.setAttributeNS(null, "userid", String.valueOf(account.getUserID()));
-			node.setAttributeNS(null, "apikey", account.getApiKey());
+			node.setAttributeNS(null, "keyid", String.valueOf(account.getKeyID()));
+			node.setAttributeNS(null, "vcode", account.getVCode());
 			node.setAttributeNS(null, "name", account.getName());
 			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getCharactersNextUpdate().getTime()));
+			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
+			node.setAttributeNS(null, "type", account.getType());
+			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
 			parentNode.appendChild(node);
 			writeHumans(xmldoc, node, account.getHumans());
 
@@ -80,8 +83,6 @@ public class AssetsWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "human");
 			node.setAttributeNS(null, "id", String.valueOf(human.getCharacterID()));
 			node.setAttributeNS(null, "name", human.getName());
-			node.setAttributeNS(null, "corporation", human.getCorporation());
-			node.setAttributeNS(null, "corpassets", String.valueOf(human.isUpdateCorporationAssets()));
 			node.setAttributeNS(null, "show", String.valueOf(human.isShowAssets()));
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
@@ -91,13 +92,9 @@ public class AssetsWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
-			writeAssets(xmldoc, childNode, human.getAssetsCorporation());
-			writeAccountBalances(xmldoc, node, human.getAccountBalances(), false);
-			writeAccountBalances(xmldoc, node, human.getAccountBalancesCorporation(), true);
-			writeMarketOrders(xmldoc, node, human.getMarketOrders(), false);
-			writeMarketOrders(xmldoc, node, human.getMarketOrdersCorporation(), true);
-			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), false);
-			writeIndustryJobs(xmldoc, node, human.getIndustryJobsCorporation(), true);
+			writeAccountBalances(xmldoc, node, human.getAccountBalances(), human.isCorporation());
+			writeMarketOrders(xmldoc, node, human.getMarketOrders(), human.isCorporation());
+			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), human.isCorporation());
 		}
 	}
 

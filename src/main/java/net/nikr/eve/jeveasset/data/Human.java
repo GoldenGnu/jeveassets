@@ -33,10 +33,7 @@ import java.util.List;
 public class Human {
 	private String name;
 	private long characterID;
-	private String corporation;
 
-
-	private boolean updateCorporationAssets;
 	private boolean showAssets;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
@@ -44,24 +41,18 @@ public class Human {
 	private Date industryJobsNextUpdate;
 	private Account parentAccount;
 	private List<ApiAccountBalance> accountBalances;
-	private List<ApiAccountBalance> accountBalancesCorporation;
 	private List<ApiMarketOrder> marketOrders;
-	private List<ApiMarketOrder> marketOrdersCorporation;
 	private List<ApiIndustryJob> industryJobs;
-	private List<ApiIndustryJob> industryJobsCorporation;
 	private List<EveAsset> assets;
-	private List<EveAsset> assetsCorporation;
 
-	public Human(Account parentAccount, String name, long characterID, String corporation) {
-		this(parentAccount, name, characterID, corporation, true, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+	public Human(Account parentAccount, String name, long characterID) {
+		this(parentAccount, name, characterID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
 	}
 
-	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
+	public Human(Account parentAccount, String name, long characterID, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.characterID = characterID;
-		this.corporation = corporation;
-		this.updateCorporationAssets = bCorporationAssets;
 		this.showAssets = showAssets;
 
 		this.assetNextUpdate = assetNextUpdate;
@@ -70,29 +61,17 @@ public class Human {
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		//Default
 		assets = new ArrayList<EveAsset>();
-		assetsCorporation = new ArrayList<EveAsset>();
 		accountBalances = new  ArrayList<ApiAccountBalance>();
-		accountBalancesCorporation = new  ArrayList<ApiAccountBalance>();
 		marketOrders = new  ArrayList<ApiMarketOrder>();
-		marketOrdersCorporation = new  ArrayList<ApiMarketOrder>();
 		industryJobs = new  ArrayList<ApiIndustryJob>();
-		industryJobsCorporation = new  ArrayList<ApiIndustryJob>();
 	}
 
 	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
-	public void setAccountBalancesCorporation(List<ApiAccountBalance> accountBalancesCorporation) {
-		this.accountBalancesCorporation = accountBalancesCorporation;
-	}
-
 	public void setAssets(List<EveAsset> assets) {
 		this.assets = assets;
-	}
-
-	public void setAssetsCorporation(List<EveAsset> assetsCorporation) {
-		this.assetsCorporation = assetsCorporation;
 	}
 
 	public void setAssetNextUpdate(Date nextUpdate) {
@@ -103,16 +82,8 @@ public class Human {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setCorporation(String corporation) {
-		this.corporation = corporation;
-	}
-
 	public void setIndustryJobs(List<ApiIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
-	}
-
-	public void setIndustryJobsCorporation(List<ApiIndustryJob> industryJobsCorporation) {
-		this.industryJobsCorporation = industryJobsCorporation;
 	}
 
 	public void setIndustryJobsNextUpdate(Date industryJobsNextUpdate) {
@@ -121,10 +92,6 @@ public class Human {
 
 	public void setMarketOrders(List<ApiMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
-	}
-
-	public void setMarketOrdersCorporation(List<ApiMarketOrder> marketOrdersCorporation) {
-		this.marketOrdersCorporation = marketOrdersCorporation;
 	}
 
 	public void setMarketOrdersNextUpdate(Date marketOrdersNextUpdate) {
@@ -139,32 +106,24 @@ public class Human {
 		this.showAssets = showAssets;
 	}
 
-	public void setUpdateCorporationAssets(boolean updateCorporationAssets) {
-		this.updateCorporationAssets = updateCorporationAssets;
-	}
-
 	public boolean isShowAssets() {
 		return showAssets;
 	}
 
-	public boolean isUpdateCorporationAssets() {
-		return updateCorporationAssets;
+	public boolean isCorporation() {
+		return parentAccount.isCorporation();
+	}
+	
+	public boolean isCharacter(){
+		return parentAccount.isCharacter();
 	}
 
 	public List<ApiAccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
-
-	public List<ApiAccountBalance> getAccountBalancesCorporation() {
-		return accountBalancesCorporation;
-	}
 	
 	public List<EveAsset> getAssets() {
 		return assets;
-	}
-
-	public List<EveAsset> getAssetsCorporation() {
-		return assetsCorporation;
 	}
 
 	public Date getAssetNextUpdate() {
@@ -179,14 +138,6 @@ public class Human {
 		return characterID;
 	}
 
-	public String getCorporation() {
-		return corporation;
-	}
-
-	public List<ApiIndustryJob> getIndustryJobsCorporation() {
-		return industryJobsCorporation;
-	}
-
 	public List<ApiIndustryJob> getIndustryJobs() {
 		return industryJobs;
 	}
@@ -197,10 +148,6 @@ public class Human {
 
 	public List<ApiMarketOrder> getMarketOrders() {
 		return marketOrders;
-	}
-
-	public List<ApiMarketOrder> getMarketOrdersCorporation() {
-		return marketOrdersCorporation;
 	}
 
 	public Date getMarketOrdersNextUpdate() {
@@ -227,13 +174,17 @@ public class Human {
 		if (this.characterID != other.characterID) {
 			return false;
 		}
+		if (this.parentAccount != other.parentAccount && (this.parentAccount == null || !this.parentAccount.equals(other.parentAccount))) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 67 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		int hash = 3;
+		hash = 89 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
 	}
 
@@ -244,6 +195,6 @@ public class Human {
 		return getApiAuthorization(human.getParentAccount(), human.getCharacterID());
 	}
 	private static ApiAuthorization getApiAuthorization(Account account, long characterID){
-		return new ApiAuthorization(account.getUserID(), characterID, account.getApiKey());
+		return new ApiAuthorization(account.getKeyID(), characterID, account.getVCode());
 	}
 }

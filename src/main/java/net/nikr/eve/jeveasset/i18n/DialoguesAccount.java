@@ -50,16 +50,20 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String ok();
 
 	public abstract String accountAlreadyImported();
+	public abstract String noAccess();
 	public abstract String noInternetConnection();
 	public abstract String accountNotValid();
+	public abstract String notEnoughAccess();
 	public abstract String accountValid();
 	public abstract String accountAlreadyImportedText();
+	public abstract String noAccessText();
 	public abstract String noInternetConnectionText();
 	public abstract String accountNotValidText();
+	public abstract String notEnoughAccessText();
 	public abstract String accountValidText();
 
-	public abstract String userId();
-	public abstract String apiKey();
+	public abstract String keyId();
+	public abstract String vCode();
 	public abstract String helpText();
 	public abstract String validatingMessage();
 
@@ -76,9 +80,6 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String showCorp();
 	public abstract String close();
 
-	public abstract String corpAssetSettings();
-	public abstract String corpAssetsChanged();
-
 
 	public abstract String deleteAccountQuestion();
 	public abstract String deleteAccount();
@@ -87,7 +88,12 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String edit();
 
 	public abstract String tableFormatName();
-	public abstract String tableFormatCorp();
-	public abstract String tableFormatShowAssets();
-	public abstract String tableFormatShowCorp();
+	public abstract String tableFormatCorporation();
+	public abstract String tableFormatAssetList();
+	public abstract String tableFormatAccountBalance();
+	public abstract String tableFormatIndustryJobs();
+	public abstract String tableFormatMarketOrders();
+	public abstract String tableFormatYes();
+	public abstract String tableFormatNo();
+	public abstract String tableFormatExpires();
 }

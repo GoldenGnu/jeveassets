@@ -365,7 +365,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			List<Human> humans = accounts.get(a).getHumans();
 			for (Human human : humans){
 				if (human.isShowAssets()){
-					if (!owners.contains(human.getName())){
+					if (human.isCharacter() && !owners.contains(human.getName())){
 						owners.add(human.getName());
 
 						//Account Balance
@@ -406,21 +406,21 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						totalBuyOrders = totalBuyOrders + ownerTotalBuyOrders;
 						
 					}
-					if (human.isUpdateCorporationAssets() && !corps.contains(human.getCorporation())){
-						corps.add(human.getCorporation());
+					if (human.isCorporation() && !corps.contains(human.getName())){
+						corps.add(human.getName());
 
 						//Account Balance
-						List<ApiAccountBalance> corpAccountBalances = human.getAccountBalancesCorporation();
+						List<ApiAccountBalance> corpAccountBalances = human.getAccountBalances();
 						double corpTotalAccountBalance = 0;
 						for (int c = 0; c < corpAccountBalances.size(); c++){
 							ApiAccountBalance accountBalance = corpAccountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
 						}
-						corpsTotalAccountBalance.put(human.getCorporation(), corpTotalAccountBalance);
+						corpsTotalAccountBalance.put(human.getName(), corpTotalAccountBalance);
 
 						//Orders
-						List<ApiMarketOrder> marketOrders = human.getMarketOrdersCorporation();
+						List<ApiMarketOrder> marketOrders = human.getMarketOrders();
 						double corpTotalSellOrders = 0;
 						double corpTotalBuyOrders = 0;
 						double corpTotalBuyOrdersNotPaid = 0;
@@ -435,13 +435,13 @@ public class ValuesTab extends JMainTab implements ActionListener {
 							}
 						}
 						if (corpTotalSellOrders != 0){
-							corpsTotalSellOrders.put(human.getCorporation(), corpTotalSellOrders);
+							corpsTotalSellOrders.put(human.getName(), corpTotalSellOrders);
 						}
 						if (corpTotalBuyOrders  != 0){
-							corpsTotalBuyOrders.put(human.getCorporation(), corpTotalBuyOrders);
+							corpsTotalBuyOrders.put(human.getName(), corpTotalBuyOrders);
 						}
 						if (corpTotalBuyOrdersNotPaid  != 0){
-							corpsTotalBuyOrdersNotPaid.put(human.getCorporation(), corpTotalBuyOrdersNotPaid);
+							corpsTotalBuyOrdersNotPaid.put(human.getName(), corpTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + corpTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + corpTotalBuyOrders;

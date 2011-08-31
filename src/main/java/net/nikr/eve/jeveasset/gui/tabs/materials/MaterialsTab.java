@@ -138,13 +138,13 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		for (Account account : accounts){
 			for (Human human : account.getHumans()){
 				if (human.isShowAssets()){
-					characters.add(human.getName());
-					if (human.isUpdateCorporationAssets()){
-						String corpKey = TabsMaterials.get().whitespace(human.getCorporation());
-						if (!characters.contains(corpKey)){
-							characters.add(corpKey);
-						}
+					String name;
+					if (human.isCorporation()){
+						name = TabsMaterials.get().whitespace(human.getName());
+					} else {
+						name = human.getName();
 					}
+					characters.add(name);
 				}
 			}
 		}

@@ -43,6 +43,7 @@ public class Formater {
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
 	private static DateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
+	private static DateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
 
 	private Formater() {
 	}
@@ -95,6 +96,9 @@ public class Formater {
 	}
 	public static String defaultDate(Object date){
 		return defaultDate.format(date);
+	}
+	public static String dateOnly(Object date){
+		return dateOnly.format(date);
 	}
 
 	private static boolean today(Date date){

@@ -359,34 +359,35 @@ public class Settings{
 			//Only the one that are assets AKA no buy orders and completed jobs
 			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
-			List<String> corporations = new ArrayList<String>();
+			List<String> ownersOrders = new ArrayList<String>();
+			List<String> ownersJobs = new ArrayList<String>();
+			List<String> ownersAssets = new ArrayList<String>();
 			for (Account account : accounts){
 				for (Human human : account.getHumans()){
-					
 					//Market Orders
-					List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, false, this);
-					addAssets(marketOrdersAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
-					List<EveAsset> marketOrdersCorporationAssets = ApiConverter.apiMarketOrder(human.getMarketOrdersCorporation(), human, true, this);
-					addAssets(marketOrdersCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					if (!human.getMarketOrders().isEmpty() && !ownersOrders.contains(human.getName())){
+						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, this);
+						addAssets(marketOrdersAssets, human.isShowAssets());
+						if (human.isShowAssets()) ownersOrders.add(human.getName());
+					}
 					//Industry Jobs
-					List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, false, this);
-					addAssets(industryJobAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
-					List<EveAsset> industryJobCorporationAssets = ApiConverter.apiIndustryJob(human.getIndustryJobsCorporation(), human, true, this);
-					addAssets(industryJobCorporationAssets, human.isShowAssets(), human.isUpdateCorporationAssets());
+					if (!human.getIndustryJobs().isEmpty() && !ownersJobs.contains(human.getName())){
+						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, this);
+						addAssets(industryJobAssets, human.isShowAssets());
+						if (human.isShowAssets()) ownersJobs.add(human.getName());
+					}
 					//Assets (Must be after Industry Jobs, for bpos to be marked)
-					addAssets(human.getAssets(), human.isShowAssets(), human.isUpdateCorporationAssets());
-					//Only add corporation assets once...
-					if (!corporations.contains(human.getCorporation()) && !human.getAssetsCorporation().isEmpty()){
-						corporations.add(human.getCorporation());
-						addAssets(human.getAssetsCorporation(), human.isShowAssets(), human.isUpdateCorporationAssets());
+					if (!human.getAssets().isEmpty() && !ownersAssets.contains(human.getName())){
+						addAssets(human.getAssets(), human.isShowAssets());
+						if (human.isShowAssets()) ownersAssets.add(human.getName());
 					}
 				}
 			}
 		}
 	}
-	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow, boolean shouldShowCorp){
+	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow){
 		for (EveAsset eveAsset : currentAssets){
-			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
+			if (shouldShow){
 				//Blueprint (Must be before user price)
 				if (eveAsset.isBlueprint()){
 					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
@@ -488,7 +489,7 @@ public class Settings{
 				uniqueIds.add(eveAsset.getTypeID());
 			}
 			//Add sub-assets
-			addAssets(eveAsset.getAssets(), shouldShow, shouldShowCorp);
+			addAssets(eveAsset.getAssets(), shouldShow);
 		}
 	}
 	public List<Long> getBpos() {
@@ -668,8 +669,8 @@ public class Settings{
 	 */
 	private void constructEveApiConnector() {
 		ApiConnector connector = new ApiConnector(); //Default
-		if (getApiProxy() != null) connector = new ApiConnector(getApiProxy()); //API Proxy
-		if (getProxy() != null) connector = new ProxyConnector(getProxy(), connector); //Real Proxy
+		if (apiProxy != null) connector = new ApiConnector(getApiProxy()); //API Proxy
+		if (proxy != null) connector = new ProxyConnector(getProxy(), connector); //Real Proxy
 		EveApi.setConnector(connector);
 	}
 

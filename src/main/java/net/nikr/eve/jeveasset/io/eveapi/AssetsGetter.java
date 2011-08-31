@@ -40,7 +40,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	private Settings settings;
 
 	public AssetsGetter() {
-		super("Assets", true, false);
+		super("Assets", 2, true, false);
 	}
 
 	public void load(UpdateTask updateTask, Settings settings) {
@@ -72,22 +72,19 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
-	protected void setData(AssetListResponse response, boolean bCorp) {
+	protected void setData(AssetListResponse response) {
 		List<ApiAsset> apiAssets = new ArrayList<ApiAsset>(response.getAssets());
-		List<EveAsset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, bCorp, settings);
-		if (bCorp){
-			getHuman().setAssetsCorporation(assets);
-		} else {
-			getHuman().setAssets(assets);
-		}
+		List<EveAsset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, settings);
+		getHuman().setAssets(assets);
+	}
+	
+	@Override
+	protected void setData(Human human){
+		getHuman().setAssets(human.getAssets());
 	}
 
 	@Override
-	protected void clearData(boolean bCorp){
-		if (bCorp){
-			getHuman().setAssetsCorporation(new ArrayList<EveAsset>());
-		} else {
-			getHuman().setAssets(new ArrayList<EveAsset>());
-		}
+	protected void clearData(){
+		getHuman().setAssets(new ArrayList<EveAsset>());
 	}
 }

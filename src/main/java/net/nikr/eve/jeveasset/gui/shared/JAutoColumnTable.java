@@ -48,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.NumberToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
@@ -84,9 +84,9 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
-		this.setDefaultRenderer(Quantity.class, new NumberToStringCellRenderer());
-		this.setDefaultRenderer(ISK.class, new NumberToStringCellRenderer());
-		this.setDefaultRenderer(ModulePriceValue.class, new NumberToStringCellRenderer());
+		this.setDefaultRenderer(Quantity.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(ISK.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(ModulePriceValue.class, new ToStringCellRenderer());
 	}
 
 	public JScrollPane getScrollPanel() {

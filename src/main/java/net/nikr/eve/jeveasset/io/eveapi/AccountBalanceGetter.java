@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
 	public AccountBalanceGetter() {
-		super("Account Balance", true, false);
+		super("Account Balance", 1, true, false);
 	}
 
 	@Override
@@ -76,21 +76,18 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	}
 
 	@Override
-	protected void setData(AccountBalanceResponse response, boolean bCorp) {
+	protected void setData(AccountBalanceResponse response) {
 		List<ApiAccountBalance> accountBalances = new ArrayList<ApiAccountBalance>(response.getAccountBalances());
-		if (bCorp){
-			getHuman().setAccountBalancesCorporation(accountBalances);
-		} else {
-			getHuman().setAccountBalances(accountBalances);
-		}
+		getHuman().setAccountBalances(accountBalances);
 	}
 
 	@Override
-	protected void clearData(boolean bCorp){
-		if (bCorp){
-			getHuman().setAccountBalancesCorporation(new ArrayList<ApiAccountBalance>());
-		} else {
-			getHuman().setAccountBalances(new ArrayList<ApiAccountBalance>());
-		}
+	protected void setData(Human human){
+		getHuman().setAccountBalances(human.getAccountBalances());
+	}
+	
+	@Override
+	protected void clearData(){
+		getHuman().setAccountBalances(new ArrayList<ApiAccountBalance>());
 	}
 }

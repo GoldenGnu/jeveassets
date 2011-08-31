@@ -427,9 +427,12 @@ public class OverviewTab extends JMainTab {
 		List<String> corps = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				chars.add(human.getName());
-				String corp = TabsOverview.get().whitespace4(human.getCorporation());
-				if (!corps.contains(corp)) corps.add(corp);
+				if (human.isCorporation()){
+					String corp = TabsOverview.get().whitespace4(human.getName());
+					if (!corps.contains(corp)) corps.add(corp);
+				} else {
+					chars.add(human.getName());
+				}
 			}
 		}
 		Collections.sort(chars);

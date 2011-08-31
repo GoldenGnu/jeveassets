@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
@@ -283,14 +282,6 @@ public class ApiIdConverter {
 			return item.getCategory();
 		}
 		return "";
-	}
-
-	public static String owner(Human human, boolean bCorp) {
-		if (bCorp) {
-			return human.getCorporation();
-		} else {
-			return human.getName();
-		}
 	}
 
 	public static String group(int typeID, Map<Integer, Item> items) {

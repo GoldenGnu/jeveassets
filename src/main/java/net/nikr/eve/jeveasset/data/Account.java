@@ -21,37 +21,43 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse.AccessMask;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class Account {
-	private int userID;
-	private String apiKey;
-	private List<Human> humans;
-	private Date charactersNextUpdate;
+	private int keyID;
+	private String vCode;
 	private String name;
+	private Date charactersNextUpdate;
+	private int accessMask;
+	private String type;
+	private Date expires;
+	
+	private List<Human> humans = new ArrayList<Human>();;
 
-	public Account(int userID, String apiKey) {
-		this(userID, apiKey, String.valueOf(userID), Settings.getGmtNow());
+	public Account(int keyID, String vCode) {
+		this(keyID, vCode, Integer.toString(keyID), Settings.getGmtNow(), 0, "", null);
 	}
 
-	public Account(int userID, String apiKey, String name, Date charactersNextUpdate) {
-		this.userID = userID;
-		this.apiKey = apiKey;
+	public Account(int keyID, String vCode, String name, Date charactersNextUpdate, int accessMask, String type, Date expires) {
+		this.keyID = keyID;
+		this.vCode = vCode;
 		this.name = name;
 		this.charactersNextUpdate = charactersNextUpdate;
-		//Default
-		humans = new ArrayList<Human>();
+		this.accessMask = accessMask;
+		this.type = type;
+		this.expires = expires;
 	}
 
-	public String getApiKey() {
-		return apiKey;
+	public String getVCode() {
+		return vCode;
 	}
 
-	public int getUserID() {
-		return userID;
+	public int getKeyID() {
+		return keyID;
 	}
 
 	public Date getCharactersNextUpdate() {
@@ -70,21 +76,73 @@ public class Account {
 		this.name = name;
 	}
 
+	public int getAccessMask() {
+		return accessMask;
+	}
+
+	public void setAccessMask(int accessMask) {
+		this.accessMask = accessMask;
+	}
+
+	public Date getExpires() {
+		return expires;
+	}
+	
+	public boolean isExpired(){
+		return getExpires() == null ? false : Settings.getGmtNow().after(getExpires());
+	}
+
+	public void setExpires(Date expires) {
+		this.expires = expires;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public boolean isCorporation(){
+		return type.equals("Corporation");
+	}
+	
+	public boolean isCharacter(){
+		return !isCorporation(); //type.equals("Character") || type.equals("Account");
+	}
+
 	public List<Human> getHumans() {
 		return humans;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setVCode(String vCode) {
+		this.vCode = vCode;
 	}
 
 	public void setHumans(List<Human> humans) {
 		this.humans = humans;
 	}
+	
+	public boolean isAccountBalance(){
+		return ((getAccessMask() & AccessMask.ACCOUNT_BALANCE.getAccessMask()) == AccessMask.ACCOUNT_BALANCE.getAccessMask());
+	}
+	
+	public boolean isAssetList(){
+		return ((getAccessMask() & AccessMask.ASSET_LIST.getAccessMask()) == AccessMask.ASSET_LIST.getAccessMask());
+	}
+	
+	public boolean isMarketOrders(){
+		return ((getAccessMask() & AccessMask.MARKET_ORDERS.getAccessMask()) == AccessMask.MARKET_ORDERS.getAccessMask());
+	}
+	
+	public boolean isIndustryJobs(){
+		return ((getAccessMask() & AccessMask.INDUSTRY_JOBS.getAccessMask()) == AccessMask.INDUSTRY_JOBS.getAccessMask());
+	}
 
 	@Override
 	public String toString(){
-		return userID+"::"+apiKey;
+		return keyID+"::"+vCode;
 	}
 
 	@Override
@@ -96,10 +154,10 @@ public class Account {
 			return false;
 		}
 		final Account other = (Account) obj;
-		if (this.userID != other.userID) {
+		if (this.keyID != other.keyID) {
 			return false;
 		}
-		if ((this.apiKey == null) ? (other.apiKey != null) : !this.apiKey.equals(other.apiKey)) {
+		if ((this.vCode == null) ? (other.vCode != null) : !this.vCode.equals(other.vCode)) {
 			return false;
 		}
 		return true;
@@ -107,9 +165,9 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 83 * hash + this.userID;
-		hash = 83 * hash + (this.apiKey != null ? this.apiKey.hashCode() : 0);
+		int hash = 3;
+		hash = 53 * hash + this.keyID;
+		hash = 53 * hash + (this.vCode != null ? this.vCode.hashCode() : 0);
 		return hash;
 	}
 }

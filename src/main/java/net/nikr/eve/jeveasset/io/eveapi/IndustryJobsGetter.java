@@ -36,7 +36,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
 	public IndustryJobsGetter() {
-		super("Industry Jobs", true, false);
+		super("Industry Jobs", 128, true, false);
 	}
 
 	@Override
@@ -68,21 +68,18 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	}
 
 	@Override
-	protected void setData(IndustryJobsResponse response, boolean bCorp) {
+	protected void setData(IndustryJobsResponse response) {
 		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
-		if (bCorp){
-			getHuman().setIndustryJobsCorporation(industryJobs);
-		} else {
-			getHuman().setIndustryJobs(industryJobs);
-		}
+		getHuman().setIndustryJobs(industryJobs);
+	}
+	
+	@Override
+	protected void setData(Human human){
+		getHuman().setIndustryJobs(human.getIndustryJobs());
 	}
 
 	@Override
-	protected void clearData(boolean bCorp){
-		if (bCorp){
-			getHuman().setIndustryJobsCorporation(new ArrayList<ApiIndustryJob>());
-		} else {
-			getHuman().setIndustryJobs(new ArrayList<ApiIndustryJob>());
-		}
+	protected void clearData(){
+		getHuman().setIndustryJobs(new ArrayList<ApiIndustryJob>());
 	}
 }
