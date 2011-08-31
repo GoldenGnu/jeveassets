@@ -61,7 +61,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
-		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
 		writeApiProxy(xmldoc, settings.getApiProxy());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
@@ -144,17 +143,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
 	}
 
-
-	private static void writeBpos(Document xmldoc, List<Long> bpos){
-		Element parentNode = xmldoc.createElementNS(null, "bpos");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (int a = 0; a < bpos.size(); a++){
-			long id = bpos.get(a);
-			Element node = xmldoc.createElementNS(null, "bpo");
-			node.setAttributeNS(null, "id", String.valueOf(id));
-			parentNode.appendChild(node);
-		}
-	}
 	private static void writeUserPrices(Document xmldoc, Map<Integer, UserItem<Integer,Double>> userPrices){
 		Element parentNode = xmldoc.createElementNS(null, "userprices");
 		xmldoc.getDocumentElement().appendChild(parentNode);

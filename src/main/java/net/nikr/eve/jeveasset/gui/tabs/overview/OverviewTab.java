@@ -301,7 +301,7 @@ public class OverviewTab extends JMainTab {
 		}
 		for (EveAsset eveAsset : input){
 			String name;
-			if (eveAsset.isCorporationAsset()){
+			if (eveAsset.isCorporation()){
 				name = TabsOverview.get().whitespace4(eveAsset.getOwner());
 			} else {
 				name = eveAsset.getOwner();

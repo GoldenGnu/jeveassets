@@ -105,7 +105,6 @@ public class Settings{
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<EveAsset> eventListAssets = null;
 	private List<Account> accounts;
-	private List<Long> bpos; //ItemID : long
 	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
 	private final Map<String, TableSettings> tableSettings = new HashMap<String, TableSettings>();
@@ -138,7 +137,6 @@ public class Settings{
 
 		//Settings
 		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
-		bpos = new ArrayList<Long>();
 		userNames = new HashMap<Long, UserItem<Long,String>>();
 		overviewGroups = new HashMap<String, OverviewGroup>();
 		
@@ -388,13 +386,6 @@ public class Settings{
 	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow){
 		for (EveAsset eveAsset : currentAssets){
 			if (shouldShow){
-				//Blueprint (Must be before user price)
-				if (eveAsset.isBlueprint()){
-					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
-				} else {
-					eveAsset.setBpo(false);
-				}
-
 				//User price
 				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
 					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
@@ -491,9 +482,6 @@ public class Settings{
 			//Add sub-assets
 			addAssets(eveAsset.getAssets(), shouldShow);
 		}
-	}
-	public List<Long> getBpos() {
-		return bpos;
 	}
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;

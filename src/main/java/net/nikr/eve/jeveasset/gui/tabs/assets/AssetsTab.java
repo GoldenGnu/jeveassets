@@ -63,7 +63,6 @@ public class AssetsTab extends JMainTab
 	
 	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
-	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
@@ -290,28 +289,6 @@ public class AssetsTab extends JMainTab
 		boolean isSingleRow = selectedRows.length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		boolean isBlueprints = false;
-		boolean isBPOs = true;
-		for (int a = 0; a < selectedRows.length; a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
-			if (eveAsset == null){
-				isBlueprints = false;
-				isBPOs = false;
-				break;
-			}
-			if (eveAssetTableModel.getElementAt(selectedRows[a]).isBlueprint()){
-				isBlueprints = true;
-				if (!eveAsset.isBpo()){
-					isBPOs = false;
-				}
-			} else {
-				isBPOs = false;
-				isBlueprints = false;
-				break;
-			}
-		}
-		if (!isBlueprints) isBPOs = false;
-
 		boolean numericColumn = false;
 		if (isSingleCell){
 			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
@@ -426,14 +403,6 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
-		jCheckBoxMenuItem = new JCheckBoxMenuItem(TabsAssets.get().blueprint());
-		jCheckBoxMenuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		jCheckBoxMenuItem.setEnabled(isBlueprints);
-		jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
-		jCheckBoxMenuItem.addActionListener(this);
-		jCheckBoxMenuItem.setSelected(isBPOs);
-		jSubMenu.add(jCheckBoxMenuItem);
-
 	//INFO
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);
@@ -524,26 +493,6 @@ public class AssetsTab extends JMainTab
 		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
 			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_LESS_THAN_COLUMN, AssetFilter.Junction.AND, column));
-		}
-		
-		if (ACTION_BLUEPRINT_ORIGINAL.equals(e.getActionCommand())){
-			JCheckBoxMenuItem jCheckBoxMenuItem = (JCheckBoxMenuItem) e.getSource();
-			boolean bpo = jCheckBoxMenuItem.isSelected();
-			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++){
-				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
-				if (bpo){
-					if (!program.getSettings().getBpos().contains(eveAsset.getItemID())){
-						program.getSettings().getBpos().add(eveAsset.getItemID());
-					}
-				} else {
-					if (program.getSettings().getBpos().contains(eveAsset.getItemID())){
-						program.getSettings().getBpos().remove(eveAsset.getItemID());
-					}
-				}
-			}
-			program.updateEventList();
-			return;
 		}
 	}
 

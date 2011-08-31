@@ -62,6 +62,7 @@ public class ApiConverter {
 		String flag = "Market Order";
 		boolean corporation = human.isCorporation();
 		boolean singleton  = true;
+		int rawQuantity = 0;
 
 		//Calculated:
 		String name = ApiIdConverter.typeName(typeID, settings.getItems());
@@ -79,25 +80,15 @@ public class ApiConverter {
 		long solarSystemId = ApiIdConverter.systemID(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 
 	public static List<EveAsset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, Settings settings){
 		List<EveAsset> eveAssets = new ArrayList<EveAsset>();
 		for (ApiIndustryJob apiIndustryJob : industryJobs){
-			long id = apiIndustryJob.getInstalledItemID();
 			if (!apiIndustryJob.isCompleted()){
 				EveAsset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, settings);
 				eveAssets.add(eveAsset);
-			}
-			//Mark original blueprints
-			boolean isCopy = (apiIndustryJob.getInstalledItemCopy() > 0);
-			List<Long> bpos = settings.getBpos();
-			if (bpos.contains(id)){
-				bpos.remove(bpos.indexOf(id));
-			}
-			if (!isCopy){
-				bpos.add(id);
 			}
 		}
 		return eveAssets;
@@ -111,6 +102,7 @@ public class ApiConverter {
 		int nFlag = apiIndustryJob.getInstalledItemFlag();
 		boolean corporation = human.isCorporation();
 		boolean singleton  = false;
+		int rawQuantity = (apiIndustryJob.getInstalledItemCopy() == 0) ? 0 : -2; //0 = BPO  -2 = BPC
 
 		//Calculated:
 		String flag = ApiIdConverter.flag(nFlag, settings.getItemFlags());
@@ -129,7 +121,7 @@ public class ApiConverter {
 		long solarSystemId = ApiIdConverter.systemID(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = new ArrayList<EveAsset>();
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 
 	public static List<EveAsset> apiAsset(Human human, List<ApiAsset> assets, Settings settings){
@@ -158,7 +150,7 @@ public class ApiConverter {
 		boolean singleton  = apiAsset.getSingleton();
 		boolean corporation = human.isCorporation();
 		String owner = human.getName();
-
+		int rawQuantity = apiAsset.getRawQuantity();
 		//Calculated:
 		String name = ApiIdConverter.typeName(apiAsset.getTypeID(), settings.getItems());
 		String group = ApiIdConverter.group(apiAsset.getTypeID(), settings.getItems());
@@ -174,7 +166,7 @@ public class ApiConverter {
 		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();

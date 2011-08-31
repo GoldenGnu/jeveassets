@@ -221,7 +221,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			//Skip market orders
 			if (eveAsset.getFlag().equals(TabsValues.get().market()))	continue;
 			
-			if (eveAsset.isCorporationAsset()){ //Corp Asset
+			if (eveAsset.isCorporation()){ //Corp Asset
 				//Corp Total Value
 				String corp = eveAsset.getOwner();
 				double corpTotalValue = 0;

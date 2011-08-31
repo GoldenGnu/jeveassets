@@ -107,9 +107,10 @@ public class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "flag", eveAsset.getFlag());
 			node.setAttributeNS(null, "id", String.valueOf(eveAsset.getItemID()));
 			node.setAttributeNS(null, "typeid", String.valueOf(eveAsset.getTypeID()));
-			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporationAsset()));
+			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporation()));
 			node.setAttributeNS(null, "locationid", String.valueOf(eveAsset.getLocationID()));
 			node.setAttributeNS(null, "singleton", String.valueOf(eveAsset.isSingleton()));
+			node.setAttributeNS(null, "rawquantity", String.valueOf(eveAsset.getRawQuantity()));
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, eveAsset.getAssets());
 		}

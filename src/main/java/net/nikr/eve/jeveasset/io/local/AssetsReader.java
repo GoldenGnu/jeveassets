@@ -332,6 +332,10 @@ public class AssetsReader extends AbstractXmlReader {
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
 		String owner = AttributeGetters.getString(node, "owner");
+		int rawQuantity = 0;
+		if (AttributeGetters.haveAttribute(node, "rawquantity")){
+			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
+		}
 
 		//Calculated:
 		String name = ApiIdConverter.typeName(typeID, settings.getItems());
@@ -347,6 +351,6 @@ public class AssetsReader extends AbstractXmlReader {
 		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId);
+		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 }

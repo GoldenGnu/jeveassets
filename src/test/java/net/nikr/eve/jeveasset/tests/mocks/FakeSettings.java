@@ -78,11 +78,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Long> getBpos() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Date getConquerableStationsNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}

@@ -108,13 +108,6 @@ public class SettingsReader extends AbstractXmlReader {
 			parseReprocessing(reprocessingElement, settings);
 		}
 
-		//BPOs
-		NodeList bposNodes = element.getElementsByTagName("bpos");
-		if (bposNodes.getLength() == 1){
-			Element bposElement = (Element) bposNodes.item(0);
-			parseBposPrices(bposElement, settings);
-		}
-
 		//UserPrices
 		NodeList userPriceNodes = element.getElementsByTagName("userprices");
 		if (userPriceNodes.getLength() == 1){
@@ -248,14 +241,6 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseBposPrices(Element element, Settings settings){
-		NodeList userPriceNodes = element.getElementsByTagName("bpo");
-		for (int a = 0; a < userPriceNodes.getLength(); a++){
-			Element currentNode = (Element) userPriceNodes.item(a);
-			long id = AttributeGetters.getLong(currentNode, "id");
-			settings.getBpos().add(id);
-		}
-	}
 	private static void parseUserPrices(Element element, Settings settings){
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){

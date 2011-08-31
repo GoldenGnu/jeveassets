@@ -131,16 +131,16 @@ public class EveAsset implements Comparable<EveAsset> {
 	private float volume;
 	private String region;
 	private long typeCount = 0;
-	private boolean bpo;
 	private boolean singleton;
 	private String security;
 	private double priceReprocessed;
 	private String system;
+	private int rawQuantity;
 	
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID) {
+	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity) {
 		this.typeName = typeName;
-		this.name = typeName;
+		this.name = getTypeName();
 		this.group = group;
 		this.category = category;
 		this.owner = owner;
@@ -157,41 +157,21 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.volume = volume;
 		this.region = region;
 		this.locationID = locationID;
-		this.bpo = false;
 		this.singleton = singleton;
 		this.security = security;
 		this.system = system;
 		this.solarSystemID = solarSystemID;
+		this.rawQuantity = rawQuantity;
 	}
-
-	public void setPriceData(PriceData priceData) {
-		this.priceData = priceData;
-	}
-
-	public void setUserPrice(UserItem<Integer,Double> userPrice) {
-		this.userPrice = userPrice;
-	}
-
-	public boolean isBpo() {
-		return bpo;
-	}
-
-	public void setBpo(boolean bpo) {
-		this.bpo = bpo;
-	}
-
-	public boolean isBlueprint() {
-		return (typeName.toLowerCase().contains("blueprint"));
-	}
-
+	
 	public void addEveAsset(EveAsset eveAsset) {
 		assets.add(eveAsset);
 	}
-
+	
 	public List<EveAsset> getAssets() {
 		return assets;
 	}
-
+	
 	public String getCategory() {
 		return category;
 	}
@@ -199,108 +179,11 @@ public class EveAsset implements Comparable<EveAsset> {
 	public String getContainer() {
 		return container;
 	}
-
-	public void setContainer(String container) {
-		this.container = container;
-	}
-
-	public List<EveAsset> getParents() {
-		return parents;
-	}
-
-	public boolean isCorporationAsset() {
-		return corporation;
-	}
-
+	
 	public long getCount() {
 		return count;
 	}
-
-	public String getFlag() {
-		return flag;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public long getItemID() {
-		return itemID;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public long getLocationID() {
-		return locationID;
-	}
-
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	public String getSecurity() {
-		return security;
-	}
-
-	public PriceData getPriceData() {
-		return priceData;
-	}
-
-	public UserItem<Integer,Double> getUserPrice() {
-		return userPrice;
-	}
-
-	public String getMeta() {
-		return meta;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	/**
-	 * Singleton: Unpackaged
-	 *
-	 * @return true if unpackaged
-	 *         false if packaged
-	 */
-	public boolean isSingleton() {
-		return singleton;
-	}
-
-	public double getPrice() {
-		//UserPrice
-		if (this.getUserPrice() != null) return this.getUserPrice().getValue();
-
-		//Blueprint Copy (Default Zero)
-		if (isBlueprint() && !isBpo()) return 0;
-
-		//PriceData
-		return getDefaultPrice();
-	}
-
-	public boolean isUserPrice() {
-		return (this.getUserPrice() != null);
-	}
-
-	public boolean isUserName(){
-		return !getName().equals(getTypeName());
-	}
-
+	
 	public double getDefaultPrice() {
 		return getDefaultPrice(getPriceData());
 	}
@@ -326,15 +209,58 @@ public class EveAsset implements Comparable<EveAsset> {
 	public static PriceMode getDefaultPriceType(){
 		return defaultPriceType;
 	}
-
-	public double getPriceSellMin() {
-		if (isBlueprint() && !isBpo()) return 0;
-		
-		if (this.getPriceData() != null) return this.getPriceData().getSellMin();
-		
-		return 0;
+	
+	public String getFlag() {
+		return flag;
+	}
+	
+	public String getGroup() {
+		return group;
 	}
 
+	public long getItemID() {
+		return itemID;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public long getLocationID() {
+		return locationID;
+	}
+	
+	public String getMeta() {
+		return meta;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+	
+	public List<EveAsset> getParents() {
+		return parents;
+	}
+	
+	public double getPrice() {
+		//UserPrice
+		if (this.getUserPrice() != null) return this.getUserPrice().getValue();
+
+		//Blueprint Copy (Default Zero)
+		if (isBlueprint() && !isBpo()) return 0;
+
+		//PriceData
+		return getDefaultPrice();
+	}
+	
+	public double getPriceBase() {
+		return priceBase;
+	}
+	
 	public double getPriceBuyMax() {
 		if (isBlueprint() && !isBpo()) return 0;
 		
@@ -342,57 +268,155 @@ public class EveAsset implements Comparable<EveAsset> {
 		
 		return 0;
 	}
-
+	
+	public PriceData getPriceData() {
+		return priceData;
+	}
+	
 	public double getPriceReprocessed() {
 		return priceReprocessed;
+	}
+	
+	public double getPriceSellMin() {
+		if (isBlueprint() && !isBpo()) return 0;
+		
+		if (this.getPriceData() != null) return this.getPriceData().getSellMin();
+		
+		return 0;
+	}
+	
+	public static PriceMode getPriceType() {
+		return priceType;
+	}
+	
+	public static List<PriceMode> getPriceTypes(){
+		return Arrays.asList(PriceMode.values());
+	}
+	
+	public int getRawQuantity() {
+		return rawQuantity;
+	}
+	
+	public String getRegion() {
+		return region;
+	}
+
+	public String getSecurity() {
+		return security;
+	}
+	
+	public long getSolarSystemID() {
+		return solarSystemID;
+	}
+	
+	public String getSystem() {
+		return system;
+	}
+
+	public long getTypeCount() {
+		return typeCount;
+	}
+	
+	public int getTypeID() {
+		return typeID;
+	}
+	
+	public final String getTypeName() {
+		if (isBlueprint()){
+			if (isBpo()){
+				return typeName + " (BPO)";
+			} else {
+				return typeName + " (BPC)";
+			}
+		} else {
+			return typeName;
+		}
+	}
+	
+	public UserItem<Integer,Double> getUserPrice() {
+		return userPrice;
+	}
+	
+	public double getValue() {
+		return Formater.round(this.getPrice() * this.getCount(), 2);
+	}
+	
+	public double getValueReprocessed() {
+		return Formater.round(this.getPriceReprocessed() * this.getCount(), 2);
+	}
+	
+	public float getVolume() {
+		return volume;
+	}
+	
+	public boolean isBlueprint() {
+		return (typeName.toLowerCase().contains("blueprint"));
+	}
+	
+	public boolean isBpo() {
+		return rawQuantity != -2;
+	}
+	
+	public boolean isCorporation() {
+		return corporation;
+	}
+	
+	public boolean isMarketGroup() {
+		return marketGroup;
+	}
+	
+	/**
+	 * Singleton: Unpackaged
+	 *
+	 * @return true if unpackaged
+	 *         false if packaged
+	 */
+	public boolean isSingleton() {
+		return singleton;
+	}
+	
+	public boolean isUserName(){
+		return !getName().equals(getTypeName());
+	}
+	
+	public boolean isUserPrice() {
+		return (this.getUserPrice() != null);
+	}
+	
+	public void setContainer(String container) {
+		this.container = container;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPriceData(PriceData priceData) {
+		this.priceData = priceData;
 	}
 
 	public void setPriceReprocessed(double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
 	}
 
-	public double getValue() {
-		return Formater.round(this.getPrice() * this.getCount(), 2);
-	}
-
-	public double getValueReprocessed() {
-		return Formater.round(this.getPriceReprocessed() * this.getCount(), 2);
-	}
-
-	public double getPriceBase() {
-		return priceBase;
-	}
-
-	public int getTypeID() {
-		return typeID;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public float getVolume() {
-		return volume;
-	}
-
-	public void setVolume(float volume) {
-		this.volume = volume;
-	}
-
-	public long getTypeCount() {
-		return typeCount;
+	public static void setPriceType(PriceMode priceSource) {
+		if (EveAsset.getPriceTypes().contains(priceSource)){
+			EveAsset.priceType = priceSource;
+		} else {
+			EveAsset.priceType = PriceMode.PRICE_MIDPOINT;
+		}
 	}
 
 	public void setTypeCount(long typeCount) {
 		this.typeCount = typeCount;
 	}
 
-	public String getSystem() {
-		return system;
+	public void setUserPrice(UserItem<Integer,Double> userPrice) {
+		this.userPrice = userPrice;
 	}
-
-	public long getSolarSystemID() {
-		return solarSystemID;
+	
+	public void setVolume(float volume) {
+		this.volume = volume;
 	}
 
 	@Override
@@ -425,22 +449,5 @@ public class EveAsset implements Comparable<EveAsset> {
 		int hash = 3;
 		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
 		return hash;
-	}
-
-	public static PriceMode getPriceType() {
-		return priceType;
-	}
-
-	public static void setPriceType(PriceMode priceSource) {
-		if (EveAsset.getPriceTypes().contains(priceSource)){
-			EveAsset.priceType = priceSource;
-		} else {
-			EveAsset.priceType = PriceMode.PRICE_MIDPOINT;
-		}
-		
-	}
-
-	public static List<PriceMode> getPriceTypes(){
-		return Arrays.asList(PriceMode.values());
 	}
 }
