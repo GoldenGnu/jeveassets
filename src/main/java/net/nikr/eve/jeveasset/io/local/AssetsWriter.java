@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -98,9 +98,9 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAssets(Document xmldoc, Element parentNode, List<EveAsset> assets) {
+	private static void writeAssets(Document xmldoc, Element parentNode, List<Asset> assets) {
 		for (int a = 0; a < assets.size(); a++){
-			EveAsset eveAsset = assets.get(a);
+			Asset eveAsset = assets.get(a);
 			Element node = xmldoc.createElementNS(null, "asset");
 			node.setAttributeNS(null, "owner", eveAsset.getOwner());
 			node.setAttributeNS(null, "count", String.valueOf(eveAsset.getCount()));
@@ -116,14 +116,14 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<ApiAccountBalance> accountBalances, boolean bCorp){
+	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<EveAccountBalance> accountBalances, boolean bCorp){
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()){
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
 		for (int a = 0; a < accountBalances.size(); a++){
-			ApiAccountBalance accountBalance = accountBalances.get(a);
+			EveAccountBalance accountBalance = accountBalances.get(a);
 
 			Element childNode = xmldoc.createElementNS(null, "balance");
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));

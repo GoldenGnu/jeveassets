@@ -28,7 +28,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 
 public class JAssetTable extends JColumnTable {
 
-	private EventTableModel<EveAsset> eventTableModel;
+	private EventTableModel<Asset> eventTableModel;
 	private DoubleCellRenderer doubleCellRenderer;
 	private LongCellRenderer longCellRenderer;
 	private TableCellRenderer tableCellRenderer;
@@ -48,7 +48,7 @@ public class JAssetTable extends JColumnTable {
 
 	private Program program;
 
-	public JAssetTable(Program program, EventTableModel<EveAsset> eventTableModel, TableSettings tableSettings) {
+	public JAssetTable(Program program, EventTableModel<Asset> eventTableModel, TableSettings tableSettings) {
 		super(eventTableModel, tableSettings);
 		this.program = program;
 		this.eventTableModel = eventTableModel;
@@ -86,7 +86,7 @@ public class JAssetTable extends JColumnTable {
 		
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		if (eventTableModel.getRowCount() >= row){
-			EveAsset eveAsset = eventTableModel.getElementAt(row);
+			Asset eveAsset = eventTableModel.getElementAt(row);
 			//User set price
 			if (eveAsset.isUserPrice() && columnName.equals("Price")){
 				Component c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);

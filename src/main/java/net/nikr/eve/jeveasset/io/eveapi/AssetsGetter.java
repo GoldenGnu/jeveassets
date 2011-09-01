@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.core.ApiException;
-import com.beimin.eveapi.shared.assetlist.ApiAsset;
+import com.beimin.eveapi.shared.assetlist.EveAsset;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -73,8 +73,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(AssetListResponse response) {
-		List<ApiAsset> apiAssets = new ArrayList<ApiAsset>(response.getAssets());
-		List<EveAsset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, settings);
+		List<EveAsset> apiAssets = new ArrayList<EveAsset>(response.getAll());
+		List<Asset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, settings);
 		getHuman().setAssets(assets);
 	}
 	
@@ -85,6 +85,6 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void clearData(){
-		getHuman().setAssets(new ArrayList<EveAsset>());
+		getHuman().setAssets(new ArrayList<Asset>());
 	}
 }

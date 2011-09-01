@@ -28,7 +28,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.Attribute;
@@ -133,15 +133,15 @@ public class Update1To2 implements LocalUpdate {
 	private String convertDefaultPriceMode(String oldVal) {
 		if (oldVal.startsWith("PRICE_")) return oldVal;
 		String convert = oldVal.toLowerCase();
-		if (convert.contains("midpoint"))     return EveAsset.PriceMode.PRICE_MIDPOINT.name();
-		if (convert.contains("sell average")) return EveAsset.PriceMode.PRICE_SELL_AVG.name();
-		if (convert.contains("sell median"))  return EveAsset.PriceMode.PRICE_SELL_MEDIAN.name();
-		if (convert.contains("sell minimum")) return EveAsset.PriceMode.PRICE_SELL_MIN.name();
-		if (convert.contains("sell maximum")) return EveAsset.PriceMode.PRICE_SELL_MAX.name();
-		if (convert.contains("buy maximum"))  return EveAsset.PriceMode.PRICE_BUY_MAX.name();
-		if (convert.contains("buy average"))  return EveAsset.PriceMode.PRICE_BUY_AVG.name();
-		if (convert.contains("buy median"))   return EveAsset.PriceMode.PRICE_BUY_MEDIAN.name();
-		if (convert.contains("buy minimum"))  return EveAsset.PriceMode.PRICE_BUY_MIN.name();
+		if (convert.contains("midpoint"))     return Asset.PriceMode.PRICE_MIDPOINT.name();
+		if (convert.contains("sell average")) return Asset.PriceMode.PRICE_SELL_AVG.name();
+		if (convert.contains("sell median"))  return Asset.PriceMode.PRICE_SELL_MEDIAN.name();
+		if (convert.contains("sell minimum")) return Asset.PriceMode.PRICE_SELL_MIN.name();
+		if (convert.contains("sell maximum")) return Asset.PriceMode.PRICE_SELL_MAX.name();
+		if (convert.contains("buy maximum"))  return Asset.PriceMode.PRICE_BUY_MAX.name();
+		if (convert.contains("buy average"))  return Asset.PriceMode.PRICE_BUY_AVG.name();
+		if (convert.contains("buy median"))   return Asset.PriceMode.PRICE_BUY_MEDIAN.name();
+		if (convert.contains("buy minimum"))  return Asset.PriceMode.PRICE_BUY_MIN.name();
 		throw new IllegalArgumentException("Failed to convert the price type " + oldVal);
 	}
 

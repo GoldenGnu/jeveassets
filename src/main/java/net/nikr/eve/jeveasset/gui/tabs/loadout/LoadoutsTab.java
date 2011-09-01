@@ -49,7 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -234,9 +234,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
 		if (!fitName.isEmpty()){
 			String selectedShip = (String)jShips.getSelectedItem();
-			EveAsset exportAsset = null;
-			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
-			for (EveAsset eveAsset : eveAssetEventList){
+			Asset exportAsset = null;
+			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			for (Asset eveAsset : eveAssetEventList){
 				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 				if (!selectedShip.equals(key)){
 					continue;
@@ -293,8 +293,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	private void updateTable(){
 		List<Module> ship = new ArrayList<Module>();
-		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
-		for (EveAsset eveAsset : eveAssetEventList){
+		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+		for (Asset eveAsset : eveAssetEventList){
 			String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 			if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
 			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", 0, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeID());
@@ -303,7 +303,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
-			for (EveAsset assetModule : eveAsset.getAssets()){
+			for (Asset assetModule : eveAsset.getAssets()){
 				Module module = new Module(assetModule, "1"+assetModule.getName(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getPrice(), (assetModule.getPrice()*assetModule.getCount()), assetModule.getCount(), assetModule.isMarketGroup(), assetModule.getTypeID());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains("HiSlot")
@@ -373,8 +373,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (ACTION_CHARACTERS.equals(e.getActionCommand())) {
 			String character = (String) jCharacters.getSelectedItem();
 			List<String> charShips = new ArrayList<String>();
-			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
-			for (EveAsset eveAsset : eveAssetEventList){
+			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			for (Asset eveAsset : eveAssetEventList){
 				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) {
 					continue;
@@ -423,13 +423,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
-			List<EveAsset> ships = new ArrayList<EveAsset>();
-			EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
-			for (EveAsset eveAsset : eveAssetEventList){
+			List<Asset> ships = new ArrayList<Asset>();
+			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			for (Asset eveAsset : eveAssetEventList){
 				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
 				ships.add(eveAsset);
 			}
-			if (filename != null) EveFittingWriter.save(new ArrayList<EveAsset>(ships), filename);
+			if (filename != null) EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
 
 		}
 

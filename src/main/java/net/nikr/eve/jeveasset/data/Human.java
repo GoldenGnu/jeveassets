@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.core.ApiAuthorization;
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
@@ -40,10 +40,10 @@ public class Human {
 	private Date marketOrdersNextUpdate;
 	private Date industryJobsNextUpdate;
 	private Account parentAccount;
-	private List<ApiAccountBalance> accountBalances;
+	private List<EveAccountBalance> accountBalances;
 	private List<ApiMarketOrder> marketOrders;
 	private List<ApiIndustryJob> industryJobs;
-	private List<EveAsset> assets;
+	private List<Asset> assets;
 
 	public Human(Account parentAccount, String name, long characterID) {
 		this(parentAccount, name, characterID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
@@ -60,17 +60,17 @@ public class Human {
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		//Default
-		assets = new ArrayList<EveAsset>();
-		accountBalances = new  ArrayList<ApiAccountBalance>();
+		assets = new ArrayList<Asset>();
+		accountBalances = new  ArrayList<EveAccountBalance>();
 		marketOrders = new  ArrayList<ApiMarketOrder>();
 		industryJobs = new  ArrayList<ApiIndustryJob>();
 	}
 
-	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {
+	public void setAccountBalances(List<EveAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
-	public void setAssets(List<EveAsset> assets) {
+	public void setAssets(List<Asset> assets) {
 		this.assets = assets;
 	}
 
@@ -118,11 +118,11 @@ public class Human {
 		return parentAccount.isCharacter();
 	}
 
-	public List<ApiAccountBalance> getAccountBalances() {
+	public List<EveAccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
 	
-	public List<EveAsset> getAssets() {
+	public List<Asset> getAssets() {
 		return assets;
 	}
 

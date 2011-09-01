@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -39,11 +39,11 @@ public class EveFittingWriter extends AbstractXmlWriter {
 
 	private final static Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
 
-	public static void save(List<EveAsset> eveassets, String filename){
+	public static void save(List<Asset> eveassets, String filename){
 		save(eveassets, filename, null, null);
 	}
 
-	public static void save(List<EveAsset> eveassets, String filename, String setupName, String description){
+	public static void save(List<Asset> eveassets, String filename, String setupName, String description){
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("fittings");
@@ -66,7 +66,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private static void writeFitting(Document xmldoc, EveAsset eveAsset, String setupName, String description, String filename) {
+	private static void writeFitting(Document xmldoc, Asset eveAsset, String setupName, String description, String filename) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);
@@ -80,14 +80,14 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		shipTypeNode.setAttributeNS(null, "value", eveAsset.getName());
 		fittingNode.appendChild(shipTypeNode);
 
-		Map<String, List<EveAsset>> modules = new HashMap<String, List<EveAsset>>();
-			List<EveAsset> assets = eveAsset.getAssets();
+		Map<String, List<Asset>> modules = new HashMap<String, List<Asset>>();
+			List<Asset> assets = eveAsset.getAssets();
 			for (int a = 0; a < assets.size(); a++){
-				EveAsset module = assets.get(a);
+				Asset module = assets.get(a);
 				if (modules.containsKey(module.getFlag())){
 					modules.get(module.getFlag()).add(module);
 				} else {
-					List<EveAsset> subModules = new ArrayList<EveAsset>();
+					List<Asset> subModules = new ArrayList<Asset>();
 					subModules.add(module);
 					modules.put(module.getFlag(), subModules);
 				}
@@ -135,9 +135,9 @@ public class EveFittingWriter extends AbstractXmlWriter {
 			}
 			if (modules.containsKey("DroneBay")){
 				Map<String, Long> moduleCount = new HashMap<String, Long>();
-				List<EveAsset> subModules = modules.get("DroneBay");
+				List<Asset> subModules = modules.get("DroneBay");
 				for (int a = 0; a < subModules.size(); a++){
-					EveAsset subModule = subModules.get(a);
+					Asset subModule = subModules.get(a);
 					if (moduleCount.containsKey(subModule.getName())){
 						long count = moduleCount.get(subModule.getName());
 						moduleCount.remove(subModule.getName());

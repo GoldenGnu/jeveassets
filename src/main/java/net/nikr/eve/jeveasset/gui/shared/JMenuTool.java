@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Material;
@@ -66,8 +66,8 @@ public abstract class JMenuTool extends JMenu {
 			IndustryJob industryJob = (IndustryJob) object;
 			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion());
 		}
-		if (object instanceof EveAsset){
-			EveAsset eveAsset = (EveAsset) object;
+		if (object instanceof Asset){
+			Asset eveAsset = (Asset) object;
 			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeID(), eveAsset.getLocation(), eveAsset.getSystem(), eveAsset.getRegion());
 		}
 		if (object instanceof Overview){

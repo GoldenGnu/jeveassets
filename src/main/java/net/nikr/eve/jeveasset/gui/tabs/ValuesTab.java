@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs;
 
 import ca.odell.glazedlists.EventList;
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +38,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -71,34 +71,34 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	//Data
 	private List<String> owners;
 	private List<String> corps;
-	private EventList<EveAsset> eveAssetEventList;
+	private EventList<Asset> eveAssetEventList;
 	private Map<String, Double> ownersTotalAccountBalance;
 	private Map<String, Double> ownersTotalItemsValue;
 	private Map<String, Long> ownersTotalItemsCount;
 	private Map<String, Double> ownersTotalSellOrders;
 	private Map<String, Double> ownersTotalBuyOrders;
 	private Map<String, Double> ownersTotalBuyOrdersNotPaid;
-	private Map<String, EveAsset> ownersBestItem;
-	private Map<String, EveAsset> ownersBestModule;
-	private Map<String, EveAsset> ownersBestShip;
+	private Map<String, Asset> ownersBestItem;
+	private Map<String, Asset> ownersBestModule;
+	private Map<String, Asset> ownersBestShip;
 	private Map<String, Double> corpsTotalAccountBalance;
 	private Map<String, Double> corpsTotalItemsValue;
 	private Map<String, Long> corpsTotalItemsCount;
 	private Map<String, Double> corpsTotalSellOrders;
 	private Map<String, Double> corpsTotalBuyOrders;
 	private Map<String, Double> corpsTotalBuyOrdersNotPaid;
-	private Map<String, EveAsset> corpsBestItem;
-	private Map<String, EveAsset> corpsBestModule;
-	private Map<String, EveAsset> corpsBestShip;
+	private Map<String, Asset> corpsBestItem;
+	private Map<String, Asset> corpsBestModule;
+	private Map<String, Asset> corpsBestShip;
 
 	private double totalItemsValue = 0;
 	private long totalItemsCount = 0;
 	private double totalAccountBalance = 0;
 	private double totalSellOrders = 0;
 	private double totalBuyOrders = 0;
-	private EveAsset bestItem = null;
-	private EveAsset bestModule = null;
-	private EveAsset bestShip = null;
+	private Asset bestItem = null;
+	private Asset bestModule = null;
+	private Asset bestShip = null;
 
 
 	private String backgroundHexColor;
@@ -196,18 +196,18 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		ownersTotalSellOrders = new HashMap<String, Double>();
 		ownersTotalBuyOrders = new HashMap<String, Double>();
 		ownersTotalBuyOrdersNotPaid = new HashMap<String, Double>();
-		ownersBestItem = new HashMap<String, EveAsset>();
-		ownersBestModule = new HashMap<String, EveAsset>();
-		ownersBestShip = new HashMap<String, EveAsset>();
+		ownersBestItem = new HashMap<String, Asset>();
+		ownersBestModule = new HashMap<String, Asset>();
+		ownersBestShip = new HashMap<String, Asset>();
 		corpsTotalAccountBalance = new HashMap<String, Double>();
 		corpsTotalItemsValue = new HashMap<String, Double>();
 		corpsTotalItemsCount = new HashMap<String, Long>();
 		corpsTotalSellOrders = new HashMap<String, Double>();
 		corpsTotalBuyOrders = new HashMap<String, Double>();
 		corpsTotalBuyOrdersNotPaid = new HashMap<String, Double>();
-		corpsBestItem = new HashMap<String, EveAsset>();
-		corpsBestModule = new HashMap<String, EveAsset>();
-		corpsBestShip = new HashMap<String, EveAsset>();
+		corpsBestItem = new HashMap<String, Asset>();
+		corpsBestModule = new HashMap<String, Asset>();
+		corpsBestShip = new HashMap<String, Asset>();
 
 		totalItemsCount = 0;
 		totalItemsValue = 0;
@@ -217,7 +217,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		bestItem = null;
 		bestShip = null;
 		bestModule = null;
-		for (EveAsset eveAsset : eveAssetEventList){
+		for (Asset eveAsset : eveAssetEventList){
 			//Skip market orders
 			if (eveAsset.getFlag().equals(TabsValues.get().market()))	continue;
 			
@@ -244,7 +244,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 
 				//Corp Best Item
-				EveAsset corpBestItem = corpsBestItem.get(corp);
+				Asset corpBestItem = corpsBestItem.get(corp);
 				if (corpBestItem == null) corpBestItem = eveAsset;
 
 				if (corpBestItem.getPrice() <= eveAsset.getPrice()){
@@ -253,7 +253,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				}
 
 				//Corp Best Module
-				EveAsset corpBestModule = corpsBestModule.get(corp);
+				Asset corpBestModule = corpsBestModule.get(corp);
 				if (corpBestModule == null && eveAsset.getCategory().equals("Module")) corpBestModule = eveAsset;
 
 				if (corpBestModule != null
@@ -266,7 +266,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				}
 
 				//Corp Best Module
-				EveAsset corpBestShip = corpsBestShip.get(corp);
+				Asset corpBestShip = corpsBestShip.get(corp);
 				if (corpBestShip == null && eveAsset.getCategory().equals("Ship")) corpBestShip = eveAsset;
 
 				if (corpBestShip != null
@@ -298,7 +298,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				ownersTotalItemsCount.put(eveAsset.getOwner(), ownerTotalCount);
 
 				//Owner Best Item
-				EveAsset ownerBestItem = ownersBestItem.get(owner);
+				Asset ownerBestItem = ownersBestItem.get(owner);
 				if (ownerBestItem == null) ownerBestItem = eveAsset;
 
 				if (ownerBestItem.getPrice() <= eveAsset.getPrice()){
@@ -307,7 +307,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				}
 
 				//Owner Best Module
-				EveAsset ownerBestModule = ownersBestModule.get(owner);
+				Asset ownerBestModule = ownersBestModule.get(owner);
 				if (ownerBestModule == null && eveAsset.getCategory().equals("Module")) ownerBestModule = eveAsset;
 
 				if (ownerBestModule != null
@@ -320,7 +320,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				}
 
 				//Owner Best Ship
-				EveAsset ownerBestShip = ownersBestShip.get(owner);
+				Asset ownerBestShip = ownersBestShip.get(owner);
 				if (ownerBestShip == null && eveAsset.getCategory().equals("Ship")) ownerBestShip = eveAsset;
 
 				if (ownerBestShip != null
@@ -369,10 +369,10 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						owners.add(human.getName());
 
 						//Account Balance
-						List<ApiAccountBalance> accountBalances = human.getAccountBalances();
+						List<EveAccountBalance> accountBalances = human.getAccountBalances();
 						double ownerTotalAccountBalance = 0;
 						for (int c = 0; c < accountBalances.size(); c++){
-							ApiAccountBalance accountBalance = accountBalances.get(c);
+							EveAccountBalance accountBalance = accountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							ownerTotalAccountBalance = ownerTotalAccountBalance + accountBalance.getBalance();
 						}
@@ -410,10 +410,10 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						corps.add(human.getName());
 
 						//Account Balance
-						List<ApiAccountBalance> corpAccountBalances = human.getAccountBalances();
+						List<EveAccountBalance> corpAccountBalances = human.getAccountBalances();
 						double corpTotalAccountBalance = 0;
 						for (int c = 0; c < corpAccountBalances.size(); c++){
-							ApiAccountBalance accountBalance = corpAccountBalances.get(c);
+							EveAccountBalance accountBalance = corpAccountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
 						}
@@ -509,21 +509,21 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			
 			output.addHeading(NAME_BEST_ASSET);
 			if (ownersBestItem.containsKey(s)){
-				EveAsset ownerBestItem = ownersBestItem.get(s);
+				Asset ownerBestItem = ownersBestItem.get(s);
 				output.addValue(ownerBestItem.getName()+"<br/>"+Formater.iskFormat(ownerBestItem.getPrice()));
 			}
 			output.addNone(2);
 			
 			output.addHeading(NAME_BEST_SHIP);
 			if (ownersBestShip.containsKey(s)){
-				EveAsset ownerBestShip = ownersBestShip.get(s);
+				Asset ownerBestShip = ownersBestShip.get(s);
 				output.addValue(ownerBestShip.getName()+"<br/>"+Formater.iskFormat(ownerBestShip.getPrice()));
 			}
 			output.addNone(2);
 			
 			output.addHeading(NAME_BEST_MODULE);
 			if (ownersBestModule.containsKey(s)){
-				EveAsset ownerBestModule = ownersBestModule.get(s);
+				Asset ownerBestModule = ownersBestModule.get(s);
 				output.addValue(ownerBestModule.getName()+"<br/>"+Formater.iskFormat(ownerBestModule.getPrice()));
 			}
 			output.addNone(2);
@@ -585,21 +585,21 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 			output.addHeading(NAME_BEST_ASSET);
 			if (corpsBestItem.containsKey(s)){
-				EveAsset corpBestItem = corpsBestItem.get(s);
+				Asset corpBestItem = corpsBestItem.get(s);
 				output.addValue(corpBestItem.getName()+"<br/>"+Formater.iskFormat(corpBestItem.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_SHIP);
 			if (corpsBestShip.containsKey(s)){
-				EveAsset corpBestShip = corpsBestShip.get(s);
+				Asset corpBestShip = corpsBestShip.get(s);
 				output.addValue(corpBestShip.getName()+"<br/>"+Formater.iskFormat(corpBestShip.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_MODULE);
 			if (corpsBestModule.containsKey(s)){
-				EveAsset corpBestModule = corpsBestModule.get(s);
+				Asset corpBestModule = corpsBestModule.get(s);
 				output.addValue(corpBestModule.getName()+"<br/>"+Formater.iskFormat(corpBestModule.getPrice()));
 			}
 			output.addNone(2);

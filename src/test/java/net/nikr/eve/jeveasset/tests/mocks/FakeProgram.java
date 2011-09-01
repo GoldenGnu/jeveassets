@@ -26,7 +26,7 @@ import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
 import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
@@ -60,7 +60,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void changedMatcher(Event<EveAsset> matcherEvent) {
+	public void changedMatcher(Event<Asset> matcherEvent) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -80,7 +80,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<EveAsset> getEveAssetEventList() {
+	public EventList<Asset> getEveAssetEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

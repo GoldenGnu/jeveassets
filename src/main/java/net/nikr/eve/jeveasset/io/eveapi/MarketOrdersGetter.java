@@ -69,7 +69,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(MarketOrdersResponse response) {
-		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getMarketOrders());
+		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getAll());
 		getHuman().setMarketOrders(marketOrders);
 	}
 	

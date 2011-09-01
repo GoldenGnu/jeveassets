@@ -69,7 +69,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(IndustryJobsResponse response) {
-		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getIndustryJobs());
+		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getAll());
 		getHuman().setIndustryJobs(industryJobs);
 	}
 	

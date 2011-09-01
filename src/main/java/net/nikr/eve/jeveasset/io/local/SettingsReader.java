@@ -31,7 +31,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -267,9 +267,9 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static void parsePriceDataSettings(Element element, Settings settings){
 		int region = AttributeGetters.getInt(element, "region");
-		EveAsset.PriceMode priceType = EveAsset.getDefaultPriceType();
+		Asset.PriceMode priceType = Asset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
-			priceType = EveAsset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
+			priceType = Asset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
 		if (AttributeGetters.haveAttribute(element, "source")){
@@ -279,7 +279,7 @@ public class SettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "faction")){
 			factionPrice = FactionPrice.valueOf(AttributeGetters.getString(element, "faction"));
 		}
-		EveAsset.setPriceType(priceType);
+		Asset.setPriceType(priceType);
 		settings.setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
 	}
 

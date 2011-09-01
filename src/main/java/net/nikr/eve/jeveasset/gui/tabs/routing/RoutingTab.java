@@ -46,7 +46,7 @@ import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
@@ -330,17 +330,17 @@ public class RoutingTab extends JMainTab  {
 				return n1.compareTo(n2);
 			}
 		});
-		List<EveAsset> assets;
+		List<Asset> assets;
 		SourceItem source = (SourceItem)jSource.getSelectedItem();
 		if (source.getName().equals(TabsRouting.get().all())){ //ALL
-			 assets = new ArrayList<EveAsset>(program.getEveAssetEventList());
+			 assets = new ArrayList<Asset>(program.getEveAssetEventList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
-			assets = new ArrayList<EveAsset>();
+			assets = new ArrayList<Asset>();
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()){
-				for (EveAsset eveAsset : program.getEveAssetEventList()){
+				for (Asset eveAsset : program.getEveAssetEventList()){
 					if ((location.getName().equals(eveAsset.getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getSystem()))
 						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getRegion()))
@@ -351,7 +351,7 @@ public class RoutingTab extends JMainTab  {
 			}
 			
 		}
-		for (EveAsset ea : assets) {
+		for (Asset ea : assets) {
 			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemID());
 			if (loc != null) {
 				allLocs.add(loc);

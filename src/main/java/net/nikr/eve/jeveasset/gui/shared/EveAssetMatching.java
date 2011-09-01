@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +36,10 @@ public class EveAssetMatching {
 
 	}
 
-	public boolean matches(EveAsset item, AssetFilter assetFilter) {
+	public boolean matches(Asset item, AssetFilter assetFilter) {
 		return matches(item, assetFilter.getColumn(), assetFilter.getMode(), assetFilter.getText(), assetFilter.getColumnMatch());
 	}
-	public boolean matches(EveAsset eveAsset, String column, AssetFilter.Mode mode, String text, String columnMatch) {
+	public boolean matches(Asset eveAsset, String column, AssetFilter.Mode mode, String text, String columnMatch) {
 			final String haystack = getString(eveAsset, column);
 			final double value = getDouble(eveAsset, column);
 			if (columnMatch != null){
@@ -108,7 +108,7 @@ public class EveAssetMatching {
 			return false;
 	}
 
-	public String getString(EveAsset eveAsset, String column){
+	public String getString(Asset eveAsset, String column){
 		if (column.equals("All")){
 			return "\r\n"
 						+ eveAsset.getCategory() + "\r\n"
@@ -159,7 +159,7 @@ public class EveAssetMatching {
 		if (column.equals("Reprocessed Value")) return String.valueOf(eveAsset.getValueReprocessed());
 		return "";
 	}
-	public double getDouble(EveAsset eveAsset, String column){
+	public double getDouble(Asset eveAsset, String column){
 		if (column.equals("All")) return -1;
 		if (column.equals("Name")) return -1;
 		if (column.equals("Group")) return -1;

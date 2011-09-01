@@ -21,14 +21,14 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -157,13 +157,13 @@ public class AssetsReader extends AbstractXmlReader {
 
 			for (int b = 0; b < balanceNodes.getLength(); b++){
 				Element currentNode = (Element) balanceNodes.item(b);
-				ApiAccountBalance AccountBalance = parseBalance(currentNode);
+				EveAccountBalance AccountBalance = parseBalance(currentNode);
 				human.getAccountBalances().add(AccountBalance);
 			}
 		}
 	}
-	private static ApiAccountBalance parseBalance(Element element){
-		ApiAccountBalance accountBalance = new ApiAccountBalance();
+	private static EveAccountBalance parseBalance(Element element){
+		EveAccountBalance accountBalance = new EveAccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 		double balance = AttributeGetters.getDouble(element, "balance");
@@ -306,9 +306,9 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private static void parseAssets(Node node, List<EveAsset> assets, EveAsset parentEveAsset, Settings settings){
+	private static void parseAssets(Node node, List<Asset> assets, Asset parentEveAsset, Settings settings){
 		NodeList assetsNodes = node.getChildNodes();
-		EveAsset eveAsset = null;
+		Asset eveAsset = null;
 		for (int a = 0; a < assetsNodes.getLength(); a++){
 			Node currentNode = assetsNodes.item(a);
 			if (currentNode.getNodeName().equals("asset")){
@@ -322,7 +322,7 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static EveAsset parseEveAsset(Node node, EveAsset parentEveAsset, Settings settings){
+	private static Asset parseEveAsset(Node node, Asset parentEveAsset, Settings settings){
 		long count = AttributeGetters.getLong(node, "count");
 		String flag = AttributeGetters.getString(node, "flag");
 		long itemId = AttributeGetters.getLong(node, "id");
@@ -348,9 +348,9 @@ public class AssetsReader extends AbstractXmlReader {
 		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		List<EveAsset> parents = ApiIdConverter.parents(parentEveAsset);
+		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
 		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		return new EveAsset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
+		return new Asset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 }

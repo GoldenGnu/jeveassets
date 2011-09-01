@@ -170,4 +170,8 @@ public class Account {
 		hash = 53 * hash + (this.vCode != null ? this.vCode.hashCode() : 0);
 		return hash;
 	}
+
+	public void setKeyID(int keyID) {
+		this.keyID = keyID;
+	}
 }

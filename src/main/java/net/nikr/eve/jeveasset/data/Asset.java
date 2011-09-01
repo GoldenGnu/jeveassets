@@ -26,7 +26,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 
-public class EveAsset implements Comparable<EveAsset> {
+public class Asset implements Comparable<Asset> {
 
 	public enum PriceMode {
 		PRICE_SELL_MAX() {
@@ -107,7 +107,7 @@ public class EveAsset implements Comparable<EveAsset> {
 
 	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
 
-	private List<EveAsset> assets = new ArrayList<EveAsset>();
+	private List<Asset> assets = new ArrayList<Asset>();
 	private long locationID; //LocationID : long
 	private long itemID; //ItemID : long
 	private long solarSystemID; //LocationID : long
@@ -120,7 +120,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private long count;
 	private String location;
 	private String container = "";
-	private List<EveAsset> parents;
+	private List<Asset> parents;
 	private String flag;
 	private double priceBase;
 	private String meta;
@@ -138,7 +138,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	private int rawQuantity;
 	
 
-	public EveAsset(String typeName, String group, String category, String owner, long count, String location, List<EveAsset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity) {
+	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -164,11 +164,11 @@ public class EveAsset implements Comparable<EveAsset> {
 		this.rawQuantity = rawQuantity;
 	}
 	
-	public void addEveAsset(EveAsset eveAsset) {
+	public void addEveAsset(Asset eveAsset) {
 		assets.add(eveAsset);
 	}
 	
-	public List<EveAsset> getAssets() {
+	public List<Asset> getAssets() {
 		return assets;
 	}
 	
@@ -242,7 +242,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		return owner;
 	}
 	
-	public List<EveAsset> getParents() {
+	public List<Asset> getParents() {
 		return parents;
 	}
 	
@@ -400,10 +400,10 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public static void setPriceType(PriceMode priceSource) {
-		if (EveAsset.getPriceTypes().contains(priceSource)){
-			EveAsset.priceType = priceSource;
+		if (Asset.getPriceTypes().contains(priceSource)){
+			Asset.priceType = priceSource;
 		} else {
-			EveAsset.priceType = PriceMode.PRICE_MIDPOINT;
+			Asset.priceType = PriceMode.PRICE_MIDPOINT;
 		}
 	}
 
@@ -425,7 +425,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	@Override
-	public int compareTo(EveAsset o) {
+	public int compareTo(Asset o) {
 		return this.getName().compareTo(o.getName());
 	}
 
@@ -437,7 +437,7 @@ public class EveAsset implements Comparable<EveAsset> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final EveAsset other = (EveAsset) obj;
+		final Asset other = (Asset) obj;
 		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
 			return false;
 		}

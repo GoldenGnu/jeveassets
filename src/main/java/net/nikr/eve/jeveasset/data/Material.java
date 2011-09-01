@@ -39,7 +39,7 @@ public class Material implements Comparable<Material>{
 	private long count = 0;
 	private boolean first = false;
 
-	public Material(String name, String location, String group, EveAsset eveAsset) {
+	public Material(String name, String location, String group, Asset eveAsset) {
 		this.name = name;
 		this.location = location;
 		this.group = group;

@@ -44,7 +44,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -206,9 +206,9 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
 		Map<String, Material> summary = new HashMap<String, Material>();
 		Map<String, Material> total = new HashMap<String, Material>();
-		EventList<EveAsset> eveAssetEventList = program.getEveAssetEventList();
+		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
-		for (EveAsset eveAsset : eveAssetEventList){
+		for (Asset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material")) continue;
 			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All")) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();

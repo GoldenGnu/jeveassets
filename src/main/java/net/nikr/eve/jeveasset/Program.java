@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
@@ -73,7 +73,7 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Program implements ActionListener, Listener<EveAsset>{
+public class Program implements ActionListener, Listener<Asset>{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
@@ -133,7 +133,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 
 	//Data
 	private Settings settings;
-	private EventList<EveAsset> eveAssetEventList;
+	private EventList<Asset> eveAssetEventList;
 
 	public Program(){
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
@@ -147,7 +147,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		LOG.info("DATA Loading...");
 		settings = new Settings();
 		settings.loadActiveProfile();
-		eveAssetEventList = new BasicEventList<EveAsset>();
+		eveAssetEventList = new BasicEventList<Asset>();
 		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
 		timer = new Timer(1000, this);
@@ -354,7 +354,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	public StatusPanel getStatusPanel(){
 		return this.getMainWindow().getStatusPanel();
 	}
-	public EventList<EveAsset> getEveAssetEventList() {
+	public EventList<Asset> getEveAssetEventList() {
 		return eveAssetEventList;
 	}
 
@@ -423,7 +423,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	 * Called when the asset table is filtered
 	 */
 	@Override
-	public void changedMatcher(Event<EveAsset> matcherEvent) {
+	public void changedMatcher(Event<Asset> matcherEvent) {
 		this.getAssetsTab().updateToolPanel();
 		overviewTab.updateTable();
 	}
@@ -468,11 +468,11 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			showSettings();
 		}
 		if (AssetsTab.ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
-			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
+			Asset eveAsset = this.getAssetsTab().getSelectedAsset();
 			userPriceSettingsPanel.edit(new UserPrice(eveAsset));
 		}
 		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
-			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
+			Asset eveAsset = this.getAssetsTab().getSelectedAsset();
 			userNameSettingsPanel.edit(new UserName(eveAsset));
 		}
 	//Others

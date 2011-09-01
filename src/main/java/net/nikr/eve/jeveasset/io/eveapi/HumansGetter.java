@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
-import com.beimin.eveapi.account.characters.ApiCharacter;
+import com.beimin.eveapi.account.characters.EveCharacter;
 import com.beimin.eveapi.core.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +76,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		getAccount().setExpires(response.getExpires());
 		getAccount().setType(response.getType());
 		
-		List<ApiCharacter> characters = new ArrayList<ApiCharacter>(response.getEveCharacters());
+		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
 		List<Human> humans = new ArrayList<Human>();
 		
 		fails = 0;
@@ -88,7 +88,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		}
 		
 		for (int a = 0; a < characters.size(); a++){
-			ApiCharacter apiCharacter = characters.get(a);
+			EveCharacter apiCharacter = characters.get(a);
 			Human human = new Human(getAccount(), getAccount().isCharacter() ? apiCharacter.getName() : apiCharacter.getCorporationName(), apiCharacter.getCharacterID());
 
 			if (!getAccount().getHumans().contains(human)){ //Add new account

@@ -98,12 +98,12 @@ public class Settings{
 	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
 	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>(); //LocationID : long
 	private List<Integer> uniqueIds = null; //TypeID : int
-	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null; //TypeID : int
+	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceData; //TypeID : int
 	private final Map<Integer, PriceData> priceFactionData = new HashMap<Integer, PriceData>(); //TypeID : int
 	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
-	private List<EveAsset> eventListAssets = null;
+	private List<Asset> eventListAssets = null;
 	private List<Account> accounts;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
@@ -337,7 +337,7 @@ public class Settings{
 		uniqueIds = null;
 		uniqueAssetsDuplicates = null;
 	}
-	public List<EveAsset> getEventListAssets(){
+	public List<Asset> getEventListAssets(){
 		updateAssetLists();
 		return eventListAssets;
 	}
@@ -352,11 +352,11 @@ public class Settings{
 	}
 	private void updateAssetLists(){
 		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
-			eventListAssets = new ArrayList<EveAsset>();
+			eventListAssets = new ArrayList<Asset>();
 			//XXX Not all orders and jobs are added to uniqueIds
 			//Only the one that are assets AKA no buy orders and completed jobs
 			uniqueIds = new ArrayList<Integer>();
-			uniqueAssetsDuplicates = new HashMap<Integer, List<EveAsset>>();
+			uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 			List<String> ownersOrders = new ArrayList<String>();
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
@@ -364,13 +364,13 @@ public class Settings{
 				for (Human human : account.getHumans()){
 					//Market Orders
 					if (!human.getMarketOrders().isEmpty() && !ownersOrders.contains(human.getName())){
-						List<EveAsset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, this);
+						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, this);
 						addAssets(marketOrdersAssets, human.isShowAssets());
 						if (human.isShowAssets()) ownersOrders.add(human.getName());
 					}
 					//Industry Jobs
 					if (!human.getIndustryJobs().isEmpty() && !ownersJobs.contains(human.getName())){
-						List<EveAsset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, this);
+						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, this);
 						addAssets(industryJobAssets, human.isShowAssets());
 						if (human.isShowAssets()) ownersJobs.add(human.getName());
 					}
@@ -383,8 +383,8 @@ public class Settings{
 			}
 		}
 	}
-	private void addAssets(List<EveAsset> currentAssets, boolean shouldShow){
-		for (EveAsset eveAsset : currentAssets){
+	private void addAssets(List<Asset> currentAssets, boolean shouldShow){
+		for (Asset eveAsset : currentAssets){
 			if (shouldShow){
 				//User price
 				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
@@ -402,7 +402,7 @@ public class Settings{
 				//Contaioner
 				String sContainer = "";
 				for (int b = 0; b < eveAsset.getParents().size(); b++){
-					EveAsset parentEveAsset = eveAsset.getParents().get(b);
+					Asset parentEveAsset = eveAsset.getParents().get(b);
 					if (b != 0) sContainer = sContainer + ">";
 					if (parentEveAsset.getName().equals(parentEveAsset.getTypeName())){
 						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
@@ -437,7 +437,7 @@ public class Settings{
 							if (userPrices.containsKey(material.getTypeID())){
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
-								price = EveAsset.getDefaultPrice(priceDatum);
+								price = Asset.getDefaultPrice(priceDatum);
 							}
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
@@ -454,10 +454,10 @@ public class Settings{
 
 				//Type Count
 				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())){
-					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<EveAsset>());
+					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<Asset>());
 				}
 				if (shouldShow) {
-					List<EveAsset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeID());
+					List<Asset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeID());
 					long newCount = eveAsset.getCount();
 					if (!dup.isEmpty()){
 						newCount = newCount + dup.get(0).getTypeCount();

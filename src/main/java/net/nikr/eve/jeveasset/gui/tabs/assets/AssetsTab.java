@@ -45,7 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -87,9 +87,9 @@ public class AssetsTab extends JMainTab
 	private JLabel jVolume;
 
 	//Table Data
-	private EventTableModel<EveAsset> eveAssetTableModel;
-	private EventList<EveAsset> eveAssetEventList;
-	private FilterList<EveAsset> filterList;
+	private EventTableModel<Asset> eveAssetTableModel;
+	private EventList<Asset> eveAssetEventList;
+	private FilterList<Asset> filterList;
 	
 	public AssetsTab(Program program) {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
@@ -98,13 +98,13 @@ public class AssetsTab extends JMainTab
 
 		eveAssetEventList = program.getEveAssetEventList();
 		//For soring the table
-		SortedList<EveAsset> sortedList = new SortedList<EveAsset>(eveAssetEventList);
+		SortedList<Asset> sortedList = new SortedList<Asset>(eveAssetEventList);
 		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
-		filterList = new FilterList<EveAsset>(sortedList);
+		filterList = new FilterList<Asset>(sortedList);
 		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(filterList, program);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<EveAsset>(filterList, eveAssetTableFormat);
+		eveAssetTableModel = new EventTableModel<Asset>(filterList, eveAssetTableFormat);
 		//Table
 		jTable = new JAssetTable(program, eveAssetTableModel, program.getSettings().getAssetTableSettings());
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
@@ -114,9 +114,9 @@ public class AssetsTab extends JMainTab
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//install the sorting/filtering
-		TableComparatorChooser<EveAsset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+		TableComparatorChooser<Asset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		EventSelectionModel<EveAsset> selectionModel = new EventSelectionModel<EveAsset>(filterList);
+		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -167,7 +167,7 @@ public class AssetsTab extends JMainTab
 		double average = 0;
 		float volume = 0;
 		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(a);
+			Asset eveAsset = eveAssetTableModel.getElementAt(a);
 			total = total + (eveAsset.getPrice() * eveAsset.getCount());
 			count = count + eveAsset.getCount();
 			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
@@ -199,7 +199,7 @@ public class AssetsTab extends JMainTab
 				));
 	}
 
-	public EveAsset getSelectedAsset(){
+	public Asset getSelectedAsset(){
 		return eveAssetTableModel.getElementAt(jTable.getSelectedRow());
 	}
 
@@ -207,9 +207,9 @@ public class AssetsTab extends JMainTab
 	 * returns a new list of the filtered assets, thus the list is modifiable.
 	 * @return a list of the filtered assets.
 	 */
-	public List<EveAsset> getFilteredAssets() {
+	public List<Asset> getFilteredAssets() {
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
-		List<EveAsset> ret = new ArrayList<EveAsset>(filterList);
+		List<Asset> ret = new ArrayList<Asset>(filterList);
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
@@ -422,7 +422,7 @@ public class AssetsTab extends JMainTab
 			long count = 0;
 			float volume = 0;
 			for (int a = 0; a < selectedRows.length; a++){
-				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
+				Asset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
 				total = total + (eveAsset.getPrice() * eveAsset.getCount());
 				count = count + eveAsset.getCount();
 				volume = volume + (eveAsset.getVolume() * eveAsset.getCount());

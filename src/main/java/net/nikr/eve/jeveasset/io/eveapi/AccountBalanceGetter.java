@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -77,7 +77,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(AccountBalanceResponse response) {
-		List<ApiAccountBalance> accountBalances = new ArrayList<ApiAccountBalance>(response.getAccountBalances());
+		List<EveAccountBalance> accountBalances = new ArrayList<EveAccountBalance>(response.getAll());
 		getHuman().setAccountBalances(accountBalances);
 	}
 
@@ -88,6 +88,6 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	
 	@Override
 	protected void clearData(){
-		getHuman().setAccountBalances(new ArrayList<ApiAccountBalance>());
+		getHuman().setAccountBalances(new ArrayList<EveAccountBalance>());
 	}
 }
