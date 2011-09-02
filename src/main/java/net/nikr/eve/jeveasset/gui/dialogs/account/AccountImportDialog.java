@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -95,7 +94,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private CardLayout cardLayout;
 	private JPanel jContent;
 	private Account account;
-	private boolean bEditAccount;
+	private Account editAccount;
 	private ListenerClass listener;
 
 	private DonePanel donePanel;
@@ -107,9 +106,9 @@ public class AccountImportDialog extends JDialogCentered {
 	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
-
+		
 		listener = new ListenerClass();
-
+		
 		//layout.setAutoCreateGaps(false);
 
 		donePanel = new DonePanel();
@@ -188,9 +187,7 @@ public class AccountImportDialog extends JDialogCentered {
 			s = s.trim();
 			try{
 				Integer.valueOf(s);
-				if (s.length() >= 3 && s.length() <= 10 && jKeyID.isEnabled()){
-					jKeyID.setText(s);
-				}
+				jKeyID.setText(s);
 				return;
 			} catch (NumberFormatException ex){
 				Matcher matcher = pattern.matcher(s);
@@ -222,19 +219,25 @@ public class AccountImportDialog extends JDialogCentered {
 	@Override
 	protected void save() {}
 
-	public void show(String userId, String apiKey) {
-		jKeyID.setText(userId);
-		jVCode.setText(apiKey);
-		bEditAccount = (!userId.isEmpty() && !apiKey.isEmpty());
+	public void show(Account editAccount) {
+		this.editAccount = editAccount;
+		if (editAccount != null){ //Edit
+			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
+			jVCode.setText(editAccount.getVCode());
+		}
 		nTabIndex = 0;
 		updateTab();
 		super.setVisible(true);
+	}
+	
+	public void show(){
+		show(null);
 	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			show("", "");
+			show();
 		} else {
 			super.setVisible(false);
 		}
@@ -253,7 +256,13 @@ public class AccountImportDialog extends JDialogCentered {
 		jPrevious.setEnabled(true);
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
-		account = new Account(getKeyID(), getVCode());
+		if (editAccount == null){ //Add
+			account = new Account(getKeyID(), getVCode());
+		} else { //Edit
+			account = new Account(editAccount);
+			account.setKeyID(getKeyID());
+			account.setVCode(getVCode());
+		}
 		ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
 		validateApiKeyTask.addPropertyChangeListener(listener);
 		validateApiKeyTask.execute();
@@ -265,23 +274,14 @@ public class AccountImportDialog extends JDialogCentered {
 		cardLayout.show(jContent, TAB_DONE);
 	}
 	
-	private void doDone(){
-		if (account != null){
-			if (bEditAccount){ //update account
-				List<Account> accounts = program.getSettings().getAccounts();
-				for (int a = 0; a < accounts.size(); a++){
-					if (accounts.get(a).getKeyID() == account.getKeyID()){
-						accounts.get(a).setVCode(account.getVCode());
-						break;
-					}
-				}
-			} else { //add new account
-				apiManager.forceUpdate();
-				program.getSettings().getAccounts().add(account);
-			}
-			apiManager.updateTable();
-			this.setVisible(false);
+	private void done(){
+		if (editAccount != null){ //Edit
+			program.getSettings().getAccounts().remove(editAccount);
 		}
+		apiManager.forceUpdate();
+		program.getSettings().getAccounts().add(account);
+		apiManager.updateTable();
+		this.setVisible(false);
 	}
 
 	private void updateTab(){
@@ -296,7 +296,7 @@ public class AccountImportDialog extends JDialogCentered {
 				showDoneTab();
 				break;
 			case 3:
-				doDone();
+				done();
 				break;
 		}
 	}
@@ -329,19 +329,16 @@ public class AccountImportDialog extends JDialogCentered {
 					switch (validateApiKeyTask.result){
 						case FAIL_ALREADY_IMPORTED:
 							jNext.setEnabled(false);
-							account = null;
 							donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
 							donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
 							break;
 						case FAIL_NO_INTERNET:
 							jNext.setEnabled(false);
-							account = null;
 							donePanel.setResult(DialoguesAccount.get().noInternetConnection());
 							donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
 							break;
 						case FAIL_NOT_VALID:
 							jNext.setEnabled(false);
-							account = null;
 							donePanel.setResult(DialoguesAccount.get().accountNotValid());
 							donePanel.setText(DialoguesAccount.get().accountNotValidText());
 							break;

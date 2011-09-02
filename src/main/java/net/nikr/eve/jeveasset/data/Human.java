@@ -33,7 +33,6 @@ import java.util.List;
 public class Human {
 	private String name;
 	private long characterID;
-
 	private boolean showAssets;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
@@ -44,6 +43,21 @@ public class Human {
 	private List<ApiMarketOrder> marketOrders;
 	private List<ApiIndustryJob> industryJobs;
 	private List<Asset> assets;
+
+	public Human(Account parentAccount, Human human) {
+		name = human.getName();
+		characterID = human.getCharacterID();
+		showAssets = human.isShowAssets();
+		assetNextUpdate = human.getAssetNextUpdate();
+		balanceNextUpdate = human.getBalanceNextUpdate();
+		marketOrdersNextUpdate = human.getMarketOrdersNextUpdate();
+		industryJobsNextUpdate = human.getIndustryJobsNextUpdate();
+		this.parentAccount = parentAccount;
+		accountBalances = human.getAccountBalances();
+		marketOrders = human.getMarketOrders();
+		industryJobs = human.getIndustryJobs();
+		assets = human.getAssets();
+	}
 
 	public Human(Account parentAccount, String name, long characterID) {
 		this(parentAccount, name, characterID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());

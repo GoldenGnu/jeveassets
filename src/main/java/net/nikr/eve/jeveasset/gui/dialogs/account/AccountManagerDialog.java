@@ -275,7 +275,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD.equals(e.getActionCommand())) {
-			accountImportDialog.setVisible(true);
+			accountImportDialog.show();
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);
@@ -293,7 +293,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				Human human = (Human) separator.first();
 				Account account = human.getParentAccount();
-				accountImportDialog.show(String.valueOf(account.getKeyID()), account.getVCode());
+				accountImportDialog.show(account);
 			}
 		}
 		if (HumanSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
