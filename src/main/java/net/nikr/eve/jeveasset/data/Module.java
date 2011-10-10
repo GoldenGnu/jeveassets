@@ -45,7 +45,7 @@ public class Module implements Comparable<Module> {
 	private String region;
 	private boolean first = false;
 
-	public Module(EveAsset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, int typeID) {
+	public Module(Asset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, int typeID) {
 		this.name = name;
 		this.typeName = typeName;
 		this.key = key;

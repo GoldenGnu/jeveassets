@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.export;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -369,7 +369,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		}
 	}
 
-	private HashMap<String, ? super Object> getLine(String[] header, EveAsset eveAsset, String lang){
+	private HashMap<String, ? super Object> getLine(String[] header, Asset eveAsset, String lang){
 		HashMap<String, ? super Object> line = new HashMap<String, Object>();
 		for (int a = 0; a < header.length; a++){
 			String headerName = header[a];
@@ -463,27 +463,27 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		}
 
 		if (jAllAssets.isSelected()){
-			EventList<EveAsset> assets = program.getEveAssetEventList();
+			EventList<Asset> assets = program.getEveAssetEventList();
 			for (int a = 0; a < assets.size(); a++){
-				EveAsset eveAsset = assets.get(a);
+				Asset eveAsset = assets.get(a);
 				data.add(getLine(header, eveAsset, lang));
 			}
 
 		}
 		if (jCurrentFilter.isSelected()){
 			List<AssetFilter> assetFilters = program.getAssetsTab().getAssetFilters();
-			FilterList<EveAsset> assets = new FilterList<EveAsset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
+			FilterList<Asset> assets = new FilterList<Asset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
 			for (int a = 0; a < assets.size(); a++){
-				EveAsset eveAsset = assets.get(a);
+				Asset eveAsset = assets.get(a);
 				data.add(getLine(header, eveAsset, lang));
 			}
 		}
 		if (jSavedFilter.isSelected()){
 			String s = (String) jFilters.getSelectedItem();
 			List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get(s);
-			FilterList<EveAsset> assets = new FilterList<EveAsset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
+			FilterList<Asset> assets = new FilterList<Asset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
 			for (int a = 0; a < assets.size(); a++){
-				EveAsset eveAsset = assets.get(a);
+				Asset eveAsset = assets.get(a);
 				data.add(getLine(header, eveAsset, lang));
 			}
 		}

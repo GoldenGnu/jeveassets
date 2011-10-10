@@ -24,9 +24,10 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.core.ApiError;
 import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.core.ApiResponse;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -40,27 +41,27 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 
 	private final static Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
 	
-	private String name;
+	private String taskName;
 	private Account account;
 	private Human human;
 	private boolean forceUpdate;
 	private boolean updated;
 	private boolean updateHuman;
 	private boolean updateAccount;
-	private boolean hasError;
-	private boolean corporationError;
-	private boolean characterError;
 	private UpdateTask updateTask;
-	private List<String> corporations;
+	private Map<String, Human> owners;
+	private int requestMask;
+	private boolean error;
 
 	protected AbstractApiGetter(String name) {
-		this(name, false, false);
+		this(name, 0, false, false);
 	}
 
-	protected AbstractApiGetter(String name, boolean updateHuman, boolean updateAccount) {
-		this.name = name;
+	protected AbstractApiGetter(String taskName, int requestMask, boolean updateHuman, boolean updateAccount) {
+		this.taskName = taskName;
 		this.updateHuman = updateHuman;
 		this.updateAccount = updateAccount;
+		this.requestMask = requestMask;
 	}
 
 	protected void load(UpdateTask updateTask, boolean forceUpdate, String characterName){
@@ -80,13 +81,13 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 
 	protected void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts){
 		init(updateTask, forceUpdate, null, null);
-		LOG.info("{} updating:", name);
+		LOG.info("{} updating:", taskName);
 		for (int a = 0; a < accounts.size(); a++){
 			account = accounts.get(a);
 			if (updateAccount){
 				if (updateTask != null){
 					if (updateTask.isCancelled()){
-						addError(String.valueOf(account.getUserID()), "Cancelled");
+						addError(String.valueOf(account.getKeyID()), "Cancelled");
 					} else {
 						loadAccount();
 					}
@@ -113,11 +114,11 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			}
 		}
 		if (updated && updateTask != null && !updateTask.hasError()){
-			LOG.info("	{} updated (ALL)", name);
+			LOG.info("	{} updated (ALL)", taskName);
 		} else if(updated && updateTask != null && updateTask.hasError()) {
-			LOG.info("	{} updated (SOME)", name);
+			LOG.info("	{} updated (SOME)", taskName);
 		} else {
-			LOG.info("	{} not updated (NONE)", name);
+			LOG.info("	{} not updated (NONE)", taskName);
 		}
 	}
 
@@ -127,64 +128,94 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		this.human = human;
 		this.account = account;
 		this.updated = false;
-		this.hasError = false;
-		this.corporationError = false;
-		this.characterError = false;
-		this.corporations = new ArrayList<String>();
+		this.error = false;
+		this.owners = new HashMap<String, Human>();
 	}
 
 	private void loadHuman(){
-		if(human.isShowAssets()){ //Ignore hidden characters
-			Date nextUpdate = getNextUpdate();
-			boolean characterUpdated = load(nextUpdate, false, human.getName());
-			String corporation = human.getCorporation();
-			boolean corporationLoaded = false;
-			if (human.isUpdateCorporationAssets() && !corporations.contains(corporation)){
-				corporationLoaded = load(nextUpdate, true, corporation+" ("+human.getName()+")");
-				if (corporationLoaded){
-					corporations.add(corporation);
-				}
+		boolean updatedOK = false;
+		String name = human.getName();
+		if(human.isShowAssets()){ //Ignore hidden owners
+			if (!owners.containsKey(name)){ //don't update the same owner twice
+				updatedOK = load(getNextUpdate(), human.isCorporation(), name); //Update...
+				if (updatedOK) owners.put(name, human); //If updated ok: don't update the same owner again...
+			} else {
+				setData(owners.get(name)); //Set data for duplicated owners (This is not 100% fix)
 			}
-			if (characterUpdated && !corporationLoaded) clearData(true);
+		} else {
+			clearData(); //Remove data from hidden owners
 		}
 	}
 
 	private void loadAccount(){
-		load(getNextUpdate(), false, String.valueOf("Account #"+account.getUserID()));
+		load(getNextUpdate(), false, String.valueOf("Account #"+account.getKeyID()));
 	}
 
 	private boolean load(Date nextUpdate, boolean updateCorporation, String updateName){
-		if (isUpdatable(nextUpdate)){
-			try {
-				T response = getResponse(updateCorporation);
-				if (response instanceof ApiResponse){
-					ApiResponse apiResponse = (ApiResponse)response;
-					setNextUpdate(apiResponse.getCachedUntil());
-					if (!apiResponse.hasError()){
-						LOG.info("	{} updated for: {}", name, updateName);
-						this.updated = true;
-						setData(response, updateCorporation);
-						return true;
-					} else {
-						ApiError apiError = apiResponse.getError();
-						addError(updateName, apiError.getError(), updateCorporation);
-						LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{name, updateName, apiError.getCode(), apiError.getError()});
-					}
+		//Check API key access mask
+		if ( (getAccessMask() & requestMask) != requestMask){
+			addError(updateName, "Not enough access privileges");
+			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
+			return false;
+		}
+		//Check API cache time
+		if (!isUpdatable(nextUpdate)){
+			addError(updateName, "Not allowed yet");
+			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
+			return false;
+		}
+		//Check if API key is expired (not to check the account...)
+		if (isExpired() && !updateAccount){
+			addError(updateName, "API Key expired");
+			LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+			return false;
+		}
+		try {
+			T response = getResponse(updateCorporation);
+			if (response instanceof ApiResponse){
+				ApiResponse apiResponse = (ApiResponse)response;
+				setNextUpdate(apiResponse.getCachedUntil());
+				if (!apiResponse.hasError()){
+					LOG.info("	{} updated for: {}", taskName, updateName);
+					this.updated = true;
+					setData(response);
+					return true;
+				} else {
+					ApiError apiError = apiResponse.getError();
+					addError(updateName, apiError.getError());
+					LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 				}
-			} catch (ApiException ex) {
-				addError(updateName, "Api Error ("+ex.getMessage()+")", updateCorporation);
-				LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{name, updateName, ex.getMessage()});
 			}
-		} else {
-			addError(updateName, "Not allowed yet", updateCorporation);
-			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", name, updateName);
+		} catch (ApiException ex) {
+			addError(updateName, "Api Error ("+ex.getMessage()+")");
+			LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
 		}
 		return false;
+	}
+	
+	private int getAccessMask(){
+		if (account != null){
+			return account.getAccessMask();
+		} else if (human != null) {
+			return human.getParentAccount().getAccessMask();
+		} else {
+			return 0;
+		}
+	}
+	private boolean isExpired(){
+		if (account != null){
+			return account.isExpired();
+		} else if (human != null) {
+			return human.getParentAccount().isExpired();
+		} else {
+			return false;
+		}
 	}
 
 	protected Account getAccount(){
 		return account;
 	}
+	
 	protected Human getHuman(){
 		return human;
 	}
@@ -192,43 +223,22 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	protected boolean isForceUpdate() {
 		return forceUpdate;
 	}
-
+	
 	public boolean hasError(){
-		return hasError;
+		return error;
 	}
-
-	public boolean hasCorporationError() {
-		return corporationError;
-	}
-
-	public boolean hasCharacterError() {
-		return characterError;
-	}
-
-	public void error(){
-		hasError = true;
-	}
-
-	private void addError(String human, String error){
-		if (updateTask != null) updateTask.addError(human, error);
-		hasError = true;
-	}
-
-	private void addError(String human, String error, boolean updateCorporation){
-		if (updateTask != null) updateTask.addError(human, error);
-		hasError = true;
-		if (updateCorporation){
-			corporationError = true;
-		} else {
-			characterError = true;
-		}
+	
+	protected void addError(String human, String errorText){
+		if (updateTask != null) updateTask.addError(human, errorText);
+		error = true;
 	}
 	
 	abstract protected T getResponse(boolean bCorp) throws ApiException;
 	abstract protected Date getNextUpdate();
 	abstract protected void setNextUpdate(Date nextUpdate);
-	abstract protected void setData(T response, boolean bCorp);
-	abstract protected void clearData(boolean bCorp);
+	abstract protected void setData(T response);
+	abstract protected void setData(Human human);
+	abstract protected void clearData();
 
 	private boolean isUpdatable(Date date){
 		return ( (
@@ -239,5 +249,4 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 				)
 				&& !Program.isForceNoUpdate());
 	}
-	
 }

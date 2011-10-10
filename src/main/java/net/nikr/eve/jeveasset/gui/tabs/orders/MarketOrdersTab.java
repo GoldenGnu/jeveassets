@@ -238,20 +238,16 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 				List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
-					characters.add(human.getName());
-					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
-					orders.put(human.getName(), characterMarketOrders);
-					all.addAll(characterMarketOrders);
-					if (human.isUpdateCorporationAssets()){
-						String corpKey = TabsOrders.get().whitespace(human.getCorporation());
-						if (!characters.contains(corpKey)){
-							characters.add(corpKey);
-							orders.put(corpKey, new ArrayList<MarketOrder>());
-						}
-						List<MarketOrder> corporationMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrdersCorporation(), program.getSettings());
-						orders.get(corpKey).addAll(corporationMarketOrders);
-						all.addAll(corporationMarketOrders);
+					String name;
+					if (human.isCorporation()){
+						name = TabsOrders.get().whitespace(human.getName());
+					} else {
+						name = human.getName();
 					}
+					characters.add(name);
+					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+					orders.put(name, characterMarketOrders);
+					all.addAll(characterMarketOrders);
 				}
 			}
 		}

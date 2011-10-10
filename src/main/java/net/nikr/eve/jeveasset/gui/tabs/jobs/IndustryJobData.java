@@ -73,20 +73,16 @@ public class IndustryJobData {
 			for (int b = 0; b < tempHumans.size(); b++){
 				Human human = tempHumans.get(b);
 				if (human.isShowAssets()){
-					characters.add(human.getName());
-					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-					jobs.put(human.getName(), characterIndustryJobs);
-					all.addAll(characterIndustryJobs);
-					if (human.isUpdateCorporationAssets()){
-						String corpKey = TabsJobs.get().whitespace(human.getCorporation());
-						if (!characters.contains(corpKey)){
-							characters.add(corpKey);
-							jobs.put(corpKey, new ArrayList<IndustryJob>());
-						}
-						List<IndustryJob> corporationIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobsCorporation(), human.getCorporation(), program.getSettings());
-						jobs.get(corpKey).addAll(corporationIndustryJobs);
-						all.addAll(corporationIndustryJobs);
+					String name;
+					if (human.isCorporation()){
+						name = TabsJobs.get().whitespace(human.getName());
+					} else {
+						name = human.getName();
 					}
+					characters.add(name);
+					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
+					jobs.put(name, characterIndustryJobs);
+					all.addAll(characterIndustryJobs);
 				}
 			}
 		}

@@ -170,7 +170,7 @@
 		<dependency>
 			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>
-			<version>3.0.0</version>
+			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>
@@ -219,15 +219,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<!--
-				define a version of commons-logging that is
-			  way in advance of the current real version
-				the jar returned is empty, thus removing the
-				commons-logging classes.
-		  -->
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>99.0-does-not-exist</version>
+			<version>1.1.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -243,7 +238,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
-			<scope>runtime</scope>
+			<!--<scope>runtime</scope>-->
 		</dependency>
 		<dependency>
 			<!--
@@ -258,7 +253,7 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
-			<scope>runtime</scope>
+			<!--<scope>runtime</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>jfree</groupId>
@@ -266,15 +261,6 @@
 			<version>1.0.13</version>
 		</dependency>
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>Version99</id>
-			<name>Version 99 Does Not Exist Maven repository</name>
-			<layout>default</layout>
-			<url>http://no-commons-logging.zapto.org/mvn2</url>
-		</repository>
-	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

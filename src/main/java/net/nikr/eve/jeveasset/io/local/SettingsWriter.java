@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -61,7 +61,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
-		writeBpos(xmldoc, settings.getBpos());
 		writeProxy(xmldoc, settings.getProxy());
 		writeApiProxy(xmldoc, settings.getApiProxy());
 		writePriceDataSettings(xmldoc, settings.getPriceDataSettings());
@@ -144,17 +143,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
 	}
 
-
-	private static void writeBpos(Document xmldoc, List<Long> bpos){
-		Element parentNode = xmldoc.createElementNS(null, "bpos");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (int a = 0; a < bpos.size(); a++){
-			long id = bpos.get(a);
-			Element node = xmldoc.createElementNS(null, "bpo");
-			node.setAttributeNS(null, "id", String.valueOf(id));
-			parentNode.appendChild(node);
-		}
-	}
 	private static void writeUserPrices(Document xmldoc, Map<Integer, UserItem<Integer,Double>> userPrices){
 		Element parentNode = xmldoc.createElementNS(null, "userprices");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -170,8 +158,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private static void writePriceDataSettings(Document xmldoc, PriceDataSettings priceDataSettings){
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "region", String.valueOf(priceDataSettings.getRegion()));
-		parentNode.setAttributeNS(null, "defaultprice", EveAsset.getPriceType().name());
+		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
 		parentNode.setAttributeNS(null, "source", priceDataSettings.getSource());
+		parentNode.setAttributeNS(null, "faction", priceDataSettings.getFactionPrice().name());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

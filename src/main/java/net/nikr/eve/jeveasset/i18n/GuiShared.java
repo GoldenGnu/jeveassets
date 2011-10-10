@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.i18n;
 
+import java.util.Date;
 import java.util.Locale;
 import uk.me.candle.translations.Bundle;
 import uk.me.candle.translations.BundleCache;
@@ -62,6 +63,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String station();
 	public abstract String system();
 	public abstract String today(Object arg0); 
+	public abstract String weekdayAndTime(Date datetime);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
 }

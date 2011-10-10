@@ -26,10 +26,10 @@ import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 
 
-public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<EveAsset> implements Listener<EveAsset> {
+public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<Asset> implements Listener<Asset> {
 
 	private EventList<EveAssetMatcherEditor> matcherEditors;
 
@@ -42,11 +42,11 @@ public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<EveAsset
 	}
 
 	@Override
-	public void changedMatcher(Event<EveAsset> matcherEvent) {
+	public void changedMatcher(Event<Asset> matcherEvent) {
 		this.fireChanged(new EveAssetLogicalMatcher(matcherEditors));
 	}
 
-	private static class EveAssetLogicalMatcher implements Matcher<EveAsset> {
+	private static class EveAssetLogicalMatcher implements Matcher<Asset> {
 
 		private EventList<EveAssetMatcherEditor> matcherEditors;
 
@@ -55,7 +55,7 @@ public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<EveAsset
 		}
 
 		@Override
-		public boolean matches(EveAsset item) {
+		public boolean matches(Asset item) {
 			boolean bOr = false;
 			boolean bAnyOrs = false;
 			int nOrs = 0;

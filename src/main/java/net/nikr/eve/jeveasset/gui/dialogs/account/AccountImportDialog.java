@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -48,6 +47,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
@@ -76,16 +76,25 @@ public class AccountImportDialog extends JDialogCentered {
 	public final static String TAB_DONE = "TAB_DONE";
 
 	private AccountManagerDialog apiManager;
+	
+	private enum Result{
+		FAIL_ALREADY_IMPORTED,
+		FAIL_NO_INTERNET,
+		FAIL_NOT_VALID,
+		FAIL_NO_ACCESS,
+		OK_LIMITED_ACCESS,
+		OK_ACCOUNT_VALID
+	}
 
-	private JTextField jUserId;
-	private JTextField jApiKey;
+	private JTextField jKeyID;
+	private JTextField jVCode;
 	private JButton jNext;
 	private JButton jPrevious;
 	private JButton jCancel;
 	private CardLayout cardLayout;
 	private JPanel jContent;
 	private Account account;
-	private boolean bEditAccount;
+	private Account editAccount;
 	private ListenerClass listener;
 
 	private DonePanel donePanel;
@@ -97,9 +106,9 @@ public class AccountImportDialog extends JDialogCentered {
 	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
-
+		
 		listener = new ListenerClass();
-
+		
 		//layout.setAutoCreateGaps(false);
 
 		donePanel = new DonePanel();
@@ -143,17 +152,17 @@ public class AccountImportDialog extends JDialogCentered {
 		);
 	}
 
-	private Integer getUserId(){
-		int nUserID = 0;
+	private int getKeyID(){
+		int keyID = 0;
 		try {
-			nUserID = Integer.valueOf(jUserId.getText());
+			keyID = Integer.valueOf(jKeyID.getText());
 		} catch (NumberFormatException ex){
 			return 0;
 		}
-		return nUserID;
+		return keyID;
 	}
-	private String getApiKey(){
-		return jApiKey.getText();
+	private String getVCode(){
+		return jVCode.getText();
 	}
 
 	private void getClipboardData(){
@@ -178,14 +187,12 @@ public class AccountImportDialog extends JDialogCentered {
 			s = s.trim();
 			try{
 				Integer.valueOf(s);
-				if (s.length() >= 3 && s.length() <= 10 && jUserId.isEnabled()){
-					jUserId.setText(s);
-				}
+				jKeyID.setText(s);
 				return;
 			} catch (NumberFormatException ex){
 				Matcher matcher = pattern.matcher(s);
-				if (s.length() == 64 && matcher.matches()){
-					jApiKey.setText(s);
+				if (matcher.matches()){
+					jVCode.setText(s);
 				}
 			}
 		}
@@ -193,7 +200,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return jUserId;
+		return jKeyID;
 	}
 
 	@Override
@@ -212,74 +219,84 @@ public class AccountImportDialog extends JDialogCentered {
 	@Override
 	protected void save() {}
 
-	public void show(String userId, String apiKey) {
-		jUserId.setText(userId);
-		jApiKey.setText(apiKey);
-		if (userId.isEmpty() || apiKey.isEmpty()){
-			jUserId.setEnabled(true);
-			bEditAccount = false;
-		} else {
-			jUserId.setEnabled(false);
-			bEditAccount = true;
+	public void show(Account editAccount) {
+		this.editAccount = editAccount;
+		if (editAccount != null){ //Edit
+			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
+			jVCode.setText(editAccount.getVCode());
 		}
 		nTabIndex = 0;
 		updateTab();
 		super.setVisible(true);
 	}
+	
+	public void show(){
+		show(null);
+	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			show("", "");
+			show();
 		} else {
 			super.setVisible(false);
 		}
 	}
 
 	
-
+	private void showAddTap(){
+		cardLayout.show(jContent, TAB_ADD);
+		jPrevious.setEnabled(false);
+		jNext.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+	}
 	
+	private void showValidateTab(){
+		cardLayout.show(jContent, TAB_VALIDATE);
+		jPrevious.setEnabled(true);
+		jNext.setEnabled(false);
+		jNext.setText(DialoguesAccount.get().nextArrow());
+		if (editAccount == null){ //Add
+			account = new Account(getKeyID(), getVCode());
+		} else { //Edit
+			account = new Account(editAccount);
+			account.setKeyID(getKeyID());
+			account.setVCode(getVCode());
+		}
+		ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
+		validateApiKeyTask.addPropertyChangeListener(listener);
+		validateApiKeyTask.execute();
+	}
+	
+	private void showDoneTab(){
+		jPrevious.setEnabled(true);
+		jNext.setText(DialoguesAccount.get().ok());
+		cardLayout.show(jContent, TAB_DONE);
+	}
+	
+	private void done(){
+		if (editAccount != null){ //Edit
+			program.getSettings().getAccounts().remove(editAccount);
+		}
+		apiManager.forceUpdate();
+		program.getSettings().getAccounts().add(account);
+		apiManager.updateTable();
+		this.setVisible(false);
+	}
 
 	private void updateTab(){
 		switch (nTabIndex){
 			case 0:
-				cardLayout.show(jContent, TAB_ADD);
-				jPrevious.setEnabled(false);
-				jNext.setEnabled(true);
-				jNext.setText(DialoguesAccount.get().nextArrow());
+				showAddTap();
 				break;
 			case 1:
-				cardLayout.show(jContent, TAB_VALIDATE);
-				jPrevious.setEnabled(true);
-				jNext.setEnabled(false);
-				jNext.setText(DialoguesAccount.get().nextArrow());
-				account = new Account(getUserId(), getApiKey());
-				ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
-				validateApiKeyTask.addPropertyChangeListener(listener);
-				validateApiKeyTask.execute();
+				showValidateTab();
 				break;
 			case 2:
-				jPrevious.setEnabled(true);
-				jNext.setText(DialoguesAccount.get().ok());
-				cardLayout.show(jContent, TAB_DONE);
+				showDoneTab();
 				break;
 			case 3:
-				if (account != null){
-					if (bEditAccount){
-						List<Account> accounts = program.getSettings().getAccounts();
-						for (int a = 0; a < accounts.size(); a++){
-							if (accounts.get(a).getUserID() == account.getUserID()){
-								accounts.get(a).setApiKey(account.getApiKey());
-								break;
-							}
-						}
-					} else {
-						apiManager.forceUpdate();
-						program.getSettings().getAccounts().add(account);
-					}
-					apiManager.updateTable();
-					this.setVisible(false);
-				}
+				done();
 				break;
 		}
 	}
@@ -296,7 +313,6 @@ public class AccountImportDialog extends JDialogCentered {
 				updateTab();
 			}
 
-
 			if (ACTION_NEXT.equals(e.getActionCommand())) {
 				nTabIndex++;
 				updateTab();
@@ -308,34 +324,43 @@ public class AccountImportDialog extends JDialogCentered {
 			Object o = evt.getSource();
 			if (o instanceof ValidateApiKeyTask){
 				ValidateApiKeyTask validateApiKeyTask = (ValidateApiKeyTask) o;
-				if (validateApiKeyTask.throwable != null){
-					LOG.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", validateApiKeyTask.throwable);
-				}
 				if (validateApiKeyTask.done){
 					validateApiKeyTask.done = false;
-					if (validateApiKeyTask.result == 10){
-						donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
-						donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
-					}
-					if (validateApiKeyTask.result == 20){
-						donePanel.setResult(DialoguesAccount.get().noInternetConnection());
-						donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
-					}
-					if (validateApiKeyTask.result == 30){
-						donePanel.setResult(DialoguesAccount.get().accountNotValid());
-						donePanel.setText(DialoguesAccount.get().accountNotValidText());
-					}
-					if (validateApiKeyTask.result == 100){
-						jNext.setEnabled(true);
-						donePanel.setResult(DialoguesAccount.get().accountValid());
-						donePanel.setText(DialoguesAccount.get().accountValidText());
-					} else {
-						jNext.setEnabled(false);
-						account = null;
+					switch (validateApiKeyTask.result){
+						case FAIL_ALREADY_IMPORTED:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
+							donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
+							break;
+						case FAIL_NO_INTERNET:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().noInternetConnection());
+							donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
+							break;
+						case FAIL_NOT_VALID:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().accountNotValid());
+							donePanel.setText(DialoguesAccount.get().accountNotValidText());
+							break;
+						case FAIL_NO_ACCESS:
+							donePanel.setResult(DialoguesAccount.get().noAccess());
+							donePanel.setText(DialoguesAccount.get().noAccessText());
+							break;
+						case OK_LIMITED_ACCESS:
+							jNext.setEnabled(true);
+							donePanel.setResult(DialoguesAccount.get().notEnoughAccess());
+							donePanel.setText(DialoguesAccount.get().notEnoughAccessText());
+							break;
+						case OK_ACCOUNT_VALID:
+							jNext.setEnabled(true);
+							donePanel.setResult(DialoguesAccount.get().accountValid());
+							donePanel.setText(DialoguesAccount.get().accountValidText());
+							break;
 					}
 					nTabIndex = 2;
 					updateTab();
 				}
+				
 			}
 		}
 
@@ -350,19 +375,21 @@ public class AccountImportDialog extends JDialogCentered {
 	private class InputPanel extends JCardPanel {
 
 		public InputPanel() {
-			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().userId());
+			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().keyId());
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
-			jUserId = new JNumberField("");
-			JCopyPopup.install(jUserId);
+			jKeyID = new JNumberField("");
+			JCopyPopup.install(jKeyID);
 
-			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().apiKey());
+			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().vCode());
 
-			jApiKey = new JTextField();
-			JCopyPopup.install(jApiKey);
+			jVCode = new JTextField();
+			JCopyPopup.install(jVCode);
 			JEditorPane jHelp = new JEditorPane("text/html", DialoguesAccount.get().helpText());
+			((HTMLDocument)jHelp.getDocument()).getStyleSheet().addRule("body { font-family: "+this.getFont().getFamily() +"; "+"font-size: " + this.getFont().getSize() + "pt; }");
 			jHelp.setFont( this.getFont() );
 			jHelp.setEditable(false);
+			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
 			jHelp.addHyperlinkListener(listener);
 
@@ -376,8 +403,8 @@ public class AccountImportDialog extends JDialogCentered {
 							.addComponent(jApiKeyLabel)
 						)
 						.addGroup(cardLayout.createParallelGroup()
-							.addComponent(jUserId, 100, 100, 100)
-							.addComponent(jApiKey, 150, 150, Integer.MAX_VALUE)
+							.addComponent(jKeyID, 100, 100, 100)
+							.addComponent(jVCode, 150, 150, Integer.MAX_VALUE)
 						)
 					)
 				)
@@ -387,11 +414,11 @@ public class AccountImportDialog extends JDialogCentered {
 				.addComponent(jHelp)
 				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jUserIdLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jUserId, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jKeyID, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(cardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jApiKeyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jApiKey, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jVCode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 			);
 		}
@@ -491,40 +518,42 @@ public class AccountImportDialog extends JDialogCentered {
 
 	class ValidateApiKeyTask extends SwingWorker<Void, Void> {
 
-		private int result = 0;
+		private Result result = null;
 		private boolean done = false;
-		private Throwable throwable = null;
 		private HumansGetter humansGetter = new HumansGetter();
 
 		@Override
 		public Void doInBackground() {
 			setProgress(0);
-			try {
-				if (program.getSettings().getAccounts().contains( account )){ //account already exist
-					result = 10;
-					return null;
+			if (program.getSettings().getAccounts().contains( account )){ //account already exist
+				result = Result.FAIL_ALREADY_IMPORTED;
+				return null;
+			}
+			humansGetter.load(null, true, account); //Update account
+			if (humansGetter.hasError() || humansGetter.getFails() > 0){ //Failed to add new account
+				if (humansGetter.getFails() > 0 && humansGetter.getFails() < 4){ //Not enough access
+					result = Result.OK_LIMITED_ACCESS;
+				} else if (humansGetter.getFails() >= 4){ //Offline
+					result = Result.FAIL_NO_ACCESS;
+				} else if (!Online.isOnline(program.getSettings())){ //Offline
+					result = Result.FAIL_NO_INTERNET;
+				} else {
+					result = Result.FAIL_NOT_VALID; //Not valid
 				}
-				humansGetter.load(null, true, account); //Update account
-				if (humansGetter.hasError()){ //Failed to add new account
-					if (!Online.isOnline(program.getSettings())){ //Offline
-						result = 20;
-						return null;
-					} else {
-						result = 30;
-						return null;
-					}
-				} else { //Successfully added new account
-					result = 100;
-				}
-			} catch (Throwable ex) {
-				throwable = ex;
-				done = false;
+			} else { //Successfully added new account
+				result = Result.OK_ACCOUNT_VALID;
 			}
 			return null;
         }
 
 		@Override
 		public void done() {
+			try {
+				get();
+			} catch (Exception ex) {
+				LOG.error(ex.getMessage(), ex);
+				throw new RuntimeException(ex);
+			}
 			done = true;
 			setProgress(100);
 		}

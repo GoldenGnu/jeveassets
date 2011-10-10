@@ -29,8 +29,9 @@ public class SeparatorListComparator implements Comparator<Human> {
 
 	@Override
 	public int compare(Human o1, Human o2) {
-		Integer userId1 = o1.getParentAccount().getUserID();
-		return userId1.compareTo(o2.getParentAccount().getUserID());
+		Integer keyid1 = o1.getParentAccount().getKeyID();
+		Integer keyid2 = o2.getParentAccount().getKeyID();
+		return keyid1.compareTo(keyid2);
 	}
 
 }

@@ -49,7 +49,7 @@ import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
@@ -276,7 +276,7 @@ public class OverviewTab extends JMainTab {
 		jComponent.add(new JMenuLookup(program, overview));
 	}
 
-	private List<Overview> getList(List<EveAsset> input, String character, String view){
+	private List<Overview> getList(List<Asset> input, String character, String view){
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -299,9 +299,9 @@ public class OverviewTab extends JMainTab {
 				}
 			}
 		}
-		for (EveAsset eveAsset : input){
+		for (Asset eveAsset : input){
 			String name;
-			if (eveAsset.isCorporationAsset()){
+			if (eveAsset.isCorporation()){
 				name = TabsOverview.get().whitespace4(eveAsset.getOwner());
 			} else {
 				name = eveAsset.getOwner();
@@ -427,9 +427,12 @@ public class OverviewTab extends JMainTab {
 		List<String> corps = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				chars.add(human.getName());
-				String corp = TabsOverview.get().whitespace4(human.getCorporation());
-				if (!corps.contains(corp)) corps.add(corp);
+				if (human.isCorporation()){
+					String corp = TabsOverview.get().whitespace4(human.getName());
+					if (!corps.contains(corp)) corps.add(corp);
+				} else {
+					chars.add(human.getName());
+				}
 			}
 		}
 		Collections.sort(chars);

@@ -51,9 +51,8 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jStable)
-				.addComponent(jDev)
-				.addGap(10)
+				.addComponent(jStable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jDev, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 

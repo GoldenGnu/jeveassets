@@ -39,12 +39,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 
 
-public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
+public class EveAssetMatcherEditor extends AbstractMatcherEditor<Asset>{
 
 	public final static String ACTION_COLUMN_SELECTED = "ACTION_COLUMN_SELECTED";
 	public final static String ACTION_MODE_SELECTED = "ACTION_MODE_SELECTED";
@@ -246,7 +246,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 		}
 	}
 
-	private class EveAssetMatcher implements Matcher<EveAsset> {
+	private class EveAssetMatcher implements Matcher<Asset> {
 		private final String column;
 		private final AssetFilter.Mode mode;
 		private final String text;
@@ -260,7 +260,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 		}
 
 		@Override
-		public boolean matches(EveAsset item) {
+		public boolean matches(Asset item) {
 			return eveAssetMatching.matches(item, column, mode, text, columnMatch);
 		}
 	}

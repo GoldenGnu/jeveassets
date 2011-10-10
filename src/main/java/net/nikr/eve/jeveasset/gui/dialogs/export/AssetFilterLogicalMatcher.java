@@ -24,11 +24,11 @@ package net.nikr.eve.jeveasset.gui.dialogs.export;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 
 
-public class AssetFilterLogicalMatcher implements Matcher<EveAsset> {
+public class AssetFilterLogicalMatcher implements Matcher<Asset> {
 
 	private List<AssetFilter> assetFilters;
 	private EveAssetMatching eveAssetMatching = new EveAssetMatching();
@@ -38,7 +38,7 @@ public class AssetFilterLogicalMatcher implements Matcher<EveAsset> {
 	}
 	
 	@Override
-	public boolean matches(EveAsset item) {
+	public boolean matches(Asset item) {
 		boolean bOr = false;
 		boolean bAnyOrs = false;
 		for (int a = 0; a < assetFilters.size(); a++){

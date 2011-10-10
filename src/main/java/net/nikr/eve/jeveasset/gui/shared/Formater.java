@@ -40,10 +40,10 @@ public class Formater {
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
 	
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
-	private static DateFormat weekdayTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
 	private static DateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
+	private static DateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
 
 	private Formater() {
 	}
@@ -83,7 +83,7 @@ public class Formater {
 		if (today(date)){
 			return GuiShared.get().today(timeOnly.format(date));
 		} else {
-			return weekdayTime.format(date);
+			return GuiShared.get().weekdayAndTime(date);
 		}
 	}
 
@@ -96,6 +96,9 @@ public class Formater {
 	}
 	public static String defaultDate(Object date){
 		return defaultDate.format(date);
+	}
+	public static String dateOnly(Object date){
+		return dateOnly.format(date);
 	}
 
 	private static boolean today(Date date){

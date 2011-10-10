@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -64,7 +64,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		public UserName(UserItem<Long, String> userItem) {
 			super(userItem);
 		}
-		public UserName(EveAsset eveAsset) {
+		public UserName(Asset eveAsset) {
 			super(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
 		}
 		public UserName(String value, Long key, String name) {

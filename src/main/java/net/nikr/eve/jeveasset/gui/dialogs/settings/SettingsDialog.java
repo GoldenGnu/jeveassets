@@ -121,7 +121,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jTreeScroller, 10, 10, Short.MAX_VALUE)
+					.addComponent(jTreeScroller, 180, 180, 200)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator, 5, 5, 5)

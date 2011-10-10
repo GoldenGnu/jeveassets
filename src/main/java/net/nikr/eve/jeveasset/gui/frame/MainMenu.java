@@ -237,7 +237,7 @@ public class MainMenu extends JMenuBar {
 			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());
 		} else {
-			jUpdatable.setIcon( jUpdatable.getDisabledIcon() );
+			jUpdatable.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().not());
 		}
 	}

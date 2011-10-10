@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Jump;
@@ -78,17 +78,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Long> getBpos() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Date getConquerableStationsNextUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public List<EveAsset> getEventListAssets() {
+	public List<Asset> getEventListAssets() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

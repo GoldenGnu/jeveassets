@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.core.ApiAuthorization;
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
@@ -33,35 +33,40 @@ import java.util.List;
 public class Human {
 	private String name;
 	private long characterID;
-	private String corporation;
-
-
-	private boolean updateCorporationAssets;
 	private boolean showAssets;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
 	private Date marketOrdersNextUpdate;
 	private Date industryJobsNextUpdate;
 	private Account parentAccount;
-	private List<ApiAccountBalance> accountBalances;
-	private List<ApiAccountBalance> accountBalancesCorporation;
+	private List<EveAccountBalance> accountBalances;
 	private List<ApiMarketOrder> marketOrders;
-	private List<ApiMarketOrder> marketOrdersCorporation;
 	private List<ApiIndustryJob> industryJobs;
-	private List<ApiIndustryJob> industryJobsCorporation;
-	private List<EveAsset> assets;
-	private List<EveAsset> assetsCorporation;
+	private List<Asset> assets;
 
-	public Human(Account parentAccount, String name, long characterID, String corporation) {
-		this(parentAccount, name, characterID, corporation, true, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+	public Human(Account parentAccount, Human human) {
+		name = human.getName();
+		characterID = human.getCharacterID();
+		showAssets = human.isShowAssets();
+		assetNextUpdate = human.getAssetNextUpdate();
+		balanceNextUpdate = human.getBalanceNextUpdate();
+		marketOrdersNextUpdate = human.getMarketOrdersNextUpdate();
+		industryJobsNextUpdate = human.getIndustryJobsNextUpdate();
+		this.parentAccount = parentAccount;
+		accountBalances = human.getAccountBalances();
+		marketOrders = human.getMarketOrders();
+		industryJobs = human.getIndustryJobs();
+		assets = human.getAssets();
 	}
 
-	public Human(Account parentAccount, String name, long characterID, String corporation, boolean bCorporationAssets, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
+	public Human(Account parentAccount, String name, long characterID) {
+		this(parentAccount, name, characterID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+	}
+
+	public Human(Account parentAccount, String name, long characterID, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.characterID = characterID;
-		this.corporation = corporation;
-		this.updateCorporationAssets = bCorporationAssets;
 		this.showAssets = showAssets;
 
 		this.assetNextUpdate = assetNextUpdate;
@@ -69,30 +74,18 @@ public class Human {
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		//Default
-		assets = new ArrayList<EveAsset>();
-		assetsCorporation = new ArrayList<EveAsset>();
-		accountBalances = new  ArrayList<ApiAccountBalance>();
-		accountBalancesCorporation = new  ArrayList<ApiAccountBalance>();
+		assets = new ArrayList<Asset>();
+		accountBalances = new  ArrayList<EveAccountBalance>();
 		marketOrders = new  ArrayList<ApiMarketOrder>();
-		marketOrdersCorporation = new  ArrayList<ApiMarketOrder>();
 		industryJobs = new  ArrayList<ApiIndustryJob>();
-		industryJobsCorporation = new  ArrayList<ApiIndustryJob>();
 	}
 
-	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {
+	public void setAccountBalances(List<EveAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
-	public void setAccountBalancesCorporation(List<ApiAccountBalance> accountBalancesCorporation) {
-		this.accountBalancesCorporation = accountBalancesCorporation;
-	}
-
-	public void setAssets(List<EveAsset> assets) {
+	public void setAssets(List<Asset> assets) {
 		this.assets = assets;
-	}
-
-	public void setAssetsCorporation(List<EveAsset> assetsCorporation) {
-		this.assetsCorporation = assetsCorporation;
 	}
 
 	public void setAssetNextUpdate(Date nextUpdate) {
@@ -103,16 +96,8 @@ public class Human {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setCorporation(String corporation) {
-		this.corporation = corporation;
-	}
-
 	public void setIndustryJobs(List<ApiIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
-	}
-
-	public void setIndustryJobsCorporation(List<ApiIndustryJob> industryJobsCorporation) {
-		this.industryJobsCorporation = industryJobsCorporation;
 	}
 
 	public void setIndustryJobsNextUpdate(Date industryJobsNextUpdate) {
@@ -121,10 +106,6 @@ public class Human {
 
 	public void setMarketOrders(List<ApiMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
-	}
-
-	public void setMarketOrdersCorporation(List<ApiMarketOrder> marketOrdersCorporation) {
-		this.marketOrdersCorporation = marketOrdersCorporation;
 	}
 
 	public void setMarketOrdersNextUpdate(Date marketOrdersNextUpdate) {
@@ -139,32 +120,24 @@ public class Human {
 		this.showAssets = showAssets;
 	}
 
-	public void setUpdateCorporationAssets(boolean updateCorporationAssets) {
-		this.updateCorporationAssets = updateCorporationAssets;
-	}
-
 	public boolean isShowAssets() {
 		return showAssets;
 	}
 
-	public boolean isUpdateCorporationAssets() {
-		return updateCorporationAssets;
-	}
-
-	public List<ApiAccountBalance> getAccountBalances() {
-		return accountBalances;
-	}
-
-	public List<ApiAccountBalance> getAccountBalancesCorporation() {
-		return accountBalancesCorporation;
+	public boolean isCorporation() {
+		return parentAccount.isCorporation();
 	}
 	
-	public List<EveAsset> getAssets() {
-		return assets;
+	public boolean isCharacter(){
+		return parentAccount.isCharacter();
 	}
 
-	public List<EveAsset> getAssetsCorporation() {
-		return assetsCorporation;
+	public List<EveAccountBalance> getAccountBalances() {
+		return accountBalances;
+	}
+	
+	public List<Asset> getAssets() {
+		return assets;
 	}
 
 	public Date getAssetNextUpdate() {
@@ -179,14 +152,6 @@ public class Human {
 		return characterID;
 	}
 
-	public String getCorporation() {
-		return corporation;
-	}
-
-	public List<ApiIndustryJob> getIndustryJobsCorporation() {
-		return industryJobsCorporation;
-	}
-
 	public List<ApiIndustryJob> getIndustryJobs() {
 		return industryJobs;
 	}
@@ -197,10 +162,6 @@ public class Human {
 
 	public List<ApiMarketOrder> getMarketOrders() {
 		return marketOrders;
-	}
-
-	public List<ApiMarketOrder> getMarketOrdersCorporation() {
-		return marketOrdersCorporation;
 	}
 
 	public Date getMarketOrdersNextUpdate() {
@@ -227,13 +188,17 @@ public class Human {
 		if (this.characterID != other.characterID) {
 			return false;
 		}
+		if (this.parentAccount != other.parentAccount && (this.parentAccount == null || !this.parentAccount.equals(other.parentAccount))) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 67 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		int hash = 3;
+		hash = 89 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
 	}
 
@@ -244,6 +209,6 @@ public class Human {
 		return getApiAuthorization(human.getParentAccount(), human.getCharacterID());
 	}
 	private static ApiAuthorization getApiAuthorization(Account account, long characterID){
-		return new ApiAuthorization(account.getUserID(), characterID, account.getApiKey());
+		return new ApiAuthorization(account.getKeyID(), characterID, account.getVCode());
 	}
 }

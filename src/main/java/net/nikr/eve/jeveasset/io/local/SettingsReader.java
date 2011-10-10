@@ -31,10 +31,11 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -105,13 +106,6 @@ public class SettingsReader extends AbstractXmlReader {
 		if (reprocessingNodes.getLength() == 1){
 			Element reprocessingElement = (Element) reprocessingNodes.item(0);
 			parseReprocessing(reprocessingElement, settings);
-		}
-
-		//BPOs
-		NodeList bposNodes = element.getElementsByTagName("bpos");
-		if (bposNodes.getLength() == 1){
-			Element bposElement = (Element) bposNodes.item(0);
-			parseBposPrices(bposElement, settings);
 		}
 
 		//UserPrices
@@ -247,14 +241,6 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseBposPrices(Element element, Settings settings){
-		NodeList userPriceNodes = element.getElementsByTagName("bpo");
-		for (int a = 0; a < userPriceNodes.getLength(); a++){
-			Element currentNode = (Element) userPriceNodes.item(a);
-			long id = AttributeGetters.getLong(currentNode, "id");
-			settings.getBpos().add(id);
-		}
-	}
 	private static void parseUserPrices(Element element, Settings settings){
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
 		for (int a = 0; a < userPriceNodes.getLength(); a++){
@@ -281,16 +267,20 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static void parsePriceDataSettings(Element element, Settings settings){
 		int region = AttributeGetters.getInt(element, "region");
-		EveAsset.PriceMode priceType = EveAsset.getDefaultPriceType();
+		Asset.PriceMode priceType = Asset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
-			priceType = EveAsset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
+			priceType = Asset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
 		if (AttributeGetters.haveAttribute(element, "source")){
 			source = AttributeGetters.getString(element, "source");
 		}
-		EveAsset.setPriceType(priceType);
-		settings.setPriceDataSettings( new PriceDataSettings(region, source) );
+		FactionPrice factionPrice = PriceDataSettings.FactionPrice.PRICES_C0RPORATION;
+		if (AttributeGetters.haveAttribute(element, "faction")){
+			factionPrice = FactionPrice.valueOf(AttributeGetters.getString(element, "faction"));
+		}
+		Asset.setPriceType(priceType);
+		settings.setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

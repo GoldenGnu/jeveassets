@@ -25,8 +25,7 @@ import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
@@ -41,7 +40,7 @@ public class ApiIdConverter {
 		return itemFlag.getFlagName();
 	}
 
-	public static boolean locationTest(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static boolean locationTest(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -75,7 +74,7 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static String locationName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String locationName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -111,7 +110,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String regionName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String regionName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -150,7 +149,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String security(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -184,7 +183,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static long systemID(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static long systemID(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -217,7 +216,7 @@ public class ApiIdConverter {
 		return -1;
 	}
 
-	public static String systemName(long locationID, EveAsset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
+	public static String systemName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
 		Location location = null;
 		ApiStation apiStation = null;
 
@@ -285,14 +284,6 @@ public class ApiIdConverter {
 		return "";
 	}
 
-	public static String owner(Human human, boolean bCorp) {
-		if (bCorp) {
-			return human.getCorporation();
-		} else {
-			return human.getName();
-		}
-	}
-
 	public static String group(int typeID, Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
@@ -317,8 +308,8 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static List<EveAsset> parents(EveAsset parentEveAsset) {
-		List<EveAsset> parents = new ArrayList<EveAsset>();
+	public static List<Asset> parents(Asset parentEveAsset) {
+		List<Asset> parents = new ArrayList<Asset>();
 		if (parentEveAsset != null){
 			for (int a = 0; a < parentEveAsset.getParents().size(); a++){
 				parents.add(parentEveAsset.getParents().get(a));

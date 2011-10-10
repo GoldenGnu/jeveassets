@@ -43,7 +43,7 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jIgnoreSecureContainers)
+				.addComponent(jIgnoreSecureContainers, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 

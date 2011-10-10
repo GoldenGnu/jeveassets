@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
@@ -28,8 +28,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -38,9 +39,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
 
+	
+	
 	private JComboBox jRegions;
 	private JComboBox jPriceType;
 	private JComboBox jSource;
+	private JComboBox jFaction;
 	
 	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
@@ -56,14 +60,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jRegions = new JComboBox(PriceDataSettings.REGIONS_EVE_CENTRAL);
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox(EveAsset.getPriceTypes().toArray());
+		jPriceType = new JComboBox(Asset.getPriceTypes().toArray());
 
+		
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceDataSettings.SOURCES);
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
 		jSource.addActionListener(new ListenerClass());
 
-
+		JLabel jFactionLabel = new JLabel(DialoguesSettings.get().faction());
+		jFaction = new JComboBox(PriceDataSettings.FactionPrice.values());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -72,11 +78,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jRegionsLabel)
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jSourceLabel)
+						.addComponent(jFactionLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jRegions)
 						.addComponent(jPriceType)
 						.addComponent(jSource)
+						.addComponent(jFaction)
 					)
 				)
 				.addComponent(jWarning)
@@ -95,7 +103,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addComponent(jPriceTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jWarning)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jFactionLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jFaction, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addComponent(jWarning, 48, 48, 48) //FIXME got not height
 		);
 	}
 
@@ -107,22 +119,26 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		//Price Type
 		Object o = jPriceType.getSelectedItem();
-		EveAsset.PriceMode priceType;
-		if (o  instanceof EveAsset.PriceMode){
-			priceType = (EveAsset.PriceMode) o;
+		Asset.PriceMode priceType;
+		if (o  instanceof Asset.PriceMode){
+			priceType = (Asset.PriceMode) o;
 		} else {
-			priceType = EveAsset.getPriceType();
+			priceType = Asset.getPriceType();
 		}
 
 		//Source
 		String source = (String) jSource.getSelectedItem();
+		
+		//Faction Price
+		FactionPrice factionPrice = (FactionPrice) jFaction.getSelectedItem();
 
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(EveAsset.getPriceType());
+		boolean updateTable = !priceType.equals(Asset.getPriceType())
+				|| factionPrice != program.getSettings().getPriceDataSettings().getFactionPrice();
 
 		//Update settings
-		program.getSettings().setPriceDataSettings( new PriceDataSettings(region, source) );
-		EveAsset.setPriceType(priceType);
+		program.getSettings().setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
+		Asset.setPriceType(priceType);
 		
 		//Update table if needed
 		return updateTable;
@@ -132,8 +148,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	public void load(){
 		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
 		jRegions.setSelectedIndex(priceDataSettings.getRegion());
-		jPriceType.setSelectedItem(EveAsset.getPriceType());
+		jPriceType.setSelectedItem(Asset.getPriceType());
 		jSource.setSelectedItem(priceDataSettings.getSource());
+		jFaction.setSelectedItem(priceDataSettings.getFactionPrice());
 	}
 
 	private class ListenerClass  implements ActionListener{
@@ -144,7 +161,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				String source = (String) jSource.getSelectedItem();
 				if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
 					jRegions.setSelectedIndex(program.getSettings().getPriceDataSettings().getRegion());
-					jPriceType.setSelectedItem(EveAsset.getPriceType());
+					jPriceType.setSelectedItem(Asset.getPriceType());
 					jRegions.setEnabled(true);
 					jPriceType.setEnabled(true);
 				}

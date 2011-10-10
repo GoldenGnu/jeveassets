@@ -92,7 +92,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jHelp)
+				.addComponent(jHelp, 100, 100, 100) //FIXME got not height
 		);
 	}
 
@@ -120,11 +120,12 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		String value = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit "+type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
 		if (value != null){
 			V v = valueOf(value);
-			if (v != null){
-				//Add if needed
-				if (!items.containsKey(userItem.getKey())){
+			if (v != null){ //Update value
+				if (!items.containsKey(userItem.getKey())){ //Add if needed
 					items.put(userItem.getKey(), userItem);
 					listItems.add(userItem);
+				} else { //Get from items list
+					userItem = items.get(userItem.getKey());
 				}
 				//Update Value
 				userItem.setValue(v);

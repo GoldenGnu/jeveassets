@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.account.characters.ApiCharacter;
-import com.beimin.eveapi.account.characters.CharactersResponse;
+import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
+import com.beimin.eveapi.account.characters.EveCharacter;
 import com.beimin.eveapi.core.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,13 +33,12 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
-public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
+public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
-	private AccountBalanceGetter accountBalanceGetter;
-
+	private int fails = 0;
+	
 	public HumansGetter() {
-		super("Accounts", false, true);
-		accountBalanceGetter = new AccountBalanceGetter();
+		super("Accounts", 0, false, true);
 	}
 
 	@Override
@@ -53,9 +52,9 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 	}
 
 	@Override
-	protected CharactersResponse getResponse(boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.account.characters
-				.CharactersParser.getInstance()
+	protected ApiKeyInfoResponse getResponse(boolean bCorp) throws ApiException {
+		return com.beimin.eveapi.account.apikeyinfo
+				.ApiKeyInfoParser.getInstance()
 				.getResponse(Human.getApiAuthorization(getAccount()));
 	}
 
@@ -70,41 +69,47 @@ public class HumansGetter extends AbstractApiGetter<CharactersResponse> {
 	}
 
 	@Override
-	protected void setData(CharactersResponse response, boolean bCorp) {
-		List<ApiCharacter> characters = new ArrayList<ApiCharacter>(response.getEveCharacters());
+	protected void setData(ApiKeyInfoResponse response) {
+		
+		//Update account
+		getAccount().setAccessMask(response.getAccessMask());
+		getAccount().setExpires(response.getExpires());
+		getAccount().setType(response.getType());
+		
+		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
 		List<Human> humans = new ArrayList<Human>();
-		if (characters.isEmpty()){ //No characters on account
-			this.error(); //it's impossible to check if it's a limited or full api key
-			return;
+		
+		fails = 0;
+		if (isForceUpdate()){
+			if (!getAccount().isAccountBalance()) fails++;
+			if (!getAccount().isIndustryJobs()) fails++;
+			if (!getAccount().isMarketOrders()) fails++;
+			if (!getAccount().isAssetList()) fails = 4; //Can not work without it...
 		}
-		for (int a = 0; a < characters.size(); a++){
-			ApiCharacter apiCharacter = characters.get(a);
-			Human human = new Human(getAccount(), apiCharacter.getName(), apiCharacter.getCharacterID(), apiCharacter.getCorporationName());
-
-			if (!getAccount().getHumans().contains(human)){ //Add new account
-				if (isForceUpdate()){ //New account
-					accountBalanceGetter.load(null, true, human);
-					if (accountBalanceGetter.hasCharacterError()){
-						this.error();
-						return;
-					}
+		for (EveCharacter apiCharacter : characters){
+			boolean found = false;
+			for (Human human : getAccount().getHumans()){
+				if (human.getCharacterID() == apiCharacter.getCharacterID()){
+					human.setName(human.getName());
+					humans.add(human);
+					found = true;
+					break;
 				}
-				humans.add(human);
-			} else { //Update existing account
-				for (int b = 0; b < getAccount().getHumans().size(); b++){
-					Human currentHuman = getAccount().getHumans().get(b);
-					if (currentHuman.equals(human)){
-						currentHuman.setName(human.getName());
-						currentHuman.setCorporation(human.getCorporation());
-						humans.add(currentHuman);
-						break;
-					}
-				}
+			}
+			if (!found){ //Add
+				humans.add(new Human(getAccount(), getAccount().isCharacter() ? apiCharacter.getName() : apiCharacter.getCorporationName(), apiCharacter.getCharacterID()));
 			}
 		}
 		getAccount().setHumans(humans);
 	}
+	
+	@Override
+	protected void setData(Human human){}
 
 	@Override
-	protected void clearData(boolean bCorp){}
+	protected void clearData(){}
+	
+	public int getFails() {
+		return fails;
+	}
 }

@@ -39,6 +39,8 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 	public DataModelPriceDataSettings(Locale locale) {
 		super(locale);
 	}
+	public abstract String factionPriceC0rporation();
+	public abstract String factionPriceNone();
 	public abstract String regionEmpire();
 	public abstract String regionMarketHubs();
 	public abstract String regionAllAmarr();

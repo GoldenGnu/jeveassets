@@ -45,7 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -63,7 +63,6 @@ public class AssetsTab extends JMainTab
 	
 	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
-	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
@@ -88,9 +87,9 @@ public class AssetsTab extends JMainTab
 	private JLabel jVolume;
 
 	//Table Data
-	private EventTableModel<EveAsset> eveAssetTableModel;
-	private EventList<EveAsset> eveAssetEventList;
-	private FilterList<EveAsset> filterList;
+	private EventTableModel<Asset> eveAssetTableModel;
+	private EventList<Asset> eveAssetEventList;
+	private FilterList<Asset> filterList;
 	
 	public AssetsTab(Program program) {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
@@ -99,13 +98,13 @@ public class AssetsTab extends JMainTab
 
 		eveAssetEventList = program.getEveAssetEventList();
 		//For soring the table
-		SortedList<EveAsset> sortedList = new SortedList<EveAsset>(eveAssetEventList);
+		SortedList<Asset> sortedList = new SortedList<Asset>(eveAssetEventList);
 		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
-		filterList = new FilterList<EveAsset>(sortedList);
+		filterList = new FilterList<Asset>(sortedList);
 		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(filterList, program);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<EveAsset>(filterList, eveAssetTableFormat);
+		eveAssetTableModel = new EventTableModel<Asset>(filterList, eveAssetTableFormat);
 		//Table
 		jTable = new JAssetTable(program, eveAssetTableModel, program.getSettings().getAssetTableSettings());
 		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
@@ -115,9 +114,9 @@ public class AssetsTab extends JMainTab
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//install the sorting/filtering
-		TableComparatorChooser<EveAsset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+		TableComparatorChooser<Asset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		EventSelectionModel<EveAsset> selectionModel = new EventSelectionModel<EveAsset>(filterList);
+		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -168,7 +167,7 @@ public class AssetsTab extends JMainTab
 		double average = 0;
 		float volume = 0;
 		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(a);
+			Asset eveAsset = eveAssetTableModel.getElementAt(a);
 			total = total + (eveAsset.getPrice() * eveAsset.getCount());
 			count = count + eveAsset.getCount();
 			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
@@ -200,7 +199,7 @@ public class AssetsTab extends JMainTab
 				));
 	}
 
-	public EveAsset getSelectedAsset(){
+	public Asset getSelectedAsset(){
 		return eveAssetTableModel.getElementAt(jTable.getSelectedRow());
 	}
 
@@ -208,9 +207,9 @@ public class AssetsTab extends JMainTab
 	 * returns a new list of the filtered assets, thus the list is modifiable.
 	 * @return a list of the filtered assets.
 	 */
-	public List<EveAsset> getFilteredAssets() {
+	public List<Asset> getFilteredAssets() {
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
-		List<EveAsset> ret = new ArrayList<EveAsset>(filterList);
+		List<Asset> ret = new ArrayList<Asset>(filterList);
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
@@ -289,28 +288,6 @@ public class AssetsTab extends JMainTab
 		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
 		boolean isSingleRow = selectedRows.length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-		boolean isBlueprints = false;
-		boolean isBPOs = true;
-		for (int a = 0; a < selectedRows.length; a++){
-			EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
-			if (eveAsset == null){
-				isBlueprints = false;
-				isBPOs = false;
-				break;
-			}
-			if (eveAssetTableModel.getElementAt(selectedRows[a]).isBlueprint()){
-				isBlueprints = true;
-				if (!eveAsset.isBpo()){
-					isBPOs = false;
-				}
-			} else {
-				isBPOs = false;
-				isBlueprints = false;
-				break;
-			}
-		}
-		if (!isBlueprints) isBPOs = false;
 
 		boolean numericColumn = false;
 		if (isSingleCell){
@@ -426,14 +403,6 @@ public class AssetsTab extends JMainTab
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
-		jCheckBoxMenuItem = new JCheckBoxMenuItem(TabsAssets.get().blueprint());
-		jCheckBoxMenuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		jCheckBoxMenuItem.setEnabled(isBlueprints);
-		jCheckBoxMenuItem.setActionCommand(ACTION_BLUEPRINT_ORIGINAL);
-		jCheckBoxMenuItem.addActionListener(this);
-		jCheckBoxMenuItem.setSelected(isBPOs);
-		jSubMenu.add(jCheckBoxMenuItem);
-
 	//INFO
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);
@@ -453,7 +422,7 @@ public class AssetsTab extends JMainTab
 			long count = 0;
 			float volume = 0;
 			for (int a = 0; a < selectedRows.length; a++){
-				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
+				Asset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
 				total = total + (eveAsset.getPrice() * eveAsset.getCount());
 				count = count + eveAsset.getCount();
 				volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
@@ -524,26 +493,6 @@ public class AssetsTab extends JMainTab
 		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
 			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
 			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_LESS_THAN_COLUMN, AssetFilter.Junction.AND, column));
-		}
-		
-		if (ACTION_BLUEPRINT_ORIGINAL.equals(e.getActionCommand())){
-			JCheckBoxMenuItem jCheckBoxMenuItem = (JCheckBoxMenuItem) e.getSource();
-			boolean bpo = jCheckBoxMenuItem.isSelected();
-			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++){
-				EveAsset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
-				if (bpo){
-					if (!program.getSettings().getBpos().contains(eveAsset.getItemID())){
-						program.getSettings().getBpos().add(eveAsset.getItemID());
-					}
-				} else {
-					if (program.getSettings().getBpos().contains(eveAsset.getItemID())){
-						program.getSettings().getBpos().remove(eveAsset.getItemID());
-					}
-				}
-			}
-			program.updateEventList();
-			return;
 		}
 	}
 

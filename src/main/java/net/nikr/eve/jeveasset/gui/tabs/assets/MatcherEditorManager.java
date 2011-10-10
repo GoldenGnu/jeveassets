@@ -27,16 +27,16 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 
 
 public class MatcherEditorManager {
 
 	private List<EveAssetMatcherEditor> tcmes;
-	private FilterList<EveAsset> eveAssetTextFiltered;
+	private FilterList<Asset> eveAssetTextFiltered;
 	private Program program;
 
-	public MatcherEditorManager(FilterList<EveAsset> eveAssetTextFiltered, Program program) {
+	public MatcherEditorManager(FilterList<Asset> eveAssetTextFiltered, Program program) {
 		this.eveAssetTextFiltered = eveAssetTextFiltered;
 		this.program = program;
 		tcmes = new ArrayList<EveAssetMatcherEditor>();

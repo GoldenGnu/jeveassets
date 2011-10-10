@@ -71,10 +71,10 @@ A: You need to double click to sort a new column
 
 ________________________________________________________________________________
 
-Q: How do I manually set price/name/BPO for assets
+Q: How do I manually set price/name for assets
 
 A: Right click the asset you want to change in the assets table
-   Select: Set price.../Set name.../Blueprint Original in the popup-menu
+   Select: Edit > price.../name... in the popup-menu
 
 ________________________________________________________________________________
 

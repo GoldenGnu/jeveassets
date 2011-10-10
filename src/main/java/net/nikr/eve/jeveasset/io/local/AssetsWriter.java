@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.accountbalance.ApiAccountBalance;
+import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -64,10 +64,13 @@ public class AssetsWriter extends AbstractXmlWriter {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			Element node = xmldoc.createElementNS(null, "account");
-			node.setAttributeNS(null, "userid", String.valueOf(account.getUserID()));
-			node.setAttributeNS(null, "apikey", account.getApiKey());
+			node.setAttributeNS(null, "keyid", String.valueOf(account.getKeyID()));
+			node.setAttributeNS(null, "vcode", account.getVCode());
 			node.setAttributeNS(null, "name", account.getName());
 			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getCharactersNextUpdate().getTime()));
+			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
+			node.setAttributeNS(null, "type", account.getType());
+			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
 			parentNode.appendChild(node);
 			writeHumans(xmldoc, node, account.getHumans());
 
@@ -80,8 +83,6 @@ public class AssetsWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "human");
 			node.setAttributeNS(null, "id", String.valueOf(human.getCharacterID()));
 			node.setAttributeNS(null, "name", human.getName());
-			node.setAttributeNS(null, "corporation", human.getCorporation());
-			node.setAttributeNS(null, "corpassets", String.valueOf(human.isUpdateCorporationAssets()));
 			node.setAttributeNS(null, "show", String.valueOf(human.isShowAssets()));
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
@@ -91,41 +92,38 @@ public class AssetsWriter extends AbstractXmlWriter {
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
-			writeAssets(xmldoc, childNode, human.getAssetsCorporation());
-			writeAccountBalances(xmldoc, node, human.getAccountBalances(), false);
-			writeAccountBalances(xmldoc, node, human.getAccountBalancesCorporation(), true);
-			writeMarketOrders(xmldoc, node, human.getMarketOrders(), false);
-			writeMarketOrders(xmldoc, node, human.getMarketOrdersCorporation(), true);
-			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), false);
-			writeIndustryJobs(xmldoc, node, human.getIndustryJobsCorporation(), true);
+			writeAccountBalances(xmldoc, node, human.getAccountBalances(), human.isCorporation());
+			writeMarketOrders(xmldoc, node, human.getMarketOrders(), human.isCorporation());
+			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), human.isCorporation());
 		}
 	}
 
-	private static void writeAssets(Document xmldoc, Element parentNode, List<EveAsset> assets) {
+	private static void writeAssets(Document xmldoc, Element parentNode, List<Asset> assets) {
 		for (int a = 0; a < assets.size(); a++){
-			EveAsset eveAsset = assets.get(a);
+			Asset eveAsset = assets.get(a);
 			Element node = xmldoc.createElementNS(null, "asset");
 			node.setAttributeNS(null, "owner", eveAsset.getOwner());
 			node.setAttributeNS(null, "count", String.valueOf(eveAsset.getCount()));
 			node.setAttributeNS(null, "flag", eveAsset.getFlag());
 			node.setAttributeNS(null, "id", String.valueOf(eveAsset.getItemID()));
 			node.setAttributeNS(null, "typeid", String.valueOf(eveAsset.getTypeID()));
-			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporationAsset()));
+			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporation()));
 			node.setAttributeNS(null, "locationid", String.valueOf(eveAsset.getLocationID()));
 			node.setAttributeNS(null, "singleton", String.valueOf(eveAsset.isSingleton()));
+			node.setAttributeNS(null, "rawquantity", String.valueOf(eveAsset.getRawQuantity()));
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, eveAsset.getAssets());
 		}
 	}
 
-	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<ApiAccountBalance> accountBalances, boolean bCorp){
+	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<EveAccountBalance> accountBalances, boolean bCorp){
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()){
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
 		for (int a = 0; a < accountBalances.size(); a++){
-			ApiAccountBalance accountBalance = accountBalances.get(a);
+			EveAccountBalance accountBalance = accountBalances.get(a);
 
 			Element childNode = xmldoc.createElementNS(null, "balance");
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));

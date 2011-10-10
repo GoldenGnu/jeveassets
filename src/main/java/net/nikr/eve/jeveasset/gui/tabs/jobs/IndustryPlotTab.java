@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -177,7 +178,7 @@ public class IndustryPlotTab extends JMainTab {
 		SymbolAxis symbolAxis = new SymbolAxis(null, seriesNames.toArray(new String[]{}));
 		plot.setDomainAxis(symbolAxis);
 		plot.setBackgroundPaint(transparant);
-		DateAxis xAxis = new DateAxis(null, TimeZone.getTimeZone("GMT"));
+		DateAxis xAxis = new DateAxis(null, TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
 		xAxis.setVerticalTickLabels(true);
 		plot.setRangeAxis(xAxis);
 

@@ -16,6 +16,35 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.7.3__________________________________________________________________________
+
+New Features:
+-Now use the new Customizable API keys (CAKe)
+-Automatically mark blueprints as BPO/BPC (except for market orders)
+
+Changed:
+-Static data updated to Incarna 1.0.0
+
+________________________________________________________________________________
+_1.7.2__________________________________________________________________________
+
+Bug Fixes:
+-Fixed bug that made it impossible to edit price of an item more then once
+
+Changed:
+-Faction prices from prices.c0rporation.com are now optional
+-Update dialog now use "Today" instead of the weekday name (when eligible)
+-Now Hide the profile name in the window title, when there is only one profile
+
+________________________________________________________________________________
+_1.7.1__________________________________________________________________________
+
+Bug Fixes:
+-Fix bug that made all faction prices zero
+-Possible fixed for the StackOverflowError (Issue 146)
+-Minor optimization
+
+________________________________________________________________________________
 _1.7.0__________________________________________________________________________
 
 New Features:

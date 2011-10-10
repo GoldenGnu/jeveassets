@@ -51,9 +51,9 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jEnterFilters)
-				.addComponent(jMarkSelectedRow)
-				.addComponent(jReprocessColors)
+				.addComponent(jEnterFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jMarkSelectedRow, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jReprocessColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 

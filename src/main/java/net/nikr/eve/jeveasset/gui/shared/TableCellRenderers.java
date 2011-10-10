@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 
@@ -82,10 +83,12 @@ public class TableCellRenderers {
 		}
 	}
 	
-	public static class NumberToStringCellRenderer extends DefaultTableCellRenderer {
-		public NumberToStringCellRenderer() {
-			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
-			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+	public static class ToStringCellRenderer extends DefaultTableCellRenderer {
+		
+		public ToStringCellRenderer() {	this(SwingConstants.RIGHT); }
+		public ToStringCellRenderer(int alignment) {
+			this.setHorizontalTextPosition(alignment);
+			this.setHorizontalAlignment(alignment);
 		}
 		@Override
 		public void setValue(Object value) {

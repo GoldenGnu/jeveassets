@@ -84,7 +84,7 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 		if(human == null) return; // handle 'late' rendering calls after this separator is invalid
 		Account account = human.getParentAccount();
 		if (account.getName().isEmpty()){
-			jAccountName.setText(String.valueOf(account.getUserID()));
+			jAccountName.setText(String.valueOf(account.getKeyID()));
 		} else {
 			jAccountName.setText(account.getName());
 		}
@@ -95,7 +95,7 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 			Human human = (Human) separator.first();
 			Account account = human.getParentAccount();
 			if (jAccountName.getText().isEmpty()){
-				jAccountName.setText(String.valueOf(account.getUserID()));
+				jAccountName.setText(String.valueOf(account.getKeyID()));
 			}
 			account.setName(jAccountName.getText());
 			jAccountName.transferFocus();

@@ -24,12 +24,12 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.TableComparators;
 
 
-public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
+public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 
 	private Settings settings;
 
@@ -86,7 +86,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<EveAsset> {
 	}
 
 	@Override
-	public Object getColumnValue(EveAsset eveAsset, int i) {
+	public Object getColumnValue(Asset eveAsset, int i) {
 		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Name")) return eveAsset.getName();
 		if (sColumn.equals("Group")) return eveAsset.getGroup();

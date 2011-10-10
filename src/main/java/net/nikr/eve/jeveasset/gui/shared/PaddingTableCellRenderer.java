@@ -25,6 +25,7 @@ import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -34,11 +35,15 @@ import javax.swing.table.TableCellRenderer;
  */
 public class PaddingTableCellRenderer implements TableCellRenderer {
 
+	/*
 	private int top;
 	private int left;
 	private int bottom;
 	private int right;
+	 * 
+	 */
 	private TableCellRenderer renderer;
+	private Border border;
 
 	public static void install(JTable jTable, int padding){
 		install(jTable, padding, padding, padding, padding);
@@ -62,18 +67,13 @@ public class PaddingTableCellRenderer implements TableCellRenderer {
 		} else {
 			this.renderer = new DefaultTableCellRenderer();
 		}
-		this.top = top;
-		this.left = left;
-		this.bottom = bottom;
-		this.right = right;
+		border = BorderFactory.createEmptyBorder(top, left, bottom, right);
 	}
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		JLabel jLabel  = (JLabel) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		jLabel.setBorder(BorderFactory.createCompoundBorder(
-				jLabel.getBorder(),
-				BorderFactory.createEmptyBorder(top, left, bottom, right) ));
+		jLabel.setBorder(BorderFactory.createCompoundBorder(jLabel.getBorder(), border));
 		return jLabel;
 	}
 

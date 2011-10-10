@@ -44,7 +44,6 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String assets();
 	public abstract String average();
 	public abstract String average1();
-	public abstract String blueprint();
 	public abstract String can();
 	public abstract String cancel();
 	public abstract String clear();

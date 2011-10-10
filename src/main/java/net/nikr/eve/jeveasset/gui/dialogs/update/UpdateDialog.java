@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
@@ -269,7 +270,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
-			jLabel.setText(DialoguesUpdate.get().nextUpdateTime(nextUpdate));
+			jLabel.setText(Formater.weekdayAndTime(nextUpdate));
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}

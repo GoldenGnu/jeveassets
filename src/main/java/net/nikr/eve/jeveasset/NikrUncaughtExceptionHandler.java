@@ -30,38 +30,45 @@ import org.slf4j.LoggerFactory;
 
 public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 	private final static Logger LOG = LoggerFactory.getLogger(NikrUncaughtExceptionHandler.class);
-
+	private static boolean error = false;
+	
 	public NikrUncaughtExceptionHandler() { }
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		LOG.error("Uncaught Exception (Thread): " + General.get(Locale.ENGLISH).uncaughtErrorMessage(), e);
-		JOptionPane.showMessageDialog(null
-				, General.get().uncaughtErrorMessage()
-				, General.get().error()
-				, JOptionPane.ERROR_MESSAGE
-				);
-		System.exit(-1);
+		if (!error){
+			error = true;
+			LOG.error("Uncaught Exception (Thread): " + General.get(Locale.ENGLISH).uncaughtErrorMessage(), e);
+			JOptionPane.showMessageDialog(null
+					, General.get().uncaughtErrorMessage()
+					, General.get().error()
+					, JOptionPane.ERROR_MESSAGE
+					);
+			System.exit(-1);
+		}
 	}
 	
 	public void handle(Throwable e){
-		//Workaround:
-		StackTraceElement[] stackTraceElements = e.getStackTrace();
-		if (stackTraceElements.length > 0
-						&& stackTraceElements[0].getClassName().equals("sun.font.FontDesignMetrics")
-						&& stackTraceElements[0].getLineNumber() == 492
-						&& stackTraceElements[0].getMethodName().equals("charsWidth")
-						){
-			LOG.warn("sun.font.FontDesignMetrics bug detected");
-			return;
+		if (!error){
+			//Workaround:
+			StackTraceElement[] stackTraceElements = e.getStackTrace();
+			if (stackTraceElements.length > 0
+							&& stackTraceElements[0].getClassName().equals("sun.font.FontDesignMetrics")
+							&& stackTraceElements[0].getLineNumber() == 492
+							&& stackTraceElements[0].getMethodName().equals("charsWidth")
+							){
+				LOG.warn("sun.font.FontDesignMetrics bug detected");
+				return;
+			}
+			error = true;
+			LOG.error("Uncaught Exception (sun.awt.exception.handler):"
+					+ General.get(Locale.ENGLISH).uncaughtErrorMessage()
+					, e);
+			JOptionPane.showMessageDialog(null
+					, General.get().uncaughtErrorMessage()
+					, General.get().error()
+					, JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
 		}
-		LOG.error("Uncaught Exception (sun.awt.exception.handler):"
-				+ General.get(Locale.ENGLISH).uncaughtErrorMessage()
-				, e);
-		JOptionPane.showMessageDialog(null
-				, General.get().uncaughtErrorMessage()
-				, General.get().error()
-				, JOptionPane.ERROR_MESSAGE);
-		System.exit(-1);
 	}
 }
