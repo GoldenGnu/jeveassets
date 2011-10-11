@@ -28,11 +28,11 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -237,11 +237,18 @@ public class MainWindow implements WindowListener, ChangeListener {
 
 		public TabCloseButton(final JMainTab jMainTab) {
 			super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			
 			this.setOpaque(false);
 			JLabel jTitle = new JLabel(jMainTab.getTitle(), jMainTab.getIcon(), SwingConstants.LEFT);
 			add(jTitle);
 			if (jMainTab.isCloseable()){
+				this.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						if (e.getButton() == MouseEvent.BUTTON2){
+							removeTab(jMainTab);
+						}
+					}
+				});
 				JButton jClose = new JButton();
 				jClose.setToolTipText(GuiFrame.get().close());
 				jClose.setIcon(Images.TAB_CLOSE.getIcon());
@@ -253,6 +260,14 @@ public class MainWindow implements WindowListener, ChangeListener {
 				jClose.setFocusable(false);
 				jClose.setBorderPainted(false);
 				jClose.setRolloverEnabled(true);
+				jClose.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						if (e.getButton() == MouseEvent.BUTTON2){
+							removeTab(jMainTab);
+						}
+					}
+				});
 				jClose.addActionListener( new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
