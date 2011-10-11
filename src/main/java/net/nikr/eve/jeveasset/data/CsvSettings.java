@@ -130,14 +130,6 @@ public class CsvSettings {
 
 	public CsvSettings() {}
 	
-	public boolean isDefault(){
-		return this.fieldDelimiter == FieldDelimiter.COMMA
-			&& this.lineDelimiter == LineDelimiter.DOS
-			&& this.decimalSeperator == DecimalSeperator.DOT
-			&& this.path.equals(getDefaultPath())
-			&& this.columns.equals(new ArrayList<String>()); //FIXME
-	}
-
 	public int getMaxColumns() {
 		return maxColumns;
 	}
