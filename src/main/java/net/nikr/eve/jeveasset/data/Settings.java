@@ -189,12 +189,13 @@ public class Settings{
 		packagedVolume.put("Transport Ship", 20000f);
 
 		//To add new column also update:
-		//		gui.table.EveAssetTableFormat.getColumnClass()
-		//		gui.table.EveAssetTableFormat.getColumnComparator()
-		//		gui.table.EveAssetTableFormat.getColumnValue()
-		//		gui.table.EveAssetMatching.matches()
+		//		gui.tabs.assets.EveAssetTableFormat.getColumnClass()
+		//		gui.tabs.assets.EveAssetTableFormat.getColumnComparator()
+		//		gui.tabs.assets.EveAssetTableFormat.getColumnValue()
+		//		gui.shared.EveAssetMatching.getString()
+		//		gui.shared.EveAssetMatching.getDouble()
 		//			remember to add to "All" as well...
-		//		gui.dialogs.CsvExportDialog.getLine()
+		//		gui.dialogs.export.CsvExportDialog.getLine()
 		//	If number column:
 		//		add to mainTableNumberColumns bellow
 		assetTableColumns.add("Name");
@@ -217,6 +218,7 @@ public class Settings{
 		assetTableColumns.add("Type Count");
 		assetTableColumns.add("Meta");
 		assetTableColumns.add("Volume");
+		assetTableColumns.add("Singleton");
 		assetTableColumns.add("ID");
 		assetTableColumns.add("Type ID");
 

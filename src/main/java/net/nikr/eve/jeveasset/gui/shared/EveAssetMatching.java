@@ -133,6 +133,7 @@ public class EveAssetMatching {
 						+ eveAsset.getSecurity() + "\r\n"
 						+ eveAsset.getPriceReprocessed() + "\r\n"
 						+ eveAsset.getValueReprocessed() + "\r\n"
+						+ eveAsset.getSingleton() + "\r\n"
 					;
 		}
 		if (column.equals("Name")) return eveAsset.getName();
@@ -157,6 +158,7 @@ public class EveAssetMatching {
 		if (column.equals("Security")) return eveAsset.getSecurity();
 		if (column.equals("Reprocessed")) return String.valueOf(eveAsset.getPriceReprocessed());
 		if (column.equals("Reprocessed Value")) return String.valueOf(eveAsset.getValueReprocessed());
+		if (column.equals("Singleton")) return eveAsset.getSingleton();
 		return "";
 	}
 	public double getDouble(Asset eveAsset, String column){
@@ -203,7 +205,7 @@ public class EveAssetMatching {
 		}
 		if (column.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		if (column.equals("Reprocessed Value")) return eveAsset.getValueReprocessed();
-
+		if (column.equals("Singleton")) return -1;
 		return -1;
 	}
 

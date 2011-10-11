@@ -46,10 +46,6 @@ public class TableSettings{
 		this(new ArrayList<String>(), ResizeMode.TEXT);
 	}
 
-	public TableSettings(ResizeMode mode) {
-		this(new ArrayList<String>(), mode);
-	}
-
 	public TableSettings(List<String> tableColumnOriginal, ResizeMode mode) {
 		if (tableColumnOriginal == null || mode == null){
 			throw new IllegalArgumentException("Arguments can not be null");
@@ -92,4 +88,7 @@ public class TableSettings{
 		this.tableColumnNames.addAll(tableColumnNames);
 	}
 
+	public List<String> getTableColumnOriginal() {
+		return tableColumnOriginal;
+	}
 }

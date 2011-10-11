@@ -369,11 +369,9 @@ public class JColumnTable extends JTable {
 				String columnOrder = "";
 				String columnVisible = "";
 				for (int a = 0; a < tempMainTableColumnNames.size(); a++){
-					columnOrder = GuiShared.get().whitespace37(columnOrder,
-							tempMainTableColumnNames.get(a));
+					columnOrder = GuiShared.get().whitespace37(columnOrder, tempMainTableColumnNames.get(a));
 					if (columnTableSettings.getTableColumnVisible().contains(tempMainTableColumnNames.get(a))){
-						columnVisible = GuiShared.get().whitespace37(columnVisible,
-								tempMainTableColumnNames.get(a));
+						columnVisible = GuiShared.get().whitespace37(columnVisible, tempMainTableColumnNames.get(a));
 						mainTableColumnVisible.add(tempMainTableColumnNames.get(a));
 					}
 				}

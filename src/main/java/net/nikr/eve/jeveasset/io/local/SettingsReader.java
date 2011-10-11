@@ -319,11 +319,26 @@ public class SettingsReader extends AbstractXmlReader {
 				if (visible) tableColumnVisible.add(name);
 			}
 			TableSettings tableSettings = settings.getTableSettings().get(table);
+			//Adding new columns (if any...)
+			if (tableSettings.getTableColumnOriginal().size() != tableColumnNames.size()){
+				for (String column : tableSettings.getTableColumnOriginal()){
+					if (!tableColumnNames.contains(column)){
+						LOG.info("Adding new column: "+column);
+						tableColumnNames.add(tableSettings.getTableColumnOriginal().indexOf(column), column);
+						int index = 0;
+						for (String visibleColumn : tableColumnNames){
+							if (tableColumnVisible.contains(visibleColumn)){
+								index++;
+							} else if (column.equals(visibleColumn)){
+								tableColumnVisible.add(index, column);
+							}
+						}
+					}
+				}
+			}
 			tableSettings.setMode(resize);
 			tableSettings.setTableColumnNames(tableColumnNames);
 			tableSettings.setTableColumnVisible(tableColumnVisible);
-
-
 		}
 	}
 

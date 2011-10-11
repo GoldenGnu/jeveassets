@@ -374,6 +374,9 @@ public class Asset implements Comparable<Asset> {
 	public boolean isSingleton() {
 		return singleton;
 	}
+	public String getSingleton() {
+		return singleton ? "Unpackaged" : "Packaged";
+	}
 	
 	public boolean isUserName(){
 		return !getName().equals(getTypeName());

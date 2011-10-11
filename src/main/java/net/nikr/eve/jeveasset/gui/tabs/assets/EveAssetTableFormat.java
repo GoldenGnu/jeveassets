@@ -74,6 +74,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Security")) return String.class;
 		if (sColumn.equals("Reprocessed")) return Double.class;
 		if (sColumn.equals("Reprocessed Value")) return Double.class;
+		if (sColumn.equals("Singleton")) return String.class;
 
 		return Object.class;
 	}
@@ -110,6 +111,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Security")) return eveAsset.getSecurity();
 		if (sColumn.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		if (sColumn.equals("Reprocessed Value")) return eveAsset.getValueReprocessed();
+		if (sColumn.equals("Singleton")) return eveAsset.getSingleton();
 		return new String();
 	}
 }

@@ -79,6 +79,7 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String headerNameSecurity();
 	public abstract String headerNameReprocessed();
 	public abstract String headerNameReprocessedValue();
+	public abstract String headerSingleton();
 	public abstract String selectOne();
 	public abstract String confirmStupidDecision();
 	public abstract String failedToSave();
