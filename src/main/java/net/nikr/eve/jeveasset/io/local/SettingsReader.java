@@ -32,6 +32,9 @@ import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -80,6 +83,13 @@ public class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//CsvExport
+		NodeList csvNodes = element.getElementsByTagName("csvexport");
+		if (csvNodes.getLength() == 1){
+			Element csvElement = (Element) csvNodes.item(0);
+			parseCsv(csvElement, settings);
+		}
+		
 		//Faction Price Data
 		NodeList factionPricesNodes = element.getElementsByTagName("factionprices");
 		if (factionPricesNodes.getLength() == 1){
@@ -371,5 +381,26 @@ public class SettingsReader extends AbstractXmlReader {
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {
 		String proxyURL = AttributeGetters.getString(apiProxyElement, "url");
 		settings.setApiProxy(proxyURL);
+	}
+
+	private static void parseCsv(Element element, Settings settings) {
+		int maxColumns = AttributeGetters.getInt(element, "maxcolumns");
+		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
+		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
+		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
+		String path = AttributeGetters.getString(element, "path");
+		List<String> columns = new ArrayList<String>();
+		NodeList columnNodes = element.getElementsByTagName("column");
+		for (int b = 0; b < columnNodes.getLength(); b++){
+			Element columnNode = (Element) columnNodes.item(b);
+			String column = AttributeGetters.getString(columnNode, "name");
+			columns.add(column);
+		}
+		settings.getCsvSettings().setColumns(columns);
+		settings.getCsvSettings().setDecimalSeperator(decimal);
+		settings.getCsvSettings().setFieldDelimiter(field);
+		settings.getCsvSettings().setLineDelimiter(line);
+		settings.getCsvSettings().setMaxColumns(maxColumns);
+		settings.getCsvSettings().setPath(path);
 	}
 }

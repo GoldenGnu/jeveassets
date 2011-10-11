@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.export;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import javax.swing.event.ListSelectionEvent;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
 import java.awt.event.ActionEvent;
@@ -32,7 +33,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,13 +48,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.CsvSettings;
+import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JMultiSelectionList;
@@ -63,12 +67,13 @@ import net.nikr.eve.jeveasset.io.local.CsvWriter;
 import org.supercsv.prefs.CsvPreference;
 
 
-public class CsvExportDialog extends JDialogCentered implements ActionListener{
+public class CsvExportDialog extends JDialogCentered implements ActionListener, ListSelectionListener{
 
 	public static final String ACTION_DISABLE_SAVED_FILTERS = "ACTION_DISABLE_SAVED_FILTERS";
 	public static final String ACTION_ENABLE_SAVED_FILTERS = "ACTION_ENABLE_SAVED_FILTERS";
 	public static final String ACTION_OK = "ACTION_OK";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	public static final String ACTION_DEFAULT = "ACTION_DEFAULT";
 	public static final String ACTION_BROWSE = "ACTION_BROWSE";
 
 	private JTextField jPath;
@@ -89,96 +94,8 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	private static DecimalFormat IntegerEu  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("da")));
 
 	private JCustomFileChooser jCsvFileChooser;
-
-	enum FieldDelimiter {
-		COMMA(',') {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().comma();
-			}
-		},
-		SEMICOLON(';') {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().semicolon();
-			}
-		}
-		;
-		char character;
-		private FieldDelimiter(char character) {
-			this.character = character;
-		}
-		public char getCharacter() {
-			return character;
-		}
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-		abstract String getI18N();
-	}
-	enum LineDelimiter {
-		DOS("\r\n") {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsWindows();
-			}
-		},
-		MAC("\r") {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsMac();
-			}
-		},
-		UNIX("\n") {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsUnix();
-			}
-		}
-		;
-
-		String string;
-		private LineDelimiter(String string) {
-			this.string = string;
-		}
-		public String getString() {
-			return string;
-		}
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-		abstract String getI18N();
-	}
-	enum DecimalSeperator {
-		DOT("Dot") {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().dot();
-			}
-		},
-		COMMA("Comma") {
-			@Override
-			String getI18N() {
-				return DialoguesCsvExport.get().comma();
-			}
-		}
-		;
-
-		String string;
-		private DecimalSeperator(String string) {
-			this.string = string;
-		}
-		public String getString() {
-			return string;
-		}
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-		abstract String getI18N();
-	}
+	
+	private boolean loading = false;
 
 	public CsvExportDialog(Program program) {
 		super(program, DialoguesCsvExport.get().csvExport(), Images.DIALOG_CSV_EXPORT.getImage());
@@ -207,6 +124,8 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		jBrowse.setActionCommand(ACTION_BROWSE);
 		jBrowse.addActionListener(this);
 		jPanel.add(jBrowse);
+		
+		JSeparator jSeparator1 = new JSeparator();
 
 		JLabel jAssetsLabel = new JLabel(DialoguesCsvExport.get().assets());
 		jAllAssets = new JRadioButton(DialoguesCsvExport.get().allAssets());
@@ -234,23 +153,34 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesCsvExport.get().fieldTerminated());
 		jFieldDelimiter = new JComboBox( FieldDelimiter.values() ); //new String[]{"Comma", "Semicolon"} );
+		jFieldDelimiter.addActionListener(this);
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesCsvExport.get().linesTerminated());
 		jLineDelimiter = new JComboBox( LineDelimiter.values() ); //new String[]{"\\n", "\\r\\n", "\\r"});
+		jLineDelimiter.addActionListener(this);
 
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesCsvExport.get().decimalSeperator());
 		jDecimalSeparator = new JComboBox( DecimalSeperator.values() ); // new String[]{"Dot", "Comma"});
+		jDecimalSeparator.addActionListener(this);
 
 		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
 		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getAssetTableSettings().getTableColumnNames()) );
+		jColumnSelection.addListSelectionListener(this);
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
+		
+		JSeparator jSeparator = new JSeparator();
 
 		jOK = new JButton(DialoguesCsvExport.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 		jPanel.add(jOK);
 
+		JButton jDefault = new JButton(DialoguesCsvExport.get().defaultSettings());
+		jDefault.setActionCommand(ACTION_DEFAULT);
+		jDefault.addActionListener(this);
+		jPanel.add(jDefault);
+		
 		JButton jCancel = new JButton(DialoguesCsvExport.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
@@ -262,6 +192,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 					.addComponent(jPath, 390, 390, 390)
 					.addComponent(jBrowse, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10)
 				)
+				.addComponent(jSeparator1)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jAssetsLabel)
@@ -293,8 +224,10 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 					)
 					
 				)
+				.addComponent(jSeparator)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 		);
@@ -304,6 +237,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 					.addComponent(jPath, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jBrowse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup()
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jAssetsLabel)
@@ -329,23 +263,13 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 
 				)
+				.addComponent(jSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
-	}
-
-	private String getDefaultPath(){
-		return Settings.getUserDirectory();
-	}
-
-	private String getDefaultFilePath(){
-		return getDefaultPath()+getDefaultFile();
-	}
-
-	private String getDefaultFile(){
-		return "assets"+Formater.simpleDate( new Date() )+".csv";
 	}
 
 	private void browse(){
@@ -354,15 +278,15 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		if (end > 0) current = current.substring(0, end+1);
 		File currentFile = new File( current );
 
-		File defaulFile = new File(getDefaultPath());
+		File defaulFile = new File(program.getSettings().getCsvSettings().getPath());
 		if (currentFile.exists()){
 			jCsvFileChooser.setCurrentDirectory( new File(current) );
 			jCsvFileChooser.setSelectedFile( new File(jPath.getText()));
 		} else {
 			jCsvFileChooser.setCurrentDirectory( defaulFile );
-			jCsvFileChooser.setSelectedFile( new File(getDefaultFilePath()));
+			jCsvFileChooser.setSelectedFile( new File(program.getSettings().getCsvSettings().getFile()));
 		}
-		int bFound = jCsvFileChooser.showSaveDialog(getDialog()); //.showDialog(this, "OK"); //.showOpenDialog(this);
+		int bFound = jCsvFileChooser.showDialog(getDialog(), "OK"); //.showSaveDialog(); //; //.showOpenDialog(this);
 		if (bFound  == JFileChooser.APPROVE_OPTION){
 			File file = jCsvFileChooser.getSelectedFile();
 			jPath.setText( file.getAbsolutePath() );
@@ -496,6 +420,34 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 		this.setVisible(false);
 	}
+	
+	public void load(){
+		loading = true;
+		jLineDelimiter.setSelectedItem(program.getSettings().getCsvSettings().getLineDelimiter());
+
+		jFieldDelimiter.setSelectedItem(program.getSettings().getCsvSettings().getFieldDelimiter());
+
+		jDecimalSeparator.setSelectedItem(program.getSettings().getCsvSettings().getDecimalSeperator());
+
+
+		if (program.getSettings().getAssetTableSettings().getTableColumnNames().size() == program.getSettings().getCsvSettings().getMaxColumns()){
+			//Select saved columns
+			jColumnSelection.clearSelection();
+			for (String column : program.getSettings().getCsvSettings().getColumns()){
+				int index = program.getSettings().getAssetTableSettings().getTableColumnNames().indexOf(column);
+				jColumnSelection.addSelection(index, true);
+			}
+		} else {
+			//Columns have changed -  select everything
+			jColumnSelection.selectAll();
+			program.getSettings().getCsvSettings().setColumns(program.getSettings().getAssetTableSettings().getTableColumnNames());
+		}
+		jColumnSelection.ensureIndexIsVisible(0);
+		program.getSettings().getCsvSettings().setMaxColumns(program.getSettings().getAssetTableSettings().getTableColumnNames().size());
+
+		jPath.setText(program.getSettings().getCsvSettings().getFile());
+		loading = false;
+	}
 
 	@Override
 	public void setVisible(boolean b) {
@@ -510,24 +462,21 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 			} else {
 				jSavedFilter.setEnabled(true);
 			}
-
-			jLineDelimiter.setSelectedIndex(0);
-
-			jFieldDelimiter.setSelectedIndex(0);
-
-			jDecimalSeparator.setSelectedIndex(0);
-
-			jColumnSelection.selectAll();
-
 			jAllAssets.setSelected(true);
-
-			jPath.setText( getDefaultFilePath() );
+			load();
 		}
 		super.setVisible(b);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (!loading){
+			program.getSettings().getCsvSettings().setPath(new File(jPath.getText()).getParent());
+			program.getSettings().getCsvSettings().setDecimalSeperator((DecimalSeperator)jDecimalSeparator.getSelectedItem());
+			program.getSettings().getCsvSettings().setFieldDelimiter((FieldDelimiter)jFieldDelimiter.getSelectedItem());
+			program.getSettings().getCsvSettings().setLineDelimiter((LineDelimiter)jLineDelimiter.getSelectedItem());
+		}
+		
 		if (ACTION_DISABLE_SAVED_FILTERS.equals(e.getActionCommand())){
 			jFilters.setEnabled(false);
 		}
@@ -540,8 +489,24 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
 			this.setVisible(false);
 		}
+		if (ACTION_DEFAULT.equals(e.getActionCommand())){
+			program.getSettings().setCsvSettings(new CsvSettings());
+			load();
+		}
 		if (ACTION_BROWSE.equals(e.getActionCommand())){
 			browse();
+		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (!loading){
+			Object[] columns = jColumnSelection.getSelectedValues();
+			List<String> list = new ArrayList<String>(columns.length);
+			for (Object o : columns){
+				list.add((String)o);
+			}
+			program.getSettings().getCsvSettings().setColumns(list);
 		}
 	}
 	

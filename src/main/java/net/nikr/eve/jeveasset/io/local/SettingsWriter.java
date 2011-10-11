@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.CsvSettings;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
@@ -70,6 +71,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
 		writeFilters(xmldoc, settings.getAssetFilters());
+		writeCsv(xmldoc, settings.getCsvSettings());
 		try {
 			writeXmlFile(xmldoc, Settings.getPathSettings());
 		} catch (XmlException ex) {
@@ -248,6 +250,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 				node.setAttributeNS(null, "type", String.valueOf(proxy.type()));
 			}
 			xmldoc.getDocumentElement().appendChild(node);
+		}
+	}
+
+	private static void writeCsv(Document xmldoc, CsvSettings csvSettings) {
+		Element node = xmldoc.createElementNS(null, "csvexport");
+		xmldoc.getDocumentElement().appendChild(node);
+		node.setAttributeNS(null, "maxcolumns", String.valueOf(csvSettings.getMaxColumns()));
+		node.setAttributeNS(null, "decimal", csvSettings.getDecimalSeperator().name());
+		node.setAttributeNS(null, "field", csvSettings.getFieldDelimiter().name());
+		node.setAttributeNS(null, "line", csvSettings.getLineDelimiter().name());
+		node.setAttributeNS(null, "path", csvSettings.getPath());
+		for (String column : csvSettings.getColumns()){
+			Element columnNode = xmldoc.createElementNS(null, "column");
+			columnNode.setAttributeNS(null, "name", column);
+			node.appendChild(columnNode);
 		}
 	}
 }

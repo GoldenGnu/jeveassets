@@ -127,6 +127,7 @@ public class Settings{
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
+	private CsvSettings csvSettings;
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
@@ -134,6 +135,7 @@ public class Settings{
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new ArrayList<Account>();
 		profiles = new ArrayList<Profile>();
+		csvSettings = new CsvSettings();
 
 		//Settings
 		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
@@ -266,6 +268,14 @@ public class Settings{
 		loadSettings();
 		model = new Galaxy(this.locations, this.jumps);
 		constructEveApiConnector();
+	}
+
+	public CsvSettings getCsvSettings() {
+		return csvSettings;
+	}
+
+	public void setCsvSettings(CsvSettings csvSettings) {
+		this.csvSettings = csvSettings;
 	}
 
 	/**

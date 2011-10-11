@@ -56,6 +56,7 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String columns();
 	public abstract String ok();
 	public abstract String cancel();
+	public abstract String defaultSettings();
 	public abstract String headerNameName();
 	public abstract String headerNameGroup();
 	public abstract String headerNameCategory();
