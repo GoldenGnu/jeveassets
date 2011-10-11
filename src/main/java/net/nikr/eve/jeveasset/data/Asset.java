@@ -136,9 +136,10 @@ public class Asset implements Comparable<Asset> {
 	private double priceReprocessed;
 	private String system;
 	private int rawQuantity;
+	private boolean piMaterial;
 	
 
-	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity) {
+	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -162,6 +163,7 @@ public class Asset implements Comparable<Asset> {
 		this.system = system;
 		this.solarSystemID = solarSystemID;
 		this.rawQuantity = rawQuantity;
+		this.piMaterial = piMaterial;
 	}
 	
 	public void addEveAsset(Asset eveAsset) {
@@ -363,6 +365,10 @@ public class Asset implements Comparable<Asset> {
 	
 	public boolean isMarketGroup() {
 		return marketGroup;
+	}
+	
+	public boolean isPiMaterial(){
+		return piMaterial;
 	}
 	
 	/**

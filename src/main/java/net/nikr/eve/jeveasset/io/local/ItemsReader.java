@@ -71,7 +71,8 @@ public class ItemsReader extends AbstractXmlReader {
 		float volume = AttributeGetters.getFloat(node, "volume");
 		String meta = AttributeGetters.getString(node, "meta");
 		boolean marketGroup = AttributeGetters.getBoolean(node, "marketgroup");
-		return new Item(id, name, group, category, price, volume, meta, marketGroup);
+		boolean piMaterial = AttributeGetters.getBoolean(node, "pi");
+		return new Item(id, name, group, category, price, volume, meta, marketGroup, piMaterial);
 	}
 
 	private static void parseMaterials(Element element, Item item){

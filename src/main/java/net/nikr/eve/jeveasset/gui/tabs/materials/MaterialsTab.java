@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -68,6 +69,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private JComboBox jCharacters;
 	private JButton jExpand;
 	private JButton jCollapse;
+	private JCheckBox jPiMaterial;
 	private JSeparatorTable jTable;
 	private EventTableModel<Material> materialTableModel;
 
@@ -80,6 +82,10 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		//Category: Asteroid
 		//Category: Material
 
+		jPiMaterial = new JCheckBox("Include Planetary Materials");
+		jPiMaterial.setActionCommand(ACTION_SELECTED);
+		jPiMaterial.addActionListener(this);
+		
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
 		jCharacters.addActionListener(this);
@@ -117,6 +123,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 					.addComponent(jCharacters, 200, 200, 200)
 					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jPiMaterial)
 				)
 				.addComponent(jMaterialScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
@@ -126,6 +133,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jMaterialScrollPanel, 0, 0, Short.MAX_VALUE)
 		);
@@ -209,7 +217,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
 		for (Asset eveAsset : eveAssetEventList){
-			if (!eveAsset.getCategory().equals("Material")) continue;
+			if (!eveAsset.getCategory().equals("Material") && (!eveAsset.isPiMaterial() || !jPiMaterial.isSelected()) ) continue;
 			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All")) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
 			//Locations

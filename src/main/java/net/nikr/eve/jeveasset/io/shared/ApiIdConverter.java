@@ -299,6 +299,13 @@ public class ApiIdConverter {
 		}
 		return "";
 	}
+	public static boolean piMaterial(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
+		if (item != null) {
+			return item.isPiMaterial();
+		}
+		return false;
+	}
 
 	public static boolean marketGroup(int typeID, Map<Integer, Item> items) {
 		Item item = items.get(typeID);

@@ -35,9 +35,10 @@ public class Item {
 	private float volume;
 	private String meta;
 	private boolean marketGroup;
+	private boolean piMaterial;
 	private List<ReprocessedMaterial> reprocessedMaterials;
 
-	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup) {
+	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -46,6 +47,7 @@ public class Item {
 		this.volume = volume;
 		this.meta = meta;
 		this.marketGroup = marketGroup;
+		this.piMaterial = piMaterial;
 		reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 	}
 
@@ -92,6 +94,10 @@ public class Item {
 	@Override
 	public String toString(){
 		return name;
+	}
+
+	public boolean isPiMaterial() {
+		return piMaterial;
 	}
 
 	

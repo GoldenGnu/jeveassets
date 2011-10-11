@@ -107,7 +107,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 					.addComponent(jFactionLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jFaction, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jWarning, 48, 48, 48) //FIXME got not height
+				.addComponent(jWarning, 48, 48, 48)
 		);
 	}
 
