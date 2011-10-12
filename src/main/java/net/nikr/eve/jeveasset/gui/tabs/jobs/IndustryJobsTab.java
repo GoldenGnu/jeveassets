@@ -34,7 +34,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -213,12 +212,21 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 					industryJobsInput = data.getJobs().get(selected);
 				}
 				//State
-				IndustryJob.IndustryJobState sState = (IndustryJob.IndustryJobState) jState.getSelectedItem();
+				Object state = jState.getSelectedItem();
 				//Activity
 				Object activity = jActivity.getSelectedItem();
 				for (int a = 0; a < industryJobsInput.size(); a++){
 					IndustryJob industryJob = industryJobsInput.get(a);
-					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.IndustryJobState.STATE_ALL));
+					boolean bState = (industryJob.getState().equals(state)
+							|| state.equals(IndustryJob.IndustryJobState.STATE_ALL) //All
+							|| (state.equals(IndustryJob.IndustryJobState.STATE_NOT_DELIVERED) //Pending/Active/Ready
+								&& (
+									industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_PENDING)
+									|| industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_ACTIVE)
+									|| industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_READY)
+								)
+							)
+						);
 					boolean bActivity = (industryJob.getActivity().equals(activity) || activity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
 					if (bState && bActivity){
 						industryJobsOutput.add(industryJob);

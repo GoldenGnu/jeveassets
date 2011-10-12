@@ -32,6 +32,12 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				return DataModelIndustryJob.get().stateAll();
 			}
 		},
+		STATE_NOT_DELIVERED() {
+			@Override
+			String getI18N() {
+				return DataModelIndustryJob.get().stateNotDelivered();
+			}
+		},
 		STATE_DELIVERED() {
 			@Override
 			String getI18N() {

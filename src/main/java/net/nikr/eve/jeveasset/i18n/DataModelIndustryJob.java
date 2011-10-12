@@ -53,6 +53,7 @@ public abstract class DataModelIndustryJob extends Bundle {
 	public abstract String stateGmAborted();
 	public abstract String stateInFlight();
 	public abstract String stateDestroyed();
+	public abstract String stateNotDelivered();
 	public abstract String activityAll();
 	public abstract String activityNone();
 	public abstract String activityManufacturing();
@@ -64,5 +65,4 @@ public abstract class DataModelIndustryJob extends Bundle {
 	public abstract String activityReverseEngineering();
 	public abstract String activityReverseInvention();
 	public abstract String descriptionCopying(String blueprintName, int copyCount, int copyRuns);
-
 }
