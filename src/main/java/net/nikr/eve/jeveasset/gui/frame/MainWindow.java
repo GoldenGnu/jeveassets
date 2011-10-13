@@ -243,9 +243,11 @@ public class MainWindow implements WindowListener, ChangeListener {
 			if (jMainTab.isCloseable()){
 				this.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mouseClicked(MouseEvent e) {
+					public void mousePressed(MouseEvent e) {
 						if (e.getButton() == MouseEvent.BUTTON2){
 							removeTab(jMainTab);
+						} else if (e.getButton() == MouseEvent.BUTTON1){
+							jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 						}
 					}
 				});
@@ -262,7 +264,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 				jClose.setRolloverEnabled(true);
 				jClose.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mouseClicked(MouseEvent e) {
+					public void mousePressed(MouseEvent e) {
 						if (e.getButton() == MouseEvent.BUTTON2){
 							removeTab(jMainTab);
 						}
