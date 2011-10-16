@@ -137,7 +137,11 @@ public class Asset implements Comparable<Asset> {
 	private String system;
 	private int rawQuantity;
 	private boolean piMaterial;
-	
+
+	/**
+	 * For mockups...
+	 */
+	protected Asset() {}
 
 	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
 		this.typeName = typeName;

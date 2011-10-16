@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -38,6 +39,7 @@ public class Formater {
 	private static DecimalFormat integerFormat  = new DecimalFormat("0");
 	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
+	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(EveAssetMatching.LOCALE));
 	
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
@@ -56,6 +58,9 @@ public class Formater {
 	}
 	public static String doubleFormat(Object obj){
 		return decimalFormat.format(obj);
+	}
+	public static String compareFormat(Object obj){
+		return compareFormat.format(obj);
 	}
 	/**
 	 * WARNING: This is not an good format for columns

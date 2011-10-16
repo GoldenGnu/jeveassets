@@ -112,7 +112,9 @@ public class FilterPanel extends JGroupLayoutPanel {
 		} else {
 			jAnd.setSelectedItem(AssetFilter.Junction.OR);
 		}
-		jMatchColumn.setSelectedItem(assetFilter.getColumnMatch());
+		if (assetFilter.getColumnMatch() != null){
+			jMatchColumn.setSelectedItem(assetFilter.getColumnMatch());
+		}
 	}
 
 	public EveAssetMatcherEditor getEveAssetMatcherEditor() {

@@ -21,6 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.nikr.eve.jeveasset.data.AssetFilter;
@@ -32,6 +35,11 @@ import org.slf4j.LoggerFactory;
 public class EveAssetMatching {
 	private static final Logger LOG = LoggerFactory.getLogger(EveAssetMatching.class);
 
+	//TODO when finishing i18n enable this to use localized input
+	//public static final Locale LOCALE = Locale.getDefault();
+	
+	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
+	
 	public EveAssetMatching() {
 
 	}
@@ -39,76 +47,76 @@ public class EveAssetMatching {
 	public boolean matches(Asset item, AssetFilter assetFilter) {
 		return matches(item, assetFilter.getColumn(), assetFilter.getMode(), assetFilter.getText(), assetFilter.getColumnMatch());
 	}
-	public boolean matches(Asset eveAsset, String column, AssetFilter.Mode mode, String text, String columnMatch) {
-			final String haystack = getString(eveAsset, column);
-			final double value = getDouble(eveAsset, column);
-			if (columnMatch != null){
-				text = getString(eveAsset, columnMatch);
-			}
+	public boolean matches(final Asset eveAsset, final String column, final AssetFilter.Mode mode, String filterValue, String columnMatch) {
+		//Compare numbers (Greater/Less then [column])
+		boolean isNumericComparison = mode.equals(AssetFilter.Mode.MODE_GREATER_THAN) || mode.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN);
+		
+		//Compare columns - Set filterValue to column value
+		if (columnMatch != null) filterValue = getString(eveAsset, columnMatch);
+		
+		//If a column is meta and is numeric comparison - get meta number
+		if (isNumericComparison && (column.equals("Meta") || (columnMatch != null && columnMatch.equals("Meta")))){
+			filterValue = getMetaNumber(filterValue);
+		}
+		
+		//Get filter number or null if NaN	
+		Double filterNumber = getNumber(filterValue);
+		
+		//if filter is numeric: update text for string comparison
+		if (filterNumber != null) filterValue = Formater.compareFormat(filterNumber);
+		
+		//Get column value
+		String columnValue = getString(eveAsset, column);
+
+		if (isNumericComparison){
+			//If meta column - get meta number
+			if ((column.equals("Meta"))) columnValue = getMetaNumber(columnValue);
+			
+			//Column number
+			final Double columnNumber = getNumber(columnValue);
+			
+			//null = false
+			if (columnNumber == null || filterNumber == null) return false;
+			
+			//Greater then [column]
 			if (mode.equals(AssetFilter.Mode.MODE_GREATER_THAN) || mode.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN)){
-				double number;
-				try{
-					number = Double.valueOf(text);
-				} catch (NumberFormatException ex){
-					return false;
-				}
-				return (value > number);
+				return filterNumber < columnNumber;
 			}
+			
+			//Less then [column]
 			if (mode.equals(AssetFilter.Mode.MODE_LESS_THAN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN)){
-				double number;
-				try{
-					number = Double.valueOf(text);
-				} catch (NumberFormatException ex){
-					return false;
-				}
-				return (value < number);
+				return filterNumber > columnNumber;
 			}
-			if (mode.equals(AssetFilter.Mode.MODE_CONTAIN)){
-				return haystack.toLowerCase().contains(text.toLowerCase());
+		}
+		//Contain
+		if (mode.equals(AssetFilter.Mode.MODE_CONTAIN)){
+			return columnValue.toLowerCase().contains(filterValue.toLowerCase());
+		}
+		//Does not contain
+		if (mode.equals(AssetFilter.Mode.MODE_CONTAIN_NOT)){
+			return !columnValue.toLowerCase().contains(filterValue.toLowerCase());
+		}
+		//Equals
+		if (mode.equals(AssetFilter.Mode.MODE_EQUALS)){
+			if (column.equals("All")){
+				return columnValue.toLowerCase().contains("\n"+filterValue.toLowerCase()+"\r");
+			} else {
+				return columnValue.toLowerCase().equals(filterValue.toLowerCase());
 			}
-			if (mode.equals(AssetFilter.Mode.MODE_CONTAIN_NOT)){
-				return !haystack.toLowerCase().contains(text.toLowerCase());
+		}
+		//Does not equals
+		if (mode.equals(AssetFilter.Mode.MODE_EQUALS_NOT)){
+			if (column.equals("All")){
+				return !columnValue.toLowerCase().contains("\n"+filterValue.toLowerCase()+"\r");
+			} else {
+				return !columnValue.toLowerCase().equals(filterValue.toLowerCase());
 			}
-			if (mode.equals(AssetFilter.Mode.MODE_EQUALS)){
-				if (value >= 0){
-					double number;
-					try{
-						number = Double.valueOf(text);
-						return (value == number);
-					} catch (NumberFormatException ex){
-						LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
-					}
-					return false;
-				} else {
-					if (column.equals("All")){
-						return haystack.toLowerCase().contains("\n"+text.toLowerCase()+"\r");
-					} else {
-						return haystack.toLowerCase().equals(text.toLowerCase());
-					}
-				}
-			}
-			if (mode.equals(AssetFilter.Mode.MODE_EQUALS_NOT)){
-				if (value >= 0){
-					double number;
-					try{
-						number = Double.valueOf(text);
-						return (value != number);
-					} catch (NumberFormatException ex){
-						LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
-					}
-					return false;
-				} else {
-					if (column.equals("All")){
-						return !haystack.toLowerCase().contains("\n"+text.toLowerCase()+"\r");
-					} else {
-						return !haystack.toLowerCase().equals(text.toLowerCase());
-					}
-				}
-			}
-			return false;
+		}
+		return false;
+			
 	}
 
-	public String getString(Asset eveAsset, String column){
+	private String getString(Asset eveAsset, String column){
 		if (column.equals("All")){
 			return "\r\n"
 						+ eveAsset.getCategory() + "\r\n"
@@ -119,20 +127,20 @@ public class EveAssetMatching {
 						+ eveAsset.getMeta() + "\r\n"
 						+ eveAsset.getName() + "\r\n"
 						+ eveAsset.getOwner() + "\r\n"
-						+ eveAsset.getCount() + "\r\n"
-						+ eveAsset.getItemID() + "\r\n"
-						+ eveAsset.getPrice() + "\r\n"
-						+ eveAsset.getPriceSellMin() + "\r\n"
-						+ eveAsset.getPriceBuyMax() + "\r\n"
-						+ eveAsset.getValue() + "\r\n"
-						+ eveAsset.getPriceBase() + "\r\n"
-						+ eveAsset.getVolume() + "\r\n"
-						+ eveAsset.getTypeID() + "\r\n"
+						+ Formater.compareFormat(eveAsset.getCount()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getItemID()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getPrice()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getPriceSellMin()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getPriceBuyMax()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getValue()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getPriceBase()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getVolume()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getTypeID()) + "\r\n"
 						+ eveAsset.getRegion() + "\r\n"
-						+ eveAsset.getTypeCount() + "\r\n"
-						+ eveAsset.getSecurity() + "\r\n"
-						+ eveAsset.getPriceReprocessed() + "\r\n"
-						+ eveAsset.getValueReprocessed() + "\r\n"
+						+ Formater.compareFormat(eveAsset.getTypeCount()) + "\r\n"
+						+ Formater.compareFormat(getSecurityNumber(eveAsset.getSecurity())) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getPriceReprocessed()) + "\r\n"
+						+ Formater.compareFormat(eveAsset.getValueReprocessed()) + "\r\n"
 						+ eveAsset.getSingleton() + "\r\n"
 					;
 		}
@@ -140,73 +148,56 @@ public class EveAssetMatching {
 		if (column.equals("Group")) return eveAsset.getGroup();
 		if (column.equals("Category")) return eveAsset.getCategory();
 		if (column.equals("Owner")) return eveAsset.getOwner();
-		if (column.equals("Count")) return String.valueOf(eveAsset.getCount());
+		if (column.equals("Count")) return Formater.compareFormat(eveAsset.getCount());
 		if (column.equals("Location")) return eveAsset.getLocation();
 		if (column.equals("Container")) return eveAsset.getContainer();
 		if (column.equals("Flag")) return eveAsset.getFlag();
-		if (column.equals("Price")) return String.valueOf(eveAsset.getPrice());
+		if (column.equals("Price")) return Formater.compareFormat(eveAsset.getPrice());
 		if (column.equals("Meta")) return eveAsset.getMeta();
-		if (column.equals("ID")) return String.valueOf(eveAsset.getItemID());
-		if (column.equals("Sell Min")) return String.valueOf(eveAsset.getPriceSellMin());
-		if (column.equals("Buy Max")) return String.valueOf(eveAsset.getPriceBuyMax());
-		if (column.equals("Value")) return String.valueOf(eveAsset.getValue());
-		if (column.equals("Base Price")) return String.valueOf(eveAsset.getPriceBase());
-		if (column.equals("Volume")) return String.valueOf(eveAsset.getVolume());
-		if (column.equals("Type ID")) return String.valueOf(eveAsset.getTypeID());
+		if (column.equals("ID")) return Formater.compareFormat(eveAsset.getItemID());
+		if (column.equals("Sell Min")) return Formater.compareFormat(eveAsset.getPriceSellMin());
+		if (column.equals("Buy Max")) return Formater.compareFormat(eveAsset.getPriceBuyMax());
+		if (column.equals("Value")) return Formater.compareFormat(eveAsset.getValue());
+		if (column.equals("Base Price")) return Formater.compareFormat(eveAsset.getPriceBase());
+		if (column.equals("Volume")) return Formater.compareFormat(eveAsset.getVolume());
+		if (column.equals("Type ID")) return Formater.compareFormat(eveAsset.getTypeID());
 		if (column.equals("Region")) return eveAsset.getRegion();
-		if (column.equals("Type Count")) return String.valueOf(eveAsset.getTypeCount());
-		if (column.equals("Security")) return eveAsset.getSecurity();
-		if (column.equals("Reprocessed")) return String.valueOf(eveAsset.getPriceReprocessed());
-		if (column.equals("Reprocessed Value")) return String.valueOf(eveAsset.getValueReprocessed());
+		if (column.equals("Type Count")) return Formater.compareFormat(eveAsset.getTypeCount());
+		if (column.equals("Security")) return Formater.compareFormat(getSecurityNumber(eveAsset.getSecurity()));
+		if (column.equals("Reprocessed")) return Formater.compareFormat(eveAsset.getPriceReprocessed());
+		if (column.equals("Reprocessed Value")) return Formater.compareFormat(eveAsset.getValueReprocessed());
 		if (column.equals("Singleton")) return eveAsset.getSingleton();
 		return "";
 	}
-	public double getDouble(Asset eveAsset, String column){
-		if (column.equals("All")) return -1;
-		if (column.equals("Name")) return -1;
-		if (column.equals("Group")) return -1;
-		if (column.equals("Category")) return -1;
-		if (column.equals("Owner")) return -1;
-		if (column.equals("Count")) return eveAsset.getCount();
-		if (column.equals("Location")) return -1;
-		if (column.equals("Container")) return -1;
-		if (column.equals("Flag")) return -1;
-		if (column.equals("Price")) return eveAsset.getPrice();
-		if (column.equals("Meta")){
-			String meta = eveAsset.getMeta();
-			if (meta.isEmpty()) return 0;
-			Pattern p = Pattern.compile("\\d+");
-			Matcher m = p.matcher(meta);
-			if (m.find()){
-				meta = meta.substring(m.start(), m.end());
-				try {
-					return Double.valueOf( meta );
-				} catch (NumberFormatException ex){
-					LOG.warn("Ignoring the exception: " + ex.getMessage(), ex);
-				}
-			}
+
+	private double getSecurityNumber(String security){
+		try {
+			return Double.valueOf(security);
+		} catch (NumberFormatException ex){
+			LOG.info("Ignoring the exception: " + ex.getMessage());
 			return -1;
 		}
-		if (column.equals("ID")) return eveAsset.getItemID();
-		if (column.equals("Sell Min")) return eveAsset.getPriceSellMin();
-		if (column.equals("Buy Max")) return eveAsset.getPriceBuyMax();
-		if (column.equals("Value")) return eveAsset.getValue();
-		if (column.equals("Base Price")) return eveAsset.getPriceBase();
-		if (column.equals("Volume")) return eveAsset.getVolume();
-		if (column.equals("Type ID")) return eveAsset.getTypeID();
-		if (column.equals("Region")) return -1;
-		if (column.equals("Type Count")) return eveAsset.getTypeCount();
-		if (column.equals("Security")){
-			try {
-				return Double.valueOf( eveAsset.getSecurity());
-			} catch (NumberFormatException ex){
-				return -1;
-			}
-		}
-		if (column.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
-		if (column.equals("Reprocessed Value")) return eveAsset.getValueReprocessed();
-		if (column.equals("Singleton")) return -1;
-		return -1;
 	}
-
+	
+	private String getMetaNumber(String meta){
+		Pattern p = Pattern.compile("\\d+");
+		Matcher m = p.matcher(meta);
+		if (m.find()){
+			return meta.substring(m.start(), m.end());
+		} else {
+			return "";
+		}
+	}
+	
+	private Double getNumber(String filterValue){
+		//Used to check if parsing was successful
+		ParsePosition position = new ParsePosition(0);
+		//Parse number using the Locale
+		Number n = NumberFormat.getInstance(LOCALE).parse(filterValue, position);
+		if (n != null && position.getIndex() == filterValue.length()){ //Numeric
+			return n.doubleValue();
+		} else { //String
+			return null;
+		}
+	}
 }

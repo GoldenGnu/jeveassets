@@ -192,7 +192,6 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<Asset>{
 				AssetFilter.Mode column = (AssetFilter.Mode) jMode.getSelectedItem();
 				if (column.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || column.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN) ){
 					columnCompare = true;
-
 				} else {
 					columnCompare = false;
 				}
