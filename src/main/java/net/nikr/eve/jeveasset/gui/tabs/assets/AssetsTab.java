@@ -102,7 +102,6 @@ public class AssetsTab extends JMainTab
 		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
 		//For filtering the table
 		filterList = new FilterList<Asset>(sortedList);
-		MatcherEditorManager matcherEditorManager = new MatcherEditorManager(filterList, program);
 		//Table Model
 		eveAssetTableModel = new EventTableModel<Asset>(filterList, eveAssetTableFormat);
 		//Table
@@ -124,7 +123,7 @@ public class AssetsTab extends JMainTab
 		installTableMenu(jTable);
 
 		//Filter panel(s)
-		toolPanel = new ToolPanel(program, matcherEditorManager);
+		toolPanel = new ToolPanel(program, filterList);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);

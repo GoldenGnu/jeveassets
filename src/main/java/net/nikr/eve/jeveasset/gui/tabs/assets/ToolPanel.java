@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
+import ca.odell.glazedlists.FilterList;
 import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -38,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
@@ -53,8 +55,8 @@ public class ToolPanel extends JGroupLayoutPanel {
 	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
 
 	//Data
-	private List<FilterPanel> filters;
-	private MatcherEditorManager matcherEditorManager;
+	private List<FilterPanel> filters = new ArrayList<FilterPanel>();
+	private EveAssetLogicalMatcherEditor matcherEditorManager = new EveAssetLogicalMatcherEditor();
 	int rowCount;
 
 	//GUI
@@ -63,15 +65,12 @@ public class ToolPanel extends JGroupLayoutPanel {
 	private JToolBar jToolBar;
 	private JCheckBox jShowFilters;
 
-	private Listener listener;
+	private Listener listener = new Listener();
 
-	public ToolPanel(Program program, MatcherEditorManager matcherEditorManager) {
+	public ToolPanel(Program program, FilterList<Asset> filterList) {
 		super(program);
-		this. matcherEditorManager = matcherEditorManager;
-		filters = new ArrayList<FilterPanel>();
+		filterList.setMatcherEditor(matcherEditorManager);
 		
-		listener = new Listener();
-
 		//Layout setup
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
@@ -136,6 +135,8 @@ public class ToolPanel extends JGroupLayoutPanel {
 
 		//Add one filterPanel
 		addFilter();
+		//Must be added after the first filter...
+		matcherEditorManager.addMatcherEditorListener(program);
 		savedFiltersChanged();
 	}
 

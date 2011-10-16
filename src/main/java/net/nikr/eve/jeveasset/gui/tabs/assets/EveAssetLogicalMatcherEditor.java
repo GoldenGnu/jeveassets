@@ -21,23 +21,30 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
+import java.util.ArrayList;
+import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
 
 
-public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<Asset> implements Listener<Asset> {
+public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<Asset> 
+											implements Listener<Asset>{
 
-	private EventList<EveAssetMatcherEditor> matcherEditors;
-
-	public EveAssetLogicalMatcherEditor(EventList<EveAssetMatcherEditor> matcherEditors) {
-		this.matcherEditors = matcherEditors;
-		for (int a = 0; a < matcherEditors.size(); a++){
-			matcherEditors.get(a).addMatcherEditorListener(this);
-		}
+	private final List<EveAssetMatcherEditor> matcherEditors = new ArrayList<EveAssetMatcherEditor>();
+	
+	public EveAssetLogicalMatcherEditor() {}
+	
+	public void add(EveAssetMatcherEditor eveAssetMatcherEditor){
+		if (matcherEditors.contains(eveAssetMatcherEditor)) matcherEditors.remove(eveAssetMatcherEditor);
+		matcherEditors.add(eveAssetMatcherEditor);
+		eveAssetMatcherEditor.addMatcherEditorListener(this);
+		this.fireChanged(new EveAssetLogicalMatcher(matcherEditors));
+	}
+	public void remove(EveAssetMatcherEditor eveAssetMatcherEditor){
+		matcherEditors.remove(eveAssetMatcherEditor);
+		eveAssetMatcherEditor.removeMatcherEditorListener(this);
 		this.fireChanged(new EveAssetLogicalMatcher(matcherEditors));
 	}
 
@@ -48,37 +55,33 @@ public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<Asset> i
 
 	private static class EveAssetLogicalMatcher implements Matcher<Asset> {
 
-		private EventList<EveAssetMatcherEditor> matcherEditors;
+		private List<EveAssetMatcherEditor> matcherEditors;
 
-		public EveAssetLogicalMatcher(EventList<EveAssetMatcherEditor> matcherEditors) {
+		public EveAssetLogicalMatcher(List<EveAssetMatcherEditor> matcherEditors) {
 			this.matcherEditors = matcherEditors;
 		}
 
 		@Override
 		public boolean matches(Asset item) {
-			boolean bOr = false;
-			boolean bAnyOrs = false;
-			int nOrs = 0;
-			for (int a = 0; a < matcherEditors.size(); a++){
-				EveAssetMatcherEditor eame = matcherEditors.get(a);
+			boolean bOR = false;
+			boolean bAnyORs = false;
+			for (EveAssetMatcherEditor eame : matcherEditors){
 				if (!eame.isEmpty()){
 					if (eame.isAnd()){ //And
 						if (!eame.getMatcher().matches(item)){ //if just one don't match, none match
 							return false;
 						}
 					} else { //Or
-						nOrs++;
-						bAnyOrs = true;
+						bAnyORs = true;
 						if (eame.getMatcher().matches(item)){ //if just one is true all is true
-							bOr = true;
+							bOR = true;
 						}
 					}
 				}
 			}
 			
-			//if any "Or" is true, if no "Or" is included, if just one "Or" it's considered as "And"
-			return (bOr || !bAnyOrs);
-
+			//if any "Or" is true | if no "Or" is included | if just one "Or" it's considered as "And"
+			return (bOR || !bAnyORs);
 		}
 	}
 }
