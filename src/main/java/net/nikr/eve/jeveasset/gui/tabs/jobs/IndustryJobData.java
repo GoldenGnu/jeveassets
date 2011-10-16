@@ -63,15 +63,13 @@ public class IndustryJobData {
 	}
 
 	public void updateData() {
+		List<String> unique = new ArrayList<String>();
 		characters = new Vector<String>();
 		//characters.add("All");
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++){
-			List<Human> tempHumans = accounts.get(a).getHumans();
-			for (int b = 0; b < tempHumans.size(); b++){
-				Human human = tempHumans.get(b);
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
 				if (human.isShowAssets()){
 					String name;
 					if (human.isCorporation()){
@@ -79,10 +77,18 @@ public class IndustryJobData {
 					} else {
 						name = human.getName();
 					}
-					characters.add(name);
+					//Only add names once
+					if (!characters.contains(name)){
+						characters.add(name);
+						jobs.put(name, new ArrayList<IndustryJob>()); //Make sure empty is not null
+					}
+					//Only add once and don't add empty jobs
 					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-					jobs.put(name, characterIndustryJobs);
-					all.addAll(characterIndustryJobs);
+					if (!unique.contains(name) && !characterIndustryJobs.isEmpty()){
+						jobs.put(name, characterIndustryJobs);
+						all.addAll(characterIndustryJobs);
+						unique.add(name);
+					}
 				}
 			}
 		}

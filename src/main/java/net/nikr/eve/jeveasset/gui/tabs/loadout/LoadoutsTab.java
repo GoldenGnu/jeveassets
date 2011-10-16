@@ -348,14 +348,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					} else {
 						name = human.getName();
 					}
-					characters.add(name);
+					if (!characters.contains(name)) characters.add(name);
 				}
 			}
 		}
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characters.add(0, "All"); //TODO Not translated
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

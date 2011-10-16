@@ -152,7 +152,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 					} else {
 						name = human.getName();
 					}
-					characters.add(name);
+					if (!characters.contains(name)) characters.add(name);
 				}
 			}
 		}
@@ -161,7 +161,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characters.add(0, "All"); //TODO Not translated
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

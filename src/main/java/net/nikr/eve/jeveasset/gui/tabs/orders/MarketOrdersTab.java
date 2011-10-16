@@ -227,16 +227,12 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
+		List<String> unique = new ArrayList<String>();
 		characters = new ArrayList<String>();
 		orders = new HashMap<String, List<MarketOrder>>();
 		all = new ArrayList<MarketOrder>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++){
-			List<Human> tempHumans = accounts.get(a).getHumans();
-			for (int b = 0; b < tempHumans.size(); b++){
-				Human human = tempHumans.get(b);
-				List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-				orders.put(human.getName(), marketOrders);
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
 				if (human.isShowAssets()){
 					String name;
 					if (human.isCorporation()){
@@ -244,10 +240,18 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 					} else {
 						name = human.getName();
 					}
-					characters.add(name);
+					//Only add names once
+					if (!characters.contains(name)){
+						characters.add(name);
+						orders.put(name, new ArrayList<MarketOrder>()); //Make sure empty is not null
+					}
+					//Only add once and don't add empty orders
 					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
-					orders.put(name, characterMarketOrders);
-					all.addAll(characterMarketOrders);
+					if (!unique.contains(name) && !characterMarketOrders.isEmpty()){
+						orders.put(name, characterMarketOrders);
+						all.addAll(characterMarketOrders);
+						unique.add(name);
+					}
 				}
 			}
 		}
