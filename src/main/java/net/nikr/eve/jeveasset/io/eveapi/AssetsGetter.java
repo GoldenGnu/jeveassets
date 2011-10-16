@@ -79,12 +79,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 	
 	@Override
-	protected void setData(Human human){
-		getHuman().setAssets(human.getAssets());
-	}
-
-	@Override
-	protected void clearData(){
-		getHuman().setAssets(new ArrayList<Asset>());
+	protected void updateFailed(Human humanFrom, Human humanTo){
+		humanTo.setAssets(humanFrom.getAssets());
+		humanTo.setAssetNextUpdate(humanFrom.getAssetNextUpdate());
 	}
 }

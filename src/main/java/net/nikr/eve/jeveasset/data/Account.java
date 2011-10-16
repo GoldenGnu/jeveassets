@@ -117,6 +117,16 @@ public class Account {
 		this.type = type;
 	}
 	
+	/**
+	 * Compare Type - Simplified to only consider Corporation or not Corporation
+	 * @param type Account | Character | Corporation
+	 * @return true if equal (both corp or both not corp) - false if not equal (one corp other not corp)
+	 */
+	public boolean compareTypes(String type){
+		boolean corp = type.equals("Corporation");
+		return (isCorporation() == corp);
+	}
+	
 	public boolean isCorporation(){
 		return type.equals("Corporation");
 	}

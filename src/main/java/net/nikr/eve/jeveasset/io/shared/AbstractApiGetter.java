@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.core.ApiError;
 import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.core.ApiResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private boolean updateAccount;
 	private UpdateTask updateTask;
 	private Map<String, Human> owners;
+	private List<Human> failOwners;
 	private int requestMask;
 	private boolean error;
 
@@ -113,6 +115,13 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 				}
 			}
 		}
+		//Set data for duplicated/failed owners
+		if (updateHuman){
+			for (Human failHuman : failOwners){
+				Human okHuman = owners.get(failHuman.getName());
+				if (okHuman != null) updateFailed(okHuman, failHuman);
+			}
+		}
 		if (updated && updateTask != null && !updateTask.hasError()){
 			LOG.info("	{} updated (ALL)", taskName);
 		} else if(updated && updateTask != null && updateTask.hasError()) {
@@ -130,20 +139,20 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		this.updated = false;
 		this.error = false;
 		this.owners = new HashMap<String, Human>();
+		this.failOwners = new ArrayList<Human>();
 	}
 
 	private void loadHuman(){
 		boolean updatedOK = false;
 		String name = human.getName();
-		if(human.isShowAssets()){ //Ignore hidden owners
-			if (!owners.containsKey(name)){ //don't update the same owner twice
-				updatedOK = load(getNextUpdate(), human.isCorporation(), name); //Update...
-				if (updatedOK) owners.put(name, human); //If updated ok: don't update the same owner again...
-			} else {
-				setData(owners.get(name)); //Set data for duplicated owners (This is not 100% fix)
-			}
+		//Ignore hidden owners && don't update the same owner twice
+		if (human.isShowAssets() && !owners.containsKey(name)){ //
+			updatedOK = load(getNextUpdate(), human.isCorporation(), name); //Update...
+		}
+		if (updatedOK){
+			owners.put(name, human); //If updated ok: don't update the same owner again...
 		} else {
-			clearData(); //Remove data from hidden owners
+			failOwners.add(human); //Save duplicated/failed owners
 		}
 	}
 
@@ -237,8 +246,7 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	abstract protected Date getNextUpdate();
 	abstract protected void setNextUpdate(Date nextUpdate);
 	abstract protected void setData(T response);
-	abstract protected void setData(Human human);
-	abstract protected void clearData();
+	abstract protected void updateFailed(Human humanFrom, Human humanTo);
 
 	private boolean isUpdatable(Date date){
 		return ( (

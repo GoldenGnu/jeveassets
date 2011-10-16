@@ -74,12 +74,8 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	}
 	
 	@Override
-	protected void setData(Human human){
-		getHuman().setMarketOrders(human.getMarketOrders());
-	}
-
-	@Override
-	protected void clearData(){
-		getHuman().setMarketOrders(new ArrayList<ApiMarketOrder>());
+	protected void updateFailed(Human humanFrom, Human humanTo){
+		humanTo.setMarketOrders(humanFrom.getMarketOrders());
+		humanTo.setMarketOrdersNextUpdate(humanFrom.getMarketOrdersNextUpdate());
 	}
 }

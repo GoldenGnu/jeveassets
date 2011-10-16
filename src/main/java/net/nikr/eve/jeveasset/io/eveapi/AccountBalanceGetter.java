@@ -82,12 +82,8 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	}
 
 	@Override
-	protected void setData(Human human){
-		getHuman().setAccountBalances(human.getAccountBalances());
-	}
-	
-	@Override
-	protected void clearData(){
-		getHuman().setAccountBalances(new ArrayList<EveAccountBalance>());
+	protected void updateFailed(Human humanFrom, Human humanTo){
+		humanTo.setAccountBalances(humanFrom.getAccountBalances());
+		humanTo.setBalanceNextUpdate(humanFrom.getBalanceNextUpdate());
 	}
 }

@@ -70,6 +70,8 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	@Override
 	protected void setData(ApiKeyInfoResponse response) {
+		//Changed between Char and Corp AKA should be treated as a new api
+		boolean typeChanged = !getAccount().compareTypes(response.getType());
 		
 		//Update account
 		getAccount().setAccessMask(response.getAccessMask());
@@ -86,28 +88,34 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 			if (!getAccount().isMarketOrders()) fails++;
 			if (!getAccount().isAssetList()) fails = 4; //Can not work without it...
 		}
+		
 		for (EveCharacter apiCharacter : characters){
 			boolean found = false;
 			for (Human human : getAccount().getHumans()){
-				if (human.getCharacterID() == apiCharacter.getCharacterID()){
-					human.setName(human.getName());
+				if (human.getCharacterID() == apiCharacter.getCharacterID() && !typeChanged){
+					human.setName(getName(apiCharacter));
 					humans.add(human);
 					found = true;
 					break;
 				}
 			}
-			if (!found){ //Add
-				humans.add(new Human(getAccount(), getAccount().isCharacter() ? apiCharacter.getName() : apiCharacter.getCorporationName(), apiCharacter.getCharacterID()));
+			if (!found){ //Add New
+				humans.add(new Human(getAccount(), getName(apiCharacter), apiCharacter.getCharacterID()));
 			}
 		}
 		getAccount().setHumans(humans);
 	}
 	
 	@Override
-	protected void setData(Human human){}
-
-	@Override
-	protected void clearData(){}
+	protected void updateFailed(Human humanFrom, Human humanTo){}
+	
+	private String getName(EveCharacter apiCharacter){
+		if (getAccount().isCharacter()){
+			return apiCharacter.getName();
+		} else {
+			return apiCharacter.getCorporationName();
+		}
+	}
 	
 	public int getFails() {
 		return fails;

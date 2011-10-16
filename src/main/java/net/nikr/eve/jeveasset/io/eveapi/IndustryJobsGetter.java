@@ -74,12 +74,8 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	}
 	
 	@Override
-	protected void setData(Human human){
-		getHuman().setIndustryJobs(human.getIndustryJobs());
-	}
-
-	@Override
-	protected void clearData(){
-		getHuman().setIndustryJobs(new ArrayList<ApiIndustryJob>());
+	protected void updateFailed(Human humanFrom, Human humanTo){
+		humanTo.setIndustryJobs(humanFrom.getIndustryJobs());
+		humanTo.setIndustryJobsNextUpdate(humanFrom.getIndustryJobsNextUpdate());
 	}
 }

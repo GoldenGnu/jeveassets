@@ -68,8 +68,5 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 	
 	@Override
-	protected void setData(Human human){}
-
-	@Override
-	protected void clearData(){}
+	protected void updateFailed(Human humanFrom, Human humanTo){}
 }
