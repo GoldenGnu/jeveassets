@@ -159,6 +159,14 @@ public class ToolPanel extends JGroupLayoutPanel {
 		while(filters.size() > 0){
 			removeFilter( filters.get(0) );
 		}
+		addAssetFilters(assetFilters);
+	}
+	
+	public void addAssetFilters(List<AssetFilter> assetFilters){
+		//Remove single empty filter...
+		if (filters.size() == 1 && filters.get(0).getAssetFilter().isEmpty()){
+			removeFilter( filters.get(0) );
+		}
 		for (int a = 0; a < assetFilters.size(); a++){
 			FilterPanel filterPanel = new FilterPanel(program, this);
 			filterPanel.setAssetFilter( assetFilters.get(a) );
@@ -255,11 +263,15 @@ public class ToolPanel extends JGroupLayoutPanel {
 		layout.setVerticalGroup(sg);
 	}
 
-	private void loadFilter(String filterName){
+	private void loadFilter(String filterName, boolean add){
 		if (filterName == null) return;
 		if (program.getSettings().getAssetFilters().containsKey(filterName)){
 			List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get( filterName );
-			setAssetFilters(assetFilters);
+			if (add){
+				addAssetFilters(assetFilters);
+			} else{
+				setAssetFilters(assetFilters);
+			}
 		}
 	}
 
@@ -277,27 +289,28 @@ public class ToolPanel extends JGroupLayoutPanel {
 	final public void savedFiltersChanged(){
 		jLoadFilter.removeAll();
 		JMenuItem jMenuItem;
-		
-		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
-		Collections.sort(list);
-		for (int a = 0; a < list.size(); a++){
-			String s = list.get(a);
-			jMenuItem = new JMenuItem(s);
-			jMenuItem.setRolloverEnabled(true);
-			jMenuItem.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
-			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(listener);
-			jLoadFilter.add(jMenuItem);
-		}
-		
-		if (list.size() > 0) jLoadFilter.addSeparator();
 
-		jMenuItem = new JMenuItem(TabsAssets.get().manage());
+		jMenuItem = new JMenuItem(TabsAssets.get().manage(), Images.DIALOG_SETTINGS.getIcon());
 		jMenuItem.setActionCommand(ACTION_OPEN_FILTER_MANAGER);
 		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 		jLoadFilter.add(jMenuItem);
+		
+		List<String> list = new ArrayList<String>( program.getSettings().getAssetFilters().keySet() );
+		Collections.sort(list);
+		
+		if (list.size() > 0) jLoadFilter.addSeparator();
+		
+		for (String s : list){
+			jMenuItem = new JMenuItem(s, Images.ASSETS_LOAD_FILTER.getIcon());
+			jMenuItem.setRolloverEnabled(true);
+			jMenuItem.setActionCommand(s);
+			jMenuItem.addActionListener(listener);
+			jLoadFilter.add(jMenuItem);
+		}
+		
+		
 	}
 
 	public void setToolbarText(String text){
@@ -337,7 +350,7 @@ public class ToolPanel extends JGroupLayoutPanel {
 				program.getFiltersManagerDialog().setVisible(true);
 				return;
 			}
-			loadFilter(e.getActionCommand());
+			loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
 		}
 	}
 }
