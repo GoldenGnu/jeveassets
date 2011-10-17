@@ -413,10 +413,9 @@ public class Settings{
 				}
 				//Contaioner
 				String sContainer = "";
-				for (int b = 0; b < eveAsset.getParents().size(); b++){
-					Asset parentEveAsset = eveAsset.getParents().get(b);
-					if (b != 0) sContainer = sContainer + ">";
-					if (parentEveAsset.getName().equals(parentEveAsset.getTypeName())){
+				for (Asset parentEveAsset : eveAsset.getParents()){
+					if (!sContainer.isEmpty()) sContainer = sContainer + ">";
+					if (!parentEveAsset.isUserName()){
 						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
 					} else {
 						sContainer = sContainer + parentEveAsset.getName();
@@ -439,9 +438,8 @@ public class Settings{
 					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeID()).getReprocessedMaterial();
 					double priceReprocessed = 0;
 					int portionSize = 0;
-					for (int b = 0; b < reprocessedMaterials.size(); b++){
+					for (ReprocessedMaterial material : reprocessedMaterials){
 						//Calculate reprocessed price
-						ReprocessedMaterial material = reprocessedMaterials.get(b);
 						portionSize = material.getPortionSize();
 						if (priceData.containsKey(material.getTypeID())){
 							PriceData priceDatum = priceData.get(material.getTypeID());
