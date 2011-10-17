@@ -24,17 +24,19 @@ package net.nikr.eve.jeveasset.data;
 
 public class Overview implements Comparable<Overview>{
 	private String name;
-	private String region;
 	private String solarSystem;
+	private String region;
+	private String security;
 	private double reprocessedValue;
 	private double volume;
 	private long count;
 	private double value;
 
-	public Overview(String name, String solarSystem, String region, double reprocessedValue, double volume, long count, double value) {
+	public Overview(String name, String solarSystem, String region, String security, double reprocessedValue, double volume, long count, double value) {
 		this.name = name;
 		this.solarSystem = solarSystem;
 		this.region = region;
+		this.security = security;
 		this.reprocessedValue = reprocessedValue;
 		this.volume = volume;
 		this.count = count;
@@ -63,6 +65,10 @@ public class Overview implements Comparable<Overview>{
 
 	public double getReprocessedValue() {
 		return reprocessedValue;
+	}
+	
+	public String getSecurity() {
+		return security;
 	}
 
 	public String getSolarSystem() {

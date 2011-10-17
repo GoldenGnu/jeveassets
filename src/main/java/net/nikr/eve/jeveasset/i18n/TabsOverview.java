@@ -60,6 +60,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String removeTheLocation(Object arg0);
 	public abstract String removeLocation();
 	public abstract String renameGroup();
+	public abstract String security();
 	public abstract String source();
 	public abstract String stations();
 	public abstract String systems();
@@ -74,6 +75,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String columnName();
 	public abstract String columnSystem();
 	public abstract String columnRegion();
+	public abstract String columnSecurity();
 	public abstract String columnVolume();
 	public abstract String columnValue();
 	public abstract String columnCount();

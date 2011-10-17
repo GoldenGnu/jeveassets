@@ -60,6 +60,16 @@ enum OverviewTableFormat implements TableColumn<Overview> {
 			return from.getRegion();
 		}
 	},
+	SECURITY(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOverview.get().columnSecurity();
+		}
+		@Override
+		public Object getColumnValue(Overview from) {
+			return from.getSecurity();
+		}
+	},
 	VOLUME(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
