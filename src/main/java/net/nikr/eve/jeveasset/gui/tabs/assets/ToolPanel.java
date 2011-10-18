@@ -69,7 +69,6 @@ public class ToolPanel extends JGroupLayoutPanel {
 
 	public ToolPanel(Program program, FilterList<Asset> filterList) {
 		super(program);
-		filterList.setMatcherEditor(matcherEditorManager);
 		
 		//Layout setup
 		layout.setAutoCreateGaps(true);
@@ -137,6 +136,8 @@ public class ToolPanel extends JGroupLayoutPanel {
 		addFilter();
 		//Must be added after the first filter...
 		matcherEditorManager.addMatcherEditorListener(program);
+		//Must be set after the program listener
+		filterList.setMatcherEditor(matcherEditorManager);
 		savedFiltersChanged();
 	}
 

@@ -37,7 +37,10 @@ public class EveAssetLogicalMatcherEditor extends AbstractMatcherEditor<Asset>
 	public EveAssetLogicalMatcherEditor() {}
 	
 	public void add(EveAssetMatcherEditor eveAssetMatcherEditor){
-		if (matcherEditors.contains(eveAssetMatcherEditor)) matcherEditors.remove(eveAssetMatcherEditor);
+		if (matcherEditors.contains(eveAssetMatcherEditor)){
+			matcherEditors.remove(eveAssetMatcherEditor);
+			eveAssetMatcherEditor.removeMatcherEditorListener(this);
+		}
 		matcherEditors.add(eveAssetMatcherEditor);
 		eveAssetMatcherEditor.addMatcherEditorListener(this);
 		this.fireChanged(new EveAssetLogicalMatcher(matcherEditors));
