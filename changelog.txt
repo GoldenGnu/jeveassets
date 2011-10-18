@@ -16,6 +16,26 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.8.0__________________________________________________________________________
+
+New Features:
+-Overview: Added buttons for views (Instead of the ComboBox) 
+-Overview: Added Security column 
+-Assets: Much better filtering of numbers
+-Assets: Added Singleton Column
+-Industry Jobs: Active/Ready/Pending
+-Materials: Added PI materials (optional)
+-Third mouse button close tab
+-Load Filter: CTRL+Click now adds filter instead of overwriting existing filter
+-Remember CSV Export settings
+
+Changed:
+-Static data Updated to Incarna 1.1.0
+
+Bug Fixes:
+-Fixed settings dialog height on XFCE 4
+
+________________________________________________________________________________
 _1.7.3__________________________________________________________________________
 
 New Features:
