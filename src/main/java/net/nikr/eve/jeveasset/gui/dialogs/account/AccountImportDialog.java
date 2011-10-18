@@ -25,14 +25,9 @@ import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Font;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -95,7 +90,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private JPanel jContent;
 	private Account account;
 	private Account editAccount;
-	private ListenerClass listener;
+	private ListenerClass listener = new ListenerClass();
 
 	private DonePanel donePanel;
 
@@ -107,10 +102,6 @@ public class AccountImportDialog extends JDialogCentered {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
 		
-		listener = new ListenerClass();
-		
-		//layout.setAutoCreateGaps(false);
-
 		donePanel = new DonePanel();
 
 		cardLayout = new CardLayout();
@@ -165,39 +156,6 @@ public class AccountImportDialog extends JDialogCentered {
 		return jVCode.getText();
 	}
 
-	private void getClipboardData(){
-		SecurityManager sm = System.getSecurityManager();
-		if (sm != null) {
-			try {
-				sm.checkSystemClipboardAccess();
-			} catch (Exception ex) {
-				return;
-			}
-		}
-		String s = null;
-		Transferable transferable = getDialog().getToolkit().getSystemClipboard ().getContents(this);
-		try {
-			s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-		} catch (UnsupportedFlavorException ex) {
-			return;
-		} catch (IOException ex) {
-			return;
-		}
-		if (s != null){
-			s = s.trim();
-			try{
-				Integer.valueOf(s);
-				jKeyID.setText(s);
-				return;
-			} catch (NumberFormatException ex){
-				Matcher matcher = pattern.matcher(s);
-				if (matcher.matches()){
-					jVCode.setText(s);
-				}
-			}
-		}
-	}
-
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jKeyID;
@@ -213,7 +171,11 @@ public class AccountImportDialog extends JDialogCentered {
 
 	@Override
 	protected void windowActivated() {
-		getClipboardData();
+		if (jKeyID.getText().isEmpty()){
+			jKeyID.requestFocusInWindow();
+		} else if (jVCode.getText().isEmpty()){
+			jVCode.requestFocusInWindow();
+		}
 	}
 
 	@Override
@@ -224,6 +186,9 @@ public class AccountImportDialog extends JDialogCentered {
 		if (editAccount != null){ //Edit
 			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
 			jVCode.setText(editAccount.getVCode());
+		} else {
+			jKeyID.setText("");
+			jVCode.setText("");
 		}
 		nTabIndex = 0;
 		updateTab();

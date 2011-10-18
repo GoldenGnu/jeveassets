@@ -234,7 +234,11 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() {
+		if (program.getSettings().getAccounts().isEmpty()){
+			accountImportDialog.show();
+		}
+	}
 
 	@Override
 	protected void windowActivated() {}
