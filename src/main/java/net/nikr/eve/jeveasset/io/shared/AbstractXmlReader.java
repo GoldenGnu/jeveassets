@@ -52,9 +52,9 @@ public abstract class AbstractXmlReader {
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(is);
-			is.close();
 			return doc.getDocumentElement();
 		} catch (SAXException ex) {
+			is.close(); //Close file - so we can delete it...
 			if (!usingBackupFile){
 				if (restoreBackupFile(filename)){
 					return getDocumentElement(filename, true);
@@ -63,6 +63,8 @@ public abstract class AbstractXmlReader {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
+		} finally {
+			is.close();
 		}
 	}
 
