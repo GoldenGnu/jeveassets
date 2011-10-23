@@ -40,14 +40,15 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -59,7 +60,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private JComboBox jActivity;
-	private JAutoColumnTable jTable;
+	private JTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
@@ -104,7 +105,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		//Sorters
 		TableComparatorChooser.install(jTable, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
-		JScrollPane jJobsScrollPanel = jTable.getScrollPanel();
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -116,7 +117,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 					.addComponent(jStateLabel)
 					.addComponent(jState, 200, 200, 200)
 				)
-				.addComponent(jJobsScrollPanel, 700, 700, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 700, 700, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -128,7 +129,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 					.addComponent(jActivityLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jActivity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jJobsScrollPanel, 100, 400, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
 

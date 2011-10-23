@@ -52,10 +52,10 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -76,8 +76,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	private Map<String, List<MarketOrder>> orders;
 	private List<String> characters;
 
-	private JAutoColumnTable jSellOrders;
-	private JAutoColumnTable jBuyOrders;
+	private JTable jSellTable;
+	private JTable jBuyTable;
 
 	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
@@ -107,29 +107,29 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
-		jSellOrders = new JAutoColumnTable(sellOrdersTableModel);
-		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel);
+		jSellTable = new JAutoColumnTable(sellOrdersTableModel);
+		jBuyTable = new JAutoColumnTable(buyOrdersTableModel);
 		//Table Selection
 		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersEventList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
-		jSellOrders.setSelectionModel(sellSelectionModel);
+		jSellTable.setSelectionModel(sellSelectionModel);
 		EventSelectionModel<MarketOrder> buySelectionModel = new EventSelectionModel<MarketOrder>(buyOrdersEventList);
 		buySelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
-		jBuyOrders.setSelectionModel(buySelectionModel);
+		jBuyTable.setSelectionModel(buySelectionModel);
 		//Listeners
-		installTableMenu(jSellOrders);
-		installTableMenu(jBuyOrders);
+		installTableMenu(jSellTable);
+		installTableMenu(jBuyTable);
 		//Sorters
-		TableComparatorChooser.install(jSellOrders, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, sellTableFormat);
-		TableComparatorChooser.install(jBuyOrders, buyOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, buyTableFormat);
+		TableComparatorChooser.install(jSellTable, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, sellTableFormat);
+		TableComparatorChooser.install(jBuyTable, buyOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, buyTableFormat);
 		//Labels
 		JLabel jCharactersLabel = new JLabel(TabsOrders.get().character());
 		JLabel jStateLabel = new JLabel(TabsOrders.get().state());
 		JLabel jSellLabel = new JLabel(TabsOrders.get().sell());
 		JLabel jBuyLabel = new JLabel(TabsOrders.get().buy());
 		//Scroll Panels
-		JScrollPane jSellOrdersScrollPanel = jSellOrders.getScrollPanel();
-		JScrollPane jBuyOrdersScrollPanel = jBuyOrders.getScrollPanel();
+		JScrollPane jSellTableScroll = new JScrollPane(jSellTable);
+		JScrollPane jBuyTableScroll = new JScrollPane(jBuyTable);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -146,9 +146,9 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 							.addComponent(jStateLabel)
 							.addComponent(jState, 200, 200, 200)
 						)
-						.addComponent(jSellOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
+						.addComponent(jSellTableScroll, 0, 0, Short.MAX_VALUE)
 					)
-					.addComponent(jBuyOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
+					.addComponent(jBuyTableScroll, 0, 0, Short.MAX_VALUE)
 				)
 		);
 		layout.setVerticalGroup(
@@ -161,11 +161,11 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jSellLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSellOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
+					.addComponent(jSellTableScroll, 0, 0, Short.MAX_VALUE)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jBuyLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBuyOrdersScrollPanel, 0, 0, Short.MAX_VALUE)
+					.addComponent(jBuyTableScroll, 0, 0, Short.MAX_VALUE)
 				)
 		);
 	}
@@ -202,11 +202,11 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSellSingleRow = (jSellOrders.getSelectedRows().length == 1);
-		boolean isBuySingleRow = (jBuyOrders.getSelectedRows().length == 1);
+		boolean isSellSingleRow = (jSellTable.getSelectedRows().length == 1);
+		boolean isBuySingleRow = (jBuyTable.getSelectedRows().length == 1);
 
-		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellOrders.getSelectedRow()): null;
-		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyOrders.getSelectedRow()) : null;
+		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellTable.getSelectedRow()): null;
+		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyTable.getSelectedRow()) : null;
 
 		jMenuItem = new JMenuItem(TabsOrders.get().sell1());
 		jMenuItem.setEnabled(false);
@@ -258,8 +258,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			jState.setEnabled(true);
-			jSellOrders.setEnabled(true);
-			jBuyOrders.setEnabled(true);
+			jSellTable.setEnabled(true);
+			jBuyTable.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
@@ -269,8 +269,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		} else {
 			jCharacters.setEnabled(false);
 			jState.setEnabled(false);
-			jSellOrders.setEnabled(false);
-			jBuyOrders.setEnabled(false);
+			jSellTable.setEnabled(false);
+			jBuyTable.setEnabled(false);
 			jCharacters.setModel( new DefaultComboBoxModel());
 			jCharacters.getModel().setSelectedItem(TabsOrders.get().no());
 			jState.setModel( new DefaultComboBoxModel());
