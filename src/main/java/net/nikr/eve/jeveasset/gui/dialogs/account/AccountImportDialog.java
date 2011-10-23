@@ -181,9 +181,6 @@ public class AccountImportDialog extends JDialogCentered {
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {}
 
 	public void show(Account editAccount) {

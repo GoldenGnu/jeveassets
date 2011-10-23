@@ -107,7 +107,6 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 	protected abstract JComponent getDefaultFocus();
 	protected abstract JButton getDefaultButton();
 	protected abstract void windowShown();
-	protected abstract void windowActivated(); //FIXME not used anywhere!
 	protected abstract void save();
 
 	public JDialog getDialog() {

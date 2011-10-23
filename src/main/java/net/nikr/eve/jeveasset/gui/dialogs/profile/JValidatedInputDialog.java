@@ -137,9 +137,6 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 	}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {}
 
 	@Override

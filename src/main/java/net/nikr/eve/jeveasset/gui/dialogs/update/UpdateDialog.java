@@ -318,11 +318,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	}
 
 	@Override
-	protected void windowActivated() {
-
-	}
-
-	@Override
 	protected void save() {
 
 	}

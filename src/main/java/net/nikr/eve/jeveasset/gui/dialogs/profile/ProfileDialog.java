@@ -211,9 +211,6 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {}
 
 	@Override

@@ -116,9 +116,6 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		String returnValue = (String) jName.getSelectedItem();
 		if (returnValue == null){

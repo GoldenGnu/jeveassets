@@ -351,9 +351,6 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener, 
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		List<HashMap<String, ? super Object>> data = new ArrayList<HashMap<String, ? super Object>>();
 

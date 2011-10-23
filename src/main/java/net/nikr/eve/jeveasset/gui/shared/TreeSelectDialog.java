@@ -201,9 +201,6 @@ public class TreeSelectDialog extends JDialogCentered {
 	protected void windowShown() {	}
 
 	@Override
-	protected void windowActivated() {	}
-
-	@Override
 	protected void save() {	}	
 	
 }

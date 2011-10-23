@@ -244,9 +244,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		boolean changed = false;
 		for (Account account : program.getSettings().getAccounts()){

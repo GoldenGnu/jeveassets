@@ -207,9 +207,6 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {}
 
 	@Override
