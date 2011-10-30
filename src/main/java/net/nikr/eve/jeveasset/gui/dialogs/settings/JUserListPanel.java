@@ -92,7 +92,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jHelp, 100, 100, 100) //FIXME got not height
+				.addComponent(jHelp, 100, 100, 100)
 		);
 	}
 
