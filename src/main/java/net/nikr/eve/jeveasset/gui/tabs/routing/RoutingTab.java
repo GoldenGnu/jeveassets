@@ -306,7 +306,7 @@ public class RoutingTab extends JMainTab  {
 		int count = 0;
 		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
-			SplashUpdater.setSubProgress((int)(count * 100 / settings.getJumps().size()));
+			SplashUpdater.setSubProgress((int)(count * 100.0 / settings.getJumps().size()));
 			SolarSystem f = null;
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {

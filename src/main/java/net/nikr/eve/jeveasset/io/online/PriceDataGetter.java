@@ -213,7 +213,7 @@ public class PriceDataGetter implements PricingListener {
 			nextUpdate = nextUpdateTemp;
 		}
 		if (updateTask != null) updateTask.setTaskProgress(ids.size(), priceDataList.size(), 0, 100);
-		if (!priceDataList.isEmpty() && !ids.isEmpty()) SplashUpdater.setSubProgress((int)(priceDataList.size() * 100 / ids.size()));
+		if (!priceDataList.isEmpty() && !ids.isEmpty()) SplashUpdater.setSubProgress((int)(priceDataList.size() * 100.0 / ids.size()));
 	}
 
 	private class EveAssetPricingOptions implements PricingOptions {

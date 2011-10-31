@@ -72,6 +72,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private JCheckBox jPiMaterial;
 	private JSeparatorTable jTable;
 	private EventTableModel<Material> materialTableModel;
+	private JScrollPane jTableScroll;
 
 	//Data
 	private EventList<Material> materialEventList;
@@ -115,7 +116,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		//Listeners
 		installTableMenu(jTable);
 		//Scroll Panels
-		JScrollPane jMaterialScrollPanel = jTable.getScrollPanel();
+		jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -125,7 +126,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jPiMaterial)
 				)
-				.addComponent(jMaterialScrollPanel, 0, 0, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -135,7 +136,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jMaterialScrollPanel, 0, 0, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
@@ -267,7 +268,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 		}
-		jTable.getScrollPanel().getViewport().setViewPosition(new Point(0,0));
+		jTableScroll.getViewport().setViewPosition(new Point(0,0));
 	}
 
 	@Override

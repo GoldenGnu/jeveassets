@@ -22,11 +22,13 @@
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import java.awt.CardLayout;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeListener;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -103,6 +105,8 @@ public class AccountImportDialog extends JDialogCentered {
 		this.apiManager = apiManager;
 		
 		donePanel = new DonePanel();
+		
+		this.getDialog().addWindowFocusListener(listener);
 
 		cardLayout = new CardLayout();
 		jContent = new JPanel(cardLayout);
@@ -155,6 +159,13 @@ public class AccountImportDialog extends JDialogCentered {
 	private String getVCode(){
 		return jVCode.getText();
 	}
+	private void focus(){
+		if (jKeyID.getText().isEmpty() && nTabIndex == 0){
+			jKeyID.requestFocusInWindow();
+		} else if (jVCode.getText().isEmpty() && nTabIndex == 0){
+			jVCode.requestFocusInWindow();
+		}
+	}
 
 	@Override
 	protected JComponent getDefaultFocus() {
@@ -168,15 +179,6 @@ public class AccountImportDialog extends JDialogCentered {
 
 	@Override
 	protected void windowShown() {}
-
-	@Override
-	protected void windowActivated() {
-		if (jKeyID.getText().isEmpty()){
-			jKeyID.requestFocusInWindow();
-		} else if (jVCode.getText().isEmpty()){
-			jVCode.requestFocusInWindow();
-		}
-	}
 
 	@Override
 	protected void save() {}
@@ -214,6 +216,7 @@ public class AccountImportDialog extends JDialogCentered {
 		jPrevious.setEnabled(false);
 		jNext.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().nextArrow());
+		focus();
 	}
 	
 	private void showValidateTab(){
@@ -266,7 +269,8 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
-	private class ListenerClass implements ActionListener, PropertyChangeListener, HyperlinkListener{
+	private class ListenerClass implements ActionListener, PropertyChangeListener, 
+											HyperlinkListener, WindowFocusListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -335,6 +339,14 @@ public class AccountImportDialog extends JDialogCentered {
 				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
+
+		@Override
+		public void windowGainedFocus(WindowEvent e) {
+			focus();
+		}
+
+		@Override
+		public void windowLostFocus(WindowEvent e) {}
 	}
 
 	private class InputPanel extends JCardPanel {

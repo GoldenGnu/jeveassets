@@ -151,7 +151,7 @@ public class OverviewTab extends JMainTab {
 		//Sorters
 		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Scroll Panels
-		JScrollPane jOverviewScrollPanel = jTable.getScrollPanel();
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -166,7 +166,7 @@ public class OverviewTab extends JMainTab {
 					.addComponent(jCharactersLabel)
 					.addComponent(jCharacters, 100, 100, 200)
 				)
-				.addComponent(jOverviewScrollPanel, 400, 400, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 400, 400, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -181,7 +181,7 @@ public class OverviewTab extends JMainTab {
 					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jOverviewScrollPanel, 100, 400, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
 

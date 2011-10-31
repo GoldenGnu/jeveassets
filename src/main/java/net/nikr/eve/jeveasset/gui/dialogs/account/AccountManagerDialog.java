@@ -39,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -96,6 +97,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
+		JScrollPane jTableScroll = new JScrollPane(jTable);
+		
 		selectionModel = new EventSelectionModel<Human>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
@@ -147,7 +150,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-					.addComponent(jTable.getScrollPanel(), 700, 700, Short.MAX_VALUE)
+					.addComponent(jTableScroll, 700, 700, Short.MAX_VALUE)
 					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -166,7 +169,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jTable.getScrollPanel(), 300, 300, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 300, 300, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				
 		);
@@ -192,7 +195,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
-		if (eventList.size() > 1){
+		if (!eventList.isEmpty()){
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -239,9 +242,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			accountImportDialog.show();
 		}
 	}
-
-	@Override
-	protected void windowActivated() {}
 
 	@Override
 	protected void save() {

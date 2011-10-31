@@ -250,9 +250,6 @@ public class FiltersManagerDialog extends JDialogCentered {
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		this.setVisible(false);
 	}

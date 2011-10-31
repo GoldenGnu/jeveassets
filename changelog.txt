@@ -16,6 +16,15 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.8.1__________________________________________________________________________
+
+Bug Fixes:
+-Now compatible Java 7 (and Java 6)
+-Materials, Ship Loadouts, and Account Management now use less CPU
+-Meta column is now filtered correct (again)
+-Settings.bac is now restored automatically (again)
+
+________________________________________________________________________________
 _1.8.0__________________________________________________________________________
 
 New Features:

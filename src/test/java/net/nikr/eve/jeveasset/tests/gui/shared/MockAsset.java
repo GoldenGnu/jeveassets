@@ -67,10 +67,8 @@ public class MockAsset extends FakeAsset {
 	public void setPriceReprocessed(double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
 	}
-	
-	
-	
-	
-	
-	
+
+	public void setMeta(String meta) {
+		this.meta = meta;
+	}
 }

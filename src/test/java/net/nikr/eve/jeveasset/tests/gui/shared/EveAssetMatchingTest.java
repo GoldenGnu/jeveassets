@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.tests.gui.shared;
 
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.AssetFilter.Mode;
 import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 import org.junit.After;
@@ -59,7 +58,7 @@ public class EveAssetMatchingTest {
 	@Test
 	public void testMatches() {
 		System.out.println("matches");
-		Asset eveAsset = new MockAsset(0.0025f, "0.5", "1 (Tech I)", 100.0);
+		MockAsset eveAsset = new MockAsset(0.0025f, "0.5", "1 (Tech I)", 100.0);
 		EveAssetMatching instance = new EveAssetMatching();
 		
 		assertEquals(true,  instance.matches(eveAsset, "Volume", Mode.MODE_CONTAIN, "5", null));
@@ -146,7 +145,7 @@ public class EveAssetMatchingTest {
 		assertEquals(false, instance.matches(eveAsset, "Reprocessed", Mode.MODE_LESS_THAN_COLUMN, "", "Security"));
 		
 		
-		Asset securityAsset = new MockAsset(0.0025f, "0.0", "1 (Tech I)", 100.0);
+		MockAsset securityAsset = new MockAsset(0.0025f, "0.0", "1 (Tech I)", 100.0);
 		assertEquals(true,  instance.matches(securityAsset, "Security", Mode.MODE_CONTAIN, "0", null));
 		assertEquals(true,  instance.matches(securityAsset, "Security", Mode.MODE_CONTAIN, ".0", null));
 		assertEquals(true,  instance.matches(securityAsset, "Security", Mode.MODE_CONTAIN, "0.0", null));
@@ -292,6 +291,19 @@ public class EveAssetMatchingTest {
 		assertEquals(true,  instance.matches(eveAsset, "Reprocessed", Mode.MODE_LESS_THAN_COLUMN, "", "Meta"));
 		eveAsset.setPriceReprocessed(1);
 		assertEquals(false, instance.matches(eveAsset, "Reprocessed", Mode.MODE_LESS_THAN_COLUMN, "", "Meta"));
+		eveAsset.setMeta("");
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_CONTAIN, "0", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_CONTAIN, "1", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_EQUALS, "0", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_EQUALS, "1", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_CONTAIN_NOT, "1", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_CONTAIN_NOT, "0", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_EQUALS_NOT, "1", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_EQUALS_NOT, "0", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_LESS_THAN, "1", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_LESS_THAN, "0", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_GREATER_THAN, "-1", null));
+		assertEquals(true, instance.matches(eveAsset, "Meta", Mode.MODE_GREATER_THAN, "-1,000.9", null));
+		assertEquals(false, instance.matches(eveAsset, "Meta", Mode.MODE_GREATER_THAN, "0", null));
 	}
-
 }

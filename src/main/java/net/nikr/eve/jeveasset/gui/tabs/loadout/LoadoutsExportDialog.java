@@ -138,9 +138,6 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		loadoutsDialog.export();
 	}

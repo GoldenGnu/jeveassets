@@ -27,6 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
+import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
+import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -39,30 +42,26 @@ import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author Candle
  */
-public class Update {
+public class Update extends AbstractXmlReader{
 	private static final Logger LOG = LoggerFactory.getLogger(Update.class);
 
-	int getVersion(File xml) throws DocumentException {
-		SAXReader xmlReader = new SAXReader();
-		Document doc = xmlReader.read(xml);
-
-		XPath xpathSelector = DocumentHelper.createXPath("/settings");
-		List results = xpathSelector.selectNodes(doc);
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
-			Element element = (Element) iter.next();
-			Attribute attr = element.attribute("version");
-			if (attr == null) {
-				return 1;
+	int getVersion(String filename) throws XmlException, IOException {
+		org.w3c.dom.Element element = getDocumentElement(filename);
+		if (element.getNodeName().equals("settings")) {
+			if (AttributeGetters.haveAttribute((Node)element, "version")){
+				return AttributeGetters.getInt((Node)element, "version");
 			} else {
-				return Integer.parseInt(attr.getText());
+				return 1;
 			}
+		} else {
+			throw new XmlException("Wrong root element name.");
 		}
-		return 1;
 	}
 
 	void setVersion(File xml, int newVersion) throws DocumentException {
@@ -107,15 +106,17 @@ public class Update {
 			return;
 		}
 		try {
-			int currentVersion = getVersion(xml);
+			int currentVersion = getVersion(Settings.getPathSettings());
 			if (requiredVersion > currentVersion) {
-				LOG.info("Data files are out of date, updating.");
-					Update1To2 update = new Update1To2();
-					update.performUpdate();
+				LOG.info("settings.xml are out of date, updating.");
+				Update1To2 update = new Update1To2();
+				update.performUpdate();
 				setVersion(new File(Settings.getPathSettings()), requiredVersion);
-				}
-		} catch (DocumentException ex) {
-			LOG.error("", ex);
+			} else {
+				LOG.info("settings.xml are up to date.");
+			}
+		} catch (Exception ex) {
+			LOG.error("Failed to update settings", ex);
 			throw new RuntimeException(ex);
 		}
 	}

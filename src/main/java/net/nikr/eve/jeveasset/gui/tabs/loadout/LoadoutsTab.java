@@ -160,7 +160,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		//Listeners
 		installTableMenu(jTable);
 		//Scroll Panels
-		JScrollPane jModuleScrollPanel = jTable.getScrollPanel();
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -176,7 +176,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					.addComponent(jExport, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jExportAll, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10, Program.BUTTONS_WIDTH+10)
 				)
-				.addComponent(jModuleScrollPanel, 0, 0, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -192,7 +192,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExportAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jModuleScrollPanel, 0, 0, Short.MAX_VALUE)
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 

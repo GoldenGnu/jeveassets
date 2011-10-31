@@ -52,10 +52,10 @@ public class EveAssetMatching {
 		boolean isNumericComparison = mode.equals(AssetFilter.Mode.MODE_GREATER_THAN) || mode.equals(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN) || mode.equals(AssetFilter.Mode.MODE_LESS_THAN_COLUMN);
 		
 		//Compare columns - Set filterValue to column value
-		if (columnMatch != null) filterValue = getString(eveAsset, columnMatch);
+		if (columnMatch != null) filterValue = getString(eveAsset, columnMatch, isNumericComparison);
 		
 		//If a column is meta and is numeric comparison - get meta number
-		if (isNumericComparison && (column.equals("Meta") || (columnMatch != null && columnMatch.equals("Meta")))){
+		if (isNumericComparison && columnMatch == null && column.equals("Meta")){
 			filterValue = getMetaNumber(filterValue);
 		}
 		
@@ -66,12 +66,9 @@ public class EveAssetMatching {
 		if (filterNumber != null) filterValue = Formater.compareFormat(filterNumber);
 		
 		//Get column value
-		String columnValue = getString(eveAsset, column);
+		String columnValue = getString(eveAsset, column, isNumericComparison);
 
 		if (isNumericComparison){
-			//If meta column - get meta number
-			if ((column.equals("Meta"))) columnValue = getMetaNumber(columnValue);
-			
 			//Column number
 			final Double columnNumber = getNumber(columnValue);
 			
@@ -116,7 +113,7 @@ public class EveAssetMatching {
 			
 	}
 
-	private String getString(Asset eveAsset, String column){
+	private String getString(Asset eveAsset, String column, boolean isNumericComparison){
 		if (column.equals("All")){
 			return "\r\n"
 						+ eveAsset.getCategory() + "\r\n"
@@ -153,7 +150,15 @@ public class EveAssetMatching {
 		if (column.equals("Container")) return eveAsset.getContainer();
 		if (column.equals("Flag")) return eveAsset.getFlag();
 		if (column.equals("Price")) return Formater.compareFormat(eveAsset.getPrice());
-		if (column.equals("Meta")) return eveAsset.getMeta();
+		if (column.equals("Meta")){
+			if (eveAsset.getMeta().isEmpty()){
+				return "0";
+			} else if (isNumericComparison){
+				return getMetaNumber(eveAsset.getMeta());
+			} else {
+				return eveAsset.getMeta();
+			}
+		}
 		if (column.equals("ID")) return Formater.compareFormat(eveAsset.getItemID());
 		if (column.equals("Sell Min")) return Formater.compareFormat(eveAsset.getPriceSellMin());
 		if (column.equals("Buy Max")) return Formater.compareFormat(eveAsset.getPriceBuyMax());
@@ -180,7 +185,7 @@ public class EveAssetMatching {
 	}
 	
 	private String getMetaNumber(String meta){
-		Pattern p = Pattern.compile("\\d+");
+		Pattern p = Pattern.compile("[\\+-\\.,\\d]+");
 		Matcher m = p.matcher(meta);
 		if (m.find()){
 			return meta.substring(m.start(), m.end());

@@ -27,6 +27,7 @@ import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class JDialogCentered implements WindowListener {
+public abstract class JDialogCentered implements WindowListener, WindowFocusListener {
 
 	private final static Logger LOG = LoggerFactory.getLogger(JDialogCentered.class);
 
@@ -62,6 +63,7 @@ public abstract class JDialogCentered implements WindowListener {
 	
 	private JDialog dialog;
 	private boolean firstActivating = false;
+	private boolean firstFocus = false;
 
 	/**
 	 *
@@ -86,6 +88,7 @@ public abstract class JDialogCentered implements WindowListener {
 		dialog.setTitle(title);
 		dialog.setResizable(false);
 		dialog.addWindowListener(this);
+		dialog.addWindowFocusListener(this);
 		if (image != null) dialog.setIconImage(image);
 		
 		jPanel = new JPanel();
@@ -104,7 +107,6 @@ public abstract class JDialogCentered implements WindowListener {
 	protected abstract JComponent getDefaultFocus();
 	protected abstract JButton getDefaultButton();
 	protected abstract void windowShown();
-	protected abstract void windowActivated();
 	protected abstract void save();
 
 	public JDialog getDialog() {
@@ -127,6 +129,7 @@ public abstract class JDialogCentered implements WindowListener {
 			dialog.setLocationRelativeTo(parent);
 
 			firstActivating = true;
+			firstFocus = true;
 		} else {
 			LOG.info("Hiding: {} Dialog", dialog.getTitle());
 		}
@@ -175,20 +178,30 @@ public abstract class JDialogCentered implements WindowListener {
 
 	@Override
 	public void windowActivated(WindowEvent e) {
+		if (firstActivating){
+			firstActivating = false;
+			windowShown();
+		}
+	}
+	
+	@Override
+	public void windowGainedFocus(WindowEvent e){
+		//We can not change focus before dialog have focus...
 		JComponent defaultFocus = this.getDefaultFocus();
 		if (defaultFocus == null){
 			LOG.warn("No default focus for: {}", dialog.getTitle());
 			return;
 		}
-		if (firstActivating){
-			firstActivating = false;
+		if (firstFocus){
+			firstFocus = false;
 			if (defaultFocus.isEnabled()){
-				defaultFocus.requestFocus();
+				defaultFocus.requestFocusInWindow();
 			}
-			windowShown();
 		}
-		windowActivated();
 	}
+	
+	@Override
+	public void windowLostFocus(WindowEvent e){}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {}

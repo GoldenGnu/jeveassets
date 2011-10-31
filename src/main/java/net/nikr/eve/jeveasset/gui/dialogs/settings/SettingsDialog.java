@@ -181,9 +181,6 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	protected void windowShown() {}
 
 	@Override
-	protected void windowActivated() {}
-
-	@Override
 	protected void save() {
 		boolean update = false;
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()){

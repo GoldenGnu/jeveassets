@@ -93,7 +93,10 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 			this.separator = (SeparatorList.Separator<?>)value;
 			jExpand.setIcon(separator.getLimit() == 0 ? Images.MISC_EXPANDED.getIcon() : Images.MISC_COLLAPSED.getIcon());
 			configure(separator);
-			jTable.setRowHeight(row, jPanel.getPreferredSize().height);
+			//Only do once - or we'll keep repainting
+			if (jTable.getRowHeight(row) != jPanel.getPreferredSize().height){
+				jTable.setRowHeight(row, jPanel.getPreferredSize().height);
+			}
 		}
 		
 	}
