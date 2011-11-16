@@ -29,13 +29,9 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class JMenuLookup extends JMenuTool implements ActionListener{
-
-	private final static Logger LOG = LoggerFactory.getLogger(JMenuLookup.class);
 
 	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";
 	private static final String ACTION_BROWSE_EVE_MARKETDATA= "ACTION_BROWSE_EVE_MARKETDATA";

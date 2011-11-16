@@ -29,10 +29,7 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-/**
- *
- * @author Niklas
- */
+
 public class PaddingTableCellRenderer implements TableCellRenderer {
 
 	/*

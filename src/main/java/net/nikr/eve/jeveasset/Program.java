@@ -46,9 +46,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu;
@@ -68,6 +66,7 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -114,6 +113,7 @@ public class Program implements ActionListener, Listener<Asset>{
 	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
+	private StockpileTab stockpileTab;
 
 	//Settings Panels
 	private GeneralSettingsPanel generalSettingsPanel;
@@ -192,65 +192,68 @@ public class Program implements ActionListener, Listener<Asset>{
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
 		SplashUpdater.setProgress(72);
+		LOG.info("Loading: Stockpile Tab");
+		stockpileTab = new StockpileTab(this);
+		SplashUpdater.setProgress(74);
 	//Dialogs
 		LOG.info("Loading: Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
-		SplashUpdater.setProgress(74);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: Filters Manager Dialog");
 		filtersManagerDialog = new FiltersManagerDialog(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(80);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(82);
 		LOG.info("Loading: Csv Export Dialog");
 		csvExportDialog = new CsvExportDialog(this);
-		SplashUpdater.setProgress(82);
+		SplashUpdater.setProgress(84);
 		LOG.info("Loading: Profiles Dialog");
 		profileDialog = new ProfileDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(86);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		SplashUpdater.setProgress(86);
+		SplashUpdater.setProgress(88);
 	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(87);
+		SplashUpdater.setProgress(89);
 		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(88);
+		SplashUpdater.setProgress(90);
 		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
 		LOG.info("Loading: Assets Tool Settings Panel");
 		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(89);
+		SplashUpdater.setProgress(91);
 		LOG.info("Loading: Overview Tool Settings Panel");
 		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(90);
+		SplashUpdater.setProgress(92);
 		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(93);
 		LOG.info("Loading: Assets Name Settings Panel");
 		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(92);
+		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(95);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(96);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(97);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(96);
+		SplashUpdater.setProgress(98);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
-		SplashUpdater.setProgress(98);
+		SplashUpdater.setProgress(99);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -356,10 +359,20 @@ public class Program implements ActionListener, Listener<Asset>{
 	public StatusPanel getStatusPanel(){
 		return this.getMainWindow().getStatusPanel();
 	}
+	public UserNameSettingsPanel getUserNameSettingsPanel() {
+		return userNameSettingsPanel;
+	}
+
+	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
+		return userPriceSettingsPanel;
+	}
+	public StockpileTab getStockpileTool() {
+		return stockpileTab;
+	}
+	
 	public EventList<Asset> getEveAssetEventList() {
 		return eveAssetEventList;
 	}
-
 	public static boolean onMac() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
@@ -459,6 +472,9 @@ public class Program implements ActionListener, Listener<Asset>{
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
 			mainWindow.addTab(routingTab);
 		}
+		if (MainMenu.ACTION_OPEN_STOCKPILE.equals(e.getActionCommand())) {
+			mainWindow.addTab(stockpileTab);
+		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
 			accountManagerDialog.setVisible(true);
@@ -468,14 +484,6 @@ public class Program implements ActionListener, Listener<Asset>{
 		}
 		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
 			showSettings();
-		}
-		if (AssetsTab.ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
-			Asset eveAsset = this.getAssetsTab().getSelectedAsset();
-			userPriceSettingsPanel.edit(new UserPrice(eveAsset));
-		}
-		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
-			Asset eveAsset = this.getAssetsTab().getSelectedAsset();
-			userNameSettingsPanel.edit(new UserName(eveAsset));
 		}
 	//Others
 		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {

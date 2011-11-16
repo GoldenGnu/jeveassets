@@ -49,12 +49,13 @@ import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
 
-	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
+	// TODO enum - more string enum pattern, to be converted to an enum
 	private final static String ACTION_ADD = "ACTION_ADD";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -88,7 +89,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		eventList = new BasicEventList<Human>();
 
 		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
-		HumanTableFormat humanTableFormat = new HumanTableFormat();
+		EnumTableFormatAdaptor<HumanTableFormat, Human> humanTableFormat = new EnumTableFormatAdaptor<HumanTableFormat, Human>(HumanTableFormat.class);
 		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
 		jTable = new JSeparatorTable(tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
@@ -223,6 +224,9 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					human.setShowAssets(check);
 				}
 			}
+		}
+		for (int row = 0; row < jTable.getRowCount(); row++){
+			tableModel.fireTableCellUpdated(row, 0);
 		}
 	}
 

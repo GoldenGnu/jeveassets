@@ -106,6 +106,7 @@ public enum Images {
 	TOOL_ROUTING ("tool_routing.png"),
 	TOOL_MATERIALS ("tool_materials.png"),
 	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),
+	TOOL_STOCKPILE ("tool_stockpile.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

@@ -27,10 +27,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 
-/**
- *
- * @author Niklas
- */
+
 public class Updatable {
 
 	private boolean updatable;

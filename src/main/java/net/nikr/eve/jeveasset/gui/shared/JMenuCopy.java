@@ -33,10 +33,7 @@ import javax.swing.JTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-/**
- *
- * @author Niklas
- */
+
 public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwner {
 
 	private static final String ACTION_COPY = "ACTION_COPY";

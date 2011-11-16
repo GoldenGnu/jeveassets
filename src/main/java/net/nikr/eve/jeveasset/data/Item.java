@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Item {
+public class Item implements Comparable<Item> {
 
 	private int typeID; //TypeID : int
 	private String name;
@@ -36,9 +36,10 @@ public class Item {
 	private String meta;
 	private boolean marketGroup;
 	private boolean piMaterial;
-	private List<ReprocessedMaterial> reprocessedMaterials;
+	private int portion;
+	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 
-	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial) {
+	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial, int portion) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -48,7 +49,7 @@ public class Item {
 		this.meta = meta;
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
-		reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+		this.portion = portion;
 	}
 
 	public void addReprocessedMaterial(ReprocessedMaterial material){
@@ -90,15 +91,44 @@ public class Item {
 	public float getVolume() {
 		return volume;
 	}
+	
+	public boolean isPiMaterial() {
+		return piMaterial;
+	}
+
+	public int getPortion() {
+		return portion;
+	}
 
 	@Override
 	public String toString(){
 		return name;
 	}
 
-	public boolean isPiMaterial() {
-		return piMaterial;
+	@Override
+	public int compareTo(Item o) {
+		return this.getName().compareTo(o.getName());
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Item other = (Item) obj;
+		if (this.typeID != other.typeID) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 17 * hash + this.typeID;
+		return hash;
+	}	
 }

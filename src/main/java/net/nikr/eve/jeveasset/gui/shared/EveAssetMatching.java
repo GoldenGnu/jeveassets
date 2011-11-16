@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class EveAssetMatching {
 	private static final Logger LOG = LoggerFactory.getLogger(EveAssetMatching.class);
 
-	//TODO when finishing i18n enable this to use localized input
+	//TODO i18n Use localized input
 	//public static final Locale LOCALE = Locale.getDefault();
 	
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN

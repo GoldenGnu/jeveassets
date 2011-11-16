@@ -25,11 +25,11 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-enum MarketTableFormat implements TableColumn<MarketOrder> {
+enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -134,5 +134,11 @@ enum MarketTableFormat implements TableColumn<MarketOrder> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	@Override public boolean isColumnEditable(Object baseObject) {
+		return false;
+	}
+	@Override public MarketOrder setColumnValue(Object baseObject, Object editedValue) {
+		return null;
 	}
 }

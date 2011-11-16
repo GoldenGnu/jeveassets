@@ -23,10 +23,7 @@ package net.nikr.eve.jeveasset.data;
 
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
-/**
- *
- * @author Niklas
- */
+
 public class ISK{
 
 	double isk;

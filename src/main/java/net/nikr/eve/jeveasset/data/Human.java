@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class Human {
+public class Human implements Comparable<Human> {
 	private String name;
 	private long characterID;
 	private boolean showAssets;
@@ -200,6 +200,16 @@ public class Human {
 		hash = 89 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
 		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
+	}
+	
+	@Override
+	public int compareTo(Human o) {
+		return this.getName().compareTo(o.getName());
+	}
+	
+	@Override
+	public String toString(){
+		return getName();
 	}
 
 	public static ApiAuthorization getApiAuthorization(Account account){

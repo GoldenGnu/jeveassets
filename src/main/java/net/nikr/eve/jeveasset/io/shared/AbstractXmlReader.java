@@ -55,10 +55,8 @@ public abstract class AbstractXmlReader {
 			return doc.getDocumentElement();
 		} catch (SAXException ex) {
 			if (is != null) is.close(); //Close file - so we can delete it...
-			if (!usingBackupFile){
-				if (restoreBackupFile(filename)){
-					return getDocumentElement(filename, true);
-				}
+			if (!usingBackupFile && restoreBackupFile(filename)){
+				return getDocumentElement(filename, true);
 			}
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
@@ -77,11 +75,9 @@ public abstract class AbstractXmlReader {
 			LOG.warn("No backup file found: {}", backup);
 			return false;
 		}
-		if (inputFile.exists() ){
-			if (!inputFile.delete()){
-				LOG.warn("Was not able to delete buggy inputfile: {}", filename);
-				return false;
-			}
+		if (inputFile.exists() && !inputFile.delete()){
+			LOG.warn("Was not able to delete buggy inputfile: {}", filename);
+			return false;
 		}
 		if (backupFile.renameTo(inputFile)){
 			LOG.warn("Backup file restored: {}", backup);

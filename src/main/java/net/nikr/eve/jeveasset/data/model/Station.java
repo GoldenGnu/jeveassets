@@ -21,12 +21,7 @@
 
 package net.nikr.eve.jeveasset.data.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Station extends GalacticObject {
-
-	private final static Logger LOG = LoggerFactory.getLogger(Station.class);
 
 	private SolarSystem system;
 

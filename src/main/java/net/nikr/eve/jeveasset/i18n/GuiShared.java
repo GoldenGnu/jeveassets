@@ -40,6 +40,7 @@ public abstract class GuiShared extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addStockpileItem();
 	public abstract String autoText();
 	public abstract String autoWindow();
 	public abstract String chruker();
@@ -48,6 +49,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String cut();
 	public abstract String disable();
 	public abstract String dotlan();
+	public abstract String editItem();
+	public abstract String editName();
+	public abstract String editPrice();
 	public abstract String emptyString();
 	public abstract String eveCentral();
 	public abstract String eveMarketdata();
@@ -55,12 +59,14 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveOnline();
 	public abstract String item();
 	public abstract String lookup();
+	public abstract String newStockpile();
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();
 	public abstract String region();
 	public abstract String reset();
 	public abstract String station();
+	public abstract String stockpile();
 	public abstract String system();
 	public abstract String today(Object arg0); 
 	public abstract String weekdayAndTime(Date datetime);

@@ -42,12 +42,8 @@ import net.nikr.eve.jeveasset.data.model.SolarSystem;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.data.model.Region;
 import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddSystemController {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AddSystemController.class);
 
 	private Galaxy model;
 	private TreeSelectDialog view;

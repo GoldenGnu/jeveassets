@@ -25,6 +25,8 @@ import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -45,6 +47,8 @@ import java.util.TimeZone;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
@@ -57,6 +61,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +104,12 @@ public class Settings{
 	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>(); //LocationID : long
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
-	private Map<Integer, PriceData> priceData; //TypeID : int
+	private Map<Integer, PriceData> priceDatas; //TypeID : int
 	private final Map<Integer, PriceData> priceFactionData = new HashMap<Integer, PriceData>(); //TypeID : int
 	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
+	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
 	private List<Account> accounts;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
@@ -131,7 +137,7 @@ public class Settings{
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
-		priceData = new HashMap<Integer, PriceData>();
+		priceDatas = new HashMap<Integer, PriceData>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new ArrayList<Account>();
 		profiles = new ArrayList<Profile>();
@@ -365,8 +371,6 @@ public class Settings{
 	private void updateAssetLists(){
 		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
 			eventListAssets = new ArrayList<Asset>();
-			//XXX Not all orders and jobs are added to uniqueIds
-			//Only the one that are assets AKA no buy orders and completed jobs
 			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 			List<String> ownersOrders = new ArrayList<String>();
@@ -391,6 +395,30 @@ public class Settings{
 						addAssets(human.getAssets(), human.isShowAssets());
 						if (human.isShowAssets()) ownersAssets.add(human.getName());
 					}
+					//Add StockpileItems to uniqueIds
+					for (Stockpile stockpile: this.getStockpiles()){
+						for (StockpileItem item : stockpile.getItems()){
+							boolean marketGroup = ApiIdConverter.marketGroup(item.getTypeID(), this.getItems());
+							if (marketGroup && !uniqueIds.contains(item.getTypeID())){
+								uniqueIds.add(item.getTypeID());
+							}
+						}
+					}
+					//Add MarketOrders to uniqueIds
+					for (ApiMarketOrder order : human.getMarketOrders()){
+						boolean marketGroup = ApiIdConverter.marketGroup(order.getTypeID(), this.getItems());
+						if (marketGroup && !uniqueIds.contains(order.getTypeID())){
+							uniqueIds.add(order.getTypeID());
+						}
+					}
+					//Add IndustryJobs to uniqueIds
+					for (ApiIndustryJob job : human.getIndustryJobs()){
+						boolean marketGroup = ApiIdConverter.marketGroup(job.getInstalledItemTypeID(), this.getItems());
+						if (marketGroup && !uniqueIds.contains(job.getInstalledItemTypeID())){
+							uniqueIds.add(job.getInstalledItemTypeID());
+						}
+					}
+					
 				}
 			}
 		}
@@ -424,8 +452,8 @@ public class Settings{
 				eveAsset.setContainer(sContainer);
 
 				//Price data
-				if (eveAsset.isMarketGroup() && priceData.containsKey(eveAsset.getTypeID()) && !priceData.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
-					eveAsset.setPriceData(priceData.get(eveAsset.getTypeID()));
+				if (eveAsset.isMarketGroup() && priceDatas.containsKey(eveAsset.getTypeID()) && !priceDatas.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
+					eveAsset.setPriceData(priceDatas.get(eveAsset.getTypeID()));
 				} else if (priceFactionData.containsKey(eveAsset.getTypeID()) && (getPriceDataSettings().getFactionPrice() == PriceDataSettings.FactionPrice.PRICES_C0RPORATION)){ //Faction Price
 					eveAsset.setPriceData(priceFactionData.get(eveAsset.getTypeID()));
 				} else { //No Price :(
@@ -441,13 +469,13 @@ public class Settings{
 					for (ReprocessedMaterial material : reprocessedMaterials){
 						//Calculate reprocessed price
 						portionSize = material.getPortionSize();
-						if (priceData.containsKey(material.getTypeID())){
-							PriceData priceDatum = priceData.get(material.getTypeID());
+						if (priceDatas.containsKey(material.getTypeID())){
+							PriceData priceData = priceDatas.get(material.getTypeID());
 							double price = 0;
 							if (userPrices.containsKey(material.getTypeID())){
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
-								price = Asset.getDefaultPrice(priceDatum);
+								price = Asset.getDefaultPrice(priceData);
 							}
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
@@ -493,6 +521,37 @@ public class Settings{
 			addAssets(eveAsset.getAssets(), shouldShow);
 		}
 	}
+	
+	public double getPrice(int typeID, boolean isBlueprintCopy){
+		UserItem<Integer,Double> userPrice = null;
+		if (isBlueprintCopy) { //Blueprint Copy
+			userPrice = userPrices.get(-typeID);
+		} else { //All other
+			userPrice = userPrices.get(typeID);
+		}
+		if (userPrice != null) return userPrice.getValue();
+		//Price data
+		PriceData priceData = null;
+		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()){ //Market Price
+			priceData = priceDatas.get(typeID);
+		} else if (priceFactionData.containsKey(typeID) && (getPriceDataSettings().getFactionPrice() == PriceDataSettings.FactionPrice.PRICES_C0RPORATION)){ //Faction Price
+			priceData = priceFactionData.get(typeID);
+		}
+		return Asset.getDefaultPrice(priceData);
+	}
+	
+	public float getVolume(int typeID, boolean packaged) {
+		Item item = getItems().get(typeID);
+		if (item != null){
+			if (packaged && packagedVolume.containsKey(item.getGroup())){
+				return packagedVolume.get(item.getGroup());
+			} else {
+				return item.getVolume();
+			}
+		}
+		return 0;
+	}
+	
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}
@@ -528,16 +587,12 @@ public class Settings{
 		this.accounts = accounts;
 	}
 
-	public Map<Integer, PriceData> getPriceData() {
-		return priceData;
-	}
-
 	public Map<Integer, PriceData> getPriceFactionData() {
 		return priceFactionData;
 	}
 
 	public void setPriceData(Map<Integer, PriceData> priceData) {
-		this.priceData = priceData;
+		this.priceDatas = priceData;
 	}
 
 	public Map<String, List<AssetFilter>> getAssetFilters() {
@@ -676,6 +731,13 @@ public class Settings{
 		return conquerableStations;
 	}
 
+	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+		this.conquerableStations = conquerableStations;
+		for (ApiStation station : conquerableStations.values()){
+			ApiIdConverter.addLocation(station, getLocations());
+		}
+	}
+
 	public Map<Integer, ItemFlag> getItemFlags() {
 		return itemFlags;
 	}
@@ -738,10 +800,9 @@ public class Settings{
 	public void setReprocessColors(boolean updateDev) {
 		flags.put(FLAG_REPROCESS_COLORS, updateDev);
 	}
-
-
-
-
+	public List<Stockpile> getStockpiles() {
+		return stockpiles;
+	}
 	//Window
 	public Point getWindowLocation() {
 		return windowLocation;
@@ -830,10 +891,6 @@ public class Settings{
 		File userDir = new File(System.getProperty("user.home", "."));
 		return userDir.getAbsolutePath()+File.separator;
 	}
-
-	private static String getLocalFile(String filename){
-    return getLocalFile(filename, true);
-  }
 
   /**
    *

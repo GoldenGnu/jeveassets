@@ -38,6 +38,7 @@ public class Material implements Comparable<Material>{
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
+	private double price;
 
 	public Material(String name, String location, String group, Asset eveAsset) {
 		this.name = name;
@@ -50,6 +51,7 @@ public class Material implements Comparable<Material>{
 			this.station = eveAsset.getLocation();
 			this.system = eveAsset.getSystem();
 			this.region = eveAsset.getRegion();
+			this.price = eveAsset.getPrice();
 		} else {
 			this.typeName = "";
 			this.marketGroup = false;
@@ -57,6 +59,7 @@ public class Material implements Comparable<Material>{
 			this.station = null;
 			this.system = null;
 			this.region = null;
+			this.price = 0;
 		}
 		
 	}
@@ -113,6 +116,10 @@ public class Material implements Comparable<Material>{
 	public void first(){
 		first = true;
 	}
+	
+	public double getPrice() {
+		return price;
+	}
 
 	public double getValue() {
 		return Formater.round(value, 2);
@@ -160,6 +167,4 @@ public class Material implements Comparable<Material>{
 	public int compareTo(Material o) {
 		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
-
-	
 }

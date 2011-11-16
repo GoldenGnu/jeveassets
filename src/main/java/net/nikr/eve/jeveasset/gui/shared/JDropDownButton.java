@@ -133,6 +133,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	private void showPopupMenu(){
+		if (!this.isEnabled()) return;
 		int verticalPosition = this.getHeight();
 		int horizontalPosition = 0;
 		Dimension popupMenuSize = jPopupMenu.getPreferredSize();

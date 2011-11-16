@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.data.Overview;
@@ -84,7 +83,7 @@ class JOverviewTable extends JAutoColumnTable{
 		if (eventTableModel.getRowCount() >= row){
 			Overview overview = (Overview) eventTableModel.getElementAt(row);
 			if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
 				} else {
@@ -93,7 +92,7 @@ class JOverviewTable extends JAutoColumnTable{
 				return c;
 			}
 			if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
 				} else {
@@ -102,7 +101,7 @@ class JOverviewTable extends JAutoColumnTable{
 				return c;
 			}
 			if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
 				if (!isSelected){
 					c.setBackground( new Color(200,255,200) );
 				} else {
@@ -118,9 +117,7 @@ class JOverviewTable extends JAutoColumnTable{
 		return super.prepareRenderer(renderer, row, column);
 	}
 
-	private Component getMatchingTableCellRendererComponent(JTable table, Object value,
-					boolean isSelected, boolean hasFocus,
-					int row, int column){
+	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){
 		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 		if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 		if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);

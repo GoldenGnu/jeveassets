@@ -25,11 +25,11 @@ package net.nikr.eve.jeveasset.gui.tabs.overview;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Overview;
-import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
-enum OverviewTableFormat implements TableColumn<Overview> {
+enum OverviewTableFormat implements EnumTableColumn<Overview> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -135,5 +135,11 @@ enum OverviewTableFormat implements TableColumn<Overview> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	@Override public boolean isColumnEditable(Object baseObject) {
+		return false;
+	}
+	@Override public Overview setColumnValue(Object baseObject, Object editedValue) {
+		return null;
 	}
 }

@@ -37,10 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 
-/**
- *
- * @author Niklas
- */
+
 public abstract class JMainTab{
 
 	private String title;

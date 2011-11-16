@@ -25,6 +25,7 @@ import java.awt.Toolkit;
 import java.util.regex.Pattern;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.PlainDocument;
 
 
@@ -36,9 +37,14 @@ public class DocumentFactory {
 	public static WordPlainDocument getWordPlainDocument(){
 		return new WordPlainDocument();
 	}
-
 	public static DoublePlainDocument getDoublePlainDocument(){
 		return new DoublePlainDocument();
+	}
+	public static MaxLengthPlainDocument getMaxLengthPlainDocument(int maxLength){
+		return new MaxLengthPlainDocument(maxLength);
+	}
+	public static MaxLengthStyledDocument getMaxLengthStyledDocument(int maxLength){
+		return new MaxLengthStyledDocument(maxLength);
 	}
 
 	public static class IntegerPlainDocument extends PlainDocument {
@@ -117,6 +123,51 @@ public class DocumentFactory {
 			} else {
 				Toolkit.getDefaultToolkit().beep();
 			}
+		}
+	}
+	
+	public static class MaxLengthPlainDocument extends PlainDocument{
+
+		private int maxLength;
+
+		public MaxLengthPlainDocument(int maxLength) {
+			this.maxLength = maxLength;
+		}
+
+		@Override
+		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+			int length = getLength();
+			if (string == null) {
+				return;
+			}
+			if (length+string.length() > maxLength){
+				Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+			super.insertString(offset, string, attributes);
+		}
+
+	}
+
+	public static class MaxLengthStyledDocument extends DefaultStyledDocument{
+
+		private int maxLength;
+
+		public MaxLengthStyledDocument(int maxLength) {
+			this.maxLength = maxLength;
+		}
+
+		@Override
+		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+			int length = getLength();
+			if (string == null) {
+				return;
+			}
+			if (length+string.length() > maxLength){
+				Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+			super.insertString(offset, string, attributes);
 		}
 	}
 

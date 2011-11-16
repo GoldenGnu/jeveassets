@@ -25,11 +25,11 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
+enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	//XXX Removed extra id columns from IndustryJobTableFormat (Industry Plot Releated?)
 	/*
 	JOB_ID(String.class, GlazedLists.comparableComparator()) {
@@ -190,5 +190,11 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	@Override public boolean isColumnEditable(Object baseObject) {
+		return false;
+	}
+	@Override public IndustryJob setColumnValue(Object baseObject, Object editedValue) {
+		return null;
 	}
 }

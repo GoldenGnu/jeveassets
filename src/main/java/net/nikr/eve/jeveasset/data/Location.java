@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public class Location {
+public class Location implements Comparable<Location> {
 	private long locationID; //LocationID : long
 	private String name;
 	private long regionID; //LocationID : long
@@ -51,6 +51,16 @@ public class Location {
 
 	public String getSecurity() {
 		return security;
+	}
+	
+	public boolean isRegion(){
+		return regionID == locationID && locationID > 0;
+	}
+	public boolean isSystem(){
+		return systemID == locationID && locationID > 0;
+	}
+	public boolean isStation(){
+		return !isSystem() && !isRegion() && locationID > 0;
 	}
 
 	@Override
@@ -86,5 +96,10 @@ public class Location {
 		hash = 71 * hash + (int) (this.locationID ^ (this.locationID >>> 32));
 		hash = 71 * hash + (int) (this.systemID ^ (this.systemID >>> 32));
 		return hash;
+	}
+
+	@Override
+	public int compareTo(Location o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

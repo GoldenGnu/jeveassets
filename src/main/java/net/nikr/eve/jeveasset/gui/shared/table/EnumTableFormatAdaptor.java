@@ -28,15 +28,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Candle
  */
-public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
-	private static final Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
+public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
 
 	List<T> shownColumns;
 	List<T> orderColumns;
@@ -117,8 +114,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 
 
 	//Used by the JSeparatorTable
-	@Override public boolean isEditable(Q baseObject, int column) { return false; }
-	@Override public Q setColumnValue(Q baseObject, Object editedValue, int column) { return null; }
+	@Override public boolean isEditable(Q baseObject, int i) {
+		return getColumn(i).isColumnEditable(baseObject);
+	}
+	@Override public Q setColumnValue(Q baseObject, Object editedValue, int i) {
+		return getColumn(i).setColumnValue(baseObject, editedValue);
+	}
 
 	class ColumnComparator implements Comparator<T>{
 

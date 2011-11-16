@@ -24,10 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Module;
 
-/**
- *
- * @author Niklas
- */
+
 public class ModuleSeparatorComparator implements Comparator<Module> {
 
 	@Override

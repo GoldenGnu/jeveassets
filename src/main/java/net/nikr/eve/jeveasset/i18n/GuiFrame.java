@@ -62,6 +62,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String readme();
 	public abstract String routing();
 	public abstract String ship();
+	public abstract String stockpile();
 	public abstract String table();
 	public abstract String tools();
 	public abstract String updatable();

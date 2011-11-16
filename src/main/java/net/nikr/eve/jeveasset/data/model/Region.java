@@ -22,16 +22,11 @@ package net.nikr.eve.jeveasset.data.model;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Region extends GalacticObject {
-
-	private final static Logger LOG = LoggerFactory.getLogger(Region.class);
 
 	Set<SolarSystem> systems;
 

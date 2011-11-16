@@ -53,7 +53,9 @@ import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
@@ -162,7 +164,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All"); //TODO Not translated
+			characters.add(0, "All"); //TODO i18n translation missing
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {
@@ -205,7 +207,9 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			addSeparator(jComponent);
 		}
 		jComponent.add(new JMenuAssetFilter(program, material));
+		jComponent.add(new JMenuStockpile(program, material));
 		jComponent.add(new JMenuLookup(program, material));
+		jComponent.add(new JMenuEditItem(program, material));
 	}
 
 

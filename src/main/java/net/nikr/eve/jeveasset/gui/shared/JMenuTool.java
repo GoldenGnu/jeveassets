@@ -29,12 +29,15 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public abstract class JMenuTool extends JMenu {
 	protected Program program;
 	protected int typeId;
+	protected double price;
 	protected String typeName;
 	protected String station;
 	protected String system;
@@ -48,36 +51,42 @@ public abstract class JMenuTool extends JMenu {
 
 	private boolean init(Program program, Object object){
 		if (object == null){
-			return init(program, false, GuiShared.get().emptyString(), 0, null, null, null);
+			return init(program, false, GuiShared.get().emptyString(), 0, null, null, null, -1);
 		}
 		if (object instanceof Material){
 			Material material = (Material) object;
-			return init(program, material.isMarketGroup(), material.getTypeName(), material.getTypeID(), material.getStation(), material.getSystem(), material.getRegion());
+			return init(program, material.isMarketGroup(), material.getTypeName(), material.getTypeID(), material.getStation(), material.getSystem(), material.getRegion(), material.getPrice());
 		}
 		if (object instanceof Module){
 			Module module = (Module) object;
-			return init(program, module.isMarketGroup(), module.getTypeName(), module.getTypeID(), module.getLocation(), module.getSystem(), module.getRegion());
+			return init(program, module.isMarketGroup(), module.getTypeName(), module.getTypeID(), module.getLocation(), module.getSystem(), module.getRegion(), module.getPrice());
 		}
 		if (object instanceof MarketOrder){
 			MarketOrder marketOrder = (MarketOrder) object;
-			return init(program, true, marketOrder.getName(), marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion());
+			//FIXME can not edit price from Orders Tool
+			return init(program, true, marketOrder.getName(), marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion(), -1);
 		}
 		if (object instanceof IndustryJob){
 			IndustryJob industryJob = (IndustryJob) object;
-			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion());
+			//FIXME can not edit price from Jobs Tool
+			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion(), -1);
 		}
 		if (object instanceof Asset){
 			Asset eveAsset = (Asset) object;
-			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeID(), eveAsset.getLocation(), eveAsset.getSystem(), eveAsset.getRegion());
+			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeID(), eveAsset.getLocation(), eveAsset.getSystem(), eveAsset.getRegion(), eveAsset.getPrice());
 		}
 		if (object instanceof Overview){
 			Overview overview = (Overview) object;
-			return init(program, false, null, 0, overview.isStation() && !overview.isGroup() ? overview.getName() : null, !overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, !overview.isGroup() ? overview.getRegion() : null);
+			return init(program, false, null, 0, overview.isStation() && !overview.isGroup() ? overview.getName() : null, !overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, !overview.isGroup() ? overview.getRegion() : null, -1);
 		}
-		return init(program, false, GuiShared.get().emptyString(), 0, null, null, null);
+		if (object instanceof StockpileItem){
+			StockpileItem item = (StockpileItem) object;
+			return init(program, item.isMarketGroup(), (object instanceof StockpileTotal) ? GuiShared.get().emptyString() : item.getName(), item.getTypeID(), item.getStockpile().getLocation(), item.getStockpile().getSystem(), item.getStockpile().getRegion(), item.getPrice());
+		}
+		return init(program, false, GuiShared.get().emptyString(), 0, null, null, null, -1);
 	}
 
-	private boolean init(Program program, boolean isMarketGroup, String typeName, int typeId, String station, String system, String region){
+	private boolean init(Program program, boolean isMarketGroup, String typeName, int typeId, String station, String system, String region, double price){
 		this.program = program;
 		this.isMarketGroup = isMarketGroup;
 		this.typeName = typeName;
@@ -90,6 +99,7 @@ public abstract class JMenuTool extends JMenu {
 		}
 		this.system = system;
 		this.region = region;
+		this.price = price;
 		return true;
 	}
 }

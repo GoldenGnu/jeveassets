@@ -56,7 +56,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 
 		for (int a = 0; a < eveassets.size(); a++){
 			if (noSetupName) setupName = eveassets.get(a).getName();
-			writeFitting(xmldoc, eveassets.get(a), setupName, description, filename);
+			writeFitting(xmldoc, eveassets.get(a), setupName, description);
 		}
 		try {
 			//writeXmlFile(xmldoc, filename, "UTF-8");
@@ -66,7 +66,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private static void writeFitting(Document xmldoc, Asset eveAsset, String setupName, String description, String filename) {
+	private static void writeFitting(Document xmldoc, Asset eveAsset, String setupName, String description) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);

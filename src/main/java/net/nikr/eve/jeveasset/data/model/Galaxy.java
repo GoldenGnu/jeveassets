@@ -29,12 +29,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Galaxy {
-
-	private final static Logger LOG = LoggerFactory.getLogger(Galaxy.class);
 
 	private Set<Region> regions;
 

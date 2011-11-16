@@ -23,13 +23,9 @@ package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import javax.management.timer.Timer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
-
-	private final static Logger LOG = LoggerFactory.getLogger(MarketOrder.class);
 
 	private String name;
 	private String location;

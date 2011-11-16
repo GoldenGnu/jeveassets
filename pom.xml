@@ -38,7 +38,7 @@
 	<licenses>
 		<license>
 			<name>GNU General Public License 2.0</name>
-			<url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+			<url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</url>
 		</license>
 	</licenses>
 	<scm>
@@ -131,6 +131,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -267,5 +272,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.sourceVersion>1.6</project.build.sourceVersion>
+		<targetJdk>1.6</targetJdk>
 	</properties>
 </project>

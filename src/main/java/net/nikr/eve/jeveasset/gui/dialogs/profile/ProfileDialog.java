@@ -48,13 +48,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener, PropertyChangeListener {
-
-	private final static Logger LOG = LoggerFactory.getLogger(ProfileDialog.class);
 
 	private final static String ACTION_NEW_PROFILE = "ACTION_NEW_PROFILE";
 	private final static String ACTION_LOAD_PROFILE = "ACTION_LOAD_PROFILE";

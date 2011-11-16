@@ -40,30 +40,8 @@ public class ApiIdConverter {
 		return itemFlag.getFlagName();
 	}
 
-	public static boolean locationTest(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
-		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
-			} else {
-				locationID = locationID - 6000000;
-			}
-		}
-
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				return true;
-			}
-		}
-
-		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
+	public static boolean locationTest(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
 		if (location != null) {
 			return true;
 		}
@@ -73,11 +51,8 @@ public class ApiIdConverter {
 		}
 		return false;
 	}
-
-	public static String locationName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
+	
+	private static Location location(long locationID, Map<Long, Location> locations) {
 		//Offices
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
@@ -87,19 +62,12 @@ public class ApiIdConverter {
 			}
 		}
 
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				return location.getName() + " - " + apiStation.getStationName();
-			} else {
-				return apiStation.getStationName();
-			}
-		}
-
 		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
+		return locations.get(locationID);
+	}
+
+	public static String locationName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
 		if (location != null) {
 			return location.getName();
 		}
@@ -110,33 +78,8 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String regionName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
-		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
-			} else {
-				locationID = locationID - 6000000;
-			}
-		}
-
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				location = locations.get(location.getRegionID());
-				if (location != null) {
-					return location.getName();
-				}
-			}
-		}
-
-		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
+	public static String regionName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
 		if (location != null) {
 			location = locations.get(location.getRegionID());
 			if (location != null) {
@@ -149,30 +92,8 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
-		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
-			} else {
-				locationID = locationID - 6000000;
-			}
-		}
-
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				return location.getSecurity();
-			}
-		}
-
-		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
+	public static String security(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
 		if (location != null) {
 			return location.getSecurity();
 		}
@@ -183,63 +104,8 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static long systemID(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
-		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
-			} else {
-				locationID = locationID - 6000000;
-			}
-		}
-
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				return location.getSystemID();
-			}
-		}
-
-		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
-		if (location != null) {
-			return location.getSystemID();
-		}
-		if (parentAsset != null) {
-			return parentAsset.getSolarSystemID();
-		}
-		return -1;
-	}
-
-	public static String systemName(long locationID, Asset parentAsset, Map<Long, ApiStation> conquerableStations, Map<Long, Location> locations) {
-		Location location = null;
-		ApiStation apiStation = null;
-
-		//Offices
-		if (locationID >= 66000000) {
-			if (locationID < 66014933) {
-				locationID = locationID - 6000001;
-			} else {
-				locationID = locationID - 6000000;
-			}
-		}
-
-		//Conquerable Stations
-		apiStation = conquerableStations.get(locationID);
-		if (apiStation != null) {
-			location = locations.get(apiStation.getSolarSystemID());
-			if (location != null) {
-				return location.getName();
-			}
-		}
-
-		//locations.xml (staStations && mapDenormalize)
-		location = locations.get(locationID);
+	public static String systemName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
 		if (location != null) {
 			location = locations.get(location.getSystemID());
 			if (location != null) {
@@ -250,6 +116,16 @@ public class ApiIdConverter {
 			return parentAsset.getSystem();
 		}
 		return "Error !" + String.valueOf(locationID);
+	}
+	public static long systemID(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
+		if (location != null) {
+			return location.getSystemID();
+		}
+		if (parentAsset != null) {
+			return parentAsset.getSolarSystemID();
+		}
+		return -locationID;
 	}
 
 	public static float volume(int typeID, Map<Integer, Item> items) {
@@ -324,5 +200,12 @@ public class ApiIdConverter {
 			parents.add(parentEveAsset);
 		}
 		return parents;
+	}
+	
+	public static void addLocation(ApiStation station, Map<Long, Location> locations){
+		long regionID = ApiIdConverter.location(station.getSolarSystemID(), locations).getRegionID();
+		String security = ApiIdConverter.security(station.getSolarSystemID(), null, locations);
+		Location location = new Location(station.getStationID(), station.getStationName(), regionID, security, station.getSolarSystemID());
+		locations.put(location.getLocationID(), location);
 	}
 }

@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public class ItemFlag {
+public class ItemFlag implements Comparable<ItemFlag> {
 	private int flagID;
 	private String flagName;
 	private String flagText;
@@ -43,5 +43,15 @@ public class ItemFlag {
 
 	public String getFlagText() {
 		return flagText;
+	}
+	
+	@Override
+	public String toString(){
+		return getFlagName();
+	}
+
+	@Override
+	public int compareTo(ItemFlag o) {
+		return this.getFlagName().compareTo(o.getFlagName());
 	}
 }

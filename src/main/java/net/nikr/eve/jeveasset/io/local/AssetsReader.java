@@ -345,12 +345,12 @@ public class AssetsReader extends AbstractXmlReader {
 		String meta = ApiIdConverter.meta(typeID, settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
+		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
+		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getLocations());
 		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
-		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
-		long solarSystemId = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getConquerableStations(), settings.getLocations());
+		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
+		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 		return new Asset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}

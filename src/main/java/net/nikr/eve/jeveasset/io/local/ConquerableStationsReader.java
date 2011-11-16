@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -41,7 +42,9 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 	public static boolean load(Settings settings){
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
-			parseConquerableStations(element, settings.getConquerableStations());
+			Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
+			parseConquerableStations(element, conquerableStations);
+			settings.setConquerableStations(conquerableStations);
 		} catch (IOException ex) {
 			LOG.info("Conquerable stations not loaded");
 			return false;
@@ -65,7 +68,6 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 			Element currentNode = (Element) filterNodes.item(a);
 			ApiStation station = parseStation(currentNode);
 			conquerableStations.put(station.getStationID(), station);
-			
 		}
 	}
 	private static ApiStation parseStation(Element element){

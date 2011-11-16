@@ -175,7 +175,7 @@ public class TaskDialog {
 			updateTask.execute();
 		} else {
 			program.updateEventList();
-			//XXX save settings after updating (if we crash later)
+			//Save settings after updating (if we crash later)
 			program.saveSettings();
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);

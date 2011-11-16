@@ -56,6 +56,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -190,6 +191,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			//FILTER & LOOKUP
 			MarketOrder marketOrder = isSingleRow ? (MarketOrder) tableModel.getElementAt(jTable.getSelectedRow()): null;
 			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
+			jTablePopupMenu.add(new JMenuStockpile(program, marketOrder));
 			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
 		}
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -213,6 +215,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		jComponent.add(jMenuItem);
 
 		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
+		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
 		jComponent.add(new JMenuLookup(program, sellMarketOrder));
 
 		addSeparator(jComponent);
@@ -222,6 +225,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 		jComponent.add(jMenuItem);
 
 		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
+		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
 		jComponent.add(new JMenuLookup(program, buyMarketOrder));
 	}
 

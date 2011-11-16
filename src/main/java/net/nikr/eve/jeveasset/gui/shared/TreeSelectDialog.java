@@ -33,13 +33,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TreeSelectDialog extends JDialogCentered {
-
-	//Logger
-	private static final Logger LOG = LoggerFactory.getLogger(TreeSelectDialog.class);
 
 	//Form components
 	private JDialog dialog;

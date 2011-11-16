@@ -57,7 +57,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -288,7 +290,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 		jComponent.add(new JMenuAssetFilter(program, module));
+		jComponent.add(new JMenuStockpile(program, module));
 		jComponent.add(new JMenuLookup(program, module));
+		jComponent.add(new JMenuEditItem(program, module));
 	}
 
 	private void updateTable(){
@@ -355,7 +359,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All"); //TODO Not translated
+			characters.add(0, "All"); //TODO i18n translation missing
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

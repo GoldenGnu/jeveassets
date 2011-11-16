@@ -69,6 +69,7 @@ public class LocationsReader extends AbstractXmlReader {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		int region = AttributeGetters.getInt(node, "region");
+		if (region == 0) region = id;
 		String security = AttributeGetters.getString(node, "security");
 		int system = AttributeGetters.getInt(node, "solarsystem");
 		return new Location(id, name, region, security, system);

@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
@@ -120,7 +119,7 @@ public class JAssetTable extends JColumnTable {
 			
 			//Reproccessing Colors
 			if (program.getSettings().isReprocessColors() && !isSelected){
-				Component c = getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
 				if (eveAsset.getPriceReprocessed() > eveAsset.getPrice()){ //Reprocessed highest
 					if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()){
 						c.setBackground( new Color(255,160,160) );
@@ -153,7 +152,7 @@ public class JAssetTable extends JColumnTable {
 
 			//Selected row highlighting
 			if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
-				Component c = getMatchingTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+				Component c = getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
 				c.setBackground( new Color(220,240,255) );
 				return c;
 			}
@@ -162,10 +161,7 @@ public class JAssetTable extends JColumnTable {
 		return super.prepareRenderer(renderer, row, column);
 	}
 
-	private Component getMatchingTableCellRendererComponent(JTable table, Object value,
-					    boolean isSelected, boolean hasFocus,
-					    int row, int column){
-
+	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){
 		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 		if (getColumnClass(column).equals(Integer.class)) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
 		if (getColumnClass(column).equals(Float.class)) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);

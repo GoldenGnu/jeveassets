@@ -36,6 +36,8 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -58,7 +60,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
 
-		writePriceFactionData(xmldoc, settings.getPriceFactionData());
+		writeStockpiles(xmldoc, settings.getStockpiles());
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -72,12 +74,39 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUpdates(xmldoc, settings);
 		writeFilters(xmldoc, settings.getAssetFilters());
 		writeCsv(xmldoc, settings.getCsvSettings());
+		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
 			writeXmlFile(xmldoc, Settings.getPathSettings());
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved "+ex.getMessage(), ex);
 		}
 		LOG.info("Settings saved");
+	}
+	
+	private static void writeStockpiles(Document xmldoc, List<Stockpile> stockpiles) {
+		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Stockpile strockpile : stockpiles){
+			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
+			strockpileNode.setAttributeNS(null, "name", strockpile.getName());
+			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getCharacterID()));
+			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
+			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
+			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocationID()));
+			strockpileNode.setAttributeNS(null, "inventory", String.valueOf(strockpile.isInventory()));
+			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
+			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
+			strockpileNode.setAttributeNS(null, "jobs", String.valueOf(strockpile.isJobs()));
+			for (StockpileItem item : strockpile.getItems()){
+				if (item.getTypeID() > 0){ //Ignore Total
+					Element itemNode = xmldoc.createElementNS(null, "item");
+					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getTypeID()));
+					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
+					strockpileNode.appendChild(itemNode);
+				}
+			}
+			parentNode.appendChild(strockpileNode);
+		}
 	}
 
 	private static void writePriceFactionData(Document xmldoc, Map<Integer, PriceData> priceFactionData){

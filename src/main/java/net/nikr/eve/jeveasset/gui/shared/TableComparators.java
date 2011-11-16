@@ -54,7 +54,7 @@ public class TableComparators {
 				try {
 					return Integer.valueOf(s);
 				} catch (NumberFormatException ex){
-				
+					return 0;
 				}
 			}
 			return 0;

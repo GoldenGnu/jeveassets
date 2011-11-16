@@ -93,10 +93,6 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 			this.separator = (SeparatorList.Separator<?>)value;
 			jExpand.setIcon(separator.getLimit() == 0 ? Images.MISC_EXPANDED.getIcon() : Images.MISC_COLLAPSED.getIcon());
 			configure(separator);
-			//Only do once - or we'll keep repainting
-			if (jTable.getRowHeight(row) != jPanel.getPreferredSize().height){
-				jTable.setRowHeight(row, jPanel.getPreferredSize().height);
-			}
 		}
 		
 	}
@@ -111,13 +107,6 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 			separatorList.getReadWriteLock().writeLock().unlock();
 		}
 		if (expand) scrollToRow(row+separator.size());
-		//Workaround
-		for (int a = 0; a < jTable.getRowCount(); a++){
-			if (!(jTable.getValueAt(a, 0) instanceof SeparatorList.Separator<?>)
-							&& jTable.getRowHeight() != jTable.getRowHeight(a)){
-				jTable.setRowHeight(a, jTable.getRowHeight());
-			}
-		}
 	}
 
 	private void scrollToRow(int row) {

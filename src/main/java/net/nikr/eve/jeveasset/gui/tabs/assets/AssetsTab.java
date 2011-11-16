@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -52,19 +51,14 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
-public class AssetsTab extends JMainTab
-		implements ActionListener, JColumnTable.ColumnTableListener {
-	
-	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
+public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.ColumnTableListener {
 
-	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
-	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";
@@ -113,7 +107,7 @@ public class AssetsTab extends JMainTab
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//install the sorting/filtering
-		TableComparatorChooser<Asset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
 		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -279,7 +273,6 @@ public class AssetsTab extends JMainTab
 		jComponent.setEnabled(true);
 
 		JMenuItem  jMenuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
 	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
@@ -380,27 +373,14 @@ public class AssetsTab extends JMainTab
 		}
 		jSubMenu.add(jMenuItem);
 
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
+
 	//LOOKUP
 		jComponent.add(new JMenuLookup(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 
 	//EDIT
-		jSubMenu = new JMenu(TabsAssets.get().edit());
-		jSubMenu.setIcon(Images.EDIT_EDIT.getIcon());
-		jComponent.add(jSubMenu);
-
-		jMenuItem = new JMenuItem(TabsAssets.get().price());
-		jMenuItem.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
-		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
-		jMenuItem.addActionListener(program);
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(TabsAssets.get().name());
-		jMenuItem.setIcon(Images.SETTINGS_USER_NAME.getIcon());
-		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
-		jMenuItem.addActionListener(program);
-		jSubMenu.add(jMenuItem);
+		jComponent.add(new JMenuEditItem(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 
 	//INFO
 		if (jComponent instanceof JPopupMenu){

@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -197,6 +198,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 		jComponent.add(new JMenuAssetFilter(program, industryJob));
+		jComponent.add(new JMenuStockpile(program, industryJob));
 		jComponent.add(new JMenuLookup(program, industryJob));
 	}
 	@Override

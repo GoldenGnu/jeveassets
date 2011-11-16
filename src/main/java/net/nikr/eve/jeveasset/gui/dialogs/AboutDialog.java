@@ -40,13 +40,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
-
-	private final static Logger LOG = LoggerFactory.getLogger(AboutDialog.class);
 
 	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private final static String ACTION_UPDATE = "ACTION_UPDATE";

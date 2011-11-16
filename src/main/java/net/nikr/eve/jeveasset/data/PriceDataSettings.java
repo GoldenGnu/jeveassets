@@ -385,7 +385,7 @@ public class PriceDataSettings {
 		if (source.equals(SOURCE_EVE_MARKETDATA)){
 			regionType = REGIONS_EVE_MARKETDATA[getRegion()];
 		}
-		// TODO (Candle, 2010-09-13) move all these numbers into the regiontype enum above.
+		// TODO enum - more string enum pattern, to be converted to an enum
 		if (regionType.equals(RegionType.REGION_EMPIRE)){
 		//Amarr
 			regions.add(10000054l); //Amarr: Aridia
