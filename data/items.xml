@@ -28,6 +28,7 @@
     </row>
     <row category="Celestial" group="Cargo Container" id="23" marketgroup="false" meta="" name="Cargo Container" pi="false" portion="1" price="0" volume="27500.0"/>
     <row category="Celestial" group="Biomass" id="25" marketgroup="false" meta="" name="Corpse" pi="false" portion="1" price="0" volume="2.0"/>
+    <row category="Station" group="Station Services" id="27" marketgroup="false" meta="" name="Office" pi="false" portion="1" price="0" volume="1.0"/>
     <row category="Material" group="Money" id="29" marketgroup="false" meta="" name="Credits" pi="false" portion="57344" price="57344" volume="0.0"/>
     <row category="Material" group="Mineral" id="34" marketgroup="true" meta="" name="Tritanium" pi="false" portion="1" price="2" volume="0.01"/>
     <row category="Material" group="Mineral" id="35" marketgroup="true" meta="" name="Pyerite" pi="false" portion="1" price="8" volume="0.01"/>
