@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -161,15 +162,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				String source = (String) jSource.getSelectedItem();
 				if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
 					jRegions.setSelectedIndex(program.getSettings().getPriceDataSettings().getRegion());
+					jPriceType.setModel(new DefaultComboBoxModel(Asset.getPriceTypes().toArray()));
 					jPriceType.setSelectedItem(Asset.getPriceType());
 					jRegions.setEnabled(true);
-					jPriceType.setEnabled(true);
 				}
 				if (source.equals(PriceDataSettings.SOURCE_EVE_MARKETDATA)){
 					jRegions.getModel().setSelectedItem("Not Configurable");
-					jPriceType.getModel().setSelectedItem("Not Configurable");
+					jPriceType.setModel(new DefaultComboBoxModel(Asset.getEveMarketdataPriceTypes().toArray()));
+					jPriceType.setSelectedItem(Asset.PriceMode.PRICE_MIDPOINT);
+					jPriceType.setSelectedItem(Asset.getPriceType());
 					jRegions.setEnabled(false);
-					jPriceType.setEnabled(false);
 				}
 			}
 		}

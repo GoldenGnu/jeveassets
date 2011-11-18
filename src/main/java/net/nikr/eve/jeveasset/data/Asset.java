@@ -298,6 +298,9 @@ public class Asset implements Comparable<Asset> {
 	public static List<PriceMode> getPriceTypes(){
 		return Arrays.asList(PriceMode.values());
 	}
+	public static List<PriceMode> getEveMarketdataPriceTypes(){
+		return Arrays.asList(PriceMode.PRICE_BUY_MAX, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_SELL_MIN);
+	}
 	
 	public int getRawQuantity() {
 		return rawQuantity;
