@@ -246,6 +246,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			stockpile.reset();
 			if (!stockpile.isEmpty()){
 				for (StockpileItem item : stockpile.getItems()){
+					if (item instanceof Stockpile.StockpileTotal) continue;
 					int typeID = item.getTypeID();
 					double price = program.getSettings().getPrice(typeID, false);
 					float volume = program.getSettings().getVolume(typeID, true);

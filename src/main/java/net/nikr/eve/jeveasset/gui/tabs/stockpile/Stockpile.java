@@ -96,15 +96,7 @@ public class Stockpile {
 	}
 	
 	public boolean isEmpty(){
-		if (items.size() > 1){
-			return false;
-		} else {
-			if (items.contains(totalItem)){
-				return true;
-			} else {
-				return false;
-			}
-		}
+		return (items.size() <= 1);
 	}
 	
 	public void add(StockpileItem item){
@@ -274,9 +266,10 @@ public class Stockpile {
 			if (asset != null && itemFlag != null && characterID != null && regionID != null //better save then sorry
 					&& typeID == asset.getTypeID()
 					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
-					&& (stockpile.getContainer().equals(asset.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
+					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
-					&& (stockpile.getLocationID() == asset.getLocationID()
+					&& ((stockpile.getLocation() != null
+					&& stockpile.getLocation().equals(asset.getLocation())) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
 					|| stockpile.getLocationID() == regionID
 					|| stockpile.getLocationID() < 0)
@@ -314,7 +307,7 @@ public class Stockpile {
 					&& industryJob.getActivityID() == 1 //Manufacturing
 					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					){
-					jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
+				jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
 			}
 		}
 
@@ -530,7 +523,11 @@ public class Stockpile {
 
 		@Override
 		public double getPrice() {
-			return totalPrice / totalPriceCount;
+			if (totalPriceCount <= 0 || totalPrice <= 0){
+				return 0;
+			} else {
+				return totalPrice / totalPriceCount;
+			}
 		}
 
 		@Override
