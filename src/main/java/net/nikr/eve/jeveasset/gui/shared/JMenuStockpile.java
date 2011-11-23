@@ -59,6 +59,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		for (Stockpile stockpile : program.getSettings().getStockpiles()){
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
+			jMenuItem.setEnabled(typeId != 0);
 			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
