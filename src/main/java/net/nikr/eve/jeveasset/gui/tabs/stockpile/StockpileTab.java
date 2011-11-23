@@ -43,6 +43,8 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -65,7 +67,7 @@ import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.JStockpileMenuItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -76,6 +78,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private final static String ACTION_ADD = "ACTION_ADD";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
+	private final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
+	private final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 	
 	private JButton jAdd;
 	private JSeparatorTable jTable;
@@ -209,6 +213,28 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 		jComponent.add(new JMenuAssetFilter(program, obj));
+		
+		JMenu jMenu;
+		JMenuItem jMenuItem;
+		
+		jMenu = new JMenu(TabsStockpile.get().stockpile());
+		jMenu.setIcon(Images.TOOL_STOCKPILE.getIcon());
+		jComponent.add(jMenu);
+		
+		if (obj instanceof StockpileItem){
+			StockpileItem item = (StockpileItem) obj;
+			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), item);
+			jMenuItem.setActionCommand(ACTION_EDIT_ITEM);
+			jMenuItem.addActionListener(this);
+			jMenu.add(jMenuItem);
+
+			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), item);
+			jMenuItem.setActionCommand(ACTION_DELETE_ITEM);
+			jMenuItem.addActionListener(this);
+			jMenu.add(jMenuItem);
+		}
+		
+		
 		jComponent.add(new JMenuLookup(program, obj));
 		jComponent.add(new JMenuEditItem(program, obj));
 	}
@@ -403,7 +429,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				updateData();
 			}
 		}
-		if (StockpileSeparatorTableCell.ACTION_EDIT_ITEM.equals(e.getActionCommand())){
+		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())){
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem){
 				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
@@ -412,7 +438,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				updateData();
 			}
 		}
-		if (StockpileSeparatorTableCell.ACTION_DELETE_ITEM.equals(e.getActionCommand())){
+		if (ACTION_DELETE_ITEM.equals(e.getActionCommand())){
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem){
 				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
@@ -432,4 +458,21 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			return o1.getSeperator().compareTo(o2.getSeperator());
 		}
 	}
+	
+	public static class JStockpileMenuItem extends JMenuItem{
+
+		private StockpileItem item;
+		
+		public JStockpileMenuItem(String title, StockpileItem item) {
+			super(title);
+			if (item instanceof StockpileTotal){
+				this.setEnabled(false);
+			}
+			this.item = item;
+		}
+
+		public StockpileItem getItem() {
+			return item;
+		}
+	} 
 }
