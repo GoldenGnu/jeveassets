@@ -91,6 +91,7 @@ public class Settings{
 	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
 	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
 	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
+	private final static String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 
 	public final static String COLUMN_SETTINGS_ASSETS = "COLUMN_SETTINGS_ASSETS";
 
@@ -155,6 +156,7 @@ public class Settings{
 		flags.put(FLAG_UPDATE_DEV, false);
 		flags.put(FLAG_REPROCESS_COLORS, false);
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
+		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
 
 		packagedVolume.put("Assault Ship", 2500f);
 		packagedVolume.put("Battlecruiser", 15000f);
@@ -797,8 +799,14 @@ public class Settings{
 	public boolean isReprocessColors() {
 		return flags.get(FLAG_REPROCESS_COLORS);
 	}
-	public void setReprocessColors(boolean updateDev) {
-		flags.put(FLAG_REPROCESS_COLORS, updateDev);
+	public void setReprocessColors(boolean reprocessColors) {
+		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
+	}
+	public boolean isStockpileFocusTab() {
+		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
+	}
+	public void setStockpileFocusTab(boolean stockpileFocusOnAdd) {
+		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;

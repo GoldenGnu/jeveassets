@@ -55,6 +55,10 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
 	public abstract String ignoreAuditLogContainers();
+	
+	// used in StockpileToolSettingsPanel
+	public abstract String stockpile();
+	public abstract String stockpileSwitchTab();
 
 	// used in PriceDataSettingsPanel
 	public abstract String priceData();
