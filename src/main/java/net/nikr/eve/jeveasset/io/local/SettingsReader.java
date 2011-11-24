@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.AssetFilter;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -244,7 +245,9 @@ public class SettingsReader extends AbstractXmlReader {
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
 				if (typeID > 0){ //Ignore Total
-					StockpileItem item = new StockpileItem(stockpile, settings.getItems().get(typeID).getName(), typeID, countMinimum);
+					String itemName = ApiIdConverter.typeName(typeID, settings.getItems());
+					String itemGroup = ApiIdConverter.group(typeID, settings.getItems());
+					StockpileItem item = new StockpileItem(stockpile, itemName, itemGroup, typeID, countMinimum);
 					stockpile.add(item);
 				}
 				

@@ -45,8 +45,8 @@ public class Stockpile {
 	private boolean sellOrders;
 	private boolean buyOrders;
 	private boolean jobs;
-	private List<StockpileItem> items = new ArrayList<StockpileItem>();
-	private StockpileTotal totalItem = new StockpileTotal(this, TabsStockpile.get().totalStockpile());
+	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
+	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private boolean expanded = true;
 
 	private Stockpile(Stockpile stockpile) {
@@ -74,8 +74,6 @@ public class Stockpile {
 		this.jobs = jobs;
 		items.add(totalItem);
 	}
-
-	
 	
 	final void update(Stockpile stockpile) {
 		this.name = stockpile.getName();
@@ -101,10 +99,8 @@ public class Stockpile {
 	}
 	
 	public void add(StockpileItem item){
-		items.remove(totalItem);
 		items.add(item);
 		Collections.sort(items);
-		items.add(totalItem);
 	}
 	
 	public void remove(StockpileItem item) {
@@ -222,32 +218,41 @@ public class Stockpile {
 	}
 	
 	public static class StockpileItem implements Comparable<StockpileItem> {
+		//Constructor
 		private Stockpile stockpile;
 		private String name;
+		private String group;
 		private int typeID;
 		private long countMinimum;
-		
+
+		//Updated values
 		private boolean marketGroup;
+		private double price = 0.0;
+		private double volume = 0.0f;
+		
+		//Updated counts
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
 		private long jobsCountNow = 0;
-		private double price = 0.0;
-		private double volume = 0.0f;
+		
 		
 		public StockpileItem(Stockpile stockpile, StockpileItem stockpileItem) {
-			this.stockpile = stockpile;
-			this.name = stockpileItem.getName();
-			this.typeID = stockpileItem.getTypeID();
-			this.countMinimum = stockpileItem.getCountMinimum();
+			this(	stockpile,
+					stockpileItem.getName(),
+					stockpileItem.getGroup(),
+					stockpileItem.getTypeID(),
+					stockpileItem.getCountMinimum()
+					);
 		}
 
-		public StockpileItem(Stockpile stockpile, String name, int typeID, String countMinimum) {
-			this(stockpile, name, typeID, Long.valueOf(countMinimum));
+		public StockpileItem(Stockpile stockpile, String name, String group, int typeID, String countMinimum) {
+			this(stockpile, name, group, typeID, Long.valueOf(countMinimum));
 		}
-		public StockpileItem(Stockpile stockpile, String name, int typeID, long countMinimum) {
+		public StockpileItem(Stockpile stockpile, String name, String group, int typeID, long countMinimum) {
 			this.stockpile = stockpile;
 			this.name = name;
+			this.group = group;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
 		}
@@ -318,6 +323,10 @@ public class Stockpile {
 					){
 				jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
 			}
+		}
+
+		public String getGroup() {
+			return group;
 		}
 
 		public void setCountMinimum(long countMinimum) {
@@ -430,8 +439,17 @@ public class Stockpile {
 		}
 
 		@Override
-		public int compareTo(StockpileItem o) {
-			return this.getName().compareTo(o.getName());
+		public int compareTo(StockpileItem item) {
+			//Total should always be last...
+			if (item instanceof StockpileTotal) return -1; //this is Before item 
+			if (this instanceof StockpileTotal) return 1; //this is After item
+			//Compare groups
+			int value = this.getGroup().compareTo(item.getGroup());
+			if (value != 0){ //Not same group
+				return value;
+			} else { //Same group - compare names
+				return this.getName().compareTo(item.getName());
+			}
 		}
 	}
 	
@@ -451,8 +469,8 @@ public class Stockpile {
 		private double volumeNow = 0;
 		private double volumeNeeded = 0;
 		
-		public StockpileTotal(Stockpile stockpile, String name) {
-			super(stockpile, name, 0, 0);
+		public StockpileTotal(Stockpile stockpile) {
+			super(stockpile, TabsStockpile.get().totalStockpile(), "", 0, 0);
 		}
 		
 		private void reset(){

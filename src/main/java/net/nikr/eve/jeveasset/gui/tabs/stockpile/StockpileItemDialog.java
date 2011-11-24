@@ -192,7 +192,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private StockpileItem getStockpileItem(){
 		Item item = (Item)jItems.getSelectedItem();
 		String countMinimum = jCountMinimum.getText();
-		return new StockpileItem(getStockpile(), item.getName(), item.getTypeID(), countMinimum);
+		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), item.getTypeID(), countMinimum);
 	}
 	
 	private void autoValidate(){
