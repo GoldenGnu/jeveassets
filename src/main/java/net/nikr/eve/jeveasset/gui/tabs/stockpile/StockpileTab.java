@@ -325,6 +325,16 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		regions = null;
 		flags = null;
 		chars = null;
+		//Save separator expanded/collapsed state
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				StockpileItem item = (StockpileItem) separator.first();
+				item.getStockpile().setExpanded(separator.getLimit() != 0);
+			}
+		}
+		//Update list
 		try {
 			stockpileEventList.getReadWriteLock().writeLock().lock();
 			stockpileEventList.clear();
@@ -332,7 +342,20 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		} finally {
 			stockpileEventList.getReadWriteLock().writeLock().unlock();
 		}
-		
+		//Restore separator expanded/collapsed state
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				StockpileItem item = (StockpileItem) separator.first();
+				separatorList.getReadWriteLock().writeLock().lock();
+				try {
+					separator.setLimit(item.getStockpile().isExpanded() ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
 	
 	}
 

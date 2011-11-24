@@ -47,6 +47,7 @@ public class Stockpile {
 	private boolean jobs;
 	private List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private StockpileTotal totalItem = new StockpileTotal(this, TabsStockpile.get().totalStockpile());
+	private boolean expanded = true;
 
 	private Stockpile(Stockpile stockpile) {
 		update(stockpile);
@@ -169,6 +170,14 @@ public class Stockpile {
 
 	public List<StockpileItem> getItems() {
 		return items;
+	}
+
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
 	}
 	
 	public void updateTotal() {
