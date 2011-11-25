@@ -92,6 +92,7 @@ public class Settings{
 	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
 	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
 	private final static String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
+	private final static String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
 	public final static String COLUMN_SETTINGS_ASSETS = "COLUMN_SETTINGS_ASSETS";
 
@@ -157,6 +158,7 @@ public class Settings{
 		flags.put(FLAG_REPROCESS_COLORS, false);
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
+		flags.put(FLAG_STOCKPILE_HALF_COLORS, false);
 
 		packagedVolume.put("Assault Ship", 2500f);
 		packagedVolume.put("Battlecruiser", 15000f);
@@ -807,6 +809,12 @@ public class Settings{
 	}
 	public void setStockpileFocusTab(boolean stockpileFocusOnAdd) {
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
+	}
+	public boolean isStockpileHalfColors() {
+		return flags.get(FLAG_STOCKPILE_HALF_COLORS);
+	}
+	public void setStockpileHalfColors(boolean stockpileHalfColors) {
+		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
 	}
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;

@@ -25,6 +25,7 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -33,9 +34,11 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 public class JStockpileTable extends JSeparatorTable{
 
 	private EventTableModel tableModel;
+	private Program program;
 	
-	public JStockpileTable(EventTableModel tableModel) {
+	public JStockpileTable(Program program, EventTableModel tableModel) {
 		super(tableModel);
+		this.program = program;
 		this.tableModel = tableModel;
 	}
 	
@@ -56,13 +59,15 @@ public class JStockpileTable extends JSeparatorTable{
 				component.setForeground(Color.BLACK);
 				if (stockpileItem.isOK()){
 					component.setBackground( new Color(200,255,200) );
+				} else if (stockpileItem.isHalf() && program.getSettings().isStockpileHalfColors()){
+					component.setBackground( new Color(255,255,200) );
 				} else {
 					component.setBackground( new Color(255,200,200) );
 				}
 			} else if (isSelected){ //Selected
 				component.setBackground(this.getSelectionBackground());
 			} else if (object instanceof StockpileTotal){ //Total
-				component.setBackground( new Color(255,255,200) );
+				component.setBackground( new Color(235,235,235) );
 			} else { //Default
 				component.setBackground(Color.WHITE);
 			}

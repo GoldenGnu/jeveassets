@@ -120,9 +120,9 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		separatorList = new SeparatorList<StockpileItem>(stockpileEventList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		stockpileTableModel = new EventTableModel<StockpileItem>(separatorList, stockpileTableFormat);
 		//Tables
-		jTable = new JStockpileTable(stockpileTableModel);
-		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(jTable, separatorList, this));
-		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(jTable, separatorList, this));
+		jTable = new JStockpileTable(program, stockpileTableModel);
+		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
+		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.getTableHeader().setReorderingAllowed(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Listeners

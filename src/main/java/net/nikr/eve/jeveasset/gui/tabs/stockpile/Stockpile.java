@@ -94,6 +94,10 @@ public class Stockpile {
 		return totalItem.isOK();
 	}
 	
+	public boolean isHalf(){
+		return totalItem.isHalf();
+	}
+	
 	public boolean isEmpty(){
 		return (items.size() <= 1);
 	}
@@ -258,6 +262,10 @@ public class Stockpile {
 			return getCountNeeded() >= 0;
 		}
 		
+		public boolean isHalf() {
+			return getCountNow() >= (getCountMinimum() / 2.0) ;
+		}
+		
 		private void reset(){
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
@@ -368,8 +376,7 @@ public class Stockpile {
 		}
 		
 		public long getCountNeeded() {
-			long countNeeded = getCountNow() - countMinimum;
-			return countNeeded;
+			return getCountNow() - countMinimum;
 		}
 
 		public double getPrice() {
@@ -453,6 +460,7 @@ public class Stockpile {
 	public static class StockpileTotal extends StockpileItem{
 
 		private boolean ok = true;
+		private boolean half = true;
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
@@ -472,6 +480,7 @@ public class Stockpile {
 		
 		private void reset(){
 			ok = true;
+			half = true;
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
 			buyOrdersCountNow = 0;
@@ -488,6 +497,7 @@ public class Stockpile {
 		
 		private void updateTotal(StockpileItem item){
 			if (!item.isOK()) ok = false;
+			if (!item.isHalf()) half = false;
 			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
@@ -508,6 +518,11 @@ public class Stockpile {
 		@Override
 		public boolean isOK() {
 			return ok;
+		}
+		
+		@Override
+		public boolean isHalf() {
+			return half;
 		}
 
 		@Override

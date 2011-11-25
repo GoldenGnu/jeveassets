@@ -41,9 +41,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jGroup;
 	private final JLabel jColor;
 	private final JDropDownButton jStockpile;
+	private Program program;
 
-	public StockpileSeparatorTableCell(JTable jTable, SeparatorList<StockpileItem> separatorList, ActionListener actionListener) {
+	public StockpileSeparatorTableCell(Program program, JTable jTable, SeparatorList<StockpileItem> separatorList, ActionListener actionListener) {
 		super(jTable, separatorList);
+		this.program = program;
 		
 		jTable.addHierarchyListener(this);
 		
@@ -125,8 +127,14 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	protected void configure(SeparatorList.Separator<?> separator) {
 		StockpileItem stockpileItem = (StockpileItem) separator.first();
 		if(stockpileItem == null) return; // handle 'late' rendering calls after this separator is invalid
-		jGroup.setText(stockpileItem.getStockpile().getName());	
-		jColor.setBackground(stockpileItem.getStockpile().isOK() ? new Color(200,255,200) : new Color(255,200,200));
+		jGroup.setText(stockpileItem.getStockpile().getName());
+		if (stockpileItem.getStockpile().isOK()){
+			jColor.setBackground(new Color(200,255,200));
+		} else if (stockpileItem.getStockpile().isHalf() && program.getSettings().isStockpileHalfColors()){
+			jColor.setBackground(new Color(255,255,200));
+		} else {
+			jColor.setBackground(new Color(255,200,200));
+		}
 	}
 	
 	protected JViewport getParentViewport(){
