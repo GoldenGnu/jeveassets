@@ -246,9 +246,6 @@ public class Stockpile {
 					);
 		}
 
-		public StockpileItem(Stockpile stockpile, String name, String group, int typeID, String countMinimum) {
-			this(stockpile, name, group, typeID, Long.valueOf(countMinimum));
-		}
 		public StockpileItem(Stockpile stockpile, String name, String group, int typeID, long countMinimum) {
 			this.stockpile = stockpile;
 			this.name = name;
