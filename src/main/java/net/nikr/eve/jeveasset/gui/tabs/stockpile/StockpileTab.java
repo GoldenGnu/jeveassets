@@ -29,6 +29,7 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -48,6 +49,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -169,17 +171,52 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	public boolean showAddItem(Stockpile stockpile, int typeID) {
 		boolean updated = stockpileItemDialog.showAdd(stockpile, typeID);
 		updateData();
+		if (updated && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
 		return updated;
 	}
 	public Stockpile showAddStockpile(Asset asset) {
 		Stockpile stockpile = stockpileDialog.showAdd(asset);
 		updateData();
+		if (stockpile != null && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
 		return stockpile;
 	}
 	public Stockpile showAddStockpile(long locationID) {
 		Stockpile stockpile = stockpileDialog.showAdd(locationID);
 		updateData();
+		if (stockpile != null && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
 		return stockpile;
+	}
+	
+	public void scrollToSctockpile(final Stockpile stockpile){
+		StockpileItem item = stockpile.getItems().get(0);
+		int row = separatorList.indexOf(item) - 1;
+		if (row < 0){ //Collapsed: Expand and run again...
+			for (int i = 0; i < separatorList.size(); i++){
+				Object object = separatorList.get(i);
+				if (object instanceof SeparatorList.Separator){
+					SeparatorList.Separator separator = (SeparatorList.Separator) object;
+					if (separator.first().equals(item)){
+						separatorList.getReadWriteLock().writeLock().lock();
+						try {
+							separator.setLimit(Integer.MAX_VALUE);
+						} finally {
+							separatorList.getReadWriteLock().writeLock().unlock();
+						}
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								scrollToSctockpile(stockpile);
+							}
+						});
+						
+					}
+				}
+			}
+		} else { //Expanded
+			Rectangle rect = jTable.getCellRect(row, 0, true);
+			rect.setSize(jTable.getVisibleRect().getSize());
+			jTable.scrollRectToVisible(rect);
+		}
 	}
 
 	@Override
