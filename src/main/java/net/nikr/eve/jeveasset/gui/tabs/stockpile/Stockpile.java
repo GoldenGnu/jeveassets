@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class Stockpile {
+public class Stockpile implements Comparable<Stockpile> {
 	private String name;
 	private long characterID;
 	private long locationID;
@@ -219,6 +219,11 @@ public class Stockpile {
 	@Override
 	public Stockpile clone() {
 		return new Stockpile(this);
+	}
+
+	@Override
+	public int compareTo(Stockpile o) {
+		return this.getName().compareTo(o.getName());
 	}
 	
 	public static class StockpileItem implements Comparable<StockpileItem> {
