@@ -125,9 +125,10 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
+		boolean updated = program.getSettings().isStockpileHalfColors() != jHalfColors.isSelected();
 		program.getSettings().setStockpileFocusTab(jSwitchTab.isSelected());
 		program.getSettings().setStockpileHalfColors(jHalfColors.isSelected());
-		return false; //Dos not need to update EventList
+		return updated; //Dos not need to update EventList
 	}
 
 	@Override
