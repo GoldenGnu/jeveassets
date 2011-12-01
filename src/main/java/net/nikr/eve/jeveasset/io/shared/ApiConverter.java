@@ -148,8 +148,14 @@ public class ApiConverter {
 		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
 		long itemId = apiAsset.getItemID();
 		int typeID = apiAsset.getTypeID();
-		long locationID = 0;
-		if (apiAsset.getLocationID() != null) locationID = apiAsset.getLocationID();
+		long locationID;
+		if (apiAsset.getLocationID() != null){ //Top level
+			locationID = apiAsset.getLocationID();
+		} else if(parentEveAsset != null){ //Sub level
+			locationID = parentEveAsset.getLocationID();
+		} else { //Fail (fallback)
+			locationID = 0;
+		}
 		boolean singleton  = apiAsset.getSingleton();
 		boolean corporation = human.isCorporation();
 		String owner = human.getName();
