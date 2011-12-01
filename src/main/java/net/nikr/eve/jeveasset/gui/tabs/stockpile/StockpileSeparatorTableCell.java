@@ -168,7 +168,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		if (!e.getValueIsAdjusting()){
 			int position = getParentViewport().getViewPosition().x;
 			int width = getParentViewport().getSize().width;
-			int offset = (width + position) - 165;
+			int offset = (width + position) - 170;
 			jGroup.setMaximumSize(new Dimension(offset, jGroup.getMaximumSize().height) );
 			if (jTable.isEditing() && (jTable.getCellEditor().getCellEditorValue() instanceof SeparatorList.Separator<?>)){
 				int selectedRow = jTable.getSelectedRow();
