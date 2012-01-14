@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class Stockpile {
+public class Stockpile implements Comparable<Stockpile> {
 	private String name;
 	private long characterID;
 	private long locationID;
@@ -45,8 +45,9 @@ public class Stockpile {
 	private boolean sellOrders;
 	private boolean buyOrders;
 	private boolean jobs;
-	private List<StockpileItem> items = new ArrayList<StockpileItem>();
-	private StockpileTotal totalItem = new StockpileTotal(this, TabsStockpile.get().totalStockpile());
+	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
+	private final StockpileTotal totalItem = new StockpileTotal(this);
+	private boolean expanded = true;
 
 	private Stockpile(Stockpile stockpile) {
 		update(stockpile);
@@ -73,8 +74,6 @@ public class Stockpile {
 		this.jobs = jobs;
 		items.add(totalItem);
 	}
-
-	
 	
 	final void update(Stockpile stockpile) {
 		this.name = stockpile.getName();
@@ -95,23 +94,17 @@ public class Stockpile {
 		return totalItem.isOK();
 	}
 	
+	public boolean isHalf(){
+		return totalItem.isHalf();
+	}
+	
 	public boolean isEmpty(){
-		if (items.size() > 1){
-			return false;
-		} else {
-			if (items.contains(totalItem)){
-				return true;
-			} else {
-				return false;
-			}
-		}
+		return (items.size() <= 1);
 	}
 	
 	public void add(StockpileItem item){
-		items.remove(totalItem);
 		items.add(item);
 		Collections.sort(items);
-		items.add(totalItem);
 	}
 	
 	public void remove(StockpileItem item) {
@@ -178,6 +171,14 @@ public class Stockpile {
 	public List<StockpileItem> getItems() {
 		return items;
 	}
+
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
 	
 	public void updateTotal() {
 		totalItem.reset();
@@ -219,40 +220,55 @@ public class Stockpile {
 	public Stockpile clone() {
 		return new Stockpile(this);
 	}
+
+	@Override
+	public int compareTo(Stockpile o) {
+		return this.getName().compareTo(o.getName());
+	}
 	
 	public static class StockpileItem implements Comparable<StockpileItem> {
+		//Constructor
 		private Stockpile stockpile;
 		private String name;
+		private String group;
 		private int typeID;
 		private long countMinimum;
-		
+
+		//Updated values
 		private boolean marketGroup;
+		private double price = 0.0;
+		private double volume = 0.0f;
+		
+		//Updated counts
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
 		private long jobsCountNow = 0;
-		private double price = 0.0;
-		private double volume = 0.0f;
+		
 		
 		public StockpileItem(Stockpile stockpile, StockpileItem stockpileItem) {
-			this.stockpile = stockpile;
-			this.name = stockpileItem.getName();
-			this.typeID = stockpileItem.getTypeID();
-			this.countMinimum = stockpileItem.getCountMinimum();
+			this(	stockpile,
+					stockpileItem.getName(),
+					stockpileItem.getGroup(),
+					stockpileItem.getTypeID(),
+					stockpileItem.getCountMinimum()
+					);
 		}
 
-		public StockpileItem(Stockpile stockpile, String name, int typeID, String countMinimum) {
-			this(stockpile, name, typeID, Long.valueOf(countMinimum));
-		}
-		public StockpileItem(Stockpile stockpile, String name, int typeID, long countMinimum) {
+		public StockpileItem(Stockpile stockpile, String name, String group, int typeID, long countMinimum) {
 			this.stockpile = stockpile;
 			this.name = name;
+			this.group = group;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
 		}
 		
 		public boolean isOK() {
 			return getCountNeeded() >= 0;
+		}
+		
+		public boolean isHalf() {
+			return getCountNow() >= (getCountMinimum() / 2.0) ;
 		}
 		
 		private void reset(){
@@ -274,9 +290,10 @@ public class Stockpile {
 			if (asset != null && itemFlag != null && characterID != null && regionID != null //better save then sorry
 					&& typeID == asset.getTypeID()
 					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
-					&& (stockpile.getContainer().equals(asset.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
+					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
-					&& (stockpile.getLocationID() == asset.getLocationID()
+					&& ((stockpile.getLocation() != null
+					&& stockpile.getLocation().equals(asset.getLocation())) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
 					|| stockpile.getLocationID() == regionID
 					|| stockpile.getLocationID() < 0)
@@ -314,8 +331,12 @@ public class Stockpile {
 					&& industryJob.getActivityID() == 1 //Manufacturing
 					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					){
-					jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
+				jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
 			}
+		}
+
+		public String getGroup() {
+			return group;
 		}
 
 		public void setCountMinimum(long countMinimum) {
@@ -360,8 +381,7 @@ public class Stockpile {
 		}
 		
 		public long getCountNeeded() {
-			long countNeeded = getCountNow() - countMinimum;
-			return countNeeded;
+			return getCountNow() - countMinimum;
 		}
 
 		public double getPrice() {
@@ -428,14 +448,24 @@ public class Stockpile {
 		}
 
 		@Override
-		public int compareTo(StockpileItem o) {
-			return this.getName().compareTo(o.getName());
+		public int compareTo(StockpileItem item) {
+			//Total should always be last...
+			if (item instanceof StockpileTotal) return -1; //this is Before item 
+			if (this instanceof StockpileTotal) return 1; //this is After item
+			//Compare groups
+			int value = this.getGroup().compareTo(item.getGroup());
+			if (value != 0){ //Not same group
+				return value;
+			} else { //Same group - compare names
+				return this.getName().compareTo(item.getName());
+			}
 		}
 	}
 	
 	public static class StockpileTotal extends StockpileItem{
 
 		private boolean ok = true;
+		private boolean half = true;
 		private long inventoryCountNow = 0;
 		private long sellOrdersCountNow = 0;
 		private long buyOrdersCountNow = 0;
@@ -449,12 +479,13 @@ public class Stockpile {
 		private double volumeNow = 0;
 		private double volumeNeeded = 0;
 		
-		public StockpileTotal(Stockpile stockpile, String name) {
-			super(stockpile, name, 0, 0);
+		public StockpileTotal(Stockpile stockpile) {
+			super(stockpile, TabsStockpile.get().totalStockpile(), "", 0, 0);
 		}
 		
 		private void reset(){
 			ok = true;
+			half = true;
 			inventoryCountNow = 0;
 			sellOrdersCountNow = 0;
 			buyOrdersCountNow = 0;
@@ -471,6 +502,7 @@ public class Stockpile {
 		
 		private void updateTotal(StockpileItem item){
 			if (!item.isOK()) ok = false;
+			if (!item.isHalf()) half = false;
 			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
@@ -491,6 +523,11 @@ public class Stockpile {
 		@Override
 		public boolean isOK() {
 			return ok;
+		}
+		
+		@Override
+		public boolean isHalf() {
+			return half;
 		}
 
 		@Override
@@ -530,7 +567,11 @@ public class Stockpile {
 
 		@Override
 		public double getPrice() {
-			return totalPrice / totalPriceCount;
+			if (totalPriceCount <= 0 || totalPrice <= 0){
+				return 0;
+			} else {
+				return totalPrice / totalPriceCount;
+			}
 		}
 
 		@Override

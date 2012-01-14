@@ -41,6 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
@@ -177,6 +178,8 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 	
 	private void show(){
+		autoValidate();
+		autoSet();
 		super.setVisible(true);
 	}
 	
@@ -186,34 +189,73 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		} else {
 			return stockpileItem.getStockpile();
 		}
-		
 	}
 	
 	private StockpileItem getStockpileItem(){
 		Item item = (Item)jItems.getSelectedItem();
-		String countMinimum = jCountMinimum.getText();
-		return new StockpileItem(getStockpile(), item.getName(), item.getTypeID(), countMinimum);
+		long countMinimum;
+		try {
+			countMinimum = Long.valueOf(jCountMinimum.getText());
+		} catch (NumberFormatException ex){
+			countMinimum = 0;
+		}
+		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), item.getTypeID(), countMinimum);
+	}
+	
+	private boolean itemExist(){
+		return getExistingItem() != null;
+	}
+
+	private StockpileItem getExistingItem(){
+		Item typeItem = (Item)jItems.getSelectedItem();
+		if (stockpile != null && typeItem != null){
+			for (StockpileItem item : stockpile.getItems()){
+				if (item.getTypeID() == typeItem.getTypeID()){
+					return item;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void autoValidate(){
 		boolean b = true;
+		boolean color = false;
 		if (jItems.getSelectedItem() == null) b = false;
+		if (itemExist() || stockpileItem != null){
+			color = true;
+			jCountMinimum.setBackground( new Color(255,255,200) );
+		}
 		try {
 			long l = Long.valueOf(jCountMinimum.getText());
-			if (l > 0){
-				jCountMinimum.setBackground(Color.WHITE);
-			} else {
+			if (l <= 0){
+				b = false; //Negative and zero is not valid
+				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
 		} catch (NumberFormatException ex){
-			b = false;
-			if (jCountMinimum.getText().isEmpty()){
-				jCountMinimum.setBackground(Color.WHITE);
-			} else {
+			b = false; //Empty and NaN is not valid 
+			if (!jCountMinimum.getText().isEmpty()){
+				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
 		}
+		if (!color){
+			jCountMinimum.setBackground(Color.WHITE);
+		}
 		jOK.setEnabled(b);
+	}
+	
+	private void autoSet(){
+		final StockpileItem item = getExistingItem();
+		if (item != null){
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jCountMinimum.setText(String.valueOf(item.getCountMinimum()));
+				}
+			});
+		}
 	}
 
 	@Override
@@ -239,7 +281,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 			stockpile = getStockpile();
 			stockpile.remove(stockpileItem);
 		}
-		//ADD & EDIT
+		if (itemExist()){ //UPDATING (Adding an existing item)
+			stockpile.remove(getExistingItem());
+		}
+		//ADD & EDIT & UPDATING
 		stockpile.add(getStockpileItem());
 		updated = true;
 		super.setVisible(false);
@@ -263,6 +308,8 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		autoValidate();
+		autoSet();
+		
 	}
 	
 	class ItemFilterator implements TextFilterator<Item>{

@@ -47,8 +47,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String cloneStockpile();
 	public abstract String deleteStockpile();
 	public abstract String allLocations();
+	public abstract String myLocations();
 	public abstract String name();
-	public abstract String characters();
+	public abstract String owner();
 	public abstract String locations();
 	public abstract String flag();
 	public abstract String container();

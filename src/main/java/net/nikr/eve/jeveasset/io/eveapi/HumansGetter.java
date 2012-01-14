@@ -92,15 +92,16 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		for (EveCharacter apiCharacter : characters){
 			boolean found = false;
 			for (Human human : getAccount().getHumans()){
-				if (human.getCharacterID() == apiCharacter.getCharacterID() && !typeChanged){
+				if ( (human.getCharacterID() == apiCharacter.getCharacterID() || human.getCharacterID() == apiCharacter.getCorporationID()) && !typeChanged){
 					human.setName(getName(apiCharacter));
+					human.setCharacterID(getID(apiCharacter));
 					humans.add(human);
 					found = true;
 					break;
 				}
 			}
 			if (!found){ //Add New
-				humans.add(new Human(getAccount(), getName(apiCharacter), apiCharacter.getCharacterID()));
+				humans.add(new Human(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
 		}
 		getAccount().setHumans(humans);
@@ -114,6 +115,13 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 			return apiCharacter.getName();
 		} else {
 			return apiCharacter.getCorporationName();
+		}
+	}
+	private long getID(EveCharacter apiCharacter){
+		if (getAccount().isCharacter()){
+			return apiCharacter.getCharacterID();
+		} else {
+			return apiCharacter.getCorporationID();
 		}
 	}
 	

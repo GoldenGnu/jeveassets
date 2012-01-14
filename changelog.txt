@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_1.9.2__________________________________________________________________________
+
+New Features:
+-Stockpile: Use table menu to edit items
+-Stockpile: Remember collapsed/expanded state when updating
+-Stockpile: Now sort by group before name
+-Stockpile: Assets focus (Optional)
+-Stockpile: Color coding (Optional)
+-Stockpile: Performance optimization
+
+Bug Fixes:
+-Stockpile: Items can be added twice
+
+Changed:
+-Static data Updated to Crucible 1.0.0
+
+________________________________________________________________________________
+_1.9.1__________________________________________________________________________
+
+Bug Fixes:
+-Offices shown as !27
+-Stockpile: Corporation items is not added properly
+-Stockpile: Offices items is not added properly
+
+________________________________________________________________________________
 _1.9.0__________________________________________________________________________
 
 New Features:

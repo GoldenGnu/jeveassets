@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.StockpileToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
@@ -76,7 +77,7 @@ public class Program implements ActionListener, Listener<Asset>{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "1.9.0";
+	public static final String PROGRAM_VERSION = "1.9.2";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -125,6 +126,7 @@ public class Program implements ActionListener, Listener<Asset>{
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
 	private AssetsToolSettingsPanel assetsToolSettingsPanel;
 	private OverviewToolSettingsPanel overviewToolSettingsPanel;
+	private StockpileToolSettingsPanel stockpileToolSettingsPanel;
 
 
 	private ProgramUpdateChecker programUpdateChecker;
@@ -231,29 +233,31 @@ public class Program implements ActionListener, Listener<Asset>{
 		LOG.info("Loading: Overview Tool Settings Panel");
 		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
 		SplashUpdater.setProgress(92);
+		LOG.info("Loading: Stockpile Tool Settings Panel");
+		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
+		SplashUpdater.setProgress(93);
 		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Assets Name Settings Panel");
 		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(95);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(96);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(96);
+		SplashUpdater.setProgress(97);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(97);
+		SplashUpdater.setProgress(98);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(98);
+		SplashUpdater.setProgress(99);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
-		SplashUpdater.setProgress(99);
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");

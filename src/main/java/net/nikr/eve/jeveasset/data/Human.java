@@ -96,6 +96,10 @@ public class Human implements Comparable<Human> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
+	public void setCharacterID(long characterID) {
+		this.characterID = characterID;
+	}
+
 	public void setIndustryJobs(List<ApiIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
@@ -171,7 +175,7 @@ public class Human implements Comparable<Human> {
 	public String getName() {
 		return name;
 	}
-
+	
 	public Account getParentAccount() {
 		return parentAccount;
 	}

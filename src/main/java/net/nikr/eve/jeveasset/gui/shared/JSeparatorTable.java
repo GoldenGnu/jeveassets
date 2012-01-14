@@ -28,6 +28,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
 	private Boolean revalidateLocked = null;
+	private boolean tableChanged = true;
 	
 	
 	public JSeparatorTable(EventTableModel tableModel) {
@@ -170,6 +171,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** {@inheritDoc} */
 	@Override
 	public void tableChanged(TableModelEvent e) {
+		tableChanged = true;
 		// stop edits when the table changes, or else we might
 		// get a relocated edit in the wrong cell!
 		if(isEditing()) {
@@ -180,39 +182,22 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.tableChanged(e);
 	}
 
-	public boolean isRowHeightValid(){
-		if (revalidateLocked != null
-				&& this.getTableHeader().getColumnModel().getColumnCount() != 0){ //Allow reordering of columns
+	//XXX - Dirty hack is dirty
+	@Override
+	public void revalidate() {
+		if (revalidateLocked != null && !revalidateLocked && tableChanged){
+			revalidateLocked = true;
 			for (int row = 0; row < this.getRowCount(); row++){
 				TableCellRenderer renderer = this.getCellRenderer(row, 0);
 				Component component = this.prepareRenderer(renderer, row, 0);
 				if (this.getRowHeight(row) != component.getPreferredSize().height){
-					return false;
+					this.setRowHeight(row, component.getPreferredSize().height);
 				}
 			}
+			revalidateLocked = false;
+			tableChanged = false;
 		}
-		return true;
-	}
-
-	//XXX - Dirty hack is dirty
-	@Override
-	public void revalidate() {
-		if (isRowHeightValid()){
-			super.revalidate();
-		} else {
-			if (revalidateLocked != null && !revalidateLocked){
-				revalidateLocked = true;
-				for (int row = 0; row < this.getRowCount(); row++){
-					TableCellRenderer renderer = this.getCellRenderer(row, 0);
-					Component component = this.prepareRenderer(renderer, row, 0);
-					if (this.getRowHeight(row) != component.getPreferredSize().height){
-						this.setRowHeight(row, component.getPreferredSize().height);
-					}
-				}
-				super.revalidate();
-				revalidateLocked = false;
-			}
-		}
+		super.revalidate();
 	}
 }
 /**

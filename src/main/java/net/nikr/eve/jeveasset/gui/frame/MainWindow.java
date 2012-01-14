@@ -112,8 +112,12 @@ public class MainWindow implements WindowListener, ChangeListener {
             program.getSettings().getActiveProfile().getName()
             ));
 	}
-
+	
 	public void addTab(JMainTab jMainTab){
+		addTab(jMainTab, true);
+	}
+
+	public void addTab(JMainTab jMainTab, boolean focus){
 		if (!tabs.contains(jMainTab)){
 			LOG.info("Opening tab: "+jMainTab.getTitle());
 			jMainTab.updateData();
@@ -123,7 +127,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		} else {
 			LOG.info("Focusing tab: "+jMainTab.getTitle());
 		}
-		jTabbedPane.setSelectedComponent(jMainTab.getPanel());
+		if (focus) jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 	}
 
 	public JMainTab getSelectedTab(){

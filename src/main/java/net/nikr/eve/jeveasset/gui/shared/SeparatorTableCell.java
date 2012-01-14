@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -42,6 +43,9 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 	protected final JButton jExpand;
 	protected final GroupLayout layout;
 	protected final JTable jTable;
+	
+	protected final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
+	protected final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
 
 	
 
@@ -57,11 +61,11 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
 
-		jExpand = new JButton(Images.MISC_EXPANDED.getIcon());
+		jExpand = new JButton(EXPANDED_ICON);
 		jExpand.setOpaque(false);
 		jExpand.setContentAreaFilled(false);
 		jExpand.setBorder(EMPTY_TWO_PIXEL_BORDER);
-		jExpand.setIcon(Images.MISC_EXPANDED.getIcon());
+		jExpand.setIcon(EXPANDED_ICON);
 		jExpand.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -91,7 +95,7 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		if (value instanceof SeparatorList.Separator<?>){
 			this.row = row;
 			this.separator = (SeparatorList.Separator<?>)value;
-			jExpand.setIcon(separator.getLimit() == 0 ? Images.MISC_EXPANDED.getIcon() : Images.MISC_COLLAPSED.getIcon());
+			jExpand.setIcon(separator.getLimit() == 0 ? EXPANDED_ICON : COLLAPSED_ICON);
 			configure(separator);
 		}
 		

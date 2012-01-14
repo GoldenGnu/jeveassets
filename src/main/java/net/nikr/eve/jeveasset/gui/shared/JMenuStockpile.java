@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -55,10 +57,12 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		add(jMenuItem);
 		
 		if (!program.getSettings().getStockpiles().isEmpty()) this.addSeparator();
-		
-		for (Stockpile stockpile : program.getSettings().getStockpiles()){
+		List<Stockpile> stockpiles = program.getSettings().getStockpiles();
+		Collections.sort(stockpiles);
+		for (Stockpile stockpile : stockpiles){
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
+			jMenuItem.setEnabled(typeId != 0);
 			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
@@ -86,7 +90,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 			}
 			if (stockpile != null){
 				program.getStockpileTool().showAddItem(stockpile, typeId);
-				program.getMainWindow().addTab(program.getStockpileTool());
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
 			}
 		}
 		if (ACTION_ADD_TO_EXISTING.equals(e.getActionCommand())){
@@ -95,7 +99,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
 				boolean updated = program.getStockpileTool().showAddItem(stockpile, typeId);
-				if (updated) program.getMainWindow().addTab(program.getStockpileTool());
+				if (updated) program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
 			}
 		}
 	}
