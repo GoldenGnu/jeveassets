@@ -70,7 +70,7 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String headerNameBuyMax();
 	public abstract String headerNameValue();
 	public abstract String headerNameMeta();
-	public abstract String headerNameID();
+	public abstract String headerNameItemID();
 	public abstract String headerNameBasePrice();
 	public abstract String headerNameVolume();
 	public abstract String headerNameTypeID();
@@ -80,6 +80,7 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String headerNameReprocessed();
 	public abstract String headerNameReprocessedValue();
 	public abstract String headerSingleton();
+	public abstract String headerVolumeTotal();
 	public abstract String selectOne();
 	public abstract String confirmStupidDecision();
 	public abstract String failedToSave();

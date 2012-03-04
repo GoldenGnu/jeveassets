@@ -34,6 +34,8 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
 
 
 public class JAssetTable extends JColumnTable {
@@ -44,6 +46,7 @@ public class JAssetTable extends JColumnTable {
 	private TableCellRenderer tableCellRenderer;
 	private IntegerCellRenderer integerCellRenderer;
 	private FloatCellRenderer floatCellRenderer;
+	private ToStringCellRenderer toStringCellRenderer;
 
 	private Program program;
 
@@ -57,10 +60,22 @@ public class JAssetTable extends JColumnTable {
 		integerCellRenderer = new IntegerCellRenderer();
 		floatCellRenderer = new FloatCellRenderer();
 		tableCellRenderer = new DefaultTableCellRenderer();
+		toStringCellRenderer = new ToStringCellRenderer();
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
+		this.setDefaultRenderer(LongInt.class, new ToStringCellRenderer());
+	}
+	
+	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){
+		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Integer.class)) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Float.class)) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Double.class)) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(Long.class)) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		if (getColumnClass(column).equals(LongInt.class)) c = toStringCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
+		return c;
 	}
 
 	@Override
@@ -160,15 +175,4 @@ public class JAssetTable extends JColumnTable {
 		}
 		return super.prepareRenderer(renderer, row, column);
 	}
-
-	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){
-		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (getColumnClass(column).equals(Integer.class)) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (getColumnClass(column).equals(Float.class)) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (getColumnClass(column).equals(Double.class)) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (getColumnClass(column).equals(Long.class)) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		return c;
-	}
-
-	
 }

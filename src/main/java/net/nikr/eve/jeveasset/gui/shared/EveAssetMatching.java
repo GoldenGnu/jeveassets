@@ -159,7 +159,7 @@ public class EveAssetMatching {
 				return eveAsset.getMeta();
 			}
 		}
-		if (column.equals("ID")) return Formater.compareFormat(eveAsset.getItemID());
+		if (column.equals("Item ID")) return Formater.compareFormat(eveAsset.getItemID());
 		if (column.equals("Sell Min")) return Formater.compareFormat(eveAsset.getPriceSellMin());
 		if (column.equals("Buy Max")) return Formater.compareFormat(eveAsset.getPriceBuyMax());
 		if (column.equals("Value")) return Formater.compareFormat(eveAsset.getValue());
@@ -172,6 +172,7 @@ public class EveAssetMatching {
 		if (column.equals("Reprocessed")) return Formater.compareFormat(eveAsset.getPriceReprocessed());
 		if (column.equals("Reprocessed Value")) return Formater.compareFormat(eveAsset.getValueReprocessed());
 		if (column.equals("Singleton")) return eveAsset.getSingleton();
+		if (column.equals("Total Volume")) return Formater.compareFormat(eveAsset.getVolumeTotal());
 		return "";
 	}
 

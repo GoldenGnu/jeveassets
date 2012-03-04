@@ -26,6 +26,7 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.TableComparators;
 
 
@@ -66,7 +67,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Base Price")) return Double.class;
 		if (sColumn.equals("Value")) return Double.class;
 		if (sColumn.equals("Meta")) return String.class;
-		if (sColumn.equals("ID")) return Long.class;
+		if (sColumn.equals("Item ID")) return LongInt.class;
 		if (sColumn.equals("Volume")) return Float.class;
 		if (sColumn.equals("Type ID")) return Integer.class;
 		if (sColumn.equals("Region")) return String.class;
@@ -75,6 +76,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Reprocessed")) return Double.class;
 		if (sColumn.equals("Reprocessed Value")) return Double.class;
 		if (sColumn.equals("Singleton")) return String.class;
+		if (sColumn.equals("Total Volume")) return Float.class;
 
 		return Object.class;
 	}
@@ -103,7 +105,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Base Price")) return eveAsset.getPriceBase();
 		if (sColumn.equals("Value")) return eveAsset.getValue();
 		if (sColumn.equals("Meta")) return eveAsset.getMeta();
-		if (sColumn.equals("ID")) return eveAsset.getItemID();
+		if (sColumn.equals("Item ID")) return new LongInt(eveAsset.getItemID());
 		if (sColumn.equals("Volume")) return eveAsset.getVolume();
 		if (sColumn.equals("Type ID")) return eveAsset.getTypeID();
 		if (sColumn.equals("Region")) return eveAsset.getRegion();
@@ -112,6 +114,29 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 		if (sColumn.equals("Reprocessed")) return eveAsset.getPriceReprocessed();
 		if (sColumn.equals("Reprocessed Value")) return eveAsset.getValueReprocessed();
 		if (sColumn.equals("Singleton")) return eveAsset.getSingleton();
+		if (sColumn.equals("Total Volume")) return eveAsset.getVolumeTotal();
 		return new String();
+	}
+	
+	public class LongInt implements Comparable<LongInt> {
+		Long number;
+
+		public LongInt(Long number) {
+			this.number = number;
+		}
+		
+		private Long getNumber() {
+			return number;
+		}
+
+		@Override
+		public String toString() {
+			return Formater.integerFormat(number);
+		}
+
+		@Override
+		public int compareTo(LongInt o) {
+			return number.compareTo(o.getNumber());
+		}
 	}
 }

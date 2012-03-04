@@ -396,6 +396,15 @@ public class SettingsReader extends AbstractXmlReader {
 					}
 				}
 			}
+			//Updaing column names
+			for (String column : tableColumnNames){
+				if (!tableSettings.getTableColumnOriginal().contains(column)){
+					LOG.info("Removing old column: "+column);
+					tableColumnNames.remove(column);
+					tableColumnVisible.remove(column);
+				}
+			}
+			
 			tableSettings.setMode(resize);
 			tableSettings.setTableColumnNames(tableColumnNames);
 			tableSettings.setTableColumnVisible(tableColumnVisible);

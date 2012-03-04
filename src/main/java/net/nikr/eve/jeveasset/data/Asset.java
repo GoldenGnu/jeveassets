@@ -358,6 +358,10 @@ public class Asset implements Comparable<Asset> {
 		return volume;
 	}
 	
+	public float getVolumeTotal() {
+		return volume * count;
+	}
+	
 	public boolean isBlueprint() {
 		return (typeName.toLowerCase().contains("blueprint"));
 	}

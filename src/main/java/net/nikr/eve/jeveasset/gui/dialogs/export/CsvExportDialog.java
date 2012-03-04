@@ -88,10 +88,10 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener, 
 	private JMultiSelectionList jColumnSelection;
 	private JButton jOK;
 
-	private static DecimalFormat DoubleEn  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat DoubleEu  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("da")));
-	private static DecimalFormat IntegerEn  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat IntegerEu  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("da")));
+	private static DecimalFormat doubleEn  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("en")));
+	private static DecimalFormat doubleEu  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("da")));
+	private static DecimalFormat longEn  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("en")));
+	private static DecimalFormat longEu  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("da")));
 
 	private JCustomFileChooser jCsvFileChooser;
 	
@@ -310,7 +310,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener, 
 			if (headerName.equals(DialoguesCsvExport.get().headerNameBuyMax())) line.put(headerName, getValue(eveAsset.getPriceBuyMax(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameValue())) line.put(headerName, getValue(eveAsset.getValue(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameMeta())) line.put(headerName, eveAsset.getMeta());
-			if (headerName.equals(DialoguesCsvExport.get().headerNameID())) line.put(headerName, getValue(eveAsset.getItemID(), lang));
+			if (headerName.equals(DialoguesCsvExport.get().headerNameItemID())) line.put(headerName, getValue(eveAsset.getItemID(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameBasePrice())) line.put(headerName, getValue(eveAsset.getPriceBase(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameVolume())) line.put(headerName, getValue(eveAsset.getVolume(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameTypeID())) line.put(headerName, getValue(eveAsset.getTypeID(), lang));
@@ -320,21 +320,22 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener, 
 			if (headerName.equals(DialoguesCsvExport.get().headerNameReprocessed())) line.put(headerName, getValue(eveAsset.getPriceReprocessed(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerNameReprocessedValue())) line.put(headerName, getValue(eveAsset.getValueReprocessed(), lang));
 			if (headerName.equals(DialoguesCsvExport.get().headerSingleton())) line.put(headerName, eveAsset.getSingleton());
+			if (headerName.equals(DialoguesCsvExport.get().headerVolumeTotal())) line.put(headerName, getValue(eveAsset.getVolumeTotal(), lang));
 		}
 		return line;
 	}
 
 	private String getValue(double number, String lang){
 		if (lang.equals("Dot")){
-			return DoubleEn.format(number);
+			return doubleEn.format(number);
 		}
-		return DoubleEu.format(number);
+		return doubleEu.format(number);
 	}
-	private String getValue(int number, String lang){
+	private String getValue(long number, String lang){
 		if (lang.equals("Dot")){
-			return IntegerEn.format(number);
+			return longEn.format(number);
 		}
-		return IntegerEu.format(number);
+		return longEu.format(number);
 	}
 
 	@Override
