@@ -105,6 +105,16 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return from.getName();
 		}
 	},
+	OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOwner();
+		}
+		@Override
+		public Object getColumnValue(IndustryJob from) {
+			return from.getOwner();
+		}
+	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -115,14 +125,14 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return from.getLocation();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
+	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsJobs.get().columnOwner();
+			return TabsJobs.get().columnRegion();
 		}
 		@Override
 		public Object getColumnValue(IndustryJob from) {
-			return from.getOwner();
+			return from.getRegion();
 		}
 	},
 	INSTALL_DATE(Date.class, GlazedLists.comparableComparator()) {
@@ -138,7 +148,7 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	START_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Start Date";
+			return TabsJobs.get().columnStartDate();
 		}
 		@Override
 		public Object getColumnValue(IndustryJob from) {
