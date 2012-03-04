@@ -26,11 +26,7 @@ import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,19 +174,20 @@ public class ApiConverter {
 
 		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
-	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
+	public static List<MarketOrder> apiMarketOrdersToMarketOrders(Human human, List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
 		for (ApiMarketOrder apiMarketOrder : apiMarketOrders){
-			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrder, settings));
+			marketOrders.add(apiMarketOrderToMarketOrder(human, apiMarketOrder, settings));
 		}
 		return marketOrders;
 	}
-	private static MarketOrder apiMarketOrderToMarketOrder(ApiMarketOrder apiMarketOrder, Settings settings){
+	private static MarketOrder apiMarketOrderToMarketOrder(Human human, ApiMarketOrder apiMarketOrder, Settings settings){
 		String name = ApiIdConverter.typeName(apiMarketOrder.getTypeID(), settings.getItems());
 		String location = ApiIdConverter.locationName(apiMarketOrder.getStationID(), null, settings.getLocations());
 		String system = ApiIdConverter.systemName(apiMarketOrder.getStationID(), null, settings.getLocations());
 		String region = ApiIdConverter.regionName(apiMarketOrder.getStationID(), null, settings.getLocations());
-		return new MarketOrder(apiMarketOrder, name, location, system, region);
+		String owner = human.getName();
+		return new MarketOrder(apiMarketOrder, name, location, system, region, owner);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();

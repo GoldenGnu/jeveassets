@@ -44,12 +44,15 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
+	public abstract String columnIssued();
 	public abstract String columnExpiresIn();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
 	public abstract String columnStatus();
 	public abstract String columnMinVolume();
+	public abstract String columnOwner();
 	public abstract String columnLocation();
+	public abstract String columnRegion();
 	public abstract String market();
 	public abstract String no();
 	public abstract String sell();

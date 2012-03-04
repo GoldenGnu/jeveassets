@@ -60,6 +60,16 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return from.getPrice();
 		}
 	},
+	ISSUED(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnIssued();
+		}
+		@Override
+		public Object getColumnValue(MarketOrder from) {
+			return from.getIssuedFormatted();
+		}
+	},
 	EXPIRES_IN(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -100,6 +110,16 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return from.getMinVolume();
 		}
 	},
+	OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOwner();
+		}
+		@Override
+		public Object getColumnValue(MarketOrder from) {
+			return from.getOwner();
+		}
+	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -108,6 +128,16 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 		@Override
 		public Object getColumnValue(MarketOrder from) {
 			return from.getLocation();
+		}
+	},
+	REGION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnRegion();
+		}
+		@Override
+		public Object getColumnValue(MarketOrder from) {
+			return from.getRegion();
 		}
 	},
 	VALUE(Double.class, GlazedLists.comparableComparator()) {

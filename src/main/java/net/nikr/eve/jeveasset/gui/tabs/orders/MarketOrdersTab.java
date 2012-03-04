@@ -250,7 +250,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 						orders.put(name, new ArrayList<MarketOrder>()); //Make sure empty is not null
 					}
 					//Only add once and don't add empty orders
-					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+					List<MarketOrder> characterMarketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
 					if (!unique.contains(name) && !characterMarketOrders.isEmpty()){
 						orders.put(name, characterMarketOrders);
 						all.addAll(characterMarketOrders);

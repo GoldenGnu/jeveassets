@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import javax.management.timer.Timer;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
@@ -33,10 +34,11 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	private String region;
 	private String rangeFormated;
 	private String status;
+	private String owner;
 	private Quantity quantity;
 
 
-	public MarketOrder(ApiMarketOrder apiMarketOrder, String name, String location, String system, String region) {
+	public MarketOrder(ApiMarketOrder apiMarketOrder, String name, String location, String system, String region, String owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -56,6 +58,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		this.location = location;
 		this.system = system;
 		this.region = region;
+		this.owner = owner;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
 		if (this.getRange() == -1) rangeFormated = "Station";
@@ -112,6 +115,14 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		}
 	}
 
+	public String getIssuedFormatted() {
+		long timeRemaining = Settings.getGmtNow().getTime() - this.getIssued().getTime();
+		//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
+		long min = (timeRemaining/(1000*60)) % 60;
+		long hours = (timeRemaining/(1000*60*60)) % 24;
+		long days = (timeRemaining/(1000*60*60*24));
+		return days+"d "+hours+"h ago";
+	}
 	public String getName() {
 		return name;
 	}
@@ -130,6 +141,10 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public String getRangeFormated() {
 		return rangeFormated;
+	}
+
+	public String getOwner() {
+		return owner;
 	}
 
 	public Quantity getQuantity() {

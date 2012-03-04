@@ -581,7 +581,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						myLocations.add(industryJob.getRegion());
 					}
 				}
-				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
 				for (MarketOrder marketOrder : marketOrders){
 					if (!myLocations.contains(marketOrder.getLocation())){
 						myLocations.add(marketOrder.getLocation());
