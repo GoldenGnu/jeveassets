@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,7 +32,7 @@ import java.util.List;
 
 public class Human implements Comparable<Human> {
 	private String name;
-	private long characterID;
+	private long ownerID;
 	private boolean showAssets;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
@@ -46,7 +46,7 @@ public class Human implements Comparable<Human> {
 
 	public Human(Account parentAccount, Human human) {
 		name = human.getName();
-		characterID = human.getCharacterID();
+		ownerID = human.getOwnerID();
 		showAssets = human.isShowAssets();
 		assetNextUpdate = human.getAssetNextUpdate();
 		balanceNextUpdate = human.getBalanceNextUpdate();
@@ -59,14 +59,14 @@ public class Human implements Comparable<Human> {
 		assets = human.getAssets();
 	}
 
-	public Human(Account parentAccount, String name, long characterID) {
-		this(parentAccount, name, characterID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+	public Human(Account parentAccount, String name, long ownerID) {
+		this(parentAccount, name, ownerID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
 	}
 
-	public Human(Account parentAccount, String name, long characterID, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
+	public Human(Account parentAccount, String name, long ownerID, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
-		this.characterID = characterID;
+		this.ownerID = ownerID;
 		this.showAssets = showAssets;
 
 		this.assetNextUpdate = assetNextUpdate;
@@ -96,8 +96,8 @@ public class Human implements Comparable<Human> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setCharacterID(long characterID) {
-		this.characterID = characterID;
+	public void setOwnerID(long ownerID) {
+		this.ownerID = ownerID;
 	}
 
 	public void setIndustryJobs(List<ApiIndustryJob> industryJobs) {
@@ -152,8 +152,8 @@ public class Human implements Comparable<Human> {
 		return balanceNextUpdate;
 	}
 
-	public long getCharacterID() {
-		return characterID;
+	public long getOwnerID() {
+		return ownerID;
 	}
 
 	public List<ApiIndustryJob> getIndustryJobs() {
@@ -189,7 +189,7 @@ public class Human implements Comparable<Human> {
 			return false;
 		}
 		final Human other = (Human) obj;
-		if (this.characterID != other.characterID) {
+		if (this.ownerID != other.ownerID) {
 			return false;
 		}
 		if (this.parentAccount != other.parentAccount && (this.parentAccount == null || !this.parentAccount.equals(other.parentAccount))) {
@@ -201,7 +201,7 @@ public class Human implements Comparable<Human> {
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 89 * hash + (int) (this.characterID ^ (this.characterID >>> 32));
+		hash = 89 * hash + (int) (this.ownerID ^ (this.ownerID >>> 32));
 		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
 	}
@@ -220,7 +220,7 @@ public class Human implements Comparable<Human> {
 		return getApiAuthorization(account, 0);
 	}
 	public static ApiAuthorization getApiAuthorization(Human human){
-		return getApiAuthorization(human.getParentAccount(), human.getCharacterID());
+		return getApiAuthorization(human.getParentAccount(), human.getOwnerID());
 	}
 	private static ApiAuthorization getApiAuthorization(Account account, long characterID){
 		return new ApiAuthorization(account.getKeyID(), characterID, account.getVCode());

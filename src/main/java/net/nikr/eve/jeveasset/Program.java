@@ -1,5 +1,5 @@
 /* 
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,11 +24,11 @@ package net.nikr.eve.jeveasset;
 import apple.dts.samplecode.osxadapter.OSXAdapter;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.matchers.MatcherEditor.Event;
-import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -36,19 +36,8 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.export.CsvExportDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.GeneralSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.PriceDataSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.ProxySettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.StockpileToolSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.*;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -56,14 +45,12 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
-import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
-import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
+import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
@@ -73,11 +60,11 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Program implements ActionListener, Listener<Asset>{
+public class Program implements ActionListener{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "1.9.2";
+	public static final String PROGRAM_VERSION = "2.0.0 BETA 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -96,10 +83,7 @@ public class Program implements ActionListener, Listener<Asset>{
 	
 	//Dialogs
 	private AccountManagerDialog accountManagerDialog;
-	private SaveFilterDialog saveFilterDialog;
-	private FiltersManagerDialog filtersManagerDialog;
 	private AboutDialog aboutDialog;
-	private CsvExportDialog csvExportDialog;
 	private ProfileDialog profileDialog;
 	private SettingsDialog settingsDialog;
 	private UpdateDialog updateDialog;
@@ -132,11 +116,13 @@ public class Program implements ActionListener, Listener<Asset>{
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
+	
+	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private Settings settings;
 	private EventList<Asset> eveAssetEventList;
-
+	
 	public Program(){
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
 		LOG.info("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version"));
@@ -198,63 +184,54 @@ public class Program implements ActionListener, Listener<Asset>{
 		stockpileTab = new StockpileTab(this);
 		SplashUpdater.setProgress(74);
 	//Dialogs
-		LOG.info("Loading: Save Filters Dialog");
-		saveFilterDialog = new SaveFilterDialog(this);
-		SplashUpdater.setProgress(76);
-		LOG.info("Loading: Filters Manager Dialog");
-		filtersManagerDialog = new FiltersManagerDialog(this);
-		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(76);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
-		SplashUpdater.setProgress(82);
-		LOG.info("Loading: Csv Export Dialog");
-		csvExportDialog = new CsvExportDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(78);
 		LOG.info("Loading: Profiles Dialog");
 		profileDialog = new ProfileDialog(this);
-		SplashUpdater.setProgress(86);
+		SplashUpdater.setProgress(80);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		SplashUpdater.setProgress(88);
+		SplashUpdater.setProgress(82);
 	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(89);
+		SplashUpdater.setProgress(84);
 		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(90);
+		SplashUpdater.setProgress(85);
 		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
 		LOG.info("Loading: Assets Tool Settings Panel");
 		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(86);
 		LOG.info("Loading: Overview Tool Settings Panel");
 		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(92);
+		SplashUpdater.setProgress(87);
 		LOG.info("Loading: Stockpile Tool Settings Panel");
 		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(88);
 		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(89);
 		LOG.info("Loading: Assets Name Settings Panel");
 		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(96);
+		SplashUpdater.setProgress(91);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(97);
+		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(98);
+		SplashUpdater.setProgress(93);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(99);
+		SplashUpdater.setProgress(94);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
@@ -282,6 +259,10 @@ public class Program implements ActionListener, Listener<Asset>{
 	 */
 	protected Program(boolean load) { }
 
+	public void addMainTab(JMainTab jMainTab){
+		jMainTabs.add(jMainTab);
+	}
+	
 	private void timerTicked(){
 		if (!timer.isRunning()){
 			timer.start();
@@ -306,6 +287,9 @@ public class Program implements ActionListener, Listener<Asset>{
 	public void saveSettings(){
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
+		for (JMainTab jMainTab : jMainTabs){
+			jMainTab.updateSettings();
+		}
 		settings.saveSettings();
 	}
 	
@@ -351,15 +335,14 @@ public class Program implements ActionListener, Listener<Asset>{
 	public MainWindow getMainWindow(){
 		return mainWindow;
 	}
-	public FiltersManagerDialog getFiltersManagerDialog(){
-		return filtersManagerDialog;
-	}
-	public SaveFilterDialog getSaveFilterDialog(){
-		return saveFilterDialog;
-	}
 	public AssetsTab getAssetsTab(){
 		return assetsTab;
 	}
+
+	public OverviewTab getOverviewTab() {
+		return overviewTab;
+	}
+	
 	public StatusPanel getStatusPanel(){
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -428,25 +411,6 @@ public class Program implements ActionListener, Listener<Asset>{
 		updateTableMenu();
 	}
 
-
-	/**
-	 * Called when saved asset filters are updated (save/rename/delete)
-	 */
-	public void savedFiltersChanged(){
-		this.getFiltersManagerDialog().savedFiltersChanged();
-		this.getSaveFilterDialog().savedFiltersChanged();
-		this.getAssetsTab().savedFiltersChanged();
-	}
-
-	/**
-	 * Called when the asset table is filtered
-	 */
-	@Override
-	public void changedMatcher(Event<Asset> matcherEvent) {
-		this.getAssetsTab().updateToolPanel();
-		overviewTab.updateTable();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	//Tools
@@ -492,9 +456,6 @@ public class Program implements ActionListener, Listener<Asset>{
 	//Others
 		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
 			showAbout();
-		}
-		if (MainMenu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
-			csvExportDialog.setVisible(true);
 		}
 		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);

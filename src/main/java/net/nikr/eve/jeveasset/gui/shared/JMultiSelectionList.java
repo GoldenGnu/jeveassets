@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,19 +21,10 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JList;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
@@ -46,19 +37,19 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		this(new DefaultListModel());
 	}
 	
-	public JMultiSelectionList(final Vector<?> listData) {
+	public JMultiSelectionList(final List<?> listData) {
 		this (
 			new AbstractListModel() {
 				@Override
 				public int getSize() { return listData.size(); }
 				@Override
-				public Object getElementAt(int i) { return listData.elementAt(i); }
+				public Object getElementAt(int i) { return listData.get(i); }
 			}
 		);
     }
 	
 	public JMultiSelectionList(ListModel model){
-		selectedList = new Vector<Integer>();
+		selectedList = new ArrayList<Integer>();
 
 		this.addMouseListener(this);
 		this.addKeyListener(this);
@@ -241,7 +232,7 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	}
 	//Private Methods
 	private void updateList(int index, int fix){
-		List<Integer> fixedIndices = new Vector<Integer>(selectedList.size());
+		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
 		for (int a = 0; a < selectedList.size(); a++){
 			int item = selectedList.get(a).intValue();
 			if (item >= index){

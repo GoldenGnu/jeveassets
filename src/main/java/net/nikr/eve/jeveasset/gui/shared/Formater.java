@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,29 +21,31 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class Formater {
 
+	//FIXME - Date format can not be changed after release!
+	//Must not be changed! please see: FilterControl
+	public static final String COLUMN_FORMAT = "dd-MM-yyyy";
+	
 	private static DecimalFormat iskFormat  = new DecimalFormat("#,##0.00 isk");
 	private static DecimalFormat itemsFormat  = new DecimalFormat("#,##0 items");
 	private static DecimalFormat longFormat  = new DecimalFormat("#,##0");
 	private static DecimalFormat integerFormat  = new DecimalFormat("0");
 	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
-	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(EveAssetMatching.LOCALE));
+	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
 	
+	private static DateFormat columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
-	private static DateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
 	private static DateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
 
@@ -92,6 +94,17 @@ public class Formater {
 		}
 	}
 
+	public static String columnDate(Object date){
+		return columnDate.format(date);
+	}
+	public static Date columnStringToDate(String date){
+		if (!date.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+		try {
+			return columnDate.parse(date);
+		} catch (ParseException ex) {
+			return null;
+		}
+	}
 	public static String timeOnly(Date date){
 		return timeOnly.format(date);
 	}
@@ -99,9 +112,7 @@ public class Formater {
 	public static String simpleDate(Date date){
 		return simpleDate.format(date);
 	}
-	public static String defaultDate(Object date){
-		return defaultDate.format(date);
-	}
+
 	public static String dateOnly(Object date){
 		return dateOnly.format(date);
 	}
@@ -110,5 +121,9 @@ public class Formater {
 		String sDate = todaysDate.format(date);
 		String sNow = todaysDate.format(Settings.getGmtNow());
 		return sDate.equals(sNow);
+	}
+
+	public static DateFormat getDefaultDate() {
+		return columnDate;
 	}
 }

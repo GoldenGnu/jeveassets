@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
+public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -194,6 +194,15 @@ enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	}
 	@Override
 	public String getColumnName() {
+		return getColumnName();
+	}
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override
+	public Object getColumnValue(StockpileItem from) {
+		return getColumnValue(from);
+	}
+	@Override
+	public String toString() {
 		return getColumnName();
 	}
 	@Override public boolean isColumnEditable(Object baseObject) {

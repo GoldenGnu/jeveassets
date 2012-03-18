@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,7 +33,6 @@ public class MainMenu extends JMenuBar {
 	
 	private static final long serialVersionUID = 1l;
 
-	public final static String ACTION_OPEN_CSV_EXPORT = "ACTION_OPEN_CSV_EXPORT";
 	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
 	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public final static String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
@@ -65,14 +64,6 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().file());
 		//menu.setActionCommand("Something");
 		this.add(menu);
-
-		menuItem = new JMenuItem(GuiFrame.get().export());
-		menuItem.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_CSV_EXPORT);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().exit());
 		menuItem.setIcon(Images.MISC_EXIT.getIcon());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 public class PriceDataSettings {
 
+	//TODO - PriceDataSettings is a mess
+	
 	private final static Logger LOG = LoggerFactory.getLogger(PriceDataSettings.class);
 
 	// should re-factor these two into an emum. - Candle 2010-09-13
@@ -385,7 +387,6 @@ public class PriceDataSettings {
 		if (source.equals(SOURCE_EVE_MARKETDATA)){
 			regionType = REGIONS_EVE_MARKETDATA[getRegion()];
 		}
-		// TODO enum - more string enum pattern, to be converted to an enum
 		if (regionType.equals(RegionType.REGION_EMPIRE)){
 		//Amarr
 			regions.add(10000054l); //Amarr: Aridia

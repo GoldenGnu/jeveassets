@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -46,7 +46,6 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String credits();
 	public abstract String eve();
 	public abstract String exit();
-	public abstract String export();
 	public abstract String file();
 	public abstract String help();
 	public abstract String industry();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
@@ -153,7 +154,9 @@ public class ProgramUpdateChecker {
 	private void parseUpdateVersion(){
 		try {
 			URL url = new URL(Program.PROGRAM_UPDATE_URL);
-			InputStream is = url.openConnection(program.getSettings().getProxy()).getInputStream();
+			URLConnection connection = url.openConnection(program.getSettings().getProxy());
+			connection.setConnectTimeout(10 * 1000); //10 sec
+			InputStream is = connection.getInputStream();
 			parseUpdate(parse(is));
 		} catch (MalformedURLException ex) {
 			LOG.info("Failed to get update information: "+ex.getMessage());

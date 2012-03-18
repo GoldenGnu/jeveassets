@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -80,6 +80,8 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private EventList<Material> materialEventList;
 	private SeparatorList<Material> separatorList;
 
+	//TODO - MaterialsTab is not translated properly
+	
 	public MaterialsTab(Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
@@ -164,7 +166,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All"); //TODO i18n translation missing
+			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

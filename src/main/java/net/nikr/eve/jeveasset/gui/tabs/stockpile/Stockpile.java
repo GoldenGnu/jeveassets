@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,12 +34,14 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 public class Stockpile implements Comparable<Stockpile> {
 	private String name;
-	private long characterID;
+	private long ownerID;
+	private String owner;
 	private long locationID;
 	private String location;
 	private String system;
 	private String region;
 	private int flagID;
+	private String flag;
 	private String container;
 	private boolean inventory;
 	private boolean sellOrders;
@@ -59,14 +61,16 @@ public class Stockpile implements Comparable<Stockpile> {
 		items.add(totalItem);
 	}
 
-	public Stockpile(String name, long characterID, long locationID, String location, String system, String region, int flagID, String container, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
+	public Stockpile(String name, long ownerID, String owner, long locationID, String location, String system, String region, int flagID, String flag, String container, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
 		this.name = name;
-		this.characterID = characterID;
+		this.ownerID = ownerID;
+		this.owner = owner;
 		this.locationID = locationID;
 		this.location = location;
 		this.system = system;
 		this.region = region;
 		this.flagID = flagID;
+		this.flag = flag;
 		this.container = container;
 		this.inventory = inventory;
 		this.sellOrders = sellOrders;
@@ -77,12 +81,14 @@ public class Stockpile implements Comparable<Stockpile> {
 	
 	final void update(Stockpile stockpile) {
 		this.name = stockpile.getName();
-		this.characterID = stockpile.getCharacterID();
+		this.ownerID = stockpile.getOwnerID();
+		this.owner = stockpile.getOwner();
 		this.locationID = stockpile.getLocationID();
 		this.location = stockpile.getLocation();
 		this.system = stockpile.getSystem();
 		this.region = stockpile.getRegion();
 		this.flagID = stockpile.getFlagID();
+		this.flag = stockpile.getFlag();
 		this.container = stockpile.getContainer();
 		this.inventory = stockpile.isInventory();
 		this.sellOrders = stockpile.isSellOrders();
@@ -140,12 +146,29 @@ public class Stockpile implements Comparable<Stockpile> {
 		return sellOrders;
 	}
 
-	public long getCharacterID() {
-		return characterID;
+	public long getOwnerID() {
+		return ownerID;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		if (owner == null) owner = "";
+		this.owner = owner;
 	}
 
 	public String getContainer() {
 		return container;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 
 	public int getFlagID() {
@@ -289,7 +312,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		public void updateAsset(Asset asset,  ItemFlag itemFlag, Long characterID, Long regionID){
 			if (asset != null && itemFlag != null && characterID != null && regionID != null //better save then sorry
 					&& typeID == asset.getTypeID()
-					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
 					&& ((stockpile.getLocation() != null
@@ -302,10 +325,10 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 		}
 		
-		void updateMarketOrder(ApiMarketOrder marketOrder, Long characterID, Location location) {
-			if (marketOrder != null && characterID != null && location != null //better save then sorry
+		void updateMarketOrder(ApiMarketOrder marketOrder, Long ownerID, Location location) {
+			if (marketOrder != null && ownerID != null && location != null //better save then sorry
 					&& typeID == marketOrder.getTypeID()
-					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
 					|| stockpile.getLocationID() == location.getRegionID()
@@ -322,7 +345,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		void updateIndustryJob(ApiIndustryJob industryJob, ItemFlag itemFlag, Long characterID, Location location, Item itemType) {
 			if (industryJob != null && itemFlag != null && characterID != null && location != null && itemType != null //better save then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()

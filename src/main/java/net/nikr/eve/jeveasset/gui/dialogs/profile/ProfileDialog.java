@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -335,7 +335,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				setAllEnabled(true);
 				program.getMainWindow().updateTitle();
 				jWait.hideWaitDialog();
-				if (!program.getAssetsTab().getAssetFilters().isEmpty()){
+				if (!program.getAssetsTab().isFiltersEmpty()){
 					int value = JOptionPane.showConfirmDialog(this.getDialog(),
 							DialoguesProfiles.get().clearFilter(),
 							DialoguesProfiles.get().profileLoadedMsg(),

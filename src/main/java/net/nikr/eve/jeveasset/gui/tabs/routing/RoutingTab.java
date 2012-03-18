@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -482,7 +482,7 @@ public class RoutingTab extends JMainTab  {
 		jCancel.setEnabled(!b);
 	}
 
-	//FIXME cancel processing in the routing tool doesn't work very well
+	//TODO cancel processing in the routing tool doesn't work very well
 	private void cancelProcessing() {
 		((RoutingAlgorithmContainer)jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}

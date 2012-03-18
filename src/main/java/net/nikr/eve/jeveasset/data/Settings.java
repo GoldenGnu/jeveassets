@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,6 +37,9 @@ import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.*;
@@ -75,8 +78,6 @@ public class Settings{
 	private final static String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 	private final static String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
-	public final static String COLUMN_SETTINGS_ASSETS = "COLUMN_SETTINGS_ASSETS";
-
 	private static boolean portable = false;
 	
 	//Data
@@ -94,12 +95,7 @@ public class Settings{
 	private List<Asset> eventListAssets = null;
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
 	private List<Account> accounts;
-	private Map<String, List<AssetFilter>> assetFilters;
-	private final List<String> assetTableColumns = new ArrayList<String>();
-	private final Map<String, TableSettings> tableSettings = new HashMap<String, TableSettings>();
 	private final Map<String, Float> packagedVolume = new HashMap<String, Float>();
-	private Map<String, String> assetTableColumnTooltips;
-	private List<String> assetTableNumberColumns;
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private List<Profile> profiles;
@@ -116,15 +112,16 @@ public class Settings{
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
-	private CsvSettings csvSettings;
+	private static CsvSettings csvSettings = new CsvSettings();
+	
+	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
+	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
 		priceDatas = new HashMap<Integer, PriceData>();
-		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new ArrayList<Account>();
 		profiles = new ArrayList<Profile>();
-		csvSettings = new CsvSettings();
 
 		//Settings
 		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
@@ -179,72 +176,6 @@ public class Settings{
 		packagedVolume.put("Titan", 10000000f);
 		packagedVolume.put("Transport Ship", 20000f);
 
-		//To add new column also update:
-		//		gui.tabs.assets.EveAssetTableFormat.getColumnClass()
-		//		gui.tabs.assets.EveAssetTableFormat.getColumnValue()
-		//		gui.shared.EveAssetMatching.getString()
-		//			remember to add to "All" as well...
-		//		gui.dialogs.export.CsvExportDialog.getLine()
-		//	If number column:
-		//		add to assetTableColumns bellow
-		assetTableColumns.add("Name");
-		assetTableColumns.add("Group");
-		assetTableColumns.add("Category");
-		assetTableColumns.add("Owner");
-		assetTableColumns.add("Location");
-		assetTableColumns.add("Security");
-		assetTableColumns.add("Region");
-		assetTableColumns.add("Container");
-		assetTableColumns.add("Flag");
-		assetTableColumns.add("Price");
-		assetTableColumns.add("Sell Min");
-		assetTableColumns.add("Buy Max");
-		assetTableColumns.add("Reprocessed");
-		assetTableColumns.add("Base Price");
-		assetTableColumns.add("Reprocessed Value");
-		assetTableColumns.add("Value");
-		assetTableColumns.add("Count");
-		assetTableColumns.add("Type Count");
-		assetTableColumns.add("Meta");
-		assetTableColumns.add("Volume");
-		assetTableColumns.add("Total Volume");
-		assetTableColumns.add("Singleton");
-		assetTableColumns.add("Item ID");
-		assetTableColumns.add("Type ID");
-
-		tableSettings.put(COLUMN_SETTINGS_ASSETS, new TableSettings(assetTableColumns));
-
-		assetTableColumnTooltips = new HashMap<String, String>();
-		assetTableColumnTooltips.put("Security", "System Security Status");
-		assetTableColumnTooltips.put("Price", "Default Price");
-		assetTableColumnTooltips.put("Sell Min", "Minimum Sell Price");
-		assetTableColumnTooltips.put("Buy Max", "Maximum Buy Price");
-		assetTableColumnTooltips.put("Reprocessed", "Value reprocessed materials");
-		assetTableColumnTooltips.put("Reprocessed Value", "Reprocessed Value (Count*Reprocessed)");
-		assetTableColumnTooltips.put("Value", "Value (Count*Price)");
-		assetTableColumnTooltips.put("Total Volume", "Total Volume (Count*Volume)");
-		assetTableColumnTooltips.put("Type Count", "Type Count (all assets of this type)");
-		assetTableColumnTooltips.put("Meta", "Meta Level");
-		assetTableColumnTooltips.put("Item ID", "Item ID (this specific asset)");
-		assetTableColumnTooltips.put("Type ID", "Type ID (this type of asset)");
-
-		assetTableNumberColumns = new ArrayList<String>();
-		assetTableNumberColumns.add("Count");
-		assetTableNumberColumns.add("Price");
-		assetTableNumberColumns.add("Sell Min");
-		assetTableNumberColumns.add("Buy Max");
-		assetTableNumberColumns.add("Base Price");
-		assetTableNumberColumns.add("Value");
-		assetTableNumberColumns.add("Volume");
-		assetTableNumberColumns.add("ID");
-		assetTableNumberColumns.add("Type ID");
-		assetTableNumberColumns.add("Type Count");
-		assetTableNumberColumns.add("Reprocessed");
-		assetTableNumberColumns.add("Reprocessed Value");
-		assetTableNumberColumns.add("Security");
-		assetTableNumberColumns.add("Meta");
-
-
 		reprocessSettings = new ReprocessSettings();
 
 		activeProfile = new Profile("Default", true, true);
@@ -263,12 +194,8 @@ public class Settings{
 		constructEveApiConnector();
 	}
 
-	public CsvSettings getCsvSettings() {
+	public static CsvSettings getCsvSettings() {
 		return csvSettings;
-	}
-
-	public void setCsvSettings(CsvSettings csvSettings) {
-		this.csvSettings = csvSettings;
 	}
 
 	/**
@@ -579,22 +506,6 @@ public class Settings{
 	public void setPriceData(Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
 	}
-
-	public Map<String, List<AssetFilter>> getAssetFilters() {
-		return assetFilters;
-	}
-
-	public void setAssetFilters(Map<String, List<AssetFilter>> assetFilters) {
-		this.assetFilters = assetFilters;
-	}
-
-	public List<String> getAssetTableNumberColumns() {
-		return assetTableNumberColumns;
-	}
-
-	public Map<String, String> getAssetTableColumnTooltips() {
-		return assetTableColumnTooltips;
-	}
 	
 	public Map<String, Boolean> getFlags() {
 		return flags;
@@ -739,15 +650,26 @@ public class Settings{
 		return locations;
 	}
 
-	public Map<String, TableSettings> getTableSettings() {
-		return tableSettings;
+	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+		return tableFilters;
+	}
+	
+	public Map<String, List<Filter>> getTableFilters(String key){
+		if (!tableFilters.containsKey(key)){
+			tableFilters.put(key, new HashMap<String, List<Filter>>());
+		}
+		return tableFilters.get(key);
 	}
 
-	public TableSettings getAssetTableSettings(){
-		return tableSettings.get(COLUMN_SETTINGS_ASSETS);
+	public Map<String, List<SimpleColumn>> getTableColumns() {
+		return tableColumns;
 	}
-
-
+	public List<SimpleColumn> getTableColumns(String key){
+		if (!tableColumns.containsKey(key)){
+			tableColumns.put(key, new ArrayList<SimpleColumn>());
+		}
+		return tableColumns.get(key);
+	}
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
 	}

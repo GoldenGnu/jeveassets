@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -42,9 +42,8 @@ public abstract class DialoguesCsvExport extends Bundle {
 		super(locale);
 	}
 	public abstract String csvExport();
-	public abstract String browse();
-	public abstract String assets();
-	public abstract String allAssets();
+	public abstract String filters();
+	public abstract String noFilter();
 	public abstract String currentFilter();
 	public abstract String savedFilter();
 	public abstract String fieldTerminated();
@@ -57,34 +56,11 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String ok();
 	public abstract String cancel();
 	public abstract String defaultSettings();
-	public abstract String headerNameName();
-	public abstract String headerNameGroup();
-	public abstract String headerNameCategory();
-	public abstract String headerNameOwner();
-	public abstract String headerNameCount();
-	public abstract String headerNameLocation();
-	public abstract String headerNameContainer();
-	public abstract String headerNameFlag();
-	public abstract String headerNamePrice();
-	public abstract String headerNameSellMin();
-	public abstract String headerNameBuyMax();
-	public abstract String headerNameValue();
-	public abstract String headerNameMeta();
-	public abstract String headerNameItemID();
-	public abstract String headerNameBasePrice();
-	public abstract String headerNameVolume();
-	public abstract String headerNameTypeID();
-	public abstract String headerNameRegion();
-	public abstract String headerNameTypeCount();
-	public abstract String headerNameSecurity();
-	public abstract String headerNameReprocessed();
-	public abstract String headerNameReprocessedValue();
-	public abstract String headerSingleton();
-	public abstract String headerVolumeTotal();
 	public abstract String selectOne();
 	public abstract String confirmStupidDecision();
 	public abstract String failedToSave();
 	public abstract String lineEndingsWindows();
 	public abstract String lineEndingsMac();
 	public abstract String lineEndingsUnix();
+	public abstract String noSavedFilter();
 }

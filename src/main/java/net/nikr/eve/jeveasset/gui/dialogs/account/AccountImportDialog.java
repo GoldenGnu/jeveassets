@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -61,12 +61,12 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
-	// TODO enum - more string enum pattern, to be converted to an enum
+	// TODO action enum - more string enum pattern, to be converted to an enum
 	public final static String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
 	public final static String ACTION_NEXT = "ACTION_NEXT";
 	public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 
-	// TODO enum - more string enum pattern, to be converted to an enum
+	// TODO tab enum - more string enum pattern, to be converted to an enum
 	public final static String TAB_ADD = "TAB_ADD";
 	public final static String TAB_VALIDATE = "TAB_VALIDATE";
 	public final static String TAB_DONE = "TAB_DONE";

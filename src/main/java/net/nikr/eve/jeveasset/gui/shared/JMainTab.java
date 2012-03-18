@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -55,6 +55,8 @@ public abstract class JMainTab{
 		this.title = title;
 		this.icon = icon;
 		this.closeable = closeable;
+		
+		program.addMainTab(this);
 
 		jPanel = new JPanel();
 
@@ -70,7 +72,12 @@ public abstract class JMainTab{
 	 * @param e mouse event
 	 */
 	protected abstract void showTablePopupMenu(MouseEvent e);
-
+	
+	/**
+	 * Overwrite to update settings before saving...
+	 */
+	public void updateSettings(){}
+	
 	public void addStatusbarLabel(JLabel jLabel){
 		statusbarLabels.add(jLabel);
 	}
@@ -117,6 +124,39 @@ public abstract class JMainTab{
 		jTable.addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+	}
+	
+	protected void selectClickedCell(MouseEvent e){
+		Object source = e.getSource();
+		if (source instanceof JTable){
+			JTable jTable = (JTable) source;
+			
+			//Rows
+			boolean clickInRowsSelection = false;
+			int[] selectedRows = jTable.getSelectedRows();
+			for (int a = 0; a < selectedRows.length; a++){
+				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
+					clickInRowsSelection = true;
+					break;
+				}
+			}
+
+			//Column
+			boolean clickInColumnsSelection = false;
+			int[] selectedColumns = jTable.getSelectedColumns();
+			for (int a = 0; a < selectedColumns.length; a++){
+				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())){
+					clickInColumnsSelection = true;
+					break;
+				}
+			}
+
+			//Clicked outside selection, select clicked cell
+			if (!clickInRowsSelection || !clickInColumnsSelection){
+				jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+				jTable.setColumnSelectionInterval(jTable.columnAtPoint(e.getPoint()), jTable.columnAtPoint(e.getPoint()));
+			}
+		}
 	}
 
 	private class TableMenuListener implements MouseListener, ListSelectionListener{

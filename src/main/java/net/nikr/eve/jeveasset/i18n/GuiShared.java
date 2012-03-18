@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -72,4 +72,53 @@ public abstract class GuiShared extends Bundle {
 	public abstract String weekdayAndTime(Date datetime);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
+	//Filters
+	public abstract String saveFilter();
+	public abstract String enterFilterName();
+	public abstract String save();
+	public abstract String cancel();
+	public abstract String noFilterName();
+	public abstract String overwriteFilter();
+	public abstract String addField();
+	public abstract String clearField();
+	public abstract String loadFilter();
+	public abstract String showFilters();
+	public abstract String manageFilters();
+	public abstract String nothingToSave();
+	public abstract String filterManager();
+	public abstract String managerLoad();
+	public abstract String managerRename();
+	public abstract String managerDelete();
+	public abstract String managerDone();
+	public abstract String renameFilter();
+	public abstract String deleteFilter();
+	public abstract String deleteFilterName(Object arg0);
+	public abstract String mergeFilters();
+	public abstract String managerMerge();
+	public abstract String filterAll();
+	public abstract String filterAnd();
+	public abstract String filterOr();
+	public abstract String filterContains();
+	public abstract String filterContainsNot();
+	public abstract String filterEquals();
+	public abstract String filterEqualsNot();
+	public abstract String filterGreaterThan();
+	public abstract String filterLessThan();
+	public abstract String filterBefore();
+	public abstract String filterAfter();
+	public abstract String filterEqualsDate();
+	public abstract String filterEqualsNotDate();
+	public abstract String filterContainsColumn();
+	public abstract String filterContainsNotColumn();
+	public abstract String filterEqualsColumn();
+	public abstract String filterEqualsNotColumn();
+	public abstract String filterGreaterThanColumn();
+	public abstract String filterLessThanColumn();
+	public abstract String filterBeforeColumn();
+	public abstract String filterAfterColumn();
+	public abstract String filterUntitled();
+	public abstract String filterEmpty();
+	public abstract String filterShowing(int rowCount, int size, String filterName);
+	public abstract String popupMenuAddField();
+	public abstract String export();
 }

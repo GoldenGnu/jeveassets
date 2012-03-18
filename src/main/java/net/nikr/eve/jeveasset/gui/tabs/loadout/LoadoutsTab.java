@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -97,24 +97,26 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private FilterList<Module> moduleFilterList;
 	private SeparatorList<Module> separatorList;
 
+	//TODO - LoadoutsTab is not translated properly
+	
 	public LoadoutsTab(Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
 		try {
-			jXmlFileChooser = new JCustomFileChooser(program, "xml");
+			jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 		} catch (RuntimeException e) {
 			// Workaround for JRE bug 4711700. A NullPointer is thrown
 			// sometimes on the first construction under XP look and feel,
 			// but construction succeeds on successive attempts.
 			try {
-				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			} catch (RuntimeException npe) {
 				// ok, now we use the metal file chooser, takes a long time to load
 				// but the user can still use the program
 				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			}
 		}
 		JLabel jCharactersLabel = new JLabel(TabsLoadout.get().character());
@@ -359,7 +361,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All"); //TODO i18n translation missing
+			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

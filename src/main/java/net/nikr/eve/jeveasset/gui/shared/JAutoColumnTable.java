@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -24,31 +24,15 @@ import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
 import javax.swing.JTable;
 import javax.swing.JViewport;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import net.nikr.eve.jeveasset.data.ISK;
-import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
+import javax.swing.SwingConstants;
+import javax.swing.event.*;
+import javax.swing.table.*;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
@@ -61,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 public class JAutoColumnTable extends JTable {
 	
 	private JViewport jViewport = null;
+	private int size = 0;
 	
 	public JAutoColumnTable(TableModel tableModel) {
 		super(tableModel);
@@ -74,24 +59,19 @@ public class JAutoColumnTable extends JTable {
 		this.addPropertyChangeListener("tableHeader", modelListener);
 		this.getColumnModel().addColumnModelListener(modelListener);
 		this.addPropertyChangeListener("columnModel", modelListener);
-
+		
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
-		this.setDefaultRenderer(Quantity.class, new ToStringCellRenderer());
-		this.setDefaultRenderer(ISK.class, new ToStringCellRenderer());
-		this.setDefaultRenderer(ModulePriceValue.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
+		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 	}
 	
-	private void autoResizeColumns() {
-		resizeColumnsText(this, jViewport);
-	}
-	
-	JViewport getViewport(){
-		return jViewport;
+	public void autoResizeColumns() {
+		resizeColumnsText(this);
 	}
 	
 	private JTable getTable(){
@@ -117,7 +97,7 @@ public class JAutoColumnTable extends JTable {
 		return null;
 	}
 
-	protected JViewport getParentViewport(){
+	private JViewport getParentViewport(){
 		Container container = this.getParent();
 		if (container instanceof JViewport){
 			return (JViewport) container;
@@ -126,32 +106,30 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 	
-	public void resizeColumnsText(JTable jTable, JViewport jViewport) {
-		if (jTable.getRowCount() > 0){
-			int size = 0;
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int i = 0; i < jTable.getColumnCount(); i++) {
-				 size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
-			}
-			if (jViewport != null && size < jViewport.getSize().width){
-				jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			}
+	private void resizeColumnsText(JTable jTable) {
+		size = 0;
+		for (int i = 0; i < jTable.getColumnCount(); i++) {
+				size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
+		}
+		updateScroll();
+	}
+	
+	private void updateScroll(){
+		if (jViewport != null && size < jViewport.getSize().width){
+			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		} else {
-			for (int i = 0; i < jTable.getColumnCount(); i++) {
-				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
-			}
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 	}
 
-	public int resizeColumn(JTable jTable, TableColumn column, int columnIndex) {
-		int maxWidth = 0;
+	private int resizeColumn(JTable jTable, TableColumn column, int columnIndex) {
+		//Header
 		TableCellRenderer renderer = column.getHeaderRenderer();
-		if (renderer == null) {
-			renderer = jTable.getTableHeader().getDefaultRenderer();
-		}
+		if (renderer == null) renderer = jTable.getTableHeader().getDefaultRenderer();
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
-		maxWidth = component.getPreferredSize().width;
+		int maxWidth = component.getPreferredSize().width;
+		
+		//Rows
 		for (int a = 0; a < jTable.getRowCount(); a++){
 			renderer = jTable.getCellRenderer(a, columnIndex);
 			if (renderer instanceof SeparatorTableCell) continue;
@@ -162,24 +140,31 @@ public class JAutoColumnTable extends JTable {
 		return maxWidth+4;
 	}
 
-	class ModelListener implements TableModelListener, ComponentListener,
+	private class ModelListener implements TableModelListener, ComponentListener,
 			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener{
 
 		boolean columnMoved = false;
 		int from = 0;
 		int to = 0;
+		private int rowsLastTime = 0;
+		private int rowsCount = 0;
 		
 		@Override
 		public void tableChanged(TableModelEvent e) {
-			if(getTable().isEditing()) {
-				getTable().getCellEditor().cancelCellEditing();
+			//FIXME JAutoColumnTable.tableChanged() removed jTable.isEditing() - this might cause a bug
+			//if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
+			if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
+			if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
+			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && e.getType() != TableModelEvent.UPDATE) { //Last Table Update
+				rowsLastTime = getRowCount();
+				rowsCount = 0;
+				autoResizeColumns();
 			}
-			autoResizeColumns();
 		}
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			autoResizeColumns();
+			updateScroll();
 		}
 
 		@Override
@@ -231,7 +216,7 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void columnRemoved(TableColumnModelEvent e) {}
-
+			
 		@Override
 		public void columnMoved(TableColumnModelEvent e) {
 			if (e.getFromIndex() != e.getToIndex()){

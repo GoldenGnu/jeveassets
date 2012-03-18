@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -286,7 +286,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		String container = (String)jContainer.getSelectedItem();
 		//Add
 		
-		return new Stockpile(name, human.getCharacterID(), location.getLocationID(), station, system, region, flag.getFlagID(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
+		return new Stockpile(name, human.getOwnerID(), human.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
 	}
 	
 	private void autoValidate(){
@@ -325,7 +325,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		Human humanSelected = humanAll;
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				if (human.getCharacterID() == stockpile.getCharacterID()){
+				if (human.getOwnerID() == stockpile.getOwnerID()){
 					humanSelected = human;
 				}
 			}
@@ -452,7 +452,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		Human humanSelected = humanAll;
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				if (human.getCharacterID() == stockpile.getCharacterID()){
+				if (human.getOwnerID() == stockpile.getOwnerID()){
 					humanSelected = human;
 				}
 			}

@@ -26,7 +26,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 		implements FocusListener, ActionListener{
 
-	// TODO enum - more string enum pattern, to be converted to an enum
+	// TODO action enum - more string enum pattern, to be converted to an enum
 	private final static String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
 	public final static String ACTION_DELETE = "ACTION_DELETE";

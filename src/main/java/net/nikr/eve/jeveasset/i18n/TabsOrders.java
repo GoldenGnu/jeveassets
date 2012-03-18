@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,12 +40,11 @@ public abstract class TabsOrders extends Bundle {
 
 	public abstract String buy();
 	public abstract String buy1();
-	public abstract String character();
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
 	public abstract String columnIssued();
-	public abstract String columnExpiresIn();
+	public abstract String columnExpires();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
 	public abstract String columnStatus();
@@ -57,6 +56,5 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String no();
 	public abstract String sell();
 	public abstract String sell1();
-	public abstract String state();
 	public abstract String whitespace(Object arg0);
 }

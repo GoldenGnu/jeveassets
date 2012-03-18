@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,13 +38,10 @@ public abstract class TabsJobs extends Bundle {
 		super(locale);
 	}
 
-	public abstract String activity();
-	public abstract String character();
 	public abstract String all();
 	public abstract String industry();
 	public abstract String install();
 	public abstract String no();
-	public abstract String state();
 	public abstract String whitespace(Object arg0);
 	public abstract String columnState();
 	public abstract String columnActivity();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,35 +26,19 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 
 
 class JOverviewTable extends JAutoColumnTable{
 
-	private DoubleCellRenderer doubleCellRenderer;
-	private LongCellRenderer longCellRenderer;
-	private TableCellRenderer tableCellRenderer;
-	private IntegerCellRenderer integerCellRenderer;
-	private FloatCellRenderer floatCellRenderer;
 	private List<String> groupedLocations = new ArrayList<String>();
-	private EventTableModel eventTableModel;
+	private EventTableModel<Overview> tableModel;
 
-	public JOverviewTable(EventTableModel eventTableModel) {
-		super(eventTableModel);
-		this.eventTableModel = eventTableModel;
-
-		doubleCellRenderer = new DoubleCellRenderer();
-		longCellRenderer = new LongCellRenderer();
-		integerCellRenderer = new IntegerCellRenderer();
-		floatCellRenderer = new FloatCellRenderer();
-		tableCellRenderer = new DefaultTableCellRenderer();
+	public JOverviewTable(EventTableModel<Overview> tableModel) {
+		super(tableModel);
+		this.tableModel = tableModel;
 	}
 
 	public void setGroupedLocations(List<String> groupedLocations) {
@@ -63,66 +47,39 @@ class JOverviewTable extends JAutoColumnTable{
 
 	@Override
 	public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
-		Object value = getValueAt(row, column);
-
-		boolean isSelected = false;
-		boolean hasFocus = false;
-
-		// Only indicate the selection and focused cell if not printing
-		if (!isPaintingForPrint()) {
-			isSelected = isCellSelected(row, column);
-
-			boolean rowIsLead =
-				(selectionModel.getLeadSelectionIndex() == row);
-			boolean colIsLead =
-				(columnModel.getSelectionModel().getLeadSelectionIndex() == column);
-
-			hasFocus = (rowIsLead && colIsLead) && isFocusOwner();
-		}
+		Component component = super.prepareRenderer(renderer, row, column);
+		boolean isSelected = isCellSelected(row, column);
+		Overview overview = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		if (eventTableModel.getRowCount() >= row){
-			Overview overview = (Overview) eventTableModel.getElementAt(row);
-			if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
-				if (!isSelected){
-					c.setBackground( new Color(200,255,200) );
-				} else {
-					c.setBackground( this.getSelectionBackground().darker() );
-				}
-				return c;
-			}
-			if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
-				if (!isSelected){
-					c.setBackground( new Color(200,255,200) );
-				} else {
-					c.setBackground( this.getSelectionBackground().darker() );
-				}
-				return c;
-			}
-			if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())){ //In group
-				Component c = this.getMatchingTableCellRendererComponent(value, isSelected, hasFocus, row, column);
-				if (!isSelected){
-					c.setBackground( new Color(200,255,200) );
-				} else {
-					c.setBackground( this.getSelectionBackground().darker() );
-				}
-				return c;
-			}
+		
+		//Default Colors
+		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
+		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
 
+		if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
+			if (!isSelected){
+				component.setBackground( new Color(200,255,200) );
+			} else {
+				component.setBackground( this.getSelectionBackground().darker() );
+			}
+			return component;
 		}
-
-
-
-		return super.prepareRenderer(renderer, row, column);
-	}
-
-	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){
-		Component c = tableCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Integer) c = integerCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Float) c = floatCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Double) c = doubleCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		if (value instanceof Long) c = longCellRenderer.getTableCellRendererComponent(this, value, isSelected, hasFocus, row, column);
-		return c;
+		if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())){ //In group
+			if (!isSelected){
+				component.setBackground( new Color(200,255,200) );
+			} else {
+				component.setBackground( this.getSelectionBackground().darker() );
+			}
+			return component;
+		}
+		if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())){ //In group
+			if (!isSelected){
+				component.setBackground( new Color(200,255,200) );
+			} else {
+				component.setBackground( this.getSelectionBackground().darker() );
+			}
+			return component;
+		}
+		return component;
 	}
 }

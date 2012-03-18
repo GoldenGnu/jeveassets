@@ -16,6 +16,18 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.0.0__________________________________________________________________________
+
+New Features:
+-Date filtering (Before/After/Equals etc.)
+-Added CSV export to Industry Jobs, Market Orders, Stockpile
+-Added customizable columns to Industry Jobs, Market Orders, Stockpile
+-Added filtering to Industry Jobs, Market Orders, Stockpile
+-Industry Jobs: Added new column "Region"
+-Assets: Added new column "Total Volume"
+-Market Orders: Added new columns "Issued", "Owner", "Region"
+
+________________________________________________________________________________
 _1.9.2__________________________________________________________________________
 
 New Features:

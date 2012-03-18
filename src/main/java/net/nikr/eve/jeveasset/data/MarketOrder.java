@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import java.util.Date;
 import javax.management.timer.Timer;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
@@ -102,29 +102,18 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return thisID.compareTo(thatID);
 	}
 
-	public String getExpireIn(){
-		long timeRemaining = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY)) - Settings.getGmtNow().getTime();
-		if (timeRemaining > 0){
-			//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
-			long min = (timeRemaining/(1000*60)) % 60;
-			long hours = (timeRemaining/(1000*60*60)) % 24;
-			long days = (timeRemaining/(1000*60*60*24));
-			return days+"d "+hours+"h "+min+"m ";
-		} else {
-			return "Expired";
-		}
+	public Date getExpires(){
+		long expires = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY));
+		return new Date(expires);
 	}
 
-	public String getIssuedFormatted() {
-		long timeRemaining = Settings.getGmtNow().getTime() - this.getIssued().getTime();
-		//long sec = (timeRemaining/1000) % 60; // unused, leaving it here as it may be useful in the future, feel free to remove it.
-		long min = (timeRemaining/(1000*60)) % 60;
-		long hours = (timeRemaining/(1000*60*60)) % 24;
-		long days = (timeRemaining/(1000*60*60*24));
-		return days+"d "+hours+"h ago";
-	}
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public Date getIssued() {
+		return super.getIssued();
 	}
 
 	public String getLocation() {

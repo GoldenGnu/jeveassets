@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -58,10 +58,20 @@ public enum Images {
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),
 	FILTER_EQUAL ("filter_equal.png"),
-	FILTER_GREATER_THEN ("filter_greater_then.png"),
-	FILTER_GREATER_THEN_COLUMN ("filter_greater_then_column.png"),
-	FILTER_LESS_THEN ("filter_less_then.png"),
-	FILTER_LESS_THEN_COLUMN ("filter_less_then_column.png"),
+	FILTER_EQUAL_DATE ("filter_equal_date.png"),
+	FILTER_NOT_EQUAL_DATE ("filter_not_equal_date.png"),
+	FILTER_GREATER_THAN ("filter_greater_than.png"),
+	FILTER_LESS_THAN ("filter_less_than.png"),
+	FILTER_AFTER ("filter_after.png"),
+	FILTER_BEFORE ("filter_before.png"),
+	FILTER_CONTAIN_COLUMN("filter_contain_column.png"),
+	FILTER_EQUAL_COLUMN ("filter_equal_column.png"),
+	FILTER_NOT_CONTAIN_COLUMN ("filter_not_contain_column.png"),
+	FILTER_NOT_EQUAL_COLUMN ("filter_not_equal_column.png"),
+	FILTER_GREATER_THAN_COLUMN ("filter_greater_than_column.png"),
+	FILTER_LESS_THAN_COLUMN ("filter_less_than_column.png"),
+	FILTER_AFTER_COLUMN ("filter_after_column.png"),
+	FILTER_BEFORE_COLUMN ("filter_before_column.png"),
 
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_EVE_MARKETS ("link_eve_markets.png"),

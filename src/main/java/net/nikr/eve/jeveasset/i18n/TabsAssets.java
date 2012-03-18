@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,41 +38,38 @@ public abstract class TabsAssets extends Bundle {
 		super(locale);
 	}
 
-	public abstract String addFilter();
-	public abstract String addField();
-	public abstract String addSystem();
 	public abstract String assets();
 	public abstract String average();
 	public abstract String average1();
-	public abstract String can();
-	public abstract String cancel();
-	public abstract String clear();
 	public abstract String count();
-	public abstract String delete();
-	public abstract String delete2(Object arg0);
-	public abstract String delete3();
-	public abstract String done();
-	public abstract String empty();
-	public abstract String enter();
-	public abstract String filter();
-	public abstract String load();
-	public abstract String load1();
-	public abstract String manage();
-	public abstract String nOfyAssets(int rowCount, int size, String filterName);
-	public abstract String nothing();
-	public abstract String overwrite();
-	public abstract String overwrite1();
-	public abstract String overwrite2();
-	public abstract String rename();
-	public abstract String rename1();
-	public abstract String save();
-	public abstract String save1();
 	public abstract String selection();
 	public abstract String total();
 	public abstract String total1();
 	public abstract String total2();
 	public abstract String value();
 	public abstract String volume();
-	public abstract String untitled();
-	public abstract String you();
+	public abstract String columnName();
+	public abstract String columnGroup();
+	public abstract String columnCategory();
+	public abstract String columnOwner();
+	public abstract String columnLocation();
+	public abstract String columnSecurity();
+	public abstract String columnRegion();
+	public abstract String columnContainer();
+	public abstract String columnFlag();
+	public abstract String columnPrice();
+	public abstract String columnPriceSellMin();
+	public abstract String columnPriceBuyMax();
+	public abstract String columnPriceReprocessed();
+	public abstract String columnPriceBase();
+	public abstract String columnValueReprocessed();
+	public abstract String columnValue();
+	public abstract String columnCount();
+	public abstract String columnTypeCount();
+	public abstract String columnMeta();
+	public abstract String columnVolume();
+	public abstract String columnVolumeTotal();
+	public abstract String columnSingleton();
+	public abstract String columnItemID();
+	public abstract String columnTypeID();
 }

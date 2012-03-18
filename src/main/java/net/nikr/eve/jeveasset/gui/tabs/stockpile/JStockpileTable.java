@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,10 +34,10 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 public class JStockpileTable extends JSeparatorTable{
 
-	private EventTableModel tableModel;
+	private EventTableModel<StockpileItem> tableModel;
 	private Program program;
 	
-	public JStockpileTable(Program program, EventTableModel tableModel) {
+	public JStockpileTable(Program program, EventTableModel<StockpileItem> tableModel) {
 		super(tableModel);
 		this.program = program;
 		this.tableModel = tableModel;
@@ -49,27 +50,35 @@ public class JStockpileTable extends JSeparatorTable{
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		
-		//Default Foreground
-		component.setForeground(isSelected ? this.getSelectionForeground() : Color.BLACK);
+		//Default Colors
+		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
+		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
+		
+		if (object instanceof SeparatorList.Separator){
+			component.setForeground(Color.BLACK);
+			component.setBackground(Color.LIGHT_GRAY);
+		}
 		
 		if (object instanceof StockpileItem){
 			StockpileItem stockpileItem = (StockpileItem) object;
 			//Background
 			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())){
 				component.setForeground(Color.BLACK);
-				if (stockpileItem.isOK()){
+				if (isSelected){
+					component.setBackground( this.getSelectionBackground().darker() );
+				} else if (stockpileItem.isOK()){ //FULL
 					component.setBackground( new Color(200,255,200) );
-				} else if (stockpileItem.isHalf() && program.getSettings().isStockpileHalfColors()){
+				} else if (stockpileItem.isHalf() && program.getSettings().isStockpileHalfColors()){ //ABOVE HALF
 					component.setBackground( new Color(255,255,200) );
 				} else {
-					component.setBackground( new Color(255,200,200) );
+					component.setBackground( new Color(255,200,200) ); //LESS THEN HALF/FULL
 				}
-			} else if (isSelected){ //Selected
-				component.setBackground(this.getSelectionBackground());
 			} else if (object instanceof StockpileTotal){ //Total
-				component.setBackground( new Color(235,235,235) );
-			} else { //Default
-				component.setBackground(Color.WHITE);
+				if (!isSelected){
+					component.setBackground( new Color(235,235,235) );
+				} else {
+					component.setBackground( this.getSelectionBackground().darker() );
+				}
 			}
 			//Foreground
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isInventory()) {
@@ -85,13 +94,25 @@ public class JStockpileTable extends JSeparatorTable{
 				component.setForeground(Color.GRAY);
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0){
-				component.setForeground(Color.RED.darker());
+				if (!isSelected) {
+					component.setForeground(Color.RED.darker());
+				} else {
+					component.setForeground( new Color(255,200,200) );
+				}
 			}
 			if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0){
-				component.setForeground(Color.RED.darker());
+				if (!isSelected) {
+					component.setForeground(Color.RED.darker());
+				} else {
+					component.setForeground( new Color(255,200,200) );
+				}
 			}
 			if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0){
-				component.setForeground(Color.RED.darker());
+				if (!isSelected) {
+					component.setForeground(Color.RED.darker());
+				} else {
+					component.setForeground( new Color(255,200,200) );
+				}
 			}
 		}
 		return component;

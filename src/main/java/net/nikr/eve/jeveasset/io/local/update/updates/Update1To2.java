@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,18 +25,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.XPath;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -123,11 +115,8 @@ public class Update1To2 implements LocalUpdate {
 			tableColumnNames.add(name.getText());
 			if (visible.getText().equals("true")) tableColumnVisible.add(name.getText());
 		}
-		TableSettings tableSettings = new TableSettings();
-		tableSettings.setMode(convertFlag(doc));
-		tableSettings.setTableColumnNames(tableColumnNames);
-		tableSettings.setTableColumnVisible(tableColumnVisible);
-		writeTableSettings(doc, tableSettings);
+		String mode = convertFlag(doc);
+		writeTableSettings(doc, mode, tableColumnNames, tableColumnVisible);
 	}
 
 	private String convertDefaultPriceMode(String oldVal) {
@@ -149,18 +138,18 @@ public class Update1To2 implements LocalUpdate {
 		if (oldVal.startsWith("MODE_")) return oldVal;
 		String convert = oldVal.toLowerCase();
 		convert = convert.toLowerCase();
-		if (convert.contains("equals"))              return AssetFilter.Mode.MODE_EQUALS.name();
-		if (convert.contains("contains"))            return AssetFilter.Mode.MODE_CONTAIN.name();
-		if (convert.contains("does not contain"))    return AssetFilter.Mode.MODE_CONTAIN_NOT.name();
-		if (convert.contains("does not equal"))      return AssetFilter.Mode.MODE_EQUALS_NOT.name();
-		if (convert.contains("greater than"))        return AssetFilter.Mode.MODE_GREATER_THAN.name();
-		if (convert.contains("less than"))           return AssetFilter.Mode.MODE_LESS_THAN.name();
-		if (convert.contains("greater than column")) return AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.name();
-		if (convert.contains("less than column"))    return AssetFilter.Mode.MODE_LESS_THAN_COLUMN.name();
+		if (convert.contains("equals"))              return "MODE_EQUALS";
+		if (convert.contains("contains"))            return "MODE_CONTAIN";
+		if (convert.contains("does not contain"))    return "MODE_CONTAIN_NOT";
+		if (convert.contains("does not equal"))      return "MODE_EQUALS_NOT";
+		if (convert.contains("greater than"))        return "MODE_GREATER_THAN";
+		if (convert.contains("less than"))           return "MODE_LESS_THAN";
+		if (convert.contains("greater than column")) return "MODE_GREATER_THAN_COLUMN";
+		if (convert.contains("less than column"))    return "MODE_LESS_THAN_COLUMN";
 		throw new IllegalArgumentException("Failed to convert the mode type " + oldVal);
 	}
 	
-	private ResizeMode convertFlag(Document doc){
+	private String convertFlag(Document doc){
 		XPath flagSelector = DocumentHelper.createXPath("/settings/flags/flag");
 		List flagResults = flagSelector.selectNodes(doc);
 		boolean text = false;
@@ -178,20 +167,20 @@ public class Update1To2 implements LocalUpdate {
 				element.detach();
 			}
 		}
-		if (text) return ResizeMode.TEXT;
-		if (window) return ResizeMode.WINDOW;
-		return ResizeMode.NONE;
+		if (text) return "TEXT";
+		if (window) return "WINDOW";
+		return "NONE";
 	}
 
-	private void writeTableSettings(Document doc, TableSettings tableSettings){
+	private void writeTableSettings(Document doc, String mode, List<String> tableColumnNames, List<String> tableColumnVisible){
 		Element tables = doc.getRootElement().addElement("tables");
 		Element table = tables.addElement("table");
-		table.addAttribute("name", Settings.COLUMN_SETTINGS_ASSETS);
-		table.addAttribute("resize", tableSettings.getMode().toString());
-		for (String columnName : tableSettings.getTableColumnNames()){
+		table.addAttribute("name", "COLUMN_SETTINGS_ASSETS");
+		table.addAttribute("resize", mode);
+		for (String columnName : tableColumnNames){
 			Element column = table.addElement("column");
 			column.addAttribute("name", columnName);
-			column.addAttribute("visible", String.valueOf(tableSettings.getTableColumnVisible().contains(columnName)));
+			column.addAttribute("visible", String.valueOf(tableColumnVisible.contains(columnName)));
 		}
 	}
 

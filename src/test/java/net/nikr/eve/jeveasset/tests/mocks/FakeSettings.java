@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,23 +29,10 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.CsvSettings;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Jump;
-import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.OverviewGroup;
-import net.nikr.eve.jeveasset.data.PriceData;
-import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.data.Profile;
-import net.nikr.eve.jeveasset.data.ReprocessSettings;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
@@ -71,11 +58,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public String getApiProxy() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, List<AssetFilter>> getAssetFilters() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -121,16 +103,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public ReprocessSettings getReprocessSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, String> getAssetTableColumnTooltips() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<String> getAssetTableNumberColumns() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -246,11 +218,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setApiProxy(String apiProxy) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setAssetFilters(Map<String, List<AssetFilter>> assetFilters) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -400,22 +367,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public TableSettings getAssetTableSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, TableSettings> getTableSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Integer, PriceData> getPriceFactionData() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public CsvSettings getCsvSettings() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -425,12 +377,57 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setCsvSettings(CsvSettings csvSettings) {
+	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+	public double getPrice(int typeID, boolean isBlueprintCopy) {
 		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, List<SimpleColumn>> getTableColumns() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, List<Filter>> getTableFilters(String key) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public float getVolume(int typeID, boolean packaged) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isStockpileFocusTab() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isStockpileHalfColors() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setStockpileFocusTab(boolean stockpileFocusOnAdd) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setStockpileHalfColors(boolean stockpileHalfColors) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<SimpleColumn> getTableColumns(String key) {
+		return super.getTableColumns(key);
 	}
 }

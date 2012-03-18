@@ -205,9 +205,21 @@ License:
   Common Public License V1.0 (http://junit.sourceforge.net/cpl-v10.html)
 
 ________________________________________________________________________________
+_JCALENDAR______________________________________________________________________
+
+jEveAssets use JCalendar to get user input as a Date
+
+Link:
+  http://www.toedter.com/en/jcalendar/
+
+License:
+  GNU Lesser General Public License
+  http://www.toedter.com/en/jcalendar/license.html
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009, 2010, 2011 Contributors (see above)
+Copyright 2009, 2010, 2011, 2012 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

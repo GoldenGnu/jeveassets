@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,43 +21,37 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.GroupLayout;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
+import net.nikr.eve.jeveasset.gui.shared.*;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.ColumnTableListener {
+public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
@@ -69,12 +63,8 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 	public final static String ACTION_ADD_FILTER_LESS_THEN_COLUMN = "ACTION_ADD_FILTER_LESS_THEN_COLUMN";
 
 	//GUI
-	private ToolPanel toolPanel;
 	private JAssetTable jTable;
 	
-	private JPopupMenu jTablePopupMenu;
-	
-
 	private JLabel jTotalValue;
 	private JLabel jCount;
 	private JLabel jAverage;
@@ -85,22 +75,27 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 	private EventList<Asset> eveAssetEventList;
 	private FilterList<Asset> filterList;
 	
+	public static final String NAME = "assets"; //Not to be changed!
+	
+	private AssetFilterControl filterControl;
+	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> eveAssetTableFormat;
+	
 	public AssetsTab(Program program) {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(false);
 
 		eveAssetEventList = program.getEveAssetEventList();
-		//For soring the table
-		SortedList<Asset> sortedList = new SortedList<Asset>(eveAssetEventList);
-		EveAssetTableFormat eveAssetTableFormat = new EveAssetTableFormat(program.getSettings());
+		eveAssetTableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
+		eveAssetTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		//For filtering the table
-		filterList = new FilterList<Asset>(sortedList);
+		filterList = new FilterList<Asset>(eveAssetEventList);
+		filterList.addListEventListener(this);
+		//For soring the table
+		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<Asset>(filterList, eveAssetTableFormat);
+		eveAssetTableModel = new EventTableModel<Asset>(sortedList, eveAssetTableFormat);
 		//Table
-		jTable = new JAssetTable(program, eveAssetTableModel, program.getSettings().getAssetTableSettings());
-		jTable.setTableHeader( new EveAssetTableHeader(program, jTable.getColumnModel()) );
+		jTable = new JAssetTable(program, eveAssetTableModel);
 		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.getTableHeader().setResizingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
@@ -109,15 +104,13 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		//install the sorting/filtering
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
+		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		jTable.addColumnTableListener(this);
 		installTableMenu(jTable);
-
-		//Filter panel(s)
-		toolPanel = new ToolPanel(program, filterList);
+		//Scroll
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -130,28 +123,47 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 
 		jTotalValue = StatusPanel.createLabel(TabsAssets.get().total2(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jTotalValue);
-
-		jTablePopupMenu = new JPopupMenu();
+		
+		filterControl = new AssetFilterControl(
+				program.getMainWindow().getFrame(),
+				program.getSettings().getTableFilters(NAME),
+				filterList,
+				eveAssetEventList);
 
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-					.addGap(15)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(toolPanel.getPanel())
-						.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
-					)
-					.addGap(15)
-				)
-			)
+			layout.createParallelGroup()
+				.addComponent(filterControl.getPanel())
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGap(5)
-				.addComponent(toolPanel.getPanel())
-				.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
+				.addComponent(filterControl.getPanel())
+				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+	@Override
+	public void updateSettings(){
+		program.getSettings().getTableColumns().put(NAME, eveAssetTableFormat.getColumns());
+	}
+	
+	
+	public boolean isFiltersEmpty(){
+		return getFilters().isEmpty();
+	}
+	public void addFilter(Filter filter) {
+		filterControl.addFilter(filter);
+	}
+	private List<Filter> getFilters(){
+		return filterControl.getCurrentFilters();
+	}
+	public void clearFilters(){
+		filterControl.clearCurrentFilters();
+	}
+	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(List<Filter> filters){
+		return new FilterLogicalMatcher<Asset>(filterControl, filters);
+	}
+	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(){
+		return new FilterLogicalMatcher<Asset>(filterControl, getFilters());
 	}
 
 	private void updateStatusbar(){
@@ -159,37 +171,16 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		long count = 0;
 		double average = 0;
 		float volume = 0;
-		for (int a = 0; a < eveAssetTableModel.getRowCount(); a++){
-			Asset eveAsset = eveAssetTableModel.getElementAt(a);
-			total = total + (eveAsset.getPrice() * eveAsset.getCount());
-			count = count + eveAsset.getCount();
-			volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
+		for (Asset asset : filterList){
+			total = total + (asset.getPrice() * asset.getCount());
+			count = count + asset.getCount();
+			volume = volume + (asset.getVolume() * asset.getCount());
 		}
 		if (count > 0 && total > 0) average = total / count;
 		jTotalValue.setText(Formater.iskFormat(total));
 		jCount.setText(Formater.itemsFormat(count));
 		jAverage.setText(Formater.iskFormat(average));
 		jVolume.setText(Formater.doubleFormat(volume));
-	}
-
-	public void updateToolPanel(){
-		String filter = TabsAssets.get().untitled();
-		if (getAssetFilters().isEmpty()){
-			filter = TabsAssets.get().empty();
-		}
-		if (program.getSettings().getAssetFilters().containsValue(getAssetFilters())){
-			for (Map.Entry<String, List<AssetFilter>> entry : program.getSettings().getAssetFilters().entrySet()){
-				if (entry.getValue().equals(getAssetFilters())){
-					filter = entry.getKey();
-					break;
-				}
-			}
-		}
-		toolPanel.setToolbarText(TabsAssets.get()
-				.nOfyAssets(jTable.getRowCount(),
-				program.getEveAssetEventList().size(),
-				filter
-				));
 	}
 
 	public Asset getSelectedAsset(){
@@ -207,60 +198,11 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		return ret;
 	}
 
-	public List<AssetFilter> getAssetFilters(){
-		return toolPanel.getAssetFilters();
-	}
-
-	public void setAssetFilters(List<AssetFilter> assetFilters){
-		toolPanel.setAssetFilters(assetFilters);
-	}
-
-	public void addFilter(AssetFilter assetFilter){
-		toolPanel.addFilter(assetFilter);
-	}
-
-	public void clearFilters(){
-		toolPanel.clearFilters();
-	}
-
-	public void addFilter(AssetFilter assetFilter, boolean unique){
-		toolPanel.addFilter(assetFilter, unique);
-	}
-
-	public void savedFiltersChanged(){
-		toolPanel.savedFiltersChanged();
-		updateToolPanel();
-	}
-
-	
-
 	@Override
 	protected void showTablePopupMenu(MouseEvent e){
-		boolean clickInRowsSelection = false;
-		int[] selectedRows = jTable.getSelectedRows();
-		for (int a = 0; a < selectedRows.length; a++){
-			if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
-				clickInRowsSelection = true;
-				break;
-			}
-		}
-
-		boolean clickInColumnsSelection = false;
-		int[] selectedColumns = jTable.getSelectedColumns();
-		for (int a = 0; a < selectedColumns.length; a++){
-			if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())){
-				clickInColumnsSelection = true;
-				break;
-			}
-		}
-
-		//Clicked outside selection, select clicked cell
-		if (!clickInRowsSelection || !clickInColumnsSelection){
-			jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-			jTable.setColumnSelectionInterval(jTable.columnAtPoint(e.getPoint()), jTable.columnAtPoint(e.getPoint()));
-			selectedRows = jTable.getSelectedRows();
-			selectedColumns = jTable.getSelectedColumns();
-		}
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		
+		selectClickedCell(e);
 
 		updateTableMenu(jTablePopupMenu);
 
@@ -272,107 +214,20 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		JMenuItem  jMenuItem;
-		JMenu jSubMenu;
+		JMenuItem jMenuItem;
 	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
 		int[] selectedColumns = jTable.getSelectedColumns();
-		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
 		boolean isSingleRow = selectedRows.length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		boolean numericColumn = false;
-		if (isSingleCell){
-			String column = (String) jTable.getColumnModel().getColumn(selectedColumns[0]).getHeaderValue();
-			numericColumn = program.getSettings().getAssetTableNumberColumns().contains(column);
-		}
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-	//COLUMNS
-		if (jComponent instanceof JMenu){
-			jComponent.add(jTable.getMenu());
-			addSeparator(jComponent);
-		}
 	//FILTER
-		jSubMenu = new JMenu(TabsAssets.get().addFilter());
-		jSubMenu.setIcon(Images.TOOL_ASSETS.getIcon());
-		jComponent.add(jSubMenu);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN.toString());
-		jMenuItem.setIcon(Images.FILTER_CONTAIN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN);
-		jMenuItem.addActionListener(this);
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_CONTAIN_NOT.toString());
-		jMenuItem.setIcon(Images.FILTER_NOT_CONTAIN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_CONTAIN_NOT);
-		jMenuItem.addActionListener(this);
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS.toString());
-		jMenuItem.setIcon(Images.FILTER_EQUAL.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS);
-		jMenuItem.addActionListener(this);
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_EQUALS_NOT.toString());
-		jMenuItem.setIcon(Images.FILTER_NOT_EQUAL.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_EQUALS_NOT);
-		jMenuItem.addActionListener(this);
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
-		jMenuItem.setIcon(Images.FILTER_GREATER_THEN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
-		jMenuItem.addActionListener(this);
-		if (!numericColumn && isSingleCell){
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().can());
-		}
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
-		jMenuItem.setIcon(Images.FILTER_LESS_THEN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
-		jMenuItem.addActionListener(this);
-		if (!numericColumn && isSingleCell){
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().can());
-		}
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.FILTER_GREATER_THEN_COLUMN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
-		jMenuItem.addActionListener(this);
-		if (!numericColumn && isSingleCell){
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().can());
-		}
-		jSubMenu.add(jMenuItem);
-
-		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.FILTER_LESS_THEN_COLUMN.getIcon());
-		jMenuItem.setEnabled(isSingleCell);
-		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
-		jMenuItem.addActionListener(this);
-		if (!numericColumn && isSingleCell){
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().can());
-		}
-		jSubMenu.add(jMenuItem);
-
+		jComponent.add(filterControl.getMenu(jTable, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 	//STOCKPILE
 		jComponent.add(new JMenuStockpile(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 
@@ -381,7 +236,8 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 
 	//EDIT
 		jComponent.add(new JMenuEditItem(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
-
+	//COLUMNS
+		jComponent.add(eveAssetTableFormat.getMenu(eveAssetTableModel, jTable));
 	//INFO
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);
@@ -432,70 +288,70 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 			jComponent.add(jMenuItem);
 		}
 	}
-	
-	private String format(String column, Object o){
-		if (column.equals("Security")){ //Format security as a comparable number
-			try {
-				String security = (String) o;
-				return Formater.compareFormat(Double.valueOf(security));
-			} catch (NumberFormatException ex){
-				return "0";
-			}
-		} else if (o instanceof Number){ //Format number to be comparable as a String
-			return Formater.compareFormat(o);
-		} else { //Any string...
-			return String.valueOf(o);
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ADD_FILTER_CONTAIN.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_CONTAIN_NOT.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_CONTAIN_NOT, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_EQUALS.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_EQUALS_NOT.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_EQUALS_NOT, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_GREATER_THEN.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_GREATER_THAN, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_LESS_THEN.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			String text = format(column, jTable.getValueAt(jTable.getSelectedRows()[0], jTable.getSelectedColumns()[0]));
-			addFilter( new AssetFilter(column, text, AssetFilter.Mode.MODE_LESS_THAN, AssetFilter.Junction.AND, null));
-		}
-		if (ACTION_ADD_FILTER_GREATER_THEN_COLUMN.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_GREATER_THAN_COLUMN, AssetFilter.Junction.AND, column));
-		}
-		if (ACTION_ADD_FILTER_LESS_THEN_COLUMN.equals(e.getActionCommand())){
-			String column = (String) jTable.getTableHeader().getColumnModel().getColumn(jTable.getSelectedColumns()[0]).getHeaderValue();
-			addFilter( new AssetFilter(column, "", AssetFilter.Mode.MODE_LESS_THAN_COLUMN, AssetFilter.Junction.AND, column));
-		}
-	}
-
-	@Override
-	public void tableUpdate(){
-		updateStatusbar();
-		updateToolPanel();
-	}
 
 	@Override
 	public void updateData() {}
+
+	@Override
+	public void listChanged(ListEvent<Asset> listChanges) {
+		updateStatusbar();
+		program.getOverviewTab().updateTable();
+	}
+	
+	public static class AssetFilterControl extends FilterControl<Asset>{
+
+		public AssetFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<Asset> filterList, EventList<Asset> eventList) {
+			super(jFrame, filters, filterList, eventList);
+		}
+		
+		@Override
+		protected Object getColumnValue(Asset item, String column) {
+			EveAssetTableFormat format = EveAssetTableFormat.valueOf(column);
+			if (format == EveAssetTableFormat.ITEM_ID){
+				LongInt longInt = (LongInt)format.getColumnValue(item);
+				return longInt.getNumber();
+			} else {
+				return format.getColumnValue(item);
+			}
+		}
+		
+		@Override
+		protected boolean isNumericColumn(Enum column) {
+			EveAssetTableFormat format = (EveAssetTableFormat) column;
+			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else if (format == EveAssetTableFormat.ITEM_ID) {
+				return true;
+			} else if (format == EveAssetTableFormat.SECURITY) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		protected boolean isDateColumn(Enum column) {
+			EveAssetTableFormat format = (EveAssetTableFormat) column;
+			if (format.getType().getName().equals(Date.class.getName())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public Enum[] getColumns() {
+			return EveAssetTableFormat.values();
+		}
+		
+		@Override
+		protected Enum valueOf(String column) {
+			return EveAssetTableFormat.valueOf(column);
+		}
+		
+		@Override
+		protected List<EnumTableColumn<Asset>> getEnumColumns() {
+			return columnsAsList(EveAssetTableFormat.values());
+		}
+	}
 }

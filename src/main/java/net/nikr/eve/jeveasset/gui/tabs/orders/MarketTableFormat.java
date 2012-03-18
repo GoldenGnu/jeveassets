@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,13 +23,14 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
+public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -60,24 +61,24 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return from.getPrice();
 		}
 	},
-	ISSUED(String.class, GlazedLists.comparableComparator()) {
+	ISSUED(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOrders.get().columnIssued();
 		}
 		@Override
 		public Object getColumnValue(MarketOrder from) {
-			return from.getIssuedFormatted();
+			return from.getIssued();
 		}
 	},
-	EXPIRES_IN(String.class, GlazedLists.comparableComparator()) {
+	EXPIRES(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsOrders.get().columnExpiresIn();
+			return TabsOrders.get().columnExpires();
 		}
 		@Override
 		public Object getColumnValue(MarketOrder from) {
-			return from.getExpireIn();
+			return from.getExpires();
 		}
 	},
 	RANGE(String.class, GlazedLists.comparableComparator()) {
@@ -164,6 +165,20 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override
+	public Object getColumnValue(MarketOrder from) {
+		return getColumnValue(from);
+	}
+	//XXX - TableFormat.getColumnName(...) Workaround
+	@Override
+	public String getColumnName() {
+		return getColumnName();
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;

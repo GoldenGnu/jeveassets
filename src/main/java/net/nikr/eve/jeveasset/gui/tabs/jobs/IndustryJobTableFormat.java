@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,52 +29,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
-	//XXX Removed extra id columns from IndustryJobTableFormat (Industry Plot Releated?)
-	/*
-	JOB_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Job ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getJobID();
-		}
-	},
-	CONTAINER_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Container ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getContainerID();
-		}
-	},
-	CONTAINER_LOCATION_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Container Location";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getContainerLocationID();
-		}
-	},
-	LINE_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Line ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getAssemblyLineID();
-		}
-	},
-	 */
-	
-	
+public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	STATE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -200,6 +155,15 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override
+	public Object getColumnValue(IndustryJob from) {
+		return getColumnValue(from);
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;

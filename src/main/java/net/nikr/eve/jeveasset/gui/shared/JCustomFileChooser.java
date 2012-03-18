@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -33,15 +33,14 @@ public class JCustomFileChooser extends JFileChooser {
 
 	private String customExtension;
 	private String customDescription;
+	private JFrame jFrame;
 
-	private Program program;
-
-	public JCustomFileChooser(Program program, String customExtension) {
-		this(program, customExtension, GuiShared.get().files(customExtension.toUpperCase()));
+	public JCustomFileChooser(JFrame jFrame, String customExtension) {
+		this(jFrame, customExtension, GuiShared.get().files(customExtension.toUpperCase()));
 	}
 
-	public JCustomFileChooser(Program program, String customExtension, String customDescription) {
-		this.program = program;
+	public JCustomFileChooser(JFrame jFrame, String customExtension, String customDescription) {
+		this.jFrame = jFrame;
 		this.customExtension = customExtension;
 		this.customDescription = customDescription;
 		this.addChoosableFileFilter(new CustomFileFilter());
@@ -57,7 +56,7 @@ public class JCustomFileChooser extends JFileChooser {
 		}
 		if (selectedFile != null && selectedFile.exists()){
 			int nReturn = JOptionPane.showConfirmDialog(
-					program.getMainWindow().getFrame(),
+					jFrame,
 					GuiShared.get().overwrite(),
 					GuiShared.get().overwriteFile(),
 					JOptionPane.YES_NO_OPTION,

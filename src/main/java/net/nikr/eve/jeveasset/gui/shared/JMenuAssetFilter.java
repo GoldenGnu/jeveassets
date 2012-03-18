@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,8 +25,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -80,23 +83,23 @@ public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Location", station, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
+			Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.EQUALS, station);
+			program.getAssetsTab().addFilter(filter);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Location", system, AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.AND, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
+			Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, system);
+			program.getAssetsTab().addFilter(filter);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Region", region, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
+			Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.REGION, CompareType.EQUALS, region);
+			program.getAssetsTab().addFilter(filter);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())){
-			AssetFilter assetFilter = new AssetFilter("Name", typeName, AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.AND, null);
-			program.getAssetsTab().addFilter(assetFilter, true);
+			Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.NAME, CompareType.CONTAINS, typeName);
+			program.getAssetsTab().addFilter(filter);
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 	}

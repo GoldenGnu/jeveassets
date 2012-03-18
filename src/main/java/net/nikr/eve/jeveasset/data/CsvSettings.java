@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -20,11 +20,6 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
 
 
@@ -82,9 +77,6 @@ public class CsvSettings {
 		private LineDelimiter(String string) {
 			this.string = string;
 		}
-		public String getString() {
-			return string;
-		}
 		@Override
 		public String toString() {
 			return getI18N();
@@ -121,31 +113,25 @@ public class CsvSettings {
 	}
 	
 	
-	FieldDelimiter fieldDelimiter = FieldDelimiter.COMMA;
-	LineDelimiter lineDelimiter = LineDelimiter.DOS;
-	DecimalSeperator decimalSeperator = DecimalSeperator.DOT;
-	String path = getDefaultPath();
-	List<String> columns = new ArrayList<String>();
-	int maxColumns = 0;
-
-	public CsvSettings() {}
+	private static final String PATH = Settings.getUserDirectory();
+	private static final String FILENAME = Settings.getUserDirectory()+"export.csv";
 	
-	public int getMaxColumns() {
-		return maxColumns;
-	}
+	private FieldDelimiter fieldDelimiter;
+	private LineDelimiter lineDelimiter;
+	private DecimalSeperator decimalSeperator;
+	private String filename = FILENAME;
 
-	public void setMaxColumns(int columnSize) {
-		this.maxColumns = columnSize;
+	public CsvSettings() {
+		clear();
 	}
-
-	public List<String> getColumns() {
-		return columns;
+	
+	public final void clear(){
+		fieldDelimiter = FieldDelimiter.COMMA;
+		lineDelimiter = LineDelimiter.DOS;
+		decimalSeperator = DecimalSeperator.DOT;
+		filename = FILENAME;
 	}
-
-	public void setColumns(List<String> columns) {
-		this.columns = columns;
-	}
-
+	
 	public DecimalSeperator getDecimalSeperator() {
 		return decimalSeperator;
 	}
@@ -170,28 +156,18 @@ public class CsvSettings {
 		this.lineDelimiter = lineDelimiter;
 	}
 
-	/**
-	 * Return a String with the path part of the filename
-	 * @return path (always ending with File.separator)
-	 */
-	public String getPath() {
-		if (path.lastIndexOf(File.separator) != path.length() - 1) path = path + File.separator;
-		return path;
+	public String getFilename() {
+		return filename;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-	public String getFile() {
-		return getPath()+getDefaultFile();
-	}
-	
-	private String getDefaultPath(){
-		return Settings.getUserDirectory();
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 
-	private String getDefaultFile(){
-		return "assets"+Formater.simpleDate( new Date() )+".csv";
+	public static String getDefaultPath() {
+		return PATH;
+	}
+	public static String getDefaultFilename() {
+		return FILENAME;
 	}
 }
