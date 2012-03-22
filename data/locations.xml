@@ -9067,75 +9067,75 @@
     <row id="60003118" name="Santola IV - Moon 1 - Expert Housing Production Plant" region="10000033" security="0.8" solarsystem="30002785"/>
     <row id="60003121" name="Sankkasen IX - Moon 10 - Expert Housing Production Plant" region="10000033" security="0.7" solarsystem="30002783"/>
     <row id="60003124" name="Litiura VIII - Moon 7 - Caldari Funds Unlimited Vault" region="10000016" security="0.5" solarsystem="30001400"/>
-    <row id="60003127" name="Nonni III - Caldari Funds Unlimited Investment Bank" region="10000016" security="0.5" solarsystem="30001401"/>
-    <row id="60003130" name="Sankkasen IX - Moon 20 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.7" solarsystem="30002783"/>
-    <row id="60003133" name="Santola VIII - Moon 11 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.8" solarsystem="30002785"/>
-    <row id="60003136" name="Josameto IX - Moon 3 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.6" solarsystem="30000156"/>
-    <row id="60003139" name="Liekuri VII - Moon 1 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.6" solarsystem="30000154"/>
-    <row id="60003142" name="Maila III - Moon 1 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.4" solarsystem="30000162"/>
-    <row id="60003145" name="Purjola VI - Moon 5 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.5" solarsystem="30000161"/>
-    <row id="60003148" name="Hykkota V - Moon 17 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.8" solarsystem="30000134"/>
-    <row id="60003151" name="Ansila V - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.9" solarsystem="30000132"/>
-    <row id="60003154" name="Malkalen IV - Moon 1 - Caldari Funds Unlimited Investment Bank" region="10000016" security="0.9" solarsystem="30001393"/>
-    <row id="60003157" name="Ylandoki VI - Moon 8 - Caldari Funds Unlimited Investment Bank" region="10000016" security="0.8" solarsystem="30001395"/>
-    <row id="60003160" name="Kaimon III - Moon 14 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.7" solarsystem="30002751"/>
-    <row id="60003163" name="Kaimon III - Moon 15 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.7" solarsystem="30002751"/>
-    <row id="60003166" name="Hatakani VII - Moon 1 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.9" solarsystem="30002764"/>
-    <row id="60003169" name="Sivala VI - Moon 1 - Caldari Funds Unlimited Investment Bank" region="10000033" security="0.6" solarsystem="30002765"/>
+    <row id="60003127" name="Nonni III - Caldari Funds Unlimited Depository" region="10000016" security="0.5" solarsystem="30001401"/>
+    <row id="60003130" name="Sankkasen IX - Moon 20 - Caldari Funds Unlimited Depository" region="10000033" security="0.7" solarsystem="30002783"/>
+    <row id="60003133" name="Santola VIII - Moon 11 - Caldari Funds Unlimited Depository" region="10000033" security="0.8" solarsystem="30002785"/>
+    <row id="60003136" name="Josameto IX - Moon 3 - Caldari Funds Unlimited Depository" region="10000002" security="0.6" solarsystem="30000156"/>
+    <row id="60003139" name="Liekuri VII - Moon 1 - Caldari Funds Unlimited Depository" region="10000002" security="0.6" solarsystem="30000154"/>
+    <row id="60003142" name="Maila III - Moon 1 - Caldari Funds Unlimited Depository" region="10000002" security="0.4" solarsystem="30000162"/>
+    <row id="60003145" name="Purjola VI - Moon 5 - Caldari Funds Unlimited Depository" region="10000002" security="0.5" solarsystem="30000161"/>
+    <row id="60003148" name="Hykkota V - Moon 17 - Caldari Funds Unlimited Depository" region="10000002" security="0.8" solarsystem="30000134"/>
+    <row id="60003151" name="Ansila V - Caldari Funds Unlimited Depository" region="10000002" security="0.9" solarsystem="30000132"/>
+    <row id="60003154" name="Malkalen IV - Moon 1 - Caldari Funds Unlimited Depository" region="10000016" security="0.9" solarsystem="30001393"/>
+    <row id="60003157" name="Ylandoki VI - Moon 8 - Caldari Funds Unlimited Depository" region="10000016" security="0.8" solarsystem="30001395"/>
+    <row id="60003160" name="Kaimon III - Moon 14 - Caldari Funds Unlimited Depository" region="10000033" security="0.7" solarsystem="30002751"/>
+    <row id="60003163" name="Kaimon III - Moon 15 - Caldari Funds Unlimited Depository" region="10000033" security="0.7" solarsystem="30002751"/>
+    <row id="60003166" name="Hatakani VII - Moon 1 - Caldari Funds Unlimited Depository" region="10000033" security="0.9" solarsystem="30002764"/>
+    <row id="60003169" name="Sivala VI - Moon 1 - Caldari Funds Unlimited Depository" region="10000033" security="0.6" solarsystem="30002765"/>
     <row id="60003172" name="Akkio V - Moon 6 - Caldari Funds Unlimited Vault" region="10000002" security="0.2" solarsystem="30000200"/>
-    <row id="60003175" name="Tasti IX - Moon 12 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.3" solarsystem="30000195"/>
-    <row id="60003178" name="Mastakomon XII - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.5" solarsystem="30000202"/>
-    <row id="60003181" name="Mastakomon VIII - Moon 2 - Caldari Funds Unlimited Investment Bank" region="10000002" security="0.5" solarsystem="30000202"/>
-    <row id="60003184" name="Antiainen III - State and Region Bank Investment Bank" region="10000016" security="0.6" solarsystem="30001357"/>
+    <row id="60003175" name="Tasti IX - Moon 12 - Caldari Funds Unlimited Depository" region="10000002" security="0.3" solarsystem="30000195"/>
+    <row id="60003178" name="Mastakomon XII - Caldari Funds Unlimited Depository" region="10000002" security="0.5" solarsystem="30000202"/>
+    <row id="60003181" name="Mastakomon VIII - Moon 2 - Caldari Funds Unlimited Depository" region="10000002" security="0.5" solarsystem="30000202"/>
+    <row id="60003184" name="Antiainen III - State and Region Bank Depository" region="10000016" security="0.6" solarsystem="30001357"/>
     <row id="60003187" name="Kiskoken VII - Moon 14 - State and Region Bank Vault" region="10000016" security="0.5" solarsystem="30001360"/>
-    <row id="60003190" name="Korsiki III - Moon 11 - State and Region Bank Investment Bank" region="10000002" security="0.6" solarsystem="30000181"/>
-    <row id="60003193" name="Inaya VIII - Moon 8 - State and Region Bank Investment Bank" region="10000002" security="0.6" solarsystem="30000182"/>
+    <row id="60003190" name="Korsiki III - Moon 11 - State and Region Bank Depository" region="10000002" security="0.6" solarsystem="30000181"/>
+    <row id="60003193" name="Inaya VIII - Moon 8 - State and Region Bank Depository" region="10000002" security="0.6" solarsystem="30000182"/>
     <row id="60003196" name="Umokka VII - State and Region Bank Vault" region="10000016" security="0.6" solarsystem="30001409"/>
-    <row id="60003199" name="Ruvas VII - State and Region Bank Investment Bank" region="10000016" security="0.8" solarsystem="30001408"/>
-    <row id="60003202" name="Hatakani VII - Moon 20 - State and Region Bank Investment Bank" region="10000033" security="0.9" solarsystem="30002764"/>
-    <row id="60003205" name="Hatakani I - Moon 1 - State and Region Bank Investment Bank" region="10000033" security="0.9" solarsystem="30002764"/>
-    <row id="60003208" name="Ihakana VI - State and Region Bank Investment Bank" region="10000002" security="0.4" solarsystem="30000169"/>
+    <row id="60003199" name="Ruvas VII - State and Region Bank Depository" region="10000016" security="0.8" solarsystem="30001408"/>
+    <row id="60003202" name="Hatakani VII - Moon 20 - State and Region Bank Depository" region="10000033" security="0.9" solarsystem="30002764"/>
+    <row id="60003205" name="Hatakani I - Moon 1 - State and Region Bank Depository" region="10000033" security="0.9" solarsystem="30002764"/>
+    <row id="60003208" name="Ihakana VI - State and Region Bank Depository" region="10000002" security="0.4" solarsystem="30000169"/>
     <row id="60003211" name="Vahunomi X - Moon 4 - State and Region Bank Vault" region="10000002" security="0.5" solarsystem="30000170"/>
     <row id="60003214" name="Horkkisen XVIII - State and Region Bank Vault" region="10000033" security="0.4" solarsystem="30002741"/>
-    <row id="60003217" name="Eitu VI - Moon 7 - State and Region Bank Investment Bank" region="10000033" security="0.5" solarsystem="30002740"/>
-    <row id="60003220" name="Nourvukaiken VII - Moon 8 - State and Region Bank Investment Bank" region="10000016" security="0.8" solarsystem="30001376"/>
-    <row id="60003223" name="Nourvukaiken VI - Moon 2 - State and Region Bank Investment Bank" region="10000016" security="0.8" solarsystem="30001376"/>
-    <row id="60003226" name="Tuuriainas IV - State and Region Bank Investment Bank" region="10000002" security="0.6" solarsystem="30000128"/>
-    <row id="60003229" name="Tuuriainas II - State and Region Bank Investment Bank" region="10000002" security="0.6" solarsystem="30000128"/>
-    <row id="60003232" name="Karjataimon V - Moon 19 - State and Region Bank Investment Bank" region="10000016" security="0.3" solarsystem="30001440"/>
-    <row id="60003235" name="Tartoken VII - Moon 7 - State and Region Bank Investment Bank" region="10000016" security="0.1" solarsystem="30001441"/>
-    <row id="60003238" name="Purjola VII - Moon 10 - State and Region Bank Investment Bank" region="10000002" security="0.5" solarsystem="30000161"/>
-    <row id="60003241" name="Akora IV - Moon 1 - State and Region Bank Investment Bank" region="10000002" security="0.3" solarsystem="30000163"/>
-    <row id="60003244" name="Geras IV - Moon 1 - Modern Finances Investment Bank" region="10000002" security="0.7" solarsystem="30000126"/>
-    <row id="60003247" name="Tuuriainas IV - Modern Finances Investment Bank" region="10000002" security="0.6" solarsystem="30000128"/>
-    <row id="60003250" name="Vaere VIII - Moon 3 - Modern Finances Investment Bank" region="10000068" security="0.8" solarsystem="30005306"/>
-    <row id="60003253" name="Alenia IV - Moon 4 - Modern Finances Investment Bank" region="10000068" security="0.9" solarsystem="30005302"/>
-    <row id="60003256" name="Audaerne VI - Moon 5 - Modern Finances Investment Bank" region="10000032" security="0.5" solarsystem="30002684"/>
+    <row id="60003217" name="Eitu VI - Moon 7 - State and Region Bank Depository" region="10000033" security="0.5" solarsystem="30002740"/>
+    <row id="60003220" name="Nourvukaiken VII - Moon 8 - State and Region Bank Depository" region="10000016" security="0.8" solarsystem="30001376"/>
+    <row id="60003223" name="Nourvukaiken VI - Moon 2 - State and Region Bank Depository" region="10000016" security="0.8" solarsystem="30001376"/>
+    <row id="60003226" name="Tuuriainas IV - State and Region Bank Depository" region="10000002" security="0.6" solarsystem="30000128"/>
+    <row id="60003229" name="Tuuriainas II - State and Region Bank Depository" region="10000002" security="0.6" solarsystem="30000128"/>
+    <row id="60003232" name="Karjataimon V - Moon 19 - State and Region Bank Depository" region="10000016" security="0.3" solarsystem="30001440"/>
+    <row id="60003235" name="Tartoken VII - Moon 7 - State and Region Bank Depository" region="10000016" security="0.1" solarsystem="30001441"/>
+    <row id="60003238" name="Purjola VII - Moon 10 - State and Region Bank Depository" region="10000002" security="0.5" solarsystem="30000161"/>
+    <row id="60003241" name="Akora IV - Moon 1 - State and Region Bank Depository" region="10000002" security="0.3" solarsystem="30000163"/>
+    <row id="60003244" name="Geras IV - Moon 1 - Modern Finances Depository" region="10000002" security="0.7" solarsystem="30000126"/>
+    <row id="60003247" name="Tuuriainas IV - Modern Finances Depository" region="10000002" security="0.6" solarsystem="30000128"/>
+    <row id="60003250" name="Vaere VIII - Moon 3 - Modern Finances Depository" region="10000068" security="0.8" solarsystem="30005306"/>
+    <row id="60003253" name="Alenia IV - Moon 4 - Modern Finances Depository" region="10000068" security="0.9" solarsystem="30005302"/>
+    <row id="60003256" name="Audaerne VI - Moon 5 - Modern Finances Depository" region="10000032" security="0.5" solarsystem="30002684"/>
     <row id="60003259" name="Barmalie VI - Moon 4 - Modern Finances Vault" region="10000032" security="0.5" solarsystem="30002683"/>
     <row id="60003262" name="Oursulaert VIII - Modern Finances Vault" region="10000064" security="0.9" solarsystem="30004969"/>
     <row id="60003265" name="Oursulaert I - Modern Finances Vault" region="10000064" security="0.9" solarsystem="30004969"/>
-    <row id="60003268" name="Penirgman V - Moon 2 - Modern Finances Investment Bank" region="10000043" security="0.9" solarsystem="30003488"/>
-    <row id="60003271" name="Penirgman IX - Moon 7 - Modern Finances Investment Bank" region="10000043" security="0.9" solarsystem="30003488"/>
-    <row id="60003274" name="Mannar VII - Moon 12 - Modern Finances Investment Bank" region="10000037" security="0.3" solarsystem="30003060"/>
-    <row id="60003277" name="Mannar IV - Moon 7 - Modern Finances Investment Bank" region="10000037" security="0.3" solarsystem="30003060"/>
-    <row id="60003280" name="Laurvier IX - Moon 2 - Modern Finances Investment Bank" region="10000064" security="0.7" solarsystem="30005002"/>
-    <row id="60003283" name="Adirain IV - Moon 2 - Modern Finances Investment Bank" region="10000064" security="0.4" solarsystem="30005003"/>
-    <row id="60003286" name="Eitu III - Moon 5 - Modern Finances Investment Bank" region="10000033" security="0.5" solarsystem="30002740"/>
-    <row id="60003289" name="Eitu III - Moon 9 - Modern Finances Investment Bank" region="10000033" security="0.5" solarsystem="30002740"/>
-    <row id="60003292" name="Brapelille IX - Moon 18 - Modern Finances Investment Bank" region="10000032" security="0.7" solarsystem="30002699"/>
-    <row id="60003295" name="Bawilan VIII - Moon 17 - Modern Finances Investment Bank" region="10000032" security="0.5" solarsystem="30002700"/>
-    <row id="60003298" name="Nourvukaiken II - Moon 1 - Modern Finances Investment Bank" region="10000016" security="0.8" solarsystem="30001376"/>
-    <row id="60003301" name="Nourvukaiken VII - Moon 13 - Modern Finances Investment Bank" region="10000016" security="0.8" solarsystem="30001376"/>
+    <row id="60003268" name="Penirgman V - Moon 2 - Modern Finances Depository" region="10000043" security="0.9" solarsystem="30003488"/>
+    <row id="60003271" name="Penirgman IX - Moon 7 - Modern Finances Depository" region="10000043" security="0.9" solarsystem="30003488"/>
+    <row id="60003274" name="Mannar VII - Moon 12 - Modern Finances Depository" region="10000037" security="0.3" solarsystem="30003060"/>
+    <row id="60003277" name="Mannar IV - Moon 7 - Modern Finances Depository" region="10000037" security="0.3" solarsystem="30003060"/>
+    <row id="60003280" name="Laurvier IX - Moon 2 - Modern Finances Depository" region="10000064" security="0.7" solarsystem="30005002"/>
+    <row id="60003283" name="Adirain IV - Moon 2 - Modern Finances Depository" region="10000064" security="0.4" solarsystem="30005003"/>
+    <row id="60003286" name="Eitu III - Moon 5 - Modern Finances Depository" region="10000033" security="0.5" solarsystem="30002740"/>
+    <row id="60003289" name="Eitu III - Moon 9 - Modern Finances Depository" region="10000033" security="0.5" solarsystem="30002740"/>
+    <row id="60003292" name="Brapelille IX - Moon 18 - Modern Finances Depository" region="10000032" security="0.7" solarsystem="30002699"/>
+    <row id="60003295" name="Bawilan VIII - Moon 17 - Modern Finances Depository" region="10000032" security="0.5" solarsystem="30002700"/>
+    <row id="60003298" name="Nourvukaiken II - Moon 1 - Modern Finances Depository" region="10000016" security="0.8" solarsystem="30001376"/>
+    <row id="60003301" name="Nourvukaiken VII - Moon 13 - Modern Finances Depository" region="10000016" security="0.8" solarsystem="30001376"/>
     <row id="60003304" name="Adahum IX - Moon 2 - Modern Finances Vault" region="10000020" security="0.6" solarsystem="30001648"/>
-    <row id="60003307" name="Tividu IV - Moon 9 - Modern Finances Investment Bank" region="10000020" security="0.6" solarsystem="30001644"/>
+    <row id="60003307" name="Tividu IV - Moon 9 - Modern Finances Depository" region="10000020" security="0.6" solarsystem="30001644"/>
     <row id="60003310" name="Erindur VIII - Moon 18 - Modern Finances Vault" region="10000042" security="0.6" solarsystem="30003472"/>
-    <row id="60003313" name="Hroduko VII - Moon 14 - Modern Finances Investment Bank" region="10000042" security="0.7" solarsystem="30003468"/>
-    <row id="60003316" name="T-LIWS IV - Moon 6 - Modern Finances Investment Bank" region="10000041" security="0.0" solarsystem="30003299"/>
-    <row id="60003319" name="UM-Q7F X - Modern Finances Investment Bank" region="10000041" security="0.0" solarsystem="30003298"/>
-    <row id="60003322" name="Ylandoki V - Moon 7 - Modern Finances Investment Bank" region="10000016" security="0.8" solarsystem="30001395"/>
-    <row id="60003325" name="Ylandoki VII - Moon 1 - Modern Finances Investment Bank" region="10000016" security="0.8" solarsystem="30001395"/>
-    <row id="60003328" name="Stegette IV - Moon 10 - Modern Finances Investment Bank" region="10000032" security="0.5" solarsystem="30002696"/>
-    <row id="60003331" name="Stegette IV - Moon 15 - Modern Finances Investment Bank" region="10000032" security="0.5" solarsystem="30002696"/>
+    <row id="60003313" name="Hroduko VII - Moon 14 - Modern Finances Depository" region="10000042" security="0.7" solarsystem="30003468"/>
+    <row id="60003316" name="T-LIWS IV - Moon 6 - Modern Finances Depository" region="10000041" security="0.0" solarsystem="30003299"/>
+    <row id="60003319" name="UM-Q7F X - Modern Finances Depository" region="10000041" security="0.0" solarsystem="30003298"/>
+    <row id="60003322" name="Ylandoki V - Moon 7 - Modern Finances Depository" region="10000016" security="0.8" solarsystem="30001395"/>
+    <row id="60003325" name="Ylandoki VII - Moon 1 - Modern Finances Depository" region="10000016" security="0.8" solarsystem="30001395"/>
+    <row id="60003328" name="Stegette IV - Moon 10 - Modern Finances Depository" region="10000032" security="0.5" solarsystem="30002696"/>
+    <row id="60003331" name="Stegette IV - Moon 15 - Modern Finances Depository" region="10000032" security="0.5" solarsystem="30002696"/>
     <row id="60003334" name="New Caldari Prime - Moon 1 - Chief Executive Panel Bureau" region="10000002" security="1.0" solarsystem="30000145"/>
     <row id="60003337" name="Urlen VI - Chief Executive Panel Bureau" region="10000002" security="1.0" solarsystem="30000139"/>
     <row id="60003340" name="Ono VII - Moon 3 - Chief Executive Panel Treasury" region="10000033" security="0.8" solarsystem="30002779"/>
@@ -11795,91 +11795,91 @@
     <row id="60011302" name="Gaknem VI - Moon 6 - Aliastra Retail Center" region="10000020" security="0.6" solarsystem="30001698"/>
     <row id="60011305" name="Siyi II - Aliastra Warehouse" region="10000020" security="0.5" solarsystem="30001699"/>
     <row id="60011308" name="Siyi IV - Moon 11 - Aliastra Warehouse" region="10000020" security="0.5" solarsystem="30001699"/>
-    <row id="60011311" name="Algogille IX - Moon 3 - Bank of Luminaire Investment Bank" region="10000064" security="0.9" solarsystem="30004972"/>
+    <row id="60011311" name="Algogille IX - Moon 3 - Bank of Luminaire Depository" region="10000064" security="0.9" solarsystem="30004972"/>
     <row id="60011314" name="Oursulaert VII - Moon 3 - Bank of Luminaire Vault" region="10000064" security="0.9" solarsystem="30004969"/>
-    <row id="60011317" name="Aydoteaux VII - Moon 20 - Bank of Luminaire Investment Bank" region="10000037" security="0.7" solarsystem="30003055"/>
-    <row id="60011320" name="Antollare VI - Bank of Luminaire Investment Bank" region="10000037" security="0.7" solarsystem="30003051"/>
-    <row id="60011323" name="Amasiree VI - Moon 6 - Bank of Luminaire Investment Bank" region="10000048" security="0.4" solarsystem="30003848"/>
-    <row id="60011326" name="Ruerrotta IV - Moon 5 - Bank of Luminaire Investment Bank" region="10000048" security="0.3" solarsystem="30003845"/>
-    <row id="60011329" name="Ondree VII - Moon 21 - Bank of Luminaire Investment Bank" region="10000044" security="0.5" solarsystem="30003603"/>
-    <row id="60011332" name="Ondree VIII - Bank of Luminaire Investment Bank" region="10000044" security="0.5" solarsystem="30003603"/>
-    <row id="60011335" name="Fliet IV - Bank of Luminaire Investment Bank" region="10000064" security="0.3" solarsystem="30004980"/>
-    <row id="60011338" name="Actee III - Bank of Luminaire Investment Bank" region="10000064" security="0.5" solarsystem="30004981"/>
+    <row id="60011317" name="Aydoteaux VII - Moon 20 - Bank of Luminaire Depository" region="10000037" security="0.7" solarsystem="30003055"/>
+    <row id="60011320" name="Antollare VI - Bank of Luminaire Depository" region="10000037" security="0.7" solarsystem="30003051"/>
+    <row id="60011323" name="Amasiree VI - Moon 6 - Bank of Luminaire Depository" region="10000048" security="0.4" solarsystem="30003848"/>
+    <row id="60011326" name="Ruerrotta IV - Moon 5 - Bank of Luminaire Depository" region="10000048" security="0.3" solarsystem="30003845"/>
+    <row id="60011329" name="Ondree VII - Moon 21 - Bank of Luminaire Depository" region="10000044" security="0.5" solarsystem="30003603"/>
+    <row id="60011332" name="Ondree VIII - Bank of Luminaire Depository" region="10000044" security="0.5" solarsystem="30003603"/>
+    <row id="60011335" name="Fliet IV - Bank of Luminaire Depository" region="10000064" security="0.3" solarsystem="30004980"/>
+    <row id="60011338" name="Actee III - Bank of Luminaire Depository" region="10000064" security="0.5" solarsystem="30004981"/>
     <row id="60011341" name="Agaullores VI - Moon 11 - Bank of Luminaire Vault" region="10000044" security="0.1" solarsystem="30003600"/>
     <row id="60011344" name="Arittant IX - Moon 21 - Bank of Luminaire Vault" region="10000044" security="0.3" solarsystem="30003595"/>
-    <row id="60011347" name="Mannar IV - Moon 4 - Bank of Luminaire Investment Bank" region="10000037" security="0.3" solarsystem="30003060"/>
-    <row id="60011350" name="Mannar V - Moon 17 - Bank of Luminaire Investment Bank" region="10000037" security="0.3" solarsystem="30003060"/>
+    <row id="60011347" name="Mannar IV - Moon 4 - Bank of Luminaire Depository" region="10000037" security="0.3" solarsystem="30003060"/>
+    <row id="60011350" name="Mannar V - Moon 17 - Bank of Luminaire Depository" region="10000037" security="0.3" solarsystem="30003060"/>
     <row id="60011353" name="Esesier X - Moon 3 - Bank of Luminaire Vault" region="10000048" security="0.3" solarsystem="30003842"/>
-    <row id="60011356" name="Evaulon VI - Moon 1 - Bank of Luminaire Investment Bank" region="10000048" security="0.4" solarsystem="30003839"/>
-    <row id="60011359" name="Hulmate I - Moon 11 - Bank of Luminaire Investment Bank" region="10000064" security="0.4" solarsystem="30004988"/>
+    <row id="60011356" name="Evaulon VI - Moon 1 - Bank of Luminaire Depository" region="10000048" security="0.4" solarsystem="30003839"/>
+    <row id="60011359" name="Hulmate I - Moon 11 - Bank of Luminaire Depository" region="10000064" security="0.4" solarsystem="30004988"/>
     <row id="60011362" name="Palmon IV - Moon 13 - Bank of Luminaire Vault" region="10000064" security="0.4" solarsystem="30004992"/>
-    <row id="60011365" name="Sarline IX - Moon 10 - Bank of Luminaire Investment Bank" region="10000044" security="0.4" solarsystem="30003584"/>
-    <row id="60011368" name="Sarline IX - Moon 15 - Bank of Luminaire Investment Bank" region="10000044" security="0.4" solarsystem="30003584"/>
-    <row id="60011371" name="Ostingele VII - Pend Insurance Investment Bank" region="10000048" security="0.2" solarsystem="30003792"/>
-    <row id="60011374" name="Intaki VI - Moon 5 - Pend Insurance Investment Bank" region="10000048" security="0.1" solarsystem="30003788"/>
-    <row id="60011377" name="Intaki III - Pend Insurance Investment Bank" region="10000048" security="0.1" solarsystem="30003788"/>
+    <row id="60011365" name="Sarline IX - Moon 10 - Bank of Luminaire Depository" region="10000044" security="0.4" solarsystem="30003584"/>
+    <row id="60011368" name="Sarline IX - Moon 15 - Bank of Luminaire Depository" region="10000044" security="0.4" solarsystem="30003584"/>
+    <row id="60011371" name="Ostingele VII - Pend Insurance Depository" region="10000048" security="0.2" solarsystem="30003792"/>
+    <row id="60011374" name="Intaki VI - Moon 5 - Pend Insurance Depository" region="10000048" security="0.1" solarsystem="30003788"/>
+    <row id="60011377" name="Intaki III - Pend Insurance Depository" region="10000048" security="0.1" solarsystem="30003788"/>
     <row id="60011380" name="Sizamod VIII - Moon 5 - Pend Insurance Vault" region="10000020" security="0.7" solarsystem="30001728"/>
     <row id="60011383" name="Sizamod V - Moon 1 - Pend Insurance Vault" region="10000020" security="0.7" solarsystem="30001728"/>
     <row id="60011386" name="Nosodnis VII - Pend Insurance Vault" region="10000020" security="0.9" solarsystem="30001725"/>
-    <row id="60011389" name="Pserz X - Pend Insurance Investment Bank" region="10000054" security="0.4" solarsystem="30004293"/>
-    <row id="60011392" name="Keba VII - Moon 15 - Pend Insurance Investment Bank" region="10000054" security="0.5" solarsystem="30004295"/>
-    <row id="60011395" name="Vaini III - Moon 1 - Pend Insurance Investment Bank" region="10000054" security="0.2" solarsystem="30004289"/>
-    <row id="60011398" name="Alenia VII - Moon 18 - Pend Insurance Investment Bank" region="10000068" security="0.9" solarsystem="30005302"/>
-    <row id="60011401" name="Alenia V - Pend Insurance Investment Bank" region="10000068" security="0.9" solarsystem="30005302"/>
-    <row id="60011404" name="Alenia VII - Pend Insurance Investment Bank" region="10000068" security="0.9" solarsystem="30005302"/>
-    <row id="60011407" name="Isendeldik IX - Moon 8 - Pend Insurance Investment Bank" region="10000030" security="0.8" solarsystem="30002546"/>
-    <row id="60011410" name="Eystur V - Pend Insurance Investment Bank" region="10000030" security="0.9" solarsystem="30002543"/>
-    <row id="60011413" name="Isendeldik IX - Moon 3 - Pend Insurance Investment Bank" region="10000030" security="0.8" solarsystem="30002546"/>
-    <row id="60011416" name="Oppold VIII - Moon 7 - Pend Insurance Investment Bank" region="10000042" security="0.7" solarsystem="30003430"/>
+    <row id="60011389" name="Pserz X - Pend Insurance Depository" region="10000054" security="0.4" solarsystem="30004293"/>
+    <row id="60011392" name="Keba VII - Moon 15 - Pend Insurance Depository" region="10000054" security="0.5" solarsystem="30004295"/>
+    <row id="60011395" name="Vaini III - Moon 1 - Pend Insurance Depository" region="10000054" security="0.2" solarsystem="30004289"/>
+    <row id="60011398" name="Alenia VII - Moon 18 - Pend Insurance Depository" region="10000068" security="0.9" solarsystem="30005302"/>
+    <row id="60011401" name="Alenia V - Pend Insurance Depository" region="10000068" security="0.9" solarsystem="30005302"/>
+    <row id="60011404" name="Alenia VII - Pend Insurance Depository" region="10000068" security="0.9" solarsystem="30005302"/>
+    <row id="60011407" name="Isendeldik IX - Moon 8 - Pend Insurance Depository" region="10000030" security="0.8" solarsystem="30002546"/>
+    <row id="60011410" name="Eystur V - Pend Insurance Depository" region="10000030" security="0.9" solarsystem="30002543"/>
+    <row id="60011413" name="Isendeldik IX - Moon 3 - Pend Insurance Depository" region="10000030" security="0.8" solarsystem="30002546"/>
+    <row id="60011416" name="Oppold VIII - Moon 7 - Pend Insurance Depository" region="10000042" security="0.7" solarsystem="30003430"/>
     <row id="60011419" name="Lumegen V - Moon 1 - Pend Insurance Vault" region="10000042" security="0.6" solarsystem="30003432"/>
-    <row id="60011422" name="Oppold V - Moon 5 - Pend Insurance Investment Bank" region="10000042" security="0.7" solarsystem="30003430"/>
-    <row id="60011425" name="Jolia I - Moon 1 - Pend Insurance Investment Bank" region="10000032" security="0.5" solarsystem="30002679"/>
-    <row id="60011428" name="Augnais VIII - Moon 14 - Pend Insurance Investment Bank" region="10000032" security="0.5" solarsystem="30002680"/>
-    <row id="60011431" name="Fluekele IV - Moon 1 - Pend Insurance Investment Bank" region="10000032" security="0.6" solarsystem="30002677"/>
-    <row id="60011434" name="Arwa IX - Moon 2 - Pend Insurance Investment Bank" region="10000042" security="0.1" solarsystem="30002078"/>
-    <row id="60011437" name="Ansen I - Moon 1 - Pend Insurance Investment Bank" region="10000042" security="0.1" solarsystem="30002081"/>
-    <row id="60011440" name="Arwa VIII - Moon 13 - Pend Insurance Investment Bank" region="10000042" security="0.1" solarsystem="30002078"/>
-    <row id="60011443" name="Ranni VII - Moon 2 - Pend Insurance Investment Bank" region="10000065" security="0.4" solarsystem="30005085"/>
-    <row id="60011446" name="Jedandan VI - Moon 13 - Pend Insurance Investment Bank" region="10000065" security="0.4" solarsystem="30005083"/>
+    <row id="60011422" name="Oppold V - Moon 5 - Pend Insurance Depository" region="10000042" security="0.7" solarsystem="30003430"/>
+    <row id="60011425" name="Jolia I - Moon 1 - Pend Insurance Depository" region="10000032" security="0.5" solarsystem="30002679"/>
+    <row id="60011428" name="Augnais VIII - Moon 14 - Pend Insurance Depository" region="10000032" security="0.5" solarsystem="30002680"/>
+    <row id="60011431" name="Fluekele IV - Moon 1 - Pend Insurance Depository" region="10000032" security="0.6" solarsystem="30002677"/>
+    <row id="60011434" name="Arwa IX - Moon 2 - Pend Insurance Depository" region="10000042" security="0.1" solarsystem="30002078"/>
+    <row id="60011437" name="Ansen I - Moon 1 - Pend Insurance Depository" region="10000042" security="0.1" solarsystem="30002081"/>
+    <row id="60011440" name="Arwa VIII - Moon 13 - Pend Insurance Depository" region="10000042" security="0.1" solarsystem="30002078"/>
+    <row id="60011443" name="Ranni VII - Moon 2 - Pend Insurance Depository" region="10000065" security="0.4" solarsystem="30005085"/>
+    <row id="60011446" name="Jedandan VI - Moon 13 - Pend Insurance Depository" region="10000065" security="0.4" solarsystem="30005083"/>
     <row id="60011449" name="Arza II - Pend Insurance Vault" region="10000065" security="0.3" solarsystem="30005086"/>
     <row id="60011452" name="Anbald I - Pend Insurance Vault" region="10000042" security="0.7" solarsystem="30003398"/>
-    <row id="60011455" name="Bongveber V - Pend Insurance Investment Bank" region="10000042" security="0.9" solarsystem="30003397"/>
-    <row id="60011458" name="Bongveber VII - Moon 1 - Pend Insurance Investment Bank" region="10000042" security="0.9" solarsystem="30003397"/>
-    <row id="60011461" name="Maseera VII - Moon 15 - Pend Insurance Investment Bank" region="10000054" security="0.3" solarsystem="30004235"/>
-    <row id="60011464" name="Zayi X - Moon 7 - Pend Insurance Investment Bank" region="10000054" security="0.3" solarsystem="30004232"/>
-    <row id="60011467" name="Maseera VII - Moon 5 - Pend Insurance Investment Bank" region="10000054" security="0.3" solarsystem="30004235"/>
-    <row id="60011470" name="Yarebap VI - Moon 11 - Pend Insurance Investment Bank" region="10000052" security="0.5" solarsystem="30004111"/>
-    <row id="60011473" name="Yarebap VII - Moon 20 - Pend Insurance Investment Bank" region="10000052" security="0.5" solarsystem="30004111"/>
-    <row id="60011476" name="Peyiri VIII - Moon 12 - Pend Insurance Investment Bank" region="10000052" security="0.5" solarsystem="30004114"/>
-    <row id="60011479" name="Habu V - Moon 2 - Pend Insurance Investment Bank" region="10000067" security="0.6" solarsystem="30005250"/>
-    <row id="60011482" name="Habu V - Moon 12 - Pend Insurance Investment Bank" region="10000067" security="0.6" solarsystem="30005250"/>
+    <row id="60011455" name="Bongveber V - Pend Insurance Depository" region="10000042" security="0.9" solarsystem="30003397"/>
+    <row id="60011458" name="Bongveber VII - Moon 1 - Pend Insurance Depository" region="10000042" security="0.9" solarsystem="30003397"/>
+    <row id="60011461" name="Maseera VII - Moon 15 - Pend Insurance Depository" region="10000054" security="0.3" solarsystem="30004235"/>
+    <row id="60011464" name="Zayi X - Moon 7 - Pend Insurance Depository" region="10000054" security="0.3" solarsystem="30004232"/>
+    <row id="60011467" name="Maseera VII - Moon 5 - Pend Insurance Depository" region="10000054" security="0.3" solarsystem="30004235"/>
+    <row id="60011470" name="Yarebap VI - Moon 11 - Pend Insurance Depository" region="10000052" security="0.5" solarsystem="30004111"/>
+    <row id="60011473" name="Yarebap VII - Moon 20 - Pend Insurance Depository" region="10000052" security="0.5" solarsystem="30004111"/>
+    <row id="60011476" name="Peyiri VIII - Moon 12 - Pend Insurance Depository" region="10000052" security="0.5" solarsystem="30004114"/>
+    <row id="60011479" name="Habu V - Moon 2 - Pend Insurance Depository" region="10000067" security="0.6" solarsystem="30005250"/>
+    <row id="60011482" name="Habu V - Moon 12 - Pend Insurance Depository" region="10000067" security="0.6" solarsystem="30005250"/>
     <row id="60011485" name="Chiga III - Moon 15 - Pend Insurance Vault" region="10000067" security="0.7" solarsystem="30005253"/>
     <row id="60011488" name="Hiremir VIII - Moon 2 - Pend Insurance Vault" region="10000052" security="0.3" solarsystem="30004141"/>
-    <row id="60011491" name="Sechmaren VIII - Moon 10 - Pend Insurance Investment Bank" region="10000052" security="0.4" solarsystem="30004139"/>
-    <row id="60011494" name="Sechmaren IX - Pend Insurance Investment Bank" region="10000052" security="0.4" solarsystem="30004139"/>
-    <row id="60011497" name="Isikemi VII - Moon 3 - Pend Insurance Investment Bank" region="10000016" security="0.8" solarsystem="30001365"/>
-    <row id="60011500" name="Uosusuokko VII - Moon 11 - Pend Insurance Investment Bank" region="10000016" security="0.7" solarsystem="30001366"/>
-    <row id="60011503" name="Isikemi IV - Pend Insurance Investment Bank" region="10000016" security="0.8" solarsystem="30001365"/>
-    <row id="60011506" name="Lirsautton IV - Moon 1 - Garoun Investment Bank" region="10000037" security="0.8" solarsystem="30003025"/>
+    <row id="60011491" name="Sechmaren VIII - Moon 10 - Pend Insurance Depository" region="10000052" security="0.4" solarsystem="30004139"/>
+    <row id="60011494" name="Sechmaren IX - Pend Insurance Depository" region="10000052" security="0.4" solarsystem="30004139"/>
+    <row id="60011497" name="Isikemi VII - Moon 3 - Pend Insurance Depository" region="10000016" security="0.8" solarsystem="30001365"/>
+    <row id="60011500" name="Uosusuokko VII - Moon 11 - Pend Insurance Depository" region="10000016" security="0.7" solarsystem="30001366"/>
+    <row id="60011503" name="Isikemi IV - Pend Insurance Depository" region="10000016" security="0.8" solarsystem="30001365"/>
+    <row id="60011506" name="Lirsautton IV - Moon 1 - Garoun Investment Bank Depository" region="10000037" security="0.8" solarsystem="30003025"/>
     <row id="60011509" name="Aclan VI - Garoun Investment Bank Vault" region="10000037" security="0.5" solarsystem="30003028"/>
-    <row id="60011512" name="Arasare VI - Garoun Investment Bank" region="10000044" security="0.8" solarsystem="30003590"/>
-    <row id="60011515" name="Lazer VIII - Moon 2 - Garoun Investment Bank" region="10000044" security="0.8" solarsystem="30003592"/>
-    <row id="60011518" name="Raneilles VI - Moon 1 - Garoun Investment Bank" region="10000068" security="0.6" solarsystem="30005319"/>
-    <row id="60011521" name="Luse VII - Moon 4 - Garoun Investment Bank" region="10000068" security="0.9" solarsystem="30005316"/>
-    <row id="60011524" name="Aunsou IV - Moon 1 - Garoun Investment Bank" region="10000048" security="0.2" solarsystem="30003801"/>
+    <row id="60011512" name="Arasare VI - Garoun Investment Bank Depository" region="10000044" security="0.8" solarsystem="30003590"/>
+    <row id="60011515" name="Lazer VIII - Moon 2 - Garoun Investment Bank Depository" region="10000044" security="0.8" solarsystem="30003592"/>
+    <row id="60011518" name="Raneilles VI - Moon 1 - Garoun Investment Bank Depository" region="10000068" security="0.6" solarsystem="30005319"/>
+    <row id="60011521" name="Luse VII - Moon 4 - Garoun Investment Bank Depository" region="10000068" security="0.9" solarsystem="30005316"/>
+    <row id="60011524" name="Aunsou IV - Moon 1 - Garoun Investment Bank Depository" region="10000048" security="0.2" solarsystem="30003801"/>
     <row id="60011527" name="Pain V - Garoun Investment Bank Vault" region="10000048" security="0.1" solarsystem="30003804"/>
     <row id="60011530" name="Amygnon VIII - Moon 5 - Garoun Investment Bank Vault" region="10000068" security="0.6" solarsystem="30005311"/>
     <row id="60011533" name="Amygnon VI - Moon 1 - Garoun Investment Bank Vault" region="10000068" security="0.6" solarsystem="30005311"/>
-    <row id="60011536" name="Iges IV - Moon 2 - Garoun Investment Bank" region="10000048" security="0.3" solarsystem="30003796"/>
-    <row id="60011539" name="Iges VI - Moon 6 - Garoun Investment Bank" region="10000048" security="0.3" solarsystem="30003796"/>
-    <row id="60011542" name="Stegette IV - Moon 4 - Garoun Investment Bank" region="10000032" security="0.5" solarsystem="30002696"/>
-    <row id="60011545" name="Stegette V - Moon 19 - Garoun Investment Bank" region="10000032" security="0.5" solarsystem="30002696"/>
-    <row id="60011548" name="Olide V - Moon 3 - Garoun Investment Bank" region="10000037" security="0.7" solarsystem="30003058"/>
-    <row id="60011551" name="Olide V - Moon 5 - Garoun Investment Bank" region="10000037" security="0.7" solarsystem="30003058"/>
+    <row id="60011536" name="Iges IV - Moon 2 - Garoun Investment Bank Depository" region="10000048" security="0.3" solarsystem="30003796"/>
+    <row id="60011539" name="Iges VI - Moon 6 - Garoun Investment Bank Depository" region="10000048" security="0.3" solarsystem="30003796"/>
+    <row id="60011542" name="Stegette IV - Moon 4 - Garoun Investment Bank Depository" region="10000032" security="0.5" solarsystem="30002696"/>
+    <row id="60011545" name="Stegette V - Moon 19 - Garoun Investment Bank Depository" region="10000032" security="0.5" solarsystem="30002696"/>
+    <row id="60011548" name="Olide V - Moon 3 - Garoun Investment Bank Depository" region="10000037" security="0.7" solarsystem="30003058"/>
+    <row id="60011551" name="Olide V - Moon 5 - Garoun Investment Bank Depository" region="10000037" security="0.7" solarsystem="30003058"/>
     <row id="60011554" name="Pucherie VI - Moon 18 - Garoun Investment Bank Vault" region="10000032" security="0.8" solarsystem="30002733"/>
     <row id="60011557" name="Pucherie VI - Moon 2 - Garoun Investment Bank Vault" region="10000032" security="0.8" solarsystem="30002733"/>
-    <row id="60011560" name="Amoderia VI - Moon 1 - Garoun Investment Bank" region="10000068" security="0.4" solarsystem="30005329"/>
-    <row id="60011563" name="Stou V - Moon 3 - Garoun Investment Bank" region="10000068" security="0.5" solarsystem="30005333"/>
+    <row id="60011560" name="Amoderia VI - Moon 1 - Garoun Investment Bank Depository" region="10000068" security="0.4" solarsystem="30005329"/>
+    <row id="60011563" name="Stou V - Moon 3 - Garoun Investment Bank Depository" region="10000068" security="0.5" solarsystem="30005333"/>
     <row id="60011566" name="Bourynes VII - Moon 2 - University of Caille School" region="10000032" security="1.0" solarsystem="30002715"/>
     <row id="60011569" name="Bille X - Moon 1 - University of Caille School" region="10000037" security="0.5" solarsystem="30003040"/>
     <row id="60011572" name="Osmeden IX - Moon 6 - University of Caille School" region="10000048" security="0.7" solarsystem="30003831"/>
@@ -12270,8 +12270,8 @@
     <row id="60012727" name="Rens VII - Moon 19 - Sisters of EVE Bureau" region="10000030" security="0.9" solarsystem="30002510"/>
     <row id="60012730" name="FDZ4-A VIII - Moon 3 - Society of Conscious Thought School" region="10000029" security="0.0" solarsystem="30002423"/>
     <row id="60012733" name="FDZ4-A IX - Moon 6 - Society of Conscious Thought School" region="10000029" security="0.0" solarsystem="30002423"/>
-    <row id="60012736" name="Yulai III - Moon 1 - Secure Commerce Commission Investment Bank" region="10000067" security="1.0" solarsystem="30005204"/>
-    <row id="60012739" name="Tar III - Secure Commerce Commission Investment Bank" region="10000067" security="0.8" solarsystem="30005199"/>
+    <row id="60012736" name="Yulai III - Moon 1 - Secure Commerce Commission Depository" region="10000067" security="1.0" solarsystem="30005204"/>
+    <row id="60012739" name="Tar III - Secure Commerce Commission Depository" region="10000067" security="0.8" solarsystem="30005199"/>
     <row id="60012742" name="H-ADOC VII - Moon 12 - Salvation Angels Warehouse" region="10000012" security="0.0" solarsystem="30001001"/>
     <row id="60012745" name="G-G78S VII - Salvation Angels Chemical Refinery" region="10000012" security="0.0" solarsystem="30001002"/>
     <row id="60012748" name="V-IUEL VII - Moon 15 - Salvation Angels Warehouse" region="10000012" security="0.0" solarsystem="30001008"/>
@@ -12385,8 +12385,8 @@
     <row id="60013072" name="WY-9LL VIII - Moon 3 - Dominations Testing Facilities" region="10000058" security="0.0" solarsystem="30004621"/>
     <row id="60013075" name="X-7OMU IV - Moon 16 - Food Relief Plantation" region="10000023" security="0.0" solarsystem="30001978"/>
     <row id="60013078" name="ROIR-Y II - Moon 2 - Food Relief Food Packaging" region="10000023" security="0.0" solarsystem="30001983"/>
-    <row id="60013081" name="9-ERCP VIII - Genolution Biotech Production" region="10000017" security="0.1" solarsystem="30001484"/>
-    <row id="60013084" name="9-ERCP V - Genolution Biotech Production" region="10000017" security="0.1" solarsystem="30001484"/>
+    <row id="60013081" name="9-ERCP VIII - Genolution Biotech Production" region="10000017" security="0.0" solarsystem="30001484"/>
+    <row id="60013084" name="9-ERCP V - Genolution Biotech Production" region="10000017" security="0.0" solarsystem="30001484"/>
     <row id="60013087" name="KN7M-N VI - Moon 3 - Genolution Biotech Research Center" region="10000017" security="0.0" solarsystem="30001485"/>
     <row id="60013090" name="KN7M-N IV - Moon 4 - Genolution Biotech Research Center" region="10000017" security="0.0" solarsystem="30001485"/>
     <row id="60013093" name="Erkinen XII - Moon 8 - Genolution Biotech Production" region="10000038" security="0.6" solarsystem="30003078"/>
@@ -12446,7 +12446,7 @@
     <row id="60013255" name="Rairomon VIII - Moon 1 - Genolution Biohazard Containment Facility" region="10000033" security="0.6" solarsystem="30002772"/>
     <row id="60013258" name="Kulelen V - Moon 18 - Genolution Biotech Production" region="10000033" security="0.5" solarsystem="30002771"/>
     <row id="60013261" name="6NJ8-V VI - Moon 6 - Guristas Production Shipyard" region="10000015" security="0.0" solarsystem="30001290"/>
-    <row id="60013264" name="IAMZ-5 VIII - Moon 9 - Impro Factory" region="10000017" security="0.1" solarsystem="30001481"/>
+    <row id="60013264" name="IAMZ-5 VIII - Moon 9 - Impro Factory" region="10000017" security="0.0" solarsystem="30001481"/>
     <row id="60013267" name="KN7M-N IV - Moon 7 - Impro Research Center" region="10000017" security="0.0" solarsystem="30001485"/>
     <row id="60013270" name="Osvestmunnur VIII - Moon 10 - Impro Factory" region="10000042" security="0.5" solarsystem="30003427"/>
     <row id="60013273" name="Nein VII - Moon 4 - Impro Factory" region="10000042" security="0.5" solarsystem="30003423"/>
@@ -12477,13 +12477,13 @@
     <row id="60013348" name="Vevelonel VI - Moon 1 - Impro Factory" region="10000044" security="0.1" solarsystem="30003572"/>
     <row id="60013351" name="Meunvon IV - Moon 3 - Impro Factory" region="10000044" security="0.3" solarsystem="30003568"/>
     <row id="60013354" name="Yulai VIII - Inner Circle Tribunal" region="10000067" security="1.0" solarsystem="30005204"/>
-    <row id="60013357" name="X-BV98 VIII - Moon 5 - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003274"/>
-    <row id="60013360" name="FD-MLJ VII - Moon 2 - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003276"/>
-    <row id="60013363" name="ZN0-SR V - Moon 7 - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003289"/>
-    <row id="60013366" name="ZN0-SR III - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003289"/>
-    <row id="60013369" name="TXW-EI I - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003323"/>
-    <row id="60013372" name="TXW-EI IX - Moon 2 - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003323"/>
-    <row id="60013375" name="KLYN-8 II - Moon 14 - Intaki Bank Investment Bank" region="10000041" security="0.0" solarsystem="30003344"/>
+    <row id="60013357" name="X-BV98 VIII - Moon 5 - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003274"/>
+    <row id="60013360" name="FD-MLJ VII - Moon 2 - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003276"/>
+    <row id="60013363" name="ZN0-SR V - Moon 7 - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003289"/>
+    <row id="60013366" name="ZN0-SR III - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003289"/>
+    <row id="60013369" name="TXW-EI I - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003323"/>
+    <row id="60013372" name="TXW-EI IX - Moon 2 - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003323"/>
+    <row id="60013375" name="KLYN-8 II - Moon 14 - Intaki Bank Depository" region="10000041" security="0.0" solarsystem="30003344"/>
     <row id="60013378" name="D85-VD VII - Intaki Bank Vault" region="10000041" security="0.0" solarsystem="30003345"/>
     <row id="60013381" name="F67E-Q VIII - Moon 2 - Intaki Commerce Trading Post" region="10000041" security="0.0" solarsystem="30003269"/>
     <row id="60013384" name="X-M2LR VI - Moon 8 - Intaki Commerce Warehouse" region="10000041" security="0.0" solarsystem="30003278"/>
@@ -12543,96 +12543,96 @@
     <row id="60013546" name="M2-CF1 X - Moon 3 - Intaki Syndicate Bureau" region="10000041" security="0.0" solarsystem="30003284"/>
     <row id="60013549" name="6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau" region="10000041" security="0.0" solarsystem="30003280"/>
     <row id="60013552" name="EZA-FM IV - Intaki Syndicate Bureau" region="10000041" security="0.0" solarsystem="30003281"/>
-    <row id="60013555" name="54-VNO XI - Moon 2 - Jove Navy Testing Facilities" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013558" name="54-VNO V - Moon 2 - Jove Navy Assembly Plant" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013561" name="54-VNO X - Jove Navy Assembly Plant" region="10000017" security="0.1" solarsystem="30001480"/>
+    <row id="60013555" name="54-VNO XI - Moon 2 - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013558" name="54-VNO V - Moon 2 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013561" name="54-VNO X - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001480"/>
     <row id="60013564" name="T-YWDD VII - Moon 13 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001631"/>
-    <row id="60013567" name="T-C5A0 X - Moon 9 - Jove Navy Logistic Support" region="10000019" security="0.1" solarsystem="30001633"/>
-    <row id="60013570" name="DLY-RG VIII - Moon 3 - Jove Navy Assembly Plant" region="10000019" security="0.1" solarsystem="30001632"/>
+    <row id="60013567" name="T-C5A0 X - Moon 9 - Jove Navy Logistic Support" region="10000019" security="0.0" solarsystem="30001633"/>
+    <row id="60013570" name="DLY-RG VIII - Moon 3 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001632"/>
     <row id="60013573" name="6-NCE7 IV - Jove Navy Logistic Support" region="10000017" security="0.0" solarsystem="30001492"/>
     <row id="60013576" name="CZ-CED IV - Moon 18 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001496"/>
     <row id="60013579" name="L-TPN0 II - Moon 2 - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001499"/>
     <row id="60013582" name="69A-54 VIII - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001624"/>
     <row id="60013585" name="BWO-UU VIII - Jove Navy Testing Facilities" region="10000019" security="0.0" solarsystem="30001629"/>
     <row id="60013588" name="PQWA-L VII - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001628"/>
-    <row id="60013591" name="1C-TD6 X - Moon 4 - Jove Navy Testing Facilities" region="10000017" security="0.4" solarsystem="30001524"/>
-    <row id="60013594" name="TO21-U VIII - Moon 1 - Jove Navy Assembly Plant" region="10000017" security="0.3" solarsystem="30001519"/>
-    <row id="60013597" name="H7OL-I IV - Moon 6 - Jove Navy Assembly Plant" region="10000017" security="0.3" solarsystem="30001518"/>
-    <row id="60013600" name="SQ-2XA II - Jove Navy Testing Facilities" region="10000017" security="0.1" solarsystem="30001453"/>
-    <row id="60013603" name="SQ-2XA IV - Jove Navy Testing Facilities" region="10000017" security="0.1" solarsystem="30001453"/>
-    <row id="60013606" name="PZP1-D IX - Moon 5 - Jove Navy Assembly Plant" region="10000017" security="0.1" solarsystem="30001449"/>
+    <row id="60013591" name="1C-TD6 X - Moon 4 - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001524"/>
+    <row id="60013594" name="TO21-U VIII - Moon 1 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001519"/>
+    <row id="60013597" name="H7OL-I IV - Moon 6 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001518"/>
+    <row id="60013600" name="SQ-2XA II - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001453"/>
+    <row id="60013603" name="SQ-2XA IV - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001453"/>
+    <row id="60013606" name="PZP1-D IX - Moon 5 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001449"/>
     <row id="60013609" name="6-HFD6 V - Moon 14 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001603"/>
     <row id="60013612" name="6-HFD6 V - Moon 19 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001603"/>
     <row id="60013615" name="9-BUSQ VII - Moon 4 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001600"/>
-    <row id="60013618" name="8-ULAA VI - Moon 13 - Jove Navy Testing Facilities" region="10000017" security="0.3" solarsystem="30001514"/>
-    <row id="60013621" name="H-EDXD VIII - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.3" solarsystem="30001513"/>
-    <row id="60013624" name="KF1-DU VII - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.4" solarsystem="30001515"/>
-    <row id="60013627" name="I9D-0D VI - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.3" solarsystem="30001508"/>
-    <row id="60013630" name="LH-J8H X - Moon 1 - Jove Navy Assembly Plant" region="10000017" security="0.2" solarsystem="30001507"/>
-    <row id="60013633" name="I9D-0D II - Jove Navy Assembly Plant" region="10000017" security="0.3" solarsystem="30001508"/>
+    <row id="60013618" name="8-ULAA VI - Moon 13 - Jove Navy Testing Facilities" region="10000017" security="0.0" solarsystem="30001514"/>
+    <row id="60013621" name="H-EDXD VIII - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001513"/>
+    <row id="60013624" name="KF1-DU VII - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001515"/>
+    <row id="60013627" name="I9D-0D VI - Moon 3 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001508"/>
+    <row id="60013630" name="LH-J8H X - Moon 1 - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001507"/>
+    <row id="60013633" name="I9D-0D II - Jove Navy Assembly Plant" region="10000017" security="0.0" solarsystem="30001508"/>
     <row id="60013636" name="0IRK-R IX - Jove Navy Testing Facilities" region="10000019" security="0.0" solarsystem="30001643"/>
     <row id="60013639" name="FR-RCH IV - Moon 2 - Jove Navy Assembly Plant" region="10000019" security="0.0" solarsystem="30001637"/>
     <row id="60013642" name="FNS3-F VII - Moon 7 - Jove Navy Logistic Support" region="10000019" security="0.0" solarsystem="30001638"/>
-    <row id="60013645" name="54-VNO X - Moon 3 - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013648" name="PBXG-A IV - Moon 3 - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001483"/>
-    <row id="60013651" name="PBXG-A IV - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001483"/>
-    <row id="60013654" name="54-VNO VI - Moon 1 - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013657" name="IAMZ-5 XII - Moon 2 - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001481"/>
-    <row id="60013660" name="54-VNO VIII - Moon 3 - Jovian directorate Bureau" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013663" name="7BA-TK VI - Moon 4 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001639"/>
-    <row id="60013666" name="FR-RCH I - Moon 11 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001637"/>
-    <row id="60013669" name="0IRK-R VIII - Moon 3 - Jovian directorate Academy" region="10000019" security="0.0" solarsystem="30001643"/>
-    <row id="60013672" name="FR-RCH I - Moon 10 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001637"/>
-    <row id="60013675" name="7BA-TK III - Moon 2 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001639"/>
-    <row id="60013678" name="FNS3-F VII - Moon 3 - Jovian directorate Academy" region="10000019" security="0.0" solarsystem="30001638"/>
-    <row id="60013681" name="T-YWDD VII - Moon 18 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
-    <row id="60013684" name="DLY-RG X - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001632"/>
-    <row id="60013687" name="T-YWDD VII - Moon 1 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
-    <row id="60013690" name="T-C5A0 XII - Moon 17 - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001633"/>
-    <row id="60013693" name="T-YWDD V - Moon 5 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
-    <row id="60013696" name="T-YWDD VI - Moon 21 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
-    <row id="60013699" name="FO-3PJ III - Moon 2 - Jovian directorate Bureau" region="10000017" security="0.4" solarsystem="30001487"/>
-    <row id="60013702" name="FO-3PJ VI - Moon 11 - Jovian directorate Bureau" region="10000017" security="0.4" solarsystem="30001487"/>
-    <row id="60013705" name="X7-8IG VIII - Moon 9 - Jovian directorate Treasury" region="10000017" security="0.4" solarsystem="30001490"/>
-    <row id="60013708" name="FO-3PJ III - Moon 10 - Jovian directorate Bureau" region="10000017" security="0.4" solarsystem="30001487"/>
-    <row id="60013711" name="6-QXE6 VI - Moon 22 - Jovian directorate Bureau" region="10000017" security="0.5" solarsystem="30001488"/>
-    <row id="60013714" name="N-FKXV V - Moon 12 - Jovian directorate Academy" region="10000017" security="0.6" solarsystem="30001489"/>
-    <row id="60013717" name="H7OL-I III - Moon 3 - Jovian directorate Bureau" region="10000017" security="0.3" solarsystem="30001518"/>
-    <row id="60013720" name="1C-TD6 VIII - Moon 2 - Jovian directorate Treasury" region="10000017" security="0.4" solarsystem="30001524"/>
-    <row id="60013723" name="H7OL-I IV - Moon 10 - Jovian directorate Bureau" region="10000017" security="0.3" solarsystem="30001518"/>
-    <row id="60013726" name="1C-TD6 X - Moon 16 - Jovian directorate Treasury" region="10000017" security="0.4" solarsystem="30001524"/>
-    <row id="60013729" name="0M-M64 VII - Moon 5 - Jovian directorate Bureau" region="10000017" security="0.3" solarsystem="30001521"/>
-    <row id="60013732" name="YBYX-1 I - Jovian directorate Academy" region="10000017" security="0.2" solarsystem="30001525"/>
-    <row id="60013735" name="Z-KPAR VIII - Moon 21 - Jovian directorate Academy" region="10000019" security="0.1" solarsystem="30001613"/>
-    <row id="60013738" name="B-Y06L VII - Moon 4 - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001611"/>
-    <row id="60013741" name="CLDT-L III - Moon 5 - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001616"/>
-    <row id="60013744" name="CLDT-L IV - Moon 7 - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001616"/>
-    <row id="60013747" name="2RV-06 VIII - Moon 11 - Jovian directorate Treasury" region="10000019" security="0.1" solarsystem="30001615"/>
-    <row id="60013750" name="B-Y06L VII - Moon 1 - Jovian directorate Bureau" region="10000019" security="0.1" solarsystem="30001611"/>
-    <row id="60013753" name="BWO-UU VII - Moon 4 - Jovian directorate Treasury" region="10000019" security="0.0" solarsystem="30001629"/>
-    <row id="60013756" name="8-UWFS II - Jovian directorate Academy" region="10000019" security="0.0" solarsystem="30001627"/>
-    <row id="60013759" name="69A-54 X - Moon 8 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001624"/>
-    <row id="60013762" name="69A-54 X - Moon 12 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001624"/>
-    <row id="60013765" name="5V-YL6 VII - Moon 11 - Jovian directorate Academy" region="10000019" security="0.0" solarsystem="30001626"/>
-    <row id="60013768" name="SQVI-U V - Moon 1 - Jovian directorate Treasury" region="10000019" security="0.0" solarsystem="30001630"/>
-    <row id="60013771" name="7-8XK0 VII - Moon 8 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001608"/>
-    <row id="60013774" name="G-N6MC VI - Moon 5 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001607"/>
-    <row id="60013777" name="7-8XK0 VI - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001608"/>
-    <row id="60013780" name="P3UD-M VII - Moon 7 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001604"/>
-    <row id="60013783" name="G-N6MC VI - Moon 9 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001607"/>
-    <row id="60013786" name="90G-OA XII - Moon 19 - Jovian directorate Bureau" region="10000019" security="0.0" solarsystem="30001609"/>
-    <row id="60013789" name="CZ-CED VI - Moon 2 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001496"/>
-    <row id="60013792" name="L-TPN0 I - Jovian directorate Academy" region="10000017" security="0.0" solarsystem="30001499"/>
-    <row id="60013795" name="BKK4-H IX - Moon 11 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001497"/>
-    <row id="60013798" name="L-TPN0 IV - Moon 13 - Jovian directorate Academy" region="10000017" security="0.0" solarsystem="30001499"/>
-    <row id="60013801" name="CZ-CED VI - Moon 3 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001496"/>
-    <row id="60013804" name="L-TPN0 IV - Moon 6 - Jovian directorate Treasury" region="10000017" security="0.0" solarsystem="30001499"/>
-    <row id="60013807" name="3-XORH VI - Moon 1 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001500"/>
-    <row id="60013810" name="6-23NU II - Moon 1 - Jovian directorate Academy" region="10000017" security="0.0" solarsystem="30001503"/>
-    <row id="60013813" name="G1VU-H IX - Moon 18 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001501"/>
-    <row id="60013816" name="W6H6-K II - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001502"/>
-    <row id="60013819" name="W6H6-K IV - Moon 15 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001502"/>
-    <row id="60013822" name="6-23NU V - Moon 13 - Jovian directorate Bureau" region="10000017" security="0.0" solarsystem="30001503"/>
+    <row id="60013645" name="54-VNO X - Moon 3 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013648" name="PBXG-A IV - Moon 3 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001483"/>
+    <row id="60013651" name="PBXG-A IV - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001483"/>
+    <row id="60013654" name="54-VNO VI - Moon 1 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013657" name="IAMZ-5 XII - Moon 2 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001481"/>
+    <row id="60013660" name="54-VNO VIII - Moon 3 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013663" name="7BA-TK VI - Moon 4 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001639"/>
+    <row id="60013666" name="FR-RCH I - Moon 11 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001637"/>
+    <row id="60013669" name="0IRK-R VIII - Moon 3 - Jovian Directorate Academy" region="10000019" security="0.0" solarsystem="30001643"/>
+    <row id="60013672" name="FR-RCH I - Moon 10 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001637"/>
+    <row id="60013675" name="7BA-TK III - Moon 2 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001639"/>
+    <row id="60013678" name="FNS3-F VII - Moon 3 - Jovian Directorate Academy" region="10000019" security="0.0" solarsystem="30001638"/>
+    <row id="60013681" name="T-YWDD VII - Moon 18 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
+    <row id="60013684" name="DLY-RG X - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001632"/>
+    <row id="60013687" name="T-YWDD VII - Moon 1 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
+    <row id="60013690" name="T-C5A0 XII - Moon 17 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001633"/>
+    <row id="60013693" name="T-YWDD V - Moon 5 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
+    <row id="60013696" name="T-YWDD VI - Moon 21 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001631"/>
+    <row id="60013699" name="FO-3PJ III - Moon 2 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001487"/>
+    <row id="60013702" name="FO-3PJ VI - Moon 11 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001487"/>
+    <row id="60013705" name="X7-8IG VIII - Moon 9 - Jovian Directorate Treasury" region="10000017" security="0.0" solarsystem="30001490"/>
+    <row id="60013708" name="FO-3PJ III - Moon 10 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001487"/>
+    <row id="60013711" name="6-QXE6 VI - Moon 22 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001488"/>
+    <row id="60013714" name="N-FKXV V - Moon 12 - Jovian Directorate Academy" region="10000017" security="0.0" solarsystem="30001489"/>
+    <row id="60013717" name="H7OL-I III - Moon 3 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001518"/>
+    <row id="60013720" name="1C-TD6 VIII - Moon 2 - Jovian Directorate Treasury" region="10000017" security="0.0" solarsystem="30001524"/>
+    <row id="60013723" name="H7OL-I IV - Moon 10 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001518"/>
+    <row id="60013726" name="1C-TD6 X - Moon 16 - Jovian Directorate Treasury" region="10000017" security="0.0" solarsystem="30001524"/>
+    <row id="60013729" name="0M-M64 VII - Moon 5 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001521"/>
+    <row id="60013732" name="YBYX-1 I - Jovian Directorate Academy" region="10000017" security="0.0" solarsystem="30001525"/>
+    <row id="60013735" name="Z-KPAR VIII - Moon 21 - Jovian Directorate Academy" region="10000019" security="0.0" solarsystem="30001613"/>
+    <row id="60013738" name="B-Y06L VII - Moon 4 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001611"/>
+    <row id="60013741" name="CLDT-L III - Moon 5 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001616"/>
+    <row id="60013744" name="CLDT-L IV - Moon 7 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001616"/>
+    <row id="60013747" name="2RV-06 VIII - Moon 11 - Jovian Directorate Treasury" region="10000019" security="0.0" solarsystem="30001615"/>
+    <row id="60013750" name="B-Y06L VII - Moon 1 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001611"/>
+    <row id="60013753" name="BWO-UU VII - Moon 4 - Jovian Directorate Treasury" region="10000019" security="0.0" solarsystem="30001629"/>
+    <row id="60013756" name="8-UWFS II - Jovian Directorate Academy" region="10000019" security="0.0" solarsystem="30001627"/>
+    <row id="60013759" name="69A-54 X - Moon 8 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001624"/>
+    <row id="60013762" name="69A-54 X - Moon 12 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001624"/>
+    <row id="60013765" name="5V-YL6 VII - Moon 11 - Jovian Directorate Academy" region="10000019" security="0.0" solarsystem="30001626"/>
+    <row id="60013768" name="SQVI-U V - Moon 1 - Jovian Directorate Treasury" region="10000019" security="0.0" solarsystem="30001630"/>
+    <row id="60013771" name="7-8XK0 VII - Moon 8 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001608"/>
+    <row id="60013774" name="G-N6MC VI - Moon 5 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001607"/>
+    <row id="60013777" name="7-8XK0 VI - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001608"/>
+    <row id="60013780" name="P3UD-M VII - Moon 7 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001604"/>
+    <row id="60013783" name="G-N6MC VI - Moon 9 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001607"/>
+    <row id="60013786" name="90G-OA XII - Moon 19 - Jovian Directorate Bureau" region="10000019" security="0.0" solarsystem="30001609"/>
+    <row id="60013789" name="CZ-CED VI - Moon 2 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001496"/>
+    <row id="60013792" name="L-TPN0 I - Jovian Directorate Academy" region="10000017" security="0.0" solarsystem="30001499"/>
+    <row id="60013795" name="BKK4-H IX - Moon 11 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001497"/>
+    <row id="60013798" name="L-TPN0 IV - Moon 13 - Jovian Directorate Academy" region="10000017" security="0.0" solarsystem="30001499"/>
+    <row id="60013801" name="CZ-CED VI - Moon 3 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001496"/>
+    <row id="60013804" name="L-TPN0 IV - Moon 6 - Jovian Directorate Treasury" region="10000017" security="0.0" solarsystem="30001499"/>
+    <row id="60013807" name="3-XORH VI - Moon 1 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001500"/>
+    <row id="60013810" name="6-23NU II - Moon 1 - Jovian Directorate Academy" region="10000017" security="0.0" solarsystem="30001503"/>
+    <row id="60013813" name="G1VU-H IX - Moon 18 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001501"/>
+    <row id="60013816" name="W6H6-K II - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001502"/>
+    <row id="60013819" name="W6H6-K IV - Moon 15 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001502"/>
+    <row id="60013822" name="6-23NU V - Moon 13 - Jovian Directorate Bureau" region="10000017" security="0.0" solarsystem="30001503"/>
     <row id="60013825" name="Khanid Prime V - Moon 1 - Khanid Innovation Factory" region="10000049" security="0.9" solarsystem="30003863"/>
     <row id="60013828" name="Khanid Prime IX - Khanid Transport Storage" region="10000049" security="0.9" solarsystem="30003863"/>
     <row id="60013831" name="Nahrneder VI - Moon 15 - Khanid Transport Storage" region="10000049" security="0.3" solarsystem="30003922"/>
@@ -12649,25 +12649,25 @@
     <row id="60013864" name="Kehrara IV - Nefantar Miner Association Refinery" region="10000001" security="0.4" solarsystem="30000098"/>
     <row id="60013867" name="Podion VIII - Moon 15 - Nefantar Miner Association Mining Outpost" region="10000001" security="0.1" solarsystem="30000019"/>
     <row id="60013870" name="Uplingur II - Moon 1 - Nefantar Miner Association Mining Outpost" region="10000001" security="0.4" solarsystem="30000037"/>
-    <row id="60013873" name="54-VNO VIII - Moon 3 - Prosper Investment Bank" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013876" name="54-VNO XII - Moon 2 - Prosper Investment Bank" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60013879" name="G-N6MC VIII - Moon 9 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001607"/>
-    <row id="60013882" name="7-8XK0 VIII - Moon 5 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001608"/>
-    <row id="60013885" name="0M-M64 VI - Prosper Investment Bank" region="10000017" security="0.3" solarsystem="30001521"/>
-    <row id="60013888" name="TO21-U VII - Prosper Investment Bank" region="10000017" security="0.3" solarsystem="30001519"/>
-    <row id="60013891" name="E2AX-5 VIII - Moon 1 - Prosper Investment Bank" region="10000017" security="0.0" solarsystem="30001462"/>
-    <row id="60013894" name="HPE-KP VI - Moon 7 - Prosper Investment Bank" region="10000017" security="0.0" solarsystem="30001463"/>
-    <row id="60013897" name="0Z-VHC VI - Moon 12 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001599"/>
-    <row id="60013900" name="6-HFD6 V - Moon 1 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001603"/>
+    <row id="60013873" name="54-VNO VIII - Moon 3 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013876" name="54-VNO XII - Moon 2 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60013879" name="G-N6MC VIII - Moon 9 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001607"/>
+    <row id="60013882" name="7-8XK0 VIII - Moon 5 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001608"/>
+    <row id="60013885" name="0M-M64 VI - Prosper Depository" region="10000017" security="0.0" solarsystem="30001521"/>
+    <row id="60013888" name="TO21-U VII - Prosper Depository" region="10000017" security="0.0" solarsystem="30001519"/>
+    <row id="60013891" name="E2AX-5 VIII - Moon 1 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001462"/>
+    <row id="60013894" name="HPE-KP VI - Moon 7 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001463"/>
+    <row id="60013897" name="0Z-VHC VI - Moon 12 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001599"/>
+    <row id="60013900" name="6-HFD6 V - Moon 1 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001603"/>
     <row id="60013903" name="3-CE1R VIII - Moon 5 - Prosper Vault" region="10000019" security="0.0" solarsystem="30001642"/>
-    <row id="60013906" name="IAWJ-X VI - Moon 16 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001640"/>
+    <row id="60013906" name="IAWJ-X VI - Moon 16 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001640"/>
     <row id="60013909" name="J-JS0D VIII - Moon 15 - Prosper Vault" region="10000017" security="0.0" solarsystem="30001505"/>
     <row id="60013912" name="J-JS0D IX - Moon 8 - Prosper Vault" region="10000017" security="0.0" solarsystem="30001505"/>
-    <row id="60013915" name="PQWA-L XI - Moon 6 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001628"/>
-    <row id="60013918" name="M9-OS2 I - Moon 1 - Prosper Investment Bank" region="10000019" security="0.0" solarsystem="30001625"/>
-    <row id="60013921" name="QO-3LC IV - Moon 2 - Prosper Investment Bank" region="10000017" security="0.1" solarsystem="30001473"/>
-    <row id="60013924" name="5-P3CQ VIII - Moon 5 - Prosper Investment Bank" region="10000017" security="0.1" solarsystem="30001478"/>
-    <row id="60013927" name="B-Y06L VII - Moon 2 - Prosper Investment Bank" region="10000019" security="0.1" solarsystem="30001611"/>
+    <row id="60013915" name="PQWA-L XI - Moon 6 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001628"/>
+    <row id="60013918" name="M9-OS2 I - Moon 1 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001625"/>
+    <row id="60013921" name="QO-3LC IV - Moon 2 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001473"/>
+    <row id="60013924" name="5-P3CQ VIII - Moon 5 - Prosper Depository" region="10000017" security="0.0" solarsystem="30001478"/>
+    <row id="60013927" name="B-Y06L VII - Moon 2 - Prosper Depository" region="10000019" security="0.0" solarsystem="30001611"/>
     <row id="60013930" name="QU7-EE V - Moon 7 - Prosper Vault" region="10000019" security="0.0" solarsystem="30001617"/>
     <row id="60013933" name="Kihtaled VIII - Moon 7 - Royal Khanid Navy Assembly Plant" region="10000049" security="0.9" solarsystem="30003860"/>
     <row id="60013936" name="Kihtaled VIII - Royal Khanid Navy Assembly Plant" region="10000049" security="0.9" solarsystem="30003860"/>
@@ -12690,24 +12690,24 @@
     <row id="60013987" name="Vezila IV - Royal Khanid Navy Assembly Plant" region="10000049" security="0.3" solarsystem="30003899"/>
     <row id="60013990" name="Gehi IX - Moon 4 - Royal Khanid Navy Assembly Plant" region="10000049" security="0.3" solarsystem="30003897"/>
     <row id="60013993" name="Serpentis Prime VI - Moon 1 - Serpentis Inquest Biotech Research Center" region="10000058" security="0.0" solarsystem="30004623"/>
-    <row id="60013996" name="IAMZ-5 X - Moon 14 - Shapeset Shipyard" region="10000017" security="0.1" solarsystem="30001481"/>
-    <row id="60013999" name="54-VNO VIII - Moon 3 - Shapeset Shipyard" region="10000017" security="0.1" solarsystem="30001480"/>
-    <row id="60014002" name="H-EDXD VIII - Moon 1 - Shapeset Shipyard" region="10000017" security="0.3" solarsystem="30001513"/>
-    <row id="60014005" name="KF1-DU VII - Moon 15 - Shapeset Shipyard" region="10000017" security="0.4" solarsystem="30001515"/>
+    <row id="60013996" name="IAMZ-5 X - Moon 14 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001481"/>
+    <row id="60013999" name="54-VNO VIII - Moon 3 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001480"/>
+    <row id="60014002" name="H-EDXD VIII - Moon 1 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001513"/>
+    <row id="60014005" name="KF1-DU VII - Moon 15 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001515"/>
     <row id="60014008" name="PQWA-L IX - Moon 1 - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001628"/>
     <row id="60014011" name="PQWA-L I - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001628"/>
     <row id="60014014" name="3-XORH IV - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001500"/>
     <row id="60014017" name="G1VU-H IX - Moon 18 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001501"/>
-    <row id="60014020" name="1SR-HT I - Shapeset Storage Bay" region="10000017" security="0.1" solarsystem="30001452"/>
-    <row id="60014023" name="PZP1-D IX - Moon 1 - Shapeset Shipyard" region="10000017" security="0.1" solarsystem="30001449"/>
-    <row id="60014026" name="PQA-9K IV - Shapeset Storage Bay" region="10000017" security="0.1" solarsystem="30001470"/>
+    <row id="60014020" name="1SR-HT I - Shapeset Storage Bay" region="10000017" security="0.0" solarsystem="30001452"/>
+    <row id="60014023" name="PZP1-D IX - Moon 1 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001449"/>
+    <row id="60014026" name="PQA-9K IV - Shapeset Storage Bay" region="10000017" security="0.0" solarsystem="30001470"/>
     <row id="60014029" name="BJC4-8 XI - Moon 2 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001469"/>
     <row id="60014032" name="0Z-VHC VI - Moon 12 - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001599"/>
     <row id="60014035" name="II-1B3 IX - Moon 9 - Shapeset Storage Bay" region="10000019" security="0.0" solarsystem="30001602"/>
-    <row id="60014038" name="LH-J8H VI - Shapeset Shipyard" region="10000017" security="0.2" solarsystem="30001507"/>
-    <row id="60014041" name="LH-J8H V - Moon 13 - Shapeset Shipyard" region="10000017" security="0.2" solarsystem="30001507"/>
-    <row id="60014044" name="B-Y06L II - Shapeset Shipyard" region="10000019" security="0.1" solarsystem="30001611"/>
-    <row id="60014047" name="B-Y06L IV - Shapeset Shipyard" region="10000019" security="0.1" solarsystem="30001611"/>
+    <row id="60014038" name="LH-J8H VI - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001507"/>
+    <row id="60014041" name="LH-J8H V - Moon 13 - Shapeset Shipyard" region="10000017" security="0.0" solarsystem="30001507"/>
+    <row id="60014044" name="B-Y06L II - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001611"/>
+    <row id="60014047" name="B-Y06L IV - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001611"/>
     <row id="60014050" name="IAWJ-X VI - Moon 10 - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001640"/>
     <row id="60014053" name="50-TJY VII - Moon 8 - Shapeset Shipyard" region="10000019" security="0.0" solarsystem="30001641"/>
     <row id="60014056" name="X-7OMU II - Moon 7 - The Sanctuary School" region="10000023" security="0.0" solarsystem="30001978"/>
@@ -12846,9 +12846,9 @@
     <row id="60014455" name="Uanzin V - Moon 1 - Trust Partners Warehouse" region="10000001" security="0.4" solarsystem="30000118"/>
     <row id="60014458" name="Kasrasi IX - Moon 5 - Trust Partners Trading Post" region="10000001" security="0.6" solarsystem="30000030"/>
     <row id="60014461" name="Fovihi V - Moon 6 - Trust Partners Warehouse" region="10000001" security="0.9" solarsystem="30000023"/>
-    <row id="60014464" name="9-ERCP VII - Moon 9 - X-Sense Chemical Refinery" region="10000017" security="0.1" solarsystem="30001484"/>
+    <row id="60014464" name="9-ERCP VII - Moon 9 - X-Sense Chemical Refinery" region="10000017" security="0.0" solarsystem="30001484"/>
     <row id="60014467" name="KN7M-N V - Moon 17 - X-Sense Reprocessing Facility" region="10000017" security="0.0" solarsystem="30001485"/>
-    <row id="60014470" name="54-VNO IX - Moon 1 - X-Sense Chemical Refinery" region="10000017" security="0.1" solarsystem="30001480"/>
+    <row id="60014470" name="54-VNO IX - Moon 1 - X-Sense Chemical Refinery" region="10000017" security="0.0" solarsystem="30001480"/>
     <row id="60014473" name="Ellmay VIII - Moon 12 - X-Sense Chemical Refinery" region="10000068" security="0.9" solarsystem="30005313"/>
     <row id="60014476" name="Ellmay I - X-Sense Chemical Storage" region="10000068" security="0.9" solarsystem="30005313"/>
     <row id="60014479" name="Amygnon VIII - Moon 5 - X-Sense Reprocessing Facility" region="10000068" security="0.6" solarsystem="30005311"/>
@@ -12971,12 +12971,12 @@
     <row id="60014830" name="Frulegur IV - Moon 1 - Pator Tech School" region="10000042" security="0.4" solarsystem="30003467"/>
     <row id="60014833" name="Illinfrik VII - Moon 12 - Pator Tech School" region="10000030" security="0.8" solarsystem="30002527"/>
     <row id="60014836" name="Todifrauan VII - Moon 19 - Pator Tech School" region="10000042" security="0.1" solarsystem="30002062"/>
-    <row id="60014839" name="Polaris I - ISD STAR Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014842" name="Polaris II - Station" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014845" name="Polaris III - Auxiliary Union for Rallying Observation Recording and Analysis" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014848" name="Polaris IV - ISD CRC Headquarters" region="10000004" security="0.0" solarsystem="30000380"/>
-    <row id="60014851" name="M-FDTD I - Material Institute" region="10000017" security="0.2" solarsystem="30001479"/>
-    <row id="60014854" name="HD3-JK I - Academy of Aggressive Behaviour" region="10000017" security="0.1" solarsystem="30001482"/>
+    <row id="60014839" name="Polaris I - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014842" name="Polaris II - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014845" name="Polaris III - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014848" name="Polaris IV - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
+    <row id="60014851" name="M-FDTD I - Material Institute School" region="10000017" security="0.0" solarsystem="30001479"/>
+    <row id="60014854" name="HD3-JK I - Academy of Aggressive Behaviour School" region="10000017" security="0.0" solarsystem="30001482"/>
     <row id="60014857" name="Crielere I - Ishukone Corporation Research Center" region="10000032" security="0.4" solarsystem="30002691"/>
     <row id="60014860" name="Crielere I - Duvolle Laboratories Research Center" region="10000032" security="0.4" solarsystem="30002691"/>
     <row id="60014861" name="JZV-F4 V - Moon 1 - Manufacturing Outpost" region="10000003" security="0.0" solarsystem="30000325"/>
@@ -13033,7 +13033,7 @@
     <row id="60014912" name="C-J6MT IV - Moon 1 - Cloning Outpost" region="10000009" security="0.0" solarsystem="30000772"/>
     <row id="60014913" name="H-W9TY XII - Moon 2 - Cloning Outpost" region="10000010" security="0.0" solarsystem="30000865"/>
     <row id="60014914" name="V2-VC2 II - Moon 5 - Cloning Outpost" region="10000014" security="0.0" solarsystem="30001222"/>
-    <row id="60014915" name="2O-EEW IV - Moon 3 - Cloning Outpost" region="10000025" security="0.0" solarsystem="30002175"/>
+    <row id="60014915" name="2O-EEW IV - Moon 3 - The French bistro" region="10000025" security="0.0" solarsystem="30002175"/>
     <row id="60014916" name="68FT-6 VI - Moon 1 - Cloning Outpost" region="10000031" security="0.0" solarsystem="30002593"/>
     <row id="60014917" name="VFK-IV VI - Moon 1 - Cloning Outpost" region="10000035" security="0.0" solarsystem="30002904"/>
     <row id="60014918" name="C9N-CC I - Moon 2 - Cloning Outpost" region="10000039" security="0.0" solarsystem="30003109"/>
