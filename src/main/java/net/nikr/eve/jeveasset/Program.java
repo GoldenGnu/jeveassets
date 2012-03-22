@@ -64,7 +64,7 @@ public class Program implements ActionListener{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.0.0 BETA 1";
+	public static final String PROGRAM_VERSION = "2.0.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
