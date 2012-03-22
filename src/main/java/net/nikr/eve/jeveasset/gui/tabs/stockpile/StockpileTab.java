@@ -180,20 +180,26 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	public boolean showAddItem(Stockpile stockpile, int typeID) {
 		boolean updated = stockpileItemDialog.showAdd(stockpile, typeID);
-		updateData();
-		if (updated && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		if (updated){
+			updateData();
+			if (program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		}
 		return updated;
 	}
 	public Stockpile showAddStockpile(Asset asset) {
 		Stockpile stockpile = stockpileDialog.showAdd(asset);
-		updateData();
-		if (stockpile != null && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		if (stockpile != null){
+			updateData();
+			if (program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		}
 		return stockpile;
 	}
 	public Stockpile showAddStockpile(long locationID) {
 		Stockpile stockpile = stockpileDialog.showAdd(locationID);
-		updateData();
-		if (stockpile != null && program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		if (stockpile != null) {
+			updateData();
+			if (program.getSettings().isStockpileFocusTab()) scrollToSctockpile(stockpile);
+		}
 		return stockpile;
 	}
 	
@@ -421,8 +427,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD.equals(e.getActionCommand())){
-			stockpileDialog.showAdd();
-			updateData();
+			Stockpile stockpile = stockpileDialog.showAdd();
+			if (stockpile != null) updateData();
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);
@@ -437,8 +443,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
 				Stockpile stockpile = item.getStockpile();
-				stockpileDialog.showEdit(stockpile);
-				updateData();
+				boolean updated = stockpileDialog.showEdit(stockpile);
+				if (updated) updateData();
 			}
 		}
 		if (StockpileSeparatorTableCell.ACTION_CLONE_STOCKPILE.equals(e.getActionCommand())){
@@ -448,8 +454,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
 				Stockpile stockpile = item.getStockpile();
-				stockpileDialog.showClone(stockpile);
-				updateData();
+				boolean updated = stockpileDialog.showClone(stockpile);
+				if (updated) updateData();
 			}
 		}
 		if (StockpileSeparatorTableCell.ACTION_DELETE_STOCKPILE.equals(e.getActionCommand())){
@@ -507,8 +513,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
 				Stockpile stockpile = item.getStockpile();
-				stockpileItemDialog.showAdd(stockpile);
-				updateData();
+				boolean updated = stockpileItemDialog.showAdd(stockpile);
+				if (updated) updateData();
 			}
 		}
 		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())){
@@ -516,8 +522,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			if (source instanceof JStockpileMenuItem){
 				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
 				StockpileItem item = jMenuItem.getItem();
-				stockpileItemDialog.showEdit(item);
-				updateData();
+				boolean updated = stockpileItemDialog.showEdit(item);
+				if (updated) updateData();
 			}
 		}
 		if (ACTION_DELETE_ITEM.equals(e.getActionCommand())){
