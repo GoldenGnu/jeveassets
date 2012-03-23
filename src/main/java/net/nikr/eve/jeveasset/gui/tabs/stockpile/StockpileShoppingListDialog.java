@@ -27,28 +27,40 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.JNumberField;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class StockpileShoppingListDialog extends JDialogCentered implements ActionListener{
+class StockpileShoppingListDialog extends JDialogCentered implements ActionListener, CaretListener{
 
 	private final static String ACTION_CLIPBOARD_STOCKPILE = "ACTION_CLIPBOARD_STOCKPILE";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	
 	private JTextArea jText;
 	private JButton jClose;
+	private JTextField jPercent;
 	
-	public StockpileShoppingListDialog(Program program) {
+	private Stockpile stockpile;
+	
+	StockpileShoppingListDialog(Program program) {
 		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
 		
-		JButton jCopyToClipboard = new JButton(TabsStockpile.get().clipboardStockpile());
+		JButton jCopyToClipboard = new JButton(TabsStockpile.get().clipboardStockpile(), Images.EDIT_COPY.getIcon());
 		jCopyToClipboard.setActionCommand(ACTION_CLIPBOARD_STOCKPILE);
 		jCopyToClipboard.addActionListener(this);
+		
+		JLabel jPercentFullLabel = new JLabel(TabsStockpile.get().percentFull());
+		JLabel jPercentLabel = new JLabel(TabsStockpile.get().percent());
+		
+		jPercent = new JNumberField("");
+		jPercent.addCaretListener(this);
 		
 		jClose = new JButton(TabsStockpile.get().close());
 		jClose.setActionCommand(ACTION_CLOSE);
@@ -60,11 +72,21 @@ public class StockpileShoppingListDialog extends JDialogCentered implements Acti
 		jText.setBackground(jPanel.getBackground());
 		JCopyPopup.install(jText);
 		
+		JSeparator jSeparator = new JSeparator(SwingConstants.VERTICAL);
+		
 		JScrollPane jTextScroll = new JScrollPane(jText);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jCopyToClipboard)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jCopyToClipboard)
+					.addGap(10)
+					.addComponent(jSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jPercentFullLabel)
+					.addComponent(jPercent, 100, 100, 100)
+					.addComponent(jPercentLabel)
+				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 					.addComponent(jTextScroll, 500, 500, 500)
 					.addComponent(jClose)
@@ -72,28 +94,60 @@ public class StockpileShoppingListDialog extends JDialogCentered implements Acti
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jCopyToClipboard, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jCopyToClipboard, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSeparator, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPercentFullLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPercent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPercentLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
 				.addComponent(jTextScroll, 400, 400, 400)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 	
 	void show(Stockpile stockpile){
+		this.stockpile = stockpile;
+		jPercent.setText("100");
+		updateList();
+		super.setVisible(true);
+	}
+	
+	private void updateList(){
+		long percent;
+		try {
+			percent = Long.valueOf(jPercent.getText());
+			if (percent <= 0) percent = 100;
+		} catch (NumberFormatException e){
+			percent = 100;
+		}
 		String s = "";
 		double volume = 0;
 		double value = 0;
 		for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()){
-			if (stockpileItem.getTypeID() > 0 && stockpileItem.getCountNeeded() < 0){
-				s = s + Formater.longFormat(Math.abs(stockpileItem.getCountNeeded()))+"x " +stockpileItem.getName()+"\r\n";
-				volume = volume + stockpileItem.getVolumeNeeded();
-				value = value + stockpileItem.getValueNeeded();
+			if (stockpileItem.getTypeID() > 0){
+				final double minimumCount = (stockpileItem.getCountMinimum()* percent / 100.0);
+				final double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
+				if (countNeeded > 0){				
+					volume = volume + (countNeeded * stockpileItem.getVolume());
+					value = value + (countNeeded * stockpileItem.getPrice());
+					s = s + Formater.longFormat(countNeeded)+"x " +stockpileItem.getName()+"\r\n";
+				}
 			}
 		}
-		s = s + "\r\n";
-		s = s + TabsStockpile.get().totalToHaul()+Formater.doubleFormat(Math.abs(volume))+ "\r\n";
-		s = s + TabsStockpile.get().estimatedMarketValue()+Formater.iskFormat(Math.abs(value))+ "\r\n";
+		if (s.isEmpty()){
+			s = TabsStockpile.get().nothingNeeded();
+		} else {
+			s = s + "\r\n";
+			s = s + TabsStockpile.get().totalToHaul()+Formater.doubleFormat(Math.abs(volume))+ "\r\n";
+			s = s + TabsStockpile.get().estimatedMarketValue()+Formater.iskFormat(Math.abs(value))+ "\r\n";
+		}
+		if (percent != 100){
+			s = stockpile.getName()+" ("+percent+TabsStockpile.get().percent()+")\r\n\r\n"+s;
+		} else {
+			s = stockpile.getName()+"\r\n\r\n"+s;
+		}
 		jText.setText(s);
-		super.setVisible(true);
 	}
 	
 	private void copyToClipboard(){
@@ -119,7 +173,7 @@ public class StockpileShoppingListDialog extends JDialogCentered implements Acti
 
 	@Override
 	protected JButton getDefaultButton() {
-		return jClose;
+		return null;
 	}
 
 	@Override
@@ -136,6 +190,11 @@ public class StockpileShoppingListDialog extends JDialogCentered implements Acti
 		if (ACTION_CLOSE.equals(e.getActionCommand())){
 			super.setVisible(false);
 		}
+	}
+
+	@Override
+	public void caretUpdate(CaretEvent e) {
+		updateList();
 	}
 	
 }
