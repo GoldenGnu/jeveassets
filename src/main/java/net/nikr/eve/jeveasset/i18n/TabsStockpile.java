@@ -87,6 +87,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String sellOrders();
 	public abstract String buyOrders();
 	public abstract String jobs();
+	public abstract String shoppingList();
+	public abstract String getShoppingList();
+	public abstract String close();
 	public abstract String columnName();
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();

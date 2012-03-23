@@ -9,17 +9,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import java.awt.event.*;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
@@ -35,7 +26,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public final static String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
 	public final static String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
 	public final static String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
-	public final static String ACTION_CLIPBOARD_STOCKPILE = "ACTION_CLIPBOARD_STOCKPILE";
+	public final static String ACTION_SHOPPING_LIST_STOCKPILE = "ACTION_SHOPPING_LIST_STOCKPILE";
 	public final static String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
 	
 	private final JLabel jGroup;
@@ -83,8 +74,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		
 		jStockpile.addSeparator();
 		
-		jMenuItem = new JMenuItem(TabsStockpile.get().clipboardStockpile());
-		jMenuItem.setActionCommand(ACTION_CLIPBOARD_STOCKPILE);
+		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList());
+		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 		

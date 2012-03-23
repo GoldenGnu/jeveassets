@@ -76,6 +76,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	private StockpileDialog stockpileDialog;
 	private StockpileItemDialog stockpileItemDialog;
+	private StockpileShoppingListDialog stockpileShoppingListDialog;
 	
 	private StockpileFilterControl filterControl;
 	
@@ -86,6 +87,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
+		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
 		
 		JToolBar jToolBar = new JToolBar();
 		jToolBar.setFloatable(false);
@@ -472,38 +474,13 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				}
 			}
 		}
-		if (StockpileSeparatorTableCell.ACTION_CLIPBOARD_STOCKPILE.equals(e.getActionCommand())){
+		if (StockpileSeparatorTableCell.ACTION_SHOPPING_LIST_STOCKPILE.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
 			Object o = stockpileTableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
-				Stockpile stockpile = item.getStockpile();
-				String s = "";
-				double volume = 0;
-				double value = 0;
-				for (StockpileItem stockpileItem : stockpile.getItems()){
-					if (stockpileItem.getTypeID() > 0 && stockpileItem.getCountNeeded() < 0){
-						s = s + Math.abs(stockpileItem.getCountNeeded())+"x " +stockpileItem.getName()+"\r\n";
-						volume = volume + stockpileItem.getVolumeNeeded();
-						value = value + stockpileItem.getValueNeeded();
-					}
-				}
-				s = s + "\r\n";
-				s = s + TabsStockpile.get().totalToHaul()+Formater.doubleFormat(Math.abs(volume))+ "\r\n";
-				s = s + TabsStockpile.get().estimatedMarketValue()+Formater.iskFormat(Math.abs(value))+ "\r\n";
-				SecurityManager sm = System.getSecurityManager();
-				if (sm != null) {
-					try {
-						sm.checkSystemClipboardAccess();
-					} catch (Exception ex) {
-						return;
-					}
-				}
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				StringSelection data = new StringSelection(s);
-				Clipboard cp = tk.getSystemClipboard();
-				cp.setContents(data, null);
+				stockpileShoppingListDialog.show(item.getStockpile());
 			}
 		}
 		if (StockpileSeparatorTableCell.ACTION_ADD_ITEM.equals(e.getActionCommand())){
