@@ -67,10 +67,8 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	private JMultiSelectionList jColumnSelection;
 	private JButton jOK;
 
-	private static DecimalFormat doubleEn  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat doubleEu  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("da")));
-	private static DecimalFormat longEn  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat longEu  = new DecimalFormat("0", new DecimalFormatSymbols(new Locale("da")));
+	private static DecimalFormat enNumberFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
+	private static DecimalFormat euNumberFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
 
 	private JCustomFileChooser jCsvFileChooser;
 	
@@ -263,19 +261,12 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	}
 	
 	private String getValue(Object object, DecimalSeperator decimalSeperator){
-		if (object instanceof Double){
-			double number = (Double) object;
+		if (object instanceof Number){
+			Number number = (Number) object;
 			if (decimalSeperator == DecimalSeperator.DOT){
-				return doubleEn.format(number);
+				return enNumberFormat.format(number);
 			} else {
-				return doubleEu.format(number);
-			}
-		} else if (object instanceof Long){
-			long number = (Long) object;
-			if (decimalSeperator == DecimalSeperator.DOT){
-				return longEn.format(number);
-			} else {
-				return longEu.format(number);
+				return euNumberFormat.format(number);
 			}
 		}
 		if (object == null){
