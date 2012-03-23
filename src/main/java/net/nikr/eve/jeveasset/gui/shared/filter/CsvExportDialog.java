@@ -408,7 +408,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			data.add(line);
 		}
 		
-		if (!CsvWriter.save(Settings.getCsvSettings().getFilename(), data, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.getCsvSettings().getFieldDelimiter().getCharacter(), Settings.getCsvSettings().getLineDelimiter().toString()))){
+		if (!CsvWriter.save(Settings.getCsvSettings().getFilename(), data, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.getCsvSettings().getFieldDelimiter().getValue(), Settings.getCsvSettings().getLineDelimiter().getValue()))){
 			JOptionPane.showMessageDialog(getDialog(),
 					DialoguesCsvExport.get().failedToSave(),
 					DialoguesCsvExport.get().csvExport(),
