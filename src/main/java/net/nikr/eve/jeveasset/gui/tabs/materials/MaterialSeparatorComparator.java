@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Material;
 
 
 public class MaterialSeparatorComparator implements Comparator<Material> {

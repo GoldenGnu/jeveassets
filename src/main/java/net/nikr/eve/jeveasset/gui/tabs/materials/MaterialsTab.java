@@ -31,33 +31,16 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import java.util.*;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
-import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
@@ -87,7 +70,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		//Category: Asteroid
 		//Category: Material
 
-		jPiMaterial = new JCheckBox("Include Planetary Materials");
+		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
 		jPiMaterial.setActionCommand(ACTION_SELECTED);
 		jPiMaterial.addActionListener(this);
 		
@@ -166,7 +149,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characters.add(0, TabsMaterials.get().all());
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {
@@ -222,28 +205,29 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		Map<String, Material> summary = new HashMap<String, Material>();
 		Map<String, Material> total = new HashMap<String, Material>();
 		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
+		//Summary Total All
+		Material allMaterials = new Material(MaterialType.SUMMARY_ALL, TabsMaterials.get().all(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
 		for (Asset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material") && (!eveAsset.isPiMaterial() || !jPiMaterial.isSelected()) ) continue;
-			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals("All")) continue;
+			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals(TabsMaterials.get().all())) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
 			//Locations
 			if (!uniqueMaterials.containsKey(key)){ //New
-				Material material = new Material("1"+eveAsset.getName(), "1"+eveAsset.getLocation(), "1"+eveAsset.getGroup(), eveAsset);
+				Material material = new Material(MaterialType.LOCATIONS, eveAsset.getName(), eveAsset.getLocation(), eveAsset.getGroup(), eveAsset);
 				uniqueMaterials.put(key, material);
 				materials.add(material);
 			}
 			Material material = uniqueMaterials.get(key);
 			//Summary
 			if (!summary.containsKey(eveAsset.getName())){ //New
-				Material summaryMaterial = new Material("1"+eveAsset.getName(), "2Summary", "1"+eveAsset.getGroup(), eveAsset);
+				Material summaryMaterial = new Material(MaterialType.SUMMARY, eveAsset.getName(), TabsMaterials.get().summary(), eveAsset.getGroup(), eveAsset);
 				summary.put(eveAsset.getName(), summaryMaterial);
 				materials.add(summaryMaterial);
 			}
 			Material summaryMaterial = summary.get(eveAsset.getName());
-			//Total
-			if (!total.containsKey(eveAsset.getGroup())){
-				Material totalMaterial = new Material("1"+eveAsset.getGroup(), "2Summary", "2Grand Total", null);
+			//Summary Total
+			if (!total.containsKey(eveAsset.getGroup())){ //New
+				Material totalMaterial = new Material(MaterialType.SUMMARY_TOTAL, eveAsset.getGroup(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
 				total.put(eveAsset.getGroup(), totalMaterial);
 				materials.add(totalMaterial);
 			}

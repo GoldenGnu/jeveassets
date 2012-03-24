@@ -10,7 +10,6 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
 
 /**
