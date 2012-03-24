@@ -23,10 +23,10 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		implements TableCellRenderer, TableCellEditor{
 
-	private static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
+	protected static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
 
 	/** the separator list to lock */
-	private final SeparatorList<E> separatorList;
+	protected final SeparatorList<E> separatorList;
 	protected SeparatorList.Separator<?> separator;
 	protected int row;
 
@@ -35,9 +35,8 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 	protected final GroupLayout layout;
 	protected final JTable jTable;
 	
-	protected final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
-	protected final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
-
+	private final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
+	private final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
 	
 
 	public SeparatorTableCell(JTable jTable, SeparatorList<E> separatorList) {

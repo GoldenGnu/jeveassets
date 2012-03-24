@@ -91,6 +91,8 @@ public enum Images {
 	MISC_HELP ("misc_help.png"),
 	MISC_EXPANDED ("misc_expanded.png"),
 	MISC_COLLAPSED ("misc_collapsed.png"),
+	MISC_EXPANDED_WHITE ("misc_expanded_white.png"),
+	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),

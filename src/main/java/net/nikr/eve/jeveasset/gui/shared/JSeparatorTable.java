@@ -39,13 +39,12 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 
 	public void expandSeparators(boolean expand, SeparatorList<?> separatorList){
-		final EventTableModel tableModel = getEventTableModel();
 		final EventSelectionModel selectModel = getEventSelectionModel();
 		if (selectModel != null) selectModel.setEnabled(false);
-		for (int a = 0; a < tableModel.getRowCount(); a++){
-			Object o = tableModel.getElementAt(a);
-			if (o instanceof SeparatorList.Separator){
-				SeparatorList.Separator separator = (SeparatorList.Separator) o;
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 				separatorList.getReadWriteLock().writeLock().lock();
 				try {
 					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
