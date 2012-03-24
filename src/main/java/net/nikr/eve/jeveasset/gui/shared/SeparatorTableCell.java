@@ -5,21 +5,12 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.SeparatorList;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -55,6 +46,13 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 
 		jPanel = new JPanel(new BorderLayout());
 		jPanel.setBackground(Color.LIGHT_GRAY);
+		jPanel.addMouseListener(new MouseAdapter() {
+			@Override public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2){
+					expandSeparator(separator.getLimit() == 0);
+				}
+			}
+		});
 
 		layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);
