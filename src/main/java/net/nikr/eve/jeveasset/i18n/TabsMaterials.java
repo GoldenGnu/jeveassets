@@ -49,5 +49,6 @@ public abstract class TabsMaterials extends Bundle {
 	public abstract String materials();
 	public abstract String no();
 	public abstract String summary();
+	public abstract String total();
 	public abstract String whitespace(Object arg0);
 }

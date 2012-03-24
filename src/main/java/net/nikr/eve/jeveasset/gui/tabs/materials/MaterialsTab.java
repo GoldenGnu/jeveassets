@@ -202,22 +202,43 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		String character = (String) jCharacters.getSelectedItem();
 		List<Material> materials = new ArrayList<Material>();
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
+		Map<String, Material> totalMaterials = new HashMap<String, Material>();
+		Map<String, Material> totalAllMaterials = new HashMap<String, Material>();
 		Map<String, Material> summary = new HashMap<String, Material>();
 		Map<String, Material> total = new HashMap<String, Material>();
 		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		//Summary Total All
-		Material allMaterials = new Material(MaterialType.SUMMARY_ALL, TabsMaterials.get().all(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
+		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, TabsMaterials.get().all(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
 		for (Asset eveAsset : eveAssetEventList){
+			//Skip none-material + none Pi Material (if not enabled)
 			if (!eveAsset.getCategory().equals("Material") && (!eveAsset.isPiMaterial() || !jPiMaterial.isSelected()) ) continue;
-			if (!character.equals(eveAsset.getOwner()) && !character.equals("["+eveAsset.getOwner()+"]") && !character.equals(TabsMaterials.get().all())) continue;
-			String key = eveAsset.getLocation()+eveAsset.getName();
+			//Skip not selected owners
+			if (!character.equals(eveAsset.getOwner()) && !character.equals(TabsMaterials.get().whitespace(eveAsset.getOwner())) && !character.equals(TabsMaterials.get().all())) continue;
+		
 			//Locations
-			if (!uniqueMaterials.containsKey(key)){ //New
+			if (!uniqueMaterials.containsKey(eveAsset.getLocation()+eveAsset.getName())){ //New
 				Material material = new Material(MaterialType.LOCATIONS, eveAsset.getName(), eveAsset.getLocation(), eveAsset.getGroup(), eveAsset);
-				uniqueMaterials.put(key, material);
+				uniqueMaterials.put(eveAsset.getLocation()+eveAsset.getName(), material);
 				materials.add(material);
 			}
-			Material material = uniqueMaterials.get(key);
+			Material material = uniqueMaterials.get(eveAsset.getLocation()+eveAsset.getName());
+
+			//Locations Total
+			if (!totalMaterials.containsKey(eveAsset.getLocation()+eveAsset.getGroup())){ //New
+				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, eveAsset.getGroup(), eveAsset.getLocation(), TabsMaterials.get().total(), null); //FIXME - i18n
+				totalMaterials.put(eveAsset.getLocation()+eveAsset.getGroup(), totalMaterial);
+				materials.add(totalMaterial);
+			}
+			Material totalMaterial =  totalMaterials.get(eveAsset.getLocation()+eveAsset.getGroup());
+
+			//Locations Total All
+			if (!totalAllMaterials.containsKey(eveAsset.getLocation())){ //New
+				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), null);  //FIXME - i18n
+				totalAllMaterials.put(eveAsset.getLocation(), totalAllMaterial);
+				materials.add(totalAllMaterial);
+			}
+			Material totalAllMaterial = totalAllMaterials.get(eveAsset.getLocation());
+			
 			//Summary
 			if (!summary.containsKey(eveAsset.getName())){ //New
 				Material summaryMaterial = new Material(MaterialType.SUMMARY, eveAsset.getName(), TabsMaterials.get().summary(), eveAsset.getGroup(), eveAsset);
@@ -225,20 +246,24 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 				materials.add(summaryMaterial);
 			}
 			Material summaryMaterial = summary.get(eveAsset.getName());
+
 			//Summary Total
 			if (!total.containsKey(eveAsset.getGroup())){ //New
-				Material totalMaterial = new Material(MaterialType.SUMMARY_TOTAL, eveAsset.getGroup(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
-				total.put(eveAsset.getGroup(), totalMaterial);
-				materials.add(totalMaterial);
+				Material summaryTotalMaterial = new Material(MaterialType.SUMMARY_TOTAL, eveAsset.getGroup(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
+				total.put(eveAsset.getGroup(), summaryTotalMaterial);
+				materials.add(summaryTotalMaterial);
 			}
-			Material totalMaterial =  total.get(eveAsset.getGroup());
+			Material summaryTotalMaterial =  total.get(eveAsset.getGroup());
+
 			//Update values
 			material.updateValue(eveAsset.getCount(), eveAsset.getPrice());
-			summaryMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 			totalMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
-			allMaterials.updateValue(eveAsset.getCount(), eveAsset.getPrice());
+			totalAllMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
+			summaryMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
+			summaryTotalMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
+			summaryTotalAllMaterial.updateValue(eveAsset.getCount(), eveAsset.getPrice());
 		}
-		if (!materials.isEmpty()) materials.add(allMaterials);
+		if (!materials.isEmpty()) materials.add(summaryTotalAllMaterial);
 		Collections.sort(materials);
 		String location = "";
 		for (Material material : materials){

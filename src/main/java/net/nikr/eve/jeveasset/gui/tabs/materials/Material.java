@@ -31,6 +31,8 @@ public class Material implements Comparable<Material>{
 	public enum MaterialType{
 		
 		LOCATIONS(2, 1, 1),
+		LOCATIONS_TOTAL(2, 2, 1),
+		LOCATIONS_ALL(2, 2, 2),
 		SUMMARY(1, 1, 1),
 		SUMMARY_TOTAL(1, 2, 1),
 		SUMMARY_ALL(1, 2, 2),
