@@ -203,4 +203,19 @@ public class Material implements Comparable<Material>{
 	public int compareTo(Material o) {
 		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
+	
+	public static class ISK{
+
+		private String price;
+
+		public ISK(String price) {
+			this.price = price;
+		}
+
+		@Override
+		public String toString() {
+			return price;
+		}
+	}
+
 }

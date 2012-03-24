@@ -42,6 +42,7 @@ public abstract class TabsMaterials extends Bundle {
 	public abstract String collapse();
 	public abstract String columnName();
 	public abstract String columnCount();
+	public abstract String columnPrice();
 	public abstract String columnValue();
 	public abstract String expand();
 	public abstract String grandTotal();

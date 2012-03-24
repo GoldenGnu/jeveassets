@@ -13,11 +13,7 @@ import java.awt.Rectangle;
 import javax.swing.JComponent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
