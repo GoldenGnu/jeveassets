@@ -93,6 +93,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String percentFull();
 	public abstract String percent();
 	public abstract String nothingNeeded();
+	public abstract String stockpileLocation();
+	public abstract String stockpileOwner();
 	public abstract String columnName();
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();

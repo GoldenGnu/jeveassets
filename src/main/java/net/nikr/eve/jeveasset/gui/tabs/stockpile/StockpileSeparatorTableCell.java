@@ -32,6 +32,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jGroup;
 	private final JLabel jColor;
 	private final JDropDownButton jStockpile;
+	private final JLabel jLocation;
+	private final JLabel jOwner;
 	private Program program;
 
 	public StockpileSeparatorTableCell(Program program, JTable jTable, SeparatorList<StockpileItem> separatorList, ActionListener actionListener) {
@@ -82,35 +84,76 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jGroup = new JLabel();
 		jGroup.setBorder(null);
 		jGroup.setOpaque(false);
-		jGroup.setBackground(Color.BLACK);
 		jGroup.setFont(new Font(jGroup.getFont().getName(), Font.BOLD, jGroup.getFont().getSize()+1));
+		
+		JLabel jLocationLabel = new JLabel(TabsStockpile.get().stockpileLocation());
+		jLocationLabel.setFont( new Font (jLocationLabel.getFont().getName(), Font.BOLD, jLocationLabel.getFont().getSize()) );
+		jLocationLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		//jLocationLabel.setForeground(Color.DARK_GRAY);
+		
+		jLocation = new JLabel();
+		//jLocation.setFont( new Font (jLocation.getFont().getName(), jLocation.getFont().getStyle(), jLocation.getFont().getSize()+1) );
+		jLocation.setVerticalAlignment(SwingConstants.BOTTOM);
+		//jLocation.setForeground(Color.DARK_GRAY);
+		
+		JLabel jOwnerLabel = new JLabel(TabsStockpile.get().stockpileOwner());
+		jOwnerLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		jOwnerLabel.setFont( new Font (jOwnerLabel.getFont().getName(), Font.BOLD, jOwnerLabel.getFont().getSize()) );
+		//jOwnerLabel.setForeground(Color.WHITE);
+		
+		jOwner = new JLabel();
+		//jOwner.setFont( new Font (jOwner.getFont().getName(), jOwner.getFont().getStyle(), jOwner.getFont().getSize()+1) );
+		jOwner.setVerticalAlignment(SwingConstants.BOTTOM);
+		//jOwner.setForeground(Color.DARK_GRAY);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jExpand)
-					.addGap(1)
-					.addGap(10)
+					.addGap(2)
 					.addComponent(jColor, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
 					.addGap(10)
 					.addComponent(jGroup)
 					.addGap(10)
 					.addComponent(jStockpile, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jExpand)
+					.addGap(7)
+					.addComponent(jLocationLabel)
+					.addGap(5)
+					.addComponent(jLocation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jOwnerLabel)
+					.addGap(5)
+					.addComponent(jOwner, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				)
+				
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGap(2)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGroup(layout.createSequentialGroup()
 						.addGap(3)
 						.addComponent(jColor, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
 					)
+					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addGap(2)
+				.addGap(1)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addGroup(layout.createSequentialGroup()
+						.addGap(4)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jLocationLabel)
+							.addComponent(jLocation)
+							.addComponent(jOwnerLabel)
+							.addComponent(jOwner)
+						)
+					)
+				)
+				.addGap(4)
 		);
 	}
 	
@@ -125,6 +168,18 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			jColor.setBackground(new Color(255,255,200));
 		} else {
 			jColor.setBackground(new Color(255,200,200));
+		}
+		String location = stockpileItem.getStockpile().getLocation();
+		if (location != null){
+			jLocation.setText(location);
+		} else {
+			jLocation.setText(TabsStockpile.get().all());
+		}
+		String owner = stockpileItem.getStockpile().getOwner();
+		if (owner != null && !owner.isEmpty()){
+			jOwner.setText(owner);
+		} else {
+			jOwner.setText(TabsStockpile.get().all());
 		}
 	}
 	
@@ -159,7 +214,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		if (!e.getValueIsAdjusting()){
 			int position = getParentViewport().getViewPosition().x;
 			int width = getParentViewport().getSize().width;
-			int offset = (width + position) - 170;
+			int offset = (width + position) - 134;
 			jGroup.setMaximumSize(new Dimension(offset, jGroup.getMaximumSize().height) );
 			if (jTable.isEditing() && (jTable.getCellEditor().getCellEditorValue() instanceof SeparatorList.Separator<?>)){
 				int selectedRow = jTable.getSelectedRow();
