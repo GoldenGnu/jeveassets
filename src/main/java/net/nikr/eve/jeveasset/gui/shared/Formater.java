@@ -36,6 +36,8 @@ public class Formater {
 	
 	private static DecimalFormat iskFormat  = new DecimalFormat("#,##0.00 isk");
 	private static DecimalFormat itemsFormat  = new DecimalFormat("#,##0 items");
+	private static DecimalFormat percentFormat  = new DecimalFormat("##0%");
+	private static DecimalFormat timesFormat  = new DecimalFormat("##0x");
 	private static DecimalFormat longFormat  = new DecimalFormat("#,##0");
 	private static DecimalFormat integerFormat  = new DecimalFormat("0");
 	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
@@ -53,6 +55,12 @@ public class Formater {
 
 	public static String iskFormat(Double number){
 		return iskFormat.format(number);
+	}
+	public static String percentFormat(Double number){
+		return percentFormat.format(number);
+	}
+	public static String timesFormat(Double number){
+		return timesFormat.format(number);
 	}
 	public static String itemsFormat(Long number){
 		return itemsFormat.format(number);

@@ -98,6 +98,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importEFT();
 	public abstract String importEmpty();
 	public abstract String importNotValid();
+	public abstract String stockpilePercent();
 	public abstract String columnName();
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();
