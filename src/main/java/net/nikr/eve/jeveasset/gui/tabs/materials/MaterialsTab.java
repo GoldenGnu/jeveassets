@@ -225,7 +225,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 
 			//Locations Total
 			if (!totalMaterials.containsKey(eveAsset.getLocation()+eveAsset.getGroup())){ //New
-				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, eveAsset.getGroup(), eveAsset.getLocation(), TabsMaterials.get().total(), null); //FIXME - i18n
+				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, eveAsset.getGroup(), eveAsset.getLocation(), TabsMaterials.get().total(), null);
 				totalMaterials.put(eveAsset.getLocation()+eveAsset.getGroup(), totalMaterial);
 				materials.add(totalMaterial);
 			}
@@ -233,7 +233,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 
 			//Locations Total All
 			if (!totalAllMaterials.containsKey(eveAsset.getLocation())){ //New
-				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), null);  //FIXME - i18n
+				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), null);
 				totalAllMaterials.put(eveAsset.getLocation(), totalAllMaterial);
 				materials.add(totalAllMaterial);
 			}

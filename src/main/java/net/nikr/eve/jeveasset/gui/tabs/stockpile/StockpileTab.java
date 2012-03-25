@@ -30,7 +30,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -55,12 +56,14 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class StockpileTab extends JMainTab implements ActionListener {
 
 	private final static String ACTION_ADD = "ACTION_ADD";
+	private final static String ACTION_IMPORT = "ACTION_IMPORT";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 	private final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
 	private final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 	
 	private JButton jAdd;
+	private JButton jImport;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
@@ -97,6 +100,13 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
 		jToolBar.add(jAdd);
+		
+		jToolBar.addSeparator();
+		
+		jImport= new JButton(TabsStockpile.get().importEFT(), Images.TOOL_SHIP_LOADOUTS.getIcon());
+		jImport.setActionCommand(ACTION_IMPORT);
+		jImport.addActionListener(this);
+		jToolBar.add(jImport);
 		
 		JLabel jSpacing = new JLabel();
 		jSpacing.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -261,6 +271,22 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	private String getClipboardContents() {
+		String result = "";
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		//odd: the Object param of getContents is not currently used
+		Transferable contents = clipboard.getContents(null);
+		boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+		if (hasTransferableText) {
+			try {
+				result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+			} catch (Exception ex) {
+				//Return empty line...
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -431,6 +457,78 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		if (ACTION_ADD.equals(e.getActionCommand())){
 			Stockpile stockpile = stockpileDialog.showAdd();
 			if (stockpile != null) updateData();
+		}
+		if (ACTION_IMPORT.equals(e.getActionCommand())){
+			//Get string from clipboard
+			String fit = getClipboardContents();
+			
+			//Validate
+			fit = fit.trim();
+			if (fit.isEmpty()){ //Empty sting
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			
+			String[] split = fit.split("[\r\n]");
+			if (split.length < 1){ //Malformed
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			//Malformed
+			if (!split[0].startsWith("[") || !split[0].contains(",") || !split[0].endsWith("]")){
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			//FIXME do some more validation...
+			
+			//Format and split
+			fit = fit.replace("[", "").replace("]", "");
+			List<String> modules = new ArrayList<String>(Arrays.asList(fit.split("[\r\n,]")));
+			
+			//Get name of fit
+			String name;
+			if (modules.size() > 1){
+				name = modules.get(1).trim();
+				modules.remove(1);
+			} else {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+				return;
+			}
+			
+			//Create Stockpile
+			Stockpile stockpile = stockpileDialog.showAdd(name);
+			if (stockpile == null) { //Dialog cancelled
+				return;
+			}
+			
+			//Add modules
+			Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
+			for (String module : modules){
+				module = module.trim().toLowerCase(); //Format line
+				if (module.isEmpty()) continue; //Skip empty lines
+				//Search for item name
+				for (Map.Entry<Integer, Item> entry : program.getSettings().getItems().entrySet()){
+					Item item = entry.getValue();
+					if (item.getName().toLowerCase().equals(module)){ //Found item
+						int typeID = item.getTypeID();
+						if (!items.containsKey(typeID)){ //Add new item
+							StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+							stockpile.add(stockpileItem);
+							items.put(typeID, stockpileItem);
+						}
+						//Update item count
+						StockpileItem stockpileItem = items.get(typeID);
+						long count = stockpileItem.getCountMinimum();
+						count++;
+						stockpileItem.setCountMinimum(count);
+						break; //search done
+					}
+				}
+			}
+			
+			//Update stockpile data
+			updateData();
+			scrollToSctockpile(stockpile);
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);

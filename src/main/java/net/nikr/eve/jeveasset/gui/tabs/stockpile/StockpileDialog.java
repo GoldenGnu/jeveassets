@@ -344,6 +344,13 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 		return stockpile;
 	}
+	Stockpile showAdd(String name) {
+		updateData();
+		jName.setText(name);
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		show();
+		return stockpile;
+	}
 
 	Stockpile showAdd(long locationID) {
 		updateData();
