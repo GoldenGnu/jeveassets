@@ -63,8 +63,6 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private EventList<Material> materialEventList;
 	private SeparatorList<Material> separatorList;
 
-	//TODO - MaterialsTab is not translated properly
-	
 	public MaterialsTab(Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
