@@ -5153,12 +5153,12 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="3283" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-902" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3283" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-902" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="3284" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-904" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3284" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-904" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -5170,22 +5170,22 @@
         <material id="11399" portionsize="1" quantity="6"/>
     </row>
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3286" marketgroup="false" meta="" name="Quad Light Beam Laser II Blueprint" pi="false" portion="1" price="9999999" volume="0.01"/>
-    <row category="Implant" group="Cyber Electronics" id="3287" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-906" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3287" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-906" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="3288" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-902" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3288" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-902" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="3289" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-904" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3289" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-904" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="3290" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-906" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="3290" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-906" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -6911,6 +6911,8 @@
     <row category="Module" group="QA Module" id="4377" marketgroup="false" meta="" name="QA Multiship Module - 5 Players" pi="false" portion="1" price="0" volume="1.0"/>
     <row category="Module" group="QA Module" id="4380" marketgroup="false" meta="" name="QA Immunity Module" pi="false" portion="1" price="362408" volume="1.0"/>
     <row category="Blueprint" group="Shield Hardener Blueprint" id="4381" marketgroup="false" meta="" name="QA Immunity Module Blueprint" pi="false" portion="1" price="9999999" volume="0.01"/>
+    <row category="Ship" group="Industrial" id="4388" marketgroup="false" meta="" name="Iteron Mark IV Quafe Ultramarine Edition" pi="false" portion="1" price="600000" volume="265000.0"/>
+    <row category="Blueprint" group="Industrial Blueprint" id="4389" marketgroup="false" meta="" name="Iteron Mark IV Quafe Ultramarine Edition Blueprint" pi="false" portion="1" price="4287500" volume="0.01"/>
     <row category="Module" group="Capacitor Recharger" id="4421" marketgroup="true" meta=" (Tech I)" name="F-a10 Buffer Capacitor Regenerator" pi="false" portion="1" price="828" volume="5.0">
         <material id="34" portionsize="1" quantity="38"/>
         <material id="35" portionsize="1" quantity="14"/>
@@ -14410,7 +14412,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="13236" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-903" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="13236" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-903" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -27726,7 +27728,7 @@
     <row category="Implant" group="Cyber Missile" id="27205" marketgroup="false" meta="" name="Hardwiring - Zainou 'Sharpshooter' ZMX1000" pi="false" portion="1" price="200000" volume="1.0"/>
     <row category="Implant" group="Cyber Missile" id="27206" marketgroup="false" meta="" name="Hardwiring - Zainou 'Sharpshooter' ZMX10" pi="false" portion="1" price="200000" volume="1.0"/>
     <row category="Implant" group="Cyber Engineering" id="27223" marketgroup="false" meta="" name="Inherent Implants 'Sergeant' XE4" pi="false" portion="1" price="200000" volume="1.0"/>
-    <row category="Implant" group="Cyber Electronics" id="27224" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-903" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="27224" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-903" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -27771,22 +27773,22 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="27234" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-905" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="27234" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-905" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="27235" marketgroup="true" meta="" name="Zainou 'Gypsy' Turret Destabilization TD-901" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="27235" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-901" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="27236" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-905" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="27236" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-905" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Electronics" id="27237" marketgroup="true" meta="" name="Zainou 'Gypsy' Weapon Disruption WD-901" pi="false" portion="1" price="200000" volume="1.0">
+    <row category="Implant" group="Cyber Electronics" id="27237" marketgroup="true" meta="" name="Zainou 'Gypsy' Target Painting TG-901" pi="false" portion="1" price="200000" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
