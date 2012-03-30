@@ -179,9 +179,11 @@ public class JSeparatorTable extends JAutoColumnTable{
 					if (selectedRows.contains(row)) selectedRows.remove(selectedRows.indexOf(row));
 				}
 			}
-			//System.out.println("valueChanged => rows: "+lastSelection+" Row: "+lastSelection.get(lastSelection.size()-1));
+			//System.out.println("valueChanged => rows: "+selectedRows+" Row: "+selectedRows.get(selectedRows.size()-1));
 		}
-		if(!selectedRows.isEmpty() && (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size()-1)) instanceof SeparatorList.Separator)){
+		if(!selectedRows.isEmpty()
+				&& selectedRows.get(selectedRows.size()-1) <  getEventTableModel().getRowCount()
+				&& (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size()-1)) instanceof SeparatorList.Separator)){
 			setAutoscrolls(false);
 		} else {
 			setAutoscrolls(true);
