@@ -16,6 +16,28 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.1.0__________________________________________________________________________
+
+New Features:
+-Stockpile: Shopping List (With percent full)
+-Stockpile: Added labels for Location/Owner/Minimum Percent Full
+-Stockpile: EFT import
+-Separator Table: double click to expand/collapse
+-Materials: Moved summary to the top
+-Materials: Added total for stations
+-Materials: Added price column
+-Materials: You can now collapse/expand locations
+-Assets: Added Tech column (Meta is can now be compared as a number)
+
+Bug Fixes:
+-Stockpile: Cancel refresh stockpile list
+-CSV Export: Line Delimiter was not added correct...
+-CSV Export: Float & Integer always had dot as decimal separator 
+
+Changed:
+-Static date updated to Crucible 1.6.0
+
+________________________________________________________________________________
 _2.0.0__________________________________________________________________________
 
 New Features:
