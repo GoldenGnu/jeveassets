@@ -10,7 +10,10 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.*;
@@ -18,7 +21,7 @@ import javax.swing.table.*;
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class JSeparatorTable extends JAutoColumnTable {
+public class JSeparatorTable extends JAutoColumnTable{
 
 	/** working with separator cells */
 	private TableCellRenderer separatorRenderer;
@@ -162,6 +165,29 @@ public class JSeparatorTable extends JAutoColumnTable {
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
 	public void setSeparatorEditor(TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
+	
+	//XXX - Workaround for Autoscroller less then optimal behavior on SeparatorList.Separator
+	private List<Integer> selectedRows = new ArrayList<Integer>();
+	/** {@inheritDoc} */
+	@Override
+	public void valueChanged(ListSelectionEvent e){
+		if (e.getValueIsAdjusting()){
+			for (int row = e.getFirstIndex(); row <= e.getLastIndex(); row++){
+				if (this.isRowSelected(row)){
+					if (!selectedRows.contains(row)) selectedRows.add(row);
+				} else {
+					if (selectedRows.contains(row)) selectedRows.remove(selectedRows.indexOf(row));
+				}
+			}
+			//System.out.println("valueChanged => rows: "+lastSelection+" Row: "+lastSelection.get(lastSelection.size()-1));
+		}
+		if(!selectedRows.isEmpty() && (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size()-1)) instanceof SeparatorList.Separator)){
+			setAutoscrolls(false);
+		} else {
+			setAutoscrolls(true);
+		}
+		super.valueChanged(e);
+	}
 
 	/** {@inheritDoc} */
 	@Override
