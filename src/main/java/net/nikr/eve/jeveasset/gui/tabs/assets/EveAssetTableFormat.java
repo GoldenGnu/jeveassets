@@ -211,7 +211,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getTypeCount();
 		}
 	},
-	META(String.class, GlazedLists.comparableComparator()) {
+	META(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnMeta();
@@ -219,6 +219,16 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		@Override
 		public Object getColumnValue(Asset from) {
 			return from.getMeta();
+		}
+	},
+	TECH(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnTech();
+		}
+		@Override
+		public Object getColumnValue(Asset from) {
+			return from.getTech();
 		}
 	},
 	VOLUME(Float.class, GlazedLists.comparableComparator()) {

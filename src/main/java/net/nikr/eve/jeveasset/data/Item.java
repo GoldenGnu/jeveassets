@@ -33,13 +33,14 @@ public class Item implements Comparable<Item> {
 	private String category;
 	private long price;
 	private float volume;
-	private String meta;
+	private int meta;
+	private String tech;
 	private boolean marketGroup;
 	private boolean piMaterial;
 	private int portion;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 
-	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial, int portion) {
+	public Item(int typeID, String name, String group, String category, long price, float volume, int meta, String tech, boolean marketGroup, boolean piMaterial, int portion) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -47,6 +48,7 @@ public class Item implements Comparable<Item> {
 		this.price = price;
 		this.volume = volume;
 		this.meta = meta;
+		this.tech = tech;
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;
@@ -76,8 +78,12 @@ public class Item implements Comparable<Item> {
 		return marketGroup;
 	}
 
-	public String getMeta() {
+	public int getMeta() {
 		return meta;
+	}
+
+	public String getTech() {
+		return tech;
 	}
 
 	public String getName() {

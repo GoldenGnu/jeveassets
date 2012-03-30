@@ -168,10 +168,17 @@ public class ApiIdConverter {
 		return "";
 	}
 
-	public static String meta(int typeID, Map<Integer, Item> items) {
+	public static int meta(int typeID, Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getMeta();
+		}
+		return 0;
+	}
+	public static String tech(int typeID, Map<Integer, Item> items) {
+		Item item = items.get(typeID);
+		if (item != null) {
+			return item.getTech();
 		}
 		return "";
 	}

@@ -123,7 +123,8 @@ public class Asset implements Comparable<Asset> {
 	private List<Asset> parents;
 	private String flag;
 	private double priceBase;
-	private String meta;
+	private String tech;
+	private int meta;
 	private boolean marketGroup;
 	private PriceData priceData;
 	private UserItem<Integer,Double> userPrice;
@@ -143,7 +144,7 @@ public class Asset implements Comparable<Asset> {
 	 */
 	protected Asset() {}
 
-	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, String meta, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
+	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, int meta, String tech, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -155,6 +156,7 @@ public class Asset implements Comparable<Asset> {
 		this.flag = flag;
 		this.priceBase = priceBase;
 		this.meta = meta;
+		this.tech = tech;
 		this.itemID = itemID;
 		this.typeID = typeID;
 		this.marketGroup = marketGroup;
@@ -236,12 +238,12 @@ public class Asset implements Comparable<Asset> {
 		return locationID;
 	}
 	
-	public String getMeta() {
-		if (meta.isEmpty()){
-			return "0 (Tech I)";
-		} else {
-			return meta;
-		}
+	public int getMeta() {
+		return meta;
+	}
+
+	public String getTech() {
+		return tech;
 	}
 
 	public String getName() {

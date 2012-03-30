@@ -342,7 +342,8 @@ public class AssetsReader extends AbstractXmlReader {
 		String group = ApiIdConverter.group(typeID, settings.getItems());
 		String category = ApiIdConverter.category(typeID, settings.getItems());
 		double priceBase = ApiIdConverter.priceBase(typeID, settings.getItems());
-		String meta = ApiIdConverter.meta(typeID, settings.getItems());
+		int meta = ApiIdConverter.meta(typeID, settings.getItems());
+		String tech = ApiIdConverter.tech(typeID, settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
 		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
@@ -352,6 +353,6 @@ public class AssetsReader extends AbstractXmlReader {
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
 		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
-		return new Asset(name, group, category, owner, count, location, parents, flag, priceBase, meta, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, owner, count, location, parents, flag, priceBase, meta, tech, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 }
