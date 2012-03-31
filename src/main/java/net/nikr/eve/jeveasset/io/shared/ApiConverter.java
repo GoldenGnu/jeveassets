@@ -68,7 +68,8 @@ public class ApiConverter {
 		double basePrice = ApiIdConverter.priceBase(typeID, settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		String meta = ApiIdConverter.meta(typeID, settings.getItems());
+		int meta = ApiIdConverter.meta(typeID, settings.getItems());
+		String tech = ApiIdConverter.tech(typeID, settings.getItems());
 		String owner = human.getName();
 		String location = ApiIdConverter.locationName(locationID, null, settings.getLocations());
 		String region = ApiIdConverter.regionName(locationID, null, settings.getLocations());
@@ -78,7 +79,7 @@ public class ApiConverter {
 		List<Asset> parents = new ArrayList<Asset>();
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 
 	public static List<Asset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, Settings settings){
@@ -110,7 +111,8 @@ public class ApiConverter {
 		double basePrice = ApiIdConverter.priceBase(typeID, settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
 		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		String meta = ApiIdConverter.meta(typeID, settings.getItems());
+		int meta = ApiIdConverter.meta(typeID, settings.getItems());
+		String tech = ApiIdConverter.tech(typeID, settings.getItems());
 		String owner = human.getName();
 		String location = ApiIdConverter.locationName(locationID, null, settings.getLocations());
 		String region = ApiIdConverter.regionName(locationID, null, settings.getLocations());
@@ -120,7 +122,7 @@ public class ApiConverter {
 		List<Asset> parents = new ArrayList<Asset>();
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, tech, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 
 	public static List<Asset> apiAsset(Human human, List<EveAsset<?>> assets, Settings settings){
@@ -161,7 +163,8 @@ public class ApiConverter {
 		String group = ApiIdConverter.group(apiAsset.getTypeID(), settings.getItems());
 		String category = ApiIdConverter.category(apiAsset.getTypeID(), settings.getItems());
 		double basePrice = ApiIdConverter.priceBase(apiAsset.getTypeID(), settings.getItems());
-		String meta = ApiIdConverter.meta(apiAsset.getTypeID(), settings.getItems());
+		int meta = ApiIdConverter.meta(typeID, settings.getItems());
+		String tech = ApiIdConverter.tech(typeID, settings.getItems());
 		boolean marketGroup = ApiIdConverter.marketGroup(apiAsset.getTypeID(), settings.getItems());
 		float volume = ApiIdConverter.volume(apiAsset.getTypeID(), settings.getItems());
 		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
@@ -172,7 +175,7 @@ public class ApiConverter {
 		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(Human human, List<ApiMarketOrder> apiMarketOrders, Settings settings){
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();

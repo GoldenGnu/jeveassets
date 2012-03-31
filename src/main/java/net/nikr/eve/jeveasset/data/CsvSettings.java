@@ -43,7 +43,7 @@ public class CsvSettings {
 		private FieldDelimiter(char character) {
 			this.character = character;
 		}
-		public char getCharacter() {
+		public char getValue() {
 			return character;
 		}
 		@Override
@@ -77,6 +77,9 @@ public class CsvSettings {
 		private LineDelimiter(String string) {
 			this.string = string;
 		}
+		public String getValue() {
+			return string;
+		}
 		@Override
 		public String toString() {
 			return getI18N();
@@ -84,27 +87,19 @@ public class CsvSettings {
 		abstract String getI18N();
 	}
 	public  enum DecimalSeperator {
-		DOT("Dot") {
+		DOT() {
 			@Override
 			String getI18N() {
 				return DialoguesCsvExport.get().dot();
 			}
 		},
-		COMMA("Comma") {
+		COMMA() {
 			@Override
 			String getI18N() {
 				return DialoguesCsvExport.get().comma();
 			}
 		}
 		;
-
-		String string;
-		private DecimalSeperator(String string) {
-			this.string = string;
-		}
-		public String getString() {
-			return string;
-		}
 		@Override
 		public String toString() {
 			return getI18N();

@@ -23,12 +23,8 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.Material;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.Overview;
+import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.GuiShared;

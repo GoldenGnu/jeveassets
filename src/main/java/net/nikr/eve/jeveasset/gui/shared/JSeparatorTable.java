@@ -10,19 +10,18 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class JSeparatorTable extends JAutoColumnTable {
+public class JSeparatorTable extends JAutoColumnTable{
 
 	/** working with separator cells */
 	private TableCellRenderer separatorRenderer;
@@ -43,13 +42,12 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 
 	public void expandSeparators(boolean expand, SeparatorList<?> separatorList){
-		final EventTableModel tableModel = getEventTableModel();
 		final EventSelectionModel selectModel = getEventSelectionModel();
 		if (selectModel != null) selectModel.setEnabled(false);
-		for (int a = 0; a < tableModel.getRowCount(); a++){
-			Object o = tableModel.getElementAt(a);
-			if (o instanceof SeparatorList.Separator){
-				SeparatorList.Separator separator = (SeparatorList.Separator) o;
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 				separatorList.getReadWriteLock().writeLock().lock();
 				try {
 					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
@@ -167,6 +165,31 @@ public class JSeparatorTable extends JAutoColumnTable {
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
 	public void setSeparatorEditor(TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
+	
+	//XXX - Workaround for Autoscroller less then optimal behavior on SeparatorList.Separator
+	private List<Integer> selectedRows = new ArrayList<Integer>();
+	/** {@inheritDoc} */
+	@Override
+	public void valueChanged(ListSelectionEvent e){
+		if (e.getValueIsAdjusting()){
+			for (int row = e.getFirstIndex(); row <= e.getLastIndex(); row++){
+				if (this.isRowSelected(row)){
+					if (!selectedRows.contains(row)) selectedRows.add(row);
+				} else {
+					if (selectedRows.contains(row)) selectedRows.remove(selectedRows.indexOf(row));
+				}
+			}
+			//System.out.println("valueChanged => rows: "+selectedRows+" Row: "+selectedRows.get(selectedRows.size()-1));
+		}
+		if(!selectedRows.isEmpty()
+				&& selectedRows.get(selectedRows.size()-1) <  getEventTableModel().getRowCount()
+				&& (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size()-1)) instanceof SeparatorList.Separator)){
+			setAutoscrolls(false);
+		} else {
+			setAutoscrolls(true);
+		}
+		super.valueChanged(e);
+	}
 
 	/** {@inheritDoc} */
 	@Override

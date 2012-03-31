@@ -67,6 +67,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnCount();
 	public abstract String columnTypeCount();
 	public abstract String columnMeta();
+	public abstract String columnTech();
 	public abstract String columnVolume();
 	public abstract String columnVolumeTotal();
 	public abstract String columnSingleton();

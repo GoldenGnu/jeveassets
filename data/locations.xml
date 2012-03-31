@@ -11880,16 +11880,16 @@
     <row id="60011557" name="Pucherie VI - Moon 2 - Garoun Investment Bank Vault" region="10000032" security="0.8" solarsystem="30002733"/>
     <row id="60011560" name="Amoderia VI - Moon 1 - Garoun Investment Bank Depository" region="10000068" security="0.4" solarsystem="30005329"/>
     <row id="60011563" name="Stou V - Moon 3 - Garoun Investment Bank Depository" region="10000068" security="0.5" solarsystem="30005333"/>
-    <row id="60011566" name="Bourynes VII - Moon 2 - University of Caille School" region="10000032" security="1.0" solarsystem="30002715"/>
-    <row id="60011569" name="Bille X - Moon 1 - University of Caille School" region="10000037" security="0.5" solarsystem="30003040"/>
-    <row id="60011572" name="Osmeden IX - Moon 6 - University of Caille School" region="10000048" security="0.7" solarsystem="30003831"/>
+    <row id="60011566" name="Bourynes VII - Moon 2 - University of Caille" region="10000032" security="1.0" solarsystem="30002715"/>
+    <row id="60011569" name="Bille X - Moon 1 - University of Caille" region="10000037" security="0.5" solarsystem="30003040"/>
+    <row id="60011572" name="Osmeden IX - Moon 6 - University of Caille" region="10000048" security="0.7" solarsystem="30003831"/>
     <row id="60011575" name="Alenia IV - Moon 3 - Quafe Company School" region="10000068" security="0.9" solarsystem="30005302"/>
-    <row id="60011578" name="Egghelende V - Moon 13 - University of Caille School" region="10000032" security="0.4" solarsystem="30002693"/>
-    <row id="60011581" name="Eletta VIII - Moon 19 - University of Caille School" region="10000068" security="0.9" solarsystem="30005315"/>
-    <row id="60011584" name="Ney IV - University of Caille School" region="10000032" security="0.5" solarsystem="30002650"/>
-    <row id="60011587" name="Scolluzer VII - Moon 1 - University of Caille School" region="10000068" security="0.8" solarsystem="30005322"/>
-    <row id="60011590" name="Aporulie VI - Moon 9 - University of Caille School" region="10000064" security="0.8" solarsystem="30005019"/>
-    <row id="60011593" name="Inghenges VI - Moon 7 - University of Caille School" region="10000032" security="0.7" solarsystem="30002672"/>
+    <row id="60011578" name="Egghelende V - Moon 13 - University of Caille" region="10000032" security="0.4" solarsystem="30002693"/>
+    <row id="60011581" name="Eletta VIII - Moon 19 - University of Caille" region="10000068" security="0.9" solarsystem="30005315"/>
+    <row id="60011584" name="Ney IV - University of Caille" region="10000032" security="0.5" solarsystem="30002650"/>
+    <row id="60011587" name="Scolluzer VII - Moon 1 - University of Caille" region="10000068" security="0.8" solarsystem="30005322"/>
+    <row id="60011590" name="Aporulie VI - Moon 9 - University of Caille" region="10000064" security="0.8" solarsystem="30005019"/>
+    <row id="60011593" name="Inghenges VI - Moon 7 - University of Caille" region="10000032" security="0.7" solarsystem="30002672"/>
     <row id="60011596" name="Ladistier VI - Moon 4 - President Bureau" region="10000064" security="0.3" solarsystem="30004999"/>
     <row id="60011599" name="Parts IV - Moon 3 - President Bureau" region="10000064" security="0.4" solarsystem="30004998"/>
     <row id="60011602" name="Villore VII - Moon 6 - Senate Bureau" region="10000064" security="0.5" solarsystem="30004993"/>
@@ -12891,46 +12891,46 @@
     <row id="60014590" name="Sonama VII - Moon 16 - X-Sense Chemical Refinery" region="10000052" security="0.8" solarsystem="30004099"/>
     <row id="60014593" name="Sonama VII - Moon 14 - X-Sense Chemical Refinery" region="10000052" security="0.8" solarsystem="30004099"/>
     <row id="60014596" name="Sonama VI - Moon 15 - X-Sense Chemical Refinery" region="10000052" security="0.8" solarsystem="30004099"/>
-    <row id="60014599" name="Sehmy VIII - Moon 2 - Hedion University School" region="10000065" security="1.0" solarsystem="30005042"/>
-    <row id="60014602" name="Azedi II - Hedion University School" region="10000067" security="0.3" solarsystem="30005275"/>
-    <row id="60014605" name="Rumida V - Moon 1 - Hedion University School" region="10000020" security="0.9" solarsystem="30001724"/>
-    <row id="60014608" name="Avair X - Hedion University School" region="10000043" security="0.4" solarsystem="30002270"/>
-    <row id="60014611" name="Riavayed IX - Moon 12 - Hedion University School" region="10000036" security="0.6" solarsystem="30002993"/>
-    <row id="60014614" name="Komaa VI - Moon 17 - Hedion University School" region="10000038" security="0.6" solarsystem="30003092"/>
-    <row id="60014617" name="Mista VI - Moon 16 - Hedion University School" region="10000043" security="0.5" solarsystem="30003482"/>
-    <row id="60014620" name="Moutid II - Moon 14 - Hedion University School" region="10000020" security="0.7" solarsystem="30001715"/>
-    <row id="60014623" name="Nema X - Moon 6 - Hedion University School" region="10000054" security="0.3" solarsystem="30004267"/>
-    <row id="60014626" name="Korridi IV - Hedion University School" region="10000067" security="0.3" solarsystem="30005258"/>
-    <row id="60014629" name="Chaven VIII - Moon 1 - Imperial Academy School" region="10000043" security="1.0" solarsystem="30003489"/>
-    <row id="60014632" name="Sarum Prime III - Moon 2 - Imperial Academy School" region="10000043" security="1.0" solarsystem="30003522"/>
-    <row id="60014635" name="Ordat V - Moon 1 - Imperial Academy School" region="10000020" security="0.3" solarsystem="30001685"/>
-    <row id="60014638" name="Fahruni XI - Imperial Academy School" region="10000043" security="0.5" solarsystem="30003473"/>
-    <row id="60014641" name="Hikansog VII - Imperial Academy School" region="10000052" security="0.8" solarsystem="30004142"/>
-    <row id="60014644" name="Paye VI - Moon 1 - Imperial Academy School" region="10000020" security="0.6" solarsystem="30001718"/>
-    <row id="60014647" name="Ajna VIII - Moon 5 - Imperial Academy School" region="10000054" security="0.2" solarsystem="30004277"/>
-    <row id="60014650" name="Azedi V - Moon 1 - Imperial Academy School" region="10000067" security="0.3" solarsystem="30005275"/>
-    <row id="60014653" name="Tew VII - Imperial Academy School" region="10000020" security="0.9" solarsystem="30001733"/>
-    <row id="60014656" name="Schmaeel VIII - Moon 9 - Imperial Academy School" region="10000065" security="0.2" solarsystem="30005063"/>
-    <row id="60014659" name="Kisogo VII - State War Academy School" region="10000002" security="1.0" solarsystem="30000141"/>
-    <row id="60014662" name="Piekura VIII - Moon 11 - State War Academy School" region="10000016" security="0.5" solarsystem="30001391"/>
-    <row id="60014665" name="Eitu VI - Moon 3 - State War Academy School" region="10000033" security="0.5" solarsystem="30002740"/>
+    <row id="60014599" name="Sehmy VIII - Moon 2 - Hedion University" region="10000065" security="1.0" solarsystem="30005042"/>
+    <row id="60014602" name="Azedi II - Hedion University" region="10000067" security="0.3" solarsystem="30005275"/>
+    <row id="60014605" name="Rumida V - Moon 1 - Hedion University" region="10000020" security="0.9" solarsystem="30001724"/>
+    <row id="60014608" name="Avair X - Hedion University" region="10000043" security="0.4" solarsystem="30002270"/>
+    <row id="60014611" name="Riavayed IX - Moon 12 - Hedion University" region="10000036" security="0.6" solarsystem="30002993"/>
+    <row id="60014614" name="Komaa VI - Moon 17 - Hedion University" region="10000038" security="0.6" solarsystem="30003092"/>
+    <row id="60014617" name="Mista VI - Moon 16 - Hedion University" region="10000043" security="0.5" solarsystem="30003482"/>
+    <row id="60014620" name="Moutid II - Moon 14 - Hedion University" region="10000020" security="0.7" solarsystem="30001715"/>
+    <row id="60014623" name="Nema X - Moon 6 - Hedion University" region="10000054" security="0.3" solarsystem="30004267"/>
+    <row id="60014626" name="Korridi IV - Hedion University" region="10000067" security="0.3" solarsystem="30005258"/>
+    <row id="60014629" name="Chaven VIII - Moon 1 - Imperial Academy" region="10000043" security="1.0" solarsystem="30003489"/>
+    <row id="60014632" name="Sarum Prime III - Moon 2 - Imperial Academy" region="10000043" security="1.0" solarsystem="30003522"/>
+    <row id="60014635" name="Ordat V - Moon 1 - Imperial Academy" region="10000020" security="0.3" solarsystem="30001685"/>
+    <row id="60014638" name="Fahruni XI - Imperial Academy" region="10000043" security="0.5" solarsystem="30003473"/>
+    <row id="60014641" name="Hikansog VII - Imperial Academy" region="10000052" security="0.8" solarsystem="30004142"/>
+    <row id="60014644" name="Paye VI - Moon 1 - Imperial Academy" region="10000020" security="0.6" solarsystem="30001718"/>
+    <row id="60014647" name="Ajna VIII - Moon 5 - Imperial Academy" region="10000054" security="0.2" solarsystem="30004277"/>
+    <row id="60014650" name="Azedi V - Moon 1 - Imperial Academy" region="10000067" security="0.3" solarsystem="30005275"/>
+    <row id="60014653" name="Tew VII - Imperial Academy" region="10000020" security="0.9" solarsystem="30001733"/>
+    <row id="60014656" name="Schmaeel VIII - Moon 9 - Imperial Academy" region="10000065" security="0.2" solarsystem="30005063"/>
+    <row id="60014659" name="Kisogo VII - State War Academy" region="10000002" security="1.0" solarsystem="30000141"/>
+    <row id="60014662" name="Piekura VIII - Moon 11 - State War Academy" region="10000016" security="0.5" solarsystem="30001391"/>
+    <row id="60014665" name="Eitu VI - Moon 3 - State War Academy" region="10000033" security="0.5" solarsystem="30002740"/>
     <row id="60014668" name="Irjunen IV - House of Records School" region="10000033" security="0.5" solarsystem="30002792"/>
-    <row id="60014671" name="Uosusuokko VII - Moon 1 - State War Academy School" region="10000016" security="0.7" solarsystem="30001366"/>
-    <row id="60014674" name="Uesuro IV - State War Academy School" region="10000016" security="0.5" solarsystem="30001432"/>
-    <row id="60014677" name="Usi VI - Moon 23 - State War Academy School" region="10000033" security="0.5" solarsystem="30002755"/>
-    <row id="60014680" name="Autama V - Moon 9 - State War Academy School" region="10000016" security="0.8" solarsystem="30001411"/>
-    <row id="60014683" name="Annaro VIII - Moon 4 - State War Academy School" region="10000033" security="0.8" solarsystem="30002776"/>
-    <row id="60014686" name="Ishisomo VIII - Moon 11 - State War Academy School" region="10000002" security="0.7" solarsystem="30000165"/>
-    <row id="60014689" name="Duripant VII - Moon 6 - Federal Navy Academy School" region="10000064" security="1.0" solarsystem="30004971"/>
-    <row id="60014692" name="Dodenvale VIII - Federal Navy Academy School" region="10000032" security="0.7" solarsystem="30002685"/>
-    <row id="60014695" name="Scolluzer VII - Moon 3 - Federal Navy Academy School" region="10000068" security="0.8" solarsystem="30005322"/>
-    <row id="60014698" name="Harerget II - Moon 1 - Federal Navy Academy School" region="10000037" security="0.8" solarsystem="30003017"/>
-    <row id="60014701" name="Elore VI - Moon 4 - Federal Navy Academy School" region="10000044" security="0.2" solarsystem="30003570"/>
-    <row id="60014704" name="Ouelletta V - Moon 5 - Federal Navy Academy School" region="10000068" security="0.4" solarsystem="30005297"/>
-    <row id="60014707" name="Alparena V - Moon 4 - Federal Navy Academy School" region="10000048" security="0.1" solarsystem="30003850"/>
-    <row id="60014710" name="Vitrauze XI - Moon 2 - Federal Navy Academy School" region="10000064" security="0.3" solarsystem="30004991"/>
-    <row id="60014713" name="Allebin VI - Federal Navy Academy School" region="10000064" security="0.5" solarsystem="30005009"/>
-    <row id="60014716" name="Rancer VI - Moon 6 - Federal Navy Academy School" region="10000032" security="0.4" solarsystem="30002718"/>
+    <row id="60014671" name="Uosusuokko VII - Moon 1 - State War Academy" region="10000016" security="0.7" solarsystem="30001366"/>
+    <row id="60014674" name="Uesuro IV - State War Academy" region="10000016" security="0.5" solarsystem="30001432"/>
+    <row id="60014677" name="Usi VI - Moon 23 - State War Academy" region="10000033" security="0.5" solarsystem="30002755"/>
+    <row id="60014680" name="Autama V - Moon 9 - State War Academy" region="10000016" security="0.8" solarsystem="30001411"/>
+    <row id="60014683" name="Annaro VIII - Moon 4 - State War Academy" region="10000033" security="0.8" solarsystem="30002776"/>
+    <row id="60014686" name="Ishisomo VIII - Moon 11 - State War Academy" region="10000002" security="0.7" solarsystem="30000165"/>
+    <row id="60014689" name="Duripant VII - Moon 6 - Federal Navy Academy" region="10000064" security="1.0" solarsystem="30004971"/>
+    <row id="60014692" name="Dodenvale VIII - Federal Navy Academy" region="10000032" security="0.7" solarsystem="30002685"/>
+    <row id="60014695" name="Scolluzer VII - Moon 3 - Federal Navy Academy" region="10000068" security="0.8" solarsystem="30005322"/>
+    <row id="60014698" name="Harerget II - Moon 1 - Federal Navy Academy" region="10000037" security="0.8" solarsystem="30003017"/>
+    <row id="60014701" name="Elore VI - Moon 4 - Federal Navy Academy" region="10000044" security="0.2" solarsystem="30003570"/>
+    <row id="60014704" name="Ouelletta V - Moon 5 - Federal Navy Academy" region="10000068" security="0.4" solarsystem="30005297"/>
+    <row id="60014707" name="Alparena V - Moon 4 - Federal Navy Academy" region="10000048" security="0.1" solarsystem="30003850"/>
+    <row id="60014710" name="Vitrauze XI - Moon 2 - Federal Navy Academy" region="10000064" security="0.3" solarsystem="30004991"/>
+    <row id="60014713" name="Allebin VI - Federal Navy Academy" region="10000064" security="0.5" solarsystem="30005009"/>
+    <row id="60014716" name="Rancer VI - Moon 6 - Federal Navy Academy" region="10000032" security="0.4" solarsystem="30002718"/>
     <row id="60014719" name="Cistuvaert V - Moon 12 - Center for Advanced Studies School" region="10000068" security="1.0" solarsystem="30005305"/>
     <row id="60014722" name="Barleguet VII - Moon 6 - Center for Advanced Studies School" region="10000048" security="0.1" solarsystem="30003819"/>
     <row id="60014725" name="Leremblompes IV - Moon 11 - Center for Advanced Studies School" region="10000037" security="0.6" solarsystem="30003039"/>
@@ -12951,16 +12951,16 @@
     <row id="60014770" name="Anher V - Republic Military School" region="10000042" security="0.5" solarsystem="30002051"/>
     <row id="60014773" name="Gerbold III - Moon 14 - Republic Military School" region="10000030" security="0.8" solarsystem="30002533"/>
     <row id="60014776" name="Evettullur VI - Republic Military School" region="10000042" security="0.8" solarsystem="30003408"/>
-    <row id="60014779" name="Hulm VIII - Moon 2 - Republic University School" region="10000030" security="1.0" solarsystem="30002505"/>
-    <row id="60014782" name="Illuin V - Moon 13 - Republic University School" region="10000042" security="0.9" solarsystem="30003377"/>
-    <row id="60014785" name="Hotrardik VI - Moon 17 - Republic University School" region="10000042" security="0.7" solarsystem="30003456"/>
-    <row id="60014788" name="Sirekur VIII - Moon 1 - Republic University School" region="10000042" security="0.3" solarsystem="30002092"/>
-    <row id="60014791" name="Gerek V - Moon 3 - Republic University School" region="10000030" security="0.7" solarsystem="30002531"/>
-    <row id="60014794" name="Hroduko V - Moon 4 - Republic University School" region="10000042" security="0.7" solarsystem="30003468"/>
-    <row id="60014797" name="Gultratren V - Moon 4 - Republic University School" region="10000030" security="0.3" solarsystem="30002560"/>
-    <row id="60014800" name="Floseswin VIII - Moon 7 - Republic University School" region="10000042" security="0.4" solarsystem="30002082"/>
-    <row id="60014803" name="Earwik VI - Moon 10 - Republic University School" region="10000042" security="0.6" solarsystem="30003441"/>
-    <row id="60014806" name="Nakugard V - Republic University School" region="10000042" security="0.5" solarsystem="30002068"/>
+    <row id="60014779" name="Hulm VIII - Moon 2 - Republic University" region="10000030" security="1.0" solarsystem="30002505"/>
+    <row id="60014782" name="Illuin V - Moon 13 - Republic University" region="10000042" security="0.9" solarsystem="30003377"/>
+    <row id="60014785" name="Hotrardik VI - Moon 17 - Republic University" region="10000042" security="0.7" solarsystem="30003456"/>
+    <row id="60014788" name="Sirekur VIII - Moon 1 - Republic University" region="10000042" security="0.3" solarsystem="30002092"/>
+    <row id="60014791" name="Gerek V - Moon 3 - Republic University" region="10000030" security="0.7" solarsystem="30002531"/>
+    <row id="60014794" name="Hroduko V - Moon 4 - Republic University" region="10000042" security="0.7" solarsystem="30003468"/>
+    <row id="60014797" name="Gultratren V - Moon 4 - Republic University" region="10000030" security="0.3" solarsystem="30002560"/>
+    <row id="60014800" name="Floseswin VIII - Moon 7 - Republic University" region="10000042" security="0.4" solarsystem="30002082"/>
+    <row id="60014803" name="Earwik VI - Moon 10 - Republic University" region="10000042" security="0.6" solarsystem="30003441"/>
+    <row id="60014806" name="Nakugard V - Republic University" region="10000042" security="0.5" solarsystem="30002068"/>
     <row id="60014809" name="Ryddinjorn VI - Moon 2 - Pator Tech School" region="10000042" security="1.0" solarsystem="30003410"/>
     <row id="60014812" name="Orduin IX - Moon 12 - Pator Tech School" region="10000042" security="0.8" solarsystem="30003453"/>
     <row id="60014815" name="Heild X - Moon 1 - Pator Tech School" region="10000028" security="0.3" solarsystem="30002390"/>
@@ -12976,7 +12976,7 @@
     <row id="60014845" name="Polaris III - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
     <row id="60014848" name="Polaris IV - Polaris Corporation Plantation" region="10000004" security="0.0" solarsystem="30000380"/>
     <row id="60014851" name="M-FDTD I - Material Institute School" region="10000017" security="0.0" solarsystem="30001479"/>
-    <row id="60014854" name="HD3-JK I - Academy of Aggressive Behaviour School" region="10000017" security="0.0" solarsystem="30001482"/>
+    <row id="60014854" name="HD3-JK I - Academy of Aggressive Behaviour" region="10000017" security="0.0" solarsystem="30001482"/>
     <row id="60014857" name="Crielere I - Ishukone Corporation Research Center" region="10000032" security="0.4" solarsystem="30002691"/>
     <row id="60014860" name="Crielere I - Duvolle Laboratories Research Center" region="10000032" security="0.4" solarsystem="30002691"/>
     <row id="60014861" name="JZV-F4 V - Moon 1 - Manufacturing Outpost" region="10000003" security="0.0" solarsystem="30000325"/>
@@ -13076,26 +13076,26 @@
     <row id="60015010" name="Pasha VII - Moon 3 - Royal Amarr Institute School" region="10000020" security="0.9" solarsystem="30021672"/>
     <row id="60015011" name="Safilbab VIII - Moon 4 - Royal Amarr Institute School" region="10000020" security="1.0" solarsystem="30031672"/>
     <row id="60015012" name="Seitam VI - Royal Amarr Institute School" region="10000020" security="0.9" solarsystem="30041672"/>
-    <row id="60015013" name="Odotte III - University of Caille School" region="10000032" security="0.9" solarsystem="30012715"/>
-    <row id="60015014" name="Oirtlair VI - Moon 1 - University of Caille School" region="10000032" security="0.9" solarsystem="30022715"/>
-    <row id="60015015" name="Olelon IV - University of Caille School" region="10000032" security="0.9" solarsystem="30032715"/>
-    <row id="60015016" name="Trossere VII - Moon 3 - University of Caille School" region="10000032" security="0.9" solarsystem="30042715"/>
-    <row id="60015017" name="Akhwa II - Moon 1 - Hedion University School" region="10000052" security="0.9" solarsystem="30015042"/>
-    <row id="60015018" name="Annad V - Hedion University School" region="10000065" security="0.8" solarsystem="30025042"/>
-    <row id="60015019" name="Chaktaren VII - Moon 3 - Hedion University School" region="10000065" security="0.8" solarsystem="30035042"/>
-    <row id="60015020" name="Conoban VII - Moon 8 - Hedion University School" region="10000065" security="0.9" solarsystem="30045042"/>
-    <row id="60015021" name="Deepari II - Imperial Academy School" region="10000043" security="0.9" solarsystem="30013489"/>
-    <row id="60015022" name="Fora V - Moon 3 - Imperial Academy School" region="10000043" security="0.9" solarsystem="30023489"/>
-    <row id="60015023" name="Hanan VI - Imperial Academy School" region="10000043" security="0.9" solarsystem="30033489"/>
-    <row id="60015024" name="Horir III - Moon 1 - Imperial Academy School" region="10000043" security="0.9" solarsystem="30043489"/>
-    <row id="60015025" name="Sakenta I - State War Academy School" region="10000002" security="1.0" solarsystem="30010141"/>
-    <row id="60015026" name="Senda III - Moon 1 - State War Academy School" region="10000002" security="0.9" solarsystem="30020141"/>
-    <row id="60015027" name="Uitra VI - Moon 4 - State War Academy School" region="10000002" security="0.9" solarsystem="30030141"/>
-    <row id="60015028" name="Urhinichi IX - State War Academy School" region="10000033" security="0.8" solarsystem="30040141"/>
-    <row id="60015029" name="Couster II - Moon 1 - Federal Navy Academy School" region="10000064" security="0.9" solarsystem="30014971"/>
-    <row id="60015030" name="Hecarrin VI - Moon 3 - Federal Navy Academy School" region="10000064" security="0.8" solarsystem="30024971"/>
-    <row id="60015031" name="Henebene V - Federal Navy Academy School" region="10000064" security="0.8" solarsystem="30034971"/>
-    <row id="60015032" name="Mesokel I - Federal Navy Academy School" region="10000064" security="0.9" solarsystem="30044971"/>
+    <row id="60015013" name="Odotte III - University of Caille" region="10000032" security="0.9" solarsystem="30012715"/>
+    <row id="60015014" name="Oirtlair VI - Moon 1 - University of Caille" region="10000032" security="0.9" solarsystem="30022715"/>
+    <row id="60015015" name="Olelon IV - University of Caille" region="10000032" security="0.9" solarsystem="30032715"/>
+    <row id="60015016" name="Trossere VII - Moon 3 - University of Caille" region="10000032" security="0.9" solarsystem="30042715"/>
+    <row id="60015017" name="Akhwa II - Moon 1 - Hedion University" region="10000052" security="0.9" solarsystem="30015042"/>
+    <row id="60015018" name="Annad V - Hedion University" region="10000065" security="0.8" solarsystem="30025042"/>
+    <row id="60015019" name="Chaktaren VII - Moon 3 - Hedion University" region="10000065" security="0.8" solarsystem="30035042"/>
+    <row id="60015020" name="Conoban VII - Moon 8 - Hedion University" region="10000065" security="0.9" solarsystem="30045042"/>
+    <row id="60015021" name="Deepari II - Imperial Academy" region="10000043" security="0.9" solarsystem="30013489"/>
+    <row id="60015022" name="Fora V - Moon 3 - Imperial Academy" region="10000043" security="0.9" solarsystem="30023489"/>
+    <row id="60015023" name="Hanan VI - Imperial Academy" region="10000043" security="0.9" solarsystem="30033489"/>
+    <row id="60015024" name="Horir III - Moon 1 - Imperial Academy" region="10000043" security="0.9" solarsystem="30043489"/>
+    <row id="60015025" name="Sakenta I - State War Academy" region="10000002" security="1.0" solarsystem="30010141"/>
+    <row id="60015026" name="Senda III - Moon 1 - State War Academy" region="10000002" security="0.9" solarsystem="30020141"/>
+    <row id="60015027" name="Uitra VI - Moon 4 - State War Academy" region="10000002" security="0.9" solarsystem="30030141"/>
+    <row id="60015028" name="Urhinichi IX - State War Academy" region="10000033" security="0.8" solarsystem="30040141"/>
+    <row id="60015029" name="Couster II - Moon 1 - Federal Navy Academy" region="10000064" security="0.9" solarsystem="30014971"/>
+    <row id="60015030" name="Hecarrin VI - Moon 3 - Federal Navy Academy" region="10000064" security="0.8" solarsystem="30024971"/>
+    <row id="60015031" name="Henebene V - Federal Navy Academy" region="10000064" security="0.8" solarsystem="30034971"/>
+    <row id="60015032" name="Mesokel I - Federal Navy Academy" region="10000064" security="0.9" solarsystem="30044971"/>
     <row id="60015033" name="Adallier II - Center for Advanced Studies School" region="10000068" security="0.9" solarsystem="30015305"/>
     <row id="60015034" name="Channace III - Moon 3 - Center for Advanced Studies School" region="10000068" security="0.9" solarsystem="30025305"/>
     <row id="60015035" name="Clacille IV - Center for Advanced Studies School" region="10000068" security="0.9" solarsystem="30035305"/>
@@ -13104,19 +13104,19 @@
     <row id="60015038" name="Krilmokenur VII - Moon 8 - Republic Military School" region="10000030" security="0.9" solarsystem="30022547"/>
     <row id="60015039" name="Larkugei IX - Republic Military School" region="10000030" security="0.9" solarsystem="30032547"/>
     <row id="60015040" name="Loguttur I - Republic Military School" region="10000030" security="1.0" solarsystem="30042547"/>
-    <row id="60015041" name="Malukker I - Republic University School" region="10000030" security="1.0" solarsystem="30012505"/>
-    <row id="60015042" name="Orgron VI - Moon 1 - Republic University School" region="10000042" security="1.0" solarsystem="30022505"/>
-    <row id="60015043" name="Todeko VII - Republic University School" region="10000030" security="1.0" solarsystem="30032505"/>
-    <row id="60015044" name="Usteli V - Republic University School" region="10000030" security="1.0" solarsystem="30042505"/>
+    <row id="60015041" name="Malukker I - Republic University" region="10000030" security="1.0" solarsystem="30012505"/>
+    <row id="60015042" name="Orgron VI - Moon 1 - Republic University" region="10000042" security="1.0" solarsystem="30022505"/>
+    <row id="60015043" name="Todeko VII - Republic University" region="10000030" security="1.0" solarsystem="30032505"/>
+    <row id="60015044" name="Usteli V - Republic University" region="10000030" security="1.0" solarsystem="30042505"/>
     <row id="60015045" name="Abrat III - Pator Tech School" region="10000042" security="1.0" solarsystem="30013410"/>
     <row id="60015046" name="Embod IV - Moon 10 - Pator Tech School" region="10000042" security="1.0" solarsystem="30023410"/>
     <row id="60015047" name="Erego VII - Moon 20 - Pator Tech School" region="10000042" security="0.9" solarsystem="30033410"/>
     <row id="60015048" name="Fildar V - Pator Tech School" region="10000042" security="1.0" solarsystem="30043410"/>
-    <row id="60015049" name="Synchelle I - Federal Navy Academy School" region="10000064" security="0.9" solarsystem="30005015"/>
-    <row id="60015050" name="Irnal I - Imperial Academy School" region="10000043" security="1.0" solarsystem="30003524"/>
+    <row id="60015049" name="Synchelle I - Federal Navy Academy" region="10000064" security="0.9" solarsystem="30005015"/>
+    <row id="60015050" name="Irnal I - Imperial Academy" region="10000043" security="1.0" solarsystem="30003524"/>
     <row id="60015051" name="Marthia I - Royal Amarr Institute School" region="10000020" security="0.9" solarsystem="30001722"/>
     <row id="60015052" name="Olbra I - Pator Tech School" region="10000042" security="0.9" solarsystem="30003388"/>
-    <row id="60015053" name="Edmalbrurdus I - Republic University School" region="10000030" security="1.0" solarsystem="30002518"/>
+    <row id="60015053" name="Edmalbrurdus I - Republic University" region="10000030" security="1.0" solarsystem="30002518"/>
     <row id="60015054" name="Asghed III - 24th Imperial Crusade Logistic Support" region="10000036" security="0.4" solarsystem="30002978"/>
     <row id="60015055" name="Halmah IV - 24th Imperial Crusade Assembly Plant" region="10000036" security="0.4" solarsystem="30002981"/>
     <row id="60015056" name="Tararan IV - 24th Imperial Crusade Logistic Support" region="10000036" security="0.3" solarsystem="30002979"/>
@@ -13194,7 +13194,7 @@
     <row id="60015128" name="Notoras III - Caldari Navy Assembly Plant" region="10000069" security="0.2" solarsystem="30045348"/>
     <row id="60015129" name="Notoras II - Lai Dai Protection Service Assembly Plant" region="10000069" security="0.2" solarsystem="30045348"/>
     <row id="60015130" name="Rakapas V - Home Guard Assembly Plant" region="10000069" security="0.2" solarsystem="30045349"/>
-    <row id="60015131" name="Onnamon I - State War Academy School" region="10000069" security="0.6" solarsystem="30045324"/>
+    <row id="60015131" name="Onnamon I - State War Academy" region="10000069" security="0.6" solarsystem="30045324"/>
     <row id="60015132" name="Oshaima IV - State Protectorate Logistic Support" region="10000033" security="0.5" solarsystem="30002795"/>
     <row id="60015133" name="Nourvukaiken V - State Protectorate Logistic Support" region="10000016" security="0.8" solarsystem="30001376"/>
     <row id="60015134" name="Elanoda IV - State Protectorate Logistic Support" region="10000016" security="0.5" solarsystem="30001434"/>

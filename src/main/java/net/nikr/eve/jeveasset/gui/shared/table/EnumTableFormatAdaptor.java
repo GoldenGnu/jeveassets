@@ -87,10 +87,13 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		for (T t : originalColumns){
 			if (!orderColumns.contains(t)){
 				LOG.info("Adding column: "+t.getColumnName());
-				orderColumns.add(t);
+				int index = originalColumns.indexOf(t);
+				if (index >= orderColumns.size()) index = orderColumns.size() - 1;
+				orderColumns.add(index, t);
 				shownColumns.add(t);
 			}
 		}
+		updateColumns();
 	}
 	
 	public List<SimpleColumn> getColumns(){

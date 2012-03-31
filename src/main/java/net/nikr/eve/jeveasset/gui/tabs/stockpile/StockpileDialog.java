@@ -28,36 +28,15 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -88,7 +67,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private JCheckBox jSellOrders;
 	private JCheckBox jJobs;
 	private JButton jOK;
-	private JButton jCancel;
 	private EventList<Location> locations = new BasicEventList<Location>();
 	private FilterList<Location> locationsFilter;
 	private List<String> myLocations;
@@ -97,7 +75,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	public static final Location locationAll = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
-	AutoCompleteSupport<Location> locationsAutoComplete;
+	private AutoCompleteSupport<Location> locationsAutoComplete;
+	private boolean updated = false;
 	
 	public StockpileDialog(Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
@@ -172,7 +151,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jOK.addActionListener(this);
 		jOK.setEnabled(false);
 		
-		jCancel = new JButton(TabsStockpile.get().cancel());
+		JButton jCancel = new JButton(TabsStockpile.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 		
@@ -306,7 +285,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jOK.setEnabled(b);
 	}
 	
-	public void showEdit(Stockpile stockpile) {
+	boolean showEdit(Stockpile stockpile) {
 		updateData();
 		this.stockpile = stockpile;
 		//Title
@@ -356,16 +335,24 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
+		return updated;
 	}
 
-	public Stockpile showAdd() {
+	Stockpile showAdd() {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		show();
 		return stockpile;
 	}
+	Stockpile showAdd(String name) {
+		updateData();
+		jName.setText(name);
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		show();
+		return stockpile;
+	}
 
-	public Stockpile showAdd(long locationID) {
+	Stockpile showAdd(long locationID) {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		//Location
@@ -389,7 +376,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		return stockpile;
 	}
 	
-	public Stockpile showAdd(Asset asset) {
+	Stockpile showAdd(Asset asset) {
 		updateData();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
@@ -436,7 +423,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		return stockpile;
 	}
 	
-	void showClone(Stockpile stockpile) {
+	boolean showClone(Stockpile stockpile) {
 		updateData();
 		this.cloneStockpile = stockpile.clone();
 		//Title
@@ -483,9 +470,11 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
+		return updated;
 	}
 	
 	private void show(){
+		updated = false;
 		super.setVisible(true);
 	}
 	
@@ -638,6 +627,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			stockpile = getStockpile();
 			program.getSettings().getStockpiles().add(stockpile);
 		}
+		updated = true;
 		this.setVisible(false);
 	}
 

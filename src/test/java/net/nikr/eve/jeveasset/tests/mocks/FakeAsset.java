@@ -99,10 +99,20 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public String getMeta() {
+	public int getMeta() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public String getTech() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public float getVolumeTotal() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
 	@Override
 	public String getName() {
 		throw new UnsupportedOperationException("not implemented");

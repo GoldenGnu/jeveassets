@@ -38,12 +38,18 @@ public abstract class TabsMaterials extends Bundle {
 		super(locale);
 	}
 
+	public abstract String all();
 	public abstract String collapse();
 	public abstract String columnName();
 	public abstract String columnCount();
+	public abstract String columnPrice();
 	public abstract String columnValue();
 	public abstract String expand();
+	public abstract String grandTotal();
+	public abstract String includePI();
 	public abstract String materials();
 	public abstract String no();
+	public abstract String summary();
+	public abstract String total();
 	public abstract String whitespace(Object arg0);
 }

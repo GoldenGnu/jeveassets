@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -50,6 +51,7 @@ public class Stockpile implements Comparable<Stockpile> {
 	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private boolean expanded = true;
+	private double percentFull;
 
 	private Stockpile(Stockpile stockpile) {
 		update(stockpile);
@@ -203,12 +205,29 @@ public class Stockpile implements Comparable<Stockpile> {
 		this.expanded = expanded;
 	}
 	
+	String getPercentFull() {
+		if (percentFull >= 10){
+			return Formater.timesFormat(percentFull);
+		} else {
+			return Formater.percentFormat(percentFull);
+		}
+	}
+	
 	public void updateTotal() {
 		totalItem.reset();
+		percentFull = Double.MAX_VALUE;
 		items.remove(totalItem);
 		for (StockpileItem item : items){
+			double percent;
+			if (item.getCountNow() == 0){
+				percent = 0;
+			} else {
+				percent =item.getCountNow() / ((double)item.getCountMinimum());
+			}
+			percentFull = Math.min(percent, percentFull);
 			totalItem.updateTotal(item);
 		}
+		if (percentFull == Double.MAX_VALUE) percentFull = 1; //Default value
 		items.add(totalItem);
 		
 	}

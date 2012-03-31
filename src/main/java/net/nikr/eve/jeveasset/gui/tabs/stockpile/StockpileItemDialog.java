@@ -26,22 +26,11 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
@@ -131,7 +120,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		);
 	}
 	
-	public void showEdit(StockpileItem stockpileItem) {
+	boolean showEdit(StockpileItem stockpileItem) {
 		updateData();
 		this.stockpileItem = stockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
@@ -139,16 +128,18 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		jItems.setSelectedItem(item);
 		jCountMinimum.setText(String.valueOf(stockpileItem.getCountMinimum()));
 		show();
+		return updated;
 	}
 	
-	public void showAdd(Stockpile stockpile) {
+	boolean showAdd(Stockpile stockpile) {
 		updateData();
 		this.stockpile = stockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
 		show();
+		return updated;
 	}
 	
-	public boolean showAdd(Stockpile stockpile, int typeID) {
+	boolean showAdd(Stockpile stockpile, int typeID) {
 		updateData();
 		this.stockpile = stockpile;
 		Item item = program.getSettings().getItems().get(typeID);
@@ -162,7 +153,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private void updateData(){
 		stockpile = null;
 		stockpileItem = null;
-		updated = false;
 		List<Item> itemsList = new ArrayList<Item>(program.getSettings().getItems().values());
 		Collections.sort(itemsList);
 		try {
@@ -178,6 +168,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 	
 	private void show(){
+		updated = false;
 		autoValidate();
 		autoSet();
 		super.setVisible(true);

@@ -151,8 +151,8 @@ public class JAutoColumnTable extends JTable {
 		
 		@Override
 		public void tableChanged(TableModelEvent e) {
-			//FIXME JAutoColumnTable.tableChanged() removed jTable.isEditing() - this might cause a bug
-			//if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
+			//XXX - Workaround for Java 7
+			if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
 			if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
 			if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
 			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && e.getType() != TableModelEvent.UPDATE) { //Last Table Update

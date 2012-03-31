@@ -50,7 +50,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 	private Clipboard clipboard;
 
 	public static void install(JTextComponent component){
-		new JCopyPopup(component);
+		JCopyPopup jCopyPopup = new JCopyPopup(component);
 	}
 
 	private JCopyPopup(JTextComponent component) {

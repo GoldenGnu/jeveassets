@@ -23,9 +23,9 @@ package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.ISK;
-import net.nikr.eve.jeveasset.data.Material;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.materials.Material.ISK;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
@@ -50,6 +50,20 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return from.getCount();
 		}
 	},
+	PRICE(ISK.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsMaterials.get().columnPrice();
+		}
+		@Override
+		public Object getColumnValue(Material from) {
+			if (from.getPrice() != 0){
+				return new ISK(Formater.iskFormat(from.getPrice()));
+			} else {
+				return new ISK("("+Formater.iskFormat(from.getValue()/from.getCount())+")");
+			}
+		}
+	},
 	VALUE(ISK.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -57,7 +71,7 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 		}
 		@Override
 		public Object getColumnValue(Material from) {
-			return new ISK(from.getValue());
+			return new ISK(Formater.iskFormat(from.getValue()));
 		}
 	},
 	;

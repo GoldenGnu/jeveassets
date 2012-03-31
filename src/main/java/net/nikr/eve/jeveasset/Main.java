@@ -135,7 +135,7 @@ public class Main {
 	}
 	
 	private static void initLookAndFeel() {
-		String lookAndFeel = null;
+		String lookAndFeel;
 		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 		lookAndFeel = UIManager.getSystemLookAndFeelClassName(); //System
 		//lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName(); //Java

@@ -20,27 +20,63 @@
  */
 
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.materials;
 
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class Material implements Comparable<Material>{
-	private String name;
-	private String location;
-	private String group;
-	private String typeName;
-	private boolean marketGroup;
-	private int typeID; //TypeID : int
-	private String station;
-	private String system;
-	private String region;
+	
+	public enum MaterialType{
+		
+		LOCATIONS(2, 1, 1),
+		LOCATIONS_TOTAL(2, 2, 1),
+		LOCATIONS_ALL(2, 2, 2),
+		SUMMARY(1, 1, 1),
+		SUMMARY_TOTAL(1, 2, 1),
+		SUMMARY_ALL(1, 2, 2),
+		;
+
+		private int locationOrder;
+		private int goupeOrder;
+		private int nameOrder;
+		private MaterialType(int locationOrder, int goupeOrder, int nameOrder) {
+			this.locationOrder = locationOrder;
+			this.goupeOrder = goupeOrder;
+			this.nameOrder = nameOrder;
+		}
+
+		public int getLocationOrder() {
+			return locationOrder;
+		}
+
+		public int getGoupeOrder() {
+			return goupeOrder;
+		}
+
+		public int getNameOrder() {
+			return nameOrder;
+		}
+	}
+	
+	private final String name;
+	private final String location;
+	private final String group;
+	private final String typeName;
+	private final boolean marketGroup;
+	private final int typeID; //TypeID : int
+	private final String station;
+	private final String system;
+	private final String region;
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
-	private double price;
+	private final double price;
+	private final MaterialType type;
 
-	public Material(String name, String location, String group, Asset eveAsset) {
+	public Material(MaterialType type, String name, String location, String group, Asset eveAsset) {
+		this.type = type;
 		this.name = name;
 		this.location = location;
 		this.group = group;
@@ -74,15 +110,15 @@ public class Material implements Comparable<Material>{
 	}
 
 	public String getGroup() {
-		return group.substring(1);
+		return group;
 	}
 
 	public String getLocation() {
-		return location.substring(1);
+		return location;
 	}
 
 	public String getName() {
-		return name.substring(1);
+		return name;
 	}
 
 	public boolean isMarketGroup() {
@@ -126,11 +162,11 @@ public class Material implements Comparable<Material>{
 	}
 
 	public String getSeperator(){
-		return location+group;
+		return type.getLocationOrder()+location+type.getGoupeOrder()+group;
 	}
 
 	protected String getCompare(){
-		return location+group+name;
+		return type.getLocationOrder()+location+type.getGoupeOrder()+group+type.getNameOrder()+name;
 	}
 
 	@Override
@@ -167,4 +203,19 @@ public class Material implements Comparable<Material>{
 	public int compareTo(Material o) {
 		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
+	
+	public static class ISK{
+
+		private String price;
+
+		public ISK(String price) {
+			this.price = price;
+		}
+
+		@Override
+		public String toString() {
+			return price;
+		}
+	}
+
 }

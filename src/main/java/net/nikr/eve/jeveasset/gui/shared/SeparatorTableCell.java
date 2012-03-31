@@ -5,21 +5,12 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.SeparatorList;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -32,10 +23,10 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		implements TableCellRenderer, TableCellEditor{
 
-	private static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
+	protected static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
 
 	/** the separator list to lock */
-	private final SeparatorList<E> separatorList;
+	protected final SeparatorList<E> separatorList;
 	protected SeparatorList.Separator<?> separator;
 	protected int row;
 
@@ -44,9 +35,8 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 	protected final GroupLayout layout;
 	protected final JTable jTable;
 	
-	protected final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
-	protected final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
-
+	private final Icon EXPANDED_ICON = Images.MISC_EXPANDED.getIcon();
+	private final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED.getIcon();
 	
 
 	public SeparatorTableCell(JTable jTable, SeparatorList<E> separatorList) {
@@ -55,6 +45,13 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 
 		jPanel = new JPanel(new BorderLayout());
 		jPanel.setBackground(Color.LIGHT_GRAY);
+		jPanel.addMouseListener(new MouseAdapter() {
+			@Override public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2){
+					expandSeparator(separator.getLimit() == 0);
+				}
+			}
+		});
 
 		layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);

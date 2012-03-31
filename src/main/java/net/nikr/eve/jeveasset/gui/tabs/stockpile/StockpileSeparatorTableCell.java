@@ -9,17 +9,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import java.awt.event.*;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
@@ -35,12 +26,20 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public final static String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
 	public final static String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
 	public final static String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
-	public final static String ACTION_CLIPBOARD_STOCKPILE = "ACTION_CLIPBOARD_STOCKPILE";
+	public final static String ACTION_SHOPPING_LIST_STOCKPILE = "ACTION_SHOPPING_LIST_STOCKPILE";
 	public final static String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
 	
+	private final JLabel jStartSpace;
 	private final JLabel jGroup;
 	private final JLabel jColor;
+	private final JLabel jColorDisabled;
 	private final JDropDownButton jStockpile;
+	private final JLabel jPercentLabel;
+	private final JLabel jPercent;
+	private final JLabel jOwnerLabel;
+	private final JLabel jOwner;
+	private final JLabel jLocation;
+	private final JLabel jLocationLabel;
 	private Program program;
 
 	public StockpileSeparatorTableCell(Program program, JTable jTable, SeparatorList<StockpileItem> separatorList, ActionListener actionListener) {
@@ -49,11 +48,55 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		
 		jTable.addHierarchyListener(this);
 		
+		jStartSpace = new JLabel();
 		
 		jColor = new JLabel();
 		jColor.setOpaque(true);
 		jColor.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		
+		jColorDisabled = new JLabel();
+		jColorDisabled.setOpaque(false);
+		jColorDisabled.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+		jColorDisabled.setVisible(false);
+		
+		jGroup = new JLabel();
+		jGroup.setBorder(null);
+		jGroup.setOpaque(false);
+		jGroup.setFont(new Font(jGroup.getFont().getName(), Font.BOLD, jGroup.getFont().getSize()+1));
+		
+		Color color = Color.BLACK;
+		
+		//Owner
+		jOwnerLabel = new JLabel(TabsStockpile.get().stockpileOwner());
+		jOwnerLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		jOwnerLabel.setForeground(color);
+		jOwnerLabel.setFont( new Font (jOwnerLabel.getFont().getName(), Font.BOLD, jOwnerLabel.getFont().getSize()) );
+		
+		jOwner = new JLabel();
+		jOwner.setVerticalAlignment(SwingConstants.BOTTOM);
+		jOwner.setForeground(color);
+		
+		//Percent
+		jPercentLabel = new JLabel(TabsStockpile.get().stockpilePercent());
+		jPercentLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		jPercentLabel.setForeground(color);
+		jPercentLabel.setFont( new Font (jPercentLabel.getFont().getName(), Font.BOLD, jPercentLabel.getFont().getSize()) );
+		
+		jPercent = new JLabel();
+		jPercent.setVerticalAlignment(SwingConstants.BOTTOM);
+		jPercent.setForeground(color);
+		
+		//Location
+		jLocationLabel = new JLabel(TabsStockpile.get().stockpileLocation());
+		jLocationLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+		jLocationLabel.setForeground(color);
+		jLocationLabel.setFont( new Font (jLocationLabel.getFont().getName(), Font.BOLD, jLocationLabel.getFont().getSize()) );
+		
+		jLocation = new JLabel();
+		jLocation.setForeground(color);
+		jLocation.setVerticalAlignment(SwingConstants.BOTTOM);
+		
+		//Stockpile Edit/Add/etc.	
 		jStockpile = new JDropDownButton(TabsStockpile.get().stockpile());
 		jStockpile.setOpaque(false);
 		
@@ -83,44 +126,78 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		
 		jStockpile.addSeparator();
 		
-		jMenuItem = new JMenuItem(TabsStockpile.get().clipboardStockpile());
-		jMenuItem.setActionCommand(ACTION_CLIPBOARD_STOCKPILE);
+		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList());
+		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
-		
-		jGroup = new JLabel();
-		jGroup.setBorder(null);
-		jGroup.setOpaque(false);
-		jGroup.setBackground(Color.BLACK);
-		jGroup.setFont(new Font(jGroup.getFont().getName(), Font.BOLD, jGroup.getFont().getSize()+1));
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(jStartSpace)
 					.addComponent(jExpand)
-					.addGap(1)
-					.addGap(10)
+					.addGap(5)
 					.addComponent(jColor, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
-					.addGap(10)
-					.addComponent(jGroup)
+					.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
 					.addGap(10)
 					.addComponent(jStockpile, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addGap(10)
+					.addComponent(jGroup, 150, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jPercentLabel)
+					.addGap(5)
+					.addComponent(jPercent, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jOwnerLabel)
+					.addGap(5)
+					.addComponent(jOwner, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jLocationLabel)
+					.addGap(5)
+					.addComponent(jLocation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGap(2)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jStartSpace, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGroup(layout.createSequentialGroup()
 						.addGap(3)
 						.addComponent(jColor, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
+						.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6, Program.BUTTONS_HEIGHT-6)
+					)
+					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addGroup(layout.createSequentialGroup()
+						.addGap(4)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jLocationLabel)
+							.addComponent(jLocation)
+							.addComponent(jOwnerLabel)
+							.addComponent(jOwner)
+							.addComponent(jPercentLabel)
+							.addComponent(jPercent)
+						)
 					)
 				)
 				.addGap(2)
 		);
+	}
+	
+	private void setEnabled(boolean aFlag){
+		jGroup.setEnabled(aFlag);
+		jColor.setVisible(aFlag);
+		jColorDisabled.setVisible(!aFlag);
+		jStockpile.setEnabled(aFlag);
+		jPercentLabel.setEnabled(aFlag);
+		jPercent.setEnabled(aFlag);
+		jOwnerLabel.setEnabled(aFlag);
+		jOwner.setEnabled(aFlag);
+		jLocation.setEnabled(aFlag);
+		jLocationLabel.setEnabled(aFlag);
+		jExpand.setEnabled(aFlag);
 	}
 	
 	@Override
@@ -134,6 +211,32 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			jColor.setBackground(new Color(255,255,200));
 		} else {
 			jColor.setBackground(new Color(255,200,200));
+		}
+		String location = stockpileItem.getStockpile().getLocation();
+		if (location != null){
+			jLocation.setText(location);
+			jLocation.setToolTipText(location);
+			jLocationLabel.setToolTipText(location);
+		} else {
+			jLocation.setText(TabsStockpile.get().all());
+			jLocation.setToolTipText(TabsStockpile.get().all());
+			jLocationLabel.setToolTipText(TabsStockpile.get().all());
+		}
+		String owner = stockpileItem.getStockpile().getOwner();
+		if (owner != null && !owner.isEmpty()){
+			jOwner.setText(owner);
+			jOwner.setToolTipText(owner);
+			jOwnerLabel.setToolTipText(owner);
+		} else {
+			jOwner.setText(TabsStockpile.get().all());
+			jOwner.setToolTipText(TabsStockpile.get().all());
+			jOwnerLabel.setToolTipText(TabsStockpile.get().all());
+		}
+		String percent = stockpileItem.getStockpile().getPercentFull();
+		if (percent != null && ! percent.isEmpty()){
+			jPercent.setText(percent);
+			jPercent.setToolTipText(percent);
+			jPercentLabel.setToolTipText(percent);
 		}
 	}
 	
@@ -167,15 +270,14 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 		if (!e.getValueIsAdjusting()){
 			int position = getParentViewport().getViewPosition().x;
-			int width = getParentViewport().getSize().width;
-			int offset = (width + position) - 170;
-			jGroup.setMaximumSize(new Dimension(offset, jGroup.getMaximumSize().height) );
-			if (jTable.isEditing() && (jTable.getCellEditor().getCellEditorValue() instanceof SeparatorList.Separator<?>)){
-				int selectedRow = jTable.getSelectedRow();
-				jTable.getCellEditor().cancelCellEditing();
-				jTable.editCellAt(selectedRow, 0);
-			}
+			jStartSpace.setMinimumSize(new Dimension(position, Program.BUTTONS_HEIGHT));
+			setEnabled(true);
 			jTable.repaint();
+		} else {
+			if (jExpand.isEnabled()){ //Only do once
+				setEnabled(false);
+				jTable.repaint();
+			}
 		}
 	}
 }
