@@ -136,8 +136,11 @@ public class FilterMatcherTest {
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
 		this.dateColumn = dateColumn; 
-		FilterMatcher<Item> filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
+		FilterMatcher<Item> filterMatcher;
+		filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
 		assertEquals(enumColumn.name(), expected, filterMatcher.matches(item));
+		filterMatcher = new FilterMatcher<Item>(filterControl, new Filter(Filter.LogicType.AND, enumColumn, compare, text));
+		assertEquals(enumColumn.name()+" (filter)", expected, filterMatcher.matches(item));
 	}
 	
 	private void dateTest(){
