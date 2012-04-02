@@ -45,7 +45,8 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	//private JButton jButton;
 	private int popupHorizontalAlignment;
 	private int popupVerticalAlignment;
-	private JPopupMenu jPopupMenu;
+	private final JPopupMenu jPopupMenu;
+	private final MenuScroller menuScroller;
 
 	public JDropDownButton() {
 		this(GuiShared.get().emptyString(), null, LEFT, BOTTOM);
@@ -88,6 +89,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		this.addKeyListener(this);
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.addPopupMenuListener(this);
+		menuScroller = new MenuScroller(jPopupMenu);
 	}
 
 	@Override
@@ -131,7 +133,20 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		}
 		this.popupVerticalAlignment = popupVerticalAlignment;
 	}
-
+	
+	public void keepVisible(int index) {
+		menuScroller.keepVisible(index);	
+	}
+	public final void setTopFixedCount(int topFixedCount) {
+        menuScroller.setTopFixedCount(topFixedCount);
+    }
+	public final void setBottomFixedCount(int bottomFixedCount) {
+        menuScroller.setBottomFixedCount(bottomFixedCount);
+    }
+	public final void setInterval(int interval) {
+        menuScroller.setInterval(interval);
+    }
+	
 	private void showPopupMenu(){
 		if (!this.isEnabled()) return;
 		int verticalPosition = this.getHeight();
@@ -233,5 +248,4 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	public void keyReleased(KeyEvent e) {
 		showPopupMenuKey = false;
 	}
-	
 }
