@@ -103,6 +103,9 @@ class FilterGui<E> implements ActionListener{
 		//Load Filter
 		jLoadFilter = new JDropDownButton(GuiShared.get().loadFilter());
 		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
+		jLoadFilter.keepVisible(2);
+		jLoadFilter.setTopFixedCount(2);
+		jLoadFilter.setInterval(125);
 		addToolButton(jLoadFilter);
 		
 		addToolSeparator();
