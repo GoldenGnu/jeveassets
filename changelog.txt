@@ -18,6 +18,13 @@
 ________________________________________________________________________________
 _2.1.0__________________________________________________________________________
 
+Bug Fixes:
+-CSV Export: Saved/Current Filter is broken
+-Load Filter: Scroll when needed (Also work with mouse wheel)
+
+________________________________________________________________________________
+_2.1.0__________________________________________________________________________
+
 New Features:
 -Stockpile: Shopping List (With percent full)
 -Stockpile: Added labels for Location/Owner/Minimum Percent Full
