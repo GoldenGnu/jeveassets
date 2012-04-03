@@ -23,15 +23,14 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -40,8 +39,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
 
-	
-	
 	private JComboBox jRegions;
 	private JComboBox jPriceType;
 	private JComboBox jSource;
@@ -58,19 +55,18 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jWarning.setEditable(false);
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
-		jRegions = new JComboBox(PriceDataSettings.REGIONS_EVE_CENTRAL);
+		jRegions = new JComboBox(RegionType.values());
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox(Asset.getPriceTypes().toArray());
-
+		jPriceType = new JComboBox(PriceMode.values());
 		
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
-		jSource = new JComboBox(PriceDataSettings.SOURCES);
+		jSource = new JComboBox(PriceSource.values());
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
 		jSource.addActionListener(new ListenerClass());
 
 		JLabel jFactionLabel = new JLabel(DialoguesSettings.get().faction());
-		jFaction = new JComboBox(PriceDataSettings.FactionPrice.values());
+		jFaction = new JComboBox(FactionPrice.values());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -114,21 +110,28 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		//Get Region
-		int region = jRegions.getSelectedIndex();
-		if (region < 0) region = program.getSettings().getPriceDataSettings().getRegion();
-
-		//Price Type
-		Object o = jPriceType.getSelectedItem();
-		Asset.PriceMode priceType;
-		if (o  instanceof Asset.PriceMode){
-			priceType = (Asset.PriceMode) o;
+		Object object;
+		
+		//Get Region (can be a String)
+		object = jRegions.getSelectedItem();
+		RegionType regionType;
+		if (object instanceof RegionType){
+			regionType = (RegionType) object;
+		} else {
+			regionType = program.getSettings().getPriceDataSettings().getRegion();
+		}
+		
+		//Price Type (can be a String)
+		object = jPriceType.getSelectedItem();
+		PriceMode priceType;
+		if (object  instanceof PriceMode){
+			priceType = (PriceMode) object;
 		} else {
 			priceType = Asset.getPriceType();
 		}
-
+		
 		//Source
-		String source = (String) jSource.getSelectedItem();
+		PriceSource source = (PriceSource) jSource.getSelectedItem();
 		
 		//Faction Price
 		FactionPrice factionPrice = (FactionPrice) jFaction.getSelectedItem();
@@ -138,7 +141,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				|| factionPrice != program.getSettings().getPriceDataSettings().getFactionPrice();
 
 		//Update settings
-		program.getSettings().setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
+		program.getSettings().setPriceDataSettings( new PriceDataSettings(regionType, source, factionPrice) );
 		Asset.setPriceType(priceType);
 		
 		//Update table if needed
@@ -147,32 +150,43 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load(){
-		PriceDataSettings priceDataSettings = program.getSettings().getPriceDataSettings();
-		jRegions.setSelectedIndex(priceDataSettings.getRegion());
-		jPriceType.setSelectedItem(Asset.getPriceType());
-		jSource.setSelectedItem(priceDataSettings.getSource());
-		jFaction.setSelectedItem(priceDataSettings.getFactionPrice());
+		jSource.setSelectedItem(program.getSettings().getPriceDataSettings().getSource());
+		jFaction.setSelectedItem(program.getSettings().getPriceDataSettings().getFactionPrice());
+	}
+	
+	private void updateSource(PriceSource source){
+		//Price Types
+		jPriceType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
+		jPriceType.setSelectedItem( Asset.getPriceType() );
+		if (source.getPriceTypes().length <= 0){ //Empty
+			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
+			jPriceType.setEnabled(false);
+		} else {
+			jPriceType.setEnabled(true);
+		}
+
+		//Regions
+		if (source.supportsMultipleLocations()){
+			jRegions.setModel( new DefaultComboBoxModel(RegionType.getMultipleLocations()) );
+			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
+			jRegions.setEnabled(true);
+		} else if (source.supportsSindleLocations()){
+			jRegions.setModel( new DefaultComboBoxModel(RegionType.getSingleLocations()) );
+			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
+			jRegions.setEnabled(true);
+		} else {
+			jRegions.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
+			jRegions.setEnabled(false);
+		}
 	}
 
-	private class ListenerClass  implements ActionListener{
+	private class ListenerClass implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
-				String source = (String) jSource.getSelectedItem();
-				if (source.equals(PriceDataSettings.SOURCE_EVE_CENTRAL)){
-					jRegions.setSelectedIndex(program.getSettings().getPriceDataSettings().getRegion());
-					jPriceType.setModel(new DefaultComboBoxModel(Asset.getPriceTypes().toArray()));
-					jPriceType.setSelectedItem(Asset.getPriceType());
-					jRegions.setEnabled(true);
-				}
-				if (source.equals(PriceDataSettings.SOURCE_EVE_MARKETDATA)){
-					jRegions.getModel().setSelectedItem("Not Configurable");
-					jPriceType.setModel(new DefaultComboBoxModel(Asset.getEveMarketdataPriceTypes().toArray()));
-					jPriceType.setSelectedItem(Asset.PriceMode.PRICE_MIDPOINT);
-					jPriceType.setSelectedItem(Asset.getPriceType());
-					jRegions.setEnabled(false);
-				}
+				PriceSource priceSource = (PriceSource) jSource.getSelectedItem();
+				updateSource(priceSource);
 			}
 		}
 	}

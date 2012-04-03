@@ -25,10 +25,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
+import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
@@ -338,21 +341,28 @@ public class SettingsReader extends AbstractXmlReader {
 	}
 
 	private static void parsePriceDataSettings(Element element, Settings settings){
-		int region = AttributeGetters.getInt(element, "region");
-		Asset.PriceMode priceType = Asset.getDefaultPriceType();
+		PriceMode priceType = Asset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")){
-			priceType = Asset.PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
+			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
-		String source = PriceDataSettings.SOURCE_EVE_CENTRAL;
-		if (AttributeGetters.haveAttribute(element, "source")){
-			source = AttributeGetters.getString(element, "source");
+		Asset.setPriceType(priceType);
+		RegionType regionType = PriceDataSettings.getDefaultRegionType();
+		if (AttributeGetters.haveAttribute(element, "regiontype")){
+			regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
 		}
-		FactionPrice factionPrice = PriceDataSettings.FactionPrice.PRICES_C0RPORATION;
+		PriceSource priceSource = PriceDataSettings.getDefaultPriceSource();
+		if (AttributeGetters.haveAttribute(element, "pricesource")){
+			try {
+				priceSource = PriceSource.valueOf(AttributeGetters.getString(element, "pricesource"));
+			} catch (IllegalArgumentException ex){
+				//In case a price source is removed: Use to default
+			}
+		}
+		FactionPrice factionPrice = PriceDataSettings.getDefaultFactionPrice();
 		if (AttributeGetters.haveAttribute(element, "faction")){
 			factionPrice = FactionPrice.valueOf(AttributeGetters.getString(element, "faction"));
 		}
-		Asset.setPriceType(priceType);
-		settings.setPriceDataSettings( new PriceDataSettings(region, source, factionPrice) );
+		settings.setPriceDataSettings( new PriceDataSettings(regionType, priceSource, factionPrice) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

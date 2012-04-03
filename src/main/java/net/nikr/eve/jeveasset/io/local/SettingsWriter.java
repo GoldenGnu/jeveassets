@@ -219,9 +219,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 	}
 	private static void writePriceDataSettings(Document xmldoc, PriceDataSettings priceDataSettings){
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
-		parentNode.setAttributeNS(null, "region", String.valueOf(priceDataSettings.getRegion()));
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
-		parentNode.setAttributeNS(null, "source", priceDataSettings.getSource());
+		parentNode.setAttributeNS(null, "regiontype", priceDataSettings.getRegion().name());
+		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
 		parentNode.setAttributeNS(null, "faction", priceDataSettings.getFactionPrice().name());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}

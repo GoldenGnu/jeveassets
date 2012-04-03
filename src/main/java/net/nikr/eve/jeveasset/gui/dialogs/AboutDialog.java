@@ -21,22 +21,16 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs;
 
-import java.beans.PropertyChangeEvent;
-import javax.swing.JComponent;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.SwingWorker;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.JWait;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -91,8 +85,9 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jExternal = createEditorPane(
 				  "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
-				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"http://www.evemarketeer.com/\">EveMarketeer.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://prices.c0rporation.com/\">Prices.c0rporation.com</a> (faction prices)<br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"

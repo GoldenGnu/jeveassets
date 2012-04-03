@@ -21,7 +21,6 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
@@ -300,14 +299,7 @@ public class Asset implements Comparable<Asset> {
 	public static PriceMode getPriceType() {
 		return priceType;
 	}
-	
-	public static List<PriceMode> getPriceTypes(){
-		return Arrays.asList(PriceMode.values());
-	}
-	public static List<PriceMode> getEveMarketdataPriceTypes(){
-		return Arrays.asList(PriceMode.PRICE_BUY_MAX, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_SELL_MIN);
-	}
-	
+
 	public int getRawQuantity() {
 		return rawQuantity;
 	}
@@ -426,11 +418,7 @@ public class Asset implements Comparable<Asset> {
 	}
 
 	public static void setPriceType(PriceMode priceSource) {
-		if (Asset.getPriceTypes().contains(priceSource)){
-			Asset.priceType = priceSource;
-		} else {
-			Asset.priceType = PriceMode.PRICE_MIDPOINT;
-		}
+		Asset.priceType = priceSource;
 	}
 
 	public void setTypeCount(long typeCount) {

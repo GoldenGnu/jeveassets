@@ -39,7 +39,6 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.*;
@@ -100,7 +99,7 @@ public class Settings{
 	private Map<String, Boolean> flags;
 	private List<Profile> profiles;
 	private boolean settingsLoaded;
-	private PriceDataSettings priceDataSettings;
+	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	private Proxy proxy;
 	private String apiProxy;
 	private Point windowLocation;
@@ -182,8 +181,6 @@ public class Settings{
 		profiles.add(activeProfile);
 
 		conquerableStationsNextUpdate = Settings.getGmtNow();
-
-		priceDataSettings = new PriceDataSettings(0, PriceDataSettings.SOURCE_EVE_CENTRAL, PriceDataSettings.FactionPrice.PRICES_C0RPORATION);
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -383,7 +380,7 @@ public class Settings{
 						portionSize = material.getPortionSize();
 						if (priceDatas.containsKey(material.getTypeID())){
 							PriceData priceData = priceDatas.get(material.getTypeID());
-							double price = 0;
+							double price;
 							if (userPrices.containsKey(material.getTypeID())){
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
@@ -435,7 +432,7 @@ public class Settings{
 	}
 	
 	public double getPrice(int typeID, boolean isBlueprintCopy){
-		UserItem<Integer,Double> userPrice = null;
+		UserItem<Integer,Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
 			userPrice = userPrices.get(-typeID);
 		} else { //All other
