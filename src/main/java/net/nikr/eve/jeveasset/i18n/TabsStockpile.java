@@ -107,6 +107,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountNowJobs();
 	public abstract String columnCountNeeded();
 	public abstract String columnCountMinimum();
+	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
 	public abstract String columnValueNow();
 	public abstract String columnValueNeeded();

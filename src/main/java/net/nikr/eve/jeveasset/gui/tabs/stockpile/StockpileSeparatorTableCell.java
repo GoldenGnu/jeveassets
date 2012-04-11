@@ -34,8 +34,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jColor;
 	private final JLabel jColorDisabled;
 	private final JDropDownButton jStockpile;
-	private final JLabel jPercentLabel;
-	private final JLabel jPercent;
 	private final JLabel jOwnerLabel;
 	private final JLabel jOwner;
 	private final JLabel jLocation;
@@ -75,16 +73,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jOwner = new JLabel();
 		jOwner.setVerticalAlignment(SwingConstants.BOTTOM);
 		jOwner.setForeground(color);
-		
-		//Percent
-		jPercentLabel = new JLabel(TabsStockpile.get().stockpilePercent());
-		jPercentLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-		jPercentLabel.setForeground(color);
-		jPercentLabel.setFont( new Font (jPercentLabel.getFont().getName(), Font.BOLD, jPercentLabel.getFont().getSize()) );
-		
-		jPercent = new JLabel();
-		jPercent.setVerticalAlignment(SwingConstants.BOTTOM);
-		jPercent.setForeground(color);
 		
 		//Location
 		jLocationLabel = new JLabel(TabsStockpile.get().stockpileLocation());
@@ -144,10 +132,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addGap(10)
 					.addComponent(jGroup, 150, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
-					.addComponent(jPercentLabel)
-					.addGap(5)
-					.addComponent(jPercent, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(10)
 					.addComponent(jOwnerLabel)
 					.addGap(5)
 					.addComponent(jOwner, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -177,8 +161,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 							.addComponent(jLocation)
 							.addComponent(jOwnerLabel)
 							.addComponent(jOwner)
-							.addComponent(jPercentLabel)
-							.addComponent(jPercent)
 						)
 					)
 				)
@@ -191,8 +173,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jColor.setVisible(aFlag);
 		jColorDisabled.setVisible(!aFlag);
 		jStockpile.setEnabled(aFlag);
-		jPercentLabel.setEnabled(aFlag);
-		jPercent.setEnabled(aFlag);
 		jOwnerLabel.setEnabled(aFlag);
 		jOwner.setEnabled(aFlag);
 		jLocation.setEnabled(aFlag);
@@ -231,12 +211,6 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			jOwner.setText(TabsStockpile.get().all());
 			jOwner.setToolTipText(TabsStockpile.get().all());
 			jOwnerLabel.setToolTipText(TabsStockpile.get().all());
-		}
-		String percent = stockpileItem.getStockpile().getPercentFull();
-		if (percent != null && ! percent.isEmpty()){
-			jPercent.setText(percent);
-			jPercent.setToolTipText(percent);
-			jPercentLabel.setToolTipText(percent);
 		}
 	}
 	

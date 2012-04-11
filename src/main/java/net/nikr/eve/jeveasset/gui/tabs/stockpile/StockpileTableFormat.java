@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -84,6 +85,16 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		@Override
 		public Object getColumnValue(StockpileItem from) {
 			return from.getCountNeeded();
+		}
+	},
+	PERCENT_NEEDED(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPercentNeeded();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return new Percent(from.getPercentNeeded());
 		}
 	},
 	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {

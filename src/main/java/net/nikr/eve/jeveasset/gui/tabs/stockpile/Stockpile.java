@@ -205,12 +205,8 @@ public class Stockpile implements Comparable<Stockpile> {
 		this.expanded = expanded;
 	}
 	
-	String getPercentFull() {
-		if (percentFull >= 10){
-			return Formater.timesFormat(percentFull);
-		} else {
-			return Formater.percentFormat(percentFull);
-		}
+	public double getPercentFull() {
+		return percentFull;
 	}
 	
 	public void updateTotal() {
@@ -404,6 +400,16 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public long getCountNow() {
 			return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
+		}
+		
+		public double getPercentNeeded() {
+			double percent;
+			if (getCountNow() == 0){
+				percent = 0;
+			} else {
+				percent =getCountNow() / ((double)getCountMinimum());
+			}
+			return percent;
 		}
 		
 		public long getInventoryCountNow() {
@@ -639,6 +645,30 @@ public class Stockpile implements Comparable<Stockpile> {
 		@Override
 		public boolean isMarketGroup() {
 			return false;
+		}
+
+		@Override
+		public double getPercentNeeded() {
+			return getStockpile().getPercentFull();
+		}
+		
+		
+	}
+	
+	static class Percent{
+		double percent;
+
+		public Percent(double percent) {
+			this.percent = percent;
+		}
+
+		@Override
+		public String toString() {
+			if (Double.isInfinite(percent)){
+				return Formater.integerFormat(percent);
+			} else {
+				return Formater.percentFormat(percent);
+			}
 		}
 	}
 }
