@@ -40,7 +40,8 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	private final Map<String, List<Filter>> filters;
 	private final List<FilterList<E>> filterLists;
 	private final List<EventList<E>> eventLists;
-	private FilterGui<E> gui;
+	private final FilterGui<E> gui;
+	private final String name;
 
 	/**
 	 * Do not use this constructor - it's here only for test purposes 
@@ -50,13 +51,14 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		filterLists = null;
 		eventLists = null;
 		gui = null;
-		
+		name = null;
 	}
 	
-	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
-		this(jFrame, filters, Collections.singletonList(filterList), Collections.singletonList(eventList));
+	protected FilterControl(JFrame jFrame, String name, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
+		this(jFrame, name, filters, Collections.singletonList(filterList), Collections.singletonList(eventList));
 	}
-	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<E>> filterLists, List<EventList<E>> eventLists) {
+	protected FilterControl(JFrame jFrame, String name, Map<String, List<Filter>> filters, List<FilterList<E>> filterLists, List<EventList<E>> eventLists) {
+		this.name = name;
 		this.filters = filters;
 		this.filterLists = filterLists;
 		this.eventLists = eventLists;
@@ -117,6 +119,10 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 			}
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
+	}
+
+	String getName() {
+		return name;
 	}
 
 	List<EventList<E>> getEventLists() {

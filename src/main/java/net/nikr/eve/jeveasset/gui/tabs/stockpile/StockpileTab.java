@@ -657,7 +657,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		private List<EnumTableColumn<StockpileItem>> columns = null;
 		
 		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<StockpileItem> filterList, EventList<StockpileItem> eventList) {
-			super(jFrame, filters, filterList, eventList);
+			super(jFrame, NAME, filters, filterList, eventList);
 		}
 		
 		@Override

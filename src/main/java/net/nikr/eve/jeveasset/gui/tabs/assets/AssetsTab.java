@@ -301,7 +301,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	public static class AssetFilterControl extends FilterControl<Asset>{
 
 		public AssetFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<Asset> filterList, EventList<Asset> eventList) {
-			super(jFrame, filters, filterList, eventList);
+			super(jFrame, NAME, filters, filterList, eventList);
 		}
 		
 		@Override

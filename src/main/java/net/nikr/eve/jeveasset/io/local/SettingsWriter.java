@@ -277,5 +277,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 		node.setAttributeNS(null, "field", csvSettings.getFieldDelimiter().name());
 		node.setAttributeNS(null, "line", csvSettings.getLineDelimiter().name());
 		node.setAttributeNS(null, "filename", csvSettings.getFilename());
+		for (Map.Entry<String, List<String>> entry : csvSettings.getTableExportColumns()){
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", entry.getKey());
+			node.appendChild(nameNode);
+			for (String column : entry.getValue()){
+				Element columnNode = xmldoc.createElementNS(null, "column");
+				columnNode.setAttributeNS(null, "name", column);
+				nameNode.appendChild(columnNode);
+			}
+		}
 	}
 }

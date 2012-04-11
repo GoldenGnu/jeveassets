@@ -171,7 +171,7 @@ public class IndustryJobsTab extends JMainTab {
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{
 
 		public IndustryJobsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<IndustryJob> filterList, EventList<IndustryJob> eventList) {
-			super(jFrame, filters, filterList, eventList);
+			super(jFrame, NAME, filters, filterList, eventList);
 		}
 		
 		@Override

@@ -25,6 +25,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -50,9 +51,6 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 
 	public static final String ACTION_DISABLE_SAVED_FILTERS = "ACTION_DISABLE_SAVED_FILTERS";
 	public static final String ACTION_ENABLE_SAVED_FILTERS = "ACTION_ENABLE_SAVED_FILTERS";
-	public static final String ACTION_FIELD_DELIMITER = "ACTION_FIELD_DELIMITER";
-	public static final String ACTION_LINE_DELIMITER = "ACTION_LINE_DELIMITER";
-	public static final String ACTION_DECIMAL_SEPARATOR = "ACTION_DECIMAL_SEPARATOR";
 	public static final String ACTION_OK = "ACTION_OK";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 	public static final String ACTION_DEFAULT = "ACTION_DEFAULT";
@@ -75,6 +73,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	private Map<String, List<Filter>> filters;
 	private List<EventList<E>> eventLists;
 	private Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
+	private List<String> columnNames;
 	private FilterControl<E> matcherControl;
 	
 	public CsvExportDialog(JFrame jFrame, FilterControl<E> matcherControl, Map<String, List<Filter>> filters, List<EventList<E>> eventLists, List<EnumTableColumn<E>> enumColumns) {
@@ -83,12 +82,12 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		this.filters = filters;
 		this.eventLists = eventLists;
 		
-		List<String> columnNames = new ArrayList<String>();
+		columnNames = new ArrayList<String>();
 		for (EnumTableColumn<E> column : enumColumns){
 			columns.put(column.getColumnName(), column);
 			columnNames.add(column.getColumnName());
 		}
-
+		
 		try {
 			jCsvFileChooser = new JCustomFileChooser(jFrame, "csv");
 		} catch (RuntimeException e) {
@@ -129,18 +128,12 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesCsvExport.get().fieldTerminated());
 		jFieldDelimiter = new JComboBox( FieldDelimiter.values() );
-		jFieldDelimiter.setActionCommand(ACTION_FIELD_DELIMITER);
-		jFieldDelimiter.addActionListener(this);
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesCsvExport.get().linesTerminated());
 		jLineDelimiter = new JComboBox( LineDelimiter.values() );
-		jLineDelimiter.setActionCommand(ACTION_LINE_DELIMITER);
-		jLineDelimiter.addActionListener(this);
 
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesCsvExport.get().decimalSeperator());
 		jDecimalSeparator = new JComboBox( DecimalSeperator.values() );
-		jDecimalSeparator.setActionCommand(ACTION_DECIMAL_SEPARATOR);
-		jDecimalSeparator.addActionListener(this);
 
 		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
 		jColumnSelection = new JMultiSelectionList(columnNames);
@@ -237,6 +230,22 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		);
 	}
 	
+	private List<String> getExportColumns() {
+		List<String> selectedColumns = new ArrayList<String>();
+		Object[] values = jColumnSelection.getSelectedValues();
+		for (Object object : values){
+			if (object instanceof String){
+				String columnName = (String) object;
+				Object column = columns.get(columnName);
+				if (column instanceof Enum<?>){
+					Enum<?> e = (Enum<?>) column;
+					selectedColumns.add(e.name());
+				}
+			}
+		}
+		return selectedColumns;
+	}
+	
 	private boolean browse(){
 		String current = Settings.getCsvSettings().getFilename();
 		int end = current.lastIndexOf(File.separator);
@@ -276,14 +285,49 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 	}
 	
+	private void saveCsvSettings(){
+		Settings.getCsvSettings().setFieldDelimiter( (FieldDelimiter)jFieldDelimiter.getSelectedItem() );
+		Settings.getCsvSettings().setLineDelimiter( (LineDelimiter)jLineDelimiter.getSelectedItem() );
+		Settings.getCsvSettings().setDecimalSeperator( (DecimalSeperator)jDecimalSeparator.getSelectedItem() );
+		if (jColumnSelection.getSelectedIndices().length == columnNames.size()){ //All is selected - nothing worth saving...
+			Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), null);
+		} else {
+			Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), getExportColumns());
+		}
+	}
+	
 	private void loadCsvSettings(){
 		jFieldDelimiter.setSelectedItem(Settings.getCsvSettings().getFieldDelimiter());
 		jLineDelimiter.setSelectedItem(Settings.getCsvSettings().getLineDelimiter());
 		jDecimalSeparator.setSelectedItem(Settings.getCsvSettings().getDecimalSeperator());
+		jColumnSelection.clearSelection();
+		List<String> list = Settings.getCsvSettings().getTableExportColumns(matcherControl.getName());
+		if (list == null){
+			jColumnSelection.selectAll();
+			list = new ArrayList<String>(getExportColumns());
+		}
+		List<Integer> selections = new ArrayList<Integer>();
+		for (String column : list){
+			Enum e = matcherControl.valueOf(column);
+			if (e instanceof EnumTableColumn){
+				EnumTableColumn enumColumn = (EnumTableColumn) e;
+				int index = columnNames.indexOf(enumColumn.getColumnName());
+				selections.add(index);
+			}
+		}
+		int[] indices = new int[selections.size()];
+		for (int i = 0; i < selections.size(); i++){
+			indices[i] = selections.get(i);
+		}
+		jColumnSelection.setSelectedIndices(indices);
 	}
 	
 	private void resetCsvSettings(){
-		Settings.getCsvSettings().clear();
+		Settings.getCsvSettings().setFieldDelimiter(FieldDelimiter.COMMA);
+		Settings.getCsvSettings().setLineDelimiter(LineDelimiter.DOS);
+		Settings.getCsvSettings().setDecimalSeperator(DecimalSeperator.DOT);
+		Settings.getCsvSettings().setFilename(CsvSettings.getDefaultFilename());
+		Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), null);
 		loadCsvSettings();
 	}
 
@@ -309,6 +353,8 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			} else {
 				jCurrentFilter.setEnabled(true);
 			}
+		} else {
+			saveCsvSettings();
 		}
 		super.setVisible(b);
 	}
@@ -410,21 +456,20 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	}
 
 	@Override
+	public void windowClosing(WindowEvent e) {
+		super.windowClosing(e);
+		saveCsvSettings();
+	}
+	
+	
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_DISABLE_SAVED_FILTERS.equals(e.getActionCommand())){
 			jFilters.setEnabled(false);
 		}
 		if (ACTION_ENABLE_SAVED_FILTERS.equals(e.getActionCommand())){
 			jFilters.setEnabled(true);
-		}
-		if (ACTION_FIELD_DELIMITER.equals(e.getActionCommand())){
-			Settings.getCsvSettings().setFieldDelimiter( (FieldDelimiter)jFieldDelimiter.getSelectedItem() );
-		}
-		if (ACTION_LINE_DELIMITER.equals(e.getActionCommand())){
-			Settings.getCsvSettings().setLineDelimiter( (LineDelimiter)jLineDelimiter.getSelectedItem() );
-		}
-		if (ACTION_DECIMAL_SEPARATOR.equals(e.getActionCommand())){
-			Settings.getCsvSettings().setDecimalSeperator( (DecimalSeperator)jDecimalSeparator.getSelectedItem() );
 		}
 		if (ACTION_OK.equals(e.getActionCommand())){
 			save();

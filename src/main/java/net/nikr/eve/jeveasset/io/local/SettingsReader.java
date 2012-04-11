@@ -560,5 +560,19 @@ public class SettingsReader extends AbstractXmlReader {
 		Settings.getCsvSettings().setDecimalSeperator(decimal);
 		Settings.getCsvSettings().setFieldDelimiter(field);
 		Settings.getCsvSettings().setLineDelimiter(line);
+
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++){
+			List<String> columns = new ArrayList<String>();
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++){
+				Element columnNode = (Element) columnNodeList.item(b);
+				String name = AttributeGetters.getString(columnNode, "name");
+				columns.add(name);
+			}
+			Settings.getCsvSettings().putTableExportColumns(tableName, columns);
+		}
 	}
 }

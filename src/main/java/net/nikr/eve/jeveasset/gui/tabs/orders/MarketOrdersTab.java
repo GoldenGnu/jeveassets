@@ -287,7 +287,7 @@ public class MarketOrdersTab extends JMainTab{
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder>{
 
 		public MarketOrdersFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<MarketOrder>> filterLists, List<EventList<MarketOrder>> eventLists) {
-			super(jFrame, filters, filterLists, eventLists);
+			super(jFrame, NAME, filters, filterLists, eventLists);
 		}
 		
 		@Override

@@ -20,6 +20,11 @@
  */
 package net.nikr.eve.jeveasset.data;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
 
 
@@ -111,16 +116,14 @@ public class CsvSettings {
 	private static final String PATH = Settings.getUserDirectory();
 	private static final String FILENAME = Settings.getUserDirectory()+"export.csv";
 	
+	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
+	
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeperator decimalSeperator;
 	private String filename = FILENAME;
 
 	public CsvSettings() {
-		clear();
-	}
-	
-	public final void clear(){
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
 		decimalSeperator = DecimalSeperator.DOT;
@@ -157,6 +160,20 @@ public class CsvSettings {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public List<String> getTableExportColumns(String key) {
+		return tableExportColumns.get(key);
+	}
+	public Set<Map.Entry<String, List<String>>> getTableExportColumns() {
+		return tableExportColumns.entrySet();
+	}
+	public void putTableExportColumns(String key, List<String> list) {
+		if (list == null){
+			tableExportColumns.remove(key);
+		} else {
+			tableExportColumns.put(key, list);
+		}
 	}
 
 	public static String getDefaultPath() {
