@@ -41,6 +41,7 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_STATION = "ACTION_BROWSE_EVEMAPS_DOTLAN_STATION";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM = "ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM";
 	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_REGION = "ACTION_BROWSE_EVEMAPS_DOTLAN_REGION";
+	private static final String ACTION_BROWSE_EVEMARKETEER = "ACTION_BROWSE_EVEMARKETEER";
 
 
 	public JMenuLookup(Program program, Object object) {
@@ -90,6 +91,13 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		menuItem.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
+		menuItem.addActionListener(this);
+		add(menuItem);
+		
+		menuItem = new JMenuItem(GuiShared.get().eveMarketeer());
+		menuItem.setIcon(Images.LINK_EVEMARKETEER.getIcon());
+		menuItem.setEnabled(typeId != 0 && isMarketGroup);
+		menuItem.setActionCommand(ACTION_BROWSE_EVEMARKETEER);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
@@ -143,6 +151,9 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		}
 		if (ACTION_BROWSE_EVEMAPS_DOTLAN_REGION.equals(e.getActionCommand())){
 			DesktopUtil.browse("http://evemaps.dotlan.net/map/"+region.replace(" ", "_"), program);
+		}
+		if (ACTION_BROWSE_EVEMARKETEER.equals(e.getActionCommand())){
+			DesktopUtil.browse("http://www.evemarketeer.com/item/info/"+typeId, program);
 		}
 	}
 }

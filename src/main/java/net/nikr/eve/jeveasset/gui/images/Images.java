@@ -75,6 +75,7 @@ public enum Images {
 
 	LINK_LOOKUP ("link_lookup.png"),
 	LINK_EVE_MARKETS ("link_eve_markets.png"),
+	LINK_EVEMARKETEER ("link_evemarketeer.png"),
 	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
 	LINK_EVE_CENTRAL ("link_eve_central.png"),
 	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
