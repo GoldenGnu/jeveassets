@@ -185,9 +185,9 @@ public class MarketOrdersTab extends JMainTab{
 			
 			//Columns
 			if (jTable.equals(jSellTable)){
-				jTablePopupMenu.add(sellTableFormat.getMenu(sellOrdersTableModel, jSellTable));
+				jTablePopupMenu.add(sellTableFormat.getMenu(program, sellOrdersTableModel, jSellTable));
 			} else {
-				jTablePopupMenu.add(buyTableFormat.getMenu(buyOrdersTableModel, jBuyTable));
+				jTablePopupMenu.add(buyTableFormat.getMenu(program, buyOrdersTableModel, jBuyTable));
 			}
 		}
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -216,7 +216,7 @@ public class MarketOrdersTab extends JMainTab{
 		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
 		jComponent.add(new JMenuLookup(program, sellMarketOrder));
 		//Columns
-		jComponent.add(sellTableFormat.getMenu(sellOrdersTableModel, jSellTable));
+		jComponent.add(sellTableFormat.getMenu(program, sellOrdersTableModel, jSellTable));
 
 		addSeparator(jComponent);
 	
@@ -230,7 +230,7 @@ public class MarketOrdersTab extends JMainTab{
 		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
 		jComponent.add(new JMenuLookup(program, buyMarketOrder));
 		//Columns
-		jComponent.add(buyTableFormat.getMenu(buyOrdersTableModel, jBuyTable));
+		jComponent.add(buyTableFormat.getMenu(program, buyOrdersTableModel, jBuyTable));
 	}
 
 	@Override

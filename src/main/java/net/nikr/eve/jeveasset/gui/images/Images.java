@@ -108,7 +108,6 @@ public enum Images {
 
 	TABLE_COLUMN_RESIZE ("table_column_resize.png"),
 	TABLE_COLUMN_SHOW ("table_column_show.png"),
-	TABLE_COLUMN_SETTINGS ("table_column_settings.png"),
 
 	TOOL_ASSETS ("tool_assets.png"),
 	TOOL_OVERVIEW ("tool_overview.png"),

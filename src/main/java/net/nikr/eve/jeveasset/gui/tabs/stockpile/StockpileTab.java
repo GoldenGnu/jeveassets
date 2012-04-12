@@ -361,7 +361,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuLookup(program, obj));
 		jComponent.add(new JMenuEditItem(program, obj));
 		//Columns
-		jComponent.add(stockpileTableFormat.getMenu(stockpileTableModel, jTable));		
+		jComponent.add(stockpileTableFormat.getMenu(program, stockpileTableModel, jTable));		
 	}
 
 	@Override

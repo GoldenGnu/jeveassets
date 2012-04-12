@@ -237,7 +237,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	//EDIT
 		jComponent.add(new JMenuEditItem(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
 	//COLUMNS
-		jComponent.add(eveAssetTableFormat.getMenu(eveAssetTableModel, jTable));
+		jComponent.add(eveAssetTableFormat.getMenu(program, eveAssetTableModel, jTable));
 	//INFO
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);

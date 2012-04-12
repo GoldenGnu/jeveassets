@@ -107,7 +107,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			tablecolumnsNode.appendChild(nameNode);
 			for (SimpleColumn column : entry.getValue()){
 				Element node = xmldoc.createElementNS(null, "column");
-				node.setAttributeNS(null, "name", column.getName());
+				node.setAttributeNS(null, "name", column.getEnumName());
 				node.setAttributeNS(null, "shown", String.valueOf(column.isShown()));
 				nameNode.appendChild(node);
 			}

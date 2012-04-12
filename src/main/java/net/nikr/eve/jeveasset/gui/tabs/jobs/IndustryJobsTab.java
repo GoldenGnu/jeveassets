@@ -165,7 +165,7 @@ public class IndustryJobsTab extends JMainTab {
 		jComponent.add(new JMenuLookup(program, industryJob));
 		
 		//Columns
-		jComponent.add(industryJobsTableFormat.getMenu(jobsTableModel, jTable));
+		jComponent.add(industryJobsTableFormat.getMenu(program, jobsTableModel, jTable));
 	}
 	
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{

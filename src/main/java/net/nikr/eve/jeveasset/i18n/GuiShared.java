@@ -41,13 +41,15 @@ public abstract class GuiShared extends Bundle {
 
 	public abstract String add();
 	public abstract String addStockpileItem();
-	public abstract String autoText();
-	public abstract String autoWindow();
+	public abstract String checkAll();
 	public abstract String chruker();
-	public abstract String columns();
+	public abstract String columnsEdit();
+	public abstract String columnsReset();
+	public abstract String columnsSettings();
+	public abstract String columnsTip();
+	public abstract String columnsTitle();
 	public abstract String copy();
 	public abstract String cut();
-	public abstract String disable();
 	public abstract String dotlan();
 	public abstract String editItem();
 	public abstract String editName();
@@ -60,11 +62,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String item();
 	public abstract String lookup();
 	public abstract String newStockpile();
+	public abstract String ok();
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();
 	public abstract String region();
-	public abstract String reset();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();
