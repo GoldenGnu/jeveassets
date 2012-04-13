@@ -41,6 +41,7 @@ public abstract class TabsJobs extends Bundle {
 	public abstract String all();
 	public abstract String industry();
 	public abstract String install();
+	public abstract String inventionSuccess();
 	public abstract String no();
 	public abstract String whitespace(Object arg0);
 	public abstract String columnState();

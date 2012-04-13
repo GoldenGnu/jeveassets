@@ -30,12 +30,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
+import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -45,11 +47,13 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab {
+public class IndustryJobsTab extends JMainTab implements TableModelListener{
 
 	private JAutoColumnTable jTable;
+	private JLabel jInventionSuccess;
 
 	private EventList<IndustryJob> jobsEventList;
+	private FilterList<IndustryJob> filterList;
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private IndustryJobData data;
@@ -67,11 +71,12 @@ public class IndustryJobsTab extends JMainTab {
 		//Backend
 		jobsEventList = new BasicEventList<IndustryJob>();
 		
-		FilterList<IndustryJob> filterList = new FilterList<IndustryJob>(jobsEventList);
+		filterList = new FilterList<IndustryJob>(jobsEventList);
 		//For soring the table
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
 		//Table Model
 		jobsTableModel = new EventTableModel<IndustryJob>(sortedList, industryJobsTableFormat);
+		jobsTableModel.addTableModelListener(this);
 		//Tables
 		jTable = new JAutoColumnTable(jobsTableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -92,6 +97,9 @@ public class IndustryJobsTab extends JMainTab {
 				program.getSettings().getTableFilters(NAME),
 				filterList,
 				jobsEventList);
+		
+		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
+		this.addStatusbarLabel(jInventionSuccess);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -166,6 +174,25 @@ public class IndustryJobsTab extends JMainTab {
 		
 		//Columns
 		jComponent.add(industryJobsTableFormat.getMenu(program, jobsTableModel, jTable));
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		int count = 0;
+		double success = 0;
+		for (IndustryJob industryJob : filterList){
+			if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()){
+				count++;
+				if (industryJob.getState() == IndustryJobState.STATE_DELIVERED){
+					success++;
+				}
+			}
+		}
+		if (count <= 0){
+			jInventionSuccess.setText(Formater.percentFormat(0.0));
+		} else {
+			jInventionSuccess.setText(Formater.percentFormat(success / count));
+		}
 	}
 	
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{

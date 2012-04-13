@@ -31,11 +31,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -46,17 +49,23 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersTab extends JMainTab{
+public class MarketOrdersTab extends JMainTab implements TableModelListener{
 
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat;
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat;
 	private EventTableModel<MarketOrder> sellOrdersTableModel;
 	private EventTableModel<MarketOrder> buyOrdersTableModel;
+	private FilterList<MarketOrder> sellOrdersFilterList;
+	private FilterList<MarketOrder> buyOrdersFilterList;
 	private EventList<MarketOrder> sellOrdersEventList;
 	private EventList<MarketOrder> buyOrdersEventList;
 
 	private JAutoColumnTable jSellTable;
 	private JAutoColumnTable jBuyTable;
+	private JLabel jSellOrdersTotal;
+	private JLabel jBuyOrdersTotal;
+	private JLabel jEscrowTotal;
+	private JLabel jToCoverTotal;
 	
 	private MarketOrdersFilterControl filterControl;
 	
@@ -76,14 +85,16 @@ public class MarketOrdersTab extends JMainTab{
 		sellOrdersEventList = new BasicEventList<MarketOrder>();
 		buyOrdersEventList = new BasicEventList<MarketOrder>();
 		//Backend
-		FilterList<MarketOrder> sellOrdersFilterList = new FilterList<MarketOrder>(sellOrdersEventList);
-		FilterList<MarketOrder> buyOrdersFilterList = new FilterList<MarketOrder>(buyOrdersEventList);
+		sellOrdersFilterList = new FilterList<MarketOrder>(sellOrdersEventList);
+		buyOrdersFilterList = new FilterList<MarketOrder>(buyOrdersEventList);
 		//For soring the table
 		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(sellOrdersFilterList);
 		SortedList<MarketOrder> buyOrdersSortedList = new SortedList<MarketOrder>(buyOrdersFilterList);
 		//Table Model
 		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
+		sellOrdersTableModel.addTableModelListener(this);
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
+		buyOrdersTableModel.addTableModelListener(this);
 		//Tables
 		jSellTable = new JMarketOrdersTable(sellOrdersTableModel);
 		jSellTable.setCellSelectionEnabled(true);
@@ -115,6 +126,18 @@ public class MarketOrdersTab extends JMainTab{
 		List<FilterList<MarketOrder>> filterLists = new ArrayList<FilterList<MarketOrder>>();
 		filterLists.add(buyOrdersFilterList);
 		filterLists.add(sellOrdersFilterList);
+
+		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
+		this.addStatusbarLabel(jSellOrdersTotal);
+		
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalBuyOrders(), Images.ORDERS_BUY.getIcon());
+		this.addStatusbarLabel(jBuyOrdersTotal);
+		
+		jEscrowTotal = StatusPanel.createLabel(TabsOrders.get().totalEscrow(), Images.ORDERS_ESCROW.getIcon());
+		this.addStatusbarLabel(jEscrowTotal);
+		
+		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
+		this.addStatusbarLabel(jToCoverTotal);
 		
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
@@ -282,6 +305,27 @@ public class MarketOrdersTab extends JMainTab{
 			sellOrdersEventList.getReadWriteLock().writeLock().unlock();
 			buyOrdersEventList.getReadWriteLock().writeLock().unlock();
 		}
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		double sellOrdersTotal = 0;
+		double buyOrdersTotal = 0;
+		double toCoverTotal = 0;
+		double escrowTotal = 0;
+		for (MarketOrder marketOrder : sellOrdersFilterList){
+			sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+		}
+		for (MarketOrder marketOrder : buyOrdersFilterList){
+			buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+			escrowTotal += marketOrder.getEscrow();
+			toCoverTotal+= (marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow();
+		}
+		jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
+		jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
+		jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
+		jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+		//;
 	}
 	
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder>{

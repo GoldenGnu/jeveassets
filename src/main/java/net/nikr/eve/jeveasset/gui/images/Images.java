@@ -37,6 +37,13 @@ public enum Images {
 	ASSETS_LOAD_FILTER ("assets_load_filter.png"),
 	ASSETS_AVERAGE ("assets_average.png"),
 	ASSETS_VOLUME ("assets_volume.png"),
+	
+	JOBS_INVENTION_SUCCESS ("jobs_invention_success.png"),
+	
+	ORDERS_SELL ("orders_sell.png"),
+	ORDERS_BUY ("orders_buy.png"),
+	ORDERS_ESCROW ("orders_escrow.png"),
+	ORDERS_TO_COVER ("orders_to_cover.png"),
 
 	DIALOG_UPDATE ("dialog_update.png"),
 	DIALOG_UPDATE_DISABLED ("dialog_update_disabled.png"),

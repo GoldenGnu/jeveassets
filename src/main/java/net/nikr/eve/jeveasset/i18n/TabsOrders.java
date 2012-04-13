@@ -56,5 +56,9 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String no();
 	public abstract String sell();
 	public abstract String sell1();
+	public abstract String totalSellOrders();
+	public abstract String totalBuyOrders();
+	public abstract String totalEscrow();
+	public abstract String totalToCover();
 	public abstract String whitespace(Object arg0);
 }
