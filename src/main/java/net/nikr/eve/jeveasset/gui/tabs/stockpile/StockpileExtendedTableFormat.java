@@ -29,89 +29,86 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
 public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileItem> {
-		STOCKPILE_NAME(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileName();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getName();
-			}
-		},
-		STOCKPILE_OWNER(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileOwner();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getOwner();
-			}
-		},
-		STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileLocation();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getLocation();
-			}
-		},
-		STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileFlag();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getFlag();
-			}
-		},
-		STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileContainer();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getContainer();
-			}
-		},
-		;
-		
-		Class type;
-		Comparator<?> comparator;
-		private StockpileExtendedTableFormat(Class type, Comparator<?> comparator) {
-			this.type = type;
-			this.comparator = comparator;
-		}
-		@Override
-		public Class getType() {
-			return type;
-		}
-		@Override
-		public Comparator getComparator() {
-			return comparator;
-		}
+	STOCKPILE_NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return getColumnName();
+			return TabsStockpile.get().getFilterStockpileName();
 		}
-		//XXX - TableFormat.getColumnValue(...) Workaround
 		@Override
 		public Object getColumnValue(StockpileItem from) {
-			return getColumnValue(from);
+			return from.getStockpile().getName();
+		}
+	},
+	STOCKPILE_OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().getFilterStockpileOwner();
 		}
 		@Override
-		public String toString() {
-			return getColumnName();
+		public Object getColumnValue(StockpileItem from) {
+			return from.getStockpile().getOwner();
 		}
-		@Override public boolean isColumnEditable(Object baseObject) {
-			return false;
+	},
+	STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().getFilterStockpileLocation();
 		}
-		@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
-			return null;
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getStockpile().getLocation();
 		}
+	},
+	STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().getFilterStockpileFlag();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getStockpile().getFlag();
+		}
+	},
+	STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().getFilterStockpileContainer();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getStockpile().getContainer();
+		}
+	},
+	;
+
+	Class type;
+	Comparator<?> comparator;
+	private StockpileExtendedTableFormat(Class type, Comparator<?> comparator) {
+		this.type = type;
+		this.comparator = comparator;
 	}
+	@Override
+	public Class getType() {
+		return type;
+	}
+	@Override
+	public Comparator getComparator() {
+		return comparator;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
+	}
+	@Override
+	public boolean isColumnEditable(Object baseObject) {
+		return false;
+	}
+	@Override
+	public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+		return null;
+	}
+	//XXX - TableFormat.getColumnName() Workaround
+	@Override abstract public String getColumnName();
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override abstract public Object getColumnValue(StockpileItem from);
+}

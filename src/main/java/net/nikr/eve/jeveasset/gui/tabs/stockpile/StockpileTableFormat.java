@@ -207,21 +207,18 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	public String getColumnName() {
 		return getColumnName();
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(StockpileItem from) {
-		return getColumnValue(from);
-	}
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
-
-	
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override abstract public Object getColumnValue(StockpileItem from);
 }

@@ -21,81 +21,128 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public abstract class JMenuTool extends JMenu {
+public abstract class JMenuTool<T> extends JMenu {
 	protected Program program;
-	protected int typeId;
-	protected double price;
-	protected String typeName;
-	protected String station;
-	protected String system;
-	protected String region;
-	protected boolean isMarketGroup;
+	protected List<Integer> typeIDs = new ArrayList<Integer>();
+	protected List<Double> prices = new ArrayList<Double>();
+	protected List<String> typeNames = new ArrayList<String>();
+	protected List<String> stations = new ArrayList<String>();
+	protected List<String> systems = new ArrayList<String>();
+	protected List<String> regions = new ArrayList<String>();
+	protected List<Integer> marketTypeIDs = new ArrayList<Integer>();
 
-	protected JMenuTool(String title, Program program, Object object) {
+	protected JMenuTool(String title, Program program, List<T> items) {
 		super(title);
-		init(program, object);
-	}
-
-	private boolean init(Program program, Object object){
-		if (object == null){
-			return init(program, false, GuiShared.get().emptyString(), 0, null, null, null, -1);
-		}
-		if (object instanceof Material){
-			Material material = (Material) object;
-			return init(program, material.isMarketGroup(), material.getTypeName(), material.getTypeID(), material.getStation(), material.getSystem(), material.getRegion(), material.getPrice());
-		}
-		if (object instanceof Module){
-			Module module = (Module) object;
-			return init(program, module.isMarketGroup(), module.getTypeName(), module.getTypeID(), module.getLocation(), module.getSystem(), module.getRegion(), module.getPrice());
-		}
-		if (object instanceof MarketOrder){
-			MarketOrder marketOrder = (MarketOrder) object;
-			//TODO - can not edit price from Orders Tool
-			return init(program, true, marketOrder.getName(), marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion(), -1);
-		}
-		if (object instanceof IndustryJob){
-			IndustryJob industryJob = (IndustryJob) object;
-			//TODO - can not edit price from Jobs Tool
-			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion(), -1);
-		}
-		if (object instanceof Asset){
-			Asset eveAsset = (Asset) object;
-			return init(program, eveAsset.isMarketGroup(), eveAsset.getTypeName(), eveAsset.getTypeID(), eveAsset.getLocation(), eveAsset.getSystem(), eveAsset.getRegion(), eveAsset.getPrice());
-		}
-		if (object instanceof Overview){
-			Overview overview = (Overview) object;
-			return init(program, false, null, 0, overview.isStation() && !overview.isGroup() ? overview.getName() : null, !overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, !overview.isGroup() ? overview.getRegion() : null, -1);
-		}
-		if (object instanceof StockpileItem){
-			StockpileItem item = (StockpileItem) object;
-			return init(program, item.isMarketGroup(), (object instanceof StockpileTotal) ? GuiShared.get().emptyString() : item.getName(), item.getTypeID(), item.getStockpile().getLocation(), item.getStockpile().getSystem(), item.getStockpile().getRegion(), item.getPrice());
-		}
-		return init(program, false, GuiShared.get().emptyString(), 0, null, null, null, -1);
-	}
-
-	private boolean init(Program program, boolean isMarketGroup, String typeName, int typeId, String station, String system, String region, double price){
 		this.program = program;
-		this.isMarketGroup = isMarketGroup;
-		this.typeName = typeName;
-		this.typeId = typeId;
-		//station can be a system
-		if (station != null && system != null && !station.equals(system)){
-			this.station = station;
-		} else {
-			this.station = null;
+		init(items);
+	}
+
+	private void init(List<T> items){
+		if (items == null) return; //Skip null
+		
+		for (T t : items){
+			if (t == null) continue; //Skip null
+			
+			if (t instanceof Material){
+				Material material = (Material) t;
+				init(	material.isMarketGroup(),
+						material.getTypeName(),
+						material.getTypeID(),
+						material.getStation(),
+						material.getSystem(),
+						material.getRegion(),
+						material.getPrice()
+						);
+			}
+			if (t instanceof Module){
+				Module module = (Module) t;
+				init(	module.isMarketGroup(),
+						module.getTypeName(),
+						module.getTypeID(),
+						module.getLocation(),
+						module.getSystem(),
+						module.getRegion(),
+						module.getPrice()
+						);
+			}
+			if (t instanceof MarketOrder){
+				MarketOrder marketOrder = (MarketOrder) t;
+				init(	true,
+						marketOrder.getName(),
+						marketOrder.getTypeID(),
+						marketOrder.getLocation(),
+						marketOrder.getSystem(),
+						marketOrder.getRegion(),
+						null //TODO - can not edit price from Orders Tool
+						);
+			}
+			if (t instanceof IndustryJob){
+				IndustryJob industryJob = (IndustryJob) t;
+				init(	true,
+						industryJob.getName(),
+						industryJob.getInstalledItemTypeID(),
+						industryJob.getLocation(),
+						industryJob.getSystem(),
+						industryJob.getRegion(),
+						null //TODO - can not edit price from Jobs Tool
+						);
+			}
+			if (t instanceof Asset){
+				Asset eveAsset = (Asset) t;
+				init(	eveAsset.isMarketGroup(),
+						eveAsset.getTypeName(),
+						eveAsset.getTypeID(),
+						eveAsset.getLocation(),
+						eveAsset.getSystem(),
+						eveAsset.getRegion(),
+						eveAsset.getPrice()
+						);
+			}
+			if (t instanceof Overview){
+				Overview overview = (Overview) t;
+				init(	false,
+						null,
+						null,
+						overview.isStation() && !overview.isGroup() ? overview.getName() : null,
+						!overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null,
+						!overview.isGroup() ? overview.getRegion() : null,
+						null
+						);
+			}
+			if (t instanceof StockpileItem){ //
+				StockpileItem item = (StockpileItem) t;
+				init(	item.isMarketGroup(),
+						(t instanceof StockpileTotal) ? null : item.getName(),
+						(t instanceof StockpileTotal) ? null : item.getTypeID(),
+						item.getStockpile().getLocation(),
+						item.getStockpile().getSystem(),
+						item.getStockpile().getRegion(),
+						item.getPrice()
+						);
+			}
 		}
-		this.system = system;
-		this.region = region;
-		this.price = price;
-		return true;
+	}
+
+	private void init(boolean marketGroup, String typeName, Integer typeID, String station, String system, String region, Double price){
+		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) marketTypeIDs.add(typeID);
+		if (typeName != null && !typeNames.contains(typeName)) typeNames.add(typeName);
+		if (typeID != null && !typeIDs.contains(typeID)) typeIDs.add(typeID);
+		//station can be a system
+		if (station != null && system != null && !station.equals(system) && !stations.contains(station)){
+			stations.add(station);
+		}
+		if (system != null && !systems.contains(system)) systems.add(system);
+		if (region != null && !regions.contains(region)) regions.add(region);
+		if (price != null && !prices.contains(price)) prices.add(price);
 	}
 }

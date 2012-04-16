@@ -27,31 +27,26 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuStockpile  extends JMenuTool implements ActionListener {
+public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 
 	private final static String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
 	private final static String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
 	
-	private Asset asset = null;
-	
-	public JMenuStockpile(Program program, Object object) {
-		super(GuiShared.get().stockpile(), program, object); //
+	public JMenuStockpile(Program program, List<T> items) {
+		super(GuiShared.get().stockpile(), program, items); //
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		JMenuItem jMenuItem;
 		
-		if (object instanceof Asset) asset = (Asset) object;
-		
 		jMenuItem = new JMenuItem(GuiShared.get().newStockpile());
 		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setEnabled(typeId != 0);
+		jMenuItem.setEnabled(!typeIDs.isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_TO_NEW);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
@@ -62,7 +57,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		for (Stockpile stockpile : stockpiles){
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setEnabled(typeId != 0);
+			jMenuItem.setEnabled(!typeIDs.isEmpty());
 			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
@@ -72,24 +67,14 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_ADD_TO_NEW.equals(e.getActionCommand())){
-			Stockpile stockpile;
-			if (asset != null){
-				stockpile = program.getStockpileTool().showAddStockpile(asset);
-			} else {
-				long locationID = -1;
-				for (Location location : program.getSettings().getLocations().values()){
-					if (location.getName().equals(station)){ //Perfect match
-						locationID = location.getLocationID();
-						break;
-					}
-					if (location.getName().equals(system)){ //Maybe a better match can be found - keep trying
-						locationID = location.getLocationID();
-					}
-				}
-				stockpile = program.getStockpileTool().showAddStockpile(locationID);
-			}
+			Stockpile stockpile = program.getStockpileTool().showAddStockpile();
 			if (stockpile != null){
-				program.getStockpileTool().showAddItem(stockpile, typeId);
+				for (int typeID : typeIDs){
+					Item item = program.getSettings().getItems().get(typeID);
+					Stockpile.StockpileItem stockpileItem = new Stockpile.StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+					stockpile.add(stockpileItem);
+				}
+				program.getStockpileTool().updateData();
 				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
 			}
 		}
@@ -98,8 +83,13 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 			if (source instanceof JStockpileMenu){
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
-				boolean updated = program.getStockpileTool().showAddItem(stockpile, typeId);
-				if (updated) program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+				for (int typeID : typeIDs){
+					Item item = program.getSettings().getItems().get(typeID);
+					Stockpile.StockpileItem stockpileItem = new Stockpile.StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+					stockpile.add(stockpileItem);
+				}
+				program.getStockpileTool().updateData();
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
 			}
 		}
 	}

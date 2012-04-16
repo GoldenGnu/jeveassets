@@ -25,7 +25,6 @@ import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -52,10 +51,11 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	private JAutoColumnTable jTable;
 	private JLabel jInventionSuccess;
 
+	//Table
 	private EventList<IndustryJob> jobsEventList;
 	private FilterList<IndustryJob> filterList;
 	private EventTableModel<IndustryJob> jobsTableModel;
-
+	private EventSelectionModel<IndustryJob> selectionModel;
 	private IndustryJobData data;
 	private IndustryJobsFilterControl filterControl;
 	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat;
@@ -81,7 +81,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		jTable = new JAutoColumnTable(jobsTableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Table Selection
-		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
+		selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -119,17 +119,6 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {
-		JPopupMenu jTablePopupMenu = new JPopupMenu();
-
-		selectClickedCell(e);
-
-		updateTableMenu(jTablePopupMenu);
-
-		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	}
-
-	@Override
 	public void updateData() {
 
 		if (data == null) {
@@ -158,21 +147,22 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 		
-		IndustryJob industryJob = isSingleRow ? jobsTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-		jComponent.add(filterControl.getMenu(jTable, industryJob));
-		jComponent.add(new JMenuAssetFilter(program, industryJob));
-		jComponent.add(new JMenuStockpile(program, industryJob));
-		jComponent.add(new JMenuLookup(program, industryJob));
-		
-		//Columns
+	//FILTER
+		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
+	//ASSET FILTER
+		jComponent.add(new JMenuAssetFilter<IndustryJob>(program, selectionModel.getSelected()));
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile<IndustryJob>(program, selectionModel.getSelected()));
+	//LOOKUP
+		jComponent.add(new JMenuLookup<IndustryJob>(program, selectionModel.getSelected()));
+	//COLUMNS
 		jComponent.add(industryJobsTableFormat.getMenu(program, jobsTableModel, jTable));
 	}
 

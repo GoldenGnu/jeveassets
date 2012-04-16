@@ -94,7 +94,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		gui.addToolSeparator();
 	}
 	
-	public JMenu getMenu(JTable jTable, E item){
+	public JMenu getMenu(JTable jTable, List<E> items){
 		String text = null;
 		Enum column = null;
 		boolean isNumeric = false;
@@ -106,14 +106,14 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor){
 				EnumTableFormatAdaptor adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0 
+				if (	columnIndex >= 0 
 						&& columnIndex < adaptor.getShownColumns().size()
-						&& item != null
+						&& items.size() == 1
 						){
 					column = (Enum) adaptor.getShownColumns().get(columnIndex);
 					isNumeric = isNumeric(column);
 					isDate = isDate(column);
-					text = FilterMatcher.format(getColumnValue(item, column.name()));
+					text = FilterMatcher.format(getColumnValue(items.get(0), column.name()));
 				}
 
 			}

@@ -30,7 +30,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
@@ -56,12 +55,13 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private JButton jCollapse;
 	private JCheckBox jPiMaterial;
 	private JSeparatorTable jTable;
-	private EventTableModel<Material> materialTableModel;
 	private JScrollPane jTableScroll;
 
-	//Data
+	//Table
 	private EventList<Material> materialEventList;
 	private SeparatorList<Material> separatorList;
+	private EventSelectionModel<Material> selectionModel;
+	private EventTableModel<Material> materialTableModel;
 
 	public MaterialsTab(Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
@@ -95,7 +95,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		PaddingTableCellRenderer.install(jTable, 3);
 
 		//Selection Model
-		EventSelectionModel<Material> selectionModel = new EventSelectionModel<Material>(separatorList);
+		selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -160,39 +160,25 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {
-		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
-
-		updateTableMenu(jTablePopupMenu);
-
-		if (jTable.getSelectedRows().length == 1){
-			Object o = materialTableModel.getElementAt(jTable.getSelectedRow());
-			if (o instanceof Material){
-				jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
-	}
-
-	@Override
 	public void updateTableMenu(JComponent jComponent){
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		Object material = isSingleRow ? (Object) materialTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-		jComponent.add(new JMenuAssetFilter(program, material));
-		jComponent.add(new JMenuStockpile(program, material));
-		jComponent.add(new JMenuLookup(program, material));
-		jComponent.add(new JMenuEditItem(program, material));
+	//ASSET FILTER
+		jComponent.add(new JMenuAssetFilter<Material>(program, selectionModel.getSelected()));
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile<Material>(program, selectionModel.getSelected()));
+	//LOOKUP
+		jComponent.add(new JMenuLookup<Material>(program, selectionModel.getSelected()));
+	//EDIT
+		jComponent.add(new JMenuEditItem<Material>(program, selectionModel.getSelected()));
 	}
 
 

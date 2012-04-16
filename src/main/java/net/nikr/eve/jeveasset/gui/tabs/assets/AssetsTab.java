@@ -31,7 +31,6 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,21 +54,20 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 
 	//GUI
 	private JAssetTable jTable;
-	
 	private JLabel jTotalValue;
 	private JLabel jCount;
 	private JLabel jAverage;
 	private JLabel jVolume;
 
-	//Table Data
+	//Table
 	private EventTableModel<Asset> eveAssetTableModel;
 	private EventList<Asset> eveAssetEventList;
 	private FilterList<Asset> filterList;
-	
-	public static final String NAME = "assets"; //Not to be changed!
-	
 	private AssetFilterControl filterControl;
 	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> eveAssetTableFormat;
+	private EventSelectionModel<Asset> selectionModel;
+	
+	public static final String NAME = "assets"; //Not to be changed!
 	
 	public AssetsTab(Program program) {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
@@ -95,7 +93,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		//install the sorting/filtering
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(sortedList);
+		selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -190,17 +188,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e){
-		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		
-		selectClickedCell(e);
-
-		updateTableMenu(jTablePopupMenu);
-
-		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	}
-
-	@Override
 	public void updateTableMenu(JComponent jComponent){
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
@@ -208,8 +195,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		JMenuItem jMenuItem;
 	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
-		int[] selectedColumns = jTable.getSelectedColumns();
-		boolean isSingleRow = selectedRows.length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
 	//COPY
@@ -218,15 +203,13 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 			addSeparator(jComponent);
 		}
 	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
+		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
-
+		jComponent.add(new JMenuStockpile<Asset>(program, selectionModel.getSelected()));
 	//LOOKUP
-		jComponent.add(new JMenuLookup(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
-
+		jComponent.add(new JMenuLookup<Asset>(program, selectionModel.getSelected()));
 	//EDIT
-		jComponent.add(new JMenuEditItem(program, isSingleRow ? eveAssetTableModel.getElementAt(selectedRows[0]) : null));
+		jComponent.add(new JMenuEditItem<Asset>(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(eveAssetTableFormat.getMenu(program, eveAssetTableModel, jTable));
 	//INFO

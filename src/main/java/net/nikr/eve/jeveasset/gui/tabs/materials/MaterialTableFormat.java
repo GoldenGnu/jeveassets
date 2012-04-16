@@ -57,7 +57,7 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 		}
 		@Override
 		public Object getColumnValue(Material from) {
-			if (from.getPrice() != 0){
+			if (from.getPrice() != null){
 				return new ISK(Formater.iskFormat(from.getPrice()));
 			} else {
 				return new ISK("("+Formater.iskFormat(from.getValue()/from.getCount())+")");

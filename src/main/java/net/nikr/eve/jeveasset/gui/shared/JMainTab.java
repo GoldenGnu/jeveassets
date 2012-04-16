@@ -71,7 +71,15 @@ public abstract class JMainTab{
 	 * Must be called after setting SelectionModel
 	 * @param e mouse event
 	 */
-	protected abstract void showTablePopupMenu(MouseEvent e);
+	protected void showTablePopupMenu(MouseEvent e){
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		
+		selectClickedCell(e);
+
+		updateTableMenu(jTablePopupMenu);
+
+		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
 	
 	/**
 	 * Overwrite to update settings before saving...

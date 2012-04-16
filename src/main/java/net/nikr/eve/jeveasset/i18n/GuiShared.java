@@ -64,6 +64,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String lookup();
 	public abstract String newStockpile();
 	public abstract String ok();
+	public abstract String openLinks(int size);
+	public abstract String openLinksTitle();
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();

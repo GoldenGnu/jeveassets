@@ -65,14 +65,14 @@ public class Material implements Comparable<Material>{
 	private final String group;
 	private final String typeName;
 	private final boolean marketGroup;
-	private final int typeID; //TypeID : int
+	private final Integer typeID; //TypeID : int
 	private final String station;
 	private final String system;
 	private final String region;
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
-	private final double price;
+	private final Double price;
 	private final MaterialType type;
 
 	public Material(MaterialType type, String name, String location, String group, Asset eveAsset) {
@@ -89,13 +89,13 @@ public class Material implements Comparable<Material>{
 			this.region = eveAsset.getRegion();
 			this.price = eveAsset.getPrice();
 		} else {
-			this.typeName = "";
+			this.typeName = null;
 			this.marketGroup = false;
-			this.typeID = 0;
+			this.typeID = null;
 			this.station = null;
 			this.system = null;
 			this.region = null;
-			this.price = 0;
+			this.price = null;
 		}
 		
 	}
@@ -133,7 +133,7 @@ public class Material implements Comparable<Material>{
 		return system;
 	}
 
-	public int getTypeID() {
+	public Integer getTypeID() {
 		return typeID;
 	}
 
@@ -153,7 +153,7 @@ public class Material implements Comparable<Material>{
 		first = true;
 	}
 	
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 

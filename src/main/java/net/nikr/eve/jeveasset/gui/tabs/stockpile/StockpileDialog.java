@@ -351,77 +351,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 		return stockpile;
 	}
-
-	Stockpile showAdd(long locationID) {
-		updateData();
-		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
-		//Location
-		Location location = program.getSettings().getLocations().get(locationID);
-		if (location == null){
-			jStations.setSelected(true); //Default
-		} else if (location.isRegion()){
-			jRegions.setSelected(true);
-		} else if (location.isSystem()){
-			jSystems.setSelected(true);
-		} else if (location.isStation()){
-			jStations.setSelected(true);
-		}
-		if (location != null){
-			jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
-			refilter();
-			jLocations.setSelectedItem(location);
-		}
-		
-		show();
-		return stockpile;
-	}
-	
-	Stockpile showAdd(Asset asset) {
-		updateData();
-		//Title
-		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
-		
-		//Characters
-		Human humanSelected = humanAll;
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (human.getName().equals(asset.getOwner())){
-					humanSelected = human;
-				}
-			}
-		}
-		jOwner.setSelectedItem(humanSelected);
-		
-		//Location
-		Location location = program.getSettings().getLocations().get(asset.getLocationID());
-		if (location == null) location = locationAll;
-		if (location.getLocationID() < 0){
-			jUniverse.setSelected(true);
-		} else if (location.isRegion()){
-			jRegions.setSelected(true);
-		} else if (location.isSystem()){
-			jSystems.setSelected(true);
-		} else if (location.isStation()){
-			jStations.setSelected(true);
-		}
-		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
-		refilter();
-		jLocations.setSelectedItem(location);
-		
-		//Flag
-		ItemFlag itemFlag = itemFlagAll;
-		for (ItemFlag flag : program.getSettings().getItemFlags().values()){
-			if (asset.getFlag().equals(flag.getFlagName())){
-				itemFlag = flag;
-			}
-		}
-		jFlag.setSelectedItem(itemFlag);
-		
-		//Container
-		jContainer.setSelectedItem(asset.getContainer());
-		show();
-		return stockpile;
-	}
 	
 	boolean showClone(Stockpile stockpile) {
 		updateData();
@@ -584,6 +513,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 				}
 			}
 		}
+		//FIXME - Consider making "All Locations" the default for the Add Stockpile Dialog
 		jMyLocations.setSelected(true);
 		jStations.setSelected(true);
 		locationsAutoComplete.removeFirstItem();

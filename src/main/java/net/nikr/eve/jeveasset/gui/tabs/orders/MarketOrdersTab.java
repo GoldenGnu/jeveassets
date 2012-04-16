@@ -51,6 +51,15 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class MarketOrdersTab extends JMainTab implements TableModelListener{
 
+	private JAutoColumnTable jSellTable;
+	private JAutoColumnTable jBuyTable;
+	private JLabel jSellOrdersTotal;
+	private JLabel jBuyOrdersTotal;
+	private JLabel jEscrowTotal;
+	private JLabel jToCoverTotal;
+	
+	//Table
+	private MarketOrdersFilterControl filterControl;
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat;
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat;
 	private EventTableModel<MarketOrder> sellOrdersTableModel;
@@ -59,15 +68,8 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 	private FilterList<MarketOrder> buyOrdersFilterList;
 	private EventList<MarketOrder> sellOrdersEventList;
 	private EventList<MarketOrder> buyOrdersEventList;
-
-	private JAutoColumnTable jSellTable;
-	private JAutoColumnTable jBuyTable;
-	private JLabel jSellOrdersTotal;
-	private JLabel jBuyOrdersTotal;
-	private JLabel jEscrowTotal;
-	private JLabel jToCoverTotal;
-	
-	private MarketOrdersFilterControl filterControl;
+	private EventSelectionModel<MarketOrder> sellSelectionModel;
+	private EventSelectionModel<MarketOrder> buySelectionModel;
 	
 	public static final String NAME = "marketorders"; //Not to be changed!
 	private final String NAME_SELL = "marketorderssell"; //Not to be changed!
@@ -101,10 +103,10 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		jBuyTable = new JMarketOrdersTable(buyOrdersTableModel);
 		jBuyTable.setCellSelectionEnabled(true);
 		//Table Selection
-		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
+		sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jSellTable.setSelectionModel(sellSelectionModel);
-		EventSelectionModel<MarketOrder> buySelectionModel = new EventSelectionModel<MarketOrder>(buyOrdersSortedList);
+		buySelectionModel = new EventSelectionModel<MarketOrder>(buyOrdersSortedList);
 		buySelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jBuyTable.setSelectionModel(buySelectionModel);
 		//Listeners
@@ -191,22 +193,26 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 
 		if (e.getSource() instanceof JTable){
 			JTable jTable = (JTable) e.getSource();
-			EventTableModel<?> tableModel = (EventTableModel<?>) jTable.getModel();
-			//is single row selected
-			boolean isSingleRow = jTable.getSelectedRows().length == 1;
-			//COPY
+			EventSelectionModel<MarketOrder> selectionModel;
+			if (jTable.equals(jBuyTable)){
+				selectionModel = buySelectionModel;
+			} else {
+				selectionModel = sellSelectionModel;
+			}
+		//COPY
 			if (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0){
 				jTablePopupMenu.add(new JMenuCopy(jTable));
 				addSeparator(jTablePopupMenu);
 			}
-			//FILTER & LOOKUP
-			MarketOrder marketOrder = isSingleRow ? (MarketOrder) tableModel.getElementAt(jTable.getSelectedRow()): null;
-			jTablePopupMenu.add(filterControl.getMenu(jTable, marketOrder));
-			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
-			jTablePopupMenu.add(new JMenuStockpile(program, marketOrder));
-			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
-			
-			//Columns
+		//FILTER
+			jTablePopupMenu.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
+		//ASSET FILTER
+			jTablePopupMenu.add(new JMenuAssetFilter<MarketOrder>(program, selectionModel.getSelected()));
+		//STOCKPILE
+			jTablePopupMenu.add(new JMenuStockpile<MarketOrder>(program, selectionModel.getSelected()));
+		//LOOKUP
+			jTablePopupMenu.add(new JMenuLookup<MarketOrder>(program, selectionModel.getSelected()));
+		//COLUMNS
 			if (jTable.equals(jSellTable)){
 				jTablePopupMenu.add(sellTableFormat.getMenu(program, sellOrdersTableModel, jSellTable));
 			} else {
@@ -223,22 +229,19 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSellSingleRow = (jSellTable.getSelectedRows().length == 1);
-		boolean isBuySingleRow = (jBuyTable.getSelectedRows().length == 1);
-
-		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellTable.getSelectedRow()): null;
-		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyTable.getSelectedRow()) : null;
-
 	//SELL
 		jMenuItem = new JMenuItem(TabsOrders.get().sell1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
-
-		jComponent.add(filterControl.getMenu(jSellTable, sellMarketOrder));
-		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
-		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
-		jComponent.add(new JMenuLookup(program, sellMarketOrder));
-		//Columns
+	//FILTER
+		jComponent.add(filterControl.getMenu(jSellTable, sellSelectionModel.getSelected()));
+	//ASSET FILTER
+		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, sellSelectionModel.getSelected()));
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile<MarketOrder>(program, sellSelectionModel.getSelected()));
+	//LOOKUP
+		jComponent.add(new JMenuLookup<MarketOrder>(program, sellSelectionModel.getSelected()));
+	//COLUMNS
 		jComponent.add(sellTableFormat.getMenu(program, sellOrdersTableModel, jSellTable));
 
 		addSeparator(jComponent);
@@ -247,12 +250,15 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		jMenuItem = new JMenuItem(TabsOrders.get().buy1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
-
-		jComponent.add(filterControl.getMenu(jBuyTable, buyMarketOrder));
-		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
-		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
-		jComponent.add(new JMenuLookup(program, buyMarketOrder));
-		//Columns
+	//FILTER
+		jComponent.add(filterControl.getMenu(jBuyTable, buySelectionModel.getSelected()));
+	//ASSET FILTER
+		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, buySelectionModel.getSelected()));
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile<MarketOrder>(program, buySelectionModel.getSelected()));
+	//LOOKUP
+		jComponent.add(new JMenuLookup<MarketOrder>(program, buySelectionModel.getSelected()));
+	//COLUMNS
 		jComponent.add(buyTableFormat.getMenu(program, buyOrdersTableModel, jBuyTable));
 	}
 

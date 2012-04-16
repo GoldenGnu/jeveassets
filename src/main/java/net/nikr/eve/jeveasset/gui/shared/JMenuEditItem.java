@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -32,31 +33,31 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuEditItem extends JMenuTool implements ActionListener {
+public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
 
 	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	
 	private Asset asset = null;
 	
-	public JMenuEditItem(Program program, Object object) {
-		super(GuiShared.get().editItem(), program, object); //
+	public JMenuEditItem(Program program, List<T> items) {
+		super(GuiShared.get().editItem(), program, items); //
 		this.setIcon(Images.EDIT_EDIT.getIcon());
 
 		JMenuItem jMenuItem;
 		
 		jMenuItem = new JMenuItem(GuiShared.get().editPrice());
 		jMenuItem.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
-		jMenuItem.setEnabled(typeId != 0);
+		jMenuItem.setEnabled(!typeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty() && items.size() == 1);
 		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
-		if (object instanceof Asset){
-			asset = (Asset) object;
+		if (!items.isEmpty() && (items.get(0) instanceof Asset)){
+			asset = (Asset) items.get(0);
 			jMenuItem = new JMenuItem(GuiShared.get().editName());
 			jMenuItem.setIcon(Images.SETTINGS_USER_NAME.getIcon());
-			jMenuItem.setEnabled(typeId != 0);
+			jMenuItem.setEnabled(!typeIDs.isEmpty() && items.size() == 1);
 			jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
@@ -70,7 +71,7 @@ public class JMenuEditItem extends JMenuTool implements ActionListener {
 			if (asset != null){
 				userPrice = new UserPrice(asset);
 			} else {
-				userPrice = new UserPrice(price, typeId, typeName);
+				userPrice = new UserPrice(prices.get(0), typeIDs.get(0), typeNames.get(0));
 			}
 			program.getUserPriceSettingsPanel().edit(userPrice);
 		}

@@ -156,19 +156,18 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(IndustryJob from) {
-		return getColumnValue(from);
-	}
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public IndustryJob setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public IndustryJob setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override abstract public Object getColumnValue(IndustryJob from);
 }

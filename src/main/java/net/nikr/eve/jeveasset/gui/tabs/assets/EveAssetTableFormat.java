@@ -298,22 +298,21 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(Asset from) {
-		return getColumnValue(from);
-	}
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public Asset setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public Asset setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
-	
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override abstract public Object getColumnValue(Asset from);
+
 	public class LongInt implements Comparable<LongInt> {
 		Long number;
 

@@ -166,24 +166,20 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(MarketOrder from) {
-		return getColumnValue(from);
-	}
-	//XXX - TableFormat.getColumnName(...) Workaround
-	@Override
-	public String getColumnName() {
-		return getColumnName();
-	}
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public MarketOrder setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public MarketOrder setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override abstract public Object getColumnValue(MarketOrder from);
+	//XXX - TableFormat.getColumnName(...) Workaround
+	@Override abstract public String getColumnName();
 }

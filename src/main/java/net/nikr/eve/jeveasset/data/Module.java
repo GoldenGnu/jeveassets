@@ -33,16 +33,16 @@ public class Module implements Comparable<Module> {
 	private String location;
 	private String flag;
 	private String owner;
-	private double price;
+	private Double price;
 	private double value;
 	private long count;
 	private boolean marketGroup;
-	private int typeID; //TypeID : int
+	private Integer typeID; //TypeID : int
 	private String system;
 	private String region;
 	private boolean first = false;
 
-	public Module(Asset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, int typeID) {
+	public Module(Asset eveAsset, String name, String typeName, String key, String flag, Double price, double value, long count, boolean marketGroup, Integer typeID) {
 		this.name = name;
 		this.typeName = typeName;
 		this.key = key;
@@ -91,7 +91,7 @@ public class Module implements Comparable<Module> {
 		return count;
 	}
 	
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
@@ -127,7 +127,7 @@ public class Module implements Comparable<Module> {
 		return system;
 	}
 
-	public int getTypeID() {
+	public Integer getTypeID() {
 		return typeID;
 	}
 
@@ -203,11 +203,11 @@ public class Module implements Comparable<Module> {
 	}
 
 	public static class ModulePriceValue{
-		private double price;
+		private Double price;
 		private double value;
 		private long count;
 
-		public ModulePriceValue(double price, double value, long count) {
+		public ModulePriceValue(Double price, double value, long count) {
 			this.price = price;
 			this.value = value;
 			this.count = count;
@@ -215,7 +215,7 @@ public class Module implements Comparable<Module> {
 
 		@Override
 		public String toString() {
-			if (count > 1){
+			if (count > 1 && price != null){
 				return Formater.iskFormat(price)+" ("+Formater.iskFormat(value)+")";
 			} else {
 				return Formater.iskFormat(value);

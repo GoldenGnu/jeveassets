@@ -27,7 +27,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
@@ -53,10 +52,6 @@ public class OverviewTab extends JMainTab {
 	private final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
 	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 	
-	private EventList<Overview> overviewEventList;
-	private EventTableModel<Overview> overviewTableModel;
-	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
-	private SortedList<Overview> overviewSortedList;
 	private JOverviewTable jTable;
 	private JToggleButton jStations;
 	private JToggleButton jSystems;
@@ -68,6 +63,13 @@ public class OverviewTab extends JMainTab {
 	private AddToGroup addToGroup = new AddToGroup();
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
 	private ListenerClass listenerClass = new ListenerClass();
+	
+	//Table
+	private EventList<Overview> overviewEventList;
+	private EventTableModel<Overview> overviewTableModel;
+	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
+	private SortedList<Overview> overviewSortedList;
+	private EventSelectionModel<Overview> selectionModel;
 
 	public OverviewTab(Program program) {
 		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
@@ -126,7 +128,7 @@ public class OverviewTab extends JMainTab {
 		//Sorters
 		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Table Selection
-		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
+		selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -167,29 +169,6 @@ public class OverviewTab extends JMainTab {
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {
-		JPopupMenu jTablePopupMenu = new JPopupMenu();
-
-		//Select clicked row
-		boolean clickInRowsSelection = false;
-		int[] selectedRows = jTable.getSelectedRows();
-		for (int a = 0; a < selectedRows.length; a++){
-			if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
-				clickInRowsSelection = true;
-				break;
-			}
-		}
-		if (!clickInRowsSelection){
-			jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-			jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
-		}
-
-		updateTableMenu(jTablePopupMenu);
-
-		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	}
-
-	@Override
 	public void updateTableMenu(JComponent jComponent){
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
@@ -211,7 +190,6 @@ public class OverviewTab extends JMainTab {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-
 	//GROUPS
 		//Station, System, Region views
 		jSubMenu = new JMenu(TabsOverview.get().groups());
@@ -278,8 +256,8 @@ public class OverviewTab extends JMainTab {
 
 		addSeparator(jComponent);
 
-	//FILTERS
-		jSubMenuItem = new JMenuAssetFilter(program, overview);
+	//ASSET FILTER
+		jSubMenuItem = new JMenuAssetFilter<Overview>(program, selectionModel.getSelected());
 		if (getSelectedView().equals(TabsOverview.get().groups())){
 			jMenuItem = new JMenuItem(TabsOverview.get().locations());
 			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
@@ -289,9 +267,8 @@ public class OverviewTab extends JMainTab {
 			jSubMenuItem.add(jMenuItem);
 		}
 		jComponent.add(jSubMenuItem);
-		
 	//LOOKUP
-		jComponent.add(new JMenuLookup(program, overview));
+		jComponent.add(new JMenuLookup<Overview>(program, selectionModel.getSelected()));
 	}
 	
 	private String getSelectedView(){

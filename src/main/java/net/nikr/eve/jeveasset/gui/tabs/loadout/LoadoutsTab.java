@@ -21,47 +21,20 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import ca.odell.glazedlists.BasicEventList;
-import net.nikr.eve.jeveasset.gui.shared.JCustomFileChooser;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.ListSelection;
-import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
-import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
@@ -86,16 +59,17 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
-	private EventTableModel<Module> moduleTableModel;
 	private JButton jExport;
 	private JButton jExportAll;
 	private LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
 
-	//Data
+	//Table
 	private EventList<Module> moduleEventList;
 	private FilterList<Module> moduleFilterList;
 	private SeparatorList<Module> separatorList;
+	private EventSelectionModel<Module> selectionModel;
+	private EventTableModel<Module> moduleTableModel;
 
 	//TODO - LoadoutsTab is not translated properly
 	
@@ -158,7 +132,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		PaddingTableCellRenderer.install(jTable, 3);
 
 		//Selection Model
-		EventSelectionModel<Module> selectionModel = new EventSelectionModel<Module>(separatorList);
+		selectionModel = new EventSelectionModel<Module>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -262,39 +236,25 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {
-		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
-
-		updateTableMenu(jTablePopupMenu);
-
-		if (jTable.getSelectedRows().length == 1){
-			Object o = moduleTableModel.getElementAt(jTable.getSelectedRow());
-			if (o instanceof Module){
-				jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
-	}
-
-	@Override
 	public void updateTableMenu(JComponent jComponent){
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
-		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
-		Object module = isSingleRow ? (Object) moduleTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-		jComponent.add(new JMenuAssetFilter(program, module));
-		jComponent.add(new JMenuStockpile(program, module));
-		jComponent.add(new JMenuLookup(program, module));
-		jComponent.add(new JMenuEditItem(program, module));
+	//ASSET FILTER
+		jComponent.add(new JMenuAssetFilter<Module>(program, selectionModel.getSelected()));
+	//STOCKPILE
+		jComponent.add(new JMenuStockpile<Module>(program, selectionModel.getSelected()));
+	//LOOKUP
+		jComponent.add(new JMenuLookup<Module>(program, selectionModel.getSelected()));
+	//EDIT
+		jComponent.add(new JMenuEditItem<Module>(program, selectionModel.getSelected()));
 	}
 
 	private void updateTable(){
@@ -303,9 +263,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		for (Asset eveAsset : eveAssetEventList){
 			String key = eveAsset.getName()+" #"+eveAsset.getItemID();
 			if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
-			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", 0, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeID());
-			Module moduleModules = new Module(eveAsset, "2Modules", "", key, "Total Value", 0, 0, 0, false, 0);
-			Module moduleTotal = new Module(eveAsset, "3Total", "", key, "Total Value", 0, eveAsset.getPrice(), 0, false, 0);
+			Module moduleShip = new Module(eveAsset, "1Ship", eveAsset.getName(), key, "Total Value", null, eveAsset.getPrice(), 0, eveAsset.isMarketGroup(), eveAsset.getTypeID());
+			Module moduleModules = new Module(eveAsset, "2Modules", null, key, "Total Value", null, 0, 0, false, null);
+			Module moduleTotal = new Module(eveAsset, "3Total", null, key, "Total Value", null, eveAsset.getPrice(), 0, false, null);
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
