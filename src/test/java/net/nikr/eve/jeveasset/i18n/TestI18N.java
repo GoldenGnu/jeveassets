@@ -212,7 +212,7 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.buy());
+		assertNotNull(g.columnExpires());
 	}
 	
 	@Test public void testTabsOverviewBundle_en() throws Exception {

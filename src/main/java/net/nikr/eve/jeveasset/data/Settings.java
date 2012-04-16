@@ -661,12 +661,6 @@ public class Settings{
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
 	}
-	public List<SimpleColumn> getTableColumns(String key){
-		if (!tableColumns.containsKey(key)){
-			tableColumns.put(key, new ArrayList<SimpleColumn>());
-		}
-		return tableColumns.get(key);
-	}
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
 	}

@@ -39,7 +39,7 @@ public abstract class TabsOrders extends Bundle {
 	}
 
 	public abstract String buy();
-	public abstract String buy1();
+	public abstract String columnOrderType();
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
@@ -55,7 +55,6 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String market();
 	public abstract String no();
 	public abstract String sell();
-	public abstract String sell1();
 	public abstract String totalSellOrders();
 	public abstract String totalBuyOrders();
 	public abstract String totalEscrow();

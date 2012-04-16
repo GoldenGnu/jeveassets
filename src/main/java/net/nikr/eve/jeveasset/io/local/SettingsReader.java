@@ -396,6 +396,8 @@ public class SettingsReader extends AbstractXmlReader {
 			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
 			Element tableNode = (Element) tableNodeList.item(a);
 			String tableName = AttributeGetters.getString(tableNode, "name");
+			//Ignore old tables
+			if (tableName.equals("marketorderssell") || tableName.equals("marketordersbuy")) continue;
 			NodeList columnNodeList = tableNode.getElementsByTagName("column");
 			for (int b = 0; b < columnNodeList.getLength(); b++){
 				Element columnNode = (Element) columnNodeList.item(b);

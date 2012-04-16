@@ -31,6 +31,16 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
 public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
+	ORDER_TYPE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsOrders.get().columnOrderType();
+		}
+		@Override
+		public Object getColumnValue(MarketOrder from) {
+			return from.getBid() < 1 ? TabsOrders.get().sell() : TabsOrders.get().buy();
+		}
+	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

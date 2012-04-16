@@ -425,9 +425,4 @@ public abstract class FakeSettings extends Settings {
 	public void setStockpileHalfColors(boolean stockpileHalfColors) {
 		throw new UnsupportedOperationException("not implemented");
 	}
-
-	@Override
-	public List<SimpleColumn> getTableColumns(String key) {
-		return super.getTableColumns(key);
-	}
 }
