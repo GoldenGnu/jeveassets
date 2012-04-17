@@ -179,6 +179,15 @@ public class TestI18N {
 		assertNotNull(g.assets());
 	}
 	
+	@Test public void testTabsItemsBundle_en() throws Exception {
+		TabsItems g = Bundle.load(TabsItems.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.columnName());
+	}
+	
 	@Test public void testTabsJobsBundle_en() throws Exception {
 		TabsJobs g = Bundle.load(TabsJobs.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,

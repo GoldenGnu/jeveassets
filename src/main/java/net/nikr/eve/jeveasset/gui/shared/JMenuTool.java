@@ -119,6 +119,17 @@ public abstract class JMenuTool<T> extends JMenu {
 						null
 						);
 			}
+			if (t instanceof Item){
+				Item item = (Item) t;
+				init(	item.isMarketGroup(),
+						item.getName(),
+						item.getTypeID(),
+						null,
+						null,
+						null,
+						(double)item.getPrice()
+						);
+			}
 			if (t instanceof StockpileItem){ //
 				StockpileItem item = (StockpileItem) t;
 				init(	item.isMarketGroup(),

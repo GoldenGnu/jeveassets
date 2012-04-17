@@ -41,6 +41,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -459,6 +461,11 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 		try {
 			if (tableName.equals(AssetsTab.NAME)) return EveAssetTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			if (tableName.equals(ItemsTab.NAME)) return ItemTableFormat.valueOf(column);
 		} catch (IllegalArgumentException exception) {
 			
 		}
