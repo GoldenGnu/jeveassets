@@ -97,7 +97,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String managerDone();
 	public abstract String renameFilter();
 	public abstract String deleteFilter();
-	public abstract String deleteFilterName(Object arg0);
+	public abstract String deleteFilters(int size);
 	public abstract String mergeFilters();
 	public abstract String managerMerge();
 	public abstract String filterAll();

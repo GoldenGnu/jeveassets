@@ -164,12 +164,24 @@ public class FilterManager<E> extends JDialogCentered {
 		updateFilters();
 	}
 
-	private void deleteFilter(){
-		String filterName = getSelectedString();
-		if (filterName == null) return;
-		int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().deleteFilterName(filterName), GuiShared.get().deleteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-		if (nReturn == JOptionPane.YES_OPTION){
-			filters.remove(filterName);
+	private void deleteFilters(){
+		List<String> list = new ArrayList<String>();
+		for (int index : jFilters.getSelectedIndices()){
+			String filterName = (String) listModel.get( index );
+			list.add(filterName);
+		}
+		int value;
+		if (list.size() > 1){
+			value = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().deleteFilters(list.size()), GuiShared.get().deleteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		} else if (list.size() == 1) {
+			value = JOptionPane.showConfirmDialog(this.getDialog(), list.get(0), GuiShared.get().deleteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+		} else {
+			return;
+		}
+		if (value == JOptionPane.YES_OPTION){
+			for (String filterName : list){
+				filters.remove(filterName);
+			}
 			updateFilters();
 		}
 	}
@@ -275,7 +287,7 @@ public class FilterManager<E> extends JDialogCentered {
 				renameFilter();
 			}
 			if (ACTION_DELETE_FILTER.equals(e.getActionCommand())) {
-				deleteFilter();
+				deleteFilters();
 			}
 		}
 
@@ -305,11 +317,9 @@ public class FilterManager<E> extends JDialogCentered {
 			if (jFilters.getSelectedIndices().length > 1){
 				jLoad.setText(GuiShared.get().managerMerge());
 				jRename.setEnabled(false);
-				jDelete.setEnabled(false);
 			} else {
 				jLoad.setText(GuiShared.get().managerLoad());
 				jRename.setEnabled(true);
-				jDelete.setEnabled(true);
 			}
 		}
 	}
