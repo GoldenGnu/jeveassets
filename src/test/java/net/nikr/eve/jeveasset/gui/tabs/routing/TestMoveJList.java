@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -43,20 +44,14 @@ public class TestMoveJList {
 				return o1.getName().compareTo(o2.getName());
 			}
 		};
-		a = new MoveJList<Something>();
+		somethings = new Something[] {new Something("foo"), new Something("foobar"), new Something("zap") };
+		
+		
+		EditableListModel<Something> editableListModel = new EditableListModel<Something>(Arrays.asList(somethings));
+		a = new MoveJList<Something>(editableListModel);
 		a.getEditableModel().setSortComparator(comp);
 		b = new MoveJList<Something>();
 		b.getEditableModel().setSortComparator(comp);
-
-		somethings = new Something[] {
-							new Something("foo")
-						, new Something("foobar")
-						, new Something("zap")
-		};
-
-		for (int i = 0; i < somethings.length; ++i) {
-			a.getEditableModel().add(somethings[i]);
-		}
 	}
 
 	@Test

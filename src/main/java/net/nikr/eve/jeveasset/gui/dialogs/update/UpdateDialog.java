@@ -352,7 +352,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 				updateTasks.add( new PriceDataTask(jPriceData.isSelected()) );
 			}
 			if (!updateTasks.isEmpty()){
-				TaskDialog updateSelectedDialog = new TaskDialog(program, updateTasks);
+				TaskDialog taskDialog = new TaskDialog(program, updateTasks);
 			}
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){

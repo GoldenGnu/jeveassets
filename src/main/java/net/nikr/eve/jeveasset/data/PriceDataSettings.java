@@ -25,12 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PriceDataSettings {
-
-	private final static Logger LOG = LoggerFactory.getLogger(PriceDataSettings.class);
 
 	public enum PriceSource{
 		EVE_CENTRAL("eve-central", true, false){

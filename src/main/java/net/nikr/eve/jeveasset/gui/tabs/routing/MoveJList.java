@@ -37,10 +37,15 @@ public class MoveJList<T> extends JList {
 	}
 
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel
+	public MoveJList(EditableListModel<T> editableListModel) {
+		setModel(editableListModel);
+	}
+	
+	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel
 	public MoveJList(ListModel dataModel) {
 		EditableListModel<T> m = new EditableListModel<T>();
-		for (int i = 0; i < m.getSize(); ++i) {
-			m.add((T) m.getElementAt(i));
+		for (int i = 0; i < dataModel.getSize(); ++i) {
+			m.add((T) dataModel.getElementAt(i));
 		}
 		setModel(m);
 	}

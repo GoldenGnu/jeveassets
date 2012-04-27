@@ -111,11 +111,6 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return name;
 	}
 
-	@Override
-	public Date getIssued() {
-		return super.getIssued();
-	}
-
 	public String getLocation() {
 		return location;
 	}

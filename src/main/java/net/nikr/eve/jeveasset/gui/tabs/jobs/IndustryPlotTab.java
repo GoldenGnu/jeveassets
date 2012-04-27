@@ -432,11 +432,6 @@ public class IndustryPlotTab extends JMainTab {
 		private static final long serialVersionUID = 1L;
 		CopyingJobPanel() {
 			super();
-
-		}
-		@Override
-		JobInformationPanel updateTo(IndustryJob job) {
-			return super.updateTo(job);
 		}
 	}
 }
