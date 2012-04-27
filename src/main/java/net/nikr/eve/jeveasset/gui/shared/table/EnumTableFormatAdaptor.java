@@ -26,8 +26,10 @@ import ca.odell.glazedlists.gui.WritableTableFormat;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -44,6 +46,32 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	
 	private final static Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 	
+	public static enum ResizeMode{
+		TEXT{
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeText();
+			}
+		},
+		WINDOW{
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeWindow();
+			}
+		},
+		NONE{
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeNone();
+			}
+		},
+		;
+
+		abstract String getI18N();
+		
+		@Override
+		public String toString(){
+			return getI18N();
+		}
+	}
+	
 	private Class<T> enumClass;
 	private List<T> shownColumns;
 	private List<T> orderColumns;
@@ -51,10 +79,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	
 	private JMenu jMenu;
 	private EditColumnsDialog<T, Q> dialog;
+	private ResizeMode resizeMode;
 
 	public EnumTableFormatAdaptor(Class<T> enumClass) {
 		this.enumClass = enumClass;
 		columnComparator = new ColumnComparator();
+		resizeMode = ResizeMode.TEXT;
 		reset();
 	}
 	
@@ -69,6 +99,15 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 	public List<T> getOrderColumns(){
 		return orderColumns;
+	}
+
+	public ResizeMode getResizeMode() {
+		return resizeMode;
+	}
+
+	public void setResizeMode(ResizeMode resizeMode) {
+		if (resizeMode == null) return;
+		this.resizeMode = resizeMode;
 	}
 	
 	public void setColumns(List<SimpleColumn> columns){
@@ -143,9 +182,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		}		
 		
 		if (jMenu == null){ //Create menu (only once)
-			jMenu = new JMenu(GuiShared.get().columnsSettings());
+			jMenu = new JMenu(GuiShared.get().tableSettings());
 			jMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
- 			JMenuItem jMenuItem = new JMenuItem(GuiShared.get().columnsEdit(), Images.DIALOG_SETTINGS.getIcon());
+ 			JMenuItem jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
 			jMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -158,7 +197,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 
 			jMenu.addSeparator();
 
-			jMenuItem = new JMenuItem(GuiShared.get().columnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
+			jMenuItem = new JMenuItem(GuiShared.get().tableColumnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
 			jMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -168,6 +207,26 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 				}
 			});
 			jMenu.add(jMenuItem);
+			
+			jMenu.addSeparator();
+			
+			ButtonGroup buttonGroup = new ButtonGroup();
+			JRadioButtonMenuItem jRadioButton;
+			for (final ResizeMode mode : ResizeMode.values()){
+				jRadioButton = new JRadioButtonMenuItem(mode.toString(), Images.TABLE_COLUMN_RESIZE.getIcon());
+				jRadioButton.setSelected(resizeMode == mode);
+				jRadioButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						setResizeMode(mode);
+						jTable.autoResizeColumns();
+					}
+				});
+				buttonGroup.add(jRadioButton);
+				jMenu.add(jRadioButton);
+			}
+			
+			
 		}
 		
 		return jMenu;

@@ -76,8 +76,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private StockpileShoppingListDialog stockpileShoppingListDialog;
 	
 	//Table
-	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat;
-	private EventTableModel<StockpileItem> stockpileTableModel;
+	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+	private EventTableModel<StockpileItem> tableModel;
 	private EventList<StockpileItem> stockpileEventList;
 	private SeparatorList<StockpileItem> separatorList;
 	private EventSelectionModel<StockpileItem> selectionModel;
@@ -134,14 +134,16 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 		
-		stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
-		stockpileTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
+		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
+		
 		stockpileEventList = new BasicEventList<StockpileItem>();
 		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(stockpileEventList);
 		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
-		stockpileTableModel = new EventTableModel<StockpileItem>(separatorList, stockpileTableFormat);
+		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
 		//Tables
-		jTable = new JStockpileTable(program, stockpileTableModel);
+		jTable = new JStockpileTable(program, tableModel);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -199,7 +201,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	@Override
 	public void updateSettings(){
-		program.getSettings().getTableColumns().put(NAME, stockpileTableFormat.getColumns());
+		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
+		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
 	}
 
 	public Stockpile showAddStockpile() {
@@ -332,7 +335,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	//EDIT
 		jComponent.add(new JMenuEditItem<StockpileItem>(program, selected));
 	//COLUMNS
-		jComponent.add(stockpileTableFormat.getMenu(program, stockpileTableModel, jTable));		
+		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));		
 	}
 
 	@Override
@@ -521,7 +524,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		if (StockpileSeparatorTableCell.ACTION_EDIT_STOCKPILE.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
-			Object o = stockpileTableModel.getElementAt(index);
+			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
@@ -532,7 +535,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		if (StockpileSeparatorTableCell.ACTION_CLONE_STOCKPILE.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
-			Object o = stockpileTableModel.getElementAt(index);
+			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
@@ -543,7 +546,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		if (StockpileSeparatorTableCell.ACTION_DELETE_STOCKPILE.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
-			Object o = stockpileTableModel.getElementAt(index);
+			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
@@ -557,7 +560,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		if (StockpileSeparatorTableCell.ACTION_SHOPPING_LIST_STOCKPILE.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
-			Object o = stockpileTableModel.getElementAt(index);
+			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();
@@ -566,7 +569,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		if (StockpileSeparatorTableCell.ACTION_ADD_ITEM.equals(e.getActionCommand())){
 			int index = jTable.getSelectedRow();
-			Object o = stockpileTableModel.getElementAt(index);
+			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>){
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				StockpileItem item = (StockpileItem) separator.first();

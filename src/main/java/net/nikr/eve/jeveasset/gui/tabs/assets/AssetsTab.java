@@ -60,11 +60,11 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	private JLabel jVolume;
 
 	//Table
-	private EventTableModel<Asset> eveAssetTableModel;
-	private EventList<Asset> eveAssetEventList;
+	private EventTableModel<Asset> tableModel;
+	private EventList<Asset> eventList;
 	private FilterList<Asset> filterList;
 	private AssetFilterControl filterControl;
-	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> eveAssetTableFormat;
+	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
 	private EventSelectionModel<Asset> selectionModel;
 	
 	public static final String NAME = "assets"; //Not to be changed!
@@ -73,25 +73,26 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
-		eveAssetEventList = program.getEveAssetEventList();
-		eveAssetTableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
-		eveAssetTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		eventList = program.getEveAssetEventList();
+		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
+		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//For filtering the table
-		filterList = new FilterList<Asset>(eveAssetEventList);
+		filterList = new FilterList<Asset>(eventList);
 		filterList.addListEventListener(this);
 		//For soring the table
 		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<Asset>(sortedList, eveAssetTableFormat);
+		tableModel = new EventTableModel<Asset>(sortedList, tableFormat);
 		//Table
-		jTable = new JAssetTable(program, eveAssetTableModel);
+		jTable = new JAssetTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.getTableHeader().setResizingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//install the sorting/filtering
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Table Selection
 		selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -117,7 +118,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 				program.getMainWindow().getFrame(),
 				program.getSettings().getTableFilters(NAME),
 				filterList,
-				eveAssetEventList);
+				eventList);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -132,9 +133,9 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	}
 	@Override
 	public void updateSettings(){
-		program.getSettings().getTableColumns().put(NAME, eveAssetTableFormat.getColumns());
+		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
+		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
 	}
-	
 	
 	public boolean isFiltersEmpty(){
 		return getFilters().isEmpty();
@@ -173,7 +174,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	}
 
 	public Asset getSelectedAsset(){
-		return eveAssetTableModel.getElementAt(jTable.getSelectedRow());
+		return tableModel.getElementAt(jTable.getSelectedRow());
 	}
 
 	/**
@@ -181,9 +182,9 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	 * @return a list of the filtered assets.
 	 */
 	public List<Asset> getFilteredAssets() {
-		eveAssetEventList.getReadWriteLock().writeLock().lock();
+		eventList.getReadWriteLock().writeLock().lock();
 		List<Asset> ret = new ArrayList<Asset>(filterList);
-		eveAssetEventList.getReadWriteLock().writeLock().unlock();
+		eventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
 
@@ -211,7 +212,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	//EDIT
 		jComponent.add(new JMenuEditItem<Asset>(program, selectionModel.getSelected()));
 	//COLUMNS
-		jComponent.add(eveAssetTableFormat.getMenu(program, eveAssetTableModel, jTable));
+		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
 		if (jComponent instanceof JPopupMenu){
 			addSeparator(jComponent);
@@ -231,7 +232,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 			long count = 0;
 			float volume = 0;
 			for (int a = 0; a < selectedRows.length; a++){
-				Asset eveAsset = eveAssetTableModel.getElementAt(selectedRows[a]);
+				Asset eveAsset = tableModel.getElementAt(selectedRows[a]);
 				total = total + (eveAsset.getPrice() * eveAsset.getCount());
 				count = count + eveAsset.getCount();
 				volume = volume + (eveAsset.getVolume() * eveAsset.getCount());

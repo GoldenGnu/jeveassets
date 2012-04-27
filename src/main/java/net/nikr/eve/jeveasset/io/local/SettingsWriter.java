@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -64,7 +65,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
-		writeTablesColumns(xmldoc, settings.getTableColumns());
+		writeTableColumns(xmldoc, settings.getTableColumns());
+		writeTablesResize(xmldoc, settings.getTableResize());
 		writeCsv(xmldoc, Settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
@@ -98,7 +100,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeTablesColumns(Document xmldoc, Map<String, List<SimpleColumn>> tableColumns) {
+	private static void writeTableColumns(Document xmldoc, Map<String, List<SimpleColumn>> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumns");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
 		for (Map.Entry<String, List<SimpleColumn>> entry : tableColumns.entrySet()){
@@ -111,6 +113,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 				node.setAttributeNS(null, "shown", String.valueOf(column.isShown()));
 				nameNode.appendChild(node);
 			}
+		}
+	}
+	private static void writeTablesResize(Document xmldoc, Map<String, ResizeMode> tableColumns) {
+		Element tablecolumnsNode = xmldoc.createElementNS(null, "tableresize");
+		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		for (Map.Entry<String, ResizeMode> entry : tableColumns.entrySet()){
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", entry.getKey());
+			nameNode.setAttributeNS(null, "resize", entry.getValue().name());
+			tablecolumnsNode.appendChild(nameNode);
 		}
 	}
 	

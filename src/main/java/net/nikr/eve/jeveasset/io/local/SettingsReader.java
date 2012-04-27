@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPr
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
@@ -169,7 +170,7 @@ public class SettingsReader extends AbstractXmlReader {
 		Element updatesElement = (Element) updateNodes.item(0);
 		parseUpdates(updatesElement, settings);
 		
-		//Table Filters
+		//Table Filters (Must be loaded before Asset Filters)
 		NodeList tablefiltersNodes = element.getElementsByTagName("tablefilters");
 		if (tablefiltersNodes.getLength() == 1){
 			Element tablefiltersElement = (Element) tablefiltersNodes.item(0);
@@ -188,6 +189,13 @@ public class SettingsReader extends AbstractXmlReader {
 		if (tablecolumnsNodes.getLength() == 1){
 			Element tablecolumnsElement = (Element) tablecolumnsNodes.item(0);
 			parseTableColumns(tablecolumnsElement, settings);
+		}
+		
+		//Table Resize
+		NodeList tableResizeNodes = element.getElementsByTagName("tableresize");
+		if (tableResizeNodes.getLength() == 1){
+			Element tableResizeElement = (Element) tableResizeNodes.item(0);
+			parseTableResize(tableResizeElement, settings);
 		}
 		
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
@@ -408,6 +416,15 @@ public class SettingsReader extends AbstractXmlReader {
 				columns.add( new SimpleColumn(name, shown));
 			}
 			settings.getTableColumns().put(tableName, columns);
+		}
+	}
+	private static void parseTableResize(Element element, Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++){
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			ResizeMode resizeMode = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
+			settings.getTableResize().put(tableName, resizeMode);
 		}
 	}
 	

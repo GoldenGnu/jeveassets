@@ -52,13 +52,13 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	private JLabel jInventionSuccess;
 
 	//Table
-	private EventList<IndustryJob> jobsEventList;
+	private EventList<IndustryJob> eventList;
 	private FilterList<IndustryJob> filterList;
-	private EventTableModel<IndustryJob> jobsTableModel;
+	private EventTableModel<IndustryJob> tableModel;
 	private EventSelectionModel<IndustryJob> selectionModel;
 	private IndustryJobData data;
 	private IndustryJobsFilterControl filterControl;
-	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat;
+	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 	
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
@@ -66,19 +66,20 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		//Table format
-		industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
-		industryJobsTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
+		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
-		jobsEventList = new BasicEventList<IndustryJob>();
+		eventList = new BasicEventList<IndustryJob>();
 		
-		filterList = new FilterList<IndustryJob>(jobsEventList);
+		filterList = new FilterList<IndustryJob>(eventList);
 		//For soring the table
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
 		//Table Model
-		jobsTableModel = new EventTableModel<IndustryJob>(sortedList, industryJobsTableFormat);
-		jobsTableModel.addTableModelListener(this);
+		tableModel = new EventTableModel<IndustryJob>(sortedList, tableFormat);
+		tableModel.addTableModelListener(this);
 		//Tables
-		jTable = new JAutoColumnTable(jobsTableModel);
+		jTable = new JAutoColumnTable(tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Table Selection
 		selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
@@ -87,7 +88,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		//Listeners
 		installTableMenu(jTable);
 		//Sorters
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
@@ -96,7 +97,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 				program.getMainWindow().getFrame(),
 				program.getSettings().getTableFilters(NAME),
 				filterList,
-				jobsEventList);
+				eventList);
 		
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -115,7 +116,8 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	
 	@Override
 	public void updateSettings(){
-		program.getSettings().getTableColumns().put(NAME, industryJobsTableFormat.getColumns());
+		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
+		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
 	}
 
 	@Override
@@ -134,11 +136,11 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 			jTable.setEnabled(false);
 		}
 		try {
-			jobsEventList.getReadWriteLock().writeLock().lock();
-			jobsEventList.clear();
-			jobsEventList.addAll( data.getAll() );
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll( data.getAll() );
 		} finally {
-			jobsEventList.getReadWriteLock().writeLock().unlock();
+			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
@@ -163,7 +165,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	//LOOKUP
 		jComponent.add(new JMenuLookup<IndustryJob>(program, selectionModel.getSelected()));
 	//COLUMNS
-		jComponent.add(industryJobsTableFormat.getMenu(program, jobsTableModel, jTable));
+		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	}
 
 	@Override

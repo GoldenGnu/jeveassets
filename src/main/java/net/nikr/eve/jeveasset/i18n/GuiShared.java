@@ -43,11 +43,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String addStockpileItem();
 	public abstract String checkAll();
 	public abstract String chruker();
-	public abstract String columnsEdit();
-	public abstract String columnsReset();
-	public abstract String columnsSettings();
-	public abstract String columnsTip();
-	public abstract String columnsTitle();
 	public abstract String copy();
 	public abstract String cut();
 	public abstract String dotlan();
@@ -73,6 +68,15 @@ public abstract class GuiShared extends Bundle {
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();
+	public abstract String tableColumns();
+	public abstract String tableColumnsReset();
+	public abstract String tableColumnsTip();
+	public abstract String tableColumnsTitle();
+	public abstract String tableResizeText();
+	public abstract String tableResizeWindow();
+	public abstract String tableResizeNone();
+	public abstract String tableSettings();
+	
 	public abstract String today(Object arg0); 
 	public abstract String weekdayAndTime(Date datetime);
 	public abstract String whitespace37(Object arg0, Object arg1);

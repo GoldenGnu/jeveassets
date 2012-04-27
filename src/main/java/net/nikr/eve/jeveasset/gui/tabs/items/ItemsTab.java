@@ -63,6 +63,7 @@ public class ItemsTab extends JMainTab{
 		//Table format
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<Item>();
 		//Backend
@@ -112,8 +113,12 @@ public class ItemsTab extends JMainTab{
 		}
 		
 	}
-	
-	
+
+	@Override
+	public void updateSettings() {
+		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
+		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+	}
 
 	@Override
 	public void updateTableMenu(JComponent jComponent) {

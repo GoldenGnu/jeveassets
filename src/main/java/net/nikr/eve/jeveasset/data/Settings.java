@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -115,6 +116,7 @@ public class Settings{
 	
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
@@ -661,6 +663,11 @@ public class Settings{
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
 	}
+
+	public Map<String, ResizeMode> getTableResize() {
+		return tableResize;
+	}
+	
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
 	}

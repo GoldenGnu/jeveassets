@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
 package net.nikr.eve.jeveasset.gui.shared;
 
 import ca.odell.glazedlists.gui.TableFormat;
@@ -40,12 +41,14 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 
 
 public class JAutoColumnTable extends JTable {
 	
 	private JViewport jViewport = null;
 	private int size = 0;
+	private ResizeMode resizeMode = null;
 	
 	public JAutoColumnTable(TableModel tableModel) {
 		super(tableModel);
@@ -69,9 +72,19 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 	}
-	
+
 	public void autoResizeColumns() {
-		resizeColumnsText(this);
+		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		if (resizeMode == null && tableFormat != null){
+			resizeMode = tableFormat.getResizeMode();
+		}
+		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT){
+			resizeColumnsText();
+		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW){
+			resizeColumnsWindow();
+		} else if (tableFormat.getResizeMode() == ResizeMode.NONE){
+			resizeColumnsNone();
+		}
 	}
 	
 	private JTable getTable(){
@@ -106,19 +119,47 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 	
-	private void resizeColumnsText(JTable jTable) {
+	private void resizeColumnsText() {
 		size = 0;
-		for (int i = 0; i < jTable.getColumnCount(); i++) {
-				size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
+		if (resizeMode != ResizeMode.TEXT) resizeMode = ResizeMode.TEXT;
+		for (int i = 0; i < getColumnCount(); i++) {
+			size = size+resizeColumn(this, getColumnModel().getColumn(i), i);
+		}
+		updateScroll();
+	}
+	
+	public void resizeColumnsWindow() {
+		if (resizeMode != ResizeMode.WINDOW){ //Only do once
+			resizeMode = ResizeMode.WINDOW;
+			for (int i = 0; i < getColumnCount(); i++){
+				getColumnModel().getColumn(i).setPreferredWidth(75);
+			}
+		}
+		updateScroll();
+	}
+	public void resizeColumnsNone() {
+		if (resizeMode != ResizeMode.NONE){ //Only do once
+			resizeMode = ResizeMode.NONE;
+			for (int i = 0; i < getColumnCount(); i++){
+				int width = getColumnModel().getColumn(i).getWidth();
+				getColumnModel().getColumn(i).setPreferredWidth(width);
+			}
 		}
 		updateScroll();
 	}
 	
 	private void updateScroll(){
-		if (jViewport != null && size < jViewport.getSize().width){
-			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		} else {
-			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		if ( tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT){
+			if (jViewport != null && size < jViewport.getSize().width){
+				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			} else {
+				this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			}
+		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW){
+			this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		} else if (tableFormat.getResizeMode() == ResizeMode.NONE){
+			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 	}
 
@@ -155,7 +196,9 @@ public class JAutoColumnTable extends JTable {
 			if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
 			if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
 			if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
-			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && e.getType() != TableModelEvent.UPDATE) { //Last Table Update
+			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && //Last Table Update
+					(e.getType() != TableModelEvent.UPDATE ||
+					(e.getType() == TableModelEvent.UPDATE && e.getFirstRow() >= 0))) {
 				rowsLastTime = getRowCount();
 				rowsCount = 0;
 				autoResizeColumns();

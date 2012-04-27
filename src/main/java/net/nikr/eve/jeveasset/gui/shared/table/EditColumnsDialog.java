@@ -53,7 +53,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	private EnumTableFormatAdaptor<T, Q> adaptor;
 	
 	public EditColumnsDialog(Program program, EnumTableFormatAdaptor<T, Q> adaptor) {
-		super(program, GuiShared.get().columnsTitle(), Images.TABLE_COLUMN_SHOW.getImage());
+		super(program, GuiShared.get().tableColumnsTitle(), Images.TABLE_COLUMN_SHOW.getImage());
 		this.adaptor = adaptor;
 		
 		jInfo = new JTextArea();
@@ -63,7 +63,7 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		jInfo.setEditable(false);
 		jInfo.setLineWrap(true);
 		jInfo.setWrapStyleWord(true);
-		jInfo.setText(GuiShared.get().columnsTip());
+		jInfo.setText(GuiShared.get().tableColumnsTip());
 		
 		jList = new JList(listModel);
 		jList.setCellRenderer(new JCheckBoxListRenderer());

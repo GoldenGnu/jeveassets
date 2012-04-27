@@ -72,6 +72,7 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		//Table format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<MarketOrder>();
 		//Backend
@@ -129,6 +130,7 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 	@Override
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
+		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
 	}
 
 	@Override
