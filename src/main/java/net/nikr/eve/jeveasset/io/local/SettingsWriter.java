@@ -68,7 +68,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeCsv(xmldoc, Settings.getCsvSettings());
-		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
 			writeXmlFile(xmldoc, Settings.getPathSettings());
 		} catch (XmlException ex) {
@@ -152,21 +151,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writePriceFactionData(Document xmldoc, Map<Integer, PriceData> priceFactionData){
-		Element parentNode = xmldoc.createElementNS(null, "factionprices");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<Integer, PriceData> entry : priceFactionData.entrySet()){
-			PriceData priceData = entry.getValue();
-			Element node = xmldoc.createElementNS(null, "factionprice");
-			node.setAttributeNS(null, "typeID", String.valueOf(entry.getKey()));
-			node.setAttributeNS(null, "avg", String.valueOf(priceData.getBuyAvg()));
-			node.setAttributeNS(null, "median", String.valueOf(priceData.getBuyMedian()));
-			node.setAttributeNS(null, "lo", String.valueOf(priceData.getBuyMin()));
-			node.setAttributeNS(null, "hi", String.valueOf(priceData.getBuyMax()));
-			parentNode.appendChild(node);
-		}
-
-	}
 	private static void writeOverviewGroups(Document xmldoc, Map<String, OverviewGroup> overviewGroups){
 		Element parentNode = xmldoc.createElementNS(null, "overview");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -234,7 +218,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
 		parentNode.setAttributeNS(null, "regiontype", priceDataSettings.getRegion().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
-		parentNode.setAttributeNS(null, "faction", priceDataSettings.getFactionPrice().name());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

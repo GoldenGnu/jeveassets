@@ -88,27 +88,6 @@ public class PriceDataSettings {
 			return supportsSindleLocations;
 		}
 	}
-	
-	public enum FactionPrice {
-		PRICES_C0RPORATION() {
-			@Override
-			String getI18N() {
-				return DataModelPriceDataSettings.get().factionPriceC0rporation();
-			}
-		},
-		NONE() {
-			@Override
-			String getI18N() {
-				return DataModelPriceDataSettings.get().factionPriceNone();
-			}
-		},
-		;
-		abstract String getI18N();
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-	}
 
 	public enum RegionType {
 		EMPIRE() {
@@ -432,22 +411,15 @@ public class PriceDataSettings {
 	}
 	private RegionType regionType;
 	private PriceSource priceSource;
-	private FactionPrice factionPrice;
 
 	public PriceDataSettings() {
 		regionType = getDefaultRegionType();
 		priceSource = getDefaultPriceSource();
-		factionPrice = getDefaultFactionPrice();
 	}
 
-	public PriceDataSettings(RegionType region, PriceSource source, FactionPrice factionPrice) {
+	public PriceDataSettings(RegionType region, PriceSource source) {
 		this.regionType = region;
 		this.priceSource = source;
-		this.factionPrice = factionPrice;
-	}
-
-	public FactionPrice getFactionPrice() {
-		return factionPrice;
 	}
 
 	public RegionType getRegion() {
@@ -470,10 +442,6 @@ public class PriceDataSettings {
 		return PriceSource.EVE_CENTRAL;
 	}
 
-	public static FactionPrice getDefaultFactionPrice() {
-		return FactionPrice.PRICES_C0RPORATION;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -489,18 +457,14 @@ public class PriceDataSettings {
 		if (this.priceSource != other.priceSource) {
 			return false;
 		}
-		if (this.factionPrice != other.factionPrice) {
-			return false;
-		}
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 67 * hash + (this.regionType != null ? this.regionType.hashCode() : 0);
-		hash = 67 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
-		hash = 67 * hash + (this.factionPrice != null ? this.factionPrice.hashCode() : 0);
+		int hash = 5;
+		hash = 79 * hash + (this.regionType != null ? this.regionType.hashCode() : 0);
+		hash = 79 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
 		return hash;
 	}
 }

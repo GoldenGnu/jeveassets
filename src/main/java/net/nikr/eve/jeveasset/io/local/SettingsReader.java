@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.*;
@@ -51,7 +50,6 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.io.local.update.Update;
-import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -103,14 +101,7 @@ public class SettingsReader extends AbstractXmlReader {
 			Element csvElement = (Element) csvNodes.item(0);
 			parseCsv(csvElement, settings);
 		}
-		
-		//Faction Price Data
-		NodeList factionPricesNodes = element.getElementsByTagName("factionprices");
-		if (factionPricesNodes.getLength() == 1){
-			Element factionPricesElement = (Element) factionPricesNodes.item(0);
-			NodeList factionPriceNodes = factionPricesElement.getElementsByTagName("factionprice");
-			FactionGetter.parseNodes(factionPriceNodes , settings.getPriceFactionData());
-		}
+
 		//Overview
 		NodeList overviewNodes = element.getElementsByTagName("overview");
 		if (overviewNodes.getLength() == 1){
@@ -368,11 +359,7 @@ public class SettingsReader extends AbstractXmlReader {
 				//In case a price source is removed: Use to default
 			}
 		}
-		FactionPrice factionPrice = PriceDataSettings.getDefaultFactionPrice();
-		if (AttributeGetters.haveAttribute(element, "faction")){
-			factionPrice = FactionPrice.valueOf(AttributeGetters.getString(element, "faction"));
-		}
-		settings.setPriceDataSettings( new PriceDataSettings(regionType, priceSource, factionPrice) );
+		settings.setPriceDataSettings( new PriceDataSettings(regionType, priceSource) );
 	}
 
 	private static void parseFlags(Element element, Settings settings){

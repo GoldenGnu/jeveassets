@@ -32,6 +32,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -367,11 +368,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, PriceData> getPriceFactionData() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public List<Stockpile> getStockpiles() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -425,4 +421,11 @@ public abstract class FakeSettings extends Settings {
 	public void setStockpileHalfColors(boolean stockpileHalfColors) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<String, ResizeMode> getTableResize() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	
 }

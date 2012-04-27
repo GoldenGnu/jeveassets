@@ -45,7 +45,6 @@ import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
 import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
 import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
-import net.nikr.eve.jeveasset.io.online.FactionGetter;
 
 
 public class UpdateDialog extends JDialogCentered implements ActionListener {
@@ -462,8 +461,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			program.getSettings().clearEveAssetList();
-			//Price
-			FactionGetter.load(program.getSettings().getPriceFactionData(), program.getSettings().getProxy());
 			if (update){
 				program.getSettings().getPriceDataGetter().update(this);
 			} else {

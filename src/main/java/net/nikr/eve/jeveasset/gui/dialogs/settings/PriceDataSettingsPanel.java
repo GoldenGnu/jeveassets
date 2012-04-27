@@ -28,7 +28,6 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -42,7 +41,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private JComboBox jRegions;
 	private JComboBox jPriceType;
 	private JComboBox jSource;
-	private JComboBox jFaction;
 	
 	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
@@ -65,9 +63,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
 		jSource.addActionListener(new ListenerClass());
 
-		JLabel jFactionLabel = new JLabel(DialoguesSettings.get().faction());
-		jFaction = new JComboBox(FactionPrice.values());
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -75,13 +70,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jRegionsLabel)
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jSourceLabel)
-						.addComponent(jFactionLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jRegions)
 						.addComponent(jPriceType)
 						.addComponent(jSource)
-						.addComponent(jFaction)
 					)
 				)
 				.addComponent(jWarning)
@@ -99,10 +92,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jPriceTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jFactionLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jFaction, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jWarning, 48, 48, 48)
 		);
@@ -133,15 +122,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
 		
-		//Faction Price
-		FactionPrice factionPrice = (FactionPrice) jFaction.getSelectedItem();
-
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(Asset.getPriceType())
-				|| factionPrice != program.getSettings().getPriceDataSettings().getFactionPrice();
+		boolean updateTable = !priceType.equals(Asset.getPriceType());
 
 		//Update settings
-		program.getSettings().setPriceDataSettings( new PriceDataSettings(regionType, source, factionPrice) );
+		program.getSettings().setPriceDataSettings( new PriceDataSettings(regionType, source) );
 		Asset.setPriceType(priceType);
 		
 		//Update table if needed
@@ -151,7 +136,6 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load(){
 		jSource.setSelectedItem(program.getSettings().getPriceDataSettings().getSource());
-		jFaction.setSelectedItem(program.getSettings().getPriceDataSettings().getFactionPrice());
 	}
 	
 	private void updateSource(PriceSource source){

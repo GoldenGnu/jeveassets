@@ -89,7 +89,6 @@ public class Settings{
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
-	private final Map<Integer, PriceData> priceFactionData = new HashMap<Integer, PriceData>(); //TypeID : int
 	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
@@ -365,8 +364,6 @@ public class Settings{
 				//Price data
 				if (eveAsset.isMarketGroup() && priceDatas.containsKey(eveAsset.getTypeID()) && !priceDatas.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
 					eveAsset.setPriceData(priceDatas.get(eveAsset.getTypeID()));
-				} else if (priceFactionData.containsKey(eveAsset.getTypeID()) && (getPriceDataSettings().getFactionPrice() == PriceDataSettings.FactionPrice.PRICES_C0RPORATION)){ //Faction Price
-					eveAsset.setPriceData(priceFactionData.get(eveAsset.getTypeID()));
 				} else { //No Price :(
 					eveAsset.setPriceData(null);
 				}
@@ -445,8 +442,6 @@ public class Settings{
 		PriceData priceData = null;
 		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()){ //Market Price
 			priceData = priceDatas.get(typeID);
-		} else if (priceFactionData.containsKey(typeID) && (getPriceDataSettings().getFactionPrice() == PriceDataSettings.FactionPrice.PRICES_C0RPORATION)){ //Faction Price
-			priceData = priceFactionData.get(typeID);
 		}
 		return Asset.getDefaultPrice(priceData);
 	}
@@ -496,10 +491,6 @@ public class Settings{
 
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
-	}
-
-	public Map<Integer, PriceData> getPriceFactionData() {
-		return priceFactionData;
 	}
 
 	public void setPriceData(Map<Integer, PriceData> priceData) {
