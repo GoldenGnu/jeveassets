@@ -42,7 +42,7 @@ public class PriceDataSettings {
 			}
 			
 		},
-		EVE_MARKETDATA("eve-marketdata", false, false){
+		EVE_MARKETDATA("eve-marketdata", false, true){
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_BUY_MAX, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_SELL_MIN};
 			}
@@ -61,12 +61,12 @@ public class PriceDataSettings {
 		;
 		private String name;
 		private boolean supportsMultipleLocations;
-		private boolean supportsSindleLocations;
+		private boolean supportsSingleLocations;
 
-		private PriceSource(String name, boolean supportMultipleLocations, boolean supportLocations) {
+		private PriceSource(String name, boolean supportMultipleLocations, boolean supportsSingleLocations) {
 			this.name = name;
 			this.supportsMultipleLocations = supportMultipleLocations;
-			this.supportsSindleLocations = supportLocations;
+			this.supportsSingleLocations = supportsSingleLocations;
 		}
 		
 		abstract public PriceMode[] getPriceTypes();
@@ -84,8 +84,8 @@ public class PriceDataSettings {
 			return supportsMultipleLocations;
 		}
 
-		public boolean supportsSindleLocations() {
-			return supportsSindleLocations;
+		public boolean supportsSingleLocations() {
+			return supportsSingleLocations;
 		}
 	}
 

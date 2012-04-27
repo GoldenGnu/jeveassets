@@ -154,7 +154,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRegions.setModel( new DefaultComboBoxModel(RegionType.getMultipleLocations()) );
 			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
 			jRegions.setEnabled(true);
-		} else if (source.supportsSindleLocations()){
+		} else if (source.supportsSingleLocations()){
 			jRegions.setModel( new DefaultComboBoxModel(RegionType.getSingleLocations()) );
 			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
 			jRegions.setEnabled(true);
