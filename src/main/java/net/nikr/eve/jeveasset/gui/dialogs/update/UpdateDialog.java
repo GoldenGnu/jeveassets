@@ -37,14 +37,9 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
-import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
-import net.nikr.eve.jeveasset.io.eveapi.AssetsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.ConquerableStationsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
-import net.nikr.eve.jeveasset.io.eveapi.IndustryJobsGetter;
-import net.nikr.eve.jeveasset.io.eveapi.MarketOrdersGetter;
+import net.nikr.eve.jeveasset.io.eveapi.*;
 
 
 public class UpdateDialog extends JDialogCentered implements ActionListener {

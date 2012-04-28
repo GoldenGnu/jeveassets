@@ -33,7 +33,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

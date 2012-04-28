@@ -32,8 +32,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class FilterSave extends JDialogCentered implements ActionListener {

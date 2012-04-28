@@ -1,7 +1,7 @@
 /* Glazed Lists                                                 (c) 2003-2006 */
 /* http://publicobject.com/glazedlists/                      publicobject.com,*/
 /*                                                     O'Dell Engineering Ltd.*/
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;

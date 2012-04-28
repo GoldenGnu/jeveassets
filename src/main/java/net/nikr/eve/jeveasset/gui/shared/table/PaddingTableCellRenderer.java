@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
 import javax.swing.BorderFactory;

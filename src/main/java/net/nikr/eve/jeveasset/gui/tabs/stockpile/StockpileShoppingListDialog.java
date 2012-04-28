@@ -32,9 +32,9 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 

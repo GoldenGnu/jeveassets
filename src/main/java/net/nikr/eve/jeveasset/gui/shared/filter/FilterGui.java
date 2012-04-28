@@ -32,7 +32,7 @@ import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterGui<E> implements ActionListener{

@@ -12,8 +12,8 @@ import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 

@@ -24,15 +24,9 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Dimension;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 
 public class TreeSelectDialog extends JDialogCentered {
 

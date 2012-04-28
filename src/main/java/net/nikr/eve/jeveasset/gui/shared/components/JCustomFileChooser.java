@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.io.File;
 import javax.swing.JFileChooser;

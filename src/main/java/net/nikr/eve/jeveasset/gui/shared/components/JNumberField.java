@@ -19,11 +19,12 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.JTextField;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 
 
 public class JNumberField extends JTextField implements FocusListener{

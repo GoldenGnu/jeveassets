@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 

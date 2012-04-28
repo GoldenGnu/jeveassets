@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;

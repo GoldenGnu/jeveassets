@@ -30,8 +30,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.JWait;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JWait;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 

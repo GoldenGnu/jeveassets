@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
@@ -34,14 +34,13 @@ import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DateCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 
 
 public class JAutoColumnTable extends JTable {

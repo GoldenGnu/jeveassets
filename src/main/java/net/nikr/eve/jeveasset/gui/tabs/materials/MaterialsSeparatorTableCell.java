@@ -17,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
+import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 
 /**
  *

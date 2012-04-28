@@ -27,7 +27,7 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public class JAssetTable extends JAutoColumnTable {

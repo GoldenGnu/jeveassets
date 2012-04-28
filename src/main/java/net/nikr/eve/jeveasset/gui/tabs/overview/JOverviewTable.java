@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.data.Overview;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 class JOverviewTable extends JAutoColumnTable{

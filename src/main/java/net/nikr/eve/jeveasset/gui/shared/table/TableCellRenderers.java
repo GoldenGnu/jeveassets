@@ -19,10 +19,11 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.table;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class TableCellRenderers {

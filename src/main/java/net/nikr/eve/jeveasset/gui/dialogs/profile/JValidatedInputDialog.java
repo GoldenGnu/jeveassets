@@ -31,7 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.text.PlainDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 

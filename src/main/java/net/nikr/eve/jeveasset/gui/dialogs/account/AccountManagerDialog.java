@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
@@ -29,27 +28,23 @@ import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Dimension;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 

@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

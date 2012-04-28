@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
+import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 /**

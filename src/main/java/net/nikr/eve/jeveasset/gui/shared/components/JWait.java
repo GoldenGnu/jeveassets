@@ -19,15 +19,11 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
+import javax.swing.*;
 
 
 public class JWait {

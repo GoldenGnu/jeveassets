@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.frame;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -32,6 +31,7 @@ import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
