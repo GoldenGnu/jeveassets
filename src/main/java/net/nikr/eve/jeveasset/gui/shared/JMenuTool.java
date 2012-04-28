@@ -148,8 +148,10 @@ public abstract class JMenuTool<T> extends JMenu {
 		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) marketTypeIDs.add(typeID);
 		if (typeName != null && !typeNames.contains(typeName)) typeNames.add(typeName);
 		if (typeID != null && !typeIDs.contains(typeID)) typeIDs.add(typeID);
-		//station can be a system
-		if (station != null && system != null && !station.equals(system) && !stations.contains(station)){
+		//station can be a system or a region
+		if (station != null && system != null && region != null 
+				&& !station.equals(system) && !station.equals(region)
+				&& !stations.contains(station)){
 			stations.add(station);
 		}
 		if (system != null && !systems.contains(system)) systems.add(system);

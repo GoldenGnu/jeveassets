@@ -325,7 +325,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 		
 		public void updateAsset(Asset asset,  ItemFlag itemFlag, Long characterID, Long regionID){
-			if (asset != null && itemFlag != null && characterID != null && regionID != null //better save then sorry
+			if (asset != null && itemFlag != null && characterID != null && regionID != null //better safe then sorry
 					&& typeID == asset.getTypeID()
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
@@ -341,7 +341,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 		
 		void updateMarketOrder(ApiMarketOrder marketOrder, Long ownerID, Location location) {
-			if (marketOrder != null && ownerID != null && location != null //better save then sorry
+			if (marketOrder != null && ownerID != null && location != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
 					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
@@ -358,7 +358,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 		
 		void updateIndustryJob(ApiIndustryJob industryJob, ItemFlag itemFlag, Long characterID, Location location, Item itemType) {
-			if (industryJob != null && itemFlag != null && characterID != null && location != null && itemType != null //better save then sorry
+			if (industryJob != null && itemFlag != null && characterID != null && location != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)

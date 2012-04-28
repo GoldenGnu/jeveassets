@@ -246,7 +246,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		Human human = (Human) jOwner.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
-		
 		String station = null;
 		String system = null;
 		String region = null;
@@ -258,6 +257,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		}
 		if (location.isStation()){
 			station = ApiIdConverter.locationName(location.getLocationID(), null, program.getSettings().getLocations());
+		} else if (location.isSystem()){
+			station = system;
+		} else if (location.isRegion()){
+			station = region;
 		}
 		//Flag
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();

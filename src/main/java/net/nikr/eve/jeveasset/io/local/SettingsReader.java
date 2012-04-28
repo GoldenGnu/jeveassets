@@ -236,6 +236,10 @@ public class SettingsReader extends AbstractXmlReader {
 			}
 			if (location.isStation()){
 				station = ApiIdConverter.locationName(location.getLocationID(), null, settings.getLocations());
+			} else if (location.isSystem()){
+				station = system;
+			} else if (location.isRegion()){
+				station = region;
 			}
 			boolean inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
 			boolean sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
