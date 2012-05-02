@@ -121,9 +121,10 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getTableFilters(NAME),
+				eventList,
 				filterList,
-				eventList);
+				program.getSettings().getTableFilters(NAME)
+				);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -280,8 +281,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	
 	public static class AssetFilterControl extends FilterControl<Asset>{
 
-		public AssetFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<Asset> filterList, EventList<Asset> eventList) {
-			super(jFrame, NAME, filters, filterList, eventList);
+		public AssetFilterControl(JFrame jFrame, EventList<Asset> eventList, FilterList<Asset> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, filterList, filters);
 		}
 		
 		@Override

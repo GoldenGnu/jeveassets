@@ -85,7 +85,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	//Table
 	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 	private EventTableModel<StockpileItem> tableModel;
-	private EventList<StockpileItem> stockpileEventList;
+	private EventList<StockpileItem> eventList;
 	private SeparatorList<StockpileItem> separatorList;
 	private EventSelectionModel<StockpileItem> selectionModel;
 	private StockpileFilterControl filterControl;
@@ -145,8 +145,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		
-		stockpileEventList = new BasicEventList<StockpileItem>();
-		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(stockpileEventList);
+		eventList = new BasicEventList<StockpileItem>();
+		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(eventList);
 		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
 		//Tables
@@ -168,9 +168,10 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getTableFilters(NAME),
+				eventList,
 				filterList,
-				stockpileEventList);
+				program.getSettings().getTableFilters(NAME)
+				);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -435,11 +436,11 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		saveExpandedState();
 		//Update list
 		try {
-			stockpileEventList.getReadWriteLock().writeLock().lock();
-			stockpileEventList.clear();
-			stockpileEventList.addAll(stockpileItems);
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(stockpileItems);
 		} finally {
-			stockpileEventList.getReadWriteLock().writeLock().unlock();
+			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Restore separator expanded/collapsed state
 		loadExpandedState();
@@ -645,8 +646,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<StockpileItem>> columns = null;
 		
-		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<StockpileItem> filterList, EventList<StockpileItem> eventList) {
-			super(jFrame, NAME, filters, filterList, eventList);
+		public StockpileFilterControl(JFrame jFrame, EventList<StockpileItem> eventList, FilterList<StockpileItem> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, filterList, filters);
 		}
 		
 		@Override

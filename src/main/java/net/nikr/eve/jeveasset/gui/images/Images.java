@@ -32,9 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum Images {
-	ASSETS_CLEAR_FIELDS ("assets_clear_fields.png"),
-	ASSETS_SAVE_FILTERS ("assets_save_filters.png"),
-	ASSETS_LOAD_FILTER ("assets_load_filter.png"),
 	ASSETS_AVERAGE ("assets_average.png"),
 	ASSETS_VOLUME ("assets_volume.png"),
 	
@@ -61,6 +58,10 @@ public enum Images {
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
 
+	FILTER_CLEAR ("filter_clear.png"),
+	FILTER_SAVE ("filter_save.png"),
+	FILTER_LOAD ("filter_load.png"),	
+	FILTER_LOAD_DEFAULT ("filter_load_default.png"),	
 	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),

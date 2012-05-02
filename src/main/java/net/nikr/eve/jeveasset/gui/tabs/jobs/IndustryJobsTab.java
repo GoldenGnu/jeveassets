@@ -25,10 +25,7 @@ import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -41,6 +38,8 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
@@ -98,12 +97,28 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
+		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		List<Filter> filter;
+		
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
+		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
+		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_READY.toString()));
+		defaultFilters.put("Active", filter); //FIXME - i18n
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_ACTIVE.toString()));
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
+		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
+		defaultFilters.put("Completed", filter); //FIXME - i18n
+		
 		//Filter
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getTableFilters(NAME),
+				eventList,
 				filterList,
-				eventList);
+				program.getSettings().getTableFilters(NAME),
+				defaultFilters
+				);
 		
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -195,8 +210,8 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{
 
-		public IndustryJobsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<IndustryJob> filterList, EventList<IndustryJob> eventList) {
-			super(jFrame, NAME, filters, filterList, eventList);
+		public IndustryJobsFilterControl(JFrame jFrame, EventList<IndustryJob> eventList, FilterList<IndustryJob> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 		}
 		
 		@Override

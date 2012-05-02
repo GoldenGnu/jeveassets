@@ -37,31 +37,50 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 public abstract class FilterControl<E> implements ListEventListener<E>{
 	
-	private final Map<String, List<Filter>> filters;
-	private final List<FilterList<E>> filterLists;
-	private final List<EventList<E>> eventLists;
-	private final FilterGui<E> gui;
 	private final String name;
+	private final List<EventList<E>> eventLists;
+	private final List<FilterList<E>> filterLists;
+	private final Map<String, List<Filter>> filters;
+	private final Map<String, List<Filter>> defaultFilters;
+	private final Map<String, List<Filter>> allFilters;
+	private final FilterGui<E> gui;
 
 	/**
 	 * Do not use this constructor - it's here only for test purposes 
 	 */
 	protected FilterControl() {
-		filters = null;
-		filterLists = null;
-		eventLists = null;
-		gui = null;
 		name = null;
+		eventLists = null;
+		filterLists = null;
+		filters = null;
+		defaultFilters = null;
+		allFilters = null;
+		gui = null;
+		
 	}
 	
-	protected FilterControl(JFrame jFrame, String name, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
-		this(jFrame, name, filters, Collections.singletonList(filterList), Collections.singletonList(eventList));
+	protected FilterControl(JFrame jFrame, String name, EventList<E> eventList, FilterList<E> filterList, Map<String, List<Filter>> filters) {
+		this(jFrame, name, Collections.singletonList(eventList), Collections.singletonList(filterList), filters);
 	}
-	protected FilterControl(JFrame jFrame, String name, Map<String, List<Filter>> filters, List<FilterList<E>> filterLists, List<EventList<E>> eventLists) {
+	
+	protected FilterControl(JFrame jFrame, String name, List<EventList<E>> eventLists, List<FilterList<E>> filterLists, Map<String, List<Filter>> filters) {
+		this(jFrame, name, eventLists, filterLists, filters, new HashMap<String, List<Filter>>());
+	}
+	
+	protected FilterControl(JFrame jFrame, String name, EventList<E> eventList, FilterList<E> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+		this(jFrame, name, Collections.singletonList(eventList), Collections.singletonList(filterList), filters, defaultFilters);
+	}
+	
+	protected FilterControl(JFrame jFrame, String name, List<EventList<E>> eventLists, List<FilterList<E>> filterLists, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
 		this.name = name;
-		this.filters = filters;
-		this.filterLists = filterLists;
 		this.eventLists = eventLists;
+		this.filterLists = filterLists;
+		this.filters = filters;
+		this.defaultFilters = defaultFilters;
+		allFilters = new HashMap<String, List<Filter>>();
+		allFilters.putAll(defaultFilters);
+		allFilters.putAll(filters);
+			
 		for (FilterList<E> filterList : filterLists){
 			filterList.addListEventListener(this);
 		}
@@ -135,6 +154,14 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 
 	Map<String, List<Filter>> getFilters() {
 		return filters;
+	}
+
+	public Map<String, List<Filter>> getAllFilters() {
+		return allFilters;
+	}
+
+	Map<String, List<Filter>> getDefaultFilters() {
+		return defaultFilters;
 	}
 	
 	int getTotalSize(){

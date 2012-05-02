@@ -64,7 +64,7 @@ class FilterGui<E> implements ActionListener{
 		this.jFrame = jFrame;
 		this.matcherControl = matcherControl;
 		
-		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getFilters(), matcherControl.getEventLists(), matcherControl.getEnumColumns());
+		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getAllFilters(), matcherControl.getEventLists(), matcherControl.getEnumColumns());
 		
 		jPanel = new JPanel();
 
@@ -86,7 +86,7 @@ class FilterGui<E> implements ActionListener{
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
-		jClearFields.setIcon(Images.ASSETS_CLEAR_FIELDS.getIcon());
+		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
 		jClearFields.setActionCommand(ACTION_CLEAR);
 		jClearFields.addActionListener(this);
 		addToolButton(jClearFields);
@@ -95,14 +95,14 @@ class FilterGui<E> implements ActionListener{
 
 		//Save Filter
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
-		jSaveFilter.setIcon(Images.ASSETS_SAVE_FILTERS.getIcon());
+		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
 		jSaveFilter.setActionCommand(ACTION_SAVE);
 		jSaveFilter.addActionListener(this);
 		addToolButton(jSaveFilter);
 
 		//Load Filter
 		jLoadFilter = new JDropDownButton(GuiShared.get().loadFilter());
-		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
+		jLoadFilter.setIcon( Images.FILTER_LOAD.getIcon());
 		jLoadFilter.keepVisible(2);
 		jLoadFilter.setTopFixedCount(2);
 		jLoadFilter.setInterval(125);
@@ -137,7 +137,7 @@ class FilterGui<E> implements ActionListener{
 		add();
 		
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<E>(jFrame, this, matcherControl.getFilters());
+		filterManager = new FilterManager<E>(jFrame, this, matcherControl.getFilters(), matcherControl.getDefaultFilters());
 	}
 	
 	JPanel getPanel(){
@@ -168,8 +168,8 @@ class FilterGui<E> implements ActionListener{
 		if (getFilters().isEmpty()){
 			filterName = GuiShared.get().filterEmpty();
 		} else {
-			if (matcherControl.getFilters().containsValue(getFilters())){
-				for (Map.Entry<String, List<Filter>> entry : matcherControl.getFilters().entrySet()){
+			if (matcherControl.getAllFilters().containsValue(getFilters())){
+				for (Map.Entry<String, List<Filter>> entry : matcherControl.getAllFilters().entrySet()){
 					if (entry.getValue().equals(getFilters())){
 						filterName = entry.getKey();
 						break;
@@ -259,8 +259,8 @@ class FilterGui<E> implements ActionListener{
 	
 	private void loadFilter(String filterName, boolean add){
 		if (filterName == null) return;
-		if (matcherControl.getFilters().containsKey(filterName)){
-			List<Filter> filters = matcherControl.getFilters().get( filterName );
+		if (matcherControl.getAllFilters().containsKey(filterName)){
+			List<Filter> filters = matcherControl.getAllFilters().get( filterName );
 			if (add){
 				addFilters(filters);
 			} else{
@@ -305,13 +305,24 @@ class FilterGui<E> implements ActionListener{
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 		
-		List<String> list = new ArrayList<String>( matcherControl.getFilters().keySet() );
-		Collections.sort(list);
+		List<String> filters = new ArrayList<String>( matcherControl.getFilters().keySet() );
+		Collections.sort(filters);
 		
-		if (list.size() > 0) jLoadFilter.addSeparator();
+		List<String> defaultFilters = new ArrayList<String>( matcherControl.getDefaultFilters().keySet() );
+		Collections.sort(defaultFilters);
 		
-		for (String s : list){
-			jMenuItem = new JMenuItem(s, Images.ASSETS_LOAD_FILTER.getIcon());
+		if (!filters.isEmpty() || !defaultFilters.isEmpty()) jLoadFilter.addSeparator();
+		
+		for (String s : defaultFilters){
+			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD_DEFAULT.getIcon());
+			jMenuItem.setRolloverEnabled(true);
+			jMenuItem.setActionCommand(s);
+			jMenuItem.addActionListener(this);
+			jLoadFilter.add(jMenuItem);
+		}
+		
+		for (String s : filters){
+			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
 			jMenuItem.addActionListener(this);
@@ -359,8 +370,8 @@ class FilterGui<E> implements ActionListener{
 			if (getMatchers().isEmpty()){
 				JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			} else {
-				String name = filterSave.show(new ArrayList<String>( matcherControl.getFilters().keySet() ));
-				if (name != null){
+				String name = filterSave.show(new ArrayList<String>( matcherControl.getFilters().keySet() ), new ArrayList<String>( matcherControl.getDefaultFilters().keySet() ));
+				if (name != null && !name.isEmpty()){
 					matcherControl.getFilters().put(name, getFilters());
 					updateFilters();
 				}

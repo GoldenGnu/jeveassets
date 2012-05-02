@@ -50,15 +50,18 @@ public class FilterManager<E> extends JDialogCentered {
 	private JButton jLoad;
 	private JButton jRename;
 	private JButton jDone;
+
 	private final Map<String, List<Filter>> filters;
-	private FilterGui<E> gui;
+	private final Map<String, List<Filter>> defaultFilters;
+	private final FilterGui<E> gui;
 
 	private ListenerClass listener = new ListenerClass();
 	
-	FilterManager(JFrame jFrame, FilterGui<E> gui, Map<String, List<Filter>> filters) {
+	FilterManager(JFrame jFrame, FilterGui<E> gui, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
 		super(null, GuiShared.get().filterManager(), jFrame);
-		this.filters = filters;
 		this.gui = gui;
+		this.filters = filters;
+		this.defaultFilters = defaultFilters;
 
 		//Load
 		jLoad = new JButton(GuiShared.get().managerLoad());
@@ -132,35 +135,17 @@ public class FilterManager<E> extends JDialogCentered {
 
 	}
 	private void renameFilter(){
-		Boolean bOverwrite = true;
+		//Get selected filter name
 		String filterName = getSelectedString();
-		if (filterName == null) return;
+		if (filterName == null) return; 
+		
+		String name = showNameDialog("", filterName, GuiShared.get().renameFilter());
+		if (name == null) return;
+		
 		List<Filter> filter = filters.get(filterName);
-		String s = (String)JOptionPane.showInputDialog(
-					this.getDialog(),
-					GuiShared.get().enterFilterName(),
-					GuiShared.get().renameFilter(),
-					JOptionPane.PLAIN_MESSAGE,
-					null,
-					null,
-					filterName
-					);
-		if (s == null) return;  //Cancel
-		if (s.length() == 0){ //No input (needed for name)
-			renameFilter();
-			return;
-		}
-		if (filters.containsKey(s) && !s.equals(filterName)){
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION){
-				bOverwrite = false;
-			}
-		}
-		if (bOverwrite){
-			filters.remove(filterName);
-			filters.remove(s);
-			filters.put(s, filter);
-		}
+		filters.remove(filterName); //Remove renamed filter (with old name)
+		filters.remove(name); //Remove overwritten filter
+		filters.put(name, filter); //Add renamed filter (with new name)
 		updateFilters();
 	}
 
@@ -195,32 +180,43 @@ public class FilterManager<E> extends JDialogCentered {
 	}
 
 	private void mergeFilters(){
-		mergeFilters("");
+		String name = showNameDialog("", "", GuiShared.get().mergeFilters());
+		if (name == null) return;
+		
+		//Get filters to merge
+		List<Filter> filter = new ArrayList<Filter>();
+		for (Object obj : jFilters.getSelectedValues()){
+			for (Filter currentFilter : filters.get( (String)obj )){
+				if (!filter.contains(currentFilter)) filter.add(currentFilter);
+			}
+		}
+		filters.put(name, filter);
+		updateFilters();
 	}
-
-	private void mergeFilters(String oldValue){
-		String name = (String)JOptionPane.showInputDialog(this.getDialog(), GuiShared.get().enterFilterName(), GuiShared.get().mergeFilters(), JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
-		boolean bOK = true;
-		if (name == null) return; //Cancel
-		if (name.equals("")) bOK = false; //No input (needed for name)
-		if (filters.containsKey(name)){
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(),  GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION){
-				bOK = false;
+	
+	private String showNameDialog(String oldValue, String filterName, String title){
+		//Show dialog
+		String name = (String)JOptionPane.showInputDialog(this.getDialog(), GuiShared.get().enterFilterName(), title, JOptionPane.PLAIN_MESSAGE, null, null, oldValue);
+		if (name == null) return null; //Cancel (do nothing)
+		
+		if (name.equals("")){ //No input (needed for name)
+			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), title, JOptionPane.PLAIN_MESSAGE);
+			return showNameDialog(name, filterName, title);
+		}
+		for (String filter : defaultFilters.keySet()){
+			if (filter.toLowerCase().equals(name.toLowerCase())){
+				JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().overwriteDefaultFilter(), title, JOptionPane.PLAIN_MESSAGE);
+				return showNameDialog(name, filterName, title);
 			}
 		}
-		if (bOK){
-			List<Filter> filter = new ArrayList<Filter>();
-			for (Object obj : jFilters.getSelectedValues()){
-				for (Filter currentFilter : filters.get( (String)obj )){
-					if (!filter.contains(currentFilter)) filter.add(currentFilter);
-				}
+		if (filters.containsKey(name) && (filterName.isEmpty() || !filterName.equals(name)) ){
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (nReturn == JOptionPane.NO_OPTION){ //Overwrite cancelled
+				return showNameDialog(name, filterName, title);
 			}
-			filters.put(name, filter);
-			updateFilters();
-		} else {
-			mergeFilters(name);
 		}
+		
+		return name;
 	}
 
 	public final void updateFilters() {

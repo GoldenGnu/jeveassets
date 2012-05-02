@@ -26,7 +26,9 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
@@ -42,6 +44,8 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
@@ -115,11 +119,17 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
 		this.addStatusbarLabel(jToCoverTotal);
 		
+		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		defaultFilters.put(TabsOrders.get().buy(), Collections.singletonList(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy())));
+		defaultFilters.put(TabsOrders.get().sell(), Collections.singletonList(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell())));
+		
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getTableFilters(NAME),
+				eventList,
 				filterList,
-				eventList);
+				program.getSettings().getTableFilters(NAME),
+				defaultFilters
+				);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -222,8 +232,8 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 	
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder>{
 
-		public MarketOrdersFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<MarketOrder> filterList, EventList<MarketOrder> eventList) {
-			super(jFrame, NAME, filters, filterList, eventList);
+		public MarketOrdersFilterControl(JFrame jFrame, EventList<MarketOrder> eventList, FilterList<MarketOrder> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 		}
 		
 		@Override

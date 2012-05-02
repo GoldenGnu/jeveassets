@@ -25,8 +25,12 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
@@ -40,11 +44,13 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 
 	public final static String ACTION_SAVE = "ACTION_SAVE";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_SELECTED = "ACTION_SELECTED";
 
-	private EventList<String> filters;
+	private final EventList<String> filters;
+	private final List<String> defaultFilters = new ArrayList<String>();
 	private JComboBox jName;
 	private JButton jSave;
+	
+	private String returnString;
 
 	public FilterSave(JFrame jFrame) {
 		super(null, GuiShared.get().saveFilter(), jFrame);
@@ -52,11 +58,11 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox();
-		jName.setActionCommand(ACTION_SELECTED);
-		jName.addActionListener(this);
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new BasicEventList<String>();
-		AutoCompleteSupport.install(jName, filters, new Filterator());
+		AutoCompleteSupport<String> autoCompleteSupport = AutoCompleteSupport.install(jName, filters, new Filterator());
+		autoCompleteSupport.setSelectsTextOnFocusGain(false);
+		autoCompleteSupport.setFirstItem("");
 		
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(ACTION_SAVE);
@@ -88,12 +94,15 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		);
 	}
 	
-	String show(List<String> list){
-		Collections.sort(list);
-		filters.clear();
-		filters.addAll(list);
+	String show(List<String> filters, List<String> defaultFilters){
+		returnString = null;
+		Collections.sort(filters);
+		this.filters.clear();
+		this.filters.addAll(filters);
+		this.defaultFilters.clear();
+		this.defaultFilters.addAll(defaultFilters);
 		this.setVisible(true);
-		return (String) jName.getSelectedItem();
+		return returnString;
 	}
 	
 	private boolean validate(){
@@ -102,9 +111,15 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		if (name.length() == 0) {
+		if (name.isEmpty()) {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
+		}
+		for (String filter : defaultFilters){
+			if (filter.toLowerCase().equals(name.toLowerCase())){ //Case insetitive contains
+				JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().overwriteDefaultFilter(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
+				return false;
+			}
 		}
 		if (filters.contains(name)){
 			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -129,12 +144,27 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	protected void windowShown() {}
 
 	@Override
-	protected void save() {}
+	protected void save() {
+		if (validate()){
+			returnString = (String) jName.getSelectedItem();
+			setVisible(false);
+		}
+		//XXX - Workaround for strange bug:
+		// 1. Doing validate JOptionPane lost focus (to another program)
+		// 2. JOptionPane is hidden (by mouse click)
+		// 3. jName is not responding (string is locked)
+		try {
+			Robot robot = new Robot();
+			robot.keyRelease(KeyEvent.VK_ENTER);
+		} catch (AWTException e) {
+		
+		}
+	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			jName.getModel().setSelectedItem("");
+			jName.setSelectedIndex(0);
 		}
 		super.setVisible(b);
 	}
@@ -142,16 +172,10 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_SAVE.equals(e.getActionCommand())){
-			if (validate()){
-				this.setVisible(false);
-			}
+			save();
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			jName.getModel().setSelectedItem(null);
 			this.setVisible(false);
-		}
-		if (ACTION_SELECTED.equals(e.getActionCommand()) && jName.getSelectedItem() == null) {
-			jName.getModel().setSelectedItem("");
 		}
 	}
 

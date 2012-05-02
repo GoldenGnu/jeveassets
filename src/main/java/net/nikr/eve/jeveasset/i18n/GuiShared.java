@@ -87,6 +87,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String save();
 	public abstract String cancel();
 	public abstract String noFilterName();
+	public abstract String overwriteDefaultFilter();
 	public abstract String overwriteFilter();
 	public abstract String addField();
 	public abstract String clearField();

@@ -91,9 +91,10 @@ public class ItemsTab extends JMainTab{
 
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getTableFilters(NAME),
+				eventList,
 				filterList,
-				eventList);
+				program.getSettings().getTableFilters(NAME)
+				);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -154,8 +155,8 @@ public class ItemsTab extends JMainTab{
 	
 	public static class ItemsFilterControl extends FilterControl<Item>{
 
-		public ItemsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<Item> filterList, EventList<Item> eventList) {
-			super(jFrame, NAME, filters, filterList, eventList);
+		public ItemsFilterControl(JFrame jFrame, EventList<Item> eventList, FilterList<Item> filterList, Map<String, List<Filter>> filters) {
+			super(jFrame, NAME, eventList, filterList, filters);
 		}
 		
 		@Override
