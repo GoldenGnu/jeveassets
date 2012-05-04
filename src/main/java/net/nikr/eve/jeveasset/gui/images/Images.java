@@ -81,12 +81,13 @@ public enum Images {
 	FILTER_AFTER_COLUMN ("filter_after_column.png"),
 	FILTER_BEFORE_COLUMN ("filter_before_column.png"),
 
-	LINK_LOOKUP ("link_lookup.png"),
-	LINK_EVE_MARKETS ("link_eve_markets.png"),
-	LINK_EVEMARKETEER ("link_evemarketeer.png"),
-	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
+	LINK_EVE_ADDICTS ("link_eve_addicts.png"),
 	LINK_EVE_CENTRAL ("link_eve_central.png"),
+	LINK_EVEMARKETEER ("link_evemarketeer.png"),
 	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
+	LINK_EVE_MARKETS ("link_eve_markets.png"),
+	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
+	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
