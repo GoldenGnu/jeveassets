@@ -42,7 +42,6 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	private final List<FilterList<E>> filterLists;
 	private final Map<String, List<Filter>> filters;
 	private final Map<String, List<Filter>> defaultFilters;
-	private final Map<String, List<Filter>> allFilters;
 	private final FilterGui<E> gui;
 
 	/**
@@ -54,7 +53,6 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		filterLists = null;
 		filters = null;
 		defaultFilters = null;
-		allFilters = null;
 		gui = null;
 		
 	}
@@ -77,10 +75,6 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		this.filterLists = filterLists;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
-		allFilters = new HashMap<String, List<Filter>>();
-		allFilters.putAll(defaultFilters);
-		allFilters.putAll(filters);
-			
 		for (FilterList<E> filterList : filterLists){
 			filterList.addListEventListener(this);
 		}
@@ -157,6 +151,10 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	}
 
 	public Map<String, List<Filter>> getAllFilters() {
+		//Need to be updated each time something has changed....
+		Map<String, List<Filter>> allFilters = new HashMap<String, List<Filter>>();
+		allFilters.putAll(defaultFilters);
+		allFilters.putAll(filters);
 		return allFilters;
 	}
 
