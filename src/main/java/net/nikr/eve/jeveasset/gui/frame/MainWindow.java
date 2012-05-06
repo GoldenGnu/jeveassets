@@ -58,7 +58,11 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame = new JFrame();
 		updateTitle();
 		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
-		jFrame.setIconImage(Images.TOOL_ASSETS.getImage());
+		List<Image> icons = new ArrayList<Image>();
+		icons.add(Images.TOOL_ASSETS.getImage());
+		icons.add(Images.MISC_ASSETS_32.getImage());
+		icons.add(Images.MISC_ASSETS_64.getImage());
+		jFrame.setIconImages(icons);
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
