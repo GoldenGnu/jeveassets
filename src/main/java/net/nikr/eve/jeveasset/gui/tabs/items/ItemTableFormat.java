@@ -59,7 +59,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getCategory();
 		}
 	},
-	PRICE_BASE(String.class, GlazedLists.comparableComparator()) {
+	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnPriceBase();
@@ -69,7 +69,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getPrice();
 		}
 	},
-	META(String.class, GlazedLists.comparableComparator()) {
+	META(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnMeta();
@@ -89,7 +89,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getTech();
 		}
 	},
-	VOLUME(String.class, GlazedLists.comparableComparator()) {
+	VOLUME(Float.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnVolume();
@@ -99,7 +99,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getVolume();
 		}
 	},
-	TYPE_ID(String.class, GlazedLists.comparableComparator()) {
+	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsItems.get().columnTypeID();
