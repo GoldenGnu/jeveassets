@@ -50,7 +50,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 		writeAccounts(xmldoc, settings.getAccounts());
 		try {
-			writeXmlFile(xmldoc, filename);
+			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
 			LOG.error("Assets not saved "+ex.getMessage(), ex);
 		}

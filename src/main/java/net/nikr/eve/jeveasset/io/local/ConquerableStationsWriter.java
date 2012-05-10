@@ -47,7 +47,7 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 
 		//xmldoc.normalizeDocument();
 		try {
-			writeXmlFile(xmldoc, Settings.getPathConquerableStations());
+			writeXmlFile(xmldoc, Settings.getPathConquerableStations(), true);
 		} catch (XmlException ex) {
 			LOG.error("Conquerable stations not saved "+ex.getMessage(), ex);
 		}

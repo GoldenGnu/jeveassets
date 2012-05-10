@@ -21,20 +21,11 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
@@ -57,14 +48,14 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		}
 	}
-	protected static void writeXmlFile(Document doc, String filename) throws XmlException  {
-		writeXmlFile(doc, filename, "UTF-16");
+	protected static void writeXmlFile(Document doc, String filename, boolean createBackup) throws XmlException  {
+		writeXmlFile(doc, filename, "UTF-16", createBackup);
 	}
 
-	protected static void writeXmlFile(Document doc, String filename, String encoding) throws XmlException  {
+	private static void writeXmlFile(Document doc, String filename, String encoding, boolean createBackup) throws XmlException  {
 		DOMSource source = new DOMSource(doc);
 		try {
-			backupFile(filename);
+			if (createBackup) backupFile(filename);
 			File outputFile = new File(filename);
 			FileOutputStream outputStream = new FileOutputStream(outputFile);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
