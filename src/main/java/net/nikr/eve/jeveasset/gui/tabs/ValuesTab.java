@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
@@ -215,7 +216,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		bestModule = null;
 		for (Asset eveAsset : eveAssetEventList){
 			//Skip market orders
-			if (eveAsset.getFlag().equals(TabsValues.get().market()))	continue;
+			if (eveAsset.getFlag().equals(General.get().marketOrderFlag()))	continue;
 			
 			if (eveAsset.isCorporation()){ //Corp Asset
 				//Corp Total Value

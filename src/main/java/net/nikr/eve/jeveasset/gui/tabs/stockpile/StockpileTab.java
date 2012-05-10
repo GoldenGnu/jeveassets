@@ -359,11 +359,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				ownersName.put(human.getOwnerID(), human.getName());
 			}
 		}
-		//ItemFlag Look-Up
-		Map<String, ItemFlag> flags = new HashMap<String, ItemFlag>();
-		for (ItemFlag itemFlag : program.getSettings().getItemFlags().values()){
-			flags.put(itemFlag.getFlagName(), itemFlag);
-		}
 		//Regions Look-Up
 		Map<String, Long> regions = new HashMap<String, Long>();
 		for (Location location : program.getSettings().getLocations().values()){
@@ -393,8 +388,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 					//Inventory AKA Assets
 					if (stockpile.isInventory()){
 						for (Asset asset : program.getEveAssetEventList()){
-							if (General.get().marketOrderFlag().equals(asset.getFlag())) continue; //Ignore market orders
-							item.updateAsset(asset, flags.get(asset.getFlag()) , ownersID.get(asset.getOwner()), regions.get(asset.getRegion()));
+							if (asset.getFlag().equals(General.get().marketOrderFlag())) continue; //Ignore market orders
+							item.updateAsset(asset, ownersID.get(asset.getOwner()), regions.get(asset.getRegion()));
 						}
 					}
 					//Orders & Jobs

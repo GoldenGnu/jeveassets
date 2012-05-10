@@ -324,12 +324,12 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.marketGroup = marketGroup;
 		}
 		
-		public void updateAsset(Asset asset,  ItemFlag itemFlag, Long characterID, Long regionID){
-			if (asset != null && itemFlag != null && characterID != null && regionID != null //better safe then sorry
+		public void updateAsset(Asset asset, Long characterID, Long regionID){
+			if (asset != null && characterID != null && regionID != null //better safe then sorry
 					&& typeID == asset.getTypeID()
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
-					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
+					&& matchFlag(asset, stockpile.getFlagID())
 					&& ((stockpile.getLocation() != null
 					&& stockpile.getLocation().equals(asset.getLocation())) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
@@ -338,6 +338,15 @@ public class Stockpile implements Comparable<Stockpile> {
 					){
 				inventoryCountNow = inventoryCountNow + asset.getCount();
 			}
+		}
+		
+		private boolean matchFlag(Asset asset, int flagID){
+			if (flagID < 0) return true; //Ignore flag
+			if (asset.getFlagID() == flagID) return true; //Match self
+			for (Asset parentAsset : asset.getParents()){ //Test parents
+				if (parentAsset.getFlagID() == flagID) return true; //Parent match
+			}
+			return false; //No match
 		}
 		
 		void updateMarketOrder(ApiMarketOrder marketOrder, Long ownerID, Location location) {

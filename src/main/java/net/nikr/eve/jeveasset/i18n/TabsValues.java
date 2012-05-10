@@ -46,7 +46,6 @@ public abstract class TabsValues extends Bundle {
 	public abstract String corporation();
 	public abstract String escrows();
 	public abstract String grand();
-	public abstract String market();
 	public abstract String no();
 	public abstract String no1();
 	public abstract String none();

@@ -111,6 +111,7 @@ public class Asset implements Comparable<Asset> {
 	private long itemID; //ItemID : long
 	private long solarSystemID; //LocationID : long
 	private int typeID; //TypeID : int
+	private int flagID; //FlagID : int
 	private String typeName;
 	private String name;
 	private String group;
@@ -143,7 +144,7 @@ public class Asset implements Comparable<Asset> {
 	 */
 	protected Asset() {}
 
-	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, double priceBase, int meta, String tech, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
+	public Asset(String typeName, String group, String category, String owner, long count, String location, List<Asset> parents, String flag, int flagID, double priceBase, int meta, String tech, long itemID, int typeID, boolean marketGroup, boolean corporation, float volume, String region, long locationID, boolean singleton, String security, String system, long solarSystemID, int rawQuantity, boolean piMaterial) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -153,6 +154,7 @@ public class Asset implements Comparable<Asset> {
 		this.location = location;
 		this.parents = parents;
 		this.flag = flag;
+		this.flagID = flagID;
 		this.priceBase = priceBase;
 		this.meta = meta;
 		this.tech = tech;
@@ -219,6 +221,10 @@ public class Asset implements Comparable<Asset> {
 	
 	public String getFlag() {
 		return flag;
+	}
+
+	public int getFlagID() {
+		return flagID;
 	}
 	
 	public String getGroup() {

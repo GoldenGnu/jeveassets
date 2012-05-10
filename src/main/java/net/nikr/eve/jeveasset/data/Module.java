@@ -66,17 +66,21 @@ public class Module implements Comparable<Module> {
 		if (s.contains("RigSlot")) return "5Rig Slots";
 		if (s.contains("SubSystem")) return "6Sub Systems";
 		if (s.contains("DroneBay")) return "7Drone Bay";
-		if (s.contains("SpecializedFuelBay")) return "8Fuel Bay";
-		if (s.contains("SpecializedOreHold")) return "8Ore Bay";
-		if (s.contains("SpecializedGasHold")) return "8Gas Bay";
-		if (s.contains("SpecializedMineralHold")) return "8Mineral Bay";
-		if (s.contains("SpecializedSalvageHold")) return "8Salvage Bay";
-		if (s.contains("SpecializedShipHold")) return " Ship Bay";
-		if (s.contains("SpecializedSmallShipHold")) return "8Small Ship Bay";
-		if (s.contains("SpecializedMediumShipHold")) return "8Medium Ship Bay";
-		if (s.contains("SpecializedLargeShipHold")) return "8Large Ship Bay";
-		if (s.contains("SpecializedIndustrialShipHold")) return "8Industrial Ship Bay";
-		if (s.contains("SpecializedAmmoHold")) return "8Ammo Bay";
+		if (s.contains("Cargo")) return "8Cargo";
+		if (s.contains("SpecializedFuelBay")) return "9Fuel Bay";
+		if (s.contains("SpecializedOreHold")) return "9Ore Bay";
+		if (s.contains("SpecializedGasHold")) return "9Gas Bay";
+		if (s.contains("SpecializedMineralHold")) return "9Mineral Bay";
+		if (s.contains("SpecializedSalvageHold")) return "9Salvage Bay";
+		if (s.contains("SpecializedShipHold")) return "9Ship Bay";
+		if (s.contains("SpecializedSmallShipHold")) return "9Small Ship Bay";
+		if (s.contains("SpecializedMediumShipHold")) return "9Medium Ship Bay";
+		if (s.contains("SpecializedLargeShipHold")) return "9Large Ship Bay";
+		if (s.contains("SpecializedIndustrialShipHold")) return "9Industrial Ship Bay";
+		if (s.contains("SpecializedAmmoHold")) return "9Ammo Bay";
+		if (s.contains("QuafeBay")) return "9Quafe Bay";
+		if (s.contains("SpecializedCommandCenterHold")) return "9Command Center Bay";
+		if (s.contains("SpecializedPlanetaryCommoditiesHold")) return "9Planetary Commodities Bay";
 		return "8"+s;
 	}
 

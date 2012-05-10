@@ -84,12 +84,17 @@ public class EveFittingWriter extends AbstractXmlWriter {
 			List<Asset> assets = eveAsset.getAssets();
 			for (int a = 0; a < assets.size(); a++){
 				Asset module = assets.get(a);
-				if (modules.containsKey(module.getFlag())){
-					modules.get(module.getFlag()).add(module);
+				String flag = module.getFlag();
+				if (flag.contains(" > ")){
+					int start = flag.indexOf(" > ") + 3;
+					flag = flag.substring(start);
+				}
+				if (modules.containsKey(flag)){
+					modules.get(flag).add(module);
 				} else {
 					List<Asset> subModules = new ArrayList<Asset>();
 					subModules.add(module);
-					modules.put(module.getFlag(), subModules);
+					modules.put(flag, subModules);
 				}
 			}
 			Element hardwareNode;
@@ -150,7 +155,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 				for (Map.Entry<String, Long> entry : moduleCount.entrySet()){
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
 					hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
-					hardwareNode.setAttributeNS(null, "slot", "dronebay");
+					hardwareNode.setAttributeNS(null, "slot", "drone bay");
 					hardwareNode.setAttributeNS(null, "type", entry.getKey());
 					fittingNode.appendChild(hardwareNode);
 				}

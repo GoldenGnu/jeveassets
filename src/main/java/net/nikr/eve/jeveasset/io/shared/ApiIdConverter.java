@@ -35,9 +35,16 @@ public class ApiIdConverter {
 
 	private ApiIdConverter() {}
 
-	public static String flag(int flag, Map<Integer, ItemFlag> flags) {
+	public static String flag(int flag, Asset parentAsset, Map<Integer, ItemFlag> flags) {
 		ItemFlag itemFlag = flags.get(flag);
-		return itemFlag.getFlagName();
+		if (itemFlag != null){
+			if (parentAsset != null && !parentAsset.getFlag().isEmpty()){
+				return parentAsset.getFlag()+" > "+itemFlag.getFlagName();
+			} else {
+				return itemFlag.getFlagName();
+			}
+		}
+		return "!"+flag;
 	}
 
 	public static boolean locationTest(long locationID, Asset parentAsset, Map<Long, Location> locations) {

@@ -27,10 +27,7 @@ import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -308,11 +305,10 @@ public class AssetsReader extends AbstractXmlReader {
 
 	private static void parseAssets(Node node, List<Asset> assets, Asset parentEveAsset, Settings settings){
 		NodeList assetsNodes = node.getChildNodes();
-		Asset eveAsset = null;
 		for (int a = 0; a < assetsNodes.getLength(); a++){
 			Node currentNode = assetsNodes.item(a);
 			if (currentNode.getNodeName().equals("asset")){
-				eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
+				Asset eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
 				if (parentEveAsset == null){
 					assets.add(eveAsset);
 				} else {
@@ -324,7 +320,7 @@ public class AssetsReader extends AbstractXmlReader {
 	}
 	private static Asset parseEveAsset(Node node, Asset parentEveAsset, Settings settings){
 		long count = AttributeGetters.getLong(node, "count");
-		String flag = AttributeGetters.getString(node, "flag");
+		
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		long locationID = AttributeGetters.getInt(node, "locationid");
@@ -336,7 +332,18 @@ public class AssetsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "rawquantity")){
 			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
 		}
-
+		int flagID = 0;
+		if (AttributeGetters.haveAttribute(node, "flagid")){
+			flagID = AttributeGetters.getInt(node, "flagid");
+		} else { //Workaround for the old system
+			String flag = AttributeGetters.getString(node, "flag");
+			for (ItemFlag itemFlag : settings.getItemFlags().values()){
+				if (flag.equals(itemFlag.getFlagName())){
+					flagID = itemFlag.getFlagID();
+					break;
+				}
+			}
+		}
 		//Calculated:
 		String name = ApiIdConverter.typeName(typeID, settings.getItems());
 		String group = ApiIdConverter.group(typeID, settings.getItems());
@@ -350,9 +357,10 @@ public class AssetsReader extends AbstractXmlReader {
 		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
 		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getLocations());
 		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
+		String flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
 		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
-		return new Asset(name, group, category, owner, count, location, parents, flag, priceBase, meta, tech, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, owner, count, location, parents, flag, flagID, priceBase, meta, tech, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 }
