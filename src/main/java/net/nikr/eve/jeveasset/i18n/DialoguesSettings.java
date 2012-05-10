@@ -118,6 +118,7 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in WindowSettingsPanel
 	public abstract String windowWindow();
 	public abstract String windowSaveOnExit();
+	public abstract String windowAlwaysOnTop();
 	public abstract String windowFixed();
 	public abstract String windowWidth();
 	public abstract String windowHeight();

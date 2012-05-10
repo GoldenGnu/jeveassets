@@ -57,7 +57,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
-		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
+		setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
+		jFrame.setAlwaysOnTop(program.getSettings().isWindowAlwaysOnTop());
 		List<Image> icons = new ArrayList<Image>();
 		icons.add(Images.TOOL_ASSETS.getImage());
 		icons.add(Images.MISC_ASSETS_32.getImage());
@@ -190,7 +191,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 
 	public void updateSettings(){
 		if (program.getSettings().isWindowAutoSave()){
-			program.getSettings().setWindowMaximized( (jFrame.getState() == JFrame.MAXIMIZED_BOTH) );
+			program.getSettings().setWindowMaximized( (jFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH) );
 			if (jFrame.getExtendedState() != JFrame.MAXIMIZED_BOTH){
 				program.getSettings().setWindowSize(jFrame.getSize());
 				program.getSettings().setWindowLocation(jFrame.getLocation());

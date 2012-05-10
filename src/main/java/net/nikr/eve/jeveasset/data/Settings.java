@@ -106,6 +106,7 @@ public class Settings{
 	private Dimension windowSize;
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
+	private boolean windowAlwaysOnTop;
 	private Profile activeProfile;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
@@ -742,6 +743,14 @@ public class Settings{
 
 	public void setWindowAutoSave(boolean windowAutoSave) {
 		this.windowAutoSave = windowAutoSave;
+	}
+
+	public boolean isWindowAlwaysOnTop() {
+		return windowAlwaysOnTop;
+	}
+
+	public void setWindowAlwaysOnTop(boolean windowAlwaysOnTop) {
+		this.windowAlwaysOnTop = windowAlwaysOnTop;
 	}
 	
 	public boolean isSettingsLoaded() {

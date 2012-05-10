@@ -296,10 +296,15 @@ public class SettingsReader extends AbstractXmlReader {
 		int width = AttributeGetters.getInt(windowElement, "width");
 		boolean maximized = AttributeGetters.getBoolean(windowElement, "maximized");
 		boolean autosave = AttributeGetters.getBoolean(windowElement, "autosave");
+		boolean alwaysOnTop = false;
+		if (AttributeGetters.haveAttribute(windowElement, "alwaysontop")){
+			alwaysOnTop = AttributeGetters.getBoolean(windowElement, "alwaysontop");
+		}
 		settings.setWindowLocation( new Point(x, y));
 		settings.setWindowSize( new Dimension(width, height));
 		settings.setWindowMaximized(maximized);
 		settings.setWindowAutoSave(autosave);
+		settings.setWindowAlwaysOnTop(alwaysOnTop);
 	}
 
 	private static void parseProxy(Element proxyElement, Settings settings) throws XmlException {

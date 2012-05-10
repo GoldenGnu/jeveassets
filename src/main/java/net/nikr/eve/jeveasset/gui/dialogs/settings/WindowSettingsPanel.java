@@ -49,6 +49,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	JTextField jX;
 	JTextField jY;
 	JCheckBox jMaximized;
+	JCheckBox jAlwaysOnTop;
 	JButton jDefault;
 
 	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog) {
@@ -74,8 +75,9 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		JLabel jYLabel = new JLabel(DialoguesSettings.get().windowY());
 		jY = new JNumberField();
 
-		JLabel jMaximizedLabel = new JLabel(DialoguesSettings.get().windowMaximised());
-		jMaximized = new JCheckBox();
+		jMaximized = new JCheckBox(DialoguesSettings.get().windowMaximised());
+		
+		jAlwaysOnTop = new JCheckBox(DialoguesSettings.get().windowAlwaysOnTop());
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jAutoSave);
@@ -89,24 +91,21 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jAlwaysOnTop)
 				.addComponent(jAutoSave)
 				.addComponent(jFixed)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jWidthLabel)
 						.addComponent(jHeightLabel)
-						.addComponent(jMaximizedLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jWidth)
 						.addComponent(jHeight)
-						.addComponent(jMaximized)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jXLabel)
 						.addComponent(jYLabel)
-
-
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jX)
@@ -114,10 +113,12 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 						.addComponent(jDefault)
 					)
 				)
+				.addComponent(jMaximized)
 		);
 
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jAlwaysOnTop, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAutoSave, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jFixed, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -133,7 +134,6 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 					.addComponent(jY, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jMaximizedLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jMaximized, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -204,6 +204,9 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 				program.getMainWindow().setSizeAndLocation(d, p, maximized);
 			}
 		}
+		boolean alwaysOnTop = jAlwaysOnTop.isSelected();
+		program.getSettings().setWindowAlwaysOnTop(alwaysOnTop);
+		program.getMainWindow().getFrame().setAlwaysOnTop(alwaysOnTop);
 		return false;
 	}
 
@@ -218,6 +221,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			setValuesFromWindow();
 			setInputEnabled(true);
 		}
+		jAlwaysOnTop.setSelected(program.getSettings().isWindowAlwaysOnTop());
 	}
 
 	@Override

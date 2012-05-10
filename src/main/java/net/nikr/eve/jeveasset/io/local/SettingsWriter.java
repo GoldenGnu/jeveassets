@@ -199,6 +199,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "width", String.valueOf(settings.getWindowSize().width));
 		parentNode.setAttributeNS(null, "maximized", String.valueOf(settings.isWindowMaximized()));
 		parentNode.setAttributeNS(null, "autosave", String.valueOf(settings.isWindowAutoSave()));
+		parentNode.setAttributeNS(null, "alwaysontop", String.valueOf(settings.isWindowAlwaysOnTop()));
 	}
 
 	private static void writeUserPrices(Document xmldoc, Map<Integer, UserItem<Integer,Double>> userPrices){
