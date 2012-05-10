@@ -25,12 +25,7 @@ import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -93,7 +88,7 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		tableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, tableFormat);
 		tableModel.addTableModelListener(this);
 		//Tables
-		jTable = new JMarketOrdersTable(tableModel);
+		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Table Selection
 		selectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);

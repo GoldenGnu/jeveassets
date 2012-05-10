@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
@@ -34,8 +35,8 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 
 	private EventTableModel<MarketOrder> tableModel;
 	
-	public JMarketOrdersTable(EventTableModel<MarketOrder> tableModel) {
-		super(tableModel);
+	public JMarketOrdersTable(Program program, EventTableModel<MarketOrder> tableModel) {
+		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 	
@@ -45,10 +46,6 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		boolean isSelected = isCellSelected(row, column);
 		MarketOrder marketOrder = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		
-		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
 		
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())){
 			if (marketOrder.getExpires().before(new Date())){

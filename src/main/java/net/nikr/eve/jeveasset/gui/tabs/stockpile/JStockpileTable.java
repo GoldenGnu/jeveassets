@@ -35,11 +35,9 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 public class JStockpileTable extends JSeparatorTable{
 
 	private EventTableModel<StockpileItem> tableModel;
-	private Program program;
 	
 	public JStockpileTable(Program program, EventTableModel<StockpileItem> tableModel) {
-		super(tableModel);
-		this.program = program;
+		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 	
@@ -49,15 +47,6 @@ public class JStockpileTable extends JSeparatorTable{
 		boolean isSelected = isCellSelected(row, column);
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		
-		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
-		
-		if (object instanceof SeparatorList.Separator){
-			component.setForeground(Color.BLACK);
-			component.setBackground(Color.LIGHT_GRAY);
-		}
 		
 		if (object instanceof StockpileItem){
 			StockpileItem stockpileItem = (StockpileItem) object;

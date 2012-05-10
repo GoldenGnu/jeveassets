@@ -43,14 +43,14 @@ public abstract class DialoguesSettings extends Bundle {
 	}
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
-	public abstract String enterFilter();
-	public abstract String hilightSelected();
 	public abstract String showSellOrReprocessColours();
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
 	public abstract String searchForNewVersion(String programName);
 	public abstract String searchForNewVersionBeta();
+	public abstract String enterFilter();
+	public abstract String highlightSelectedRow();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();

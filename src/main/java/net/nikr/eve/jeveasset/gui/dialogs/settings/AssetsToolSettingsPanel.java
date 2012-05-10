@@ -30,47 +30,32 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
-		private JCheckBox jEnterFilters;
-		private JCheckBox jMarkSelectedRow;
 		private JCheckBox jReprocessColors;
 
 	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon(), parentNode);
 
-		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
-
-		jMarkSelectedRow = new JCheckBox(DialoguesSettings.get().hilightSelected());
-
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jEnterFilters)
-				.addComponent(jMarkSelectedRow)
 				.addComponent(jReprocessColors)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addComponent(jEnterFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jMarkSelectedRow, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jReprocessColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean update = jMarkSelectedRow.isSelected() != program.getSettings().isHighlightSelectedRows()
-						|| jReprocessColors.isSelected() != program.getSettings().isReprocessColors();
-		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
-		program.getSettings().setHighlightSelectedRows(jMarkSelectedRow.isSelected());
+		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors();
 		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
 		return update;
 	}
 
 	@Override
 	public void load() {
-		jEnterFilters.setSelected(program.getSettings().isFilterOnEnter());
-		jMarkSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
 		jReprocessColors.setSelected(program.getSettings().isReprocessColors());
 	}
 }

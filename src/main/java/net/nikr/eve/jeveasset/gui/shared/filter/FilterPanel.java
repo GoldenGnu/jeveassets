@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 
 class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener{
 	private final static String ACTION_FILTER = "ACTION_FILTER";
+	private final static String ACTION_FILTER_TIMER = "ACTION_FILTER_TIMER";
 	private final static String ACTION_REMOVE = "ACTION_REMOVE";
 	
 	private JPanel jPanel;
@@ -140,7 +141,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jRemove.setActionCommand(ACTION_REMOVE);
 		
 		timer = new Timer(500, this);
-		timer.setActionCommand(ACTION_FILTER);
+		timer.setActionCommand(ACTION_FILTER_TIMER);
 		
 		jPanel = new JPanel();
 
@@ -309,6 +310,18 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 	}
 	
+	private void processFilterAction(ActionEvent e){
+		if (jColumn.equals(e.getSource())) updateNumeric(true);
+		if (jCompare.equals(e.getSource())) updateCompare(true);
+		if (jEnabled.isSelected()){
+			jText.setBackground(Color.WHITE);
+		} else {
+			jText.setBackground(new Color(255, 200, 200));
+		}
+		timer.stop();
+		refilter();
+	}
+	
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		timer.stop();
@@ -351,15 +364,12 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 			refilter();
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())){
-			if (jColumn.equals(e.getSource())) updateNumeric(true);
-			if (jCompare.equals(e.getSource())) updateCompare(true);
-			if (jEnabled.isSelected()){
-				jText.setBackground(Color.WHITE);
-			} else {
-				jText.setBackground(new Color(255, 200, 200));
+			processFilterAction(e);
+		}
+		if (ACTION_FILTER_TIMER.equals(e.getActionCommand())){
+			if (!Settings.isFilterOnEnter()){
+				processFilterAction(e);
 			}
-			timer.stop();
-			refilter();
 		}
 	}
 

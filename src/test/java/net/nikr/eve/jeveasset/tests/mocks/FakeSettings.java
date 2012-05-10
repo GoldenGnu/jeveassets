@@ -143,11 +143,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isFilterOnEnter() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isForceUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -426,6 +421,14 @@ public abstract class FakeSettings extends Settings {
 	public Map<String, ResizeMode> getTableResize() {
 		throw new UnsupportedOperationException("not implemented");
 	}
-	
-	
+
+	@Override
+	public boolean isWindowAlwaysOnTop() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setWindowAlwaysOnTop(boolean windowAlwaysOnTop) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

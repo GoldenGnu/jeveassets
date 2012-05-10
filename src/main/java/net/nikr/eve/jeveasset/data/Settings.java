@@ -113,6 +113,7 @@ public class Settings{
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private static CsvSettings csvSettings = new CsvSettings();
+	private static boolean filterOnEnter = false;
 	
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
@@ -660,11 +661,12 @@ public class Settings{
 		return tableResize;
 	}
 	
-	public boolean isFilterOnEnter() {
-		return flags.get(FLAG_FILTER_ON_ENTER);
+	public static boolean isFilterOnEnter() {
+		return Settings.filterOnEnter; //Static
 	}
 	public void setFilterOnEnter(boolean filterOnEnter) {
-		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter);
+		Settings.filterOnEnter = filterOnEnter; //Static
+		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
 	public boolean isHighlightSelectedRows() {
 		return flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
@@ -818,8 +820,8 @@ public class Settings{
 	private static String getLocalFile(String filename, boolean dynamic){
 		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
 		try {
-			File file = null;
-			File ret = null;
+			File file;
+			File ret;
 			if (dynamic) {
 				File userDir = new File(System.getProperty("user.home", "."));
 				if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences

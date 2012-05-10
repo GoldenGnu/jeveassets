@@ -75,7 +75,7 @@ public class ItemsTab extends JMainTab{
 		//Table Model
 		tableModel = new EventTableModel<Item>(sortedList, tableFormat);
 		//Tables
-		jTable = new JAutoColumnTable(tableModel);
+		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Table Selection
 		selectionModel = new EventSelectionModel<Item>(sortedList);

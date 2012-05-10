@@ -129,7 +129,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
 		//Tables
-		jTable = new JSeparatorTable(moduleTableModel);
+		jTable = new JSeparatorTable(program, moduleTableModel);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
 		//Table Render

@@ -23,17 +23,20 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
@@ -48,9 +51,11 @@ public class JAutoColumnTable extends JTable {
 	private JViewport jViewport = null;
 	private int size = 0;
 	private ResizeMode resizeMode = null;
+	protected Program program;
 	
-	public JAutoColumnTable(TableModel tableModel) {
+	public JAutoColumnTable(Program program, TableModel tableModel) {
 		super(tableModel);
+		this.program = program;
 
 		//Listeners
 		ModelListener modelListener = new ModelListener();
@@ -70,6 +75,27 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
+	}
+	
+	@Override
+	public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
+		Component component = super.prepareRenderer(renderer, row, column);
+		boolean isSelected = isCellSelected(row, column);
+		
+		if (component instanceof JPanel){ //Ignore Separator Panels
+			return component;
+		}
+		
+		//Default Colors
+		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
+		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
+
+		//Highlight selected row
+		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
+			component.setBackground( new Color(220,240,255) );
+			return component;
+		}
+		return component;
 	}
 
 	public void autoResizeColumns() {

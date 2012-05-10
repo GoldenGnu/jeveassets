@@ -84,7 +84,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		tableModel = new EventTableModel<IndustryJob>(sortedList, tableFormat);
 		tableModel.addTableModelListener(this);
 		//Tables
-		jTable = new JAutoColumnTable(tableModel);
+		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Table Selection
 		selectionModel = new EventSelectionModel<IndustryJob>(sortedList);

@@ -124,7 +124,7 @@ public class OverviewTab extends JMainTab {
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
-		jTable = new JOverviewTable(overviewTableModel);
+		jTable = new JOverviewTable(program, overviewTableModel);
 		//Sorters
 		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Table Selection

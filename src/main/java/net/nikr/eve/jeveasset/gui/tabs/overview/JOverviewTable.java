@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableCellRenderer;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
@@ -36,8 +37,8 @@ class JOverviewTable extends JAutoColumnTable{
 	private List<String> groupedLocations = new ArrayList<String>();
 	private EventTableModel<Overview> tableModel;
 
-	public JOverviewTable(EventTableModel<Overview> tableModel) {
-		super(tableModel);
+	public JOverviewTable(Program program, EventTableModel<Overview> tableModel) {
+		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 
@@ -51,10 +52,6 @@ class JOverviewTable extends JAutoColumnTable{
 		boolean isSelected = isCellSelected(row, column);
 		Overview overview = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		
-		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
 
 		if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
 			if (!isSelected){

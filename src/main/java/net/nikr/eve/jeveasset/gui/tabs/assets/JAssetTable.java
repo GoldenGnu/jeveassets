@@ -34,11 +34,8 @@ public class JAssetTable extends JAutoColumnTable {
 
 	private EventTableModel<Asset> tableModel;
 
-	private Program program;
-
 	public JAssetTable(Program program, EventTableModel<Asset> tableModel) {
-		super(tableModel);
-		this.program = program;
+		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 
@@ -49,10 +46,6 @@ public class JAssetTable extends JAutoColumnTable {
 		Asset asset = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 		
-		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
-
 		//User set price
 		if (asset.isUserPrice() && columnName.equals(EveAssetTableFormat.PRICE.getColumnName())){
 			if (!isSelected){
@@ -114,12 +107,6 @@ public class JAssetTable extends JAutoColumnTable {
 			} else {
 				component.setBackground( this.getSelectionBackground().darker() );
 			}
-			return component;
-		}
-
-		//Selected row highlighting
-		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
-			component.setBackground( new Color(220,240,255) );
 			return component;
 		}
 		return component;

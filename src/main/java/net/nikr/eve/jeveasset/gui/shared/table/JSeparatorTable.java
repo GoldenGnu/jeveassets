@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.*;
+import net.nikr.eve.jeveasset.Program;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
@@ -30,8 +31,8 @@ public class JSeparatorTable extends JAutoColumnTable{
 	private boolean tableChanged = true;
 	
 	
-	public JSeparatorTable(EventTableModel tableModel) {
-		super(tableModel);
+	public JSeparatorTable(Program program, EventTableModel tableModel) {
+		super(program, tableModel);
 		setUI(new SpanTableUI());
 
 		this.getTableHeader().setReorderingAllowed(false);
@@ -39,7 +40,7 @@ public class JSeparatorTable extends JAutoColumnTable{
 		this.separatorRenderer = getDefaultRenderer(Object.class);
 		revalidateLocked = false;
 	}
-
+	
 
 	public void expandSeparators(boolean expand, SeparatorList<?> separatorList){
 		final EventSelectionModel selectModel = getEventSelectionModel();
