@@ -24,16 +24,75 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
+import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
 
+	enum OrderStatus{
+		ACTIVE() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusActive();
+			}
+		},
+		CLOSED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusClosed();
+			}
+		},
+		FULFILLED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusFulfilled();
+			}
+		},
+		EXPIRED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusExpired();
+			}
+		},
+		PARTIALLY_FULFILLED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusPartiallyFulfilled();
+			}
+		},
+		CANCELLED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusCancelled();
+			}
+		},
+		PENDING() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusPending();
+			}
+		},
+		CHARACTER_DELETED() {
+			@Override
+			String getI18N() {
+				return TabsOrders.get().statusCharacterDeleted();
+			}
+		},
+		;
+		
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
+	
 	private String name;
 	private String location;
 	private String system;
 	private String region;
 	private String rangeFormated;
-	private String status;
+	private OrderStatus status;
 	private String owner;
 	private Quantity quantity;
 
@@ -61,35 +120,37 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		this.owner = owner;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
-		if (this.getRange() == -1) rangeFormated = "Station";
-		if (this.getRange() == 0) rangeFormated = "Solar System";
-		if (this.getRange() == 32767) rangeFormated = "Region";
-		if (this.getRange() == 1) rangeFormated = "1 Jump";
-		if (this.getRange() > 1 && this.getRange() < 32767) rangeFormated = this.getRange()+" Jumps";
+		if (this.getRange() == -1) rangeFormated = TabsOrders.get().rangeStation();
+		if (this.getRange() == 0) rangeFormated = TabsOrders.get().rangeSolarSystem();
+		if (this.getRange() == 32767) rangeFormated = TabsOrders.get().rangeRegion();
+		if (this.getRange() == 1) rangeFormated = TabsOrders.get().rangeJump();
+		if (this.getRange() > 1 && this.getRange() < 32767) rangeFormated = TabsOrders.get().rangeJumps(this.getRange());
 		//0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
-		status = "";
 		switch (this.getOrderState()){
 			case 0: 
-				status = "Active";
+				status = OrderStatus.ACTIVE;
 				break;
 			case 1: 
-				status = "Closed";
+				status = OrderStatus.CLOSED;
 				break;
 			case 2:
 				if (this.getVolRemaining() == 0){
-					status = "Fulfilled";
+					status = OrderStatus.FULFILLED;
 					
 				} else if (this.getVolRemaining() == this.getVolEntered()){
-					status = "Expired";
+					status = OrderStatus.EXPIRED;
 				} else {
-					status = "Partially Fulfilled";
+					status = OrderStatus.PARTIALLY_FULFILLED;
 				}
 				break;
 			case 3: 
-				status = "Cancelled";
+				status = OrderStatus.CANCELLED;
 				break;
 			case 4: 
-				status = "Pending";
+				status = OrderStatus.PENDING;
+				break;
+			case 5:
+				status = OrderStatus.CHARACTER_DELETED;
 				break;
 		}
 
@@ -135,7 +196,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return quantity;
 	}
 
-	public String getStatus() {
+	public OrderStatus getStatus() {
 		return status;
 	}
 

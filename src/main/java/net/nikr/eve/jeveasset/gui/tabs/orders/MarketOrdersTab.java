@@ -115,8 +115,16 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener{
 		this.addStatusbarLabel(jToCoverTotal);
 		
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
-		defaultFilters.put(TabsOrders.get().buy(), Collections.singletonList(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy())));
-		defaultFilters.put(TabsOrders.get().sell(), Collections.singletonList(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell())));
+		List<Filter> filter;
+		
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
 		
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
