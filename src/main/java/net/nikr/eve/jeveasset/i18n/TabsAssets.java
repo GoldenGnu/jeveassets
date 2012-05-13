@@ -43,9 +43,10 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String average1();
 	public abstract String count();
 	public abstract String selection();
-	public abstract String total();
-	public abstract String total1();
-	public abstract String total2();
+	public abstract String totalCount();
+	public abstract String totalReprocessed();
+	public abstract String totalValue();
+	public abstract String totalVolume();
 	public abstract String value();
 	public abstract String volume();
 	public abstract String columnName();

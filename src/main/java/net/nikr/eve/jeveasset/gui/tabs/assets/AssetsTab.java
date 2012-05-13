@@ -59,7 +59,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 
 	//GUI
 	private JAssetTable jTable;
-	private JLabel jTotalValue;
+	private JLabel jValue;
+	private JLabel jReprocessed;
 	private JLabel jCount;
 	private JLabel jAverage;
 	private JLabel jVolume;
@@ -107,17 +108,20 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		jVolume = StatusPanel.createLabel(TabsAssets.get().total(), Images.ASSETS_VOLUME.getIcon());
+		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
-		jCount = StatusPanel.createLabel(TabsAssets.get().total1(), Images.EDIT_ADD.getIcon()); //Add
+		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
 		this.addStatusbarLabel(jCount);
 
 		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
 		this.addStatusbarLabel(jAverage);
+		
+		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		this.addStatusbarLabel(jReprocessed);
 
-		jTotalValue = StatusPanel.createLabel(TabsAssets.get().total2(), Images.TOOL_VALUES.getIcon());
-		this.addStatusbarLabel(jTotalValue);
+		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		this.addStatusbarLabel(jValue);
 		
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
@@ -163,20 +167,23 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	}
 
 	private void updateStatusbar(){
-		double total = 0;
+		float volume = 0;
 		long count = 0;
 		double average = 0;
-		float volume = 0;
+		double totalReprocessed = 0;
+		double total = 0;
 		for (Asset asset : filterList){
-			total = total + (asset.getPrice() * asset.getCount());
-			count = count + asset.getCount();
 			volume = volume + (asset.getVolume() * asset.getCount());
+			count = count + asset.getCount();
+			totalReprocessed = totalReprocessed + (asset.getPriceReprocessed() * asset.getCount());
+			total = total + (asset.getPrice() * asset.getCount());
 		}
 		if (count > 0 && total > 0) average = total / count;
-		jTotalValue.setText(Formater.iskFormat(total));
+		jVolume.setText(Formater.doubleFormat(volume));
 		jCount.setText(Formater.itemsFormat(count));
 		jAverage.setText(Formater.iskFormat(average));
-		jVolume.setText(Formater.doubleFormat(volume));
+		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
+		jValue.setText(Formater.iskFormat(total));
 	}
 
 	public Asset getSelectedAsset(){
