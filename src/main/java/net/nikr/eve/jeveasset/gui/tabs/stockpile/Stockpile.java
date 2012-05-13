@@ -664,7 +664,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		
 	}
 	
-	static class Percent{
+	static class Percent implements Comparable<Percent> {
 		double percent;
 
 		public Percent(double percent) {
@@ -678,6 +678,11 @@ public class Stockpile implements Comparable<Stockpile> {
 			} else {
 				return Formater.percentFormat(percent);
 			}
+		}
+
+		@Override
+		public int compareTo(Percent o) {
+			return Double.compare(percent, o.percent);
 		}
 	}
 }

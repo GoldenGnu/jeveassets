@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Dimension;
@@ -146,16 +147,23 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		
 		eventList = new BasicEventList<StockpileItem>();
+		//Filter
 		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(eventList);
-		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Sorting (per column)
+		SortedList<StockpileItem> sortedListColumn = new SortedList<StockpileItem>(filterList);
+		//Sorting Total (Ensure that total is always last)
+		SortedList<StockpileItem> sortedListTotal = new SortedList<StockpileItem>(sortedListColumn, new TotalComparator());
+		separatorList = new SeparatorList<StockpileItem>(sortedListTotal, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JStockpileTable(program, tableModel);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Listeners
 		installTableMenu(jTable);
 		//Scroll Panels
@@ -731,5 +739,19 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			}
 			return columns;
 		}
+	}
+	
+	public class TotalComparator implements Comparator<StockpileItem>{
+		@Override
+		public int compare(StockpileItem o1, StockpileItem o2) {
+			if (o1 instanceof StockpileTotal){
+				return 1;
+			} else if (o2 instanceof StockpileTotal){
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+		
 	}
 }
