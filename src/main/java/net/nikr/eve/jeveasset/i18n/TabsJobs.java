@@ -38,7 +38,9 @@ public abstract class TabsJobs extends Bundle {
 		super(locale);
 	}
 
+	public abstract String active();
 	public abstract String all();
+	public abstract String completed();
 	public abstract String industry();
 	public abstract String install();
 	public abstract String inventionSuccess();

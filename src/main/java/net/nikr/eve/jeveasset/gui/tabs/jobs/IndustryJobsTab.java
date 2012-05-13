@@ -104,12 +104,12 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_READY.toString()));
-		defaultFilters.put("Active", filter); //FIXME - i18n
+		defaultFilters.put(TabsJobs.get().active(), filter);
 		filter = new ArrayList<Filter>();
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_ACTIVE.toString()));
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
-		defaultFilters.put("Completed", filter); //FIXME - i18n
+		defaultFilters.put(TabsJobs.get().completed(), filter);
 		
 		//Filter
 		filterControl = new IndustryJobsFilterControl(
