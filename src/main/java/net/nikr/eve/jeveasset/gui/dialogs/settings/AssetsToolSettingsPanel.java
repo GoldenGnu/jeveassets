@@ -30,33 +30,50 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
-		private JCheckBox jReprocessColors;
+	
+	private JCheckBox jReprocessColors;
+	private JCheckBox jSellOrders;
+	private JCheckBox jBuyOrders;
 
 	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon(), parentNode);
 
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
+		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());
+		jBuyOrders = new JCheckBox(DialoguesSettings.get().includeBuyOrders());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(jReprocessColors)
+				.addComponent(jSellOrders)
+				.addComponent(jBuyOrders)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jReprocessColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jBuyOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
 	@Override
 	public boolean save() {
-		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors();
+		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors()
+						|| jSellOrders.isSelected() != program.getSettings().isIncludeSellOrders()
+						|| jBuyOrders.isSelected() != program.getSettings().isIncludeBuyOrders()
+						;
 		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
+		program.getSettings().setIncludeSellOrders(jSellOrders.isSelected());
+		program.getSettings().setIncludeBuyOrders(jBuyOrders.isSelected());
+		
 		return update;
 	}
 
 	@Override
 	public void load() {
 		jReprocessColors.setSelected(program.getSettings().isReprocessColors());
+		jSellOrders.setSelected(program.getSettings().isIncludeSellOrders());
+		jBuyOrders.setSelected(program.getSettings().isIncludeBuyOrders());
 	}
 }
 

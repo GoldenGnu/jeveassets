@@ -40,9 +40,9 @@ public class ApiConverter {
 	public static List<Asset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, Settings settings){
 		List<Asset> eveAssets = new ArrayList<Asset>();
 		for (ApiMarketOrder apiMarketOrder : marketOrders){
-			if (apiMarketOrder.getBid() == 0
-					&& apiMarketOrder.getOrderState() == 0
-					&& apiMarketOrder.getVolRemaining() > 0
+			if (apiMarketOrder.getOrderState() == 0 && apiMarketOrder.getVolRemaining() > 0
+					&& ((apiMarketOrder.getBid() < 1 && settings.isIncludeSellOrders())
+					|| (apiMarketOrder.getBid() > 0 && settings.isIncludeBuyOrders()))
 					){
 				Asset eveAsset = apiMarketOrderToEveAsset(apiMarketOrder, human, settings);
 				eveAssets.add(eveAsset);
@@ -56,7 +56,12 @@ public class ApiConverter {
 		long locationID = apiMarketOrder.getStationID();
 		long count = apiMarketOrder.getVolRemaining();
 		long itemId = apiMarketOrder.getOrderID();
-		String flag = General.get().marketOrderFlag();
+		String flag;
+		if (apiMarketOrder.getBid() < 1){ //Sell
+			flag = General.get().marketOrderSellFlag();
+		} else { //Buy
+			flag = General.get().marketOrderBuyFlag();
+		}
 		int flagID = 0;
 		boolean corporation = human.isCorporation();
 		boolean singleton  = true;

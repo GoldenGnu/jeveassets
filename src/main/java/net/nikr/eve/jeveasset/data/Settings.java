@@ -72,6 +72,8 @@ public class Settings{
 	private final static String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	private final static String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
+	private final static String FLAG_INCLUDE_SELL_ORDERS = "FLAG_INCLUDE_SELL_ORDERS";
+	private final static String FLAG_INCLUDE_BUY_ORDERS = "FLAG_INCLUDE_BUY_ORDERS";
 	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
 	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
 	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
@@ -139,6 +141,8 @@ public class Settings{
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, false);
+		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 
 		packagedVolume.put("Assault Ship", 2500f);
 		packagedVolume.put("Battlecruiser", 15000f);
@@ -710,6 +714,18 @@ public class Settings{
 	}
 	public void setStockpileHalfColors(boolean stockpileHalfColors) {
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
+	}
+	public boolean isIncludeSellOrders() {
+		return flags.get(FLAG_INCLUDE_SELL_ORDERS);
+	}
+	public void setIncludeSellOrders(boolean includeSellOrders) {
+		flags.put(FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
+	}
+	public boolean isIncludeBuyOrders() {
+		return flags.get(FLAG_INCLUDE_BUY_ORDERS);
+	}
+	public void setIncludeBuyOrders(boolean includeBuyOrders) {
+		flags.put(FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
 	}
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;

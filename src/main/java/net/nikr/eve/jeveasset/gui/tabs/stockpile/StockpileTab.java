@@ -396,7 +396,9 @@ public class StockpileTab extends JMainTab implements ActionListener {
 					//Inventory AKA Assets
 					if (stockpile.isInventory()){
 						for (Asset asset : program.getEveAssetEventList()){
-							if (asset.getFlag().equals(General.get().marketOrderFlag())) continue; //Ignore market orders
+							//Skip market orders
+							if (asset.getFlag().equals(General.get().marketOrderSellFlag())) continue; //Ignore market sell orders
+							if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) continue; //Ignore market buy orders
 							item.updateAsset(asset, ownersID.get(asset.getOwner()), regions.get(asset.getRegion()));
 						}
 					}

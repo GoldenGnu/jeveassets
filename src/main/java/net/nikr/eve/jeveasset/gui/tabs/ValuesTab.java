@@ -216,7 +216,8 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		bestModule = null;
 		for (Asset eveAsset : eveAssetEventList){
 			//Skip market orders
-			if (eveAsset.getFlag().equals(General.get().marketOrderFlag()))	continue;
+			if (eveAsset.getFlag().equals(General.get().marketOrderSellFlag())) continue; //Ignore market sell orders
+			if (eveAsset.getFlag().equals(General.get().marketOrderBuyFlag())) continue; //Ignore market buy orders
 			
 			if (eveAsset.isCorporation()){ //Corp Asset
 				//Corp Total Value
