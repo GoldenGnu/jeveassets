@@ -31,7 +31,7 @@ public class Asset implements Comparable<Asset> {
 		PRICE_SELL_MAX() {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMax();
+				return DataModelEveAsset.get().priceSellMax();
 			}
 		},
 		PRICE_SELL_AVG {
@@ -79,7 +79,7 @@ public class Asset implements Comparable<Asset> {
 		PRICE_BUY_MIN {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMedian();
+				return DataModelEveAsset.get().priceBuyMin();
 			}
 		},
 		;
