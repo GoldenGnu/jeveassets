@@ -346,10 +346,15 @@ public class MenuScroller {
 		}
 	}
 
-	private class MenuScrollTimer extends Timer {
+	private class MenuScrollItem extends JMenuItem
+			implements ChangeListener {
 
-		public MenuScrollTimer(final int increment, int interval) {
-			super(interval, new ActionListener() {
+		private Timer timer;
+
+		public MenuScrollItem(MenuScroller.MenuIcon icon, final int increment) {
+			setIcon(icon);
+			setDisabledIcon(icon);
+			timer = new Timer(interval, new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -357,18 +362,6 @@ public class MenuScroller {
 					refreshMenu();
 				}
 			});
-		}
-	}
-
-	private class MenuScrollItem extends JMenuItem
-			implements ChangeListener {
-
-		private MenuScroller.MenuScrollTimer timer;
-
-		public MenuScrollItem(MenuScroller.MenuIcon icon, int increment) {
-			setIcon(icon);
-			setDisabledIcon(icon);
-			timer = new MenuScroller.MenuScrollTimer(increment, interval);
 			addChangeListener(this);
 		}
 
