@@ -126,8 +126,6 @@ class FilterGui<E> implements ActionListener{
 		jShowFilters.setSelected(true);
 		addToolButton(jShowFilters, 70);
 		
-		addToolSeparator();
-		
 		//Showing
 		jShowing = new JLabel();
 		
