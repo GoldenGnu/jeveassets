@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -37,6 +38,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 
 	private final static String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
 	private final static String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
+	private final static int DEFAULT_ADD_COUNT = 0;
 	
 	public JMenuStockpile(Program program, List<T> items) {
 		super(GuiShared.get().stockpile(), program, items); //
@@ -71,7 +73,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 			if (stockpile != null){
 				for (int typeID : typeIDs){
 					Item item = program.getSettings().getItems().get(typeID);
-					Stockpile.StockpileItem stockpileItem = new Stockpile.StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
 				program.getStockpileTool().updateData();
@@ -85,7 +87,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 				Stockpile stockpile = jStockpileMenu.getStockpile();
 				for (int typeID : typeIDs){
 					Item item = program.getSettings().getItems().get(typeID);
-					Stockpile.StockpileItem stockpileItem = new Stockpile.StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
 				program.getStockpileTool().updateData();
