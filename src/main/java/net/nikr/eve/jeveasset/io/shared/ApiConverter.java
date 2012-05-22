@@ -31,19 +31,19 @@ import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApiConverter {
+public final class ApiConverter {
 
-	private static Logger LOG = LoggerFactory.getLogger(ApiConverter.class);;
+	private static final Logger LOG = LoggerFactory.getLogger(ApiConverter.class);;
 
-	private ApiConverter() {}
+	private ApiConverter() { }
 
-	public static List<Asset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, Settings settings){
+	public static List<Asset> apiMarketOrder(final List<ApiMarketOrder> marketOrders, final Human human, final Settings settings) {
 		List<Asset> eveAssets = new ArrayList<Asset>();
-		for (ApiMarketOrder apiMarketOrder : marketOrders){
+		for (ApiMarketOrder apiMarketOrder : marketOrders) {
 			if (apiMarketOrder.getOrderState() == 0 && apiMarketOrder.getVolRemaining() > 0
 					&& ((apiMarketOrder.getBid() < 1 && settings.isIncludeSellOrders())
 					|| (apiMarketOrder.getBid() > 0 && settings.isIncludeBuyOrders()))
-					){
+					) {
 				Asset eveAsset = apiMarketOrderToEveAsset(apiMarketOrder, human, settings);
 				eveAssets.add(eveAsset);
 			}
@@ -51,13 +51,13 @@ public class ApiConverter {
 		return eveAssets;
 	}
 
-	private static Asset apiMarketOrderToEveAsset(ApiMarketOrder apiMarketOrder, Human human, Settings settings){
+	private static Asset apiMarketOrderToEveAsset(final ApiMarketOrder apiMarketOrder, final Human human, final Settings settings) {
 		int typeID = apiMarketOrder.getTypeID();
 		long locationID = apiMarketOrder.getStationID();
 		long count = apiMarketOrder.getVolRemaining();
 		long itemId = apiMarketOrder.getOrderID();
 		String flag;
-		if (apiMarketOrder.getBid() < 1){ //Sell
+		if (apiMarketOrder.getBid() < 1) { //Sell
 			flag = General.get().marketOrderSellFlag();
 		} else { //Buy
 			flag = General.get().marketOrderBuyFlag();
@@ -88,18 +88,18 @@ public class ApiConverter {
 		return new Asset(name, group, category, owner, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 
-	public static List<Asset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, Settings settings){
+	public static List<Asset> apiIndustryJob(final List<ApiIndustryJob> industryJobs, final Human human, final Settings settings) {
 		List<Asset> eveAssets = new ArrayList<Asset>();
-		for (ApiIndustryJob apiIndustryJob : industryJobs){
-			if (!apiIndustryJob.isCompleted()){
+		for (ApiIndustryJob apiIndustryJob : industryJobs) {
+			if (!apiIndustryJob.isCompleted()) {
 				Asset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, settings);
 				eveAssets.add(eveAsset);
 			}
 		}
 		return eveAssets;
 	}
-	
-	private static Asset apiIndustryJobToEveAsset(ApiIndustryJob apiIndustryJob, Human human, Settings settings){
+
+	private static Asset apiIndustryJobToEveAsset(final ApiIndustryJob apiIndustryJob, final Human human, final Settings settings) {
 		int typeID = apiIndustryJob.getInstalledItemTypeID();
 		long locationID = apiIndustryJobLocationId(apiIndustryJob, settings);
 		long count = apiIndustryJob.getInstalledItemQuantity();
@@ -107,7 +107,12 @@ public class ApiConverter {
 		int flagID = apiIndustryJob.getInstalledItemFlag();
 		boolean corporation = human.isCorporation();
 		boolean singleton  = false;
-		int rawQuantity = (apiIndustryJob.getInstalledItemCopy() == 0) ? 0 : -2; //0 = BPO  -2 = BPC
+		int rawQuantity;
+		if (apiIndustryJob.getInstalledItemCopy() == 0) {
+			rawQuantity = 0; //0 = BPO
+		} else {
+			rawQuantity = -2; //-2 = BPC
+		}
 
 		//Calculated:
 		String name = ApiIdConverter.typeName(typeID, settings.getItems());
@@ -131,15 +136,15 @@ public class ApiConverter {
 		return new Asset(name, group, category, owner, count, location, parents, flag, flagID, basePrice, meta, tech, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 
-	public static List<Asset> apiAsset(Human human, List<EveAsset<?>> assets, Settings settings){
+	public static List<Asset> apiAsset(final Human human, final List<EveAsset<?>> assets, final Settings settings) {
 		List<Asset> eveAssets = new ArrayList<Asset>();
 		apiAsset(human, assets, eveAssets, null, settings);
 		return eveAssets;
 	}
-	private static void apiAsset(Human human, List<EveAsset<?>> assets, List<Asset> eveAssets, Asset parentEveAsset, Settings settings){
-		for (EveAsset<?> asset : assets){
+	private static void apiAsset(final Human human, final List<EveAsset<?>> assets, final List<Asset> eveAssets, final Asset parentEveAsset, final Settings settings) {
+		for (EveAsset<?> asset : assets) {
 			Asset eveAsset = apiAssetsToEveAsset(human, asset, parentEveAsset, settings);
-			if (parentEveAsset == null){
+			if (parentEveAsset == null) {
 				eveAssets.add(eveAsset);
 			} else {
 				parentEveAsset.addEveAsset(eveAsset);
@@ -147,15 +152,15 @@ public class ApiConverter {
 			apiAsset(human, new ArrayList<EveAsset<?>>(asset.getAssets()), eveAssets, eveAsset, settings);
 		}
 	}
-	private static Asset apiAssetsToEveAsset(Human human, EveAsset<?> apiAsset, Asset parentEveAsset, Settings settings){
+	private static Asset apiAssetsToEveAsset(final Human human, final EveAsset<?> apiAsset, final Asset parentEveAsset, final Settings settings) {
 		long count = apiAsset.getQuantity();
 		int flagID = apiAsset.getFlag();
 		long itemId = apiAsset.getItemID();
 		int typeID = apiAsset.getTypeID();
 		long locationID;
-		if (apiAsset.getLocationID() != null){ //Top level
+		if (apiAsset.getLocationID() != null) { //Top level
 			locationID = apiAsset.getLocationID();
-		} else if(parentEveAsset != null){ //Sub level
+		} else if (parentEveAsset != null) { //Sub level
 			locationID = parentEveAsset.getLocationID();
 		} else { //Fail (fallback)
 			locationID = 0;
@@ -184,14 +189,14 @@ public class ApiConverter {
 
 		return new Asset(name, group, category, owner, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
-	public static List<MarketOrder> apiMarketOrdersToMarketOrders(Human human, List<ApiMarketOrder> apiMarketOrders, Settings settings){
+	public static List<MarketOrder> apiMarketOrdersToMarketOrders(final Human human, final List<ApiMarketOrder> apiMarketOrders, final Settings settings) {
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		for (ApiMarketOrder apiMarketOrder : apiMarketOrders){
+		for (ApiMarketOrder apiMarketOrder : apiMarketOrders) {
 			marketOrders.add(apiMarketOrderToMarketOrder(human, apiMarketOrder, settings));
 		}
 		return marketOrders;
 	}
-	private static MarketOrder apiMarketOrderToMarketOrder(Human human, ApiMarketOrder apiMarketOrder, Settings settings){
+	private static MarketOrder apiMarketOrderToMarketOrder(final Human human, final ApiMarketOrder apiMarketOrder, final Settings settings) {
 		String name = ApiIdConverter.typeName(apiMarketOrder.getTypeID(), settings.getItems());
 		String location = ApiIdConverter.locationName(apiMarketOrder.getStationID(), null, settings.getLocations());
 		String system = ApiIdConverter.systemName(apiMarketOrder.getStationID(), null, settings.getLocations());
@@ -199,15 +204,15 @@ public class ApiConverter {
 		String owner = human.getName();
 		return new MarketOrder(apiMarketOrder, name, location, system, region, owner);
 	}
-	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
+	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final String owner, final Settings settings) {
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
-		for (ApiIndustryJob apiIndustryJob : apiIndustryJobs){
+		for (ApiIndustryJob apiIndustryJob : apiIndustryJobs) {
 			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJob, owner, settings));
 		}
 		return industryJobs;
 	}
 
-	private static IndustryJob apiIndustryJobToIndustryJob(ApiIndustryJob apiIndustryJob, String owner, Settings settings){
+	private static IndustryJob apiIndustryJobToIndustryJob(final ApiIndustryJob apiIndustryJob, final String owner, final Settings settings) {
 		String name = ApiIdConverter.typeName(apiIndustryJob.getInstalledItemTypeID(), settings.getItems());
 		long locationID = apiIndustryJobLocationId(apiIndustryJob, settings);
 		String location = ApiIdConverter.locationName(locationID, null, settings.getLocations());
@@ -215,13 +220,17 @@ public class ApiConverter {
 		String region = ApiIdConverter.regionName(locationID, null, settings.getLocations());
 		return new IndustryJob(apiIndustryJob, name, location, system, region, owner);
 	}
-	
-	private static long apiIndustryJobLocationId(ApiIndustryJob apiIndustryJob, Settings settings){
+
+	private static long apiIndustryJobLocationId(final ApiIndustryJob apiIndustryJob, final Settings settings) {
 		boolean location = ApiIdConverter.locationTest(apiIndustryJob.getInstalledItemLocationID(), null, settings.getLocations());
-		if (location) return apiIndustryJob.getInstalledItemLocationID();
+		if (location) {
+			return apiIndustryJob.getInstalledItemLocationID();
+		}
 		location = ApiIdConverter.locationTest(apiIndustryJob.getContainerLocationID(), null, settings.getLocations());
-		if (location) return apiIndustryJob.getContainerLocationID();
-		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: "+apiIndustryJob.getInstalledItemLocationID()+" - ContainerLocationID: "+apiIndustryJob.getContainerLocationID());
+		if (location) {
+			return apiIndustryJob.getContainerLocationID();
+		}
+		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: " + apiIndustryJob.getInstalledItemLocationID() + " - ContainerLocationID: " + apiIndustryJob.getContainerLocationID());
 		return -1;
 	}
 }

@@ -33,18 +33,18 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	private JCheckBox jStable;
 	private JCheckBox jDev;
-	
+
 	private JCheckBox jEnterFilters;
 	private JCheckBox jHighlightSelectedRow;
 
 
-	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog) {
+	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().general(),  Images.DIALOG_SETTINGS.getIcon());
 
 		jStable = new JCheckBox(DialoguesSettings.get().searchForNewVersion(Program.PROGRAM_NAME));
 
 		jDev = new JCheckBox(DialoguesSettings.get().searchForNewVersionBeta());
-		
+
 		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 
 		jHighlightSelectedRow = new JCheckBox(DialoguesSettings.get().highlightSelectedRow());

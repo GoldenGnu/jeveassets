@@ -37,8 +37,12 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnOrderType();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
-			return from.getBid() < 1 ? TabsOrders.get().sell() : TabsOrders.get().buy();
+		public Object getColumnValue(final MarketOrder from) {
+			if (from.getBid() < 1) {
+				return TabsOrders.get().sell();
+			} else {
+				return TabsOrders.get().buy();
+			}
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
@@ -47,7 +51,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getName();
 		}
 	},
@@ -57,7 +61,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnQuantity();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getQuantity();
 		}
 	},
@@ -67,7 +71,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getPrice();
 		}
 	},
@@ -77,7 +81,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnIssued();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getIssued();
 		}
 	},
@@ -87,7 +91,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnExpires();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getExpires();
 		}
 	},
@@ -97,7 +101,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnRange();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getRangeFormated();
 		}
 	},
@@ -107,7 +111,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnStatus();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getStatus();
 		}
 	},
@@ -117,7 +121,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnMinVolume();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getMinVolume();
 		}
 	},
@@ -127,7 +131,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getOwner();
 		}
 	},
@@ -137,7 +141,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnLocation();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getLocation();
 		}
 	},
@@ -147,7 +151,7 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return from.getRegion();
 		}
 	},
@@ -157,14 +161,13 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return TabsOrders.get().columnRemainingValue();
 		}
 		@Override
-		public Object getColumnValue(MarketOrder from) {
+		public Object getColumnValue(final MarketOrder from) {
 			return Double.valueOf(from.getQuantity().getQuantityRemaining() * from.getPrice());
 		}
-	},
-	;
-	Class type;
-	Comparator<?> comparator;
-	private MarketTableFormat(Class type, Comparator<?> comparator) {
+	};
+	private Class type;
+	private Comparator<?> comparator;
+	private MarketTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -181,15 +184,15 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 		return getColumnName();
 	}
 	@Override
-	public boolean isColumnEditable(Object baseObject) {
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
 	@Override
-	public MarketOrder setColumnValue(Object baseObject, Object editedValue) {
+	public MarketOrder setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override abstract public Object getColumnValue(MarketOrder from);
+	@Override public abstract Object getColumnValue(final MarketOrder from);
 	//XXX - TableFormat.getColumnName(...) Workaround
-	@Override abstract public String getColumnName();
+	@Override public abstract String getColumnName();
 }

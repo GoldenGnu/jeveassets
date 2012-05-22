@@ -34,11 +34,11 @@ public abstract class DialoguesAddSystem extends Bundle {
 		return BundleCache.get(DialoguesAddSystem.class);
 	}
 
-	public static DialoguesAddSystem get(Locale locale) {
+	public static DialoguesAddSystem get(final Locale locale) {
 		return BundleCache.get(DialoguesAddSystem.class, locale);
 	}
 
-	public DialoguesAddSystem(Locale locale) {
+	public DialoguesAddSystem(final Locale locale) {
 		super(locale);
 	}
 

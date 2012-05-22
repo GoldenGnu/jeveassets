@@ -28,21 +28,21 @@ import org.slf4j.LoggerFactory;
 
 public class MoveJList<T> extends JList {
 
-	private final static Logger LOG = LoggerFactory.getLogger(MoveJList.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MoveJList.class);
 
-	private static final long serialVersionUID = 1l;
+	private static final long serialVersionUID = 1L;
 
 	public MoveJList() {
 		setModel(new EditableListModel<T>());
 	}
 
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel
-	public MoveJList(EditableListModel<T> editableListModel) {
+	public MoveJList(final EditableListModel<T> editableListModel) {
 		setModel(editableListModel);
 	}
-	
+
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel
-	public MoveJList(ListModel dataModel) {
+	public MoveJList(final ListModel dataModel) {
 		EditableListModel<T> m = new EditableListModel<T>();
 		for (int i = 0; i < dataModel.getSize(); ++i) {
 			m.add((T) dataModel.getElementAt(i));
@@ -62,7 +62,7 @@ public class MoveJList<T> extends JList {
 	 * @return true if all the items were added.
 	 */
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel/JList
-	public boolean move(MoveJList<T> to, int limit) {
+	public boolean move(final MoveJList<T> to, final int limit) {
 		EditableListModel<T> fModel = getEditableModel();
 		EditableListModel<T> tModel = to.getEditableModel();
 		for (Object obj : getSelectedValues()) {

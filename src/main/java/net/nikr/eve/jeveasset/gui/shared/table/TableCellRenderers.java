@@ -34,8 +34,12 @@ public class TableCellRenderers {
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		}
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.longFormat(value));
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				Formater.longFormat(value);
+			}
 		}
 	}
 
@@ -45,8 +49,12 @@ public class TableCellRenderers {
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		}
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.doubleFormat(value));
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				setText(Formater.doubleFormat(value));
+			}
 		}
 	}
 
@@ -57,8 +65,12 @@ public class TableCellRenderers {
 		}
 
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.integerFormat(value));
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				setText(Formater.integerFormat(value));
+			}
 		}
 	}
 
@@ -68,8 +80,12 @@ public class TableCellRenderers {
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		}
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.floatFormat(value));
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				setText(Formater.floatFormat(value));
+			}
 		}
 	}
 
@@ -79,21 +95,29 @@ public class TableCellRenderers {
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		}
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.columnDate(value));
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				setText(Formater.columnDate(value));
+			}
 		}
 	}
-	
+
 	public static class ToStringCellRenderer extends DefaultTableCellRenderer {
-		
+
 		public ToStringCellRenderer() {	this(SwingConstants.RIGHT); }
-		public ToStringCellRenderer(int alignment) {
+		public ToStringCellRenderer(final int alignment) {
 			this.setHorizontalTextPosition(alignment);
 			this.setHorizontalAlignment(alignment);
 		}
 		@Override
-		public void setValue(Object value) {
-			setText((value == null) ? "" : value.toString());
+		public void setValue(final Object value) {
+			if (value == null) {
+				setText("");
+			} else {
+				setText(value.toString());
+			}
 		}
 	}
 }

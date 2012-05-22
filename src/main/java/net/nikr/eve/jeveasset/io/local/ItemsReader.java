@@ -38,31 +38,31 @@ import org.w3c.dom.NodeList;
 
 public class ItemsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(ItemsReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ItemsReader.class);
 
-	public static void load(Settings settings) {
+	public static void load(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathItems());
 			parseItems(element, settings.getItems());
 		} catch (IOException ex) {
-			LOG.error("Items not loaded: "+ex.getMessage(), ex);
+			LOG.error("Items not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			LOG.error("Items not loaded: "+ex.getMessage(), ex);
+			LOG.error("Items not loaded: " + ex.getMessage(), ex);
 		}
 		LOG.info("Items loaded");
 	}
 
-	private static void parseItems(Element element, Map<Integer, Item> items){
+	private static void parseItems(final Element element, final Map<Integer, Item> items) {
 		NodeList nodes = element.getElementsByTagName("row");
-		Item item = null;
-		for (int a = 0; a < nodes.getLength(); a++){
+		Item item;
+		for (int a = 0; a < nodes.getLength(); a++) {
 			Element itemElement = (Element) nodes.item(a);
 			item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
 			items.put(item.getTypeID(), item);
 		}
 	}
-	private static Item parseItem(Node node){
+	private static Item parseItem(final Node node) {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		String group = AttributeGetters.getString(node, "group");
@@ -77,16 +77,16 @@ public class ItemsReader extends AbstractXmlReader {
 		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion);
 	}
 
-	private static void parseMaterials(Element element, Item item){
+	private static void parseMaterials(final Element element, final Item item) {
 		NodeList nodes = element.getElementsByTagName("material");
-		for (int a = 0; a < nodes.getLength(); a++){
+		for (int a = 0; a < nodes.getLength(); a++) {
 			parseMaterial(nodes.item(a), item);
 		}
 	}
-	private static void parseMaterial(Node node, Item item){
+	private static void parseMaterial(final Node node, final Item item) {
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int portionSize = AttributeGetters.getInt(node, "portionsize");
-		item.addReprocessedMaterial( new ReprocessedMaterial(id, quantity, portionSize));
+		item.addReprocessedMaterial(new ReprocessedMaterial(id, quantity, portionSize));
 	}
 }

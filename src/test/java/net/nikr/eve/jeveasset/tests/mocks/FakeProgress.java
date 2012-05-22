@@ -28,9 +28,9 @@ import uk.me.candle.eve.routing.Progress;
  * @author Candle
  */
 public class FakeProgress implements Progress {
-	int value;
-	int min;
-	int max;
+	private int value;
+	private int min;
+	private int max;
 
 	@Override
 	public int getMaximum() {
@@ -38,7 +38,7 @@ public class FakeProgress implements Progress {
 	}
 
 	@Override
-	public void setMaximum(int max) {
+	public void setMaximum(final int max) {
 		this.max = max;
 	}
 
@@ -48,7 +48,7 @@ public class FakeProgress implements Progress {
 	}
 
 	@Override
-	public void setMinimum(int min) {
+	public void setMinimum(final int min) {
 		this.min = min;
 	}
 
@@ -58,7 +58,7 @@ public class FakeProgress implements Progress {
 	}
 
 	@Override
-	public void setValue(int value) {
+	public void setValue(final int value) {
 		this.value = value;
 	}
 }

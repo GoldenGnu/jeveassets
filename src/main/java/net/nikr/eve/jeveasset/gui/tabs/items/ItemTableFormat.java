@@ -35,7 +35,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getName();
 		}
 	},
@@ -45,7 +45,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnGroup();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getGroup();
 		}
 	},
@@ -55,7 +55,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnCategory();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getCategory();
 		}
 	},
@@ -65,7 +65,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnPriceBase();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getPrice();
 		}
 	},
@@ -75,7 +75,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnMeta();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getMeta();
 		}
 	},
@@ -85,7 +85,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnTech();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getTech();
 		}
 	},
@@ -95,7 +95,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnVolume();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getVolume();
 		}
 	},
@@ -105,14 +105,13 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return TabsItems.get().columnTypeID();
 		}
 		@Override
-		public Object getColumnValue(Item from) {
+		public Object getColumnValue(final Item from) {
 			return from.getTypeID();
 		}
-	},
-	;
-	Class type;
-	Comparator<?> comparator;
-	private ItemTableFormat(Class type, Comparator<?> comparator) {
+	};
+	private Class type;
+	private Comparator<?> comparator;
+	private ItemTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -129,16 +128,15 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		return getColumnName();
 	}
 	@Override
-	public boolean isColumnEditable(Object baseObject) {
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
 	@Override
-	public Item setColumnValue(Object baseObject, Object editedValue) {
+	public Item setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override abstract public Object getColumnValue(Item from);
+	@Override public abstract Object getColumnValue(final Item from);
 	//XXX - TableFormat.getColumnName(...) Workaround
 	//@Override abstract public String getColumnName();
-	
 }

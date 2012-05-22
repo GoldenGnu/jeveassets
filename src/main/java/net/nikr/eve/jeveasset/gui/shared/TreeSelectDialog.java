@@ -43,11 +43,11 @@ public class TreeSelectDialog extends JDialogCentered {
 	private JTree tree;
 	private JScrollPane treeScrollPane;
 
-	public TreeSelectDialog(Program program, String title) {
+	public TreeSelectDialog(final Program program, final String title) {
 		super(program, title);
 		dialog = getDialog();
 		dialog.setResizable(true);
-		dialog.setMinimumSize(new Dimension(300,400));
+		dialog.setMinimumSize(new Dimension(300, 400));
 		leafFilterLabel = new JLabel();
 		leafFilterTextField = new JTextField();
 		filterInfoLabel = new JLabel();
@@ -190,6 +190,6 @@ public class TreeSelectDialog extends JDialogCentered {
 	protected void windowShown() {	}
 
 	@Override
-	protected void save() {	}	
-	
+	protected void save() {	}
+
 }

@@ -27,7 +27,7 @@ public class ItemFlag implements Comparable<ItemFlag> {
 	private String flagName;
 	private String flagText;
 
-	public ItemFlag(int flagID, String flagName, String flagText) {
+	public ItemFlag(final int flagID, final String flagName, final String flagText) {
 		this.flagID = flagID;
 		this.flagName = flagName;
 		this.flagText = flagText;
@@ -44,14 +44,14 @@ public class ItemFlag implements Comparable<ItemFlag> {
 	public String getFlagText() {
 		return flagText;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getFlagName();
 	}
 
 	@Override
-	public int compareTo(ItemFlag o) {
+	public int compareTo(final ItemFlag o) {
 		return this.getFlagName().compareTo(o.getFlagName());
 	}
 }

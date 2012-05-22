@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
@@ -61,8 +61,8 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Program implements ActionListener{
-	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
+public class Program implements ActionListener {
+	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
 	public static final String PROGRAM_VERSION = "2.2.0 DEV BUILD 2";
@@ -73,7 +73,7 @@ public class Program implements ActionListener{
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	private final static String ACTION_TIMER = "ACTION_TIMER";
+	private static final String ACTION_TIMER = "ACTION_TIMER";
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -81,7 +81,7 @@ public class Program implements ActionListener{
 
 	//GUI
 	private MainWindow mainWindow;
-	
+
 	//Dialogs
 	private AccountManagerDialog accountManagerDialog;
 	private AboutDialog aboutDialog;
@@ -118,19 +118,19 @@ public class Program implements ActionListener{
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
-	
+
 	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private Settings settings;
 	private EventList<Asset> eveAssetEventList;
-	
-	public Program(){
+
+	public Program() {
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
-		LOG.info("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version"));
-		LOG.info("Java: "+System.getProperty("java.vendor")+" "+System.getProperty("java.version"));
-		
-		if(debug){
+		LOG.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+		LOG.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+
+		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
 
@@ -247,12 +247,12 @@ public class Program implements ActionListener{
 		//Start timer
 		timerTicked();
 		LOG.info("Startup Done");
-		if(debug){
+		if (debug) {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		programUpdateChecker.showMessages();
-		if (settings.getAccounts().isEmpty()){
+		if (settings.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
@@ -262,70 +262,70 @@ public class Program implements ActionListener{
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected Program(boolean load) { }
+	protected Program(final boolean load) { }
 
-	public void addMainTab(JMainTab jMainTab){
+	public void addMainTab(final JMainTab jMainTab) {
 		jMainTabs.add(jMainTab);
 	}
-	
-	private void timerTicked(){
-		if (!timer.isRunning()){
+
+	private void timerTicked() {
+		if (!timer.isRunning()) {
 			timer.start();
 		}
 		this.getStatusPanel().timerTicked(updatable.isUpdatable());
 		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
 	}
-	
-	final public void updateEventList(){
+
+	public final void updateEventList() {
 		LOG.info("Updating EventList");
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
-		eveAssetEventList.addAll( settings.getEventListAssets() );
+		eveAssetEventList.addAll(settings.getEventListAssets());
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
-		for (JMainTab jMainTab : mainWindow.getTabs()){
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
 		}
 	}
 
-	public void saveSettings(){
+	public void saveSettings() {
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
-		for (JMainTab jMainTab : jMainTabs){
+		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.updateSettings();
 		}
 		settings.saveSettings();
 	}
-	
-	public void exit(){
+
+	public void exit() {
 		saveSettings();
 		LOG.info("Exiting...");
 		System.exit(0);
 	}
 
-	public void showAbout(){
+	public void showAbout() {
 		aboutDialog.setVisible(true);
 	}
 
-	public void showSettings(){
+	public void showSettings() {
 		settingsDialog.setVisible(true);
 	}
 
-	public void checkForProgramUpdates(Window parent){
+	public void checkForProgramUpdates(final Window parent) {
 		programUpdateChecker.showMessages(parent, true);
 	}
 
-	public String getProgramDataVersion(){
+	public String getProgramDataVersion() {
 		return programUpdateChecker.getProgramDataVersion();
 	}
 
-	private void macOsxCode(){
+	private void macOsxCode() {
 		if (onMac()) {
 			try {
 				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
-				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[])null));
-				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[])null));
+				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
+				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
 			} catch (NoSuchMethodException ex) {
 				LOG.error("NoSuchMethodException: " + ex.getMessage(), ex);
 			} catch (SecurityException ex) {
@@ -334,21 +334,21 @@ public class Program implements ActionListener{
 		}
 	}
 
-	public Settings getSettings(){
+	public Settings getSettings() {
 		return settings;
 	}
-	public MainWindow getMainWindow(){
+	public MainWindow getMainWindow() {
 		return mainWindow;
 	}
-	public AssetsTab getAssetsTab(){
+	public AssetsTab getAssetsTab() {
 		return assetsTab;
 	}
 
 	public OverviewTab getOverviewTab() {
 		return overviewTab;
 	}
-	
-	public StatusPanel getStatusPanel(){
+
+	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
 	public UserNameSettingsPanel getUserNameSettingsPanel() {
@@ -361,7 +361,7 @@ public class Program implements ActionListener{
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;
 	}
-	
+
 	public EventList<Asset> getEveAssetEventList() {
 		return eveAssetEventList;
 	}
@@ -373,7 +373,7 @@ public class Program implements ActionListener{
 		return debug;
 	}
 
-	public static void setDebug(boolean debug) {
+	public static void setDebug(final boolean debug) {
 		Program.debug = debug;
 	}
 
@@ -381,7 +381,7 @@ public class Program implements ActionListener{
 		return forceNoUpdate;
 	}
 
-	public static void setForceNoUpdate(boolean forceNoUpdate) {
+	public static void setForceNoUpdate(final boolean forceNoUpdate) {
 		Program.forceNoUpdate = forceNoUpdate;
 	}
 
@@ -389,35 +389,34 @@ public class Program implements ActionListener{
 		return forceUpdate;
 	}
 
-	public static void setForceUpdate(boolean forceUpdate) {
+	public static void setForceUpdate(final boolean forceUpdate) {
 		Program.forceUpdate = forceUpdate;
 	}
 
 	/**
-	 * Called when Overview Groups are changed
+	 * Called when Overview Groups are changed.
 	 */
-	public void overviewGroupsChanged(){
+	public void overviewGroupsChanged() {
 		routingTab.updateData();
-		
 	}
 
 	/**
-	 * Called when the table menu needs update
+	 * Called when the table menu needs update.
 	 */
-	public void updateTableMenu(){
+	public void updateTableMenu() {
 		this.getMainWindow().getSelectedTab().updateTableMenu(this.getMainWindow().getMenu().getTableMenu());
 	}
 
 	/**
-	 * Called when the active tab is change (close/open/change)
+	 * Called when the active tab is change (close/open/change).
 	 */
-	public void tabChanged(){
+	public void tabChanged() {
 		getStatusPanel().tabChanged();
 		updateTableMenu();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			mainWindow.addTab(valuesTab);

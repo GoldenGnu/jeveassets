@@ -31,9 +31,8 @@ import org.junit.*;
 
 
 public class PriceDataSettingsTest {
-	
-	public PriceDataSettingsTest() {
-	}
+
+	public PriceDataSettingsTest() { }
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -42,11 +41,11 @@ public class PriceDataSettingsTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 	}
-	
+
 	@Before
 	public void setUp() {
 	}
-	
+
 	@After
 	public void tearDown() {
 	}
@@ -55,12 +54,12 @@ public class PriceDataSettingsTest {
 	public void testGetRegion() {
 		Settings settings = new PriceDataSettingsMock();
 		LocationsReader.load(settings);
-		for (RegionType regionType : RegionType.values()){
+		for (RegionType regionType : RegionType.values()) {
 			List<Long> regions = regionType.getRegions();
-			if (regions.size() == 1){ //Single location
+			if (regions.size() == 1) { //Single location
 				Location location = settings.getLocations().get(regions.get(0));
 				String locationName = regionType.toString();
-				if (locationName.contains("(")){
+				if (locationName.contains("(")) {
 					locationName = locationName.substring(0, locationName.indexOf("(")).trim();
 				}
 				assertEquals(location.getName(), locationName);
@@ -69,13 +68,12 @@ public class PriceDataSettingsTest {
 			}
 		}
 	}
-	
-	
-	public class PriceDataSettingsMock extends FakeSettings {
 
-	Map<Long, Location> locations = new HashMap<Long, Location>();
-	
-	public PriceDataSettingsMock() {}
+	public static class PriceDataSettingsMock extends FakeSettings {
+
+	private Map<Long, Location> locations = new HashMap<Long, Location>();
+
+	public PriceDataSettingsMock() { }
 
 	@Override
 	public Map<Long, Location> getLocations() {

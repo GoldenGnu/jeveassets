@@ -33,14 +33,14 @@ import org.junit.Test;
  * @author Candle
  */
 public class TestEditableModel {
-	Comparator<ListContents> comp;
-	List<ListContents> contents;
+	private Comparator<ListContents> comp;
+	private List<ListContents> contents;
 
 	@Before
 	public void setup() {
 		Comparator<ListContents> comp = new Comparator<ListContents>() {
 			@Override
-			public int compare(ListContents o1, ListContents o2) {
+			public int compare(final ListContents o1, final ListContents o2) {
 				return o1.getName().compareToIgnoreCase(o2.getName());
 			}
 		};
@@ -55,18 +55,15 @@ public class TestEditableModel {
 
 	@Test
 	public void testCreate() {
-		EditableListModel<ListContents> elm = new EditableListModel<ListContents>(
-						contents
-						, comp
-						);
+		EditableListModel<ListContents> elm = new EditableListModel<ListContents>(contents, comp);
 		assertNotSame("contents should be a different object (unmodifiable list)", contents, elm.getAll());
 		assertSame("The comparator should be the same", comp, elm.getSortComparator());
 	}
 
 	class ListContents {
-		String name;
+		private String name;
 
-		public ListContents(String name) {
+		public ListContents(final String name) {
 			this.name = name;
 		}
 

@@ -49,7 +49,7 @@ import uk.me.candle.eve.routing.cancel.CancelService;
  */
 public class RoutingTab extends JMainTab  {
 
-	private final static Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
+	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
 	public static final String ACTION_ADD = "ACTION_ADD";
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
@@ -57,7 +57,7 @@ public class RoutingTab extends JMainTab  {
 	public static final String ACTION_SOURCE = "ACTION_SOURCE";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
-	
+
 	private JButton jAdd;
 	private JButton jRemove;
 	private JButton jCalculate;
@@ -80,11 +80,11 @@ public class RoutingTab extends JMainTab  {
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected RoutingTab(boolean load) {
+	protected RoutingTab(final boolean load) {
 		super(load);
 	}
 
-	public RoutingTab(Program program) {
+	public RoutingTab(final Program program) {
 
 		super(program, TabsRouting.get().routing(), Images.TOOL_ROUTING.getIcon(), true);
 
@@ -115,7 +115,7 @@ public class RoutingTab extends JMainTab  {
 		jAlgorithm.addItemListener(new ItemListener() {
 
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void itemStateChanged(final ItemEvent e) {
 				changeAlgorithm();
 			}
 		});
@@ -133,7 +133,7 @@ public class RoutingTab extends JMainTab  {
 		jDescription.setFont(jAlgorithm.getFont());
 		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
 			@Override
-			public int compare(SolarSystem o1, SolarSystem o2) {
+			public int compare(final SolarSystem o1, final SolarSystem o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		};
@@ -257,7 +257,7 @@ public class RoutingTab extends JMainTab  {
 		updateWaypointsRemaining();
 		updateAvailableRemaining();
 	}
-	
+
 	private void updateWaypointsRemaining() {
 		int max = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit();
 		int cur = jWaypoints.getModel().getSize();
@@ -275,57 +275,64 @@ public class RoutingTab extends JMainTab  {
 		jAvailableRemaining.setText(TabsRouting.get().whitespace4(cur, tot));
 	}
 
-	protected final void buildGraph(Settings settings) {
+	protected final void buildGraph(final Settings settings) {
 		// build the graph.
 		// filter the solarsystems based on the settings.
 		filteredGraph = new Graph();
 		int count = 0;
 		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
-			SplashUpdater.setSubProgress((int)(count * 100.0 / settings.getJumps().size()));
+			SplashUpdater.setSubProgress((int) (count * 100.0 / settings.getJumps().size()));
 			SolarSystem f = null;
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {
-				SolarSystem s = (SolarSystem)n;
-				if (s.getSystemID() == jump.getFrom().getSystemID()) f = s;
-				if (s.getSystemID() == jump.getTo().getSystemID()) t = s;
+				SolarSystem s = (SolarSystem) n;
+				if (s.getSystemID() == jump.getFrom().getSystemID()) {
+					f = s;
+				}
+				if (s.getSystemID() == jump.getTo().getSystemID()) {
+					t = s;
+				}
 			}
-			if (f == null) f = new SolarSystem(jump.getFrom());
-			if (t == null) t = new SolarSystem(jump.getTo());
+			if (f == null) {
+				f = new SolarSystem(jump.getFrom());
+			}
+			if (t == null) {
+				t = new SolarSystem(jump.getTo());
+			}
 			filteredGraph.addEdge(new Edge(f, t));
 		}
 	}
 
-	protected void processFilteredAssets(Settings settings) {
+	protected void processFilteredAssets(final Settings settings) {
 		// select the active places.
 		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
 			@Override
-			public int compare(SolarSystem o1, SolarSystem o2) {
+			public int compare(final SolarSystem o1, final SolarSystem o2) {
 				String n1 = o1.getName();
 				String n2 = o2.getName();
 				return n1.compareTo(n2);
 			}
 		});
 		List<Asset> assets;
-		SourceItem source = (SourceItem)jSource.getSelectedItem();
-		if (source.getName().equals(TabsRouting.get().all())){ //ALL
+		SourceItem source = (SourceItem) jSource.getSelectedItem();
+		if (source.getName().equals(TabsRouting.get().all())) { //ALL
 			 assets = new ArrayList<Asset>(program.getEveAssetEventList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
 			assets = new ArrayList<Asset>();
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
-			for (OverviewLocation location : group.getLocations()){
-				for (Asset eveAsset : program.getEveAssetEventList()){
+			for (OverviewLocation location : group.getLocations()) {
+				for (Asset eveAsset : program.getEveAssetEventList()) {
 					if ((location.getName().equals(eveAsset.getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getSystem()))
 						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getRegion()))
-						){
+						) {
 						assets.add(eveAsset);
 					}
 				}
 			}
-			
 		}
 		for (Asset ea : assets) {
 			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemID());
@@ -346,7 +353,7 @@ public class RoutingTab extends JMainTab  {
 	 * @param locationID
 	 * @return null if the system is unreachable (e.g. w-space)
 	 */
-	private SolarSystem findNodeForLocation(Graph g, long locationID) {
+	private SolarSystem findNodeForLocation(final Graph g, final long locationID) {
 		if (locationID < 0) {
 			throw new RuntimeException(TabsRouting.get().unknown(locationID));
 		}
@@ -370,7 +377,7 @@ public class RoutingTab extends JMainTab  {
 	 * @param limit
 	 * @return true if all the items were moved.
 	 */
-	private boolean move(MoveJList<SolarSystem> from, MoveJList<SolarSystem> to, int limit) {
+	private boolean move(final MoveJList<SolarSystem> from, final MoveJList<SolarSystem> to, final int limit) {
 		boolean b = from.move(to, limit);
 		updateRemaining();
 		return b;
@@ -404,7 +411,7 @@ public class RoutingTab extends JMainTab  {
 				sb.append(ss.getName());
 				sb.append('\n');
 			}
-			int time = (int)Math.floor(((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastTimeTaken() / 1000);
+			int time = (int) Math.floor(((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastTimeTaken() / 1000);
 			sb.append(TabsRouting.get().generating());
 			sb.append(TabsRouting.get().second(time));
 			sb.append(TabsRouting.get().whitespace5());
@@ -436,12 +443,12 @@ public class RoutingTab extends JMainTab  {
 		}
 	}
 
-	protected List<Node> executeRouteFinding(List<Node> inputWaypoints) {
+	protected List<Node> executeRouteFinding(final List<Node> inputWaypoints) {
 		List<Node> route = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).execute(jProgress, filteredGraph, inputWaypoints);
 		return route;
 	}
 
-	private void setUIEnabled(boolean b) {
+	private void setUIEnabled(final boolean b) {
 		jAdd.setEnabled(b);
 		jRemove.setEnabled(b);
 		jCalculate.setEnabled(b);
@@ -460,19 +467,19 @@ public class RoutingTab extends JMainTab  {
 
 	//TODO cancel processing in the routing tool doesn't work very well
 	private void cancelProcessing() {
-		((RoutingAlgorithmContainer)jAlgorithm.getSelectedItem()).getCancelService().cancel();
+		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent){
+	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(false);
 	}
 
-	private class ListenerClass implements ActionListener{
+	private class ListenerClass implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			LOG.debug(e.getActionCommand());
 			if (ACTION_ADD.equals(e.getActionCommand())) {
 				move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
@@ -500,13 +507,13 @@ public class RoutingTab extends JMainTab  {
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
 		List<SourceItem> sources = new ArrayList<SourceItem>();
-		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
+		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 			sources.add(new SourceItem(entry.getKey(), true));
 		}
 		Collections.sort(sources);
 		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
 		sources.add(0, new SourceItem(TabsRouting.get().all()));
-		jSource.setModel( new DefaultComboBoxModel(sources.toArray()) );
+		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
 		jAlgorithm.setSelectedIndex(0);
 		jLastResultArea.setText(TabsRouting.get().once());
 		jLastResultArea.setCaretPosition(0);
@@ -517,16 +524,16 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {}
+	protected void showTablePopupMenu(final MouseEvent e) { }
 
 	/**
 	 * A GUI compatible container for the routing algorithms.
 	 */
 	private static class RoutingAlgorithmContainer {
 
-		RoutingAlgorithm contained;
+		private RoutingAlgorithm contained;
 
-		public RoutingAlgorithmContainer(RoutingAlgorithm contained) {
+		public RoutingAlgorithmContainer(final RoutingAlgorithm contained) {
 			this.contained = contained;
 		}
 
@@ -546,7 +553,7 @@ public class RoutingTab extends JMainTab  {
 			return contained.getBasicDescription();
 		}
 
-		public List<Node> execute(Progress progress, Graph g, List<? extends Node> assetLocations) {
+		public List<Node> execute(final Progress progress, final Graph g, final List<? extends Node> assetLocations) {
 			return contained.execute(progress, g, assetLocations);
 		}
 
@@ -576,7 +583,7 @@ public class RoutingTab extends JMainTab  {
 		}
 	}
 
-	class DummyProgress implements Progress {
+	static class DummyProgress implements Progress {
 
 		@Override
 		public int getMaximum() {
@@ -584,7 +591,7 @@ public class RoutingTab extends JMainTab  {
 		}
 
 		@Override
-		public void setMaximum(int maximum) {
+		public void setMaximum(final int maximum) {
 		}
 
 		@Override
@@ -593,7 +600,7 @@ public class RoutingTab extends JMainTab  {
 		}
 
 		@Override
-		public void setMinimum(int minimum) {
+		public void setMinimum(final int minimum) {
 		}
 
 		@Override
@@ -602,33 +609,33 @@ public class RoutingTab extends JMainTab  {
 		}
 
 		@Override
-		public void setValue(int value) {
+		public void setValue(final int value) {
 		}
 	}
 
-	class ProgressBar extends JProgressBar implements Progress {
+	static class ProgressBar extends JProgressBar implements Progress {
 
-		private static final long serialVersionUID = 1l;
+		private static final long serialVersionUID = 1L;
 	}
 
-	class SourceItem implements Comparable<SourceItem> {
+	static class SourceItem implements Comparable<SourceItem> {
 
 		private String name;
 		private boolean group;
 
-		public SourceItem(String name) {
+		public SourceItem(final String name) {
 			this.name = name;
 			this.group = false;
 		}
 
-		public SourceItem(String name, boolean group) {
+		public SourceItem(final String name, final boolean group) {
 			this.name = name;
 			this.group = group;
 		}
 
 		@Override
-		public String toString(){
-			if (group){
+		public String toString() {
+			if (group) {
 				return TabsRouting.get().overviewGroup(name);
 			} else {
 				return name;
@@ -640,7 +647,7 @@ public class RoutingTab extends JMainTab  {
 		}
 
 		@Override
-		public int compareTo(SourceItem o) {
+		public int compareTo(final SourceItem o) {
 			return this.getName().compareTo(o.getName());
 		}
 	}

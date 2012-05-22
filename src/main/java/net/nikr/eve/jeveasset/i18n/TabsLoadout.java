@@ -30,11 +30,11 @@ public abstract class TabsLoadout extends Bundle {
 		return BundleCache.get(TabsLoadout.class);
 	}
 
-	public static TabsLoadout get(Locale locale) {
+	public static TabsLoadout get(final Locale locale) {
 		return BundleCache.get(TabsLoadout.class, locale);
 	}
 
-	public TabsLoadout(Locale locale) {
+	public TabsLoadout(final Locale locale) {
 		super(locale);
 	}
 

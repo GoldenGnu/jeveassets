@@ -46,17 +46,17 @@ import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 public class ValuesTab extends JMainTab implements ActionListener {
 
-	public final static String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
-	public final static String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
+	public static final String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
+	public static final String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
 
-	private final String NAME_TOTAL = TabsValues.get().total();
-	private final String NAME_WALLET_BALANCE = TabsValues.get().wallet();
-	private final String NAME_ASSETS_VALUE = TabsValues.get().assets();
-	private final String NAME_ASSETS_SELL_ORDERS = TabsValues.get().sell();
-	private final String NAME_ASSETS_ESCROWS = TabsValues.get().escrows();
-	private final String NAME_BEST_ASSET = TabsValues.get().best();
-	private final String NAME_BEST_SHIP = TabsValues.get().best1();
-	private final String NAME_BEST_MODULE = TabsValues.get().best2();
+	private static final String NAME_TOTAL = TabsValues.get().total();
+	private static final String NAME_WALLET_BALANCE = TabsValues.get().wallet();
+	private static final String NAME_ASSETS_VALUE = TabsValues.get().assets();
+	private static final String NAME_ASSETS_SELL_ORDERS = TabsValues.get().sell();
+	private static final String NAME_ASSETS_ESCROWS = TabsValues.get().escrows();
+	private static final String NAME_BEST_ASSET = TabsValues.get().best();
+	private static final String NAME_BEST_SHIP = TabsValues.get().best1();
+	private static final String NAME_BEST_MODULE = TabsValues.get().best2();
 
 	//GUI
 	private JComboBox jOwners;
@@ -101,7 +101,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private String backgroundHexColor;
 	private String gridHexColor;
 
-	public ValuesTab(Program program) {
+	public ValuesTab(final Program program) {
 		super(program, TabsValues.get().values(), Images.TOOL_VALUES.getIcon(), true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
@@ -114,7 +114,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jOwners.setActionCommand(ACTION_OWNER_SELECTED);
 		jOwners.addActionListener(this);
 
-		jOwner = new JEditorPane("text/html","<html>");
+		jOwner = new JEditorPane("text/html", "<html>");
 		JCopyPopup.install(jOwner);
 		jOwner.setEditable(false);
 		jOwner.setOpaque(false);
@@ -126,7 +126,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jCorps.setActionCommand(ACTION_CORP_SELECTED);
 		jCorps.addActionListener(this);
 
-		jCorp = new JEditorPane("text/html","<html>");
+		jCorp = new JEditorPane("text/html", "<html>");
 		JCopyPopup.install(jCorp);
 		jCorp.setEditable(false);
 		jCorp.setOpaque(false);
@@ -135,7 +135,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jCorpScroll.setBorder(null);
 
 
-		jAll = new JEditorPane("text/html","<html>");
+		jAll = new JEditorPane("text/html", "<html>");
 		JCopyPopup.install(jAll);
 		jAll.setEditable(false);
 		jAll.setOpaque(false);
@@ -173,18 +173,16 @@ public class ValuesTab extends JMainTab implements ActionListener {
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCorps, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jAllScroll, 0, 0, Short.MAX_VALUE)
 					.addComponent(jOwnerScroll, 0, 0, Short.MAX_VALUE)
 					.addComponent(jCorpScroll, 0, 0, Short.MAX_VALUE)
 				)
-				
 		);
 		eveAssetEventList = program.getEveAssetEventList();
 	}
 
-	private boolean calcTotal(){
+	private boolean calcTotal() {
 		owners = new ArrayList<String>();
 		corps = new ArrayList<String>();
 		ownersTotalAccountBalance = new HashMap<String, Double>();
@@ -214,16 +212,22 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		bestItem = null;
 		bestShip = null;
 		bestModule = null;
-		for (Asset eveAsset : eveAssetEventList){
+		for (Asset eveAsset : eveAssetEventList) {
 			//Skip market orders
-			if (eveAsset.getFlag().equals(General.get().marketOrderSellFlag())) continue; //Ignore market sell orders
-			if (eveAsset.getFlag().equals(General.get().marketOrderBuyFlag())) continue; //Ignore market buy orders
-			
-			if (eveAsset.isCorporation()){ //Corp Asset
+			//Ignore market sell orders
+			if (eveAsset.getFlag().equals(General.get().marketOrderSellFlag())) {
+				continue;
+			}
+			//Ignore market buy orders
+			if (eveAsset.getFlag().equals(General.get().marketOrderBuyFlag())) {
+				continue;
+			}
+
+			if (eveAsset.isCorporation()) { //Corp Asset
 				//Corp Total Value
 				String corp = eveAsset.getOwner();
 				double corpTotalValue = 0;
-				if (corpsTotalItemsValue.containsKey(corp)){
+				if (corpsTotalItemsValue.containsKey(corp)) {
 					corpTotalValue = corpsTotalItemsValue.get(corp);
 					corpsTotalItemsValue.remove(corp);
 				}
@@ -232,7 +236,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Corp Total Count
 				long corpTotalCount = 0;
-				if (corpsTotalItemsCount.containsKey(corp)){
+				if (corpsTotalItemsCount.containsKey(corp)) {
 					corpTotalCount = corpsTotalItemsCount.get(corp);
 					corpsTotalItemsCount.remove(corp);
 				}
@@ -243,20 +247,26 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Corp Best Item
 				Asset corpBestItem = corpsBestItem.get(corp);
-				if (corpBestItem == null) corpBestItem = eveAsset;
+				if (corpBestItem == null) {
+					corpBestItem = eveAsset;
+				}
 
-				if (corpBestItem.getPrice() <= eveAsset.getPrice()){
-					if (corpsBestItem.containsValue(corpBestItem)) corpsBestItem.remove(corp);
+				if (corpBestItem.getPrice() <= eveAsset.getPrice()) {
+					if (corpsBestItem.containsValue(corpBestItem)) {
+						corpsBestItem.remove(corp);
+					}
 					corpsBestItem.put(corp, eveAsset);
 				}
 
 				//Corp Best Module
 				Asset corpBestModule = corpsBestModule.get(corp);
-				if (corpBestModule == null && eveAsset.getCategory().equals("Module")) corpBestModule = eveAsset;
+				if (corpBestModule == null && eveAsset.getCategory().equals("Module")) {
+					corpBestModule = eveAsset;
+				}
 
 				if (corpBestModule != null
 								&& corpBestModule.getPrice() <= eveAsset.getPrice()
-								&& eveAsset.getCategory().equals("Module")){
+								&& eveAsset.getCategory().equals("Module")) {
 					if (corpsBestModule.containsValue(corpBestModule)) {
 						corpsBestModule.remove(corp);
 					}
@@ -265,11 +275,13 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Corp Best Module
 				Asset corpBestShip = corpsBestShip.get(corp);
-				if (corpBestShip == null && eveAsset.getCategory().equals("Ship")) corpBestShip = eveAsset;
+				if (corpBestShip == null && eveAsset.getCategory().equals("Ship")) {
+					corpBestShip = eveAsset;
+				}
 
 				if (corpBestShip != null
 								&& corpBestShip.getPrice() <= eveAsset.getPrice()
-								&& eveAsset.getCategory().equals("Ship")){
+								&& eveAsset.getCategory().equals("Ship")) {
 					if (corpsBestShip.containsValue(corpBestShip)) {
 						corpsBestShip.remove(corp);
 					}
@@ -279,7 +291,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				String owner = eveAsset.getOwner();
 				//Owner Total Item Value
 				double ownerTotalValue = 0;
-				if (ownersTotalItemsValue.containsKey(owner)){
+				if (ownersTotalItemsValue.containsKey(owner)) {
 					ownerTotalValue = ownersTotalItemsValue.get(owner);
 					ownersTotalItemsValue.remove(owner);
 				}
@@ -288,7 +300,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Owner Total Count
 				long ownerTotalCount = 0;
-				if (ownersTotalItemsCount.containsKey(owner)){
+				if (ownersTotalItemsCount.containsKey(owner)) {
 					ownerTotalCount = ownersTotalItemsCount.get(owner);
 					ownersTotalItemsCount.remove(owner);
 				}
@@ -297,20 +309,26 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Owner Best Item
 				Asset ownerBestItem = ownersBestItem.get(owner);
-				if (ownerBestItem == null) ownerBestItem = eveAsset;
+				if (ownerBestItem == null) {
+					ownerBestItem = eveAsset;
+				}
 
-				if (ownerBestItem.getPrice() <= eveAsset.getPrice()){
-					if (ownersBestItem.containsValue(ownerBestItem)) ownersBestItem.remove(owner);
+				if (ownerBestItem.getPrice() <= eveAsset.getPrice()) {
+					if (ownersBestItem.containsValue(ownerBestItem)) {
+						ownersBestItem.remove(owner);
+					}
 					ownersBestItem.put(owner, eveAsset);
 				}
 
 				//Owner Best Module
 				Asset ownerBestModule = ownersBestModule.get(owner);
-				if (ownerBestModule == null && eveAsset.getCategory().equals("Module")) ownerBestModule = eveAsset;
+				if (ownerBestModule == null && eveAsset.getCategory().equals("Module")) {
+					ownerBestModule = eveAsset;
+				}
 
 				if (ownerBestModule != null
 								&& ownerBestModule.getPrice() <= eveAsset.getPrice()
-								&& eveAsset.getCategory().equals("Module")){
+								&& eveAsset.getCategory().equals("Module")) {
 					if (ownersBestModule.containsValue(ownerBestModule)) {
 						ownersBestModule.remove(owner);
 					}
@@ -319,11 +337,13 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 				//Owner Best Ship
 				Asset ownerBestShip = ownersBestShip.get(owner);
-				if (ownerBestShip == null && eveAsset.getCategory().equals("Ship")) ownerBestShip = eveAsset;
+				if (ownerBestShip == null && eveAsset.getCategory().equals("Ship")) {
+					ownerBestShip = eveAsset;
+				}
 
 				if (ownerBestShip != null
 								&& ownerBestShip.getPrice() <= eveAsset.getPrice()
-								&& eveAsset.getCategory().equals("Ship")){
+								&& eveAsset.getCategory().equals("Ship")) {
 					if (ownersBestShip.containsValue(ownerBestShip)) {
 						ownersBestShip.remove(owner);
 					}
@@ -337,39 +357,45 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			totalItemsCount = totalItemsCount + eveAsset.getCount();
 
 			//Best Item
-			if (bestItem == null) bestItem = eveAsset;
-			if (bestItem.getPrice() <= eveAsset.getPrice()){
+			if (bestItem == null) {
+				bestItem = eveAsset;
+			}
+			if (bestItem.getPrice() <= eveAsset.getPrice()) {
 				bestItem = eveAsset;
 			}
 
 			//Best Module
-			if (bestModule == null && eveAsset.getCategory().equals("Module")) bestModule = eveAsset;
+			if (bestModule == null && eveAsset.getCategory().equals("Module")) {
+				bestModule = eveAsset;
+			}
 			if (bestModule != null
 							&& bestModule.getPrice() <= eveAsset.getPrice()
-							&& eveAsset.getCategory().equals("Module")){
+							&& eveAsset.getCategory().equals("Module")) {
 				bestModule = eveAsset;
 			}
 
 			//Best Ship
-			if (bestShip == null && eveAsset.getCategory().equals("Ship")) bestShip = eveAsset;
+			if (bestShip == null && eveAsset.getCategory().equals("Ship")) {
+				bestShip = eveAsset;
+			}
 			if (bestShip != null
 							&& bestShip.getPrice() <= eveAsset.getPrice()
-							&& eveAsset.getCategory().equals("Ship")){
+							&& eveAsset.getCategory().equals("Ship")) {
 				bestShip = eveAsset;
 			}
 		}
 		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++){
+		for (int a = 0; a < accounts.size(); a++) {
 			List<Human> humans = accounts.get(a).getHumans();
-			for (Human human : humans){
-				if (human.isShowAssets()){
-					if (human.isCharacter() && !owners.contains(human.getName())){
+			for (Human human : humans) {
+				if (human.isShowAssets()) {
+					if (human.isCharacter() && !owners.contains(human.getName())) {
 						owners.add(human.getName());
 
 						//Account Balance
 						List<EveAccountBalance> accountBalances = human.getAccountBalances();
 						double ownerTotalAccountBalance = 0;
-						for (int c = 0; c < accountBalances.size(); c++){
+						for (int c = 0; c < accountBalances.size(); c++) {
 							EveAccountBalance accountBalance = accountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							ownerTotalAccountBalance = ownerTotalAccountBalance + accountBalance.getBalance();
@@ -381,9 +407,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						double ownerTotalSellOrders = 0;
 						double ownerTotalBuyOrders = 0;
 						double ownerTotalBuyOrdersNotPaid = 0;
-						for (ApiMarketOrder apiMarketOrder : marketOrders){
-							if (apiMarketOrder.getOrderState() == 0){
-								if (apiMarketOrder.getBid() < 1){ //Sell Orders
+						for (ApiMarketOrder apiMarketOrder : marketOrders) {
+							if (apiMarketOrder.getOrderState() == 0) {
+								if (apiMarketOrder.getBid() < 1) { //Sell Orders
 									ownerTotalSellOrders = ownerTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
 									ownerTotalBuyOrders = ownerTotalBuyOrders + apiMarketOrder.getEscrow();
@@ -391,26 +417,25 @@ public class ValuesTab extends JMainTab implements ActionListener {
 								}
 							}
 						}
-						if (ownerTotalSellOrders != 0){
+						if (ownerTotalSellOrders != 0) {
 							ownersTotalSellOrders.put(human.getName(), ownerTotalSellOrders);
 						}
-						if (ownerTotalBuyOrders != 0){
+						if (ownerTotalBuyOrders != 0) {
 							ownersTotalBuyOrders.put(human.getName(), ownerTotalBuyOrders);
 						}
-						if (ownerTotalBuyOrdersNotPaid != 0){
+						if (ownerTotalBuyOrdersNotPaid != 0) {
 							ownersTotalBuyOrdersNotPaid.put(human.getName(), ownerTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + ownerTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + ownerTotalBuyOrders;
-						
 					}
-					if (human.isCorporation() && !corps.contains(human.getName())){
+					if (human.isCorporation() && !corps.contains(human.getName())) {
 						corps.add(human.getName());
 
 						//Account Balance
 						List<EveAccountBalance> corpAccountBalances = human.getAccountBalances();
 						double corpTotalAccountBalance = 0;
-						for (int c = 0; c < corpAccountBalances.size(); c++){
+						for (int c = 0; c < corpAccountBalances.size(); c++) {
 							EveAccountBalance accountBalance = corpAccountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
@@ -422,23 +447,23 @@ public class ValuesTab extends JMainTab implements ActionListener {
 						double corpTotalSellOrders = 0;
 						double corpTotalBuyOrders = 0;
 						double corpTotalBuyOrdersNotPaid = 0;
-						for (ApiMarketOrder apiMarketOrder : marketOrders){
-							if (apiMarketOrder.getOrderState() == 0){
-								if (apiMarketOrder.getBid() < 1){ //Sell Orders
+						for (ApiMarketOrder apiMarketOrder : marketOrders) {
+							if (apiMarketOrder.getOrderState() == 0) {
+								if (apiMarketOrder.getBid() < 1) { //Sell Orders
 									corpTotalSellOrders = corpTotalSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 								} else { //Buy Orders
 									corpTotalBuyOrders = corpTotalBuyOrders + apiMarketOrder.getEscrow();
-									corpTotalBuyOrdersNotPaid = corpTotalBuyOrdersNotPaid + ( (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
+									corpTotalBuyOrdersNotPaid = corpTotalBuyOrdersNotPaid + ((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
 								}
 							}
 						}
-						if (corpTotalSellOrders != 0){
+						if (corpTotalSellOrders != 0) {
 							corpsTotalSellOrders.put(human.getName(), corpTotalSellOrders);
 						}
-						if (corpTotalBuyOrders  != 0){
+						if (corpTotalBuyOrders  != 0) {
 							corpsTotalBuyOrders.put(human.getName(), corpTotalBuyOrders);
 						}
-						if (corpTotalBuyOrdersNotPaid  != 0){
+						if (corpTotalBuyOrdersNotPaid  != 0) {
 							corpsTotalBuyOrdersNotPaid.put(human.getName(), corpTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + corpTotalSellOrders;
@@ -451,87 +476,97 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
-			String s = (String)jOwners.getSelectedItem();
-			if (s == null || s.equals(TabsValues.get().select())){
+			String s = (String) jOwners.getSelectedItem();
+			if (s == null || s.equals(TabsValues.get().select())) {
 				jOwner.setText("<html>");
 				return;
 			}
-			
+
 			Output output = new Output(TabsValues.get().character());
 
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
 			//Account Balance
-			if (ownersTotalAccountBalance.containsKey(s)) total = total + ownersTotalAccountBalance.get(s);
+			if (ownersTotalAccountBalance.containsKey(s)) {
+				total = total + ownersTotalAccountBalance.get(s);
+			}
 			//Items Value
-			if (ownersTotalItemsValue.containsKey(s)) total = total + ownersTotalItemsValue.get(s);
+			if (ownersTotalItemsValue.containsKey(s)) {
+				total = total + ownersTotalItemsValue.get(s);
+			}
 			//Sell Orders
-			if (ownersTotalSellOrders.containsKey(s)) total = total + ownersTotalSellOrders.get(s);
+			if (ownersTotalSellOrders.containsKey(s)) {
+				total = total + ownersTotalSellOrders.get(s);
+			}
 			//Buy Orders (Escrows)
-			if (ownersTotalBuyOrders.containsKey(s)) total = total + ownersTotalBuyOrders.get(s);
-			if (total != 0){
+			if (ownersTotalBuyOrders.containsKey(s)) {
+				total = total + ownersTotalBuyOrders.get(s);
+			}
+			if (total != 0) {
 				output.addValue(Formater.iskFormat(total));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_WALLET_BALANCE);
-			if (ownersTotalAccountBalance.containsKey(s)){
+			if (ownersTotalAccountBalance.containsKey(s)) {
 				double l = ownersTotalAccountBalance.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
-			
+
 			output.addHeading(NAME_ASSETS_VALUE);
-			if (ownersTotalItemsValue.containsKey(s)){
+			if (ownersTotalItemsValue.containsKey(s)) {
 				double l = ownersTotalItemsValue.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_SELL_ORDERS);
-			if (ownersTotalSellOrders.containsKey(s)){
+			if (ownersTotalSellOrders.containsKey(s)) {
 				double l = ownersTotalSellOrders.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
-			if (ownersTotalBuyOrders.containsKey(s)){
+			if (ownersTotalBuyOrders.containsKey(s)) {
 				String value = Formater.iskFormat(ownersTotalBuyOrders.get(s));
-				if (ownersTotalBuyOrdersNotPaid.containsKey(s)) value = value +" ("+Formater.iskFormat(ownersTotalBuyOrdersNotPaid.get(s))+")";
+				if (ownersTotalBuyOrdersNotPaid.containsKey(s)) {
+					value = value + " (" + Formater.iskFormat(ownersTotalBuyOrdersNotPaid.get(s)) + ")";
+				}
 				output.addValue(value);
 			}
 			output.addNone();
-			
+
 			output.addHeading(NAME_BEST_ASSET);
-			if (ownersBestItem.containsKey(s)){
+			if (ownersBestItem.containsKey(s)) {
 				Asset ownerBestItem = ownersBestItem.get(s);
-				output.addValue(ownerBestItem.getName()+"<br/>"+Formater.iskFormat(ownerBestItem.getPrice()));
+				output.addValue(ownerBestItem.getName() + "<br/>" + Formater.iskFormat(ownerBestItem.getPrice()));
 			}
 			output.addNone(2);
-			
+
 			output.addHeading(NAME_BEST_SHIP);
-			if (ownersBestShip.containsKey(s)){
+			if (ownersBestShip.containsKey(s)) {
 				Asset ownerBestShip = ownersBestShip.get(s);
-				output.addValue(ownerBestShip.getName()+"<br/>"+Formater.iskFormat(ownerBestShip.getPrice()));
+				output.addValue(ownerBestShip.getName() + "<br/>" + Formater.iskFormat(ownerBestShip.getPrice()));
 			}
 			output.addNone(2);
-			
+
 			output.addHeading(NAME_BEST_MODULE);
-			if (ownersBestModule.containsKey(s)){
+			if (ownersBestModule.containsKey(s)) {
 				Asset ownerBestModule = ownersBestModule.get(s);
-				output.addValue(ownerBestModule.getName()+"<br/>"+Formater.iskFormat(ownerBestModule.getPrice()));
+				output.addValue(ownerBestModule.getName() + "<br/>" + Formater.iskFormat(ownerBestModule.getPrice()));
 			}
 			output.addNone(2);
-			
+
 			jOwner.setText(output.getOutput());
 		}
 		if (ACTION_CORP_SELECTED.equals(e.getActionCommand())) {
 			//String output = "";
-			String s = (String)jCorps.getSelectedItem();
-			if (s == null || s.equals(TabsValues.get().select())){
+			String s = (String) jCorps.getSelectedItem();
+			if (s == null || s.equals(TabsValues.get().select())) {
 				jCorp.setText("<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11px;\"></div>");
 				return;
 			}
@@ -540,65 +575,75 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
 			//Account Balance
-			if (corpsTotalAccountBalance.containsKey(s)) total = total + corpsTotalAccountBalance.get(s);
+			if (corpsTotalAccountBalance.containsKey(s)) {
+				total = total + corpsTotalAccountBalance.get(s);
+			}
 			//Items Value
-			if (corpsTotalItemsValue.containsKey(s)) total = total + corpsTotalItemsValue.get(s);
+			if (corpsTotalItemsValue.containsKey(s)) {
+				total = total + corpsTotalItemsValue.get(s);
+			}
 			//Sell Orders
-			if (corpsTotalSellOrders.containsKey(s)) total = total + corpsTotalSellOrders.get(s);
+			if (corpsTotalSellOrders.containsKey(s)) {
+				total = total + corpsTotalSellOrders.get(s);
+			}
 			//Buy Orders
-			if (corpsTotalBuyOrders.containsKey(s)) total = total + corpsTotalBuyOrders.get(s);
-			if (total != 0){
+			if (corpsTotalBuyOrders.containsKey(s)) {
+				total = total + corpsTotalBuyOrders.get(s);
+			}
+			if (total != 0) {
 				output.addValue(Formater.iskFormat(total));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_WALLET_BALANCE);
-			if (corpsTotalAccountBalance.containsKey(s)){
+			if (corpsTotalAccountBalance.containsKey(s)) {
 				double l = corpsTotalAccountBalance.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_VALUE);
-			if (corpsTotalItemsValue.containsKey(s)){
+			if (corpsTotalItemsValue.containsKey(s)) {
 				double l = corpsTotalItemsValue.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_SELL_ORDERS);
-			if (corpsTotalSellOrders.containsKey(s)){
+			if (corpsTotalSellOrders.containsKey(s)) {
 				double l = corpsTotalSellOrders.get(s);
 				output.addValue(Formater.iskFormat(l));
 			}
 			output.addNone();
 
 			output.addHeading(NAME_ASSETS_ESCROWS);
-			if (corpsTotalBuyOrders.containsKey(s)){
+			if (corpsTotalBuyOrders.containsKey(s)) {
 				String value = Formater.iskFormat(corpsTotalBuyOrders.get(s));
-				if (corpsTotalBuyOrdersNotPaid.containsKey(s)) value = value + " (" +Formater.iskFormat(corpsTotalBuyOrdersNotPaid.get(s))+")";
+				if (corpsTotalBuyOrdersNotPaid.containsKey(s)) {
+					value = value + " (" + Formater.iskFormat(corpsTotalBuyOrdersNotPaid.get(s)) + ")";
+				}
 				output.addValue(value);
 			}
 			output.addNone();
 
 			output.addHeading(NAME_BEST_ASSET);
-			if (corpsBestItem.containsKey(s)){
+			if (corpsBestItem.containsKey(s)) {
 				Asset corpBestItem = corpsBestItem.get(s);
-				output.addValue(corpBestItem.getName()+"<br/>"+Formater.iskFormat(corpBestItem.getPrice()));
+				output.addValue(corpBestItem.getName() + "<br/>" + Formater.iskFormat(corpBestItem.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_SHIP);
-			if (corpsBestShip.containsKey(s)){
+			if (corpsBestShip.containsKey(s)) {
 				Asset corpBestShip = corpsBestShip.get(s);
-				output.addValue(corpBestShip.getName()+"<br/>"+Formater.iskFormat(corpBestShip.getPrice()));
+				output.addValue(corpBestShip.getName() + "<br/>" + Formater.iskFormat(corpBestShip.getPrice()));
 			}
 			output.addNone(2);
 
 			output.addHeading(NAME_BEST_MODULE);
-			if (corpsBestModule.containsKey(s)){
+			if (corpsBestModule.containsKey(s)) {
 				Asset corpBestModule = corpsBestModule.get(s);
-				output.addValue(corpBestModule.getName()+"<br/>"+Formater.iskFormat(corpBestModule.getPrice()));
+				output.addValue(corpBestModule.getName() + "<br/>" + Formater.iskFormat(corpBestModule.getPrice()));
 			}
 			output.addNone(2);
 
@@ -608,7 +653,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent){
+	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(false);
 	}
@@ -617,10 +662,10 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	public void updateData() {
 		calcTotal();
 		jOwners.removeAllItems();
-		for (int a = 0; a < owners.size(); a++){
+		for (int a = 0; a < owners.size(); a++) {
 			jOwners.addItem(owners.get(a));
 		}
-		if (jOwners.getModel().getSize() > 0){
+		if (jOwners.getModel().getSize() > 0) {
 			jOwners.setEnabled(true);
 		} else {
 			jOwners.addItem(TabsValues.get().no());
@@ -629,10 +674,10 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jOwners.setSelectedIndex(0);
 
 		jCorps.removeAllItems();
-		for (int a = 0; a < corps.size(); a++){
+		for (int a = 0; a < corps.size(); a++) {
 			jCorps.addItem(corps.get(a));
 		}
-		if (jCorps.getModel().getSize() > 0){
+		if (jCorps.getModel().getSize() > 0) {
 			jCorps.setEnabled(true);
 		} else {
 			jCorps.addItem(TabsValues.get().no1());
@@ -646,33 +691,41 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				|| totalItemsValue != 0
 				|| totalSellOrders != 0
 				|| totalBuyOrders != 0
-				){
+				) {
 			output.addValue(Formater.iskFormat(totalAccountBalance
-					+totalItemsValue
-					+totalSellOrders
-					+totalBuyOrders));
+					+ totalItemsValue
+					+ totalSellOrders
+					+ totalBuyOrders));
 		}
 		output.addNone();
 
 		output.addHeading(NAME_WALLET_BALANCE);
-		if (totalAccountBalance != 0) output.addValue(Formater.iskFormat(totalAccountBalance));
+		if (totalAccountBalance != 0) {
+			output.addValue(Formater.iskFormat(totalAccountBalance));
+		}
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_VALUE);
-		if (totalItemsValue != 0) output.addValue(Formater.iskFormat(totalItemsValue));
+		if (totalItemsValue != 0) {
+			output.addValue(Formater.iskFormat(totalItemsValue));
+		}
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_SELL_ORDERS);
-		if (totalSellOrders != 0) output.addValue(Formater.iskFormat(totalSellOrders));
+		if (totalSellOrders != 0) {
+			output.addValue(Formater.iskFormat(totalSellOrders));
+		}
 		output.addNone();
 
 		output.addHeading(NAME_ASSETS_ESCROWS);
-		if (totalBuyOrders != 0) output.addValue(Formater.iskFormat(totalBuyOrders));
+		if (totalBuyOrders != 0) {
+			output.addValue(Formater.iskFormat(totalBuyOrders));
+		}
 		output.addNone();
 
 		output.addHeading(NAME_BEST_ASSET);
-		if (bestItem != null){
-			output.addValue(bestItem.getName()+"<br/>"+Formater.iskFormat(bestItem.getPrice()));
+		if (bestItem != null) {
+			output.addValue(bestItem.getName() + "<br/>" + Formater.iskFormat(bestItem.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);
@@ -680,8 +733,8 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 
 		output.addHeading(NAME_BEST_SHIP);
-		if (bestShip != null){
-			output.addValue(bestShip.getName()+"<br/>"+Formater.iskFormat(bestShip.getPrice()));
+		if (bestShip != null) {
+			output.addValue(bestShip.getName() + "<br/>" + Formater.iskFormat(bestShip.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);
@@ -689,8 +742,8 @@ public class ValuesTab extends JMainTab implements ActionListener {
 
 
 		output.addHeading(NAME_BEST_MODULE);
-		if (bestModule != null){
-			output.addValue(bestModule.getName()+"<br/>"+Formater.iskFormat(bestModule.getPrice()));
+		if (bestModule != null) {
+			output.addValue(bestModule.getName() + "<br/>" + Formater.iskFormat(bestModule.getPrice()));
 			output.addNone();
 		} else {
 			output.addNone(2);
@@ -701,48 +754,47 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {}
+	protected void showTablePopupMenu(final MouseEvent e) { }
 
-	private class Output{
+	private class Output {
 		private String output;
 		private String moduleOutput;
 
-		public Output(String title) {
+		public Output(final String title) {
 			output = "<html>"
-				+"<div>"
-				+"<table cellspacing=\"1\" style=\"padding: 0px; background: #"+gridHexColor+"; width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 9px;\">"
-				+"<tr><td style=\"background: #222222; color: #ffffff; font-size: 11px; font-weight: bold;\">"+title+"</td></tr>";
+				+ "<div>"
+				+ "<table cellspacing=\"1\" style=\"padding: 0px; background: #" + gridHexColor + "; width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 9px;\">"
+				+ "<tr><td style=\"background: #222222; color: #ffffff; font-size: 11px; font-weight: bold;\">" + title + "</td></tr>";
 			moduleOutput = "";
 		}
 
 
-		public void addHeading(String heading){
-			output = output+"<tr><td style=\"background: #"+gridHexColor+"; color: #ffffff; font-size: 11px; font-weight: bold;\">"+heading+"</td></tr>";
+		public void addHeading(final String heading) {
+			output = output + "<tr><td style=\"background: #" + gridHexColor + "; color: #ffffff; font-size: 11px; font-weight: bold;\">" + heading + "</td></tr>";
 			moduleOutput = "";
 		}
 
-		public void addValue(String module){
-			moduleOutput = moduleOutput+"<tr><td style=\"background: #ffffff; text-align: right;\">"+module+"</td></tr>";
+		public void addValue(final String module) {
+			moduleOutput = moduleOutput + "<tr><td style=\"background: #ffffff; text-align: right;\">" + module + "</td></tr>";
 		}
 
-		public void addNone(int i){
-			if (moduleOutput.isEmpty()){
+		public void addNone(final int i) {
+			if (moduleOutput.isEmpty()) {
 				String temp = "";
-				for (int a = 1; a < i; a++){
+				for (int a = 1; a < i; a++) {
 					temp = temp + "<br/>";
 				}
-				addValue("<i>"+TabsValues.get().none()+"</i><br/>"+temp);
-				
+				addValue("<i>" + TabsValues.get().none() + "</i><br/>" + temp);
 			}
-			output = output+moduleOutput;
+			output = output + moduleOutput;
 		}
 
-		public void addNone(){
+		public void addNone() {
 			addNone(1);
 		}
 
-		public String getOutput(){
-			return output+"</table></div>";
+		public String getOutput() {
+			return output + "</table></div>";
 		}
 	}
 

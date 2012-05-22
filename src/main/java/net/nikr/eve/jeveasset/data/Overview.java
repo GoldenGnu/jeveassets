@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public class Overview implements Comparable<Overview>{
+public class Overview implements Comparable<Overview> {
 	private String name;
 	private String solarSystem;
 	private String region;
@@ -32,7 +32,7 @@ public class Overview implements Comparable<Overview>{
 	private long count;
 	private double value;
 
-	public Overview(String name, String solarSystem, String region, String security, double reprocessedValue, double volume, long count, double value) {
+	public Overview(final String name, final String solarSystem, final String region, final String security, final double reprocessedValue, final double volume, final long count, final double value) {
 		this.name = name;
 		this.solarSystem = solarSystem;
 		this.region = region;
@@ -44,7 +44,7 @@ public class Overview implements Comparable<Overview>{
 	}
 
 	public double getAverageValue() {
-		if (value > 0 && count > 0){
+		if (value > 0 && count > 0) {
 			return value / count;
 		} else {
 			return 0;
@@ -66,7 +66,7 @@ public class Overview implements Comparable<Overview>{
 	public double getReprocessedValue() {
 		return reprocessedValue;
 	}
-	
+
 	public String getSecurity() {
 		return security;
 	}
@@ -82,45 +82,45 @@ public class Overview implements Comparable<Overview>{
 	public double getVolume() {
 		return volume;
 	}
-	
-	public boolean isStation(){
+
+	public boolean isStation() {
 		return !isSystem() && !isRegion();
 	}
 
-	public boolean isSystem(){
+	public boolean isSystem() {
 		return name.equals(solarSystem);
 	}
 
-	public boolean isRegion(){
+	public boolean isRegion() {
 		return name.equals(region);
 	}
 
-	public boolean isGroup(){
+	public boolean isGroup() {
 		return solarSystem.equals("") && region.equals("");
 	}
 
-	public void addCount(long count) {
-		this.count = this.count + count;
+	public void addCount(final long addCount) {
+		this.count = this.count + addCount;
 	}
 
-	public void addValue(double value) {
-		this.value = this.value + value;
+	public void addValue(final double addValue) {
+		this.value = this.value + addValue;
 	}
 
-	public void addVolume(double volume) {
-		this.volume = this.volume + volume;
+	public void addVolume(final double addVolume) {
+		this.volume = this.volume + addVolume;
 	}
-	public void addReprocessedValue(double reprocessedValue) {
-		this.reprocessedValue = this.reprocessedValue + reprocessedValue;
+	public void addReprocessedValue(final double addReprocessedValue) {
+		this.reprocessedValue = this.reprocessedValue + addReprocessedValue;
 	}
 
 	@Override
-	public int compareTo(Overview o) {
+	public int compareTo(final Overview o) {
 		return this.name.compareTo(o.getName());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

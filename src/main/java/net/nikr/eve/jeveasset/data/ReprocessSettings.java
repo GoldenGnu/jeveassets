@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data;
 
 
 public class ReprocessSettings {
-	private final double BASE_YIELD = 0.375;
+	private static final double BASE_YIELD = 0.375;
 
 	private int station;
 	private int refiningLevel;
@@ -39,7 +39,7 @@ public class ReprocessSettings {
 
 
 
-	public ReprocessSettings(int station, int refining, int refineryEfficiency, int scrapmetalProcessing) {
+	public ReprocessSettings(final int station, final int refining, final int refineryEfficiency, final int scrapmetalProcessing) {
 		this.station = station;
 		this.refiningLevel = refining;
 		this.refineryEfficiencyLevel = refineryEfficiency;
@@ -62,23 +62,25 @@ public class ReprocessSettings {
 		return station;
 	}
 
-	public int getLeft(int start){
-		return (int) Math.floor(((double)start / 100.0) * getPercent());
+	public int getLeft(final int start) {
+		return (int) Math.floor(((double) start / 100.0) * getPercent());
 	}
 
-	private double getPercent(){
-		double percent = (((double)station / 100.0) +
-		(BASE_YIELD
-		* (1.0 + ((double)refiningLevel * 0.02))
-		* (1.0 + ((double)refineryEfficiencyLevel * 0.04))
-		* (1.0 + ((double)scrapmetalProcessingLevel * 0.05))
-		))*100.0;
-		if (percent > 100) return 100;
+	private double getPercent() {
+		double percent = (((double) station / 100.0)
+		+ (BASE_YIELD
+		* (1.0 + ((double) refiningLevel * 0.02))
+		* (1.0 + ((double) refineryEfficiencyLevel * 0.04))
+		* (1.0 + ((double) scrapmetalProcessingLevel * 0.05))
+		)) * 100.0;
+		if (percent > 100) {
+			return 100;
+		}
 		return percent;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

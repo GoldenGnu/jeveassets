@@ -42,19 +42,19 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class FilterSave extends JDialogCentered implements ActionListener {
 
-	public final static String ACTION_SAVE = "ACTION_SAVE";
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
+	public static final String ACTION_SAVE = "ACTION_SAVE";
+	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<String>();
 	private JComboBox jName;
 	private JButton jSave;
-	
+
 	private String returnString;
 
-	public FilterSave(JFrame jFrame) {
+	public FilterSave(final JFrame jFrame) {
 		super(null, GuiShared.get().saveFilter(), jFrame);
-		
+
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox();
@@ -63,7 +63,7 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		AutoCompleteSupport<String> autoCompleteSupport = AutoCompleteSupport.install(jName, filters, new Filterator());
 		autoCompleteSupport.setSelectsTextOnFocusGain(false);
 		autoCompleteSupport.setFirstItem("");
-		
+
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
@@ -93,8 +93,8 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 				)
 		);
 	}
-	
-	String show(List<String> filters, List<String> defaultFilters){
+
+	String show(final List<String> filters, final List<String> defaultFilters) {
 		returnString = null;
 		Collections.sort(filters);
 		this.filters.clear();
@@ -104,10 +104,10 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		this.setVisible(true);
 		return returnString;
 	}
-	
-	private boolean validate(){
+
+	private boolean validate() {
 		String name = (String) jName.getSelectedItem();
-		if (name == null){
+		if (name == null) {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
@@ -115,21 +115,21 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		for (String filter : defaultFilters){
-			if (filter.toLowerCase().equals(name.toLowerCase())){ //Case insetitive contains
+		for (String filter : defaultFilters) {
+			if (filter.toLowerCase().equals(name.toLowerCase())) { //Case insetitive contains
 				JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().overwriteDefaultFilter(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				return false;
 			}
 		}
-		if (filters.contains(name)){
+		if (filters.contains(name)) {
 			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION){
+			if (nReturn == JOptionPane.NO_OPTION) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jName;
@@ -141,11 +141,11 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
-		if (validate()){
+		if (validate()) {
 			returnString = (String) jName.getSelectedItem();
 			setVisible(false);
 		}
@@ -157,32 +157,34 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 			Robot robot = new Robot();
 			robot.keyRelease(KeyEvent.VK_ENTER);
 		} catch (AWTException e) {
-		
+
 		}
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
+	public void setVisible(final boolean b) {
+		if (b) {
 			jName.setSelectedIndex(0);
 		}
 		super.setVisible(b);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SAVE.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_SAVE.equals(e.getActionCommand())) {
 			save();
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
 		}
 	}
 
-	class Filterator implements TextFilterator<String>{
+	private static class Filterator implements TextFilterator<String> {
 		@Override
-		public void getFilterStrings(List<String> baseList, String element) {
-			if (element.length() > 0) baseList.add(element);
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			if (element.length() > 0) {
+				baseList.add(element);
+			}
 		}
 	}
 }

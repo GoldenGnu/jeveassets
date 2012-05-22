@@ -1,6 +1,6 @@
 /*
  * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
- * 
+ *
  * This file is part of jEveAssets.
  *
  * jEveAssets is free software; you can redistribute it and/or
@@ -32,29 +32,29 @@ import org.slf4j.LoggerFactory;
 import uk.me.candle.translations.BundleCache;
 
 
-public class Main {
+public final class Main {
 	/**
 	 * We cannot init this until we have set the two system properties: log.home and log.level
 	 * They are set in the entry point method and then the LOG is created.
 	 *
 	 */
-	private static Logger LOG;
+	private static Logger log;
 
 	/**
-	 * JEveAssets main launcher
+	 * JEveAssets main launcher.
 	 */
-	Program program;
+	private Program program;
 
-	/** Creates a new instance of Main */
-	public Main() {
+	/** Creates a new instance of Main. */
+	private Main() {
 		program = new Program();
 	}
-	
+
 	/**
 	 * Entry point for JEveAssets.
 	 * @param args the command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		boolean isDebug = false;
 		boolean isPortable = false;
 		boolean hasNoUpdate = false;
@@ -83,9 +83,9 @@ public class Main {
 			System.setProperty("log.home", "." + File.separator);
 		} else {
 			if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
-				System.setProperty("log.home", System.getProperty("user.home")+File.separator+"Library"+File.separator+"Preferences"+File.separator+"JEveAssets"+File.separator+"");
+				System.setProperty("log.home", System.getProperty("user.home") + File.separator + "Library" + File.separator + "Preferences" + File.separator + "JEveAssets" + File.separator);
 			} else { //Windows/Linux
-				System.setProperty("log.home", System.getProperty("user.home")+File.separator+".jeveassets"+File.separator);
+				System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
 			}
 		}
 		// ditto here.
@@ -94,9 +94,9 @@ public class Main {
 		} else {
 			System.setProperty("log.level", "INFO");
 		}
-		
+
 		// only now can we create the Logger.
-		LOG = LoggerFactory.getLogger(Main.class);
+		log = LoggerFactory.getLogger(Main.class);
 
 		// Now we have the logging stuff done, we can pass the
 		// variables to the main program and settings.
@@ -120,20 +120,20 @@ public class Main {
 				}
 			});
 	}
-	
+
 	private static void createAndShowGUI() {
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();
 
 		initLookAndFeel();
-		
+
 		//Make sure we have nice window decorations.
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
 		Main main = new Main();
 	}
-	
+
 	private static void initLookAndFeel() {
 		String lookAndFeel;
 		//lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
@@ -146,9 +146,7 @@ public class Main {
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (Exception ex) {
-			LOG.error("failed to set LookAndFeel: "+lookAndFeel, ex);
+			log.error("Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
 	}
-
-
 }

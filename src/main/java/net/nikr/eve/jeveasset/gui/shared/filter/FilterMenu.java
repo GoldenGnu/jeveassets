@@ -36,28 +36,28 @@ class FilterMenu<E> extends JMenu implements ActionListener {
 	private FilterGui<E> gui;
 	private Enum column;
 	private String text;
-	
-	FilterMenu(FilterGui<E> gui, Enum column, String text, boolean isNumeric, boolean isDate) {
+
+	FilterMenu(final FilterGui<E> gui, final Enum column, final String text, final boolean isNumeric, final boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
 		this.gui = gui;
 		this.setIcon(Images.FILTER_CONTAIN.getIcon());
 		this.column = column;
 		this.text = text;
-		
+
 		boolean isValid = column != null && text != null;
-		
+
 		JMenuItem jMenuItem;
 		CompareType[] compareTypes;
-		if (isNumeric){
+		if (isNumeric) {
 			compareTypes = CompareType.valuesNumeric();
-		} else if (isDate){
+		} else if (isDate) {
 			compareTypes = CompareType.valuesDate();
 		} else {
 			compareTypes = CompareType.valuesString();
 		}
-		
-		
-		for (CompareType compareType : compareTypes){
+
+
+		for (CompareType compareType : compareTypes) {
 			jMenuItem = new JMenuItem(compareType.toString());
 			jMenuItem.setIcon(compareType.getIcon());
 			jMenuItem.setActionCommand(compareType.name());
@@ -68,12 +68,12 @@ class FilterMenu<E> extends JMenu implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
-		if (CompareType.isColumnCompare(compareType)){
-			gui.addFilter( new Filter(LogicType.AND, column, compareType, column.name()));
+		if (CompareType.isColumnCompare(compareType)) {
+			gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
 		} else {
-			gui.addFilter( new Filter(LogicType.AND, column, compareType, text));
+			gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
 		}
 	}
 }

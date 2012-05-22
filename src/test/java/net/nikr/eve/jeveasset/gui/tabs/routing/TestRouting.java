@@ -41,7 +41,7 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
 public class TestRouting {
 
 	@Test
-	public void empty() {}
+	public void empty() { }
 
 	private List<String> getErentaList() {
 		/*
@@ -74,7 +74,7 @@ public class TestRouting {
 		testRoute(getErentaList(), new NearestNeighbour(), 42);
 	}
 
-	private void testRoute(List<String> waypointNames, RoutingAlgorithm ra, int exptectedDistance) {
+	private void testRoute(final List<String> waypointNames, final RoutingAlgorithm ra, final int exptectedDistance) {
 
 	  RoutingMockSettings rms = new RoutingMockSettings();
 		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(rms), null, ra);
@@ -91,7 +91,7 @@ public class TestRouting {
 		  System.out.print("" + i + ":");
 			for (int j = 0; j < distances[i].length && j <= i; ++j) {
 				String id = "" + distances[i][j];
-				switch (id.length()){ // HAAAAAX.
+				switch (id.length()) { // HAAAAAX.
 					case 1:
 						id = "  " + id; break;
 					case 2:

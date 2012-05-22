@@ -30,11 +30,11 @@ public abstract class TabsValues extends Bundle {
 		return BundleCache.get(TabsValues.class);
 	}
 
-	public static TabsValues get(Locale locale) {
+	public static TabsValues get(final Locale locale) {
 		return BundleCache.get(TabsValues.class, locale);
 	}
 
-	public TabsValues(Locale locale) {
+	public TabsValues(final Locale locale) {
 		super(locale);
 	}
 

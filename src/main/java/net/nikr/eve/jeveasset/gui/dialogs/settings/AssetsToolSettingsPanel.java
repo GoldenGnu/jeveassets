@@ -30,12 +30,12 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
-	
+
 	private JCheckBox jReprocessColors;
 	private JCheckBox jSellOrders;
 	private JCheckBox jBuyOrders;
 
-	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
+	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon(), parentNode);
 
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
@@ -60,12 +60,10 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	public boolean save() {
 		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors()
 						|| jSellOrders.isSelected() != program.getSettings().isIncludeSellOrders()
-						|| jBuyOrders.isSelected() != program.getSettings().isIncludeBuyOrders()
-						;
+						|| jBuyOrders.isSelected() != program.getSettings().isIncludeBuyOrders();
 		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
 		program.getSettings().setIncludeSellOrders(jSellOrders.isSelected());
 		program.getSettings().setIncludeBuyOrders(jBuyOrders.isSelected());
-		
 		return update;
 	}
 

@@ -41,10 +41,9 @@ public class CsvSettings {
 			String getI18N() {
 				return DialoguesCsvExport.get().semicolon();
 			}
-		}
-		;
-		char character;
-		private FieldDelimiter(char character) {
+		};
+		private char character;
+		private FieldDelimiter(final char character) {
 			this.character = character;
 		}
 		public char getValue() {
@@ -74,11 +73,9 @@ public class CsvSettings {
 			String getI18N() {
 				return DialoguesCsvExport.get().lineEndingsUnix();
 			}
-		}
-		;
-
-		String string;
-		private LineDelimiter(String string) {
+		};
+		private String string;
+		private LineDelimiter(final String string) {
 			this.string = string;
 		}
 		public String getValue() {
@@ -102,21 +99,19 @@ public class CsvSettings {
 			String getI18N() {
 				return DialoguesCsvExport.get().comma();
 			}
-		}
-		;
+		};
 		@Override
 		public String toString() {
 			return getI18N();
 		}
 		abstract String getI18N();
 	}
-	
-	
+
 	private static final String PATH = Settings.getUserDirectory();
-	private static final String FILENAME = Settings.getUserDirectory()+"export.csv";
-	
+	private static final String FILENAME = Settings.getUserDirectory() + "export.csv";
+
 	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
-	
+
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeperator decimalSeperator;
@@ -128,12 +123,12 @@ public class CsvSettings {
 		decimalSeperator = DecimalSeperator.DOT;
 		filename = FILENAME;
 	}
-	
+
 	public DecimalSeperator getDecimalSeperator() {
 		return decimalSeperator;
 	}
 
-	public void setDecimalSeperator(DecimalSeperator decimalSeperator) {
+	public void setDecimalSeperator(final DecimalSeperator decimalSeperator) {
 		this.decimalSeperator = decimalSeperator;
 	}
 
@@ -141,7 +136,7 @@ public class CsvSettings {
 		return fieldDelimiter;
 	}
 
-	public void setFieldDelimiter(FieldDelimiter fieldDelimiter) {
+	public void setFieldDelimiter(final FieldDelimiter fieldDelimiter) {
 		this.fieldDelimiter = fieldDelimiter;
 	}
 
@@ -149,7 +144,7 @@ public class CsvSettings {
 		return lineDelimiter;
 	}
 
-	public void setLineDelimiter(LineDelimiter lineDelimiter) {
+	public void setLineDelimiter(final LineDelimiter lineDelimiter) {
 		this.lineDelimiter = lineDelimiter;
 	}
 
@@ -157,18 +152,18 @@ public class CsvSettings {
 		return filename;
 	}
 
-	public void setFilename(String filename) {
+	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 
-	public List<String> getTableExportColumns(String key) {
+	public List<String> getTableExportColumns(final String key) {
 		return tableExportColumns.get(key);
 	}
 	public Set<Map.Entry<String, List<String>>> getTableExportColumns() {
 		return tableExportColumns.entrySet();
 	}
-	public void putTableExportColumns(String key, List<String> list) {
-		if (list == null){
+	public void putTableExportColumns(final String key, final List<String> list) {
+		if (list == null) {
 			tableExportColumns.remove(key);
 		} else {
 			tableExportColumns.put(key, list);

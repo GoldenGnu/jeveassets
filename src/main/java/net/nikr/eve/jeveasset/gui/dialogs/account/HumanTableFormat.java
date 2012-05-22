@@ -38,16 +38,16 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return "";
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return from.isShowAssets();
 		}
 		@Override
-		public boolean isColumnEditable(Object baseObject) {
+		public boolean isColumnEditable(final Object baseObject) {
 			return true;
 		}
 		@Override
-		public Human setColumnValue(Object baseObject, Object editedValue) {
-			if ((editedValue instanceof Boolean) && (baseObject instanceof Human)){
+		public Human setColumnValue(final Object baseObject, final Object editedValue) {
+			if ((editedValue instanceof Boolean) && (baseObject instanceof Human)) {
 				Human human = (Human) baseObject;
 				boolean value = (Boolean) editedValue;
 				human.setShowAssets(value);
@@ -62,7 +62,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatName();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return from.getName();
 		}
 	},
@@ -72,7 +72,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatCorporation();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new YesNo(from.isCorporation());
 		}
 	},
@@ -82,7 +82,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatAssetList();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new YesNo(from.getParentAccount().isAssetList());
 		}
 	},
@@ -92,7 +92,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatAccountBalance();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new YesNo(from.getParentAccount().isAccountBalance());
 		}
 	},
@@ -102,7 +102,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatIndustryJobs();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new YesNo(from.getParentAccount().isIndustryJobs());
 		}
 	},
@@ -112,7 +112,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatMarketOrders();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new YesNo(from.getParentAccount().isMarketOrders());
 		}
 	},
@@ -122,15 +122,14 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatExpires();
 		}
 		@Override
-		public Object getColumnValue(Human from) {
+		public Object getColumnValue(final Human from) {
 			return new ExpirerDate(from.getParentAccount().getExpires());
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private HumanTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+	private HumanTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -146,10 +145,10 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 	public String getColumnName() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
-	@Override public Human setColumnValue(Object baseObject, Object editedValue) {
+	@Override public Human setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 
@@ -157,34 +156,37 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 
 		private boolean b;
 
-		public YesNo(boolean b) {
+		public YesNo(final boolean b) {
 			this.b = b;
 		}
-		
+
 		@Override
-		public String toString(){
-			return b ? DialoguesAccount.get().tableFormatYes() : DialoguesAccount.get().tableFormatNo();
+		public String toString() {
+			if (b) {
+				return DialoguesAccount.get().tableFormatYes();
+			} else {
+				return DialoguesAccount.get().tableFormatNo();
+			}
 		}
 
 		@Override
-		public int compareTo(YesNo o) {
-			return this.toString().compareTo(o.toString()); 
+		public int compareTo(final YesNo o) {
+			return this.toString().compareTo(o.toString());
 		}
-		
 	}
-	
-	public class ExpirerDate implements Comparable<ExpirerDate>{
+
+	public class ExpirerDate implements Comparable<ExpirerDate> {
 		private Date expirer;
 
-		public ExpirerDate(Date expirer) {
+		public ExpirerDate(final Date expirer) {
 			this.expirer = expirer;
 		}
-		
+
 		@Override
-		public String toString(){
-			if (expirer == null){
+		public String toString() {
+			if (expirer == null) {
 				return "Never";
-			} else if (Settings.getGmtNow().after(expirer)){
+			} else if (Settings.getGmtNow().after(expirer)) {
 				return "Expired";
 			} else {
 				return Formater.dateOnly(expirer);
@@ -192,72 +194,8 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 		}
 
 		@Override
-		public int compareTo(ExpirerDate o) {
+		public int compareTo(final ExpirerDate o) {
 			return this.expirer.compareTo(o.expirer);
 		}
 	}
 }
-	/*
-	private List<String> columnNames;
-
-	
-
-	public List<String> getColumnNames() {
-		return columnNames;
-	}
-
-	@Override
-	public int getColumnCount() {
-		return columnNames.size();
-	}
-
-	@Override
-	public String getColumnName(int column) {
-		return columnNames.get(column);
-	}
-
-	@Override
-	public Object getColumnValue(Object baseObject, int column) {
-		if (baseObject instanceof Human){
-			Human human = (Human) baseObject;
-			switch (column) {
-				case 0: 
-				case 1: 
-				case 2: 
-				case 3: 
-				case 4: return new YesNo(human.getParentAccount().());
-				case 5: return new YesNo(human.getParentAccount().());
-				case 6: return new YesNo(human.getParentAccount().());
-				case 7: return new ExpirerDate(human.getParentAccount().());
-			}
-		}
-		return new Object();
-	}
-
-	@Override
-	public Class getColumnClass(int column) {
-		switch (column) {
-			case 0: return ;
-			case 1: return String.class;
-			case 2: return YesNo.class;
-			case 3: return YesNo.class;
-			case 4: return YesNo.class;
-			case 5: return YesNo.class;
-			case 6: return YesNo.class;
-			case 7: return .class;
-		}
-		return Object.class;
-	}
-
-	@Override
-	public Comparator getColumnComparator(int column) {
-		return GlazedLists.comparableComparator();
-	}
-
-	
-	
-	
- }
-	
-	 * 
-	 */

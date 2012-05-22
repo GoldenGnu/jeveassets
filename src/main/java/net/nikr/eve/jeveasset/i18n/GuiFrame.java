@@ -31,11 +31,11 @@ public abstract class GuiFrame extends Bundle {
 		return BundleCache.get(GuiFrame.class);
 	}
 
-	public static GuiFrame get(Locale locale) {
+	public static GuiFrame get(final Locale locale) {
 		return BundleCache.get(GuiFrame.class, locale);
 	}
 
-	public GuiFrame(Locale locale) {
+	public GuiFrame(final Locale locale) {
 		super(locale);
 	}
 

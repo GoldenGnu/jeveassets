@@ -41,21 +41,25 @@ public abstract class JMenuTool<T> extends JMenu {
 	protected List<String> regions = new ArrayList<String>();
 	protected List<Integer> marketTypeIDs = new ArrayList<Integer>();
 
-	protected JMenuTool(String title, Program program, List<T> items) {
+	protected JMenuTool(final String title, final Program program, final List<T> items) {
 		super(title);
 		this.program = program;
 		init(items);
 	}
 
-	private void init(List<T> items){
-		if (items == null) return; //Skip null
-		
-		for (T t : items){
-			if (t == null) continue; //Skip null
-			
-			if (t instanceof Material){
+	private void init(final List<T> items) {
+		if (items == null) { //Skip null
+			return;
+		}
+
+		for (T t : items) {
+			if (t == null) { //Skip null
+				continue;
+			}
+
+			if (t instanceof Material) {
 				Material material = (Material) t;
-				init(	material.isMarketGroup(),
+				init(material.isMarketGroup(),
 						material.getTypeName(),
 						material.getTypeID(),
 						material.getStation(),
@@ -64,9 +68,9 @@ public abstract class JMenuTool<T> extends JMenu {
 						material.getPrice()
 						);
 			}
-			if (t instanceof Module){
+			if (t instanceof Module) {
 				Module module = (Module) t;
-				init(	module.isMarketGroup(),
+				init(module.isMarketGroup(),
 						module.getTypeName(),
 						module.getTypeID(),
 						module.getLocation(),
@@ -75,9 +79,9 @@ public abstract class JMenuTool<T> extends JMenu {
 						module.getPrice()
 						);
 			}
-			if (t instanceof MarketOrder){
+			if (t instanceof MarketOrder) {
 				MarketOrder marketOrder = (MarketOrder) t;
-				init(	true,
+				init(true,
 						marketOrder.getName(),
 						marketOrder.getTypeID(),
 						marketOrder.getLocation(),
@@ -86,9 +90,9 @@ public abstract class JMenuTool<T> extends JMenu {
 						null //TODO - can not edit price from Orders Tool
 						);
 			}
-			if (t instanceof IndustryJob){
+			if (t instanceof IndustryJob) {
 				IndustryJob industryJob = (IndustryJob) t;
-				init(	true,
+				init(true,
 						industryJob.getName(),
 						industryJob.getInstalledItemTypeID(),
 						industryJob.getLocation(),
@@ -97,9 +101,9 @@ public abstract class JMenuTool<T> extends JMenu {
 						null //TODO - can not edit price from Jobs Tool
 						);
 			}
-			if (t instanceof Asset){
+			if (t instanceof Asset) {
 				Asset eveAsset = (Asset) t;
-				init(	eveAsset.isMarketGroup(),
+				init(eveAsset.isMarketGroup(),
 						eveAsset.getTypeName(),
 						eveAsset.getTypeID(),
 						eveAsset.getLocation(),
@@ -108,9 +112,9 @@ public abstract class JMenuTool<T> extends JMenu {
 						eveAsset.getPrice()
 						);
 			}
-			if (t instanceof Overview){
+			if (t instanceof Overview) {
 				Overview overview = (Overview) t;
-				init(	false,
+				init(false,
 						null,
 						null,
 						overview.isStation() && !overview.isGroup() ? overview.getName() : null,
@@ -119,20 +123,20 @@ public abstract class JMenuTool<T> extends JMenu {
 						null
 						);
 			}
-			if (t instanceof Item){
+			if (t instanceof Item) {
 				Item item = (Item) t;
-				init(	item.isMarketGroup(),
+				init(item.isMarketGroup(),
 						item.getName(),
 						item.getTypeID(),
 						null,
 						null,
 						null,
-						(double)item.getPrice()
+						(double) item.getPrice()
 						);
 			}
-			if (t instanceof StockpileItem){ //
+			if (t instanceof StockpileItem) { //
 				StockpileItem item = (StockpileItem) t;
-				init(	item.isMarketGroup(),
+				init(item.isMarketGroup(),
 						(t instanceof StockpileTotal) ? null : item.getName(),
 						(t instanceof StockpileTotal) ? null : item.getTypeID(),
 						item.getStockpile().getLocation(),
@@ -144,18 +148,30 @@ public abstract class JMenuTool<T> extends JMenu {
 		}
 	}
 
-	private void init(boolean marketGroup, String typeName, Integer typeID, String station, String system, String region, Double price){
-		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) marketTypeIDs.add(typeID);
-		if (typeName != null && !typeNames.contains(typeName)) typeNames.add(typeName);
-		if (typeID != null && !typeIDs.contains(typeID)) typeIDs.add(typeID);
+	private void init(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price) {
+		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) {
+			marketTypeIDs.add(typeID);
+		}
+		if (typeName != null && !typeNames.contains(typeName)) {
+			typeNames.add(typeName);
+		}
+		if (typeID != null && !typeIDs.contains(typeID)) {
+			typeIDs.add(typeID);
+		}
 		//station can be a system or a region
-		if (station != null && system != null && region != null 
+		if (station != null && system != null && region != null
 				&& !station.equals(system) && !station.equals(region)
-				&& !stations.contains(station)){
+				&& !stations.contains(station)) {
 			stations.add(station);
 		}
-		if (system != null && !systems.contains(system)) systems.add(system);
-		if (region != null && !regions.contains(region)) regions.add(region);
-		if (price != null && !prices.contains(price)) prices.add(price);
+		if (system != null && !systems.contains(system)) {
+			systems.add(system);
+		}
+		if (region != null && !regions.contains(region)) {
+			regions.add(region);
+		}
+		if (price != null && !prices.contains(price)) {
+			prices.add(price);
+		}
 	}
 }

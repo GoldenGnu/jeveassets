@@ -31,7 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 
 
-public abstract class JMainTab{
+public abstract class JMainTab {
 
 	private String title;
 	private Icon icon;
@@ -41,14 +41,14 @@ public abstract class JMainTab{
 	protected JPanel jPanel;
 	protected GroupLayout layout;
 
-	protected JMainTab(boolean load) { }
+	protected JMainTab(final boolean load) { }
 
-	public JMainTab(Program program, String title, Icon icon, boolean closeable) {
+	public JMainTab(final Program program, final String title, final Icon icon, final boolean closeable) {
 		this.program = program;
 		this.title = title;
 		this.icon = icon;
 		this.closeable = closeable;
-		
+
 		program.addMainTab(this);
 
 		jPanel = new JPanel();
@@ -60,30 +60,29 @@ public abstract class JMainTab{
 	}
 
 	public abstract void updateTableMenu(JComponent jComponent);
-	/**
-	 * Must be called after setting SelectionModel
+	/** Must be called after setting SelectionModel.
 	 * @param e mouse event
 	 */
-	protected void showTablePopupMenu(MouseEvent e){
+	protected void showTablePopupMenu(final MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
-		
+
 		selectClickedCell(e);
 
 		updateTableMenu(jTablePopupMenu);
 
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
-	
+
 	/**
 	 * Overwrite to update settings before saving...
 	 */
-	public void updateSettings(){}
-	
-	public void addStatusbarLabel(JLabel jLabel){
+	public void updateSettings() { }
+
+	public void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
 	}
 
-	public List<JLabel> getStatusbarLabels(){
+	public List<JLabel> getStatusbarLabels() {
 		return statusbarLabels;
 	}
 
@@ -105,38 +104,38 @@ public abstract class JMainTab{
 		return closeable;
 	}
 
-	protected void addSeparator(JComponent jComponent){
-		if (jComponent instanceof JMenu){
+	protected void addSeparator(final JComponent jComponent) {
+		if (jComponent instanceof JMenu) {
 			JMenu jMenu = (JMenu) jComponent;
 			jMenu.addSeparator();
 		}
-		if (jComponent instanceof JPopupMenu){
+		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 			jPopupMenu.addSeparator();
 		}
-		if (jComponent instanceof JDropDownButton){
+		if (jComponent instanceof JDropDownButton) {
 			JDropDownButton jDropDownButton = (JDropDownButton) jComponent;
 			jDropDownButton.addSeparator();
 		}
 	}
 
-	protected void installTableMenu(JTable jTable){
+	protected void installTableMenu(final JTable jTable) {
 		TableMenuListener listener = new TableMenuListener(jTable);
 		jTable.addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
 	}
-	
-	protected void selectClickedCell(MouseEvent e){
+
+	protected void selectClickedCell(final MouseEvent e) {
 		Object source = e.getSource();
-		if (source instanceof JTable){
+		if (source instanceof JTable) {
 			JTable jTable = (JTable) source;
-			
+
 			//Rows
 			boolean clickInRowsSelection = false;
 			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++){
-				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
+			for (int a = 0; a < selectedRows.length; a++) {
+				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())) {
 					clickInRowsSelection = true;
 					break;
 				}
@@ -145,55 +144,55 @@ public abstract class JMainTab{
 			//Column
 			boolean clickInColumnsSelection = false;
 			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedColumns.length; a++){
-				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())){
+			for (int a = 0; a < selectedColumns.length; a++) {
+				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())) {
 					clickInColumnsSelection = true;
 					break;
 				}
 			}
 
 			//Clicked outside selection, select clicked cell
-			if (!clickInRowsSelection || !clickInColumnsSelection){
+			if (!clickInRowsSelection || !clickInColumnsSelection) {
 				jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
 				jTable.setColumnSelectionInterval(jTable.columnAtPoint(e.getPoint()), jTable.columnAtPoint(e.getPoint()));
 			}
 		}
 	}
 
-	private class TableMenuListener implements MouseListener, ListSelectionListener{
+	private class TableMenuListener implements MouseListener, ListSelectionListener {
 
 		private JTable jTable;
 
-		public TableMenuListener(JTable jTable) {
+		public TableMenuListener(final JTable jTable) {
 			this.jTable = jTable;
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {}
+		public void mouseClicked(final MouseEvent e) { }
 
 		@Override
-		public void mousePressed(MouseEvent e) {
-			if (e.getSource().equals(jTable) && e.isPopupTrigger()){
+		public void mousePressed(final MouseEvent e) {
+			if (e.getSource().equals(jTable) && e.isPopupTrigger()) {
 				showTablePopupMenu(e);
 			}
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (e.getSource().equals(jTable) && e.isPopupTrigger()){
+		public void mouseReleased(final MouseEvent e) {
+			if (e.getSource().equals(jTable) && e.isPopupTrigger()) {
 				showTablePopupMenu(e);
 			}
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent e) {}
+		public void mouseEntered(final MouseEvent e) { }
 
 		@Override
-		public void mouseExited(MouseEvent e) {}
+		public void mouseExited(final MouseEvent e) { }
 
 		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			if (!e.getValueIsAdjusting()){
+		public void valueChanged(final ListSelectionEvent e) {
+			if (!e.getValueIsAdjusting()) {
 				program.updateTableMenu();
 			}
 		}

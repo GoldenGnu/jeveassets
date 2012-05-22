@@ -40,7 +40,7 @@ public class Item implements Comparable<Item> {
 	private int portion;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 
-	public Item(int typeID, String name, String group, String category, long price, float volume, int meta, String tech, boolean marketGroup, boolean piMaterial, int portion) {
+	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -54,7 +54,7 @@ public class Item implements Comparable<Item> {
 		this.portion = portion;
 	}
 
-	public void addReprocessedMaterial(ReprocessedMaterial material){
+	public void addReprocessedMaterial(final ReprocessedMaterial material) {
 		reprocessedMaterials.add(material);
 	}
 
@@ -97,7 +97,7 @@ public class Item implements Comparable<Item> {
 	public float getVolume() {
 		return volume;
 	}
-	
+
 	public boolean isPiMaterial() {
 		return piMaterial;
 	}
@@ -107,17 +107,17 @@ public class Item implements Comparable<Item> {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return name;
 	}
 
 	@Override
-	public int compareTo(Item o) {
+	public int compareTo(final Item o) {
 		return this.getName().compareTo(o.getName());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -136,5 +136,5 @@ public class Item implements Comparable<Item> {
 		int hash = 3;
 		hash = 17 * hash + this.typeID;
 		return hash;
-	}	
+	}
 }

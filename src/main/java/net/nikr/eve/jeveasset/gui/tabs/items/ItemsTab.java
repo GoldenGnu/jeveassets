@@ -45,10 +45,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab{
-	
+public class ItemsTab extends JMainTab {
+
 	private JAutoColumnTable jTable;
-	
+
 	//Table
 	private ItemsFilterControl filterControl;
 	private EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
@@ -56,12 +56,12 @@ public class ItemsTab extends JMainTab{
 	private FilterList<Item> filterList;
 	private EventList<Item> eventList;
 	private EventSelectionModel<Item> selectionModel;
-	
+
 	public static final String NAME = "items"; //Not to be changed!
 
-	public ItemsTab(Program program) {
+	public ItemsTab(final Program program) {
 		super(program, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
-		
+
 		//Table format
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
@@ -95,7 +95,7 @@ public class ItemsTab extends JMainTab{
 				filterList,
 				program.getSettings().getTableFilters(NAME)
 				);
-		
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -106,15 +106,14 @@ public class ItemsTab extends JMainTab{
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		
+
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll( program.getSettings().getItems().values() );
+			eventList.addAll(program.getSettings().getItems().values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		
 	}
 
 	@Override
@@ -124,14 +123,14 @@ public class ItemsTab extends JMainTab{
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
+	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
-		
+
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
 	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu){
+		if (isSelected && jComponent instanceof JPopupMenu) {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
@@ -150,23 +149,23 @@ public class ItemsTab extends JMainTab{
 	}
 
 	@Override
-	public void updateData() {}
-	
-	
-	public static class ItemsFilterControl extends FilterControl<Item>{
+	public void updateData() { }
 
-		public ItemsFilterControl(JFrame jFrame, EventList<Item> eventList, FilterList<Item> filterList, Map<String, List<Filter>> filters) {
+
+	public static class ItemsFilterControl extends FilterControl<Item> {
+
+		public ItemsFilterControl(final JFrame jFrame, final EventList<Item> eventList, final FilterList<Item> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 		}
-		
+
 		@Override
-		protected Object getColumnValue(Item item, String column) {
+		protected Object getColumnValue(final Item item, final String column) {
 			ItemTableFormat format = ItemTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
-		
+
 		@Override
-		protected boolean isNumericColumn(Enum column) {
+		protected boolean isNumericColumn(final Enum column) {
 			ItemTableFormat format = (ItemTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -174,9 +173,9 @@ public class ItemsTab extends JMainTab{
 				return false;
 			}
 		}
-		
+
 		@Override
-		protected boolean isDateColumn(Enum column) {
+		protected boolean isDateColumn(final Enum column) {
 			ItemTableFormat format = (ItemTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -190,9 +189,9 @@ public class ItemsTab extends JMainTab{
 		public Enum[] getColumns() {
 			return ItemTableFormat.values();
 		}
-		
+
 		@Override
-		protected Enum valueOf(String column) {
+		protected Enum valueOf(final String column) {
 			return ItemTableFormat.valueOf(column);
 		}
 
@@ -200,6 +199,5 @@ public class ItemsTab extends JMainTab{
 		protected List<EnumTableColumn<Item>> getEnumColumns() {
 			return columnsAsList(ItemTableFormat.values());
 		}
-		
 	}
 }

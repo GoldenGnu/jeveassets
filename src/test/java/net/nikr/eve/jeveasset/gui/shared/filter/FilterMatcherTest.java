@@ -33,7 +33,7 @@ import org.junit.*;
 
 public class FilterMatcherTest {
 
-	public enum TestEnum{
+	public enum TestEnum {
 		TEXT(false, false),
 		LONG(true, false),
 		INTEGER(true, false),
@@ -42,11 +42,11 @@ public class FilterMatcherTest {
 		DATE(false, true),
 		COLUMN_TEXT(false, false),
 		COLUMN_NUMBER(true, false),
-		COLUMN_DATE(false, true),
-		;
+		COLUMN_DATE(false, true);
+
 		private boolean number;
 		private boolean date;
-		private TestEnum(boolean number, boolean date) {
+		private TestEnum(final boolean number, final boolean date) {
 			this.number = number;
 			this.date = date;
 		}
@@ -59,28 +59,28 @@ public class FilterMatcherTest {
 			return number;
 		}
 	}
-	
+
 	private String textColumn = null;
 	private Number numberColumn = null;
 	private Date dateColumn = null;
 	private static final String TEXT = "Text";
 	private static final String TEXT_PART = "Tex";
 	private static final String TEXT_NOT = "Not";
-	
+
 	private static final String DATE = "01-01-2005";
 	private static final String DATE_BEFORE = "01-01-2010";
 	private static final String DATE_AFTER = "01-01-2000";
 	private static final String DATE_PART = "2005";
 	private static final String DATE_NOT = "05-05-2005";
-	
+
 	private static final double NUMBER_DOUBLE = 222.0d;
 	private static final float NUMBER_FLOAT = 222.0f;
-	private static final long NUMBER_LONG = 222l;
+	private static final long NUMBER_LONG = 222L;
 	private static final int NUMBER_INTEGER = 222;
-	
+
 	private final TestFilterControl filterControl = new TestFilterControl();
 	private final Item item = new Item();
-	
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 	}
@@ -88,11 +88,11 @@ public class FilterMatcherTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 	}
-	
+
 	@Before
 	public void setUp() {
 	}
-	
+
 	@After
 	public void tearDown() {
 	}
@@ -113,37 +113,36 @@ public class FilterMatcherTest {
 		dateTest();
 	//All
 		allTest();
-		
 	}
-	
-	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text){
+
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text) {
 		matches(expected, item, enumColumn, compare, text, null, null, null);
 	}
-	
-	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn){
+
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn) {
 		matches(expected, item, enumColumn, compare, text, textColumn, null, null);
 	}
-	
-	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Number numberColumn){
+
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Number numberColumn) {
 		matches(expected, item, enumColumn, compare, text, null, numberColumn, null);
 	}
-	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Date dateColumn){
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Date dateColumn) {
 		matches(expected, item, enumColumn, compare, text, null, null, dateColumn);
 	}
-	
-	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn){
+
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn) {
 		//Test matches
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
-		this.dateColumn = dateColumn; 
+		this.dateColumn = dateColumn;
 		FilterMatcher<Item> filterMatcher;
 		filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
 		assertEquals(enumColumn.name(), expected, filterMatcher.matches(item));
 		filterMatcher = new FilterMatcher<Item>(filterControl, new Filter(Filter.LogicType.AND, enumColumn, compare, text));
-		assertEquals(enumColumn.name()+" (filter)", expected, filterMatcher.matches(item));
+		assertEquals(enumColumn.name() + " (filter)", expected, filterMatcher.matches(item));
 	}
-	
-	private void dateTest(){
+
+	private void dateTest() {
 		//Equals
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS, DATE_PART);
@@ -176,7 +175,7 @@ public class FilterMatcherTest {
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE);
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_AFTER);
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER, DATE_BEFORE);
-		
+
 		//Equals column
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE));
 		matches(false, item, TestEnum.DATE, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_NOT));
@@ -198,8 +197,8 @@ public class FilterMatcherTest {
 		matches(true,  item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_AFTER));
 		matches(false, item, TestEnum.DATE, Filter.CompareType.AFTER_COLUMN, TestEnum.COLUMN_DATE.name(), Formater.columnStringToDate(DATE_BEFORE));
 	}
-	
-	private void stringTest(){
+
+	private void stringTest() {
 		//Equals
 		matches(true,  item, TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT);
 		matches(false, item, TestEnum.TEXT, Filter.CompareType.EQUALS, TEXT_PART);
@@ -233,8 +232,8 @@ public class FilterMatcherTest {
 		matches(false, item, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT_PART);
 		matches(true,  item, TestEnum.TEXT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_TEXT.name(), TEXT_NOT);
 	}
-	
-	private void numberTest(TestEnum testEnum){
+
+	private void numberTest(final TestEnum testEnum) {
 		//Equals
 		matches(true,  item, testEnum, Filter.CompareType.EQUALS, "222");
 		matches(true,  item, testEnum, Filter.CompareType.EQUALS, "222.0");
@@ -316,7 +315,7 @@ public class FilterMatcherTest {
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221.9);
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221);
 	}
-	
+
 	private void allTest() {
 		long startTime = System.currentTimeMillis();
 	//Text
@@ -387,28 +386,26 @@ public class FilterMatcherTest {
 		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
 		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
 		long endTime = System.currentTimeMillis();
-		System.out.println("Filter time:"+ (endTime-startTime));
+		System.out.println("Filter time:" + (endTime - startTime));
 	}
-	
-	public class Item{
-		
-	}
-	
-	public class TestFilterControl extends FilterControl<Item>{
-		
+
+	public static class Item { }
+
+	public class TestFilterControl extends FilterControl<Item> {
+
 		@Override
 		protected Enum[] getColumns() {
 			return TestEnum.values();
 		}
 
 		@Override
-		protected Enum valueOf(String column) {
+		protected Enum valueOf(final String column) {
 			return TestEnum.valueOf(column);
 		}
 
 		@Override
-		protected boolean isNumericColumn(Enum column) {
-			if (column instanceof TestEnum){
+		protected boolean isNumericColumn(final Enum column) {
+			if (column instanceof TestEnum) {
 				TestEnum testEnum = (TestEnum) column;
 				return testEnum.isNumber();
 			}
@@ -416,8 +413,8 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		protected boolean isDateColumn(Enum column) {
-			if (column instanceof TestEnum){
+		protected boolean isDateColumn(final Enum column) {
+			if (column instanceof TestEnum) {
 				TestEnum testEnum = (TestEnum) column;
 				return testEnum.isDate();
 			}
@@ -425,33 +422,33 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		protected Object getColumnValue(Item item, String columnString) {
+		protected Object getColumnValue(final Item item, final String columnString) {
 			Enum column = valueOf(columnString);
-			if (column instanceof TestEnum){
+			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
-				if (format.equals(TestEnum.TEXT)){
+				if (format.equals(TestEnum.TEXT)) {
 					return TEXT;
-				} else if (format.equals(TestEnum.DOUBLE)){
+				} else if (format.equals(TestEnum.DOUBLE)) {
 					return NUMBER_DOUBLE;
-				} else if (format.equals(TestEnum.FLOAT)){
+				} else if (format.equals(TestEnum.FLOAT)) {
 					return NUMBER_FLOAT;
-				} else if (format.equals(TestEnum.LONG)){
+				} else if (format.equals(TestEnum.LONG)) {
 					return NUMBER_LONG;
-				} else if (format.equals(TestEnum.INTEGER)){
+				} else if (format.equals(TestEnum.INTEGER)) {
 					return NUMBER_INTEGER;
-				} else if (format.equals(TestEnum.DATE)){
+				} else if (format.equals(TestEnum.DATE)) {
 					return Formater.columnStringToDate(DATE);
-				} else if (format.equals(TestEnum.COLUMN_TEXT)){
+				} else if (format.equals(TestEnum.COLUMN_TEXT)) {
 					return textColumn;
-				} else if (format.equals(TestEnum.COLUMN_NUMBER)){
+				} else if (format.equals(TestEnum.COLUMN_NUMBER)) {
 					return numberColumn;
-				} else if (format.equals(TestEnum.COLUMN_DATE)){
+				} else if (format.equals(TestEnum.COLUMN_DATE)) {
 					return dateColumn;
 				}
 			}
 			return null;
 		}
-		
+
 		@Override
 		protected List<EnumTableColumn<Item>> getEnumColumns() {
 			return null; //Only used by the GUI

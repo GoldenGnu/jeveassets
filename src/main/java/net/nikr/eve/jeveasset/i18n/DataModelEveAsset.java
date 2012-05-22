@@ -34,11 +34,11 @@ public abstract class DataModelEveAsset extends Bundle {
 		return BundleCache.get(DataModelEveAsset.class);
 	}
 
-	public static DataModelEveAsset get(Locale locale) {
+	public static DataModelEveAsset get(final Locale locale) {
 		return BundleCache.get(DataModelEveAsset.class, locale);
 	}
 
-	public DataModelEveAsset(Locale locale) {
+	public DataModelEveAsset(final Locale locale) {
 		super(locale);
 	}
 

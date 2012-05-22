@@ -26,7 +26,7 @@ package net.nikr.eve.jeveasset.io.local.update;
  */
 public interface LocalUpdate {
 
-	public void performUpdate();
-	public int getStart();
-	public int getEnd();
+	void performUpdate();
+	int getStart();
+	int getEnd();
 }

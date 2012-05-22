@@ -34,11 +34,11 @@ public abstract class DialoguesSettings extends Bundle {
 		return BundleCache.get(DialoguesSettings.class);
 	}
 
-	public static DialoguesSettings get(Locale locale) {
+	public static DialoguesSettings get(final Locale locale) {
 		return BundleCache.get(DialoguesSettings.class, locale);
 	}
 
-	public DialoguesSettings(Locale locale) {
+	public DialoguesSettings(final Locale locale) {
 		super(locale);
 	}
 	// used in AssetsToolSettingsPanel
@@ -57,7 +57,7 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
 	public abstract String ignoreAuditLogContainers();
-	
+
 	// used in StockpileToolSettingsPanel
 	public abstract String stockpile();
 	public abstract String stockpileSwitchTab();

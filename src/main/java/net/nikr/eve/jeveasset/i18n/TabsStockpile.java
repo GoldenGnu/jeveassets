@@ -31,14 +31,14 @@ public abstract class TabsStockpile extends Bundle {
 		return BundleCache.get(TabsStockpile.class);
 	}
 
-	public static TabsStockpile get(Locale locale) {
+	public static TabsStockpile get(final Locale locale) {
 		return BundleCache.get(TabsStockpile.class, locale);
 	}
 
-	public TabsStockpile(Locale locale) {
+	public TabsStockpile(final Locale locale) {
 		super(locale);
 	}
-	
+
 	public abstract String stockpile();
 	public abstract String newStockpile();
 	public abstract String addStockpileTitle();

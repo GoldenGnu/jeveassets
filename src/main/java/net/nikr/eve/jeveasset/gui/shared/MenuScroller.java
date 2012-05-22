@@ -1,6 +1,6 @@
 /*
  * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
- * 
+ *
  * Original code by Darryl (http://tips4java.wordpress.com/2009/02/01/menu-scroller/)
  *
  * This file is part of jEveAssets.
@@ -65,7 +65,7 @@ public class MenuScroller {
 	 *
 	 * @param menu the popup menu
 	 */
-	public MenuScroller(JPopupMenu menu) {
+	public MenuScroller(final JPopupMenu menu) {
 		this(menu, 15);
 	}
 
@@ -79,7 +79,7 @@ public class MenuScroller {
 	 * @throws IllegalArgumentException if scrollCount or interval is 0 or
 	 * negative
 	 */
-	public MenuScroller(JPopupMenu menu, int interval) {
+	public MenuScroller(final JPopupMenu menu, final int interval) {
 		this(menu, interval, 0, 0);
 	}
 
@@ -100,7 +100,7 @@ public class MenuScroller {
 	 * @throws IllegalArgumentException if scrollCount or interval is 0 or
 	 * negative or if topFixedCount or bottomFixedCount is negative
 	 */
-	public MenuScroller(JPopupMenu menu, int interval, int topFixedCount, int bottomFixedCount) {
+	public MenuScroller(final JPopupMenu menu, final int interval, final int topFixedCount, final int bottomFixedCount) {
 		if (interval <= 0) {
 			throw new IllegalArgumentException("interval must be greater than 0");
 		}
@@ -121,7 +121,7 @@ public class MenuScroller {
 	}
 
 	/**
-	 * Returns the scroll interval in milliseconds
+	 * Returns the scroll interval in milliseconds.
 	 *
 	 * @return the scroll interval in milliseconds
 	 */
@@ -130,12 +130,12 @@ public class MenuScroller {
 	}
 
 	/**
-	 * Sets the scroll interval in milliseconds
+	 * Sets the scroll interval in milliseconds.
 	 *
 	 * @param interval the scroll interval in milliseconds
 	 * @throws IllegalArgumentException if interval is 0 or negative
 	 */
-	public final void setInterval(int interval) {
+	public final void setInterval(final int interval) {
 		if (interval <= 0) {
 			throw new IllegalArgumentException("interval must be greater than 0");
 		}
@@ -158,7 +158,7 @@ public class MenuScroller {
 	 *
 	 * @param topFixedCount the number of items
 	 */
-	public final void setTopFixedCount(int topFixedCount) {
+	public final void setTopFixedCount(final int topFixedCount) {
 		if (firstIndex <= topFixedCount) {
 			firstIndex = topFixedCount;
 		} else {
@@ -182,7 +182,7 @@ public class MenuScroller {
 	 *
 	 * @param bottomFixedCount the number of items
 	 */
-	public final void setBottomFixedCount(int bottomFixedCount) {
+	public final void setBottomFixedCount(final int bottomFixedCount) {
 		this.bottomFixedCount = bottomFixedCount;
 	}
 
@@ -195,7 +195,7 @@ public class MenuScroller {
 	 * @param item the item to keep visible
 	 * @see #keepVisible(int)
 	 */
-	public void keepVisible(JMenuItem item) {
+	public void keepVisible(final JMenuItem item) {
 		if (item == null) {
 			keepVisibleIndex = -1;
 		} else {
@@ -213,7 +213,7 @@ public class MenuScroller {
 	 * @param index the index of the item to keep visible
 	 * @see #keepVisible(javax.swing.JMenuItem)
 	 */
-	public void keepVisible(int index) {
+	public void keepVisible(final int index) {
 		keepVisibleIndex = index;
 	}
 
@@ -244,8 +244,8 @@ public class MenuScroller {
 
 	private void refreshMenu() {
 		if (menuItems != null && menuItems.length > 0) {
-			int maxScroll = menuItems.length - (topFixedCount+bottomFixedCount+2);
-			if (scrollCount ==  maxScroll){ //Show All
+			int maxScroll = menuItems.length - (topFixedCount + bottomFixedCount + 2);
+			if (scrollCount ==  maxScroll) { //Show All
 				menu.setPreferredSize(null);
 				return;
 			}
@@ -282,7 +282,7 @@ public class MenuScroller {
 			parent.repaint();
 		}
 	}
-	
+
 	public void scrollCountForScreen() {
 		int maxHeight = 0;
 		if (menuItems != null && menuItems.length > 0) {
@@ -292,24 +292,24 @@ public class MenuScroller {
 		}
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int height = screenSize.height;
-		int maxScroll = (height / maxHeight) - (topFixedCount+bottomFixedCount+1);  // 2 just takes the menu up a bit from the bottom which looks nicer
-		scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount+bottomFixedCount+2));
+		int maxScroll = (height / maxHeight) - (topFixedCount + bottomFixedCount + 1);  // 2 just takes the menu up a bit from the bottom which looks nicer
+		scrollCount = Math.min(maxScroll, menuItems.length - (topFixedCount + bottomFixedCount + 2));
 	}
 
 	private class MenuScrollListener implements PopupMenuListener {
 
 		@Override
-		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+		public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
 			setMenuItems();
 		}
 
 		@Override
-		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+		public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
 			restoreMenuItems();
 		}
 
 		@Override
-		public void popupMenuCanceled(PopupMenuEvent e) {
+		public void popupMenuCanceled(final PopupMenuEvent e) {
 			restoreMenuItems();
 		}
 
@@ -339,7 +339,7 @@ public class MenuScroller {
 	private class MouseScrollListener implements MouseWheelListener {
 
 		@Override
-		public void mouseWheelMoved(MouseWheelEvent mwe) {
+		public void mouseWheelMoved(final MouseWheelEvent mwe) {
 			firstIndex += mwe.getWheelRotation();
 			mwe.consume();
 			refreshMenu();
@@ -351,13 +351,13 @@ public class MenuScroller {
 
 		private Timer timer;
 
-		public MenuScrollItem(MenuScroller.MenuIcon icon, final int increment) {
+		public MenuScrollItem(final MenuScroller.MenuIcon icon, final int increment) {
 			setIcon(icon);
 			setDisabledIcon(icon);
 			timer = new Timer(interval, new ActionListener() {
 
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(final ActionEvent e) {
 					firstIndex += increment;
 					refreshMenu();
 				}
@@ -365,12 +365,12 @@ public class MenuScroller {
 			addChangeListener(this);
 		}
 
-		public void setInterval(int interval) {
+		public void setInterval(final int interval) {
 			timer.setDelay(interval);
 		}
 
 		@Override
-		public void stateChanged(ChangeEvent e) {
+		public void stateChanged(final ChangeEvent e) {
 			if (isArmed() && !timer.isRunning()) {
 				timer.start();
 			}
@@ -384,15 +384,15 @@ public class MenuScroller {
 
 		UP(7, 3, 7),
 		DOWN(3, 7, 3);
-		final int[] xPoints = {1, 5, 9};
-		final int[] yPoints;
+		private final int[] xPoints = {1, 5, 9};
+		private final int[] yPoints;
 
-		MenuIcon(int... yPoints) {
+		MenuIcon(final int... yPoints) {
 			this.yPoints = yPoints;
 		}
 
 		@Override
-		public void paintIcon(Component c, Graphics g, int x, int y) {
+		public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
 			Dimension size = c.getSize();
 			Graphics g2 = g.create(size.width / 2 - 5, size.height / 2 - 5, 10, 10);
 			if (c.isEnabled()) {

@@ -28,9 +28,9 @@ import uk.me.candle.eve.graph.Node;
  * @author Candle
  */
 public class SolarSystem extends Node {
-	Location location;
+	private Location location;
 
-	public SolarSystem(Location location) {
+	public SolarSystem(final Location location) {
 		super(location.getName());
 		this.location = location;
 	}
@@ -52,7 +52,7 @@ public class SolarSystem extends Node {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

@@ -36,7 +36,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getName();
 		}
 	},
@@ -46,7 +46,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnSystem();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getSolarSystem();
 		}
 	},
@@ -56,7 +56,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getRegion();
 		}
 	},
@@ -66,7 +66,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnSecurity();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getSecurity();
 		}
 	},
@@ -76,7 +76,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnVolume();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getVolume();
 		}
 	},
@@ -86,7 +86,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getValue();
 		}
 	},
@@ -96,7 +96,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnCount();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getCount();
 		}
 	},
@@ -106,7 +106,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnAverageValue();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getAverageValue();
 		}
 	},
@@ -116,15 +116,13 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return TabsOverview.get().columnReprocessedValue();
 		}
 		@Override
-		public Object getColumnValue(Overview from) {
+		public Object getColumnValue(final Overview from) {
 			return from.getReprocessedValue();
 		}
-	},
-	;
-
-	Class type;
-	Comparator<?> comparator;
-	private OverviewTableFormat(Class type, Comparator<?> comparator) {
+	};
+	private Class type;
+	private Comparator<?> comparator;
+	private OverviewTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -137,13 +135,13 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		return comparator;
 	}
 	@Override
-	public boolean isColumnEditable(Object baseObject) {
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
 	@Override
-	public Overview setColumnValue(Object baseObject, Object editedValue) {
+	public Overview setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnName() Workaround
-	@Override abstract public String getColumnName();
+	@Override public abstract String getColumnName();
 }

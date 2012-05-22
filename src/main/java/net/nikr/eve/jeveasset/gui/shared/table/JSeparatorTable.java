@@ -22,16 +22,16 @@ import net.nikr.eve.jeveasset.Program;
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class JSeparatorTable extends JAutoColumnTable{
+public class JSeparatorTable extends JAutoColumnTable {
 
-	/** working with separator cells */
+	/** working with separator cells. */
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
 	private Boolean revalidateLocked = null;
 	private boolean tableChanged = true;
-	
-	
-	public JSeparatorTable(Program program, EventTableModel tableModel) {
+
+
+	public JSeparatorTable(final Program program, final EventTableModel tableModel) {
 		super(program, tableModel);
 		setUI(new SpanTableUI());
 
@@ -40,14 +40,15 @@ public class JSeparatorTable extends JAutoColumnTable{
 		this.separatorRenderer = getDefaultRenderer(Object.class);
 		revalidateLocked = false;
 	}
-	
 
-	public void expandSeparators(boolean expand, SeparatorList<?> separatorList){
+	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
 		final EventSelectionModel selectModel = getEventSelectionModel();
-		if (selectModel != null) selectModel.setEnabled(false);
-		for (int i = 0; i < separatorList.size(); i++){
+		if (selectModel != null) {
+			selectModel.setEnabled(false);
+		}
+		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator){
+			if (object instanceof SeparatorList.Separator) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 				separatorList.getReadWriteLock().writeLock().lock();
 				try {
@@ -57,11 +58,13 @@ public class JSeparatorTable extends JAutoColumnTable{
 				}
 			}
 		}
-		if (selectModel != null) selectModel.setEnabled(true);
+		if (selectModel != null) {
+			selectModel.setEnabled(true);
+		}
 	}
 
 	private EventSelectionModel getEventSelectionModel() {
-		if (selectionModel instanceof EventSelectionModel<?>){
+		if (selectionModel instanceof EventSelectionModel<?>) {
 			return (EventSelectionModel) selectionModel;
 		} else {
 			return null;
@@ -81,20 +84,20 @@ public class JSeparatorTable extends JAutoColumnTable{
 
 	/** {@inheritDoc} */
 	@Override
-	public Rectangle getCellRect(int row, int column, boolean includeSpacing) {
+	public Rectangle getCellRect(final int row, final int column, final boolean includeSpacing) {
 		final EventTableModel eventTableModel = getEventTableModel();
 
 		// sometimes JTable asks for a cellrect that doesn't exist anymore, due
 		// to an editor being installed before a bunch of rows were removed.
 		// In this case, just return an empty rectangle, since it's going to
 		// be discarded anyway
-		if(row >= eventTableModel.getRowCount() || row < 0) {
+		if (row >= eventTableModel.getRowCount() || row < 0) {
 			return new Rectangle();
 		}
 
 		// if it's the separator row, return the entire row as one big rectangle
 		Object rowValue = eventTableModel.getElementAt(row);
-		if(rowValue instanceof SeparatorList.Separator) {
+		if (rowValue instanceof SeparatorList.Separator) {
 			Rectangle firstColumn = super.getCellRect(row, 0, includeSpacing);
 			Rectangle lastColumn = super.getCellRect(row, getColumnCount() - 1, includeSpacing);
 			return firstColumn.union(lastColumn);
@@ -105,18 +108,19 @@ public class JSeparatorTable extends JAutoColumnTable{
 		}
 	}
 
-	public Rectangle getCellRectWithoutSpanning(int row, int column, boolean includeSpacing) {
+	public Rectangle getCellRectWithoutSpanning(final int row, final int column, final boolean includeSpacing) {
 		return super.getCellRect(row, column, includeSpacing);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public Object getValueAt(int row, int column) {
+	public Object getValueAt(final int row, final int column) {
 		final Object rowValue = getEventTableModel().getElementAt(row);
 
 		// if it's the separator row, return the value directly
-		if(rowValue instanceof SeparatorList.Separator)
+		if (rowValue instanceof SeparatorList.Separator) {
 			return rowValue;
+		}
 
 		// otherwise it's business as usual
 		return super.getValueAt(row, column);
@@ -124,9 +128,9 @@ public class JSeparatorTable extends JAutoColumnTable{
 
 	/** {@inheritDoc} */
 	@Override
-	public TableCellRenderer getCellRenderer(int row, int column) {
+	public TableCellRenderer getCellRenderer(final int row, final int column) {
 		// if it's the separator row, use the separator renderer
-		if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
+		if (getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator) {
 			return separatorRenderer;
 		}
 		// otherwise it's business as usual
@@ -135,9 +139,9 @@ public class JSeparatorTable extends JAutoColumnTable{
 
 	/** {@inheritDoc} */
 	@Override
-	public TableCellEditor getCellEditor(int row, int column) {
+	public TableCellEditor getCellEditor(final int row, final int column) {
 		// if it's the separator row, use the separator editor
-		if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
+		if (getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator) {
 			return separatorEditor;
 		}
 		// otherwise it's business as usual
@@ -146,9 +150,9 @@ public class JSeparatorTable extends JAutoColumnTable{
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean isCellEditable(int row, int column) {
+	public boolean isCellEditable(final int row, final int column) {
 		// if it's the separator row, it is always editable (so that the separator can be collapsed/expanded)
-		if(getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator){
+		if (getEventTableModel().getElementAt(row) instanceof SeparatorList.Separator) {
 			return true;
 		}
 		// otherwise it's business as usual
@@ -159,32 +163,36 @@ public class JSeparatorTable extends JAutoColumnTable{
 	 * Get the renderer for separator rows.
 	 */
 	public TableCellRenderer getSeparatorRenderer() { return separatorRenderer; }
-	public void setSeparatorRenderer(TableCellRenderer separatorRenderer) { this.separatorRenderer = separatorRenderer; }
+	public void setSeparatorRenderer(final TableCellRenderer separatorRenderer) { this.separatorRenderer = separatorRenderer; }
 
 	/**
 	 * Get the editor for separator rows.
 	 */
 	public TableCellEditor getSeparatorEditor() { return separatorEditor; }
-	public void setSeparatorEditor(TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
-	
+	public void setSeparatorEditor(final TableCellEditor separatorEditor) { this.separatorEditor = separatorEditor; }
+
 	//XXX - Workaround for Autoscroller less then optimal behavior on SeparatorList.Separator
 	private List<Integer> selectedRows = new ArrayList<Integer>();
 	/** {@inheritDoc} */
 	@Override
-	public void valueChanged(ListSelectionEvent e){
-		if (e.getValueIsAdjusting()){
-			for (int row = e.getFirstIndex(); row <= e.getLastIndex(); row++){
-				if (this.isRowSelected(row)){
-					if (!selectedRows.contains(row)) selectedRows.add(row);
+	public void valueChanged(final ListSelectionEvent e) {
+		if (e.getValueIsAdjusting()) {
+			for (int row = e.getFirstIndex(); row <= e.getLastIndex(); row++) {
+				if (this.isRowSelected(row)) {
+					if (!selectedRows.contains(row)) {
+						selectedRows.add(row);
+					}
 				} else {
-					if (selectedRows.contains(row)) selectedRows.remove(selectedRows.indexOf(row));
+					if (selectedRows.contains(row)) {
+						selectedRows.remove(selectedRows.indexOf(row));
+					}
 				}
 			}
 			//System.out.println("valueChanged => rows: "+selectedRows+" Row: "+selectedRows.get(selectedRows.size()-1));
 		}
-		if(!selectedRows.isEmpty()
-				&& selectedRows.get(selectedRows.size()-1) <  getEventTableModel().getRowCount()
-				&& (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size()-1)) instanceof SeparatorList.Separator)){
+		if (!selectedRows.isEmpty()
+				&& selectedRows.get(selectedRows.size() - 1) < getEventTableModel().getRowCount()
+				&& (getEventTableModel().getElementAt(selectedRows.get(selectedRows.size() - 1)) instanceof SeparatorList.Separator)) {
 			setAutoscrolls(false);
 		} else {
 			setAutoscrolls(true);
@@ -194,11 +202,11 @@ public class JSeparatorTable extends JAutoColumnTable{
 
 	/** {@inheritDoc} */
 	@Override
-	public void tableChanged(TableModelEvent e) {
+	public void tableChanged(final TableModelEvent e) {
 		tableChanged = true;
 		// stop edits when the table changes, or else we might
 		// get a relocated edit in the wrong cell!
-		if(isEditing()) {
+		if (isEditing()) {
 			super.getCellEditor().cancelCellEditing();
 		}
 
@@ -209,12 +217,12 @@ public class JSeparatorTable extends JAutoColumnTable{
 	//XXX - Dirty hack is dirty
 	@Override
 	public void revalidate() {
-		if (revalidateLocked != null && !revalidateLocked && tableChanged){
+		if (revalidateLocked != null && !revalidateLocked && tableChanged) {
 			revalidateLocked = true;
-			for (int row = 0; row < this.getRowCount(); row++){
+			for (int row = 0; row < this.getRowCount(); row++) {
 				TableCellRenderer renderer = this.getCellRenderer(row, 0);
 				Component component = this.prepareRenderer(renderer, row, 0);
-				if (this.getRowHeight(row) != component.getPreferredSize().height){
+				if (this.getRowHeight(row) != component.getPreferredSize().height) {
 					this.setRowHeight(row, component.getPreferredSize().height);
 				}
 			}
@@ -232,7 +240,7 @@ class SpanTableUI extends BasicTableUI {
 	private JSeparatorTable separatorTable;
 
 	@Override
-	public void installUI(JComponent c) {
+	public void installUI(final JComponent c) {
 		this.separatorTable = (JSeparatorTable) c;
 		super.installUI(c);
 	}
@@ -241,7 +249,7 @@ class SpanTableUI extends BasicTableUI {
 	 * that was set in installUI().
 	 */
 	@Override
-	public void paint(Graphics g, JComponent c) {
+	public void paint(final Graphics g, final JComponent c) {
 		Rectangle clip = g.getClipBounds();
 
 		Rectangle bounds = table.getBounds();
@@ -249,10 +257,10 @@ class SpanTableUI extends BasicTableUI {
 		// into the table's bounds
 		bounds.x = bounds.y = 0;
 
-		if (table.getRowCount() <= 0 || table.getColumnCount() <= 0 ||
+		if (table.getRowCount() <= 0 || table.getColumnCount() <= 0
 			// this check prevents us from painting the entire table
 			// when the clip doesn't intersect our bounds at all
-			!bounds.intersects(clip)) {
+			|| !bounds.intersects(clip)) {
 
 			return;
 		}
@@ -271,7 +279,7 @@ class SpanTableUI extends BasicTableUI {
 		// which is why we bail above if that is the case).
 		// Replace this with the index of the last row.
 		if (rMax == -1) {
-			rMax = table.getRowCount()-1;
+			rMax = table.getRowCount() - 1;
 		}
 
 		boolean ltr = table.getComponentOrientation().isLeftToRight();
@@ -284,7 +292,7 @@ class SpanTableUI extends BasicTableUI {
 		// If the table does not have enough columns to fill the view we'll get -1.
 		// Replace this with the index of the last column.
 		if (cMax == -1) {
-			cMax = table.getColumnCount()-1;
+			cMax = table.getColumnCount() - 1;
 		}
 
 		// Paint the grid.
@@ -293,8 +301,8 @@ class SpanTableUI extends BasicTableUI {
 		// Paint the cells.
 		paintCells(g, rMin, rMax, cMin, cMax);
 	}
-	private void paintCell(Graphics g, Rectangle cellRect, int row, int column) {
-		if (table.isEditing() && table.getEditingRow()==row && table.getEditingColumn()==column) {
+	private void paintCell(final Graphics g, final Rectangle cellRect, final int row, final int column) {
+		if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
 			Component component = table.getEditorComponent();
 			component.setBounds(cellRect);
 			component.validate();
@@ -304,7 +312,7 @@ class SpanTableUI extends BasicTableUI {
 			rendererPane.paintComponent(g, component, table, cellRect.x, cellRect.y, cellRect.width, cellRect.height, true);
 		}
 	}
-	private void paintCells(Graphics g, int rMin, int rMax, int cMin, int cMax) {
+	private void paintCells(final Graphics g, final int rMin, final int rMax, final int cMin, final int cMax) {
 		JTableHeader header = table.getTableHeader();
 		TableColumn draggedColumn = (header == null) ? null : header.getDraggedColumn();
 
@@ -315,8 +323,8 @@ class SpanTableUI extends BasicTableUI {
 		TableColumn aColumn;
 		int columnWidth;
 		if (table.getComponentOrientation().isLeftToRight()) {
-			for(int row = rMin; row <= rMax; row++) {
-				for(int column = 0; column <= cMax; column++) {
+			for (int row = rMin; row <= rMax; row++) {
+				for (int column = 0; column <= cMax; column++) {
 					aColumn = cm.getColumn(column);
 					cellRect = table.getCellRect(row, column, false);
 					if (aColumn != draggedColumn) {
@@ -325,7 +333,7 @@ class SpanTableUI extends BasicTableUI {
 				}
 			}
 		} else {
-			for(int row = rMin; row <= rMax; row++) {
+			for (int row = rMin; row <= rMax; row++) {
 				cellRect = table.getCellRect(row, cMin, false);
 				aColumn = cm.getColumn(cMin);
 				if (aColumn != draggedColumn) {
@@ -333,7 +341,7 @@ class SpanTableUI extends BasicTableUI {
 					cellRect.width = columnWidth - columnMargin;
 					paintCell(g, cellRect, row, cMin);
 				}
-				for(int column = cMin+1; column <= cMax; column++) {
+				for (int column = cMin + 1; column <= cMax; column++) {
 					aColumn = cm.getColumn(column);
 					columnWidth = aColumn.getWidth();
 					cellRect.width = columnWidth - columnMargin;
@@ -361,13 +369,13 @@ class SpanTableUI extends BasicTableUI {
 	 * horizontal lines if <code>getShowHorizontalLines()</code>
 	 * returns true.
 	 */
-	private void paintGrid(Graphics g, int rMin, int rMax, int cMin, int cMax) {
+	private void paintGrid(final Graphics g, final int rMin, final int rMax, final int cMin, final int cMax) {
 		g.setColor(table.getGridColor());
 
 		Rectangle minCell = table.getCellRect(rMin, cMin, true);
 		Rectangle maxCell = table.getCellRect(rMax, cMax, true);
-		Rectangle damagedArea = minCell.union( maxCell );
-		
+		Rectangle damagedArea = minCell.union(maxCell);
+
 		if (table.getShowHorizontalLines()) {
 			int tableWidth = damagedArea.x + damagedArea.width;
 			int y = damagedArea.y;
@@ -384,10 +392,10 @@ class SpanTableUI extends BasicTableUI {
 				x = 0; //damagedArea.x;
 				for (int column = 0; column <= cMax; column++) {
 					x += cm.getColumn(column).getWidth();
-					 
 					// redraw the grid lines for this column if it is damaged
-					if (column >= cMin)
+					if (column >= cMin) {
 						g.drawLine(x - 1, 0, x - 1, tableHeight - 1);
+					}
 				}
 			} else {
 				x = damagedArea.x + damagedArea.width;
@@ -401,7 +409,7 @@ class SpanTableUI extends BasicTableUI {
 		}
 	}
 
-	private int viewIndexForColumn(TableColumn aColumn) {
+	private int viewIndexForColumn(final TableColumn aColumn) {
 		TableColumnModel cm = table.getColumnModel();
 		for (int column = 0; column < cm.getColumnCount(); column++) {
 			if (cm.getColumn(column) == aColumn) {
@@ -411,15 +419,15 @@ class SpanTableUI extends BasicTableUI {
 		return -1;
 	}
 
-	private void paintDraggedArea(Graphics g, int rMin, int rMax, TableColumn draggedColumn, int distance) {
+	private void paintDraggedArea(final Graphics g, final int rMin, final int rMax, final TableColumn draggedColumn, final int distance) {
 		int draggedColumnIndex = viewIndexForColumn(draggedColumn);
 
-		for(int row = rMin; row <= rMax; row++) {
+		for (int row = rMin; row <= rMax; row++) {
 			// skip separator rows
-			Object rowValue = ((EventTableModel)separatorTable.getModel()).getElementAt(row);
+			Object rowValue = ((EventTableModel) separatorTable.getModel()).getElementAt(row);
 
 			// only paint the cell on non-separator rows
-			if(!(rowValue instanceof SeparatorList.Separator)) {
+			if (!(rowValue instanceof SeparatorList.Separator)) {
 
 				Rectangle cellRect = table.getCellRect(row, draggedColumnIndex, false);
 
@@ -442,7 +450,7 @@ class SpanTableUI extends BasicTableUI {
 					int x2 = x1 + cellRect.width - 1;
 					int y2 = y1 + cellRect.height - 1;
 					// Left
-					g.drawLine(x1-1, y1, x1-1, y2);
+					g.drawLine(x1 - 1, y1, x1 - 1, y2);
 					// Right
 					g.drawLine(x2, y1, x2, y2);
 				}

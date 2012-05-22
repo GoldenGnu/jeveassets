@@ -26,15 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -46,15 +38,15 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
  */
 public class ProxySettingsPanel extends JSettingsPanel {
 
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_SAVE = "ACTION_SAVE";
+	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	public static final String ACTION_SAVE = "ACTION_SAVE";
 	private JComboBox proxyTypeField;
 	private JTextField proxyAddressField;
 	private JSpinner proxyPortField;
 	private JCheckBox enableApiProxy;
 	private JTextField apiProxyField;
 
-	public ProxySettingsPanel(Program program, SettingsDialog optionsDialog) {
+	public ProxySettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().proxy(), Images.SETTINGS_PROXY.getIcon());
 
 		JLabel proxyTypeLabel = new JLabel(DialoguesSettings.get().type());
@@ -71,7 +63,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		proxyTypeField.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				boolean enabled = !proxyTypeField.getSelectedItem().equals(Proxy.Type.DIRECT);
 				proxyAddressField.setEnabled(enabled);
 				proxyPortField.setEnabled(enabled);
@@ -89,7 +81,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		enableApiProxy.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				apiProxyField.setEnabled(enableApiProxy.isSelected());
 			}
 		});
@@ -144,7 +136,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 			);
 	}
 
-	private void enableProxy(boolean b) {
+	private void enableProxy(final boolean b) {
 		proxyAddressField.setEnabled(b);
 		proxyPortField.setEnabled(b);
 	}

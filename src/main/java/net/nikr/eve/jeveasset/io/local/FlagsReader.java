@@ -37,32 +37,32 @@ import org.w3c.dom.NodeList;
 
 public class FlagsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
 
-	public static boolean load(Settings settings){
+	public static boolean load(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathFlags());
 			parseFlags(element, settings.getItemFlags());
 		} catch (IOException ex) {
-			LOG.error("Flags not loaded: "+ex.getMessage(), ex);
+			LOG.error("Flags not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			LOG.error("Flags not loaded: "+ex.getMessage(), ex);
+			LOG.error("Flags not loaded: " + ex.getMessage(), ex);
 		}
 		LOG.info("Flags loaded");
 		return true;
 	}
 
-	private static void parseFlags(Element element, Map<Integer, ItemFlag> flags){
+	private static void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) {
 		NodeList nodes = element.getElementsByTagName("row");
-		ItemFlag itemFlag = null;
-		for (int a = 0; a < nodes.getLength(); a++){
+		ItemFlag itemFlag;
+		for (int a = 0; a < nodes.getLength(); a++) {
 			Element itemElement = (Element) nodes.item(a);
 			itemFlag = parseFlag(itemElement);
 			flags.put(itemFlag.getFlagID(), itemFlag);
 		}
 	}
 
-	private static ItemFlag parseFlag(Node node){
+	private static ItemFlag parseFlag(final Node node) {
 		int flagID = AttributeGetters.getInt(node, "flagid");
 		String flagName = AttributeGetters.getString(node, "flagname");
 		String flagText = AttributeGetters.getString(node, "flagtext");

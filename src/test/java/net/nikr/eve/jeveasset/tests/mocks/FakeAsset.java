@@ -34,17 +34,17 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public void addEveAsset(Asset eveAsset) {
+	public void addEveAsset(final Asset eveAsset) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public int compareTo(Asset o) {
+	public int compareTo(final Asset o) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -112,7 +112,7 @@ public class FakeAsset extends Asset {
 	public float getVolumeTotal() {
 		throw new UnsupportedOperationException("not implemented");
 	}
-	
+
 	@Override
 	public String getName() {
 		throw new UnsupportedOperationException("not implemented");
@@ -264,37 +264,37 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public void setContainer(String container) {
+	public void setContainer(final String container) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setName(String name) {
+	public void setName(final String name) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setPriceData(PriceData priceData) {
+	public void setPriceData(final PriceData priceData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setPriceReprocessed(double priceReprocessed) {
+	public void setPriceReprocessed(final double priceReprocessed) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setTypeCount(long typeCount) {
+	public void setTypeCount(final long typeCount) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUserPrice(UserItem<Integer, Double> userPrice) {
+	public void setUserPrice(final UserItem<Integer, Double> userPrice) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setVolume(float volume) {
+	public void setVolume(final float volume) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -302,7 +302,4 @@ public class FakeAsset extends Asset {
 	public String toString() {
 		throw new UnsupportedOperationException("not implemented");
 	}
-	
-	
-	
 }

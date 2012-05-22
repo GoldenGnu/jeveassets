@@ -43,49 +43,49 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 public class StockpileItemDialog extends JDialogCentered implements ActionListener, CaretListener, ItemListener {
 
-	private final static String ACTION_CANCEL = "ACTION_CANCEL";
-	private final static String ACTION_OK = "ACTION_OK";
-	
+	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private static final String ACTION_OK = "ACTION_OK";
+
 	private JButton jOK;
 	private JButton jCancel;
 	private JComboBox jItems;
 	private JTextField jCountMinimum;
-	
+
 	private EventList<Item> items = new BasicEventList<Item>();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
 	private boolean updated = false;
-	
-	public StockpileItemDialog(Program program) {
+
+	public StockpileItemDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
-		
+
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
 		jItems = new JComboBox();
 		jItems.addItemListener(this);
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, items, new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
-		
+
 		JLabel jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
 		jCountMinimum = new JTextField();
 		jCountMinimum.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusGained(FocusEvent e) {
+			public void focusGained(final FocusEvent e) {
 				jCountMinimum.selectAll();
 			}
 		});
 		jCountMinimum.addCaretListener(this);
-		
+
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 		jOK.setEnabled(false);
-		
+
 		jCancel = new JButton(TabsStockpile.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
-		
-		
+
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -119,29 +119,29 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 				)
 		);
 	}
-	
-	boolean showEdit(StockpileItem stockpileItem) {
+
+	boolean showEdit(final StockpileItem addStockpileItem) {
 		updateData();
-		this.stockpileItem = stockpileItem;
+		this.stockpileItem = addStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
-		Item item = program.getSettings().getItems().get(stockpileItem.getTypeID());
+		Item item = program.getSettings().getItems().get(addStockpileItem.getTypeID());
 		jItems.setSelectedItem(item);
-		jCountMinimum.setText(String.valueOf(stockpileItem.getCountMinimum()));
+		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
 		show();
 		return updated;
 	}
-	
-	boolean showAdd(Stockpile stockpile) {
+
+	boolean showAdd(final Stockpile addStockpile) {
 		updateData();
-		this.stockpile = stockpile;
+		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
 		show();
 		return updated;
 	}
-	
-	boolean showAdd(Stockpile stockpile, int typeID) {
+
+	boolean showAdd(final Stockpile addStockpile, final int typeID) {
 		updateData();
-		this.stockpile = stockpile;
+		this.stockpile = addStockpile;
 		Item item = program.getSettings().getItems().get(typeID);
 		jItems.setSelectedItem(item);
 		jItems.setEnabled(false);
@@ -149,8 +149,8 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		show();
 		return updated;
 	}
-	
-	private void updateData(){
+
+	private void updateData() {
 		stockpile = null;
 		stockpileItem = null;
 		List<Item> itemsList = new ArrayList<Item>(program.getSettings().getItems().values());
@@ -166,80 +166,82 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		jCountMinimum.setText("");
 		jItems.setEnabled(true);
 	}
-	
-	private void show(){
+
+	private void show() {
 		updated = false;
 		autoValidate();
 		autoSet();
 		super.setVisible(true);
 	}
-	
-	private Stockpile getStockpile(){
-		if (stockpile != null){
+
+	private Stockpile getStockpile() {
+		if (stockpile != null) {
 			return stockpile;
 		} else {
 			return stockpileItem.getStockpile();
 		}
 	}
-	
-	private StockpileItem getStockpileItem(){
-		Item item = (Item)jItems.getSelectedItem();
+
+	private StockpileItem getStockpileItem() {
+		Item item = (Item) jItems.getSelectedItem();
 		long countMinimum;
 		try {
 			countMinimum = Long.valueOf(jCountMinimum.getText());
-		} catch (NumberFormatException ex){
+		} catch (NumberFormatException ex) {
 			countMinimum = 0;
 		}
 		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), item.getTypeID(), countMinimum);
 	}
-	
-	private boolean itemExist(){
+
+	private boolean itemExist() {
 		return getExistingItem() != null;
 	}
 
-	private StockpileItem getExistingItem(){
-		Item typeItem = (Item)jItems.getSelectedItem();
-		if (stockpile != null && typeItem != null){
-			for (StockpileItem item : stockpile.getItems()){
-				if (item.getTypeID() == typeItem.getTypeID()){
+	private StockpileItem getExistingItem() {
+		Item typeItem = (Item) jItems.getSelectedItem();
+		if (stockpile != null && typeItem != null) {
+			for (StockpileItem item : stockpile.getItems()) {
+				if (item.getTypeID() == typeItem.getTypeID()) {
 					return item;
 				}
 			}
 		}
 		return null;
 	}
-	
-	private void autoValidate(){
+
+	private void autoValidate() {
 		boolean b = true;
 		boolean color = false;
-		if (jItems.getSelectedItem() == null) b = false;
-		if (itemExist() || stockpileItem != null){
+		if (jItems.getSelectedItem() == null) {
+			b = false;
+		}
+		if (itemExist() || stockpileItem != null) {
 			color = true;
-			jCountMinimum.setBackground( new Color(255,255,200) );
+			jCountMinimum.setBackground(new Color(255, 255, 200));
 		}
 		try {
 			long l = Long.valueOf(jCountMinimum.getText());
-			if (l <= 0){
+			if (l <= 0) {
 				b = false; //Negative and zero is not valid
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
-		} catch (NumberFormatException ex){
-			b = false; //Empty and NaN is not valid 
-			if (!jCountMinimum.getText().isEmpty()){
+		} catch (NumberFormatException ex) {
+			b = false; //Empty and NaN is not valid
+			if (!jCountMinimum.getText().isEmpty()) {
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
 		}
-		if (!color){
+		if (!color) {
 			jCountMinimum.setBackground(Color.WHITE);
 		}
 		jOK.setEnabled(b);
 	}
-	
-	private void autoSet(){
+
+	private void autoSet() {
 		final StockpileItem item = getExistingItem();
-		if (item != null){
+		if (item != null) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -251,7 +253,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		if (jItems.isEnabled()){
+		if (jItems.isEnabled()) {
 			return jItems;
 		} else {
 			return jCountMinimum;
@@ -264,15 +266,15 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
-		if (stockpileItem != null){ //EDIT
+		if (stockpileItem != null) { //EDIT
 			stockpile = getStockpile();
 			stockpile.remove(stockpileItem);
 		}
-		if (itemExist()){ //UPDATING (Adding an existing item)
+		if (itemExist()) { //UPDATING (Adding an existing item)
 			stockpile.remove(getExistingItem());
 		}
 		//ADD & EDIT & UPDATING
@@ -282,30 +284,29 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_OK.equals(e.getActionCommand())) {
 			save();
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
 		}
 	}
 
 	@Override
-	public void caretUpdate(CaretEvent e) {
+	public void caretUpdate(final CaretEvent e) {
 		autoValidate();
 	}
 
 	@Override
-	public void itemStateChanged(ItemEvent e) {
+	public void itemStateChanged(final ItemEvent e) {
 		autoValidate();
 		autoSet();
-		
 	}
-	
-	class ItemFilterator implements TextFilterator<Item>{
+
+	static class ItemFilterator implements TextFilterator<Item> {
 		@Override
-		public void getFilterStrings(List<String> baseList, Item element) {
+		public void getFilterStrings(final List<String> baseList, final Item element) {
 			baseList.add(element.getName());
 		}
 	}

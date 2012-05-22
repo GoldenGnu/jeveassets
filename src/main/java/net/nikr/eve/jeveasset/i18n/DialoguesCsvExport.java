@@ -34,11 +34,11 @@ public abstract class DialoguesCsvExport extends Bundle {
 		return BundleCache.get(DialoguesCsvExport.class);
 	}
 
-	public static DialoguesCsvExport get(Locale locale) {
+	public static DialoguesCsvExport get(final Locale locale) {
 		return BundleCache.get(DialoguesCsvExport.class, locale);
 	}
 
-	public DialoguesCsvExport(Locale locale) {
+	public DialoguesCsvExport(final Locale locale) {
 		super(locale);
 	}
 	public abstract String csvExport();

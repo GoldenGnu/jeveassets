@@ -36,13 +36,13 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener {
 
-	private final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
-	private final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
-	private final static String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
-	private final static String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
+	private static final String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
+	private static final String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
+	private static final String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
+	private static final String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
 
 
-	public JMenuAssetFilter(Program program, List<T> items) {
+	public JMenuAssetFilter(final Program program, final List<T> items) {
 		super(GuiShared.get().add(), program, items);
 
 		this.setIcon(Images.TOOL_ASSETS.getIcon());
@@ -81,30 +81,30 @@ public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener 
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())){
-			for (String station : stations){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())) {
+			for (String station : stations) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.EQUALS, station);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
-		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())){
-			for (String system : systems){
+		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())) {
+			for (String system : systems) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, system);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
-		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())){
-			for (String region : regions){
+		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())) {
+			for (String region : regions) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.REGION, CompareType.EQUALS, region);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
-		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())){
-			for (String typeName : typeNames){
+		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())) {
+			for (String typeName : typeNames) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.NAME, CompareType.CONTAINS, typeName);
 				program.getAssetsTab().addFilter(filter);
 			}

@@ -33,10 +33,10 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 	public static DataModelPriceDataSettings get() {
 		return BundleCache.get(DataModelPriceDataSettings.class);
 	}
-	public static DataModelPriceDataSettings get(Locale locale) {
+	public static DataModelPriceDataSettings get(final Locale locale) {
 		return BundleCache.get(DataModelPriceDataSettings.class, locale);
 	}
-	public DataModelPriceDataSettings(Locale locale) {
+	public DataModelPriceDataSettings(final Locale locale) {
 		super(locale);
 	}
 	public abstract String sourceEveCentral();

@@ -35,17 +35,17 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
 
-	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
-	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
-	
+	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
+	public static final String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
+
 	private Asset asset = null;
-	
-	public JMenuEditItem(Program program, List<T> items) {
+
+	public JMenuEditItem(final Program program, final List<T> items) {
 		super(GuiShared.get().editItem(), program, items); //
 		this.setIcon(Images.EDIT_EDIT.getIcon());
 
 		JMenuItem jMenuItem;
-		
+
 		jMenuItem = new JMenuItem(GuiShared.get().editPrice());
 		jMenuItem.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
 		jMenuItem.setEnabled(!typeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty() && items.size() == 1);
@@ -53,7 +53,7 @@ public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
-		if (!items.isEmpty() && (items.get(0) instanceof Asset)){
+		if (!items.isEmpty() && (items.get(0) instanceof Asset)) {
 			asset = (Asset) items.get(0);
 			jMenuItem = new JMenuItem(GuiShared.get().editName());
 			jMenuItem.setIcon(Images.SETTINGS_USER_NAME.getIcon());
@@ -65,19 +65,18 @@ public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
 			UserPrice userPrice;
-			if (asset != null){
+			if (asset != null) {
 				userPrice = new UserPrice(asset);
 			} else {
 				userPrice = new UserPrice(prices.get(0), typeIDs.get(0), typeNames.get(0));
 			}
 			program.getUserPriceSettingsPanel().edit(userPrice);
 		}
-		if (ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
+		if (ACTION_USER_NAME_EDIT.equals(e.getActionCommand())) {
 			program.getUserNameSettingsPanel().edit(new UserName(asset));
 		}
 	}
-	
 }

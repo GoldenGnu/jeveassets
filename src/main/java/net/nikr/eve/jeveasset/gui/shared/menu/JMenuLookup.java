@@ -33,10 +33,10 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
-public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener{
+public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener {
 
 	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";
-	private static final String ACTION_BROWSE_EVE_MARKETDATA= "ACTION_BROWSE_EVE_MARKETDATA";
+	private static final String ACTION_BROWSE_EVE_MARKETDATA = "ACTION_BROWSE_EVE_MARKETDATA";
 	private static final String ACTION_BROWSE_EVE_MARKETS = "ACTION_BROWSE_EVE_MARKETS";
 	private static final String ACTION_BROWSE_GAMES_CHRUKER = "ACTION_BROWSE_GAMES_CHRUKER";
 	private static final String ACTION_BROWSE_EVE_ITEM_DATABASE = "ACTION_BROWSE_EVE_ITEM_DATABASE";
@@ -47,9 +47,9 @@ public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener{
 	private static final String ACTION_BROWSE_EVE_ADDICTS = "ACTION_BROWSE_EVE_ADDICTS";
 
 
-	public JMenuLookup(Program program, List<T> items) {
+	public JMenuLookup(final Program program, final List<T> items) {
 		super(GuiShared.get().lookup(), program, items);
-		
+
 		this.setIcon(Images.LINK_LOOKUP.getIcon());
 
 		JMenuItem menuItem;
@@ -96,7 +96,7 @@ public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener{
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
 		menuItem.addActionListener(this);
 		add(menuItem);
-		
+
 		menuItem = new JMenuItem(GuiShared.get().eveMarketeer());
 		menuItem.setIcon(Images.LINK_EVEMARKETEER.getIcon());
 		menuItem.setEnabled(!marketTypeIDs.isEmpty());
@@ -110,8 +110,7 @@ public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener{
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETS);
 		menuItem.addActionListener(this);
 		add(menuItem);
-		
-		
+
 		menuItem = new JMenuItem(GuiShared.get().eveAddicts());
 		menuItem.setIcon(Images.LINK_EVE_ADDICTS.getIcon());
 		menuItem.setEnabled(!marketTypeIDs.isEmpty());
@@ -136,74 +135,95 @@ public class JMenuLookup<T> extends JMenuTool<T> implements ActionListener{
 		add(menuItem);
 
 	}
-	
-	
-	protected boolean confirmOpenLinks(int size){
-		if (size <= 1) return true;
+
+	protected boolean confirmOpenLinks(final int size) {
+		if (size <= 1) {
+			return true;
+		}
 		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().openLinks(size), GuiShared.get().openLinksTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		return (value == JOptionPane.OK_OPTION);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_STATION.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(stations.size())) return;
-			for (String station : stations){
-				DesktopUtil.browse("http://evemaps.dotlan.net/outpost/"+station.replace(" ", "_"), program);
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_BROWSE_EVEMAPS_DOTLAN_STATION.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(stations.size())) {
+				return;
+			}
+			for (String station : stations) {
+				DesktopUtil.browse("http://evemaps.dotlan.net/outpost/" + station.replace(" ", "_"), program);
 			}
 		}
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(stations.size())) return;
-			for (String system : systems){
-				DesktopUtil.browse("http://evemaps.dotlan.net/system/"+system.replace(" ", "_"), program);
+		if (ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(stations.size())) {
+				return;
+			}
+			for (String system : systems) {
+				DesktopUtil.browse("http://evemaps.dotlan.net/system/" + system.replace(" ", "_"), program);
 			}
 		}
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_REGION.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(stations.size())) return;
-			for (String region : regions){
-				DesktopUtil.browse("http://evemaps.dotlan.net/map/"+region.replace(" ", "_"), program);
+		if (ACTION_BROWSE_EVEMAPS_DOTLAN_REGION.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(stations.size())) {
+				return;
+			}
+			for (String region : regions) {
+				DesktopUtil.browse("http://evemaps.dotlan.net/map/" + region.replace(" ", "_"), program);
 			}
 		}
-		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(marketTypeIDs.size())) return;
-			for (int marketTypeID : marketTypeIDs){
-				DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid="+marketTypeID, program);
+		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(marketTypeIDs.size())) {
+				return;
+			}
+			for (int marketTypeID : marketTypeIDs) {
+				DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID, program);
 			}
 		}
-		if (ACTION_BROWSE_EVE_MARKETDATA.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(marketTypeIDs.size())) return;
-			for (int marketTypeID : marketTypeIDs){
-				DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id="+marketTypeID, program);
+		if (ACTION_BROWSE_EVE_MARKETDATA.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(marketTypeIDs.size())) {
+				return;
+			}
+			for (int marketTypeID : marketTypeIDs) {
+				DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID, program);
 			}
 		}
-		if (ACTION_BROWSE_EVEMARKETEER.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(marketTypeIDs.size())) return;
-			for (int marketTypeID : marketTypeIDs){
-				DesktopUtil.browse("http://www.evemarketeer.com/item/info/"+marketTypeID, program);
+		if (ACTION_BROWSE_EVEMARKETEER.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(marketTypeIDs.size())) {
+				return;
+			}
+			for (int marketTypeID : marketTypeIDs) {
+				DesktopUtil.browse("http://www.evemarketeer.com/item/info/" + marketTypeID, program);
 			}
 		}
-		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(marketTypeIDs.size())) return;
-			for (int marketTypeID : marketTypeIDs){
-				DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid="+marketTypeID, program);
+		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(marketTypeIDs.size())) {
+				return;
+			}
+			for (int marketTypeID : marketTypeIDs) {
+				DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID, program);
 			}
 		}
-		if (ACTION_BROWSE_EVE_ADDICTS.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(marketTypeIDs.size())) return;
-			for (int marketTypeID : marketTypeIDs){
-				DesktopUtil.browse("http://eve.addicts.nl/?typeID="+marketTypeID, program);
+		if (ACTION_BROWSE_EVE_ADDICTS.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(marketTypeIDs.size())) {
+				return;
+			}
+			for (int marketTypeID : marketTypeIDs) {
+				DesktopUtil.browse("http://eve.addicts.nl/?typeID=" + marketTypeID, program);
 			}
 		}
-		if (ACTION_BROWSE_GAMES_CHRUKER.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(typeIDs.size())) return;
-			for (int typeID : typeIDs){
-				DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id="+typeID, program);
+		if (ACTION_BROWSE_GAMES_CHRUKER.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(typeIDs.size())) {
+				return;
+			}
+			for (int typeID : typeIDs) {
+				DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID, program);
 			}
 		}
-		if (ACTION_BROWSE_EVE_ITEM_DATABASE.equals(e.getActionCommand())){
-			if (!confirmOpenLinks(typeNames.size())) return;
-			for (String typeName : typeNames){
-				DesktopUtil.browse("http://wiki.eveonline.com/wiki/"+typeName.replace(" ", "_"), program);
+		if (ACTION_BROWSE_EVE_ITEM_DATABASE.equals(e.getActionCommand())) {
+			if (!confirmOpenLinks(typeNames.size())) {
+				return;
+			}
+			for (String typeName : typeNames) {
+				DesktopUtil.browse("http://wiki.eveonline.com/wiki/" + typeName.replace(" ", "_"), program);
 			}
 		}
 	}

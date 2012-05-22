@@ -21,38 +21,34 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 
 public class EditableListModel<T> extends AbstractListModel {
 
 	private static final long serialVersionUID = 1L;
-	List<T> backed = new ArrayList<T>();
-	Comparator<T> sortComparator = new Comparator<T>() {
+	private List<T> backed = new ArrayList<T>();
+	private Comparator<T> sortComparator = new Comparator<T>() {
 		@Override
-		public int compare(T o1, T o2) {
-			return o2.hashCode()-o1.hashCode();
+		public int compare(final T o1, final T o2) {
+			return o2.hashCode() - o1.hashCode();
 		}
 	};
 
 	public EditableListModel() {
 	}
 
-	public EditableListModel(List<T> initial) {
+	public EditableListModel(final List<T> initial) {
 		backed.addAll(initial);
 	}
 
-	public EditableListModel(List<T> initial, Comparator<T> sortComparator) {
+	public EditableListModel(final List<T> initial, final Comparator<T> sortComparator) {
 		backed.addAll(initial);
 		this.sortComparator = sortComparator;
 	}
 
-	public void setSortComparator(Comparator<T> sortComparator) {
+	public void setSortComparator(final Comparator<T> sortComparator) {
 		this.sortComparator = sortComparator;
 	}
 
@@ -70,11 +66,11 @@ public class EditableListModel<T> extends AbstractListModel {
 	}
 
 	@Override
-	public Object getElementAt(int index) {
+	public Object getElementAt(final int index) {
 		return backed.get(index);
 	}
 
-	public T remove(int index) {
+	public T remove(final int index) {
 		T b = backed.remove(index);
 		changed();
 		return b;
@@ -85,26 +81,26 @@ public class EditableListModel<T> extends AbstractListModel {
 		changed();
 	}
 
-	public boolean remove(T o) {
+	public boolean remove(final T o) {
 		boolean b = backed.remove(o);
 		changed();
 		return b;
 	}
 
-	public boolean add(T e) {
+	public boolean add(final T e) {
 		boolean b = backed.add(e);
 		Collections.sort(backed, sortComparator);
 		changed();
 		return b;
 	}
 
-	public boolean addAll(Collection<? extends T> c) {
+	public boolean addAll(final Collection<? extends T> c) {
 		boolean b = backed.addAll(c);
 		changed();
 		return b;
 	}
 
-	public boolean contains(T o) {
+	public boolean contains(final T o) {
 		return backed.contains(o);
 	}
 

@@ -21,12 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -56,9 +51,9 @@ public class IndustryJobData {
 	 */
 	private Vector<String> characters;
 
-	Program program;
+	private Program program;
 
-	public IndustryJobData(Program program) {
+	public IndustryJobData(final Program program) {
 		this.program = program;
 	}
 
@@ -68,23 +63,23 @@ public class IndustryJobData {
 		//characters.add("All");
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (human.isShowAssets()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
+				if (human.isShowAssets()) {
 					String name;
-					if (human.isCorporation()){
+					if (human.isCorporation()) {
 						name = TabsJobs.get().whitespace(human.getName());
 					} else {
 						name = human.getName();
 					}
 					//Only add names once
-					if (!characters.contains(name)){
+					if (!characters.contains(name)) {
 						characters.add(name);
 						jobs.put(name, new ArrayList<IndustryJob>()); //Make sure empty is not null
 					}
 					//Only add once and don't add empty jobs
 					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-					if (!unique.contains(name) && !characterIndustryJobs.isEmpty()){
+					if (!unique.contains(name) && !characterIndustryJobs.isEmpty()) {
 						jobs.put(name, characterIndustryJobs);
 						all.addAll(characterIndustryJobs);
 						unique.add(name);

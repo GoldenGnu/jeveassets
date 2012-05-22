@@ -23,8 +23,8 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -37,21 +37,21 @@ import org.w3c.dom.NodeList;
 
 public class LocationsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(LocationsReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LocationsReader.class);
 
-	public static void load(Settings settings){
+	public static void load(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathLocations());
 			parseLocations(element, settings.getLocations());
 		} catch (IOException ex) {
-			LOG.error("Locations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {
-			LOG.error("Locations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
 		}
 		LOG.info("Locations loaded");
 	}
 
-	private static void parseLocations(Element element, Map<Long, Location> locations){
+	private static void parseLocations(final Element element, final Map<Long, Location> locations) {
 		/*
 		Map<Integer, Location> locations;
 		locations = new HashMap<Integer, Location>();
@@ -59,17 +59,19 @@ public class LocationsReader extends AbstractXmlReader {
 		settings.setLocations(locations);
 		 */
 		NodeList nodes = element.getElementsByTagName("row");
-		Location location = null;
-		for (int a = 0; a < nodes.getLength(); a++){
+		Location location;
+		for (int a = 0; a < nodes.getLength(); a++) {
 			location = parseLocation(nodes.item(a));
 			locations.put(location.getLocationID(), location);
 		}
 	}
-	private static Location parseLocation(Node node){
+	private static Location parseLocation(final Node node) {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		int region = AttributeGetters.getInt(node, "region");
-		if (region == 0) region = id;
+		if (region == 0) {
+			region = id;
+		}
 		String security = AttributeGetters.getString(node, "security");
 		int system = AttributeGetters.getInt(node, "solarsystem");
 		return new Location(id, name, region, security, system);

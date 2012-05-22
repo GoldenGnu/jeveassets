@@ -66,15 +66,15 @@ import org.slf4j.LoggerFactory;
 public class IndustryPlotTab extends JMainTab {
 	private static final Logger LOG = LoggerFactory.getLogger(IndustryPlotTab.class);
 
-	IndustryJobData data;
+	private IndustryJobData data;
 
-	JButton updateButton;
-	JPanel panel;
-	JPanel infoPanel;
+	private JButton updateButton;
+	private JPanel panel;
+	private JPanel infoPanel;
 
-	final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
+	private final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
 
-	public IndustryPlotTab(Program program) {
+	public IndustryPlotTab(final Program program) {
 		super(program, "Industry Plot", Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 		jobColours = new EnumMap<IndustryJob.IndustryActivity, List<Color>>(IndustryJob.IndustryActivity.class);
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(180, 180, 0)));
@@ -96,33 +96,35 @@ public class IndustryPlotTab extends JMainTab {
 		updateButton = new JButton(new AbstractAction("Update") {
 			private static final long serialVersionUID = 1L;
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				updateData();
 			}
 		});
 
 		layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+			layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+					.addContainerGap()
+				)
+		);
+		layout.setVerticalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+					.addContainerGap()
+				)
+		);
 	}
 
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) { }
+	public void updateTableMenu(final JComponent jComponent) { }
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) { }
+	protected void showTablePopupMenu(final MouseEvent e) { }
 
 	@Override
 	public void updateData() {
@@ -137,7 +139,7 @@ public class IndustryPlotTab extends JMainTab {
 		doLayout();
 	}
 
-	private JFreeChart createChart(IntervalXYDataset dataset) {
+	private JFreeChart createChart(final IntervalXYDataset dataset) {
 		JFreeChart chart = ChartFactory.createXYBarChart(
 				null, // title
 				null, // x-axis label
@@ -149,7 +151,7 @@ public class IndustryPlotTab extends JMainTab {
 				false, // tooltips
 				false // URLs
 				);
-		Color transparant = new Color(0,0,0,0);
+		Color transparant = new Color(0, 0, 0, 0);
 		chart.setBackgroundPaint(transparant);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setRenderer(createBarRenderer());
@@ -204,22 +206,22 @@ public class IndustryPlotTab extends JMainTab {
 
 		chartPanel.addChartMouseListener(new ChartMouseListener() {
 			@Override
-			public void chartMouseClicked(ChartMouseEvent cme) {
+			public void chartMouseClicked(final ChartMouseEvent cme) {
 				LOG.info(cme.getEntity().toString());
 				if (cme.getEntity() instanceof XYItemEntity) {
-					XYItemEntity entity = (XYItemEntity)cme.getEntity();
+					XYItemEntity entity = (XYItemEntity) cme.getEntity();
 					IndustryJob job = chartDataInformation.rowColJobMap.get(entity.getItem()).get(entity.getSeriesIndex());
 					updateInformationTable(job);
 				}
 			}
 			@Override
-			public void chartMouseMoved(ChartMouseEvent cme) { }
+			public void chartMouseMoved(final ChartMouseEvent cme) { }
 		});
 
 		return chartPanel;
 	}
 
-	private void updateInformationTable(IndustryJob job) {
+	private void updateInformationTable(final IndustryJob job) {
 		infoPanel.removeAll();
 		infoPanel.add(JobInformationPanel.getPanelForJob(job));
 		doLayout();
@@ -229,8 +231,8 @@ public class IndustryPlotTab extends JMainTab {
 		return new XYTaskDataset(createTasks());
 	}
 
-	List<String> seriesNames;
-	ChartDataInformation chartDataInformation;
+	private List<String> seriesNames;
+	private ChartDataInformation chartDataInformation;
 
 	private TaskSeriesCollection createTasks() {
 		TaskSeriesCollection seriesList = new TaskSeriesCollection();
@@ -247,8 +249,8 @@ public class IndustryPlotTab extends JMainTab {
 		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(data.getAll());
 		Collections.sort(jobsSorted, new Comparator<IndustryJob>() {
 			@Override
-			public int compare(IndustryJob o1, IndustryJob o2) {
-				return (int)Math.signum(o2.getEndProductionTime().getTime()
+			public int compare(final IndustryJob o1, final IndustryJob o2) {
+				return (int) Math.signum(o2.getEndProductionTime().getTime()
 						- o1.getEndProductionTime().getTime());
 			}
 		});
@@ -262,7 +264,7 @@ public class IndustryPlotTab extends JMainTab {
 				TaskSeries series = new TaskSeries(String.valueOf(id));
 				seriesMap.put(id, series);
 				seriesList.add(series);
-				String name = " ";//String.valueOf(id);//ApiIdConverter.locationName(id, null, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
+				String name = " "; //String.valueOf(id);//ApiIdConverter.locationName(id, null, program.getSettings().getConquerableStations(), program.getSettings().getLocations());
 				seriesNames.add(name);
 				seriesCounter++;
 			}
@@ -283,9 +285,9 @@ public class IndustryPlotTab extends JMainTab {
 	}
 
 	static class ChartDataInformation {
-		final Map<Integer, Map<Integer, IndustryJob>> rowColJobMap;
-		final Map<Long, IndustryJob.IndustryActivity> assemblyLineActivities;
-		final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
+		private final Map<Integer, Map<Integer, IndustryJob>> rowColJobMap;
+		private final Map<Long, IndustryJob.IndustryActivity> assemblyLineActivities;
+		private final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
 
 		ChartDataInformation(final Map<IndustryActivity, List<Color>> jobColours) {
 			this.jobColours = jobColours;
@@ -293,7 +295,7 @@ public class IndustryPlotTab extends JMainTab {
 			rowColJobMap = new HashMap<Integer, Map<Integer, IndustryJob>>();
 		}
 
-		public void addIndustryJob(IndustryJob job, int x, int y) {
+		public void addIndustryJob(final IndustryJob job, final int x, final int y) {
 			assemblyLineActivities.put(job.getAssemblyLineID(), job.getActivity());
 			if (!rowColJobMap.containsKey(x)) {
 				rowColJobMap.put(x, new HashMap<Integer, IndustryJob>());
@@ -304,14 +306,14 @@ public class IndustryPlotTab extends JMainTab {
 
 	private static class XYBarRendererImpl extends XYBarRenderer {
 		private static final long serialVersionUID = 1L;
-		final ChartDataInformation cdi;
+		private final ChartDataInformation cdi;
 
-		XYBarRendererImpl(ChartDataInformation cdi) {
+		XYBarRendererImpl(final ChartDataInformation cdi) {
 			this.cdi = cdi;
 		}
 
 		@Override
-		public Paint getItemPaint(int row, int column) {
+		public Paint getItemPaint(final int row, final int column) {
 			List<Color> colours = cdi.jobColours.get(
 					cdi.rowColJobMap.get(column).get(row).getActivity()
 					);
@@ -322,8 +324,8 @@ public class IndustryPlotTab extends JMainTab {
 	static class JobInformationPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 
-		static Map<IndustryActivity, JobInformationPanel> panels = new EnumMap<IndustryActivity, JobInformationPanel>(IndustryActivity.class);
-		static JobInformationPanel getPanelForJob(IndustryJob job) {
+		private static Map<IndustryActivity, JobInformationPanel> panels = new EnumMap<IndustryActivity, JobInformationPanel>(IndustryActivity.class);
+		private static JobInformationPanel getPanelForJob(final IndustryJob job) {
 			IndustryActivity activity;
 			if (job == null) {
 				activity = IndustryActivity.ACTIVITY_COPYING;
@@ -339,7 +341,7 @@ public class IndustryPlotTab extends JMainTab {
 				return panels.get(activity).updateTo(job);
 			}
 		}
-		private static JobInformationPanel createPanel(IndustryActivity activity) {
+		private static JobInformationPanel createPanel(final IndustryActivity activity) {
 			switch(activity) {
 				case ACTIVITY_COPYING:
 					return new CopyingJobPanel();
@@ -356,15 +358,15 @@ public class IndustryPlotTab extends JMainTab {
 			}
 		}
 
-		IndustryJob job;
-		JLabel state;
-		JLabel activity;
-		JLabel name;
-		JLabel location;
-		JLabel owner;
-		JLabel installDate;
-		JLabel startDate;
-		JLabel endDate;
+		private IndustryJob job;
+		private JLabel state;
+		private JLabel activity;
+		private JLabel name;
+		private JLabel location;
+		private JLabel owner;
+		private JLabel installDate;
+		private JLabel startDate;
+		private JLabel endDate;
 		JobInformationPanel() {
 			state = new JLabel("             ");
 			activity = new JLabel("             ");
@@ -388,11 +390,11 @@ public class IndustryPlotTab extends JMainTab {
 		}
 
 		/**
-		 * update the panel to this job and
+		 * update the panel to this job and.
 		 * @param job
 		 * @return 'this'
 		 */
-		JobInformationPanel updateTo(IndustryJob job) {
+		JobInformationPanel updateTo(final IndustryJob job) {
 			setJob(job);
 			state.setText(job.getState().toString());
 			activity.setText(job.getActivity().toString());
@@ -404,7 +406,7 @@ public class IndustryPlotTab extends JMainTab {
 			endDate.setText(String.valueOf(job.getEndProductionTime()));
 			return this;
 		}
-		void setJob(IndustryJob job) {
+		void setJob(final IndustryJob job) {
 			this.job = job;
 		}
 	}

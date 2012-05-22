@@ -32,13 +32,13 @@ public class JWait {
 	private JLabel jLabel;
 	private Window parent;
 
-	public JWait(Window parent) {
+	public JWait(final Window parent) {
 		this.parent = parent;
 		jWindow = new JWindow(parent);
 		//jWindow.setUndecorated(true);
 
 		JPanel jPanel = new JPanel();
-		jPanel.setBorder( BorderFactory.createRaisedBevelBorder() );
+		jPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 		GroupLayout layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
@@ -62,7 +62,7 @@ public class JWait {
 		);
 	}
 
-	public void showWaitDialog(String text){
+	public void showWaitDialog(final String text) {
 		jLabel.setText(text);
 		jWindow.pack();
 		//Get the parent size
@@ -78,7 +78,7 @@ public class JWait {
 		jWindow.setVisible(true);
 	}
 
-	public void hideWaitDialog(){
+	public void hideWaitDialog() {
 		jWindow.setVisible(false);
 	}
 }

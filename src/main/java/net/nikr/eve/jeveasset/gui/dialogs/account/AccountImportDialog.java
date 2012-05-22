@@ -49,21 +49,21 @@ import org.slf4j.LoggerFactory;
 
 public class AccountImportDialog extends JDialogCentered {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
 	// TODO action enum - more string enum pattern, to be converted to an enum
-	public final static String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
-	public final static String ACTION_NEXT = "ACTION_NEXT";
-	public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
+	public static final String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
+	public static final String ACTION_NEXT = "ACTION_NEXT";
+	public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 
 	// TODO tab enum - more string enum pattern, to be converted to an enum
-	public final static String TAB_ADD = "TAB_ADD";
-	public final static String TAB_VALIDATE = "TAB_VALIDATE";
-	public final static String TAB_DONE = "TAB_DONE";
+	public static final String TAB_ADD = "TAB_ADD";
+	public static final String TAB_VALIDATE = "TAB_VALIDATE";
+	public static final String TAB_DONE = "TAB_DONE";
 
 	private AccountManagerDialog apiManager;
-	
-	private enum Result{
+
+	private enum Result {
 		FAIL_ALREADY_IMPORTED,
 		FAIL_NO_INTERNET,
 		FAIL_NOT_VALID,
@@ -86,13 +86,13 @@ public class AccountImportDialog extends JDialogCentered {
 	private DonePanel donePanel;
 
 	private int nTabIndex;
-	
-	public AccountImportDialog(AccountManagerDialog apiManager, Program program) {
+
+	public AccountImportDialog(final AccountManagerDialog apiManager, final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountImport(), apiManager.getDialog());
 		this.apiManager = apiManager;
-		
+
 		donePanel = new DonePanel();
-		
+
 		this.getDialog().addWindowFocusListener(listener);
 
 		cardLayout = new CardLayout();
@@ -134,22 +134,20 @@ public class AccountImportDialog extends JDialogCentered {
 		);
 	}
 
-	private int getKeyID(){
-		int keyID = 0;
+	private int getKeyID() {
 		try {
-			keyID = Integer.valueOf(jKeyID.getText());
-		} catch (NumberFormatException ex){
+			return Integer.valueOf(jKeyID.getText());
+		} catch (NumberFormatException ex) {
 			return 0;
 		}
-		return keyID;
 	}
-	private String getVCode(){
+	private String getVCode() {
 		return jVCode.getText();
 	}
-	private void focus(){
-		if (jKeyID.getText().isEmpty() && nTabIndex == 0){
+	private void focus() {
+		if (jKeyID.getText().isEmpty() && nTabIndex == 0) {
 			jKeyID.requestFocusInWindow();
-		} else if (jVCode.getText().isEmpty() && nTabIndex == 0){
+		} else if (jVCode.getText().isEmpty() && nTabIndex == 0) {
 			jVCode.requestFocusInWindow();
 		}
 	}
@@ -165,14 +163,14 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
-	protected void save() {}
+	protected void save() { }
 
-	public void show(Account editAccount) {
+	public void show(final Account editAccount) {
 		this.editAccount = editAccount;
-		if (editAccount != null){ //Edit
+		if (editAccount != null) { //Edit
 			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
 			jVCode.setText(editAccount.getVCode());
 		} else {
@@ -183,54 +181,53 @@ public class AccountImportDialog extends JDialogCentered {
 		updateTab();
 		super.setVisible(true);
 	}
-	
-	public void show(){
+
+	public void show() {
 		show(null);
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
+	public void setVisible(final boolean b) {
+		if (b) {
 			show();
 		} else {
 			super.setVisible(false);
 		}
 	}
 
-	
-	private void showAddTap(){
+	private void showAddTap() {
 		cardLayout.show(jContent, TAB_ADD);
 		jPrevious.setEnabled(false);
 		jNext.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		focus();
 	}
-	
-	private void showValidateTab(){
+
+	private void showValidateTab() {
 		cardLayout.show(jContent, TAB_VALIDATE);
 		jPrevious.setEnabled(true);
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
-		if (editAccount == null){ //Add
+		if (editAccount == null) { //Add
 			account = new Account(getKeyID(), getVCode());
 		} else { //Edit
 			account = new Account(editAccount);
 			account.setKeyID(getKeyID());
-			account.setVCode(getVCode());
+			account.setvCode(getVCode());
 		}
 		ValidateApiKeyTask validateApiKeyTask = new ValidateApiKeyTask();
 		validateApiKeyTask.addPropertyChangeListener(listener);
 		validateApiKeyTask.execute();
 	}
-	
-	private void showDoneTab(){
+
+	private void showDoneTab() {
 		jPrevious.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().ok());
 		cardLayout.show(jContent, TAB_DONE);
 	}
-	
-	private void done(){
-		if (editAccount != null){ //Edit
+
+	private void done() {
+		if (editAccount != null) { //Edit
 			program.getSettings().getAccounts().remove(editAccount);
 		}
 		apiManager.forceUpdate();
@@ -239,8 +236,8 @@ public class AccountImportDialog extends JDialogCentered {
 		this.setVisible(false);
 	}
 
-	private void updateTab(){
-		switch (nTabIndex){
+	private void updateTab() {
+		switch (nTabIndex) {
 			case 0:
 				showAddTap();
 				break;
@@ -256,11 +253,11 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
-	private class ListenerClass implements ActionListener, PropertyChangeListener, 
-											HyperlinkListener, WindowFocusListener{
+	private class ListenerClass implements ActionListener, PropertyChangeListener,
+											HyperlinkListener, WindowFocusListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_ADD_KEY_CANCEL.equals(e.getActionCommand())) {
 				setVisible(false);
 			}
@@ -276,13 +273,13 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(final PropertyChangeEvent evt) {
 			Object o = evt.getSource();
-			if (o instanceof ValidateApiKeyTask){
+			if (o instanceof ValidateApiKeyTask) {
 				ValidateApiKeyTask validateApiKeyTask = (ValidateApiKeyTask) o;
-				if (validateApiKeyTask.done){
+				if (validateApiKeyTask.done) {
 					validateApiKeyTask.done = false;
-					switch (validateApiKeyTask.result){
+					switch (validateApiKeyTask.result) {
 						case FAIL_ALREADY_IMPORTED:
 							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
@@ -316,24 +313,23 @@ public class AccountImportDialog extends JDialogCentered {
 					nTabIndex = 2;
 					updateTab();
 				}
-				
 			}
 		}
 
 		@Override
-		public void hyperlinkUpdate(HyperlinkEvent hle) {
+		public void hyperlinkUpdate(final HyperlinkEvent hle) {
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
 				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
 
 		@Override
-		public void windowGainedFocus(WindowEvent e) {
+		public void windowGainedFocus(final WindowEvent e) {
 			focus();
 		}
 
 		@Override
-		public void windowLostFocus(WindowEvent e) {}
+		public void windowLostFocus(final WindowEvent e) { }
 	}
 
 	private class InputPanel extends JCardPanel {
@@ -350,8 +346,8 @@ public class AccountImportDialog extends JDialogCentered {
 			jVCode = new JTextField();
 			JCopyPopup.install(jVCode);
 			JEditorPane jHelp = new JEditorPane("text/html", DialoguesAccount.get().helpText());
-			((HTMLDocument)jHelp.getDocument()).getStyleSheet().addRule("body { font-family: "+this.getFont().getFamily() +"; "+"font-size: " + this.getFont().getSize() + "pt; }");
-			jHelp.setFont( this.getFont() );
+			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + this.getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
+			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
@@ -388,11 +384,11 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 	}
 
-	private class ValidatePanel extends JCardPanel{
+	private class ValidatePanel extends JCardPanel {
 
 		public ValidatePanel() {
 			JLabel jHelp = new JLabel(DialoguesAccount.get().validatingMessage());
-			
+
 			JWorking jWorking = new JWorking();
 
 			cardLayout.setHorizontalGroup(
@@ -426,7 +422,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		public DonePanel() {
 			jResult = new JLabel();
-			jResult.setFont( new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+			jResult.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
 
 			jHelp = new JTextArea();
 			jHelp.setLineWrap(true);
@@ -437,7 +433,7 @@ public class AccountImportDialog extends JDialogCentered {
 			jHelp.setFocusable(false);
 			jHelp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-			JScrollPane jScroll = new JScrollPane(jHelp,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			JScrollPane jScroll = new JScrollPane(jHelp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScroll.setBorder(BorderFactory.createLineBorder(this.getBackground().darker(), 1));
 
 			cardLayout.setHorizontalGroup(
@@ -455,17 +451,17 @@ public class AccountImportDialog extends JDialogCentered {
 			);
 		}
 
-		public void setResult(String text){
+		public void setResult(final String text) {
 			jResult.setText(text);
 		}
 
-		public void setText(String text){
+		public void setText(final String text) {
 			jHelp.setText(text);
 		}
 
 	}
 
-	private abstract class JCardPanel extends JPanel{
+	private abstract class JCardPanel extends JPanel {
 
 		protected GroupLayout cardLayout;
 
@@ -489,17 +485,17 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public Void doInBackground() {
 			setProgress(0);
-			if (program.getSettings().getAccounts().contains( account )){ //account already exist
+			if (program.getSettings().getAccounts().contains(account)) { //account already exist
 				result = Result.FAIL_ALREADY_IMPORTED;
 				return null;
 			}
 			humansGetter.load(null, true, account); //Update account
-			if (humansGetter.hasError() || humansGetter.getFails() > 0){ //Failed to add new account
-				if (humansGetter.getFails() > 0 && humansGetter.getFails() < 4){ //Not enough access
+			if (humansGetter.hasError() || humansGetter.getFails() > 0) { //Failed to add new account
+				if (humansGetter.getFails() > 0 && humansGetter.getFails() < 4) { //Not enough access
 					result = Result.OK_LIMITED_ACCESS;
-				} else if (humansGetter.getFails() >= 4){ //Offline
+				} else if (humansGetter.getFails() >= 4) { //Offline
 					result = Result.FAIL_NO_ACCESS;
-				} else if (!Online.isOnline(program.getSettings())){ //Offline
+				} else if (!Online.isOnline(program.getSettings())) { //Offline
 					result = Result.FAIL_NO_INTERNET;
 				} else {
 					result = Result.FAIL_NOT_VALID; //Not valid
@@ -508,7 +504,7 @@ public class AccountImportDialog extends JDialogCentered {
 				result = Result.OK_ACCOUNT_VALID;
 			}
 			return null;
-        }
+		}
 
 		@Override
 		public void done() {

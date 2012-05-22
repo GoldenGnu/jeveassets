@@ -23,19 +23,14 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 
 public class ApiIdConverterTest {
-	
+
 	private MockSettings settings = new MockSettings();
-	
+
 	public ApiIdConverterTest() {
 	}
 
@@ -46,11 +41,11 @@ public class ApiIdConverterTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 	}
-	
+
 	@Before
 	public void setUp() {
 	}
-	
+
 	@After
 	public void tearDown() {
 	}
@@ -60,7 +55,7 @@ public class ApiIdConverterTest {
 	 */
 	@Test
 	public void testLocation() {
-		for (Location o1 : settings.getLocations().values()){
+		for (Location o1 : settings.getLocations().values()) {
 		//LocationID
 			//Name - region | system | station
 			assertEquals(o1.getName(), ApiIdConverter.locationName(o1.getLocationID(), null, settings.getLocations()));
@@ -79,7 +74,6 @@ public class ApiIdConverterTest {
 			assertEquals(settings.getLocations().get(o1.getSystemID()).getSystemID(), ApiIdConverter.systemID(o1.getSystemID(), null, settings.getLocations()));
 			//Region
 			assertEquals(settings.getLocations().get(o1.getRegionID()).getName(), ApiIdConverter.regionName(o1.getSystemID(), null, settings.getLocations()));
-			
 		//RegionID
 			//Name - region | system | station
 			//assertEquals(o1.getName(), ApiIdConverter.locationName(o1.getRegionID(), null, settings.getLocations()));
@@ -90,9 +84,9 @@ public class ApiIdConverterTest {
 			//Region
 			assertEquals(settings.getLocations().get(o1.getRegionID()).getName(), ApiIdConverter.regionName(o1.getRegionID(), null, settings.getLocations()));
 		}
-		for (ApiStation apiStation : settings.getConquerableStations().values()){
+		for (ApiStation apiStation : settings.getConquerableStations().values()) {
 			String system = ApiIdConverter.systemName(apiStation.getSolarSystemID(), null, settings.getLocations());
-			assertTrue("Station name: "+apiStation.getStationName()+" System name: "+system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
+			assertTrue("Station name: " + apiStation.getStationName() + " System name: " + system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
 		}
 	}
 }

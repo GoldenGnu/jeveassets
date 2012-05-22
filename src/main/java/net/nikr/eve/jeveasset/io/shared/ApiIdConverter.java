@@ -31,23 +31,23 @@ import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 
 
-public class ApiIdConverter {
+public final class ApiIdConverter {
 
-	private ApiIdConverter() {}
+	private ApiIdConverter() { }
 
-	public static String flag(int flag, Asset parentAsset, Map<Integer, ItemFlag> flags) {
+	public static String flag(final int flag, final Asset parentAsset, final Map<Integer, ItemFlag> flags) {
 		ItemFlag itemFlag = flags.get(flag);
-		if (itemFlag != null){
-			if (parentAsset != null && !parentAsset.getFlag().isEmpty()){
-				return parentAsset.getFlag()+" > "+itemFlag.getFlagName();
+		if (itemFlag != null) {
+			if (parentAsset != null && !parentAsset.getFlag().isEmpty()) {
+				return parentAsset.getFlag() + " > " + itemFlag.getFlagName();
 			} else {
 				return itemFlag.getFlagName();
 			}
 		}
-		return "!"+flag;
+		return "!" + flag;
 	}
 
-	public static boolean locationTest(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static boolean locationTest(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			return true;
@@ -58,8 +58,8 @@ public class ApiIdConverter {
 		}
 		return false;
 	}
-	
-	private static Location location(long locationID, Map<Long, Location> locations) {
+
+	private static Location location(long locationID, final Map<Long, Location> locations) {
 		//Offices
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
@@ -73,7 +73,7 @@ public class ApiIdConverter {
 		return locations.get(locationID);
 	}
 
-	public static String locationName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static String locationName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			return location.getName();
@@ -85,7 +85,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String regionName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static String regionName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			location = locations.get(location.getRegionID());
@@ -99,7 +99,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String security(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static String security(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			return location.getSecurity();
@@ -111,7 +111,7 @@ public class ApiIdConverter {
 		return "Error !" + String.valueOf(locationID);
 	}
 
-	public static String systemName(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static String systemName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			location = locations.get(location.getSystemID());
@@ -124,7 +124,7 @@ public class ApiIdConverter {
 		}
 		return "Error !" + String.valueOf(locationID);
 	}
-	public static long systemID(long locationID, Asset parentAsset, Map<Long, Location> locations) {
+	public static long systemID(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
 		Location location = location(locationID, locations);
 		if (location != null) {
 			return location.getSystemID();
@@ -135,7 +135,7 @@ public class ApiIdConverter {
 		return -locationID;
 	}
 
-	public static float volume(int typeID, Map<Integer, Item> items) {
+	public static float volume(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getVolume();
@@ -143,7 +143,7 @@ public class ApiIdConverter {
 		return -1;
 	}
 
-	public static String typeName(int typeID, Map<Integer, Item> items) {
+	public static String typeName(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getName();
@@ -151,7 +151,7 @@ public class ApiIdConverter {
 		return "!" + String.valueOf(typeID);
 	}
 
-	public static double priceBase(int typeID, Map<Integer, Item> items) {
+	public static double priceBase(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getPrice();
@@ -159,7 +159,7 @@ public class ApiIdConverter {
 		return -1;
 	}
 
-	public static String category(int typeID, Map<Integer, Item> items) {
+	public static String category(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getCategory();
@@ -167,7 +167,7 @@ public class ApiIdConverter {
 		return "";
 	}
 
-	public static String group(int typeID, Map<Integer, Item> items) {
+	public static String group(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getGroup();
@@ -175,21 +175,21 @@ public class ApiIdConverter {
 		return "";
 	}
 
-	public static int meta(int typeID, Map<Integer, Item> items) {
+	public static int meta(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getMeta();
 		}
 		return 0;
 	}
-	public static String tech(int typeID, Map<Integer, Item> items) {
+	public static String tech(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.getTech();
 		}
 		return "";
 	}
-	public static boolean piMaterial(int typeID, Map<Integer, Item> items) {
+	public static boolean piMaterial(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.isPiMaterial();
@@ -197,7 +197,7 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static boolean marketGroup(int typeID, Map<Integer, Item> items) {
+	public static boolean marketGroup(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
 			return item.isMarketGroup();
@@ -205,18 +205,18 @@ public class ApiIdConverter {
 		return false;
 	}
 
-	public static List<Asset> parents(Asset parentEveAsset) {
+	public static List<Asset> parents(final Asset parentEveAsset) {
 		List<Asset> parents = new ArrayList<Asset>();
-		if (parentEveAsset != null){
-			for (int a = 0; a < parentEveAsset.getParents().size(); a++){
+		if (parentEveAsset != null) {
+			for (int a = 0; a < parentEveAsset.getParents().size(); a++) {
 				parents.add(parentEveAsset.getParents().get(a));
 			}
 			parents.add(parentEveAsset);
 		}
 		return parents;
 	}
-	
-	public static void addLocation(ApiStation station, Map<Long, Location> locations){
+
+	public static void addLocation(final ApiStation station, final Map<Long, Location> locations) {
 		long regionID = ApiIdConverter.location(station.getSolarSystemID(), locations).getRegionID();
 		String security = ApiIdConverter.security(station.getSolarSystemID(), null, locations);
 		Location location = new Location(station.getStationID(), station.getStationName(), regionID, security, station.getSolarSystemID());

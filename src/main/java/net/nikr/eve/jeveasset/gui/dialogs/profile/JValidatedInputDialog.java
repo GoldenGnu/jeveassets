@@ -37,9 +37,9 @@ import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 public class JValidatedInputDialog extends JDialogCentered implements ActionListener {
 
-	private final static String ACTION_OK = "ACTION_OK";
-	private final static String ACTION_CANCEL = "ACTION_CANCEL";
-	
+	private static final String ACTION_OK = "ACTION_OK";
+	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+
 	private JTextArea jMessage;
 	private JTextField jName;
 	private JButton jOK;
@@ -47,7 +47,7 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 
 	private boolean failed = false;
 
-	public JValidatedInputDialog(Program program, JDialogCentered jDialogCentered) {
+	public JValidatedInputDialog(final Program program, final JDialogCentered jDialogCentered) {
 		super(program, "", jDialogCentered.getDialog());
 
 		jMessage = new JTextArea();
@@ -86,39 +86,41 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 		);
 	}
 
-	public String show(String title, String message, String defaultValue, int restrictions){
-		if (title != null){
+	public String show(final String title, final String message, final String defaultValue, final int restrictions) {
+		if (title != null) {
 			this.getDialog().setTitle(title);
 		} else {
 			this.getDialog().setTitle("");
 		}
-		if (message != null){
+		if (message != null) {
 			jMessage.setText(message);
 		} else {
 			jMessage.setText("");
 		}
-		switch (restrictions){
+		switch (restrictions) {
 			case WORDS_ONLY:
-				jName.setDocument( DocumentFactory.getWordPlainDocument() );
+				jName.setDocument(DocumentFactory.getWordPlainDocument());
 				break;
 			case INTEGERS_ONLY:
-				jName.setDocument( DocumentFactory.getIntegerPlainDocument() );
+				jName.setDocument(DocumentFactory.getIntegerPlainDocument());
 				break;
 			case NUMBERS_ONLY:
-				jName.setDocument( DocumentFactory.getDoublePlainDocument() );
+				jName.setDocument(DocumentFactory.getDoublePlainDocument());
 				break;
 			case NO_RESTRICTIONS:
 			default:
-				jName.setDocument( new PlainDocument() );
+				jName.setDocument(new PlainDocument());
 		}
-		if (defaultValue != null){
+		if (defaultValue != null) {
 			jName.setText(defaultValue);
 		} else {
 			jName.setText("");
 		}
 		jName.selectAll();
 		this.setVisible(true);
-		if (failed) return null;
+		if (failed) {
+			return null;
+		}
 		return jName.getText();
 	}
 
@@ -133,20 +135,18 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 	}
 
 	@Override
-	protected void windowShown() {
-		
-	}
+	protected void windowShown() { }
 
 	@Override
-	protected void save() {}
+	protected void save() { }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_OK.equals(e.getActionCommand())) {
 			failed = false;
 			this.setVisible(false);
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			failed = true;
 			this.setVisible(false);
 		}

@@ -24,11 +24,11 @@ public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 	private final JLabel jLocation;
 	private final JLabel jFlag;
 
-	public ModuleSeparatorTableCell(JTable jTable, SeparatorList<Module> separatorList) {
+	public ModuleSeparatorTableCell(final JTable jTable, final SeparatorList<Module> separatorList) {
 		super(jTable, separatorList);
 
 		jOwner = new JLabel();
-		Font largeFont = new Font(jOwner.getFont().getName(), Font.BOLD, jOwner.getFont().getSize()+1) ;
+		Font largeFont = new Font(jOwner.getFont().getName(), Font.BOLD, jOwner.getFont().getSize() + 1);
 		jOwner.setBorder(null);
 		jOwner.setBackground(Color.BLACK);
 		jOwner.setForeground(Color.WHITE);
@@ -82,9 +82,11 @@ public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 	}
 
 	@Override
-	protected void configure(SeparatorList.Separator<?> separator) {
+	protected void configure(final SeparatorList.Separator<?> separator) {
 		Module module = (Module) separator.first();
-		if(module == null) return; // handle 'late' rendering calls after this separator is invalid
+		if (module == null) { // handle 'late' rendering calls after this separator is invalid
+			return;
+		}
 		jLocation.setVisible(module.isFirst());
 		jLocation.setText(TabsLoadout.get().whitespace10(module.getLocation()));
 		jOwner.setVisible(module.isFirst());

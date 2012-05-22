@@ -34,29 +34,28 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 public class JMarketOrdersTable extends JAutoColumnTable {
 
 	private EventTableModel<MarketOrder> tableModel;
-	
-	public JMarketOrdersTable(Program program, EventTableModel<MarketOrder> tableModel) {
+
+	public JMarketOrdersTable(final Program program, final EventTableModel<MarketOrder> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
-	
+
 	@Override
-	public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
+	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
 		MarketOrder marketOrder = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
-		
-		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())){
-			if (marketOrder.getExpires().before(new Date())){
-				if (isSelected){
-					component.setBackground( this.getSelectionBackground().darker() );
+
+		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())) {
+			if (marketOrder.getExpires().before(new Date())) {
+				if (isSelected) {
+					component.setBackground(this.getSelectionBackground().darker());
 				} else {
-					component.setBackground( new Color(255,200,200) );
+					component.setBackground(new Color(255, 200, 200));
 				}
 			}
 		}
 		return component;
 	}
-	
 }

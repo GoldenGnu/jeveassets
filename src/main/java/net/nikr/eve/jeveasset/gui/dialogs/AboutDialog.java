@@ -38,8 +38,8 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
 
-	private final static String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
-	private final static String ACTION_UPDATE = "ACTION_UPDATE";
+	private static final String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
+	private static final String ACTION_UPDATE = "ACTION_UPDATE";
 
 	private JButton jClose;
 	private JButton jCheckUpdates;
@@ -47,8 +47,8 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	private JEditorPane jExternal;
 	private JEditorPane jThanks;
 	private JWait jWait;
-	
-	public AboutDialog(Program program) {
+
+	public AboutDialog(final Program program) {
 		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
 		jWait = new JWait(this.getDialog());
@@ -56,14 +56,14 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon(Images.MISC_ASSETS_64.getIcon());
 
-		JEditorPane jProgram = createEditorPane(false, 
-				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"
+		JEditorPane jProgram = createEditorPane(false,
+				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
 				+ "Copyright &copy; 2009, 2010, 2011, 2012 Contributors<br>"
 				);
 
 		jInfo = createEditorPane(
 				  "<b>Version</b><br>"
-				+ "&nbsp;"+Program.PROGRAM_VERSION+" ("+program.getProgramDataVersion()+")<br>"
+				+ "&nbsp;" + Program.PROGRAM_VERSION + " (" + program.getProgramDataVersion() + ")<br>"
 				+ "<br>"
 				+ "<b>Contributors</b><br>"
 				+ "&nbsp;Niklas Kyster Rasmussen<br>"
@@ -75,7 +75,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
 				+ "<br>"
 				+ "<b>www</b><br>"
-				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Homepage</a> (download and source)<br>"
+				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Homepage</a> (download and source)<br>"
 				+ "&nbsp;<a href=\"http://code.google.com/p/jeveassets/\">Google Code Project</a> (developers)<br>"
 				+ "&nbsp;<a href=\"https://forums.eveonline.com/default.aspx?g=posts&t=6419\">Forum Thread</a> (feedback)<br>"
 				+ "<br>"
@@ -98,17 +98,17 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://junit.sourceforge.net/\">JUnit</a> (unit testing)<br>"
 				+ "&nbsp;<a href=\"http://www.slf4j.org/\">slf4J</a> (logging)<br>"
 				+ "&nbsp;<a href=\"http://logging.apache.org/log4j/1.2/\">log4j</a> (logging)<br>"
-				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">OSXAdapter</a> (native mac os x support)<br>"
-				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Pricing</a> (parsing price data api)<br>"
-				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Routing</a> (routing tool)<br>"
-				+ "&nbsp;<a href=\""+Program.PROGRAM_HOMEPAGE+"\">Translations</a> (i18n)<br>"
+				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">OSXAdapter</a> (native mac os x support)<br>"
+				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Pricing</a> (parsing price data api)<br>"
+				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Routing</a> (routing tool)<br>"
+				+ "&nbsp;<a href=\"" + Program.PROGRAM_HOMEPAGE + "\">Translations</a> (i18n)<br>"
 				//+ "<br>"
 				);
 
 		jThanks =  createEditorPane(
 				"<b>Special Thanks</b><br>"
 				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
-		
+
 		jClose = new JButton(DialoguesAbout.get().close());
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
@@ -125,7 +125,6 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 						.addComponent(jProgram)
 						.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					)
-					
 				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jInfo)
@@ -153,7 +152,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		);
 	}
 
-	private void setEnabledAll(boolean b){
+	private void setEnabledAll(final boolean b) {
 		jClose.setEnabled(b);
 		jCheckUpdates.setEnabled(b);
 		jInfo.setEnabled(b);
@@ -161,23 +160,23 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jThanks.setEnabled(b);
 	}
 
-	private JEditorPane createEditorPane(String text){
+	private JEditorPane createEditorPane(final String text) {
 		return createEditorPane(true, text);
 	}
 
-	private JEditorPane createEditorPane(boolean addBorder, String text){
+	private JEditorPane createEditorPane(final boolean addBorder, final String text) {
 		JEditorPane jEditorPane = new JEditorPane("text/html",
 				"<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11pt;\">"
-				+text
+				+ text
 				+ "</div>"
 				);
 		jEditorPane.setEditable(false);
 		jEditorPane.setOpaque(false);
 		jEditorPane.addHyperlinkListener(this);
-		if (addBorder){
+		if (addBorder) {
 			jEditorPane.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
-					BorderFactory.createEmptyBorder(10, 10, 10, 10)) );
+					BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		}
 		return jEditorPane;
 	}
@@ -198,27 +197,26 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	}
 
 	@Override
-	protected void save() {}
+	protected void save() { }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_ABOUT_CLOSE.equals(e.getActionCommand())) {
 			super.setVisible(false);
 		}
-		if (ACTION_UPDATE.equals(e.getActionCommand())){
+		if (ACTION_UPDATE.equals(e.getActionCommand())) {
 			jWait.showWaitDialog(DialoguesAbout.get().updatesInProgress());
 			setEnabledAll(false);
 			CheckProgramUpdate checkProgramUpdate = new CheckProgramUpdate();
 			checkProgramUpdate.addPropertyChangeListener(this);
 			checkProgramUpdate.execute();
-			
 		}
 	}
-	
+
 	@Override
-	public void hyperlinkUpdate(HyperlinkEvent hle) {
+	public void hyperlinkUpdate(final HyperlinkEvent hle) {
 		Object o = hle.getSource();
-		if (o instanceof JEditorPane){
+		if (o instanceof JEditorPane) {
 			JEditorPane jEditorPane = (JEditorPane) o;
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
 				DesktopUtil.browse(hle.getURL().toString(), program);
@@ -227,20 +225,19 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(final PropertyChangeEvent evt) {
 		Object o = evt.getSource();
-		if (o instanceof SwingWorker){
+		if (o instanceof SwingWorker) {
 			SwingWorker swingWorker = (SwingWorker) o;
-			if (swingWorker.isDone()){
+			if (swingWorker.isDone()) {
 				setEnabledAll(true);
 				jWait.hideWaitDialog();
-				
 			}
 		}
 
 	}
 
-	private class CheckProgramUpdate extends SwingWorker<Void, Void>{
+	private class CheckProgramUpdate extends SwingWorker<Void, Void> {
 
 		@Override
 		protected Void doInBackground() throws Exception {

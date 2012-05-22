@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner {
+public final class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner {
 
 	public static final String ACTION_CUT = "ACTION_CUT";
 	public static final String ACTION_COPY = "ACTION_COPY";
@@ -44,31 +44,33 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 	private JPopupMenu jPopupMenu;
 	private Clipboard clipboard;
 
-	public static void install(JTextComponent component){
+	public static void install(final JTextComponent component) {
 		JCopyPopup jCopyPopup = new JCopyPopup(component);
 	}
 
-	private JCopyPopup(JTextComponent component) {
+	private JCopyPopup(final JTextComponent component) {
 		this.component = component;
 		component.addMouseListener(this);
 		clipboard = component.getToolkit().getSystemClipboard();
 	}
-	
-	private void showPopupMenu(MouseEvent e){
-		if (!component.hasFocus()) component.requestFocus();
+
+	private void showPopupMenu(final MouseEvent e) {
+		if (!component.hasFocus()) {
+			component.requestFocus();
+		}
 
 		jPopupMenu = new JPopupMenu();
 		JMenuItem jMenuItem;
 
 		String s = component.getSelectedText();
 		boolean canCopy = true;
-		if (s == null){
+		if (s == null) {
 			canCopy = false;
-		} else if (s.length() == 0){
+		} else if (s.length() == 0) {
 			canCopy = false;
 		}
 
-		if (component.isEditable()){
+		if (component.isEditable()) {
 			jMenuItem = new JMenuItem(GuiShared.get().cut());
 			jMenuItem.setIcon(Images.EDIT_CUT.getIcon());
 			jMenuItem.setActionCommand(ACTION_CUT);
@@ -84,51 +86,47 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 		jMenuItem.setEnabled(canCopy);
 		jPopupMenu.add(jMenuItem);
 
-		if (component.isEditable()){
+		if (component.isEditable()) {
 			jMenuItem = new JMenuItem(GuiShared.get().paste());
 			jMenuItem.setIcon(Images.EDIT_PASTE.getIcon());
 			jMenuItem.setActionCommand(ACTION_PASTE);
 			jMenuItem.addActionListener(this);
 			jPopupMenu.add(jMenuItem);
 		}
-		
+
 		jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (e.isPopupTrigger()){
+	public void mouseClicked(final MouseEvent e) {
+		if (e.isPopupTrigger()) {
 			showPopupMenu(e);
 		}
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()){
+	public void mousePressed(final MouseEvent e) {
+		if (e.isPopupTrigger()) {
 			showPopupMenu(e);
 		}
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()){
+	public void mouseReleased(final MouseEvent e) {
+		if (e.isPopupTrigger()) {
 			showPopupMenu(e);
 		}
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-
-	}
+	public void mouseEntered(final MouseEvent e) { }
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-
-	}
+	public void mouseExited(final MouseEvent e) { }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_CUT.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_CUT.equals(e.getActionCommand())) {
 			SecurityManager sm = System.getSecurityManager();
 			if (sm != null) {
 				try {
@@ -139,18 +137,22 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 			}
 
 			String s = component.getSelectedText();
-			if (s == null) return;
-			if (s.length() == 0) return;
+			if (s == null) {
+				return;
+			}
+			if (s.length() == 0) {
+				return;
+			}
 			String text = component.getText();
 			String before = text.substring(0, component.getSelectionStart());
 			String after = text.substring(component.getSelectionEnd(), text.length());
-			component.setText(before+after);
+			component.setText(before + after);
 			StringSelection st = new StringSelection(s);
 			clipboard.setContents(st, this);
 		}
 
 
-		if (ACTION_COPY.equals(e.getActionCommand())){
+		if (ACTION_COPY.equals(e.getActionCommand())) {
 			SecurityManager sm = System.getSecurityManager();
 			if (sm != null) {
 				try {
@@ -160,12 +162,16 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 				}
 			}
 			String s = component.getSelectedText();
-			if (s == null) return;
-			if (s.length() == 0) return;
+			if (s == null) {
+				return;
+			}
+			if (s.length() == 0) {
+				return;
+			}
 			StringSelection st = new StringSelection(s);
 			clipboard.setContents(st, this);
 		}
-		if (ACTION_PASTE.equals(e.getActionCommand())){
+		if (ACTION_PASTE.equals(e.getActionCommand())) {
 			SecurityManager sm = System.getSecurityManager();
 			if (sm != null) {
 				try {
@@ -180,21 +186,19 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 				String text = component.getText();
 				String before = text.substring(0, component.getSelectionStart());
 				String after = text.substring(component.getSelectionEnd(), text.length());
-				component.setText(before+s+after);
-				int caretPosition = before.length()+s.length();
-				if (caretPosition <= component.getText().length()){
-					component.setCaretPosition(before.length()+s.length());
+				component.setText(before + s + after);
+				int caretPosition = before.length() + s.length();
+				if (caretPosition <= component.getText().length()) {
+					component.setCaretPosition(before.length() + s.length());
 				}
 			} catch (UnsupportedFlavorException ex) {
-				return;
+
 			} catch (IOException ex) {
-				return;
+
 			}
 		}
 	}
 
 	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable contents) {
-
-	}
+	public void lostOwnership(final Clipboard clipboard, final Transferable contents) { }
 }

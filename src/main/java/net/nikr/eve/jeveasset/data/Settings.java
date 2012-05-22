@@ -50,38 +50,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class Settings{
+public class Settings {
 
-	private final static Logger LOG = LoggerFactory.getLogger(Settings.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
 
-	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
-	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
-	private final static String PATH_JUMPS = "data"+File.separator+"jumps.xml";
-	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
-	private final static String PATH_FLAGS = "data"+File.separator+"flags.xml";
-	private final static String PATH_DATA_VERSION = "data"+File.separator+"data.xml";
-	private final static String PATH_PRICE_DATA = "data"+File.separator+"pricedata.dat";
-	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
-	private final static String PATH_CONQUERABLE_STATIONS = "data"+File.separator+"conquerable_stations.xml";
-	private final static String PATH_README = "readme.txt";
-	private final static String PATH_LICENSE = "license.txt";
-	private final static String PATH_CREDITS = "credits.txt";
-	private final static String PATH_CHANGELOG = "changelog.txt";
-	private final static String PATH_PROFILES = "profiles";
+	private static final String PATH_SETTINGS = "data" + File.separator + "settings.xml";
+	private static final String PATH_ITEMS = "data" + File.separator + "items.xml";
+	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
+	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
+	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
+	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.xml";
+	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
+	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
+	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
+	private static final String PATH_README = "readme.txt";
+	private static final String PATH_LICENSE = "license.txt";
+	private static final String PATH_CREDITS = "credits.txt";
+	private static final String PATH_CHANGELOG = "changelog.txt";
+	private static final String PATH_PROFILES = "profiles";
 
-	private final static String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
-	private final static String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
-	private final static String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
-	private final static String FLAG_INCLUDE_SELL_ORDERS = "FLAG_INCLUDE_SELL_ORDERS";
-	private final static String FLAG_INCLUDE_BUY_ORDERS = "FLAG_INCLUDE_BUY_ORDERS";
-	private final static String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
-	private final static String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
-	private final static String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
-	private final static String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
-	private final static String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
+	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
+	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
+	private static final String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
+	private static final String FLAG_INCLUDE_SELL_ORDERS = "FLAG_INCLUDE_SELL_ORDERS";
+	private static final String FLAG_INCLUDE_BUY_ORDERS = "FLAG_INCLUDE_BUY_ORDERS";
+	private static final String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
+	private static final String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
+	private static final String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
+	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
+	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
 	private static boolean portable = false;
-	
+
 	//Data
 	private Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
 	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
@@ -91,7 +91,7 @@ public class Settings{
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
-	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
+	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
@@ -116,11 +116,11 @@ public class Settings{
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private static CsvSettings csvSettings = new CsvSettings();
 	private static boolean filterOnEnter = false;
-	
+
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
-	
+
 	public Settings() {
 		SplashUpdater.setProgress(5);
 		priceDatas = new HashMap<Integer, PriceData>();
@@ -128,10 +128,10 @@ public class Settings{
 		profiles = new ArrayList<Profile>();
 
 		//Settings
-		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
-		userNames = new HashMap<Long, UserItem<Long,String>>();
+		userPrices = new HashMap<Integer, UserItem<Integer, Double>>();
+		userNames = new HashMap<Long, UserItem<Long, String>>();
 		overviewGroups = new HashMap<String, OverviewGroup>();
-		
+
 		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
@@ -206,18 +206,18 @@ public class Settings{
 	 *
 	 * @param load does nothing except change the method signature.
 	 */
-	protected Settings(boolean load) { }
+	protected Settings(final boolean load) { }
 
 	public Galaxy getGalaxyModel() {
 		return model;
 	}
-	
-	public void saveSettings(){
+
+	public void saveSettings() {
 		SettingsWriter.save(this);
 		saveAssets();
 	}
 
-	private void loadSettings(){
+	private void loadSettings() {
 	//Load static data
 		SplashUpdater.setProgress(10);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
@@ -237,7 +237,7 @@ public class Settings{
 		constructEveApiConnector();
 	}
 
-	public void loadActiveProfile(){
+	public void loadActiveProfile() {
 	//Load Assets
 		LOG.info("Loading profile: {}", activeProfile.getName());
 		accounts = new ArrayList<Account>();
@@ -250,15 +250,15 @@ public class Settings{
 		constructEveApiConnector();
 	}
 
-	public void saveAssets(){
+	public void saveAssets() {
 		AssetsWriter.save(this, activeProfile.getFilename());
 	}
 
-	public PriceDataGetter getPriceDataGetter(){
+	public PriceDataGetter getPriceDataGetter() {
 		return priceDataGetter;
 	}
 
-	public static void setPortable(boolean portable) {
+	public static void setPortable(final boolean portable) {
 		Settings.portable = portable;
 	}
 
@@ -266,100 +266,107 @@ public class Settings{
 		return portable;
 	}
 
-	public void clearEveAssetList(){
+	public void clearEveAssetList() {
 		eventListAssets = null;
 		uniqueIds = null;
 		uniqueAssetsDuplicates = null;
 	}
-	public List<Asset> getEventListAssets(){
+	public List<Asset> getEventListAssets() {
 		updateAssetLists();
 		return eventListAssets;
 	}
-	public List<Integer> getUniqueIds(){
+	public List<Integer> getUniqueIds() {
 		updateAssetLists();
 		return uniqueIds;
 	}
-	
-	public boolean hasAssets(){
+
+	public boolean hasAssets() {
 		updateAssetLists();
 		return !uniqueIds.isEmpty();
 	}
-	private void updateAssetLists(){
-		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null){
+	private void updateAssetLists() {
+		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null) {
 			eventListAssets = new ArrayList<Asset>();
 			uniqueIds = new ArrayList<Integer>();
 			uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 			List<String> ownersOrders = new ArrayList<String>();
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
-			for (Account account : accounts){
-				for (Human human : account.getHumans()){
+			for (Account account : accounts) {
+				for (Human human : account.getHumans()) {
 					//Market Orders
-					if (!human.getMarketOrders().isEmpty() && !ownersOrders.contains(human.getName())){
+					if (!human.getMarketOrders().isEmpty() && !ownersOrders.contains(human.getName())) {
 						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, this);
 						addAssets(marketOrdersAssets, human.isShowAssets());
-						if (human.isShowAssets()) ownersOrders.add(human.getName());
+						if (human.isShowAssets()) {
+							ownersOrders.add(human.getName());
+						}
 					}
 					//Industry Jobs
-					if (!human.getIndustryJobs().isEmpty() && !ownersJobs.contains(human.getName())){
+					if (!human.getIndustryJobs().isEmpty() && !ownersJobs.contains(human.getName())) {
 						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, this);
 						addAssets(industryJobAssets, human.isShowAssets());
-						if (human.isShowAssets()) ownersJobs.add(human.getName());
+						if (human.isShowAssets()) {
+							ownersJobs.add(human.getName());
+						}
 					}
 					//Assets (Must be after Industry Jobs, for bpos to be marked)
-					if (!human.getAssets().isEmpty() && !ownersAssets.contains(human.getName())){
+					if (!human.getAssets().isEmpty() && !ownersAssets.contains(human.getName())) {
 						addAssets(human.getAssets(), human.isShowAssets());
-						if (human.isShowAssets()) ownersAssets.add(human.getName());
+						if (human.isShowAssets()) {
+							ownersAssets.add(human.getName());
+						}
 					}
 					//Add StockpileItems to uniqueIds
-					for (Stockpile stockpile: this.getStockpiles()){
-						for (StockpileItem item : stockpile.getItems()){
+					for (Stockpile stockpile : this.getStockpiles()) {
+						for (StockpileItem item : stockpile.getItems()) {
 							boolean marketGroup = ApiIdConverter.marketGroup(item.getTypeID(), this.getItems());
-							if (marketGroup && !uniqueIds.contains(item.getTypeID())){
+							if (marketGroup && !uniqueIds.contains(item.getTypeID())) {
 								uniqueIds.add(item.getTypeID());
 							}
 						}
 					}
 					//Add MarketOrders to uniqueIds
-					for (ApiMarketOrder order : human.getMarketOrders()){
+					for (ApiMarketOrder order : human.getMarketOrders()) {
 						boolean marketGroup = ApiIdConverter.marketGroup(order.getTypeID(), this.getItems());
-						if (marketGroup && !uniqueIds.contains(order.getTypeID())){
+						if (marketGroup && !uniqueIds.contains(order.getTypeID())) {
 							uniqueIds.add(order.getTypeID());
 						}
 					}
 					//Add IndustryJobs to uniqueIds
-					for (ApiIndustryJob job : human.getIndustryJobs()){
+					for (ApiIndustryJob job : human.getIndustryJobs()) {
 						boolean marketGroup = ApiIdConverter.marketGroup(job.getInstalledItemTypeID(), this.getItems());
-						if (marketGroup && !uniqueIds.contains(job.getInstalledItemTypeID())){
+						if (marketGroup && !uniqueIds.contains(job.getInstalledItemTypeID())) {
 							uniqueIds.add(job.getInstalledItemTypeID());
 						}
 					}
-					
 				}
 			}
 		}
 	}
-	private void addAssets(List<Asset> currentAssets, boolean shouldShow){
-		for (Asset eveAsset : currentAssets){
-			if (shouldShow){
+	private void addAssets(final List<Asset> currentAssets, final boolean shouldShow) {
+		for (Asset eveAsset : currentAssets) {
+			if (shouldShow) {
 				//User price
 				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
 					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
 				} else { //All other
 					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
 				}
-				
+
 				//User Item Names
-				if (userNames.containsKey(eveAsset.getItemID())){
+				if (userNames.containsKey(eveAsset.getItemID())) {
 					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
 				} else {
 					eveAsset.setName(eveAsset.getTypeName());
 				}
 				//Contaioner
 				String sContainer = "";
-				for (Asset parentEveAsset : eveAsset.getParents()){
-					if (!sContainer.isEmpty()) sContainer = sContainer + ">";
-					if (!parentEveAsset.isUserName()){
+				for (Asset parentEveAsset : eveAsset.getParents()) {
+					if (!sContainer.isEmpty()) {
+						sContainer = sContainer + ">";
+					}
+					if (!parentEveAsset.isUserName()) {
 						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
 					} else {
 						sContainer = sContainer + parentEveAsset.getName();
@@ -368,25 +375,25 @@ public class Settings{
 				eveAsset.setContainer(sContainer);
 
 				//Price data
-				if (eveAsset.isMarketGroup() && priceDatas.containsKey(eveAsset.getTypeID()) && !priceDatas.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
+				if (eveAsset.isMarketGroup() && priceDatas.containsKey(eveAsset.getTypeID()) && !priceDatas.get(eveAsset.getTypeID()).isEmpty()) { //Market Price
 					eveAsset.setPriceData(priceDatas.get(eveAsset.getTypeID()));
 				} else { //No Price :(
 					eveAsset.setPriceData(null);
 				}
-				
+
 				//Reprocessed price
 				eveAsset.setPriceReprocessed(0);
-				if (getItems().containsKey(eveAsset.getTypeID())){
+				if (getItems().containsKey(eveAsset.getTypeID())) {
 					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeID()).getReprocessedMaterial();
 					double priceReprocessed = 0;
 					int portionSize = 0;
-					for (ReprocessedMaterial material : reprocessedMaterials){
+					for (ReprocessedMaterial material : reprocessedMaterials) {
 						//Calculate reprocessed price
 						portionSize = material.getPortionSize();
-						if (priceDatas.containsKey(material.getTypeID())){
+						if (priceDatas.containsKey(material.getTypeID())) {
 							PriceData priceData = priceDatas.get(material.getTypeID());
 							double price;
-							if (userPrices.containsKey(material.getTypeID())){
+							if (userPrices.containsKey(material.getTypeID())) {
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
 								price = Asset.getDefaultPrice(priceData);
@@ -394,33 +401,33 @@ public class Settings{
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
 						//Unique Ids
-						if (!uniqueIds.contains(material.getTypeID())){
+						if (!uniqueIds.contains(material.getTypeID())) {
 							uniqueIds.add(material.getTypeID());
 						}
 					}
-					if (priceReprocessed > 0 && portionSize > 0){
+					if (priceReprocessed > 0 && portionSize > 0) {
 						priceReprocessed = priceReprocessed / portionSize;
 					}
 					eveAsset.setPriceReprocessed(priceReprocessed);
 				}
 
 				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())){
+				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())) {
 					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<Asset>());
 				}
 				if (shouldShow) {
 					List<Asset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeID());
 					long newCount = eveAsset.getCount();
-					if (!dup.isEmpty()){
+					if (!dup.isEmpty()) {
 						newCount = newCount + dup.get(0).getTypeCount();
 					}
 					dup.add(eveAsset);
-					for (int b = 0; b < dup.size(); b++){
+					for (int b = 0; b < dup.size(); b++) {
 						dup.get(b).setTypeCount(newCount);
 					}
 				}
 				//Packaged Volume
-				if (!eveAsset.isSingleton() && packagedVolume.containsKey(eveAsset.getGroup())){
+				if (!eveAsset.isSingleton() && packagedVolume.containsKey(eveAsset.getGroup())) {
 					eveAsset.setVolume(packagedVolume.get(eveAsset.getGroup()));
 				}
 
@@ -428,34 +435,36 @@ public class Settings{
 				eventListAssets.add(eveAsset);
 			}
 			//Unique Ids
-			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeID())){
+			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeID())) {
 				uniqueIds.add(eveAsset.getTypeID());
 			}
 			//Add sub-assets
 			addAssets(eveAsset.getAssets(), shouldShow);
 		}
 	}
-	
-	public double getPrice(int typeID, boolean isBlueprintCopy){
-		UserItem<Integer,Double> userPrice;
+
+	public double getPrice(final int typeID, final boolean isBlueprintCopy) {
+		UserItem<Integer, Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
 			userPrice = userPrices.get(-typeID);
 		} else { //All other
 			userPrice = userPrices.get(typeID);
 		}
-		if (userPrice != null) return userPrice.getValue();
+		if (userPrice != null) {
+			return userPrice.getValue();
+		}
 		//Price data
 		PriceData priceData = null;
-		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()){ //Market Price
+		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price
 			priceData = priceDatas.get(typeID);
 		}
 		return Asset.getDefaultPrice(priceData);
 	}
-	
-	public float getVolume(int typeID, boolean packaged) {
+
+	public float getVolume(final int typeID, final boolean packaged) {
 		Item item = getItems().get(typeID);
-		if (item != null){
-			if (packaged && packagedVolume.containsKey(item.getGroup())){
+		if (item != null) {
+			if (packaged && packagedVolume.containsKey(item.getGroup())) {
 				return packagedVolume.get(item.getGroup());
 			} else {
 				return item.getVolume();
@@ -463,46 +472,46 @@ public class Settings{
 		}
 		return 0;
 	}
-	
+
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}
-	public void setConquerableStationsNextUpdate(Date conquerableStationNextUpdate) {
+	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
 		this.conquerableStationsNextUpdate = conquerableStationNextUpdate;
 	}
 	public PriceDataSettings getPriceDataSettings() {
 		return priceDataSettings;
 	}
-	public void setPriceDataSettings(PriceDataSettings priceDataSettings) {
+	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
 	}
-	public Date getPriceDataNextUpdate(){
+	public Date getPriceDataNextUpdate() {
 		return priceDataGetter.getNextUpdate();
 	}
-	public Map<Integer, UserItem<Integer,Double>> getUserPrices() {
+	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		return userPrices;
 	}
-	public void setUserPrices(Map<Integer, UserItem<Integer,Double>> userPrices) {
+	public void setUserPrices(final Map<Integer, UserItem<Integer, Double>> userPrices) {
 		this.userPrices = userPrices;
 	}
-	public Map<Long, UserItem<Long,String>> getUserItemNames() {
+	public Map<Long, UserItem<Long, String>> getUserItemNames() {
 		return userNames;
 	}
-	public void setUserItemNames(Map<Long, UserItem<Long,String>> userItemNames) {
+	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
 		this.userNames = userItemNames;
 	}
 	public List<Account> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(List<Account> accounts) {
+	public void setAccounts(final List<Account> accounts) {
 		this.accounts = accounts;
 	}
 
-	public void setPriceData(Map<Integer, PriceData> priceData) {
+	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
 	}
-	
+
 	public Map<String, Boolean> getFlags() {
 		return flags;
 	}
@@ -511,11 +520,11 @@ public class Settings{
 		return profiles;
 	}
 
-	public void setProfiles(List<Profile> profiles) {
+	public void setProfiles(final List<Profile> profiles) {
 		this.profiles = profiles;
 	}
 
-	public void setActiveProfile(Profile activeProfile) {
+	public void setActiveProfile(final Profile activeProfile) {
 		this.activeProfile = activeProfile;
 	}
 
@@ -527,7 +536,7 @@ public class Settings{
 		return reprocessSettings;
 	}
 
-	public void setReprocessSettings(ReprocessSettings reprocessSettings) {
+	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
 		this.reprocessSettings = reprocessSettings;
 	}
 
@@ -544,7 +553,7 @@ public class Settings{
    *
    * @param proxy passing 'null' removes proxying.
    */
-	public void setProxy(Proxy proxy) {
+	public void setProxy(final Proxy proxy) {
 		this.proxy = proxy;
 		// pass the new proxy onto the API framework.
 		constructEveApiConnector();
@@ -557,7 +566,7 @@ public class Settings{
    * @param type
    * @throws IllegalArgumentException
    */
-	public void setProxy(String host, int port, String type) throws IllegalArgumentException {
+	public void setProxy(final String host, final int port, final String type) {
 		// Convert the proxy type. not using the "valueof()" method so that they can be case-insensitive.
 		Proxy.Type proxyType = Proxy.Type.DIRECT;
 		if ("http".equalsIgnoreCase(type)) {
@@ -578,7 +587,7 @@ public class Settings{
    * @param type
    * @throws IllegalArgumentException
    */
-	public void setProxy(String host, int port, Proxy.Type type) throws IllegalArgumentException {
+	public void setProxy(final String host, final int port, final Proxy.Type type) {
 		// Convert it into something we can use.
 		InetAddress addr = null;
 		try {
@@ -588,11 +597,11 @@ public class Settings{
 		}
 
 		SocketAddress proxyAddress = new InetSocketAddress(addr, port);
-		
+
 		setProxy(new Proxy(type, proxyAddress));
 	}
 
-	public boolean isForceUpdate(){
+	public boolean isForceUpdate() {
 		return (apiProxy != null);
 	}
 
@@ -601,10 +610,10 @@ public class Settings{
 	}
 
 	/**
-	 * 
+	 * Set API Proxy.
 	 * @param apiProxy pass null to disable any API proxy, and use the default: http://api.eve-online.com
 	 */
-	public void setApiProxy(String apiProxy) {
+	public void setApiProxy(final String apiProxy) {
 		this.apiProxy = apiProxy;
 		constructEveApiConnector();
 	}
@@ -614,8 +623,12 @@ public class Settings{
 	 */
 	private void constructEveApiConnector() {
 		ApiConnector connector = new ApiConnector(); //Default
-		if (apiProxy != null) connector = new ApiConnector(getApiProxy()); //API Proxy
-		if (proxy != null) connector = new ProxyConnector(getProxy(), connector); //Real Proxy
+		if (apiProxy != null) { //API Proxy
+			connector = new ApiConnector(getApiProxy());
+		}
+		if (proxy != null) { //Real Proxy
+			connector = new ProxyConnector(getProxy(), connector);
+		}
 		EveApi.setConnector(connector);
 	}
 
@@ -623,9 +636,9 @@ public class Settings{
 		return conquerableStations;
 	}
 
-	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Long, ApiStation> conquerableStations) {
 		this.conquerableStations = conquerableStations;
-		for (ApiStation station : conquerableStations.values()){
+		for (ApiStation station : conquerableStations.values()) {
 			ApiIdConverter.addLocation(station, getLocations());
 		}
 	}
@@ -649,9 +662,9 @@ public class Settings{
 	public Map<String, Map<String, List<Filter>>> getTableFilters() {
 		return tableFilters;
 	}
-	
-	public Map<String, List<Filter>> getTableFilters(String key){
-		if (!tableFilters.containsKey(key)){
+
+	public Map<String, List<Filter>> getTableFilters(final String key) {
+		if (!tableFilters.containsKey(key)) {
 			tableFilters.put(key, new HashMap<String, List<Filter>>());
 		}
 		return tableFilters.get(key);
@@ -664,67 +677,67 @@ public class Settings{
 	public Map<String, ResizeMode> getTableResize() {
 		return tableResize;
 	}
-	
+
 	public static boolean isFilterOnEnter() {
 		return Settings.filterOnEnter; //Static
 	}
-	public void setFilterOnEnter(boolean filterOnEnter) {
+	public void setFilterOnEnter(final boolean filterOnEnter) {
 		Settings.filterOnEnter = filterOnEnter; //Static
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
 	public boolean isHighlightSelectedRows() {
 		return flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
 	}
-	public void setHighlightSelectedRows(boolean filterOnEnter) {
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, filterOnEnter);
+	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
+		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
 	}
 
 	public boolean isAutoUpdate() {
 		return flags.get(FLAG_AUTO_UPDATE);
 	}
-	public void setAutoUpdate(boolean updateStable) {
+	public void setAutoUpdate(final boolean updateStable) {
 		flags.put(FLAG_AUTO_UPDATE, updateStable);
 	}
 	public boolean isUpdateDev() {
 		return flags.get(FLAG_UPDATE_DEV);
 	}
-	public void setUpdateDev(boolean updateDev) {
+	public void setUpdateDev(final boolean updateDev) {
 		flags.put(FLAG_UPDATE_DEV, updateDev);
 	}
 	public boolean isIgnoreSecureContainers() {
 		return flags.get(FLAG_IGNORE_SECURE_CONTAINERS);
 	}
-	public void setIgnoreSecureContainers(boolean ignoreSecureContainers) {
+	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 	public boolean isReprocessColors() {
 		return flags.get(FLAG_REPROCESS_COLORS);
 	}
-	public void setReprocessColors(boolean reprocessColors) {
+	public void setReprocessColors(final boolean reprocessColors) {
 		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
 	}
 	public boolean isStockpileFocusTab() {
 		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
 	}
-	public void setStockpileFocusTab(boolean stockpileFocusOnAdd) {
+	public void setStockpileFocusTab(final boolean stockpileFocusOnAdd) {
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
 		return flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
-	public void setStockpileHalfColors(boolean stockpileHalfColors) {
+	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
 	}
 	public boolean isIncludeSellOrders() {
 		return flags.get(FLAG_INCLUDE_SELL_ORDERS);
 	}
-	public void setIncludeSellOrders(boolean includeSellOrders) {
+	public void setIncludeSellOrders(final boolean includeSellOrders) {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
 	}
 	public boolean isIncludeBuyOrders() {
 		return flags.get(FLAG_INCLUDE_BUY_ORDERS);
 	}
-	public void setIncludeBuyOrders(boolean includeBuyOrders) {
+	public void setIncludeBuyOrders(final boolean includeBuyOrders) {
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
 	}
 	public List<Stockpile> getStockpiles() {
@@ -735,7 +748,7 @@ public class Settings{
 		return windowLocation;
 	}
 
-	public void setWindowLocation(Point windowLocation) {
+	public void setWindowLocation(final Point windowLocation) {
 		this.windowLocation = windowLocation;
 	}
 
@@ -743,7 +756,7 @@ public class Settings{
 		return windowMaximized;
 	}
 
-	public void setWindowMaximized(boolean windowMaximized) {
+	public void setWindowMaximized(final boolean windowMaximized) {
 		this.windowMaximized = windowMaximized;
 	}
 
@@ -751,7 +764,7 @@ public class Settings{
 		return windowSize;
 	}
 
-	public void setWindowSize(Dimension windowSize) {
+	public void setWindowSize(final Dimension windowSize) {
 		this.windowSize = windowSize;
 	}
 
@@ -759,7 +772,7 @@ public class Settings{
 		return windowAutoSave;
 	}
 
-	public void setWindowAutoSave(boolean windowAutoSave) {
+	public void setWindowAutoSave(final boolean windowAutoSave) {
 		this.windowAutoSave = windowAutoSave;
 	}
 
@@ -767,10 +780,10 @@ public class Settings{
 		return windowAlwaysOnTop;
 	}
 
-	public void setWindowAlwaysOnTop(boolean windowAlwaysOnTop) {
+	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
 		this.windowAlwaysOnTop = windowAlwaysOnTop;
 	}
-	
+
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
 	}
@@ -779,52 +792,52 @@ public class Settings{
 		return overviewGroups;
 	}
 
-	public static String getPathSettings(){
+	public static String getPathSettings() {
 		return getLocalFile(Settings.PATH_SETTINGS, !portable);
 	}
-	public static String getPathConquerableStations(){
+	public static String getPathConquerableStations() {
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
 	}
-	public static String getPathJumps(){
+	public static String getPathJumps() {
 		return getLocalFile(Settings.PATH_JUMPS, false);
 	}
-	public static String getPathFlags(){
+	public static String getPathFlags() {
 		return getLocalFile(Settings.PATH_FLAGS, false);
 	}
-	public static String getPathPriceData(){
+	public static String getPathPriceData() {
 		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
 	}
-	public static String getPathAssetsOld(){
+	public static String getPathAssetsOld() {
 		return getLocalFile(Settings.PATH_ASSETS, !portable);
 	}
-	public static String getPathProfilesDirectory(){
+	public static String getPathProfilesDirectory() {
 		return getLocalFile(Settings.PATH_PROFILES, !portable);
 	}
-	public static String getPathItems(){
+	public static String getPathItems() {
 		return getLocalFile(Settings.PATH_ITEMS, false);
 	}
-	public static String getPathLocations(){
+	public static String getPathLocations() {
 		return getLocalFile(Settings.PATH_LOCATIONS, false);
 	}
-	public static String getPathDataVersion(){
+	public static String getPathDataVersion() {
 		return getLocalFile(Settings.PATH_DATA_VERSION, false);
 	}
-	public static String getPathReadme(){
+	public static String getPathReadme() {
 		return getLocalFile(Settings.PATH_README, false);
 	}
-	public static String getPathLicense(){
+	public static String getPathLicense() {
 		return getLocalFile(Settings.PATH_LICENSE, false);
 	}
-	public static String getPathCredits(){
+	public static String getPathCredits() {
 		return getLocalFile(Settings.PATH_CREDITS, false);
 	}
-	public static String getPathChangeLog(){
+	public static String getPathChangeLog() {
 		return getLocalFile(Settings.PATH_CHANGELOG, false);
 	}
 
-	public static String getUserDirectory(){
+	public static String getUserDirectory() {
 		File userDir = new File(System.getProperty("user.home", "."));
-		return userDir.getAbsolutePath()+File.separator;
+		return userDir.getAbsolutePath() + File.separator;
 	}
 
   /**
@@ -833,7 +846,7 @@ public class Settings{
    * @param dynamic true if the file is expecting to be written to, false for things like the items and locations.
    * @return
    */
-	private static String getLocalFile(String filename, boolean dynamic){
+	private static String getLocalFile(final String filename, final boolean dynamic) {
 		LOG.debug("Looking for file: {} dynamic: {}", filename, dynamic);
 		try {
 			File file;
@@ -843,9 +856,9 @@ public class Settings{
 				if (Program.onMac()) { // preferences are stored in user.home/Library/Preferences
 					file = new File(userDir, "Library/Preferences/JEveAssets");
 				} else {
-					file = new File(userDir.getAbsolutePath()+File.separator+".jeveassets");	
+					file = new File(userDir.getAbsolutePath() + File.separator + ".jeveassets");
 				}
-				ret = new File(file.getAbsolutePath()+File.separator+filename);
+				ret = new File(file.getAbsolutePath() + File.separator + filename);
 				File parent = ret.getParentFile();
 				if (!parent.exists()
 								&& !parent.mkdirs()) {
@@ -853,7 +866,7 @@ public class Settings{
 				}
 			} else {
 				file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-				ret = new File(file.getAbsolutePath()+File.separator+filename);
+				ret = new File(file.getAbsolutePath() + File.separator + filename);
 			}
 			LOG.debug("Found file at: {}", ret.getAbsolutePath());
 			return ret.getAbsolutePath();
@@ -864,20 +877,20 @@ public class Settings{
 	}
 
 	public static Date getGmtNow() {
-		return getGmt( new Date() );
+		return getGmt(new Date());
 	}
 
-	public static Date getGmt(Date date) {
+	public static Date getGmt(final Date date) {
 		TimeZone tz = TimeZone.getDefault();
-		Date ret = new Date( date.getTime() - tz.getRawOffset() );
+		Date ret = new Date(date.getTime() - tz.getRawOffset());
 
 		// if we are now in DST, back off by the delta.  Note that we are checking the GMT date, this is the KEY.
-		if ( tz.inDaylightTime( ret )) {
-			Date dstDate = new Date( ret.getTime() - tz.getDSTSavings() );
+		if (tz.inDaylightTime(ret)) {
+			Date dstDate = new Date(ret.getTime() - tz.getDSTSavings());
 
 			// check to make sure we have not crossed back into standard time
 			// this happens when we are on the cusp of DST (7pm the day before the change for PDT)
-			if ( tz.inDaylightTime( dstDate )) {
+			if (tz.inDaylightTime(dstDate)) {
 				ret = dstDate;
 			}
 		}
@@ -888,15 +901,15 @@ public class Settings{
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
-	public boolean isUpdatable(Date date){
+	public boolean isUpdatable(final Date date) {
 		return isUpdatable(date, true);
 	}
 
-	public boolean isUpdatable(Date date, boolean ignoreOnProxy){
-		return ( (Settings.getGmtNow().after(date)
+	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
+		return ((Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
 				|| Program.isForceUpdate()
-				|| (getApiProxy() != null && ignoreOnProxy) )
+				|| (getApiProxy() != null && ignoreOnProxy))
 				&& !Program.isForceNoUpdate());
 	}
 }

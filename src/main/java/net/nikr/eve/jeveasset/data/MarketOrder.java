@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
 
-	enum OrderStatus{
+	public enum OrderStatus {
 		ACTIVE() {
 			@Override
 			String getI18N() {
@@ -77,16 +77,15 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 			String getI18N() {
 				return TabsOrders.get().statusCharacterDeleted();
 			}
-		},
-		;
-		
+		};
+
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
 		}
 	}
-	
+
 	private String name;
 	private String location;
 	private String system;
@@ -97,7 +96,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	private Quantity quantity;
 
 
-	public MarketOrder(ApiMarketOrder apiMarketOrder, String name, String location, String system, String region, String owner) {
+	public MarketOrder(final ApiMarketOrder apiMarketOrder, final String name, final String location, final String system, final String region, final String owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -120,33 +119,42 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		this.owner = owner;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
-		if (this.getRange() == -1) rangeFormated = TabsOrders.get().rangeStation();
-		if (this.getRange() == 0) rangeFormated = TabsOrders.get().rangeSolarSystem();
-		if (this.getRange() == 32767) rangeFormated = TabsOrders.get().rangeRegion();
-		if (this.getRange() == 1) rangeFormated = TabsOrders.get().rangeJump();
-		if (this.getRange() > 1 && this.getRange() < 32767) rangeFormated = TabsOrders.get().rangeJumps(this.getRange());
+		if (this.getRange() == -1) {
+			rangeFormated = TabsOrders.get().rangeStation();
+		}
+		if (this.getRange() == 0) {
+			rangeFormated = TabsOrders.get().rangeSolarSystem();
+		}
+		if (this.getRange() == 32767) {
+			rangeFormated = TabsOrders.get().rangeRegion();
+		}
+		if (this.getRange() == 1) {
+			rangeFormated = TabsOrders.get().rangeJump();
+		}
+		if (this.getRange() > 1 && this.getRange() < 32767) {
+			rangeFormated = TabsOrders.get().rangeJumps(this.getRange());
+		}
 		//0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
-		switch (this.getOrderState()){
-			case 0: 
+		switch (this.getOrderState()) {
+			case 0:
 				status = OrderStatus.ACTIVE;
 				break;
-			case 1: 
+			case 1:
 				status = OrderStatus.CLOSED;
 				break;
 			case 2:
-				if (this.getVolRemaining() == 0){
+				if (this.getVolRemaining() == 0) {
 					status = OrderStatus.FULFILLED;
-					
-				} else if (this.getVolRemaining() == this.getVolEntered()){
+				} else if (this.getVolRemaining() == this.getVolEntered()) {
 					status = OrderStatus.EXPIRED;
 				} else {
 					status = OrderStatus.PARTIALLY_FULFILLED;
 				}
 				break;
-			case 3: 
+			case 3:
 				status = OrderStatus.CANCELLED;
 				break;
-			case 4: 
+			case 4:
 				status = OrderStatus.PENDING;
 				break;
 			case 5:
@@ -157,13 +165,13 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	@Override
-	public int compareTo(MarketOrder o) {
+	public int compareTo(final MarketOrder o) {
 		Long thisID = this.getOrderID();
 		Long thatID = o.getOrderID();
 		return thisID.compareTo(thatID);
 	}
 
-	public Date getExpires(){
+	public Date getExpires() {
 		long expires = (this.getIssued().getTime() + ((this.getDuration()) * Timer.ONE_DAY));
 		return new Date(expires);
 	}
@@ -201,35 +209,37 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	public class Quantity implements Comparable<Quantity> {
-		int QuantityEntered;
-		int QuantityRemaining;
+		private int quantityEntered;
+		private int quantityRemaining;
 
-		public Quantity(int QuantityEntered, int QuantityRemaining) {
-			this.QuantityEntered = QuantityEntered;
-			this.QuantityRemaining = QuantityRemaining;
+		public Quantity(final int quantityEntered, final int quantityRemaining) {
+			this.quantityEntered = quantityEntered;
+			this.quantityRemaining = quantityRemaining;
 		}
 
 		@Override
-		public String toString(){
-			return QuantityRemaining+"/"+QuantityEntered;
+		public String toString() {
+			return quantityRemaining + "/" + quantityEntered;
 		}
 
 		public int getQuantityEntered() {
-			return QuantityEntered;
+			return quantityEntered;
 		}
 
 		public int getQuantityRemaining() {
-			return QuantityRemaining;
+			return quantityRemaining;
 		}
 
 		@Override
-		public int compareTo(Quantity o) {
+		public int compareTo(final Quantity o) {
 			Integer thatQuantityRemaining = o.getQuantityRemaining();
-			Integer thisQuantityRemaining = QuantityRemaining;
+			Integer thisQuantityRemaining = quantityRemaining;
 			int result = thatQuantityRemaining.compareTo(thisQuantityRemaining);
-			if (result != 0) return result;
+			if (result != 0) {
+				return result;
+			}
 			Integer thatQuantityEntered = o.getQuantityEntered();
-			Integer thisQuantityEntered = QuantityEntered;
+			Integer thisQuantityEntered = quantityEntered;
 			return thatQuantityEntered.compareTo(thisQuantityEntered);
 		}
 

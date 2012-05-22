@@ -32,14 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class DesktopUtil {
+public final class DesktopUtil {
 
-	private final static Logger LOG = LoggerFactory.getLogger(DesktopUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DesktopUtil.class);
 
-	private DesktopUtil() {
-	}
+	private DesktopUtil() { }
 
-	private static boolean isSupported(Desktop.Action action){
+	private static boolean isSupported(final Desktop.Action action) {
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(action)) {
@@ -49,7 +48,7 @@ public class DesktopUtil {
 		return false;
 	}
 
-	public static void open(String filename, Program program){
+	public static void open(final String filename, final Program program) {
 		File file = new File(filename);
 		LOG.info("Opening: {}", file.getName());
 		if (isSupported(Desktop.Action.OPEN)) {
@@ -63,11 +62,11 @@ public class DesktopUtil {
 		} else {
 			LOG.warn("	Opening failed");
 		}
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open "+file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not open " + file.getName(), "Open File", JOptionPane.PLAIN_MESSAGE);
 	}
 
 
-	public static void browse(String url, Program program){
+	public static void browse(final String url, final Program program) {
 		LOG.info("Browsing: {}", url);
 		URI uri;
 		try {
@@ -86,6 +85,6 @@ public class DesktopUtil {
 		} else {
 			LOG.warn("	Browsing failed");
 		}
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not browse to:\n"+url, "Browse", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
 	}
 }

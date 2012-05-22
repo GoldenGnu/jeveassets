@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
@@ -36,13 +36,13 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class PriceDataSettingsPanel extends JSettingsPanel {
 
-	public final static String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
+	public static final String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
 
 	private JComboBox jRegions;
 	private JComboBox jPriceType;
 	private JComboBox jSource;
-	
-	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog) {
+
+	public PriceDataSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
 		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
 		jWarning.setFont(this.getPanel().getFont());
@@ -57,7 +57,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
 		jPriceType = new JComboBox(PriceMode.values());
-		
+
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceSource.values());
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
@@ -100,49 +100,49 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public boolean save() {
 		Object object;
-		
+
 		//Get Region (can be a String)
 		object = jRegions.getSelectedItem();
 		RegionType regionType;
-		if (object instanceof RegionType){
+		if (object instanceof RegionType) {
 			regionType = (RegionType) object;
 		} else {
 			regionType = program.getSettings().getPriceDataSettings().getRegion();
 		}
-		
+
 		//Price Type (can be a String)
 		object = jPriceType.getSelectedItem();
 		PriceMode priceType;
-		if (object  instanceof PriceMode){
+		if (object  instanceof PriceMode) {
 			priceType = (PriceMode) object;
 		} else {
 			priceType = Asset.getPriceType();
 		}
-		
+
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
-		
+
 		//Eval if table need to be updated
 		boolean updateTable = !priceType.equals(Asset.getPriceType());
 
 		//Update settings
-		program.getSettings().setPriceDataSettings( new PriceDataSettings(regionType, source) );
+		program.getSettings().setPriceDataSettings(new PriceDataSettings(regionType, source));
 		Asset.setPriceType(priceType);
-		
+
 		//Update table if needed
 		return updateTable;
 	}
 
 	@Override
-	public void load(){
+	public void load() {
 		jSource.setSelectedItem(program.getSettings().getPriceDataSettings().getSource());
 	}
-	
-	private void updateSource(PriceSource source){
+
+	private void updateSource(final PriceSource source) {
 		//Price Types
 		jPriceType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
-		jPriceType.setSelectedItem( Asset.getPriceType() );
-		if (source.getPriceTypes().length <= 0){ //Empty
+		jPriceType.setSelectedItem(Asset.getPriceType());
+		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
 			jPriceType.setEnabled(false);
 		} else {
@@ -150,13 +150,13 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 
 		//Regions
-		if (source.supportsMultipleLocations()){
-			jRegions.setModel( new DefaultComboBoxModel(RegionType.getMultipleLocations()) );
-			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
+		if (source.supportsMultipleLocations()) {
+			jRegions.setModel(new DefaultComboBoxModel(RegionType.getMultipleLocations()));
+			jRegions.setSelectedItem(program.getSettings().getPriceDataSettings().getRegion());
 			jRegions.setEnabled(true);
-		} else if (source.supportsSingleLocations()){
-			jRegions.setModel( new DefaultComboBoxModel(RegionType.getSingleLocations()) );
-			jRegions.setSelectedItem( program.getSettings().getPriceDataSettings().getRegion() );
+		} else if (source.supportsSingleLocations()) {
+			jRegions.setModel(new DefaultComboBoxModel(RegionType.getSingleLocations()));
+			jRegions.setSelectedItem(program.getSettings().getPriceDataSettings().getRegion());
 			jRegions.setEnabled(true);
 		} else {
 			jRegions.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
@@ -164,11 +164,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 	}
 
-	private class ListenerClass implements ActionListener{
+	private class ListenerClass implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())){
+		public void actionPerformed(final ActionEvent e) {
+			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())) {
 				PriceSource priceSource = (PriceSource) jSource.getSelectedItem();
 				updateSource(priceSource);
 			}

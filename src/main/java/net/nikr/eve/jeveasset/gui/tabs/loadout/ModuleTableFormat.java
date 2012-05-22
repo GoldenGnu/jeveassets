@@ -39,7 +39,7 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 			return TabsLoadout.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(Module from) {
+		public Object getColumnValue(final Module from) {
 			return from.getName();
 		}
 	},
@@ -49,15 +49,14 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 			return TabsLoadout.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(Module from) {
+		public Object getColumnValue(final Module from) {
 			return from.getModulePriceValue();
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private ModuleTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+	private ModuleTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -69,10 +68,10 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
-	@Override public Module setColumnValue(Object baseObject, Object editedValue) {
+	@Override public Module setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 }

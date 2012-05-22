@@ -33,10 +33,10 @@ public abstract class DialoguesProfiles extends Bundle {
 	public static DialoguesProfiles get() {
 		return BundleCache.get(DialoguesProfiles.class);
 	}
-	public static DialoguesProfiles get(Locale locale) {
+	public static DialoguesProfiles get(final Locale locale) {
 		return BundleCache.get(DialoguesProfiles.class, locale);
 	}
-	public DialoguesProfiles(Locale locale) {
+	public DialoguesProfiles(final Locale locale) {
 		super(locale);
 	}
 	public abstract String ok();

@@ -41,9 +41,9 @@ import org.w3c.dom.NodeList;
 
 public class AssetsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AssetsReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AssetsReader.class);
 
-	public static boolean load(Settings settings, String filename){
+	public static boolean load(final Settings settings, final String filename) {
 		try {
 			Element element = getDocumentElement(filename);
 			parseSettings(element, settings);
@@ -51,26 +51,25 @@ public class AssetsReader extends AbstractXmlReader {
 			LOG.info("Assets not loaded");
 			return false;
 		} catch (XmlException ex) {
-			LOG.error("Assets not loaded: ("+filename+")"+ex.getMessage(), ex);
+			LOG.error("Assets not loaded: (" + filename + ") " + ex.getMessage(), ex);
 		}
 		LOG.info("Assets loaded");
 		return true;
 	}
-	private static void parseSettings(Element element, Settings settings) throws XmlException {
+	private static void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		//Accounts
 		NodeList accountNodes = element.getElementsByTagName("accounts");
-		if (accountNodes.getLength() == 1){
+		if (accountNodes.getLength() == 1) {
 			Element accountsElement = (Element) accountNodes.item(0);
 			parseAccounts(accountsElement, settings.getAccounts(), settings);
 		}
-		
 	}
-	private static void parseAccounts(Element element, List<Account> accounts, Settings settings){
+	private static void parseAccounts(final Element element, final List<Account> accounts, final Settings settings) {
 		NodeList accountNodes = element.getElementsByTagName("account");
-		for (int a = 0; a < accountNodes.getLength(); a++){
+		for (int a = 0; a < accountNodes.getLength(); a++) {
 			Element currentNode = (Element) accountNodes.item(a);
 			Account account = parseAccount(currentNode);
 			parseHumans(currentNode, account, settings);
@@ -78,88 +77,92 @@ public class AssetsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Account parseAccount(Node node){
+	private static Account parseAccount(final Node node) {
 		int keyID;
-		if (AttributeGetters.haveAttribute(node, "keyid")){
+		if (AttributeGetters.haveAttribute(node, "keyid")) {
 			keyID = AttributeGetters.getInt(node, "keyid");
 		} else {
 			keyID = AttributeGetters.getInt(node, "userid");
 		}
 		String vCode;
-		if (AttributeGetters.haveAttribute(node, "vcode")){
+		if (AttributeGetters.haveAttribute(node, "vcode")) {
 			vCode = AttributeGetters.getString(node, "vcode");
 		} else {
 			vCode = AttributeGetters.getString(node, "apikey");
 		}
-		Date nextUpdate = new Date( AttributeGetters.getLong(node, "charactersnextupdate") );
+		Date nextUpdate = new Date(AttributeGetters.getLong(node, "charactersnextupdate"));
 		String name = Integer.toString(keyID);
-		if (AttributeGetters.haveAttribute(node, "name")){
+		if (AttributeGetters.haveAttribute(node, "name")) {
 			name = AttributeGetters.getString(node, "name");
 		}
 		int accessMask = 0;
-		if (AttributeGetters.haveAttribute(node, "accessmask")){
+		if (AttributeGetters.haveAttribute(node, "accessmask")) {
 			accessMask = AttributeGetters.getInt(node, "accessmask");
 		}
 		String type = "";
-		if (AttributeGetters.haveAttribute(node, "type")){
+		if (AttributeGetters.haveAttribute(node, "type")) {
 			type = AttributeGetters.getString(node, "type");
 		}
 		Date expires = null;
-		if (AttributeGetters.haveAttribute(node, "expires")){
+		if (AttributeGetters.haveAttribute(node, "expires")) {
 			long i = AttributeGetters.getLong(node, "expires");
-			if (i != 0) expires = new Date(i);
+			if (i != 0) {
+				expires = new Date(i);
+			}
 		}
 		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
 	}
 
-	private static void parseHumans(Element element, Account account, Settings settings){
+	private static void parseHumans(final Element element, final Account account, final Settings settings) {
 		NodeList humanNodes =  element.getElementsByTagName("human");
-		for (int a = 0; a < humanNodes.getLength(); a++){
+		for (int a = 0; a < humanNodes.getLength(); a++) {
 			Element currentNode = (Element) humanNodes.item(a);
 			Human human = parseHuman(currentNode, account);
 			account.getHumans().add(human);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
-			if (assetNodes.getLength() == 1) parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
+			if (assetNodes.getLength() == 1) {
+				parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
+			}
 			parseBalances(currentNode, human);
 			parseMarkerOrders(currentNode, human);
 			parseIndustryJobs(currentNode, human);
 		}
 	}
-	private static Human parseHuman(Node node, Account account){
+	private static Human parseHuman(final Node node, final Account account) {
 		String name = AttributeGetters.getString(node, "name");
 		int characterID = AttributeGetters.getInt(node, "id");
-		Date assetsNextUpdate = new Date( AttributeGetters.getLong(node, "assetsnextupdate") );
-		Date balanceNextUpdate = new Date( AttributeGetters.getLong(node, "balancenextupdate") );
+		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
+		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
 		boolean showAssets = true;
-		if (AttributeGetters.haveAttribute(node, "show")){
+		if (AttributeGetters.haveAttribute(node, "show")) {
 			showAssets = AttributeGetters.getBoolean(node, "show");
 		}
 		Date marketOrdersNextUpdate = Settings.getGmtNow();
-		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")){
+		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
 			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
 		}
 		Date industryJobsNextUpdate = Settings.getGmtNow();
-		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")){
+		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
 			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
 		}
 
 		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate);
 	}
 
-	private static void parseBalances(Element element, Human human){
+	private static void parseBalances(final Element element, final Human human) {
 		NodeList balancesNodes = element.getElementsByTagName("balances");
-		for (int a = 0; a < balancesNodes.getLength(); a++){
+		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
 
-			for (int b = 0; b < balanceNodes.getLength(); b++){
+			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
-				EveAccountBalance AccountBalance = parseBalance(currentNode);
-				human.getAccountBalances().add(AccountBalance);
+				EveAccountBalance accountBalance = parseBalance(currentNode);
+				human.getAccountBalances().add(accountBalance);
 			}
 		}
 	}
-	private static EveAccountBalance parseBalance(Element element){
+	private static EveAccountBalance parseBalance(final Element element) {
 		EveAccountBalance accountBalance = new EveAccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
@@ -170,19 +173,19 @@ public class AssetsReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private static void parseMarkerOrders(Element element, Human human){
+	private static void parseMarkerOrders(final Element element, final Human human) {
 		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
-		for (int a = 0; a < markerOrdersNodes.getLength(); a++){
+		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
 			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
 			NodeList markerOrderNodes = currentMarkerOrdersNode.getElementsByTagName("markerorder");
-			for (int b = 0; b < markerOrderNodes.getLength(); b++){
+			for (int b = 0; b < markerOrderNodes.getLength(); b++) {
 				Element currentNode = (Element) markerOrderNodes.item(b);
 				ApiMarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
 				human.getMarketOrders().add(apiMarketOrder);
 			}
 		}
 	}
-	private static ApiMarketOrder parseMarkerOrder(Element element){
+	private static ApiMarketOrder parseMarkerOrder(final Element element) {
 		ApiMarketOrder apiMarketOrder = new ApiMarketOrder();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long charID = AttributeGetters.getLong(element, "charid");
@@ -217,19 +220,19 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private static void parseIndustryJobs(Element element, Human human){
+	private static void parseIndustryJobs(final Element element, final Human human) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
-		for (int a = 0; a < industryJobsNodes.getLength(); a++){
+		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
 			NodeList industryJobNodes = currentIndustryJobsNode.getElementsByTagName("industryjob");
-			for (int b = 0; b < industryJobNodes.getLength(); b++){
+			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
 				ApiIndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
 				human.getIndustryJobs().add(apiIndustryJob);
 			}
 		}
 	}
-	private static ApiIndustryJob parseIndustryJobs(Element element){
+	private static ApiIndustryJob parseIndustryJobs(final Element element) {
 		ApiIndustryJob apiIndustryJob = new ApiIndustryJob();
 
 		long jobID = AttributeGetters.getLong(element, "jobid");
@@ -303,13 +306,13 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private static void parseAssets(Node node, List<Asset> assets, Asset parentEveAsset, Settings settings){
+	private static void parseAssets(final Node node, final List<Asset> assets, final Asset parentEveAsset, final Settings settings) {
 		NodeList assetsNodes = node.getChildNodes();
-		for (int a = 0; a < assetsNodes.getLength(); a++){
+		for (int a = 0; a < assetsNodes.getLength(); a++) {
 			Node currentNode = assetsNodes.item(a);
-			if (currentNode.getNodeName().equals("asset")){
+			if (currentNode.getNodeName().equals("asset")) {
 				Asset eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
-				if (parentEveAsset == null){
+				if (parentEveAsset == null) {
 					assets.add(eveAsset);
 				} else {
 					parentEveAsset.addEveAsset(eveAsset);
@@ -318,27 +321,29 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static Asset parseEveAsset(Node node, Asset parentEveAsset, Settings settings){
+	private static Asset parseEveAsset(final Node node, final Asset parentEveAsset, final Settings settings) {
 		long count = AttributeGetters.getLong(node, "count");
-		
+
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		long locationID = AttributeGetters.getInt(node, "locationid");
-		if (locationID == 0 && parentEveAsset != null) locationID = parentEveAsset.getLocationID();
+		if (locationID == 0 && parentEveAsset != null) {
+			locationID = parentEveAsset.getLocationID();
+		}
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
 		String owner = AttributeGetters.getString(node, "owner");
 		int rawQuantity = 0;
-		if (AttributeGetters.haveAttribute(node, "rawquantity")){
+		if (AttributeGetters.haveAttribute(node, "rawquantity")) {
 			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
 		}
 		int flagID = 0;
-		if (AttributeGetters.haveAttribute(node, "flagid")){
+		if (AttributeGetters.haveAttribute(node, "flagid")) {
 			flagID = AttributeGetters.getInt(node, "flagid");
 		} else { //Workaround for the old system
 			String flag = AttributeGetters.getString(node, "flag");
-			for (ItemFlag itemFlag : settings.getItemFlags().values()){
-				if (flag.equals(itemFlag.getFlagName())){
+			for (ItemFlag itemFlag : settings.getItemFlags().values()) {
+				if (flag.equals(itemFlag.getFlagName())) {
 					flagID = itemFlag.getFlagID();
 					break;
 				}

@@ -47,13 +47,13 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRe
 
 
 public class JAutoColumnTable extends JTable {
-	
+
 	private JViewport jViewport = null;
 	private int size = 0;
 	private ResizeMode resizeMode = null;
 	protected Program program;
-	
-	public JAutoColumnTable(Program program, TableModel tableModel) {
+
+	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
 		this.program = program;
 
@@ -66,7 +66,7 @@ public class JAutoColumnTable extends JTable {
 		this.addPropertyChangeListener("tableHeader", modelListener);
 		this.getColumnModel().addColumnModelListener(modelListener);
 		this.addPropertyChangeListener("columnModel", modelListener);
-		
+
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
 		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
@@ -76,23 +76,23 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 	}
-	
+
 	@Override
-	public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
+	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		
-		if (component instanceof JPanel){ //Ignore Separator Panels
+
+		if (component instanceof JPanel) { //Ignore Separator Panels
 			return component;
 		}
-		
+
 		//Default Colors
 		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
 		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
 
 		//Highlight selected row
-		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()){
-			component.setBackground( new Color(220,240,255) );
+		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()) {
+			component.setBackground(new Color(220, 240, 255));
 			return component;
 		}
 		return component;
@@ -100,130 +100,142 @@ public class JAutoColumnTable extends JTable {
 
 	public void autoResizeColumns() {
 		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
-		if (resizeMode == null && tableFormat != null){
+		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();
 		}
-		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT){
+		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			resizeColumnsText();
-		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW){
+		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW) {
 			resizeColumnsWindow();
-		} else if (tableFormat.getResizeMode() == ResizeMode.NONE){
+		} else if (tableFormat.getResizeMode() == ResizeMode.NONE) {
 			resizeColumnsNone();
 		}
 	}
-	
-	private JTable getTable(){
+
+	private JTable getTable() {
 		return this;
 	}
-	
-	private EventTableModel getEventTableModel(){
+
+	private EventTableModel getEventTableModel() {
 		TableModel model = this.getModel();
-		if (model instanceof EventTableModel){
+		if (model instanceof EventTableModel) {
 			return (EventTableModel) model;
 		} else {
 			return null;
 		}
 	}
-	
-	private EnumTableFormatAdaptor getEnumTableFormatAdaptor(){
-		if (getEventTableModel() != null){
+
+	private EnumTableFormatAdaptor getEnumTableFormatAdaptor() {
+		if (getEventTableModel() != null) {
 			TableFormat tableFormat = getEventTableModel().getTableFormat();
-			if (tableFormat instanceof EnumTableFormatAdaptor){
+			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				return (EnumTableFormatAdaptor) tableFormat;
 			}
 		}
 		return null;
 	}
 
-	private JViewport getParentViewport(){
+	private JViewport getParentViewport() {
 		Container container = this.getParent();
-		if (container instanceof JViewport){
+		if (container instanceof JViewport) {
 			return (JViewport) container;
 		} else {
 			return null;
 		}
 	}
-	
+
 	private void resizeColumnsText() {
 		size = 0;
-		if (resizeMode != ResizeMode.TEXT) resizeMode = ResizeMode.TEXT;
+		if (resizeMode != ResizeMode.TEXT) {
+			resizeMode = ResizeMode.TEXT;
+		}
 		for (int i = 0; i < getColumnCount(); i++) {
-			size = size+resizeColumn(this, getColumnModel().getColumn(i), i);
+			size = size + resizeColumn(this, getColumnModel().getColumn(i), i);
 		}
 		updateScroll();
 	}
-	
+
 	public void resizeColumnsWindow() {
-		if (resizeMode != ResizeMode.WINDOW){ //Only do once
+		if (resizeMode != ResizeMode.WINDOW) { //Only do once
 			resizeMode = ResizeMode.WINDOW;
-			for (int i = 0; i < getColumnCount(); i++){
+			for (int i = 0; i < getColumnCount(); i++) {
 				getColumnModel().getColumn(i).setPreferredWidth(75);
 			}
 		}
 		updateScroll();
 	}
 	public void resizeColumnsNone() {
-		if (resizeMode != ResizeMode.NONE){ //Only do once
+		if (resizeMode != ResizeMode.NONE) { //Only do once
 			resizeMode = ResizeMode.NONE;
-			for (int i = 0; i < getColumnCount(); i++){
+			for (int i = 0; i < getColumnCount(); i++) {
 				int width = getColumnModel().getColumn(i).getWidth();
 				getColumnModel().getColumn(i).setPreferredWidth(width);
 			}
 		}
 		updateScroll();
 	}
-	
-	private void updateScroll(){
+
+	private void updateScroll() {
 		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
-		if ( tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT){
-			if (jViewport != null && size < jViewport.getSize().width){
+		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
+			if (jViewport != null && size < jViewport.getSize().width) {
 				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			} else {
 				this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			}
-		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW){
+		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW) {
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		} else if (tableFormat.getResizeMode() == ResizeMode.NONE){
+		} else if (tableFormat.getResizeMode() == ResizeMode.NONE) {
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 	}
 
-	private int resizeColumn(JTable jTable, TableColumn column, int columnIndex) {
+	private int resizeColumn(final JTable jTable, final TableColumn column, final int columnIndex) {
 		//Header
 		TableCellRenderer renderer = column.getHeaderRenderer();
-		if (renderer == null) renderer = jTable.getTableHeader().getDefaultRenderer();
+		if (renderer == null) {
+			renderer = jTable.getTableHeader().getDefaultRenderer();
+		}
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
 		int maxWidth = component.getPreferredSize().width;
-		
+
 		//Rows
-		for (int a = 0; a < jTable.getRowCount(); a++){
+		for (int a = 0; a < jTable.getRowCount(); a++) {
 			renderer = jTable.getCellRenderer(a, columnIndex);
-			if (renderer instanceof SeparatorTableCell) continue;
+			if (renderer instanceof SeparatorTableCell) {
+				continue;
+			}
 			component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
 			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
 		}
-		column.setPreferredWidth(maxWidth+4);
-		return maxWidth+4;
+		column.setPreferredWidth(maxWidth + 4);
+		return maxWidth + 4;
 	}
 
 	private class ModelListener implements TableModelListener, ComponentListener,
-			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener{
+			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener {
 
-		boolean columnMoved = false;
-		int from = 0;
-		int to = 0;
+		private boolean columnMoved = false;
+		private int from = 0;
+		private int to = 0;
 		private int rowsLastTime = 0;
 		private int rowsCount = 0;
-		
+
 		@Override
-		public void tableChanged(TableModelEvent e) {
+		public void tableChanged(final TableModelEvent e) {
 			//XXX - Workaround for Java 7
-			if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
-			if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
-			if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
-			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && //Last Table Update
-					(e.getType() != TableModelEvent.UPDATE ||
-					(e.getType() == TableModelEvent.UPDATE && e.getFirstRow() >= 0))) {
+			if (getTable().isEditing()) {
+				getTable().getCellEditor().cancelCellEditing();
+			}
+			if (e.getType() == TableModelEvent.DELETE) {
+				rowsCount = rowsCount - (Math.abs(e.getFirstRow() - e.getLastRow()) + 1);
+			}
+			if (e.getType() == TableModelEvent.INSERT) {
+				rowsCount = rowsCount + (Math.abs(e.getFirstRow() - e.getLastRow()) + 1);
+			}
+			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() //Last Table Update
+					&& (e.getType() != TableModelEvent.UPDATE
+					|| (e.getType() == TableModelEvent.UPDATE && e.getFirstRow() >= 0))) {
 				rowsLastTime = getRowCount();
 				rowsCount = 0;
 				autoResizeColumns();
@@ -231,38 +243,38 @@ public class JAutoColumnTable extends JTable {
 		}
 
 		@Override
-		public void componentResized(ComponentEvent e) {
+		public void componentResized(final ComponentEvent e) {
 			updateScroll();
 		}
 
 		@Override
-		public void componentMoved(ComponentEvent e) {}
+		public void componentMoved(final ComponentEvent e) { }
 
 		@Override
-		public void componentShown(ComponentEvent e) {}
+		public void componentShown(final ComponentEvent e) { }
 
 		@Override
-		public void componentHidden(ComponentEvent e) {}
+		public void componentHidden(final ComponentEvent e) { }
 
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(final PropertyChangeEvent evt) {
 			Object newValue = evt.getNewValue();
 			Object oldValue = evt.getOldValue();
-			if (newValue instanceof JTableHeader && oldValue instanceof JTableHeader){
+			if (newValue instanceof JTableHeader && oldValue instanceof JTableHeader) {
 				JTableHeader newModel = (JTableHeader) newValue;
 				JTableHeader oldModel = (JTableHeader) oldValue;
 				oldModel.removeMouseListener(this);
 				newModel.addMouseListener(this);
 
 			}
-			if (newValue instanceof TableColumnModel && oldValue instanceof TableColumnModel){
+			if (newValue instanceof TableColumnModel && oldValue instanceof TableColumnModel) {
 				TableColumnModel newModel = (TableColumnModel) newValue;
 				TableColumnModel oldModel = (TableColumnModel) oldValue;
 				oldModel.removeColumnModelListener(this);
 				newModel.addColumnModelListener(this);
 
 			}
-			if (newValue instanceof TableModel && oldValue instanceof TableModel){
+			if (newValue instanceof TableModel && oldValue instanceof TableModel) {
 				TableModel newModel = (TableModel) newValue;
 				TableModel oldModel = (TableModel) oldValue;
 				oldModel.removeTableModelListener(this);
@@ -271,50 +283,56 @@ public class JAutoColumnTable extends JTable {
 		}
 
 		@Override
-		public void hierarchyChanged(HierarchyEvent e) {
-			if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED){
-				if (jViewport != null) jViewport.removeComponentListener(this);
+		public void hierarchyChanged(final HierarchyEvent e) {
+			if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED) {
+				if (jViewport != null) {
+					jViewport.removeComponentListener(this);
+				}
 				jViewport = getParentViewport();
-				if (jViewport != null) jViewport.addComponentListener(this);
+				if (jViewport != null) {
+					jViewport.addComponentListener(this);
+				}
 			}
 		}
-		
-		@Override
-		public void columnAdded(TableColumnModelEvent e) {}
 
 		@Override
-		public void columnRemoved(TableColumnModelEvent e) {}
-			
+		public void columnAdded(final TableColumnModelEvent e) { }
+
 		@Override
-		public void columnMoved(TableColumnModelEvent e) {
-			if (e.getFromIndex() != e.getToIndex()){
-				if (!columnMoved) from = e.getFromIndex();
+		public void columnRemoved(final TableColumnModelEvent e) { }
+
+		@Override
+		public void columnMoved(final TableColumnModelEvent e) {
+			if (e.getFromIndex() != e.getToIndex()) {
+				if (!columnMoved) {
+					from = e.getFromIndex();
+				}
 				to = e.getToIndex();
 				columnMoved = true;
 			}
 		}
 
 		@Override
-		public void columnMarginChanged(ChangeEvent e) {}
+		public void columnMarginChanged(final ChangeEvent e) { }
 
 		@Override
-		public void columnSelectionChanged(ListSelectionEvent e) {}
+		public void columnSelectionChanged(final ListSelectionEvent e) { }
 
 		@Override
-		public void mouseClicked(MouseEvent e) {}
+		public void mouseClicked(final MouseEvent e) { }
 
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed(final MouseEvent e) {
 			columnMoved = false;
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (columnMoved){
+		public void mouseReleased(final MouseEvent e) {
+			if (columnMoved) {
 				columnMoved = false;
 				EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
 				EventTableModel model = getEventTableModel();
-				if (tableFormat != null && model != null){
+				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
 				}
@@ -323,9 +341,9 @@ public class JAutoColumnTable extends JTable {
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent e) {}
+		public void mouseEntered(final MouseEvent e) { }
 
 		@Override
-		public void mouseExited(MouseEvent e) {}
+		public void mouseExited(final MouseEvent e) { }
 	}
 }

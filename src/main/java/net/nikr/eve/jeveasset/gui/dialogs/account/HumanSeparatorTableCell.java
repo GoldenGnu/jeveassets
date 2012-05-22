@@ -1,6 +1,6 @@
-/* Glazed Lists                                                 (c) 2003-2006 */
-/* http://publicobject.com/glazedlists/                      publicobject.com,*/
-/*                                                     O'Dell Engineering Ltd.*/
+/* Glazed Lists													(c) 2003-2006 */
+/* http://publicobject.com/glazedlists/						 publicobject.com,*/
+/*													   O'Dell Engineering Ltd.*/
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
@@ -24,21 +24,21 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
 public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
-		implements FocusListener, ActionListener{
+		implements FocusListener, ActionListener {
 
 	// TODO action enum - more string enum pattern, to be converted to an enum
-	private final static String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
-	public final static String ACTION_EDIT = "ACTION_EDIT";
-	public final static String ACTION_DELETE = "ACTION_DELETE";
+	private static final String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
+	public static final String ACTION_EDIT = "ACTION_EDIT";
+	public static final String ACTION_DELETE = "ACTION_DELETE";
 
-	/** the separator list to lock */
+	/** the separator list to lock. */
 	private final JTextField jAccountName;
 	private final JButton jEdit;
 	private final JButton jDelete;
 
-	public HumanSeparatorTableCell(ActionListener actionListener, JTable jTable, SeparatorList<Human> separatorList) {
+	public HumanSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Human> separatorList) {
 		super(jTable, separatorList);
-		
+
 		jAccountName = new JTextField();
 		jAccountName.addFocusListener(this);
 		jAccountName.setBorder(null);
@@ -79,47 +79,44 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 	}
 
 	@Override
-	protected void configure(Separator<?> separator) {
+	protected void configure(final Separator<?> separator) {
 		Human human = (Human) separator.first();
-		if(human == null) return; // handle 'late' rendering calls after this separator is invalid
+		if (human == null) { // handle 'late' rendering calls after this separator is invalid
+			return;
+		}
 		Account account = human.getParentAccount();
-		if (account.getName().isEmpty()){
+		if (account.getName().isEmpty()) {
 			jAccountName.setText(String.valueOf(account.getKeyID()));
 		} else {
 			jAccountName.setText(account.getName());
 		}
 	}
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ACCOUNT_NAME.equals(e.getActionCommand())){
-			Human human = (Human) separator.first();
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_ACCOUNT_NAME.equals(e.getActionCommand())) {
+			Human human = (Human) currentSeparator.first();
 			Account account = human.getParentAccount();
-			if (jAccountName.getText().isEmpty()){
+			if (jAccountName.getText().isEmpty()) {
 				jAccountName.setText(String.valueOf(account.getKeyID()));
 			}
 			account.setName(jAccountName.getText());
 			jAccountName.transferFocus();
 			expandSeparator(true);
-			int index = jTable.getSelectedRow()+1;
-			if (jTable.getRowCount() >= index){
+			int index = jTable.getSelectedRow() + 1;
+			if (jTable.getRowCount() >= index) {
 				jTable.setRowSelectionInterval(index, index);
 			}
-			
 		}
 	}
 
 	@Override
-	public void focusGained(FocusEvent e) {
-		if (e.getSource() instanceof JTextField){
-			jTable.setRowSelectionInterval(row, row);
+	public void focusGained(final FocusEvent e) {
+		if (e.getSource() instanceof JTextField) {
+			jTable.setRowSelectionInterval(currentRow, currentRow);
 			jAccountName.selectAll();
 		}
 	}
 
 	@Override
-	public void focusLost(FocusEvent e) {
-
-	}
-
-
+	public void focusLost(final FocusEvent e) { }
 }

@@ -32,48 +32,48 @@ import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
-class JOverviewTable extends JAutoColumnTable{
+class JOverviewTable extends JAutoColumnTable {
 
 	private List<String> groupedLocations = new ArrayList<String>();
 	private EventTableModel<Overview> tableModel;
 
-	public JOverviewTable(Program program, EventTableModel<Overview> tableModel) {
+	public JOverviewTable(final Program program, final EventTableModel<Overview> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
 
-	public void setGroupedLocations(List<String> groupedLocations) {
+	public void setGroupedLocations(final List<String> groupedLocations) {
 		this.groupedLocations = groupedLocations;
 	}
 
 	@Override
-	public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
+	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
 		Overview overview = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())){ //In group
-			if (!isSelected){
-				component.setBackground( new Color(200,255,200) );
+		if (groupedLocations.contains(overview.getName()) && columnName.equals(OverviewTableFormat.NAME.getColumnName())) { //In group
+			if (!isSelected) {
+				component.setBackground(new Color(200, 255, 200));
 			} else {
-				component.setBackground( this.getSelectionBackground().darker() );
+				component.setBackground(this.getSelectionBackground().darker());
 			}
 			return component;
 		}
-		if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())){ //In group
-			if (!isSelected){
-				component.setBackground( new Color(200,255,200) );
+		if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())) { //In group
+			if (!isSelected) {
+				component.setBackground(new Color(200, 255, 200));
 			} else {
-				component.setBackground( this.getSelectionBackground().darker() );
+				component.setBackground(this.getSelectionBackground().darker());
 			}
 			return component;
 		}
-		if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())){ //In group
-			if (!isSelected){
-				component.setBackground( new Color(200,255,200) );
+		if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())) { //In group
+			if (!isSelected) {
+				component.setBackground(new Color(200, 255, 200));
 			} else {
-				component.setBackground( this.getSelectionBackground().darker() );
+				component.setBackground(this.getSelectionBackground().darker());
 			}
 			return component;
 		}

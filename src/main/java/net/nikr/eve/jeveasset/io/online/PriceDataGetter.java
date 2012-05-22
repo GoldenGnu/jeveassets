@@ -43,51 +43,51 @@ import uk.me.candle.eve.pricing.options.PricingType;
 
 public class PriceDataGetter implements PricingListener {
 
-	private final static Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
 	private Settings settings;
 	private UpdateTask updateTask;
 	private long nextUpdate = 0;
-	private long priceCacheTimer = 1*60*60*1000l; // 1 hour (hours*min*sec*ms)
+	private long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private Map<Integer, PriceData> priceDataList;
 	private final int attemptCount = 5;
 	private boolean update;
 	private boolean failed;
 	private List<Integer> ids;
 
-	public PriceDataGetter(Settings settings) {
+	public PriceDataGetter(final Settings settings) {
 		this.settings = settings;
 	}
 	/**
-	 * Load price data from cache and only update missing price data
+	 * Load price data from cache and only update missing price data.
 	 * @return
 	 */
-	public boolean load(){
+	public boolean load() {
 		return process(null, false);
 	}
 	/**
-	 * Load price data from cache and only update missing price data
+	 * Load price data from cache and only update missing price data.
 	 * @param task UpdateTask to track progress
 	 * @return
 	 */
-	public boolean load(UpdateTask task){
+	public boolean load(final UpdateTask task) {
 		return process(task, false);
 	}
 	/**
-	 * Update of all price data
+	 * Update of all price data.
 	 * @param task UpdateTask to track progress
 	 * @return
 	 */
 
-	public boolean update(UpdateTask task){
+	public boolean update(final UpdateTask task) {
 		return process(task, true);
 	}
 
-	private boolean process(UpdateTask task, boolean update){
+	private boolean process(final UpdateTask task, final boolean processUpdate) {
 		this.updateTask = task;
-		this.update = update;
-		
-		if (update){
+		this.update = processUpdate;
+
+		if (processUpdate) {
 			LOG.info("Price data update:");
 		} else {
 			LOG.info("Price data loading:");
@@ -99,31 +99,31 @@ public class PriceDataGetter implements PricingListener {
 		//Get all price ids
 		ids = settings.getUniqueIds();
 
-		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
+		PricingFactory.setPricingOptions(new EveAssetPricingOptions());
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
 		pricing.resetAllAttemptCounters();
 		//Reset cache timers...
-		if (update){
-			for (int id : ids){
+		if (processUpdate) {
+			for (int id : ids) {
 				pricing.setPrice(id, -1.0);
 			}
 		}
-		
+
 		//Load price data (Update as needed)
-		for (int id : ids){
+		for (int id : ids) {
 			createPriceData(id, pricing);
 		}
 		//Wait to complete
-		while (ids.size() >  (priceDataList.size()) && !failed){
+		while (ids.size() > priceDataList.size() && !failed) {
 			try {
-				synchronized(this) {
-                    wait();
-                }
+				synchronized (this) {
+					wait();
+				}
 			} catch (InterruptedException ex) {
 				LOG.info("Failed to update price");
 				pricing.cancelAll();
-				if (updateTask != null){
+				if (updateTask != null) {
 					updateTask.addError("Price data", "Cancelled");
 					updateTask.setTaskProgress(100, 100, 0, 100);
 					updateTask = null;
@@ -133,14 +133,14 @@ public class PriceDataGetter implements PricingListener {
 			}
 		}
 		boolean updated = (!priceDataList.isEmpty() && !failed);
-		if (updated){ //All Updated
-			if (update) {
+		if (updated) { //All Updated
+			if (processUpdate) {
 				LOG.info("	Price data updated");
 			} else {
 				LOG.info("	Price data loaded");
 			}
 			//We only set the price data if everthing worked (AKA all updated)
-			settings.setPriceData( priceDataList );
+			settings.setPriceData(priceDataList);
 			try {
 				pricing.writeCache();
 				LOG.info("	Price data cached saved");
@@ -149,7 +149,7 @@ public class PriceDataGetter implements PricingListener {
 			}
 		} else { //None or some updated
 			LOG.info("	Failed to update price data");
-			if (updateTask != null){
+			if (updateTask != null) {
 				updateTask.addError("Price data", "Failed to update price data");
 				updateTask.setTaskProgress(100, 100, 0, 100);
 			}
@@ -159,27 +159,27 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public Date getNextUpdate() {
-		return Settings.getGmt( new Date(nextUpdate+priceCacheTimer) );
+		return Settings.getGmt(new Date(nextUpdate + priceCacheTimer));
 	}
 
 	@Override
-	public void priceUpdated(int typeID, Pricing pricing) {
+	public void priceUpdated(final int typeID, final Pricing pricing) {
 		createPriceData(typeID, pricing);
-		synchronized(this) {
+		synchronized (this) {
 			notify();
 		}
 	}
 
 	@Override
-	public void priceUpdateFailed(int typeID, Pricing pricing) {
+	public void priceUpdateFailed(final int typeID, final Pricing pricing) {
 		pricing.cancelAll();
 		failed = true;
-		synchronized(this) {
+		synchronized (this) {
 			notify();
 		}
 	}
 
-	private void createPriceData(int typeID, Pricing pricing){
+	private void createPriceData(final int typeID, final Pricing pricing) {
 		Double sellMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.SELL);
 		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
 		Double sellMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.SELL);
@@ -191,7 +191,7 @@ public class PriceDataGetter implements PricingListener {
 
 		if (sellMax != null && sellAvg != null && sellMedian != null && sellMin != null
 			&& buyMax != null && buyAvg != null && buyMedian != null && buyMin != null
-				){
+				) {
 			PriceData priceData = new PriceData();
 			priceData.setSellMax(sellMax);
 			priceData.setSellAvg(sellAvg);
@@ -204,11 +204,15 @@ public class PriceDataGetter implements PricingListener {
 			priceDataList.put(typeID, priceData);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
-		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate ){
+		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate) {
 			nextUpdate = nextUpdateTemp;
 		}
-		if (updateTask != null) updateTask.setTaskProgress(ids.size(), priceDataList.size(), 0, 100);
-		if (!priceDataList.isEmpty() && !ids.isEmpty()) SplashUpdater.setSubProgress((int)(priceDataList.size() * 100.0 / ids.size()));
+		if (updateTask != null) {
+			updateTask.setTaskProgress(ids.size(), priceDataList.size(), 0, 100);
+		}
+		if (!priceDataList.isEmpty() && !ids.isEmpty()) {
+			SplashUpdater.setSubProgress((int) (priceDataList.size() * 100.0 / ids.size()));
+		}
 	}
 
 	private class EveAssetPricingOptions implements PricingOptions {
@@ -241,7 +245,7 @@ public class PriceDataGetter implements PricingListener {
 		@Override
 		public InputStream getCacheInputStream() throws IOException {
 			File file = new File(Settings.getPathPriceData());
-			if (file.exists()){
+			if (file.exists()) {
 				return new FileInputStream(file);
 			}
 			return null;

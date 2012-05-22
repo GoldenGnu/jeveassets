@@ -40,13 +40,13 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
-	protected MarketOrdersResponse getResponse(boolean bCorp) throws ApiException {
-		if (bCorp){
+	protected MarketOrdersResponse getResponse(final boolean bCorp) throws ApiException {
+		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.marketorders.MarketOrdersParser.getInstance()
 					.getResponse(Human.getApiAuthorization(getHuman()));
@@ -63,18 +63,18 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	}
 
 	@Override
-	protected void setNextUpdate(Date nextUpdate) {
+	protected void setNextUpdate(final Date nextUpdate) {
 		getHuman().setMarketOrdersNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected void setData(MarketOrdersResponse response) {
+	protected void setData(final MarketOrdersResponse response) {
 		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getAll());
 		getHuman().setMarketOrders(marketOrders);
 	}
-	
+
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo){
+	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setMarketOrders(humanFrom.getMarketOrders());
 		humanTo.setMarketOrdersNextUpdate(humanFrom.getMarketOrdersNextUpdate());
 	}

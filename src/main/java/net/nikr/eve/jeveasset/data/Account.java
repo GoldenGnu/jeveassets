@@ -35,10 +35,10 @@ public class Account {
 	private int accessMask;
 	private String type;
 	private Date expires;
-	
-	private List<Human> humans = new ArrayList<Human>();;
 
-	public Account(Account account) {
+	private List<Human> humans = new ArrayList<Human>();
+
+	public Account(final Account account) {
 		this.keyID = account.getKeyID();
 		this.vCode = account.getVCode();
 		this.name = account.getName();
@@ -46,16 +46,16 @@ public class Account {
 		this.accessMask = account.getAccessMask();
 		this.type = account.getType();
 		this.expires = account.getExpires();
-		for (Human human : account.getHumans()){
+		for (Human human : account.getHumans()) {
 			humans.add(new Human(this, human));
 		}
 	}
 
-	public Account(int keyID, String vCode) {
+	public Account(final int keyID, final String vCode) {
 		this(keyID, vCode, Integer.toString(keyID), Settings.getGmtNow(), 0, "", null);
 	}
 
-	public Account(int keyID, String vCode, String name, Date charactersNextUpdate, int accessMask, String type, Date expires) {
+	public Account(final int keyID, final String vCode, final String name, final Date charactersNextUpdate, final int accessMask, final String type, final Date expires) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -77,7 +77,7 @@ public class Account {
 		return charactersNextUpdate;
 	}
 
-	public void setCharactersNextUpdate(Date charactersNextUpdate) {
+	public void setCharactersNextUpdate(final Date charactersNextUpdate) {
 		this.charactersNextUpdate = charactersNextUpdate;
 	}
 
@@ -85,7 +85,7 @@ public class Account {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -93,19 +93,23 @@ public class Account {
 		return accessMask;
 	}
 
-	public void setAccessMask(int accessMask) {
+	public void setAccessMask(final int accessMask) {
 		this.accessMask = accessMask;
 	}
 
 	public Date getExpires() {
 		return expires;
 	}
-	
-	public boolean isExpired(){
-		return getExpires() == null ? false : Settings.getGmtNow().after(getExpires());
+
+	public boolean isExpired() {
+		if (getExpires() == null) {
+			return false;
+		} else {
+			return Settings.getGmtNow().after(getExpires());
+		}
 	}
 
-	public void setExpires(Date expires) {
+	public void setExpires(final Date expires) {
 		this.expires = expires;
 	}
 
@@ -113,25 +117,25 @@ public class Account {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(final String type) {
 		this.type = type;
 	}
-	
+
 	/**
-	 * Compare Type - Simplified to only consider Corporation or not Corporation
-	 * @param type Account | Character | Corporation
+	 * Compare Type - Simplified to only consider Corporation or not Corporation.
+	 * @param accountType Account | Character | Corporation
 	 * @return true if equal (both corp or both not corp) - false if not equal (one corp other not corp)
 	 */
-	public boolean compareTypes(String type){
-		boolean corp = type.equals("Corporation");
+	public boolean compareTypes(final String accountType) {
+		boolean corp = accountType.equals("Corporation");
 		return (isCorporation() == corp);
 	}
-	
-	public boolean isCorporation(){
+
+	public boolean isCorporation() {
 		return type.equals("Corporation");
 	}
-	
-	public boolean isCharacter(){
+
+	public boolean isCharacter() {
 		return !isCorporation(); //type.equals("Character") || type.equals("Account");
 	}
 
@@ -139,37 +143,37 @@ public class Account {
 		return humans;
 	}
 
-	public void setVCode(String vCode) {
+	public void setvCode(final String vCode) {
 		this.vCode = vCode;
 	}
 
-	public void setHumans(List<Human> humans) {
+	public void setHumans(final List<Human> humans) {
 		this.humans = humans;
 	}
-	
-	public boolean isAccountBalance(){
+
+	public boolean isAccountBalance() {
 		return ((getAccessMask() & AccessMask.ACCOUNT_BALANCE.getAccessMask()) == AccessMask.ACCOUNT_BALANCE.getAccessMask());
 	}
-	
-	public boolean isAssetList(){
+
+	public boolean isAssetList() {
 		return ((getAccessMask() & AccessMask.ASSET_LIST.getAccessMask()) == AccessMask.ASSET_LIST.getAccessMask());
 	}
-	
-	public boolean isMarketOrders(){
+
+	public boolean isMarketOrders() {
 		return ((getAccessMask() & AccessMask.MARKET_ORDERS.getAccessMask()) == AccessMask.MARKET_ORDERS.getAccessMask());
 	}
-	
-	public boolean isIndustryJobs(){
+
+	public boolean isIndustryJobs() {
 		return ((getAccessMask() & AccessMask.INDUSTRY_JOBS.getAccessMask()) == AccessMask.INDUSTRY_JOBS.getAccessMask());
 	}
 
 	@Override
-	public String toString(){
-		return keyID+"::"+vCode;
+	public String toString() {
+		return keyID + "::" + vCode;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -194,7 +198,7 @@ public class Account {
 		return hash;
 	}
 
-	public void setKeyID(int keyID) {
+	public void setKeyID(final int keyID) {
 		this.keyID = keyID;
 	}
 }

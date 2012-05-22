@@ -34,14 +34,14 @@ import org.w3c.dom.Element;
 
 public class ConquerableStationsWriter extends AbstractXmlWriter {
 
-	private final static Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
 
-	public static void save(Settings settings){
+	public static void save(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("stations");
 		} catch (XmlException ex) {
-			LOG.error("Conquerable stations not saved "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not saved " + ex.getMessage(), ex);
 		}
 		writeConquerableStations(xmldoc, settings.getConquerableStations());
 
@@ -49,13 +49,13 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 		try {
 			writeXmlFile(xmldoc, Settings.getPathConquerableStations(), true);
 		} catch (XmlException ex) {
-			LOG.error("Conquerable stations not saved "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not saved " + ex.getMessage(), ex);
 		}
 		LOG.info("	Conquerable stations saved");
 	}
-	private static void writeConquerableStations(Document xmldoc, Map<Long, ApiStation> conquerableStations){
+	private static void writeConquerableStations(final Document xmldoc, final Map<Long, ApiStation> conquerableStations) {
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Long, ApiStation> entry : conquerableStations.entrySet()){
+		for (Map.Entry<Long, ApiStation> entry : conquerableStations.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "station");
 			ApiStation station = entry.getValue();
 			node.setAttributeNS(null, "corporationid", String.valueOf(station.getCorporationID()));

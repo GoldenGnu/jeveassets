@@ -43,18 +43,18 @@ import net.nikr.eve.jeveasset.data.UserItem;
 
 public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettingsPanel {
 
-	public final static String ACTION_DELETE = "ACTION_DELETE";
-	public final static String ACTION_EDIT = "ACTION_EDIT";
+	public static final String ACTION_DELETE = "ACTION_DELETE";
+	public static final String ACTION_EDIT = "ACTION_EDIT";
 
 	private JComboBox jItems;
 	private JButton jEdit;
 	private JButton jDelete;
 
-	private Map<K, UserItem<K,V>> items;
-	private List<UserItem<K,V>> listItems;
+	private Map<K, UserItem<K, V>> items;
+	private List<UserItem<K, V>> listItems;
 	private String type;
 
-	public JUserListPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode, String title, String type, String help) {
+	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final DefaultMutableTreeNode parentNode, final String title, final String type, final String help) {
 		super(program, optionsDialog, title, icon, parentNode);
 		this.type = type;
 
@@ -96,32 +96,34 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		);
 	}
 
-	abstract protected Map<K, UserItem<K,V>> getItems();
-	abstract protected void setItems(Map<K, UserItem<K,V>> items);
-	abstract protected V valueOf(String value) ;
-	abstract protected UserItem<K,V> newUserItem(UserItem<K,V> userItem);
+	protected abstract Map<K, UserItem<K, V>> getItems();
+	protected abstract void setItems(Map<K, UserItem<K, V>> items);
+	protected abstract V valueOf(String value);
+	protected abstract UserItem<K, V> newUserItem(UserItem<K, V> userItem);
 
-	private void setEnabledAll(boolean b){
+	private void setEnabledAll(final boolean b) {
 		jItems.setEnabled(b);
 		jEdit.setEnabled(b);
 		jDelete.setEnabled(b);
 	}
 
-	public void edit(UserItem<K,V> userItem){
+	public void edit(final UserItem<K, V> userItem) {
 		edit(userItem, true);
 	}
 
-	private void edit(UserItem<K,V> userItem, boolean save){
+	private void edit(final UserItem<K, V> userItem, final boolean save) {
 		edit(userItem, save, null);
 	}
 
-	private void edit(UserItem<K,V> userItem, boolean save, String oldValue){
-		if (save) load();
-		String value = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit "+type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
-		if (value != null){
+	private void edit(UserItem<K, V> userItem, final boolean save, final String oldValue) {
+		if (save) {
+			load();
+		}
+		String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit " + type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
+		if (value != null) {
 			V v = valueOf(value);
-			if (v != null){ //Update value
-				if (!items.containsKey(userItem.getKey())){ //Add if needed
+			if (v != null) { //Update value
+				if (!items.containsKey(userItem.getKey())) { //Add if needed
 					items.put(userItem.getKey(), userItem);
 					listItems.add(userItem);
 				} else { //Get from items list
@@ -131,9 +133,11 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				userItem.setValue(v);
 				//Update GUI
 				updateGUI();
-				if (save){ //Save (if not in setttings dialog)
+				if (save) { //Save (if not in setttings dialog)
 					boolean update = save();
-					if (update) program.updateEventList();
+					if (update) {
+						program.updateEventList();
+					}
 				}
 			} else {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Input not valid", "Bad input", JOptionPane.PLAIN_MESSAGE);
@@ -142,33 +146,37 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		}
 	}
 
-	public void delete(UserItem<K,V> userItem){
+	public void delete(final UserItem<K, V> userItem) {
 		delete(userItem, true);
 	}
 
-	private void delete(UserItem<K,V> userItem, boolean save){
-		if (save) load();
-		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName()+"\n["+userItem.getValueFormated()+"]", "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-		if (value == JOptionPane.OK_OPTION){
+	private void delete(final UserItem<K, V> userItem, final boolean save) {
+		if (save) {
+			load();
+		}
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName() + "\n[" + userItem.getValueFormated() + "]", "Delete " + type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (value == JOptionPane.OK_OPTION) {
 			items.remove(userItem.getKey());
 			listItems.remove(userItem);
 			updateGUI();
-			if (save){
+			if (save) {
 				boolean update = save();
-				if (update) program.updateEventList();
+				if (update) {
+					program.updateEventList();
+				}
 			}
 		}
 	}
 
-	private void updateGUI(){
-		if (items.isEmpty()){
+	private void updateGUI() {
+		if (items.isEmpty()) {
 			setEnabledAll(false);
-			jItems.setModel( new DefaultComboBoxModel() );
+			jItems.setModel(new DefaultComboBoxModel());
 			jItems.getModel().setSelectedItem("Empty");
 		} else {
 			setEnabledAll(true);
 			Collections.sort(listItems);
-			jItems.setModel( new DefaultComboBoxModel(listItems.toArray()) );
+			jItems.setModel(new DefaultComboBoxModel(listItems.toArray()));
 		}
 	}
 
@@ -179,35 +187,43 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		setItems(items);
 		//Update this
 		int selected = jItems.getSelectedIndex();
-		if (update) load();
-		if (selected >= 0) jItems.setSelectedIndex(selected);
+		if (update) {
+			load();
+		}
+		if (selected >= 0) {
+			jItems.setSelectedIndex(selected);
+		}
 		//Update table if needed
 		return update;
 	}
 
 	@Override
-	public void load(){
-		items = new HashMap<K, UserItem<K,V>>();
-		listItems = new ArrayList<UserItem<K,V>>();
-		for (Entry<K, UserItem<K,V>> entry : getItems().entrySet()){
-			UserItem<K,V> userItem = newUserItem(entry.getValue());
+	public void load() {
+		items = new HashMap<K, UserItem<K, V>>();
+		listItems = new ArrayList<UserItem<K, V>>();
+		for (Entry<K, UserItem<K, V>> entry : getItems().entrySet()) {
+			UserItem<K, V> userItem = newUserItem(entry.getValue());
 			items.put(entry.getKey(), userItem);
 			listItems.add(userItem);
 		}
 		updateGUI();
 	}
 
-	private class ListenerClass implements ActionListener{
+	private class ListenerClass implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (ACTION_DELETE.equals(e.getActionCommand())){
+		public void actionPerformed(final ActionEvent e) {
+			if (ACTION_DELETE.equals(e.getActionCommand())) {
 				int index = jItems.getSelectedIndex();
-				if (index >= 0) delete(listItems.get(index), false);
+				if (index >= 0) {
+					delete(listItems.get(index), false);
+				}
 			}
-			if (ACTION_EDIT.equals(e.getActionCommand())){
+			if (ACTION_EDIT.equals(e.getActionCommand())) {
 				int index = jItems.getSelectedIndex();
-				if (index >= 0) edit(listItems.get(index), false);
+				if (index >= 0) {
+					edit(listItems.get(index), false);
+				}
 			}
 		}
 	}

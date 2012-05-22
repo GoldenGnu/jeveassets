@@ -51,7 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab implements TableModelListener{
+public class IndustryJobsTab extends JMainTab implements TableModelListener {
 
 	private JAutoColumnTable jTable;
 	private JLabel jInventionSuccess;
@@ -64,10 +64,10 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	private IndustryJobData data;
 	private IndustryJobsFilterControl filterControl;
 	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
-	
+
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
-	public IndustryJobsTab(Program program) {
+	public IndustryJobsTab(final Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		//Table format
@@ -76,7 +76,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<IndustryJob>();
-		
+
 		filterList = new FilterList<IndustryJob>(eventList);
 		//For soring the table
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
@@ -96,10 +96,10 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		
+
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
-		
+
 		filter = new ArrayList<Filter>();
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
@@ -110,7 +110,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
-		
+
 		//Filter
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
@@ -119,7 +119,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 				program.getSettings().getTableFilters(NAME),
 				defaultFilters
 				);
-		
+
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
 
@@ -134,9 +134,9 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
-	
+
 	@Override
-	public void updateSettings(){
+	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
 	}
@@ -149,7 +149,7 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		}
 		data.updateData();
 
-		if (!data.getCharacters().isEmpty()){
+		if (!data.getCharacters().isEmpty()) {
 			jTable.setEnabled(true);
 			Collections.sort(data.getCharacters());
 			data.getCharacters().add(0, TabsJobs.get().all());
@@ -159,21 +159,21 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll( data.getAll() );
+			eventList.addAll(data.getAll());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent){
+	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		
+
 	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu){
+		if (isSelected && jComponent instanceof JPopupMenu) {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
@@ -190,38 +190,38 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 	}
 
 	@Override
-	public void tableChanged(TableModelEvent e) {
+	public void tableChanged(final TableModelEvent e) {
 		int count = 0;
 		double success = 0;
-		for (IndustryJob industryJob : filterList){
-			if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()){
+		for (IndustryJob industryJob : filterList) {
+			if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
 				count++;
-				if (industryJob.getState() == IndustryJobState.STATE_DELIVERED){
+				if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
 					success++;
 				}
 			}
 		}
-		if (count <= 0){
+		if (count <= 0) {
 			jInventionSuccess.setText(Formater.percentFormat(0.0));
 		} else {
 			jInventionSuccess.setText(Formater.percentFormat(success / count));
 		}
 	}
-	
-	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{
 
-		public IndustryJobsFilterControl(JFrame jFrame, EventList<IndustryJob> eventList, FilterList<IndustryJob> filterList, Map<String, List<Filter>> filters, Map<String, List<Filter>> defaultFilters) {
+	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
+
+		public IndustryJobsFilterControl(final JFrame jFrame, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 		}
-		
+
 		@Override
-		protected Object getColumnValue(IndustryJob item, String column) {
+		protected Object getColumnValue(final IndustryJob item, final String column) {
 			IndustryJobTableFormat format = IndustryJobTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
-		
+
 		@Override
-		protected boolean isNumericColumn(Enum column) {
+		protected boolean isNumericColumn(final Enum column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -229,9 +229,9 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 				return false;
 			}
 		}
-		
+
 		@Override
-		protected boolean isDateColumn(Enum column) {
+		protected boolean isDateColumn(final Enum column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -244,9 +244,9 @@ public class IndustryJobsTab extends JMainTab implements TableModelListener{
 		public Enum[] getColumns() {
 			return IndustryJobTableFormat.values();
 		}
-		
+
 		@Override
-		protected Enum valueOf(String column) {
+		protected Enum valueOf(final String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
 

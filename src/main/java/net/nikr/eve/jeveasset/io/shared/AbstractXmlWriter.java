@@ -36,9 +36,9 @@ import org.w3c.dom.Document;
 
 public abstract class AbstractXmlWriter {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
 
-	protected static Document getXmlDocument(String rootname) throws XmlException  {
+	protected static Document getXmlDocument(final String rootname) throws XmlException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -48,14 +48,16 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		}
 	}
-	protected static void writeXmlFile(Document doc, String filename, boolean createBackup) throws XmlException  {
+	protected static void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
 		writeXmlFile(doc, filename, "UTF-16", createBackup);
 	}
 
-	private static void writeXmlFile(Document doc, String filename, String encoding, boolean createBackup) throws XmlException  {
+	private static void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
 		DOMSource source = new DOMSource(doc);
 		try {
-			if (createBackup) backupFile(filename);
+			if (createBackup) {
+				backupFile(filename);
+			}
 			File outputFile = new File(filename);
 			FileOutputStream outputStream = new FileOutputStream(outputFile);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
@@ -82,15 +84,15 @@ public abstract class AbstractXmlWriter {
 		}
 	}
 
-	private static void backupFile(String filename){
+	private static void backupFile(final String filename) {
 		File outputFile = new File(filename);
 		int end = filename.lastIndexOf(".");
-		String backup = filename.substring(0, end)+".bac";
+		String backup = filename.substring(0, end) + ".bac";
 		File backupFile = new File(backup);
-		if (backupFile.exists() && !backupFile.delete()){
+		if (backupFile.exists() && !backupFile.delete()) {
 			LOG.warn("Was not able to delete previous backup file: {}", backup);
 		}
-		if (outputFile.exists() && !outputFile.renameTo(backupFile)){
+		if (outputFile.exists() && !outputFile.renameTo(backupFile)) {
 			LOG.warn("Was not able to make backup of: {}", filename);
 		}
 	}

@@ -39,13 +39,13 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 		super("Conquerable Stations");
 	}
 
-	public void load(UpdateTask updateTask, Settings settings){
-		this.settings = settings;
-		load(updateTask, settings.isForceUpdate(), "jEveAssets");
+	public void load(final UpdateTask updateTask, final Settings loadSettings) {
+		this.settings = loadSettings;
+		load(updateTask, loadSettings.isForceUpdate(), "jEveAssets");
 	}
 
 	@Override
-	protected StationListResponse getResponse(boolean bCorp) throws ApiException {
+	protected StationListResponse getResponse(final boolean bCorp) throws ApiException {
 		return com.beimin.eveapi.eve.conquerablestationlist
 				.ConquerableStationListParser.getInstance().getResponse();
 	}
@@ -56,16 +56,16 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 
 	@Override
-	protected void setNextUpdate(Date nextUpdate) {
+	protected void setNextUpdate(final Date nextUpdate) {
 		settings.setConquerableStationsNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected void setData(StationListResponse response) {
+	protected void setData(final StationListResponse response) {
 		settings.setConquerableStations(response.getStations());
 		ConquerableStationsWriter.save(settings);
 	}
-	
+
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo){}
+	protected void updateFailed(final Human humanFrom, final Human humanTo) { }
 }

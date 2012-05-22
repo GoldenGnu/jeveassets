@@ -30,36 +30,37 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 
-public class PaddingTableCellRenderer implements TableCellRenderer {
+public final class PaddingTableCellRenderer implements TableCellRenderer {
 
 	/*
 	private int top;
 	private int left;
 	private int bottom;
 	private int right;
-	 * 
 	 */
 	private TableCellRenderer renderer;
 	private Border border;
 
-	public static void install(JTable jTable, int padding){
+	public static void install(final JTable jTable, final int padding) {
 		install(jTable, padding, padding, padding, padding);
 	}
 
-	public static void install(JTable jTable, int top, int left, int bottom, int right){
-		for (int a = 0; a < jTable.getColumnCount(); a++){
+	public static void install(final JTable jTable, final int top, final int left, final int bottom, final int right) {
+		for (int a = 0; a < jTable.getColumnCount(); a++) {
 			Class<?> clazz = jTable.getColumnClass(a);
 			TableCellRenderer defaultRenderer = jTable.getDefaultRenderer(clazz);
-			if (defaultRenderer == null) defaultRenderer = new DefaultTableCellRenderer();
-			if (!(defaultRenderer instanceof PaddingTableCellRenderer)){
+			if (defaultRenderer == null) {
+				defaultRenderer = new DefaultTableCellRenderer();
+			}
+			if (!(defaultRenderer instanceof PaddingTableCellRenderer)) {
 				jTable.setDefaultRenderer(clazz, new PaddingTableCellRenderer(defaultRenderer, top, left, bottom, right));
 			}
 		}
-		jTable.setRowHeight(jTable.getRowHeight()+top+bottom);
+		jTable.setRowHeight(jTable.getRowHeight() + top + bottom);
 	}
 
-	private PaddingTableCellRenderer(TableCellRenderer renderer, int top, int left, int bottom, int right) {
-		if (renderer != null){
+	private PaddingTableCellRenderer(final TableCellRenderer renderer, final int top, final int left, final int bottom, final int right) {
+		if (renderer != null) {
 			this.renderer = renderer;
 		} else {
 			this.renderer = new DefaultTableCellRenderer();
@@ -68,7 +69,7 @@ public class PaddingTableCellRenderer implements TableCellRenderer {
 	}
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 		JLabel jLabel  = (JLabel) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		jLabel.setBorder(BorderFactory.createCompoundBorder(jLabel.getBorder(), border));
 		return jLabel;

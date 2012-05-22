@@ -45,14 +45,14 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 
 
-class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener{
-	private final static String ACTION_FILTER = "ACTION_FILTER";
-	private final static String ACTION_FILTER_TIMER = "ACTION_FILTER_TIMER";
-	private final static String ACTION_REMOVE = "ACTION_REMOVE";
-	
+class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener {
+	private static final String ACTION_FILTER = "ACTION_FILTER";
+	private static final String ACTION_FILTER_TIMER = "ACTION_FILTER_TIMER";
+	private static final String ACTION_REMOVE = "ACTION_REMOVE";
+
 	private JPanel jPanel;
 	private GroupLayout layout;
-	
+
 	private JCheckBox jEnabled;
 	private JComboBox jLogic;
 	private JComboBox jColumn;
@@ -60,39 +60,38 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	private JTextField jText;
 	private JComboBox jCompareColumn;
 	private JDateChooser jDate;
-	
+
 	private JLabel jSpacing;
 	private JButton jRemove;
-	
-	
+
 	private Timer timer;
-	
+
 	private FilterGui<E> gui;
 	private FilterControl<E> matcherControl;
 	private final List<Enum> allColumns;
 	private final List<Enum> numericColumns;
 	private final List<Enum> dateColumns;
-	
+
 	private boolean loading = false;
 
-	FilterPanel(FilterGui<E> gui, FilterControl<E> matcherControl) {
+	FilterPanel(final FilterGui<E> gui, final FilterControl<E> matcherControl) {
 		this.gui = gui;
 		this.matcherControl = matcherControl;
-		
+
 		allColumns = new ArrayList<Enum>();
 		allColumns.add(ExtraColumns.ALL);
 		allColumns.addAll(Arrays.asList(matcherControl.getColumns()));
-		
+
 		numericColumns = new ArrayList<Enum>();
-		for (Enum object : matcherControl.getColumns()){
-			if (matcherControl.isNumeric(object)){
+		for (Enum object : matcherControl.getColumns()) {
+			if (matcherControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
-		
+
 		dateColumns = new ArrayList<Enum>();
-		for (Enum object : matcherControl.getColumns()){
-			if (matcherControl.isDate(object)){
+		for (Enum object : matcherControl.getColumns()) {
+			if (matcherControl.isDate(object)) {
 				dateColumns.add(object);
 			}
 		}
@@ -101,23 +100,23 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jEnabled.setSelected(true);
 		jEnabled.addActionListener(this);
 		jEnabled.setActionCommand(ACTION_FILTER);
-		
+
 		jLogic = new JComboBox(LogicType.values());
 		jLogic.addActionListener(this);
 		jLogic.setActionCommand(ACTION_FILTER);
-		
+
 		jColumn = new JComboBox(allColumns.toArray());
 		jColumn.addActionListener(this);
 		jColumn.setActionCommand(ACTION_FILTER);
-		
+
 		jCompare = new JComboBox();
 		jCompare.addActionListener(this);
 		jCompare.setActionCommand(ACTION_FILTER);
-		
+
 		jText = new JTextField();
 		jText.getDocument().addDocumentListener(this);
 		jText.addKeyListener(this);
-		
+
 		jCompareColumn = new JComboBox();
 		jCompareColumn.addActionListener(this);
 		jCompareColumn.setActionCommand(ACTION_FILTER);
@@ -127,29 +126,29 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText("Today");
 		jCalendar.setTodayButtonVisible(true);
-		JTextFieldDateEditor dateEditor = (JTextFieldDateEditor)jDate.getDateEditor().getUiComponent();
+		JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) jDate.getDateEditor().getUiComponent();
 		dateEditor.setEnabled(false);
 		dateEditor.setBorder(null);
 		dateEditor.setDisabledTextColor(Color.BLACK);
 		jDate.addPropertyChangeListener(this);
-		
+
 		jSpacing = new JLabel();
-		
+
 		jRemove = new JButton();
 		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.addActionListener(this);
 		jRemove.setActionCommand(ACTION_REMOVE);
-		
+
 		timer = new Timer(500, this);
 		timer.setActionCommand(ACTION_FILTER_TIMER);
-		
+
 		jPanel = new JPanel();
 
 		layout = new GroupLayout(jPanel);
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
-		
+
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jEnabled, 30, 30, 30)
@@ -176,23 +175,23 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		);
 		updateNumeric(false);
 	}
-	
-	void setEnabled(boolean b){
+
+	void setEnabled(final boolean b) {
 		jRemove.setEnabled(b);
 	}
-	
-	JPanel getPanel(){
+
+	JPanel getPanel() {
 		return jPanel;
 	}
-	
-	FilterMatcher<E> getMatcher(){
+
+	FilterMatcher<E> getMatcher() {
 		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum column = (Enum)jColumn.getSelectedItem();
-		CompareType compare = (CompareType)jCompare.getSelectedItem();
+		Enum column = (Enum) jColumn.getSelectedItem();
+		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
-		if (isColumnCompare()){
-			Enum compareColumn = (Enum)jCompareColumn.getSelectedItem();
+		if (isColumnCompare()) {
+			Enum compareColumn = (Enum) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();
@@ -201,14 +200,14 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 		return new FilterMatcher<E>(matcherControl, logic, column, compare, text, enabled);
 	}
-	
-	Filter getFilter(){
+
+	Filter getFilter() {
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum column = (Enum)jColumn.getSelectedItem();
-		CompareType compare = (CompareType)jCompare.getSelectedItem();
+		Enum column = (Enum) jColumn.getSelectedItem();
+		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
-		if (isColumnCompare()){
-			Enum compareColumn = (Enum)jCompareColumn.getSelectedItem();
+		if (isColumnCompare()) {
+			Enum compareColumn = (Enum) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();
@@ -217,14 +216,14 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 		return new Filter(logic, column, compare, text);
 	}
-	
-	void setFilter(Filter filter){
+
+	void setFilter(final Filter filter) {
 		loading = true;
 		jEnabled.setEnabled(true);
 		jLogic.setSelectedItem(filter.getLogic());
 		jColumn.setSelectedItem(filter.getColumn());
 		jCompare.setSelectedItem(filter.getCompareType());
-		if (isColumnCompare()){
+		if (isColumnCompare()) {
 			jCompareColumn.setSelectedItem(matcherControl.valueOf(filter.getText()));
 		} else if (isDateCompare()) {
 			jDate.setDate(Formater.columnStringToDate(filter.getText()));
@@ -234,52 +233,55 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 		loading = false;
 	}
-	
-	private String getDataString(){
+
+	private String getDataString() {
 		return  Formater.columnDate(jDate.getDate());
 	}
-	
+
 	private void refilter() {
-		if (!loading) gui.refilter();
+		if (!loading) {
+			gui.refilter();
+		}
 	}
-	
-	private boolean isColumnCompare(){
+
+	private boolean isColumnCompare() {
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isColumnCompare(compareType);
 	}
-	
-	private boolean isNumericCompare(){
+
+	private boolean isNumericCompare() {
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isNumericCompare(compareType);
 	}
-	
-	private boolean isDateCompare(){
+
+	private boolean isDateCompare() {
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isDateCompare(compareType);
 	}
-	
-	
-	private void updateNumeric(boolean saveIndex){
+
+	private void updateNumeric(final boolean saveIndex) {
 		Object object = jCompare.getSelectedItem();
 		CompareType[] compareTypes;
-		if (matcherControl.isNumeric((Enum)jColumn.getSelectedItem())){
+		if (matcherControl.isNumeric((Enum) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesNumeric();
-		} else if (matcherControl.isDate((Enum)jColumn.getSelectedItem())){
+		} else if (matcherControl.isDate((Enum) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesDate();
-		} else if (matcherControl.isAll((Enum)jColumn.getSelectedItem())){
+		} else if (matcherControl.isAll((Enum) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesAll();
 		} else {
 			compareTypes = CompareType.valuesString();
 		}
-		jCompare.setModel( new DefaultComboBoxModel(compareTypes));
-		for (CompareType compareType : compareTypes){
-			if (compareType.equals(object) && saveIndex) jCompare.setSelectedItem(compareType);
+		jCompare.setModel(new DefaultComboBoxModel(compareTypes));
+		for (CompareType compareType : compareTypes) {
+			if (compareType.equals(object) && saveIndex) {
+				jCompare.setSelectedItem(compareType);
+			}
 		}
 		updateCompare(saveIndex);
 	}
 
-	private void updateCompare(boolean saveIndex){
-		if (isColumnCompare()){ //Column
+	private void updateCompare(final boolean saveIndex) {
+		if (isColumnCompare()) { //Column
 			jText.setVisible(false);
 			jCompareColumn.setVisible(true);
 			jDate.setVisible(false);
@@ -297,23 +299,29 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 		Object object = jCompareColumn.getSelectedItem();
 		Object[] compareColumns;
-		if (isNumericCompare()){
+		if (isNumericCompare()) {
 			compareColumns = numericColumns.toArray();
-		} else if (isDateCompare()){
+		} else if (isDateCompare()) {
 			compareColumns = dateColumns.toArray();
 		} else {
 			compareColumns = matcherControl.getColumns();
 		}
-		jCompareColumn.setModel( new DefaultComboBoxModel(compareColumns));
-		for (Object column : compareColumns){
-			if (column.equals(object) && saveIndex) jCompareColumn.setSelectedItem(column);
+		jCompareColumn.setModel(new DefaultComboBoxModel(compareColumns));
+		for (Object column : compareColumns) {
+			if (column.equals(object) && saveIndex) {
+				jCompareColumn.setSelectedItem(column);
+			}
 		}
 	}
-	
-	private void processFilterAction(ActionEvent e){
-		if (jColumn.equals(e.getSource())) updateNumeric(true);
-		if (jCompare.equals(e.getSource())) updateCompare(true);
-		if (jEnabled.isSelected()){
+
+	private void processFilterAction(final ActionEvent e) {
+		if (jColumn.equals(e.getSource())) {
+			updateNumeric(true);
+		}
+		if (jCompare.equals(e.getSource())) {
+			updateCompare(true);
+		}
+		if (jEnabled.isSelected()) {
 			jText.setBackground(Color.WHITE);
 		} else {
 			jText.setBackground(new Color(255, 200, 200));
@@ -321,60 +329,56 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		timer.stop();
 		refilter();
 	}
-	
+
 	@Override
-	public void insertUpdate(DocumentEvent e) {
+	public void insertUpdate(final DocumentEvent e) {
 		timer.stop();
 		timer.start();
 	}
 
 	@Override
-	public void removeUpdate(DocumentEvent e) {
+	public void removeUpdate(final DocumentEvent e) {
 		timer.stop();
 		timer.start();
 	}
 
 	@Override
-	public void changedUpdate(DocumentEvent e) {
+	public void changedUpdate(final DocumentEvent e) {
 		timer.stop();
 		timer.start();
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-
-	}
+	public void keyTyped(final KeyEvent e) { }
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(final KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			refilter();
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-
-	}
+	public void keyReleased(final KeyEvent e) { }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_REMOVE.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			gui.remove(this);
 			refilter();
 		}
-		if (ACTION_FILTER.equals(e.getActionCommand())){
+		if (ACTION_FILTER.equals(e.getActionCommand())) {
 			processFilterAction(e);
 		}
-		if (ACTION_FILTER_TIMER.equals(e.getActionCommand())){
-			if (!Settings.isFilterOnEnter()){
+		if (ACTION_FILTER_TIMER.equals(e.getActionCommand())) {
+			if (!Settings.isFilterOnEnter()) {
 				processFilterAction(e);
 			}
 		}
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(final PropertyChangeEvent evt) {
 		if ("date".equals(evt.getPropertyName())) {
 			refilter();
 		}

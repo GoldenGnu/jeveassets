@@ -25,11 +25,11 @@ public class Station extends GalacticObject {
 
 	private SolarSystem system;
 
-	Station(String id, String name, SolarSystem system) {
+	Station(final String id, final String name, final SolarSystem system) {
 		super(id, name);
 		this.system = system;
 	}
-	
+
 	public SolarSystem getSolarSystem() {
 		return system;
 	}

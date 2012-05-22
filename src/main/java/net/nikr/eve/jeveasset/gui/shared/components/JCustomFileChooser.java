@@ -35,11 +35,11 @@ public class JCustomFileChooser extends JFileChooser {
 	private String customDescription;
 	private JFrame jFrame;
 
-	public JCustomFileChooser(JFrame jFrame, String customExtension) {
+	public JCustomFileChooser(final JFrame jFrame, final String customExtension) {
 		this(jFrame, customExtension, GuiShared.get().files(customExtension.toUpperCase()));
 	}
 
-	public JCustomFileChooser(JFrame jFrame, String customExtension, String customDescription) {
+	public JCustomFileChooser(final JFrame jFrame, final String customExtension, final String customDescription) {
 		this.jFrame = jFrame;
 		this.customExtension = customExtension;
 		this.customDescription = customDescription;
@@ -48,13 +48,13 @@ public class JCustomFileChooser extends JFileChooser {
 	}
 
 	@Override
-	public void approveSelection(){
+	public void approveSelection() {
 		File selectedFile = this.getSelectedFile();
-		if (Utils.getExtension(selectedFile) == null){
-			selectedFile = new File(selectedFile.getAbsolutePath()+"."+customExtension);
+		if (Utils.getExtension(selectedFile) == null) {
+			selectedFile = new File(selectedFile.getAbsolutePath() + "." + customExtension);
 			this.setSelectedFile(selectedFile);
 		}
-		if (selectedFile != null && selectedFile.exists()){
+		if (selectedFile != null && selectedFile.exists()) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					jFrame,
 					GuiShared.get().overwrite(),
@@ -62,7 +62,7 @@ public class JCustomFileChooser extends JFileChooser {
 					JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE
 					);
-			if (nReturn == JOptionPane.NO_OPTION){
+			if (nReturn == JOptionPane.NO_OPTION) {
 				return;
 			}
 		}
@@ -73,17 +73,13 @@ public class JCustomFileChooser extends JFileChooser {
 
 
 		@Override
-		public boolean accept(File f) {
+		public boolean accept(final File f) {
 			if (f.isDirectory()) {
 				return true;
 			}
 			String extension = Utils.getExtension(f);
 			if (extension != null) {
-				if (extension.equals(customExtension)) {
-					return true;
-				} else {
-					return false;
-				}
+				return extension.equals(customExtension);
 			}
 			return false;
 		}
@@ -95,14 +91,14 @@ public class JCustomFileChooser extends JFileChooser {
 		}
 	}
 
-	static public class Utils {
+	public static class Utils {
 		//public final static String XML = "xml";
-		public static String getExtension(File f) {
+		public static String getExtension(final File f) {
 			String ext = null;
 			String s = f.getName();
 			int i = s.lastIndexOf('.');
 			if (i > 0 &&  i < s.length() - 1) {
-				ext = s.substring(i+1).toLowerCase();
+				ext = s.substring(i + 1).toLowerCase();
 			}
 			return ext;
 		}

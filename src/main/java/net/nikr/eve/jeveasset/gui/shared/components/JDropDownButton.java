@@ -53,34 +53,34 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		this(GuiShared.get().emptyString(), null, LEFT, BOTTOM);
 	}
 
-	public JDropDownButton(String text) {
+	public JDropDownButton(final String text) {
 		this(text, null, LEFT, BOTTOM);
 	}
 
-	public JDropDownButton(String text, Icon icon) {
+	public JDropDownButton(final String text, final Icon icon) {
 		this(text, icon, LEFT, BOTTOM);
 	}
 
-	public JDropDownButton(int popupHorizontalAlignment) throws IllegalArgumentException {
+	public JDropDownButton(final int popupHorizontalAlignment) {
 		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, BOTTOM);
 	}
-	public JDropDownButton(int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
+	public JDropDownButton(final int popupHorizontalAlignment, final int popupVerticalAlignment) {
 		this(GuiShared.get().emptyString(), null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
 
-	public JDropDownButton(String text, int popupHorizontalAlignment) throws IllegalArgumentException {
+	public JDropDownButton(final String text, final int popupHorizontalAlignment) {
 		this(text, null, popupHorizontalAlignment, BOTTOM);
 	}
-	public JDropDownButton(String text, int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
+	public JDropDownButton(final String text, final int popupHorizontalAlignment, final int popupVerticalAlignment) {
 		this(text, null, popupHorizontalAlignment, popupVerticalAlignment);
 	}
 
-	public JDropDownButton(String text, Icon icon, int popupHorizontalAlignment, int popupVerticalAlignment) throws IllegalArgumentException {
+	public JDropDownButton(final String text, final Icon icon, final int popupHorizontalAlignment, final int popupVerticalAlignment) {
 		super(text, icon);
-		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER){
+		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
-		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER){
+		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
@@ -94,7 +94,7 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	@Override
-	public void removeAll(){
+	public void removeAll() {
 		jPopupMenu.removeAll();
 	}
 
@@ -103,12 +103,14 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	@Override
-	public Component add(Component component) {
-		if (component instanceof JMenuItem) return add((JMenuItem) component);
+	public Component add(final Component component) {
+		if (component instanceof JMenuItem) {
+			return add((JMenuItem) component);
+		}
 		return super.add(component);
-    }
-	
-	public JMenuItem add(JMenuItem jMenuItem){
+	}
+
+	public JMenuItem add(final JMenuItem jMenuItem) {
 		jPopupMenu.add(jMenuItem);
 		return jMenuItem;
 	}
@@ -117,8 +119,8 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		return popupHorizontalAlignment;
 	}
 
-	public void setPopupHorizontalAlignment(int popupHorizontalAlignment) throws  IllegalArgumentException {
-		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER){
+	public void setPopupHorizontalAlignment(final int popupHorizontalAlignment)  {
+		if (popupHorizontalAlignment != LEFT && popupHorizontalAlignment != RIGHT && popupHorizontalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.RIGHT, SwingConstants.LEFT, or SwingConstants.CENTER");
 		}
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
@@ -128,43 +130,45 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		return popupVerticalAlignment;
 	}
 
-	public void setPopupVerticalAlignment(int popupVerticalAlignment) throws  IllegalArgumentException {
-		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER){
+	public void setPopupVerticalAlignment(final int popupVerticalAlignment) {
+		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
 		this.popupVerticalAlignment = popupVerticalAlignment;
 	}
-	
-	public void keepVisible(int index) {
-		menuScroller.keepVisible(index);	
+
+	public void keepVisible(final int index) {
+		menuScroller.keepVisible(index);
 	}
-	public final void setTopFixedCount(int topFixedCount) {
-        menuScroller.setTopFixedCount(topFixedCount);
-    }
-	public final void setBottomFixedCount(int bottomFixedCount) {
-        menuScroller.setBottomFixedCount(bottomFixedCount);
-    }
-	public final void setInterval(int interval) {
-        menuScroller.setInterval(interval);
-    }
-	
-	private void showPopupMenu(){
-		if (!this.isEnabled()) return;
+	public final void setTopFixedCount(final int topFixedCount) {
+		menuScroller.setTopFixedCount(topFixedCount);
+	}
+	public final void setBottomFixedCount(final int bottomFixedCount) {
+		menuScroller.setBottomFixedCount(bottomFixedCount);
+	}
+	public final void setInterval(final int interval) {
+		menuScroller.setInterval(interval);
+	}
+
+	private void showPopupMenu() {
+		if (!this.isEnabled()) {
+			return;
+		}
 		int verticalPosition = this.getHeight();
 		int horizontalPosition = 0;
 		Dimension popupMenuSize = jPopupMenu.getPreferredSize();
-		switch (popupHorizontalAlignment){
+		switch (popupHorizontalAlignment) {
 		case LEFT: //OK
 			horizontalPosition = 0;
 			break;
 		case RIGHT: //OK
-			horizontalPosition = this.getWidth()-popupMenuSize.width;
+			horizontalPosition = this.getWidth() - popupMenuSize.width;
 			break;
 		case CENTER: //OK
-			horizontalPosition = (this.getWidth()/2)-(popupMenuSize.width/2);
+			horizontalPosition = (this.getWidth() / 2) - (popupMenuSize.width / 2);
 			break;
 		}
-		switch (popupVerticalAlignment){
+		switch (popupVerticalAlignment) {
 			case TOP: //OK
 				verticalPosition = -popupMenuSize.height + 2;
 				break;
@@ -172,21 +176,21 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 				verticalPosition = this.getHeight() - 2;
 				break;
 			case CENTER: //OK
-				verticalPosition = -(popupMenuSize.height/2) + (this.getHeight()/2);
+				verticalPosition = -(popupMenuSize.height / 2) + (this.getHeight() / 2);
 		}
 		jPopupMenu.show(this, horizontalPosition, verticalPosition);
 		this.getModel().setRollover(true);
 	}
 
 	@Override
-	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+	public void popupMenuWillBecomeVisible(final PopupMenuEvent e) { }
 
 	@Override
-	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+	public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) { }
 
 	@Override
-	public void popupMenuCanceled(PopupMenuEvent e) {
-		if (mouseOverThis){
+	public void popupMenuCanceled(final PopupMenuEvent e) {
+		if (mouseOverThis) {
 			showPopupMenuMouse = false;
 		} else {
 			showPopupMenuMouse = true;
@@ -195,17 +199,17 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(final MouseEvent e) { }
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(final MouseEvent e) {
 		mousePressedThis = true;
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (mousePressedThis){
-			if (showPopupMenuMouse){
+	public void mouseReleased(final MouseEvent e) {
+		if (mousePressedThis) {
+			if (showPopupMenuMouse) {
 				showPopupMenu();
 			} else {
 				showPopupMenuMouse = true;
@@ -216,37 +220,39 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		if (e.getSource().equals(this)){
+	public void mouseEntered(final MouseEvent e) {
+		if (e.getSource().equals(this)) {
 			mouseOverThis = true;
 		}
 
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		if (e.getSource().equals(this)){
+	public void mouseExited(final MouseEvent e) {
+		if (e.getSource().equals(this)) {
 			mouseOverThis = false;
 		}
-		if (jPopupMenu.isShowing()) this.getModel().setRollover(true);
+		if (jPopupMenu.isShowing()) {
+			this.getModel().setRollover(true);
+		}
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-		if (showPopupMenuKey){
+	public void keyTyped(final KeyEvent e) {
+		if (showPopupMenuKey) {
 			showPopupMenu();
 		}
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		if ( (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER)){
+	public void keyPressed(final KeyEvent e) {
+		if (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
 			showPopupMenuKey = true;
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(final KeyEvent e) {
 		showPopupMenuKey = false;
 	}
 }

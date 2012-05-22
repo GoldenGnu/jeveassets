@@ -32,9 +32,9 @@ public abstract class JGroupLayoutPanel {
 	protected GroupLayout layout;
 	private JPanel jPanel;
 
-	public JGroupLayoutPanel(Program program) {
+	public JGroupLayoutPanel(final Program program) {
 		this.program = program;
-	
+
 		jPanel = new JPanel();
 
 		layout = new GroupLayout(jPanel);
@@ -47,7 +47,7 @@ public abstract class JGroupLayoutPanel {
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected JGroupLayoutPanel(boolean load) { }
+	protected JGroupLayoutPanel(final boolean load) { }
 
 	public JPanel getPanel() {
 		return jPanel;

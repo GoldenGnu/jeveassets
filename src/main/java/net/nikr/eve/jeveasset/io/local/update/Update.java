@@ -30,12 +30,7 @@ import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.XPath;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -48,14 +43,14 @@ import org.w3c.dom.Node;
  *
  * @author Candle
  */
-public class Update extends AbstractXmlReader{
+public class Update extends AbstractXmlReader {
 	private static final Logger LOG = LoggerFactory.getLogger(Update.class);
 
-	int getVersion(String filename) throws XmlException, IOException {
+	int getVersion(final String filename) throws XmlException, IOException {
 		org.w3c.dom.Element element = getDocumentElement(filename);
 		if (element.getNodeName().equals("settings")) {
-			if (AttributeGetters.haveAttribute((Node)element, "version")){
-				return AttributeGetters.getInt((Node)element, "version");
+			if (AttributeGetters.haveAttribute((Node) element, "version")) {
+				return AttributeGetters.getInt((Node) element, "version");
 			} else {
 				return 1;
 			}
@@ -64,7 +59,7 @@ public class Update extends AbstractXmlReader{
 		}
 	}
 
-	void setVersion(File xml, int newVersion) throws DocumentException {
+	void setVersion(final File xml, final int newVersion) throws DocumentException {
 		SAXReader xmlReader = new SAXReader();
 		Document doc = xmlReader.read(xml);
 
@@ -99,9 +94,9 @@ public class Update extends AbstractXmlReader{
 	 * in the correct order. - Candle 2010-09-19
 	 * @param requiredVersion
 	 */
-	public void performUpdates(int requiredVersion) {
+	public void performUpdates(final int requiredVersion) {
 		File xml = new File(Settings.getPathSettings());
-		if (!xml.exists()){
+		if (!xml.exists()) {
 			LOG.info("No settings.xml file found - nothing to update");
 			return;
 		}

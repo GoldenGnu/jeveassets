@@ -23,15 +23,15 @@ package net.nikr.eve.jeveasset.io.shared;
 
 
 public class XmlException extends Exception {
-	public XmlException(String message) {
+	public XmlException(final String message) {
 		super(message);
 	}
 
-	public XmlException(String message, Throwable cause) {
+	public XmlException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
-	public XmlException(Throwable cause) {
+	public XmlException(final Throwable cause) {
 		super(cause);
 	}
 

@@ -33,12 +33,12 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionListener {
 
-	private final int LEVEL0 = 0;
-	private final int LEVEL1 = 1;
-	private final int LEVEL2 = 2;
-	private final int LEVEL3 = 3;
-	private final int LEVEL4 = 4;
-	private final int LEVEL5 = 5;
+	private static final int LEVEL0 = 0;
+	private static final int LEVEL1 = 1;
+	private static final int LEVEL2 = 2;
+	private static final int LEVEL3 = 3;
+	private static final int LEVEL4 = 4;
+	private static final int LEVEL5 = 5;
 
 	private JRadioButton jStation50;
 	private JRadioButton jStationOther;
@@ -47,7 +47,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	private JRadioButton[] jRefineryEfficiency;
 	private JRadioButton[] jScrapmetalProcessing;
 
-	public ReprocessingSettingsPanel(Program program, SettingsDialog optionsDialog) {
+	public ReprocessingSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), Images.SETTINGS_REPROCESSING.getIcon());
 
 		JLabel jNotes = new JLabel(DialoguesSettings.get().reprocessingWarning());
@@ -257,7 +257,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	@Override
 	public void load() {
 		ReprocessSettings reprocessSettings = program.getSettings().getReprocessSettings();
-		if (reprocessSettings.getStation() == 50){
+		if (reprocessSettings.getStation() == 50) {
 			 jStation50.setSelected(true);
 		} else {
 			jStationOther.setSelected(true);
@@ -270,27 +270,29 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		validateStation();
 	}
 
-	private int getSelected(JRadioButton[] jRadioButton){
-		for (int a = 0; a < jRadioButton.length; a++){
-			if (jRadioButton[a].isSelected()) return a;
+	private int getSelected(final JRadioButton[] jRadioButton) {
+		for (int a = 0; a < jRadioButton.length; a++) {
+			if (jRadioButton[a].isSelected()) {
+				return a;
+			}
 		}
 		return 0;
 	}
 
-	private void setEnabled(JRadioButton[] jRadioButton, boolean enabled){
-		for (int a = 0; a < jRadioButton.length; a++){
+	private void setEnabled(final JRadioButton[] jRadioButton, final boolean enabled) {
+		for (int a = 0; a < jRadioButton.length; a++) {
 			jRadioButton[a].setEnabled(enabled);
 		}
 	}
 
-	private void validateSkills(){
-		if (getSelected(jRefining) < 5){
+	private void validateSkills() {
+		if (getSelected(jRefining) < 5) {
 			setEnabled(jRefineryEfficiency, false);
 			jRefineryEfficiency[LEVEL0].setSelected(true);
 		} else {
 			setEnabled(jRefineryEfficiency, true);
 		}
-		if (getSelected(jRefineryEfficiency) < 5){
+		if (getSelected(jRefineryEfficiency) < 5) {
 			setEnabled(jScrapmetalProcessing, false);
 			jScrapmetalProcessing[LEVEL0].setSelected(true);
 		} else {
@@ -298,18 +300,18 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		}
 	}
 
-	private void validateStation(){
-		if (jStation50.isSelected()){
+	private void validateStation() {
+		if (jStation50.isSelected()) {
 			jStation.setText("50");
 			jStation.setEditable(false);
 		}
-		if (jStationOther.isSelected()){
+		if (jStationOther.isSelected()) {
 			jStation.setEditable(true);
 		}
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		validateSkills();
 		validateStation();
 	}

@@ -31,30 +31,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ProfileReader {
+public final class ProfileReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
-	
-	private ProfileReader() {}
+	private static final Logger LOG = LoggerFactory.getLogger(ProfileReader.class);
 
-	public static boolean load(Settings settings){
+	private ProfileReader() { }
+
+	public static boolean load(final Settings settings) {
 		backwardCompatibility();
 		List<Profile> profiles = new ArrayList<Profile>();
 		File profilesDirectory = new File(Settings.getPathProfilesDirectory());
 		FileFilter fileFilter = new XmlFileFilter();
-		
+
 		File[] files = profilesDirectory.listFiles(fileFilter);
-		if (files != null){
+		if (files != null) {
 			boolean defaultProfileFound = false;
-			for (File file : files){
+			for (File file : files) {
 				String name = file.getName();
 				Profile profile = new Profile(formatName(name), defaultProfile(name), activeProfile(name));
-				if (profile.isDefaultProfile() && !defaultProfileFound){
+				if (profile.isDefaultProfile() && !defaultProfileFound) {
 					LOG.info("Default profile found: {}", formatName(name));
 					defaultProfileFound = true;
 					profiles.add(0, profile);
 					settings.setActiveProfile(profile);
-				}  else if (profile.isDefaultProfile() && defaultProfileFound){
+				}  else if (profile.isDefaultProfile() && defaultProfileFound) {
 					LOG.warn("Default profile found (again): {}", formatName(name));
 					profile.setDefaultProfile(false);
 					profile.setActiveProfile(false);
@@ -64,26 +64,28 @@ public class ProfileReader {
 					profiles.add(profile);
 				}
 			}
-			if (!defaultProfileFound && !profiles.isEmpty()){
+			if (!defaultProfileFound && !profiles.isEmpty()) {
 				LOG.warn("No default profile found: Using first available");
 				profiles.get(0).setDefaultProfile(true);
 				profiles.get(0).setActiveProfile(true);
 				settings.setActiveProfile(profiles.get(0));
-			} else if (!defaultProfileFound && profiles.isEmpty()){
+			} else if (!defaultProfileFound && profiles.isEmpty()) {
 				LOG.info("No default profile found: Using default settings");
 			}
-			if (!profiles.isEmpty()) settings.setProfiles(profiles);
+			if (!profiles.isEmpty()) {
+				settings.setProfiles(profiles);
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private static void backwardCompatibility(){
+	private static void backwardCompatibility() {
 		//Create profiles directory
 		File dir = new File(Settings.getPathProfilesDirectory());
-		if (!dir.exists()){
-			if (dir.mkdirs()){
+		if (!dir.exists()) {
+			if (dir.mkdirs()) {
 				LOG.info("Created profiles directory");
 			} else {
 				LOG.error("Failed to make profiles directory");
@@ -91,8 +93,8 @@ public class ProfileReader {
 		}
 		//Move assets.xml to new location
 		File assets = new File(Settings.getPathAssetsOld());
-		if (assets.exists()){
-			if (assets.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.xml"))){
+		if (assets.exists()) {
+			if (assets.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.xml"))) {
 				LOG.info("Moved assets.xml to new location");
 			} else {
 				LOG.error("Failed to move assets.xml to new location");
@@ -101,10 +103,10 @@ public class ProfileReader {
 		//Move assets.bac to new location
 		String filename = Settings.getPathAssetsOld();
 		int end = filename.lastIndexOf(".");
-		filename = filename.substring(0, end)+".bac";
+		filename = filename.substring(0, end) + ".bac";
 		File backup = new File(filename);
-		if (backup.exists()){
-			if (backup.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.bac"))){
+		if (backup.exists()) {
+			if (backup.renameTo(new File(Settings.getPathProfilesDirectory(), "#Default.bac"))) {
 				LOG.info("Moved assets.xml to new location");
 			} else {
 				LOG.error("Failed to move assets.xml to new location");
@@ -112,8 +114,8 @@ public class ProfileReader {
 		}
 	}
 
-	private static String formatName(String name){
-		if (name.contains(".")){
+	private static String formatName(String name) {
+		if (name.contains(".")) {
 			int end = name.lastIndexOf(".");
 			name = name.substring(0, end);
 		}
@@ -122,16 +124,16 @@ public class ProfileReader {
 		return name;
 	}
 
-	private static boolean defaultProfile(String name){
+	private static boolean defaultProfile(final String name) {
 		return name.startsWith("#");
 	}
-	private static boolean activeProfile(String name){
+	private static boolean activeProfile(final String name) {
 		return name.startsWith("#");
 	}
 
 	private static class XmlFileFilter implements  FileFilter {
 		@Override
-		public boolean accept(File file) {
+		public boolean accept(final File file) {
 			return !file.isDirectory() && file.getName().endsWith(".xml");
 		}
 	}

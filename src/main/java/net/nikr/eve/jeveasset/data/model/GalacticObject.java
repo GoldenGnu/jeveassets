@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.data.model;
 
-public abstract class GalacticObject implements Comparable<GalacticObject>{
+public abstract class GalacticObject implements Comparable<GalacticObject> {
 
 	private String id;
 	private String name;
 
-	protected GalacticObject(String id, String name) {
+	protected GalacticObject(final String id, final String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -44,27 +44,27 @@ public abstract class GalacticObject implements Comparable<GalacticObject>{
 		return getName();
 	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof GalacticObject)) {
-            return false;
-        }
-        GalacticObject g = (GalacticObject) o;
-        return (g.getId().equalsIgnoreCase(this.getId()));
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 79 * hash + (this.getId() != null ? this.getId().hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof GalacticObject)) {
+			return false;
+		}
+		GalacticObject g = (GalacticObject) o;
+		return (g.getId().equalsIgnoreCase(this.getId()));
+	}
 
 	@Override
-	public int compareTo(GalacticObject go) {
+	public int hashCode() {
+		int hash = 3;
+		hash = 79 * hash + (this.getId() != null ? this.getId().hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public int compareTo(final GalacticObject go) {
 		return name.compareTo(go.name);
 	}
 

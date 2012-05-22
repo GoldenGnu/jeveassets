@@ -30,14 +30,14 @@ public abstract class TabsItems extends Bundle {
 		return BundleCache.get(TabsItems.class);
 	}
 
-	public static TabsItems get(Locale locale) {
+	public static TabsItems get(final Locale locale) {
 		return BundleCache.get(TabsItems.class, locale);
 	}
 
-	public TabsItems(Locale locale) {
+	public TabsItems(final Locale locale) {
 		super(locale);
 	}
-	
+
 	public abstract String items();
 	public abstract String columnName();
 	public abstract String columnGroup();

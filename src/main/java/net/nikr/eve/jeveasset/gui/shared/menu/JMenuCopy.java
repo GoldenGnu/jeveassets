@@ -40,7 +40,7 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 
 	private JTable jTable;
 
-	public JMenuCopy(JTable jTable) {
+	public JMenuCopy(final JTable jTable) {
 		super(GuiShared.get().copy());
 		this.jTable = jTable;
 		this.setIcon(Images.EDIT_COPY.getIcon());
@@ -49,24 +49,28 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_COPY.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_COPY.equals(e.getActionCommand())) {
 			String s = "";
 			int[] selectedRows = jTable.getSelectedRows();
 			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedRows.length; a++){
-				for (int b = 0; b < selectedColumns.length; b++){
-					if (b != 0) s = s + "	";
+			for (int a = 0; a < selectedRows.length; a++) {
+				for (int b = 0; b < selectedColumns.length; b++) {
+					if (b != 0) {
+						s = s + "	";
+					}
 					s = s + jTable.getValueAt(selectedRows[a], selectedColumns[b]);
 				}
-				if ( (a + 1) < selectedRows.length ) s = s + "\r\n";
+				if ((a + 1) < selectedRows.length) {
+					s = s + "\r\n";
+				}
 			}
 			copyToClipboard(s);
 		}
 	}
 
 
-	private void copyToClipboard(Object o){
+	private void copyToClipboard(final Object obj) {
 		SecurityManager sm = System.getSecurityManager();
 		if (sm != null) {
 			try {
@@ -77,13 +81,13 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		StringSelection st =
-		new StringSelection(String.valueOf(o));
+		new StringSelection(String.valueOf(obj));
 		Clipboard cp = tk.getSystemClipboard();
 		cp.setContents(st, this);
 	}
 
 	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable contents) {}
+	public void lostOwnership(final Clipboard clipboard, final Transferable contents) { }
 
 
 }

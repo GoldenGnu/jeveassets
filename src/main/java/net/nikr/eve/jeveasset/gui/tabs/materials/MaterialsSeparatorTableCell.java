@@ -28,30 +28,30 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 	private final JLabel jLocation;
 	private final JLabel jGroup;
 	private final JButton jExpandLocation;
-	
-	private final Icon EXPANDED_ICON = Images.MISC_EXPANDED_WHITE.getIcon();
-	private final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED_WHITE.getIcon();
 
-	public MaterialsSeparatorTableCell(JTable jTable, SeparatorList<Material> separatorList) {
+	private static final Icon EXPANDED_ICON = Images.MISC_EXPANDED_WHITE.getIcon();
+	private static final Icon COLLAPSED_ICON = Images.MISC_COLLAPSED_WHITE.getIcon();
+
+	public MaterialsSeparatorTableCell(final JTable jTable, final SeparatorList<Material> separatorList) {
 		super(jTable, separatorList);
-		
+
 		jLocation = new JLabel();
 		jLocation.setBorder(null);
 		jLocation.setBackground(Color.BLACK);
 		jLocation.setForeground(Color.WHITE);
 		jLocation.setOpaque(true);
 		Font font = jLocation.getFont();
-		jLocation.setFont( new Font(font.getName(), Font.BOLD, font.getSize()+1));
+		jLocation.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
 		jLocation.addMouseListener(new MouseAdapter() {
-			@Override public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() >= 2){
+			@Override public void mouseClicked(final MouseEvent e) {
+				if (e.getClickCount() >= 2) {
 					expandLocation();
 				}
 			}
 		});
 
 		jGroup = new JLabel();
-		jGroup.setFont( new Font(font.getName(), Font.BOLD, font.getSize()+1));
+		jGroup.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
 
 		jExpandLocation = new JButton(COLLAPSED_ICON);
 		jExpandLocation.setContentAreaFilled(false);
@@ -60,7 +60,7 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		jExpandLocation.setBackground(Color.BLACK);
 		jExpandLocation.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				expandLocation();
 			}
 		});
@@ -92,30 +92,32 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 	}
 
 	@Override
-	protected void configure(SeparatorList.Separator<?> separator) {
+	protected void configure(final SeparatorList.Separator<?> separator) {
 		Material material = (Material) separator.first();
-		if(material == null) return; // handle 'late' rendering calls after this separator is invalid
+		if (material == null) {
+			return;
+		} // handle 'late' rendering calls after this separator is invalid
 		jLocation.setVisible(material.isFirst());
 		jExpandLocation.setVisible(material.isFirst());
 		jLocation.setText(material.getLocation());
 		jGroup.setText(material.getGroup());
-		if (material.isFirst()){
+		if (material.isFirst()) {
 			jExpandLocation.setIcon(isLocationCollapsed() ? EXPANDED_ICON : COLLAPSED_ICON);
 		}
 	}
-	
-	private void expandLocation(){
-		Material material = (Material) separator.first();
+
+	private void expandLocation() {
+		Material material = (Material) currentSeparator.first();
 		boolean expand = isLocationCollapsed();
-		for (int i = 0; i < separatorList.size(); i++){
+		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator<?>){
-				SeparatorList.Separator<?> currentSeparator = (SeparatorList.Separator<?>) object;
-				Material currentMaterial = (Material) currentSeparator.first();
-				if (currentMaterial.getLocation().equals(material.getLocation())){
+			if (object instanceof SeparatorList.Separator<?>) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+				Material currentMaterial = (Material) separator.first();
+				if (currentMaterial.getLocation().equals(material.getLocation())) {
 					separatorList.getReadWriteLock().writeLock().lock();
 					try {
-						currentSeparator.setLimit(expand ? Integer.MAX_VALUE : 0);
+						separator.setLimit(expand ? Integer.MAX_VALUE : 0);
 					} finally {
 						separatorList.getReadWriteLock().writeLock().unlock();
 					}
@@ -123,16 +125,16 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 			}
 		}
 	}
-	
-	private boolean isLocationCollapsed(){
-		Material material = (Material) separator.first();
-		for (int i = 0; i < separatorList.size(); i++){
+
+	private boolean isLocationCollapsed() {
+		Material material = (Material) currentSeparator.first();
+		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator<?>){
-				SeparatorList.Separator<?> currentSeparator = (SeparatorList.Separator<?>) object;
-				Material currentMaterial = (Material) currentSeparator.first();
-				if (currentMaterial.getLocation().equals(material.getLocation())){
-					if (currentSeparator.getLimit() != 0){
+			if (object instanceof SeparatorList.Separator<?>) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
+				Material currentMaterial = (Material) separator.first();
+				if (currentMaterial.getLocation().equals(material.getLocation())) {
+					if (separator.getLimit() != 0) {
 						return false;
 					}
 				}

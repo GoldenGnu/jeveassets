@@ -41,18 +41,18 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, Human human) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Human human) {
 		super.load(updateTask, forceUpdate, human);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
-	protected AccountBalanceResponse getResponse(boolean bCorp) throws ApiException {
-		if (bCorp){
+	protected AccountBalanceResponse getResponse(final boolean bCorp) throws ApiException {
+		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.accountbalance
 					.AccountBalanceParser.getInstance()
@@ -62,11 +62,11 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 					.accountbalance
 					.AccountBalanceParser.getInstance()
 					.getResponse(Human.getApiAuthorization(getHuman()));
-		}		
+		}
 	}
 
 	@Override
-	protected void setNextUpdate(Date nextUpdate) {
+	protected void setNextUpdate(final Date nextUpdate) {
 		getHuman().setBalanceNextUpdate(nextUpdate);
 	}
 
@@ -76,13 +76,13 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	}
 
 	@Override
-	protected void setData(AccountBalanceResponse response) {
+	protected void setData(final AccountBalanceResponse response) {
 		List<EveAccountBalance> accountBalances = new ArrayList<EveAccountBalance>(response.getAll());
 		getHuman().setAccountBalances(accountBalances);
 	}
 
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo){
+	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setAccountBalances(humanFrom.getAccountBalances());
 		humanTo.setBalanceNextUpdate(humanFrom.getBalanceNextUpdate());
 	}

@@ -20,17 +20,13 @@
  */
 package net.nikr.eve.jeveasset.data.model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Region extends GalacticObject {
 
-	Set<SolarSystem> systems;
+	private Set<SolarSystem> systems;
 
-	Region(String id, String name) {
+	Region(final String id, final String name) {
 		super(id, name);
 		this.systems = new TreeSet<SolarSystem>();
 	}
@@ -50,7 +46,7 @@ public class Region extends GalacticObject {
 		}
 		return Collections.unmodifiableMap(systemMap);
 	}
-	
+
 	public int getSolarSystemCount() {
 		return systems.size();
 	}
@@ -60,14 +56,15 @@ public class Region extends GalacticObject {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Package level model construction methods">
-	void addSystem(String id, String name, String security) {
+	void addSystem(final String id, final String name, final String security) {
 		systems.add(new SolarSystem(id, name, security, this));
 	}
 
-	void addStationToSystem(String id, String name, String systemID) {
+	void addStationToSystem(final String id, final String name, final String systemID) {
 		for (SolarSystem s : systems) {
-			if (s.getId().equals(systemID))
+			if (s.getId().equals(systemID)) {
 				s.addStation(id, name);
+			}
 		}
 	}
 	// </editor-fold>

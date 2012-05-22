@@ -30,32 +30,31 @@ public class FilterLogicalMatcher<E> implements Matcher<E> {
 
 	private final List<FilterMatcher<E>> matchers;
 
-	public FilterLogicalMatcher(List<FilterMatcher<E>> matchers) {
+	public FilterLogicalMatcher(final List<FilterMatcher<E>> matchers) {
 		this.matchers = matchers;
 	}
 
-	
-	public FilterLogicalMatcher(FilterControl<E> matcherControl, List<Filter> filters) {
+	public FilterLogicalMatcher(final FilterControl<E> matcherControl, final List<Filter> filters) {
 		this.matchers = new ArrayList<FilterMatcher<E>>();
-		for (Filter filter : filters){
+		for (Filter filter : filters) {
 			this.matchers.add(new FilterMatcher<E>(matcherControl, filter));
 		}
 	}
-	
+
 	@Override
-	public boolean matches(E item) {
+	public boolean matches(final E item) {
 		boolean bOr = false;
 		boolean bAnyOrs = false;
-		for (FilterMatcher<E> matcher : matchers){
-			if (!matcher.isEmpty()){
+		for (FilterMatcher<E> matcher : matchers) {
+			if (!matcher.isEmpty()) {
 				boolean matches = matcher.matches(item);
-				if (matcher.isAnd()){ //And
-					if (!matches){ //if just one don't match, none match
+				if (matcher.isAnd()) { //And
+					if (!matches) { //if just one don't match, none match
 						return false;
 					}
 				} else { //Or
 					bAnyOrs = true;
-					if (matches){ //if just one is true all is true
+					if (matches) { //if just one is true all is true
 						bOr = true;
 					}
 				}

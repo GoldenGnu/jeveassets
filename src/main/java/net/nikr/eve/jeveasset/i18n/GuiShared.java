@@ -31,11 +31,11 @@ public abstract class GuiShared extends Bundle {
 		return BundleCache.get(GuiShared.class);
 	}
 
-	public static GuiShared get(Locale locale) {
+	public static GuiShared get(final Locale locale) {
 		return BundleCache.get(GuiShared.class, locale);
 	}
 
-	public GuiShared(Locale locale) {
+	public GuiShared(final Locale locale) {
 		super(locale);
 	}
 
@@ -77,8 +77,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableResizeWindow();
 	public abstract String tableResizeNone();
 	public abstract String tableSettings();
-	
-	public abstract String today(Object arg0); 
+
+	public abstract String today(Object arg0);
 	public abstract String weekdayAndTime(Date datetime);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);

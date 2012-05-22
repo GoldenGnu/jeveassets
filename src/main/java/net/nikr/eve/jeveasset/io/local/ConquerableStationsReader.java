@@ -37,9 +37,9 @@ import org.w3c.dom.NodeList;
 
 public class ConquerableStationsReader extends AbstractXmlReader {
 
-	private final static Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
 
-	public static boolean load(Settings settings){
+	public static boolean load(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
 			Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
@@ -49,35 +49,35 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 			LOG.info("Conquerable stations not loaded");
 			return false;
 		} catch (XmlException ex) {
-			LOG.error("Conquerable stations not loaded: "+ex.getMessage(), ex);
+			LOG.error("Conquerable stations not loaded: " + ex.getMessage(), ex);
 		}
 		LOG.info("Conquerable stations loaded");
 		return true;
 	}
 
-	private static void parseConquerableStations(Element element, Map<Long, ApiStation> conquerableStations) throws XmlException {
+	private static void parseConquerableStations(final Element element, final Map<Long, ApiStation> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private static void parseStations(Element element, Map<Long, ApiStation> conquerableStations){
+	private static void parseStations(final Element element, final Map<Long, ApiStation> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
-		for (int a = 0; a < filterNodes.getLength(); a++){
+		for (int a = 0; a < filterNodes.getLength(); a++) {
 			Element currentNode = (Element) filterNodes.item(a);
 			ApiStation station = parseStation(currentNode);
 			conquerableStations.put(station.getStationID(), station);
 		}
 	}
-	private static ApiStation parseStation(Element element){
+	private static ApiStation parseStation(final Element element) {
 		ApiStation station = new ApiStation();
-		station.setCorporationID( AttributeGetters.getInt(element, "corporationid"));
-		station.setCorporationName( AttributeGetters.getString(element, "corporationname"));
-		station.setSolarSystemID( AttributeGetters.getInt(element, "solarsystemid"));
+		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
+		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));
+		station.setSolarSystemID(AttributeGetters.getInt(element, "solarsystemid"));
 		station.setStationID(AttributeGetters.getInt(element, "stationid"));
 		station.setStationName(AttributeGetters.getString(element, "stationname"));
-		station.setStationTypeID( AttributeGetters.getInt(element, "stationtypeid"));
+		station.setStationTypeID(AttributeGetters.getInt(element, "stationtypeid"));
 		return station;
 
 	}

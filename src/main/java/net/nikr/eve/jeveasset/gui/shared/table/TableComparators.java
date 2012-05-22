@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class TableComparators {
+public final class TableComparators {
 
 	private static Comparator metaComparator = new MetaComparator();
 
@@ -37,23 +37,26 @@ public class TableComparators {
 		return metaComparator;
 	}
 
-	public static class MetaComparator implements Comparator<String>{
+	public static class MetaComparator implements Comparator<String> {
 		@Override
-		public int compare(String o1, String o2) {
+		public int compare(final String o1, final String o2) {
 			int n1 = stringToNumber(o1);
 			int n2 = stringToNumber(o2);
 			return n1 - n2;
 		}
 
-		public int stringToNumber(String s){
-			if (s.isEmpty()) return 0;
+		public int stringToNumber(final String input) {
+			String temp = input;
+			if (temp.isEmpty()) {
+				return 0;
+			}
 			Pattern p = Pattern.compile("\\d+");
-			Matcher m = p.matcher(s);
-			if (m.find()){
-				s = s.substring(m.start(), m.end());
+			Matcher m = p.matcher(temp);
+			if (m.find()) {
+				temp = temp.substring(m.start(), m.end());
 				try {
-					return Integer.valueOf(s);
-				} catch (NumberFormatException ex){
+					return Integer.valueOf(temp);
+				} catch (NumberFormatException ex) {
 					return 0;
 				}
 			}

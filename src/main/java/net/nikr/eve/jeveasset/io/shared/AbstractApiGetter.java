@@ -24,11 +24,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.core.ApiError;
 import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.core.ApiResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -38,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-abstract public class AbstractApiGetter<T extends ApiResponse> {
+public abstract class AbstractApiGetter<T extends ApiResponse> {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
-	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
+
 	private String taskName;
 	private Account account;
 	private Human human;
@@ -55,60 +51,60 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 	private int requestMask;
 	private boolean error;
 
-	protected AbstractApiGetter(String name) {
+	protected AbstractApiGetter(final String name) {
 		this(name, 0, false, false);
 	}
 
-	protected AbstractApiGetter(String taskName, int requestMask, boolean updateHuman, boolean updateAccount) {
+	protected AbstractApiGetter(final String taskName, final int requestMask, final boolean updateHuman, final boolean updateAccount) {
 		this.taskName = taskName;
 		this.updateHuman = updateHuman;
 		this.updateAccount = updateAccount;
 		this.requestMask = requestMask;
 	}
 
-	protected void load(UpdateTask updateTask, boolean forceUpdate, String characterName){
+	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final String characterName) {
 		init(updateTask, forceUpdate, null, null);
 		load(getNextUpdate(), false, characterName);
 	}
 
-	protected void load(UpdateTask updateTask, boolean forceUpdate, Human human){
+	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Human human) {
 		init(updateTask, forceUpdate, human, null);
 		loadHuman();
 	}
 
-	protected void load(UpdateTask updateTask, boolean forceUpdate, Account account){
+	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
 		init(updateTask, forceUpdate, null, account);
 		loadAccount();
 	}
 
-	protected void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts){
+	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
-		for (int a = 0; a < accounts.size(); a++){
+		for (int a = 0; a < accounts.size(); a++) {
 			account = accounts.get(a);
-			if (updateAccount){
-				if (updateTask != null){
-					if (updateTask.isCancelled()){
+			if (updateAccount) {
+				if (updateTask != null) {
+					if (updateTask.isCancelled()) {
 						addError(String.valueOf(account.getKeyID()), "Cancelled");
 					} else {
 						loadAccount();
 					}
-					updateTask.setTaskProgress(accounts.size(), (a+1), 0, 100);
+					updateTask.setTaskProgress(accounts.size(), (a + 1), 0, 100);
 				} else {
 					loadAccount();
 				}
 			}
-			if (updateHuman){
+			if (updateHuman) {
 				List<Human> humans = account.getHumans();
-				for (int b = 0; b < humans.size(); b++){
+				for (int b = 0; b < humans.size(); b++) {
 					human = humans.get(b);
-					if (updateTask != null){
-						if (updateTask.isCancelled()){
+					if (updateTask != null) {
+						if (updateTask.isCancelled()) {
 							addError(human.getName(), "Cancelled");
 						} else {
 							loadHuman();
 						}
-						updateTask.setTaskProgress(accounts.size()*3, (a*3)+(b+1), 0, 100);
+						updateTask.setTaskProgress(accounts.size() * 3, (a * 3) + (b + 1), 0, 100);
 					} else {
 						loadHuman();
 					}
@@ -116,22 +112,24 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			}
 		}
 		//Set data for duplicated/failed owners
-		if (updateHuman){
-			for (Human failHuman : failOwners){
+		if (updateHuman) {
+			for (Human failHuman : failOwners) {
 				Human okHuman = owners.get(failHuman.getName());
-				if (okHuman != null) updateFailed(okHuman, failHuman);
+				if (okHuman != null) {
+					updateFailed(okHuman, failHuman);
+				}
 			}
 		}
-		if (updated && updateTask != null && !updateTask.hasError()){
+		if (updated && updateTask != null && !updateTask.hasError()) {
 			LOG.info("	{} updated (ALL)", taskName);
-		} else if(updated && updateTask != null && updateTask.hasError()) {
+		} else if (updated && updateTask != null && updateTask.hasError()) {
 			LOG.info("	{} updated (SOME)", taskName);
 		} else {
 			LOG.info("	{} not updated (NONE)", taskName);
 		}
 	}
 
-	private void init(UpdateTask updateTask, boolean forceUpdate, Human human, Account account){
+	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Human human, final Account account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
 		this.human = human;
@@ -142,49 +140,49 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		this.failOwners = new ArrayList<Human>();
 	}
 
-	private void loadHuman(){
+	private void loadHuman() {
 		boolean updatedOK = false;
 		String name = human.getName();
 		//Ignore hidden owners && don't update the same owner twice
-		if (human.isShowAssets() && !owners.containsKey(name)){ //
+		if (human.isShowAssets() && !owners.containsKey(name)) {
 			updatedOK = load(getNextUpdate(), human.isCorporation(), name); //Update...
 		}
-		if (updatedOK){
+		if (updatedOK) {
 			owners.put(name, human); //If updated ok: don't update the same owner again...
 		} else {
 			failOwners.add(human); //Save duplicated/failed owners
 		}
 	}
 
-	private void loadAccount(){
-		load(getNextUpdate(), false, String.valueOf("Account #"+account.getKeyID()));
+	private void loadAccount() {
+		load(getNextUpdate(), false, String.valueOf("Account #" + account.getKeyID()));
 	}
 
-	private boolean load(Date nextUpdate, boolean updateCorporation, String updateName){
+	private boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
-		if ( (getAccessMask() & requestMask) != requestMask){
+		if ((getAccessMask() & requestMask) != requestMask) {
 			addError(updateName, "Not enough access privileges");
 			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 			return false;
 		}
 		//Check API cache time
-		if (!isUpdatable(nextUpdate)){
+		if (!isUpdatable(nextUpdate)) {
 			addError(updateName, "Not allowed yet");
 			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
 			return false;
 		}
 		//Check if API key is expired (not to check the account...)
-		if (isExpired() && !updateAccount){
+		if (isExpired() && !updateAccount) {
 			addError(updateName, "API Key expired");
 			LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
 			return false;
 		}
 		try {
 			T response = getResponse(updateCorporation);
-			if (response instanceof ApiResponse){
-				ApiResponse apiResponse = (ApiResponse)response;
+			if (response instanceof ApiResponse) {
+				ApiResponse apiResponse = (ApiResponse) response;
 				setNextUpdate(apiResponse.getCachedUntil());
-				if (!apiResponse.hasError()){
+				if (!apiResponse.hasError()) {
 					LOG.info("	{} updated for: {}", taskName, updateName);
 					this.updated = true;
 					setData(response);
@@ -196,14 +194,14 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 				}
 			}
 		} catch (ApiException ex) {
-			addError(updateName, "Api Error ("+ex.getMessage()+")");
+			addError(updateName, "Api Error (" + ex.getMessage() + ")");
 			LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
 		}
 		return false;
 	}
-	
-	private int getAccessMask(){
-		if (account != null){
+
+	private int getAccessMask() {
+		if (account != null) {
 			return account.getAccessMask();
 		} else if (human != null) {
 			return human.getParentAccount().getAccessMask();
@@ -211,8 +209,8 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 			return 0;
 		}
 	}
-	private boolean isExpired(){
-		if (account != null){
+	private boolean isExpired() {
+		if (account != null) {
 			return account.isExpired();
 		} else if (human != null) {
 			return human.getParentAccount().isExpired();
@@ -221,36 +219,37 @@ abstract public class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	protected Account getAccount(){
+	protected Account getAccount() {
 		return account;
 	}
-	
-	protected Human getHuman(){
+
+	protected Human getHuman() {
 		return human;
 	}
 
 	protected boolean isForceUpdate() {
 		return forceUpdate;
 	}
-	
-	public boolean hasError(){
+
+	public boolean hasError() {
 		return error;
 	}
-	
-	protected void addError(String human, String errorText){
-		if (updateTask != null) updateTask.addError(human, errorText);
+
+	protected void addError(final String human, final String errorText) {
+		if (updateTask != null) {
+			updateTask.addError(human, errorText);
+		}
 		error = true;
 	}
-	
-	abstract protected T getResponse(boolean bCorp) throws ApiException;
-	abstract protected Date getNextUpdate();
-	abstract protected void setNextUpdate(Date nextUpdate);
-	abstract protected void setData(T response);
-	abstract protected void updateFailed(Human humanFrom, Human humanTo);
 
-	private boolean isUpdatable(Date date){
-		return ( (
-				Settings.getGmtNow().after(date)
+	protected abstract T getResponse(boolean bCorp) throws ApiException;
+	protected abstract Date getNextUpdate();
+	protected abstract void setNextUpdate(Date nextUpdate);
+	protected abstract void setData(T response);
+	protected abstract void updateFailed(Human humanFrom, Human humanTo);
+
+	private boolean isUpdatable(final Date date) {
+		return ((Settings.getGmtNow().after(date)
 				|| Settings.getGmtNow().equals(date)
 				|| forceUpdate
 				|| Program.isForceUpdate()

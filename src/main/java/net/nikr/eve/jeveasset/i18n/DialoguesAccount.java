@@ -34,11 +34,11 @@ public abstract class DialoguesAccount extends Bundle {
 		return BundleCache.get(DialoguesAccount.class);
 	}
 
-	public static DialoguesAccount get(Locale locale) {
+	public static DialoguesAccount get(final Locale locale) {
 		return BundleCache.get(DialoguesAccount.class, locale);
 	}
 
-	public DialoguesAccount(Locale locale) {
+	public DialoguesAccount(final Locale locale) {
 		super(locale);
 	}
 

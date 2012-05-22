@@ -20,13 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data.model;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
 
@@ -34,7 +28,7 @@ public class Galaxy {
 
 	private Set<Region> regions;
 
-	public Galaxy(Map<Long, Location> locations, List<Jump> jumps) {
+	public Galaxy(final Map<Long, Location> locations, final List<Jump> jumps) {
 		this.regions = new TreeSet<Region>();
 
 		Collection<Location> loc = locations.values();
@@ -67,7 +61,7 @@ public class Galaxy {
 			}
 		}
 		// Add the jump associations.
-		Map <String, SolarSystem> systemMap = getAllSolarSystemsAsMap();
+		Map<String, SolarSystem> systemMap = getAllSolarSystemsAsMap();
 		for (Jump j : jumps) {
 			SolarSystem from = systemMap.get(Long.toString(j.getFrom().getLocationID()));
 			SolarSystem to = systemMap.get(Long.toString(j.getTo().getLocationID()));
@@ -81,7 +75,7 @@ public class Galaxy {
 
 	public final Map<String, SolarSystem> getAllSolarSystemsAsMap() {
 		Map<String, SolarSystem> systemMap = new HashMap<String, SolarSystem>();
-		for (Region r: regions) {
+		for (Region r : regions) {
 			systemMap.putAll(r.getSolarSystemsAsMap());
 		}
 		return Collections.unmodifiableMap(systemMap);
@@ -101,18 +95,19 @@ public class Galaxy {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Package level model construction methods">
-	void addRegion(String id, String name) {
+	void addRegion(final String id, final String name) {
 		regions.add(new Region(id, name));
 	}
 
-	final void addSystemToRegion(String id, String name, String sec, String regionId) {
+	final void addSystemToRegion(final String id, final String name, final String sec, final String regionId) {
 		for (Region r : regions) {
-			if (r.getId().equals(regionId))
+			if (r.getId().equals(regionId)) {
 				r.addSystem(id, name, sec);
+			}
 		}
 	}
 
-	final void addStationToSystem(String id, String name, String regionId, String systemId) {
+	final void addStationToSystem(final String id, final String name, final String regionId, final String systemId) {
 		for (Region r : regions) {
 			if (r.getId().equals(regionId)) {
 				r.addStationToSystem(id, name, systemId);

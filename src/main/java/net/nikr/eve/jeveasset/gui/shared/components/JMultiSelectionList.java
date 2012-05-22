@@ -30,151 +30,149 @@ import javax.swing.event.ListDataListener;
 
 
 public class JMultiSelectionList extends JList implements MouseListener, KeyListener, ListDataListener, MouseMotionListener  {
-	
+
 	private List<Integer> selectedList;
-	
-	public JMultiSelectionList(){
+
+	public JMultiSelectionList() {
 		this(new DefaultListModel());
 	}
-	
+
 	public JMultiSelectionList(final List<?> listData) {
 		this (
 			new AbstractListModel() {
 				@Override
 				public int getSize() { return listData.size(); }
 				@Override
-				public Object getElementAt(int i) { return listData.get(i); }
+				public Object getElementAt(final int i) { return listData.get(i); }
 			}
 		);
-    }
-	
-	public JMultiSelectionList(ListModel model){
+	}
+
+	public JMultiSelectionList(final ListModel model) {
+		super(model);
 		selectedList = new ArrayList<Integer>();
 
 		this.addMouseListener(this);
 		this.addKeyListener(this);
 		this.addMouseMotionListener(this);
 		this.setDragEnabled(false);
-		
-		setModel( model );
-		this.setSelectionModel( new DefaultListSelectionModel() );
-		
-		//ListSelectionModel sm = this.getSelectionModel();
-		//sm.setSelectionMode(sm.MULTIPLE_INTERVAL_SELECTION);
-		
 
+		this.setSelectionModel(new DefaultListSelectionModel());
 	}
-	
+
 	@Override
 	public void clearSelection() {
  		super.clearSelection();
  		selectedList.clear();
  	}
 	@Override
-	public void setSelectedIndex(int index){
+	public void setSelectedIndex(final int index) {
 		super.setSelectedIndex(index);
 		selectedList.clear();
-		selectedList.add((Integer)index);
+		selectedList.add((Integer) index);
 	}
-	
+
 	@Override
-	public void setSelectedIndices(int[] indices){
+	public void setSelectedIndices(final int[] indices) {
 		super.setSelectedIndices(indices);
 		selectedList.clear();
-		for (int a = 0; a < indices.length; a++){
-			selectedList.add((Integer)indices[a]);
+		for (int a = 0; a < indices.length; a++) {
+			selectedList.add((Integer) indices[a]);
 		}
-		
 	}
-	
+
 	@Override
-	public void setSelectedValue(Object anObject, boolean shouldScrool){
+	public void setSelectedValue(final Object anObject, final boolean shouldScrool) {
 		super.setSelectedValue(anObject, shouldScrool);
 		selectedList.clear();
-		selectedList.add((Integer)getSelectedIndex());
+		selectedList.add((Integer) getSelectedIndex());
 	}
-	
+
 	@Override
-	public void addSelectionInterval(int anchor, int lead){
+	public void addSelectionInterval(final int anchor, final int lead) {
 		super.addSelectionInterval(anchor, lead);
 		int start;
 		int end;
-		if (anchor < lead){
+		if (anchor < lead) {
 			start = anchor;
 			end = lead;
 		} else {
 			start = lead;
 			end = anchor;
 		}
-		for (int a = start; a <= end; a++){
-			if (!selectedList.contains((Integer)a)) selectedList.add((Integer)a);
+		for (int a = start; a <= end; a++) {
+			if (!selectedList.contains((Integer) a)) {
+				selectedList.add((Integer) a);
+			}
 		}
 	}
-	
+
 	@Override
-	public void removeSelectionInterval(int index0, int index1){
+	public void removeSelectionInterval(final int index0, final int index1) {
 		super.removeSelectionInterval(index0, index1);
 		int start;
 		int end;
-		if (index0 < index1){
+		if (index0 < index1) {
 			start = index0;
 			end = index1;
 		} else {
 			start = index1;
 			end = index0;
 		}
-		for (int a = start; a <= end; a++){
-			if (!selectedList.contains((Integer)a)) selectedList.add((Integer)a);
+		for (int a = start; a <= end; a++) {
+			if (!selectedList.contains((Integer) a)) {
+				selectedList.add((Integer) a);
+			}
 		}
 	}
-	
+
 	@Override
-	public void setModel(ListModel model){
+	public void setModel(final ListModel model) {
 		super.setModel(model);
 		model.addListDataListener(this);
 	}
-	
+
 	//MouseListener
 	@Override
-	public void mouseClicked(MouseEvent e) {}
-	
+	public void mouseClicked(final MouseEvent e) { }
+
 	@Override
-	public void mouseReleased(MouseEvent e) {}
-	
+	public void mouseReleased(final MouseEvent e) { }
+
 	@Override
-	public void mouseEntered(MouseEvent e) {}
-	
+	public void mouseEntered(final MouseEvent e) { }
+
 	@Override
-	public void mouseExited(MouseEvent e) {}
-	
+	public void mouseExited(final MouseEvent e) { }
+
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(final MouseEvent e) {
 		int index = this.locationToIndex(e.getPoint());
-		if (e.getButton() == MouseEvent.BUTTON1){
+		if (e.getButton() == MouseEvent.BUTTON1) {
 			toggleSelectedIndex(index);
 			e.consume();
 		}
 	}
-	
+
 	//KeyListener
 	@Override
-	public void keyTyped(KeyEvent e) {}
-	
+	public void keyTyped(final KeyEvent e) { }
+
 	@Override
-	public void keyReleased(KeyEvent e) {}
-	
+	public void keyReleased(final KeyEvent e) { }
+
 	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_A && e.getModifiers() == KeyEvent.CTRL_MASK){
+	public void keyPressed(final KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_A && e.getModifiers() == KeyEvent.CTRL_MASK) {
 			toggleSelectAll();
 		}
-		if (e.getKeyCode() == KeyEvent.VK_UP){
-			setAnchor(getAnchorSelectionIndex()-1);
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			setAnchor(getAnchorSelectionIndex() - 1);
 		}
-		if (e.getKeyCode() == KeyEvent.VK_DOWN){
-			setAnchor(getAnchorSelectionIndex()+1);
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			setAnchor(getAnchorSelectionIndex() + 1);
 		}
-		if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER){
+		if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
 			int index = getAnchorSelectionIndex();
 			toggleSelectedIndex(index);
 		}
@@ -182,32 +180,32 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	}
 	//MouseMotionListener
 	@Override
-	public void mouseMoved(MouseEvent e) {}
-	
+	public void mouseMoved(final MouseEvent e) { }
+
 	@Override
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(final MouseEvent e) {
 		updateSelections();
 	}
-	
+
 	//ListDataListener
 	@Override
-	public void contentsChanged(ListDataEvent e) {}
-	
+	public void contentsChanged(final ListDataEvent e) { }
+
 	@Override
-	public void intervalAdded(ListDataEvent e) {
+	public void intervalAdded(final ListDataEvent e) {
 		int index0 = e.getIndex0();
 		int index1 = e.getIndex1();
-		if (index0 == index1){
+		if (index0 == index1) {
 			updateList(index0, 1);
 		}
 	}
-	
+
 	@Override
-	public void intervalRemoved(ListDataEvent e) {
+	public void intervalRemoved(final ListDataEvent e) {
 		int index0 = e.getIndex0();
 		int index1 = e.getIndex1();
-		if (index0 == index1){
-			selectedList.remove((Integer)index0);
+		if (index0 == index1) {
+			selectedList.remove((Integer) index0);
 			updateList(index0, -1);
 		} else {
 			selectedList.clear();
@@ -215,9 +213,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		ensureIndexIsVisible(index1);
 	}
 	//Public Methods
-	public void addSelection(int index, boolean bSelected){
-		Integer indexObj = new Integer(index);
-		
+	public void addSelection(final int index, final boolean bSelected) {
+		Integer indexObj = Integer.valueOf(index);
+
 		//is this selected? if so remove it.
 		if (selectedList.contains(indexObj) && !bSelected) {
 			selectedList.remove(indexObj);
@@ -231,11 +229,11 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		setAnchor(index);
 	}
 	//Private Methods
-	private void updateList(int index, int fix){
+	private void updateList(final int index, final int fix) {
 		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
-		for (int a = 0; a < selectedList.size(); a++){
+		for (int a = 0; a < selectedList.size(); a++) {
 			int item = selectedList.get(a).intValue();
-			if (item >= index){
+			if (item >= index) {
 				item = item + fix;
 				fixedIndices.add(item);
 			} else {
@@ -244,11 +242,11 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		}
 		selectedList = fixedIndices;
 	}
-	private void setAnchor(int nAnchor){
+	private void setAnchor(final int nAnchor) {
 		ListSelectionModel sm = this.getSelectionModel();
 		ListModel lm = this.getModel();
-		if (nAnchor >= 0 && nAnchor < lm.getSize()){
-			if (this.isSelectedIndex(nAnchor)){
+		if (nAnchor >= 0 && nAnchor < lm.getSize()) {
+			if (this.isSelectedIndex(nAnchor)) {
 				sm.removeSelectionInterval(nAnchor, nAnchor);
 				sm.addSelectionInterval(nAnchor, nAnchor);
 			} else {
@@ -258,21 +256,21 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 			ensureIndexIsVisible(nAnchor);
 		}
 	}
-	private void toggleSelectedIndex(int index){
-		Integer indexObj = new Integer(index);
-		
+	private void toggleSelectedIndex(final int index) {
+		Integer indexObj = Integer.valueOf(index);
+
 		//is this selected? if so remove it.
 		if (selectedList.contains(indexObj)) {
 			selectedList.remove(indexObj);
+		} else { //otherwise add it to our list
+			selectedList.add(indexObj);
 		}
-		//otherwise add it to our list
-		else selectedList.add(indexObj);
 
 		//set selected indices
 		updateSelections();
 		setAnchor(index);
 	}
-	private void updateSelections(){
+	private void updateSelections() {
 		//copy to an int array
 		int[] arr = new int[selectedList.size()];
 		for (int i = 0; i < arr.length; i++) {
@@ -282,27 +280,25 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		//set selected indices
 		setSelectedIndices(arr);
 	}
-	private void toggleSelectAll(){
+	private void toggleSelectAll() {
 		ListModel lm = this.getModel();
 		int size = selectedList.size();
 		selectedList.clear();
-		if (size != lm.getSize()){
-			for (Integer a = 0; a < lm.getSize(); a++){
+		if (size != lm.getSize()) {
+			for (Integer a = 0; a < lm.getSize(); a++) {
 				selectedList.add(a);
 			}
 		}
 		updateSelections();
 		setAnchor(0);
 	}
-	public void selectAll(){
+	public void selectAll() {
 		ListModel lm = this.getModel();
 		selectedList.clear();
-		for (Integer a = 0; a < lm.getSize(); a++){
+		for (Integer a = 0; a < lm.getSize(); a++) {
 			selectedList.add(a);
 		}
 		updateSelections();
 		setAnchor(0);
 	}
-
-	
 }

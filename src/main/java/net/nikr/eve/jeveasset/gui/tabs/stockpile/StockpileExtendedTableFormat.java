@@ -35,7 +35,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return TabsStockpile.get().getFilterStockpileName();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getStockpile().getName();
 		}
 	},
@@ -45,7 +45,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return TabsStockpile.get().getFilterStockpileOwner();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getStockpile().getOwner();
 		}
 	},
@@ -55,7 +55,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return TabsStockpile.get().getFilterStockpileLocation();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getStockpile().getLocation();
 		}
 	},
@@ -65,7 +65,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return TabsStockpile.get().getFilterStockpileFlag();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getStockpile().getFlag();
 		}
 	},
@@ -75,15 +75,14 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 			return TabsStockpile.get().getFilterStockpileContainer();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getStockpile().getContainer();
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private StockpileExtendedTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+	private StockpileExtendedTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -100,15 +99,15 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		return getColumnName();
 	}
 	@Override
-	public boolean isColumnEditable(Object baseObject) {
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
 	@Override
-	public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+	public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnName() Workaround
-	@Override abstract public String getColumnName();
+	@Override public abstract String getColumnName();
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override abstract public Object getColumnValue(StockpileItem from);
+	@Override public abstract Object getColumnValue(StockpileItem from);
 }

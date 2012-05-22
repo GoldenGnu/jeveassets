@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 public enum Images {
 	ASSETS_AVERAGE ("assets_average.png"),
 	ASSETS_VOLUME ("assets_volume.png"),
-	
+
 	JOBS_INVENTION_SUCCESS ("jobs_invention_success.png"),
-	
+
 	ORDERS_SELL ("orders_sell.png"),
 	ORDERS_BUY ("orders_buy.png"),
 	ORDERS_ESCROW ("orders_escrow.png"),
@@ -60,8 +60,8 @@ public enum Images {
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
-	FILTER_LOAD ("filter_load.png"),	
-	FILTER_LOAD_DEFAULT ("filter_load_default.png"),	
+	FILTER_LOAD ("filter_load.png"),
+	FILTER_LOAD_DEFAULT ("filter_load_default.png"),
 	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),
@@ -136,18 +136,17 @@ public enum Images {
 	UPDATE_CANCELLED ("update_cancelled.png"),
 	UPDATE_DONE_OK ("update_done_ok.png"),
 	UPDATE_DONE_SOME ("update_done_some.png"),
-	UPDATE_DONE_ERROR ("update_done_error.png"),
-	;
+	UPDATE_DONE_ERROR ("update_done_error.png");
 
-	private static Logger LOG = LoggerFactory.getLogger(Images.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Images.class);
 	private final String filename;   // in kilograms
 	private BufferedImage image = null;
 
-	Images(String filename) {
+	Images(final String filename) {
 		this.filename = filename;
 	}
 
-	public Icon getIcon(){
+	public Icon getIcon() {
 		load();
 		return new ImageIcon(image);
 	}
@@ -161,36 +160,36 @@ public enum Images {
 		return filename;
 	}
 
-	private boolean load(){
-		if (image == null){
+	private boolean load() {
+		if (image == null) {
 			image = getBufferedImage(filename);
 		}
 		return (image != null);
 	}
 
-	public static boolean preload(){
+	public static boolean preload() {
 		int count = 0;
 		boolean ok = true;
-		for (Images i : Images.values()){
-			if (!i.load()){
+		for (Images i : Images.values()) {
+			if (!i.load()) {
 				ok = false;
 			}
 			count++;
-			SplashUpdater.setSubProgress((int)(count * 100.0 / Images.values().length));
+			SplashUpdater.setSubProgress((int) (count * 100.0 / Images.values().length));
 		}
 		return ok;
 	}
 
-	public static BufferedImage getBufferedImage(String s) {
+	public static BufferedImage getBufferedImage(final String s) {
 		try {
 			java.net.URL imgURL = Images.class.getResource(s);
-			if (imgURL != null){
+			if (imgURL != null) {
 				return ImageIO.read(imgURL);
 			} else {
-				LOG.warn("image: "+s+" not found (URL == null)");
+				LOG.warn("image: " + s + " not found (URL == null)");
 			}
 		} catch (IOException ex) {
-			LOG.warn("image: "+s+" not found (IOException)");
+			LOG.warn("image: " + s + " not found (IOException)");
 		}
 		return null;
 	}

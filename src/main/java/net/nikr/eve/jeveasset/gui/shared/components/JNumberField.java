@@ -27,7 +27,7 @@ import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 
 
-public class JNumberField extends JTextField implements FocusListener{
+public class JNumberField extends JTextField implements FocusListener {
 
 	private String defaultValue;
 
@@ -35,27 +35,27 @@ public class JNumberField extends JTextField implements FocusListener{
 		this("0");
 	}
 
-	public JNumberField(String defaultValue) {
+	public JNumberField(final String defaultValue) {
 		this.defaultValue = defaultValue;
 		this.addFocusListener(this);
-		this.setDocument( DocumentFactory.getIntegerPlainDocument() );
+		this.setDocument(DocumentFactory.getIntegerPlainDocument());
 	}
 
 	@Override
-	public void focusGained(FocusEvent e) {
-
-	}
+	public void focusGained(final FocusEvent e) { }
 
 	@Override
-	public void focusLost(FocusEvent e) {
-		if (super.getText().length() == 0){
+	public void focusLost(final FocusEvent e) {
+		if (super.getText().length() == 0) {
 			super.setText(defaultValue);
 		}
 	}
 
 	@Override
 	public String getText() {
-		if (super.getText().length() == 0) super.setText(defaultValue);
+		if (super.getText().length() == 0) {
+			super.setText(defaultValue);
+		}
 		return super.getText();
 	}
 }
