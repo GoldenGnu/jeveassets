@@ -38,7 +38,7 @@ public class TableCellRenderers {
 			if (value == null) {
 				setText("");
 			} else {
-				Formater.longFormat(value);
+				setText(Formater.longFormat(value));
 			}
 		}
 	}
