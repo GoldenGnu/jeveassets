@@ -128,7 +128,7 @@
     <row flagid="149" flagname="SpecializedPlanetaryCommoditiesHold" flagtext="Specialized Planetary Commodities Hold"/>
     <row flagid="150" flagname="PlanetSurface" flagtext="Planet Surface"/>
     <row flagid="151" flagname="SpecializedMaterialBay" flagtext="Specialized Material Bay"/>
-    <row flagid="152" flagname="DustCharacterBackpack" flagtext="Dust Character Backpack"/>
+    <row flagid="152" flagname="DustCharacterDatabank" flagtext="Dust Character Databank"/>
     <row flagid="153" flagname="DustCharacterBattle" flagtext="Dust Character Battle"/>
     <row flagid="154" flagname="QuafeBay" flagtext="Quafe Bay"/>
 </rows>

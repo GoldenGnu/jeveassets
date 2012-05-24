@@ -529,9 +529,10 @@
         <material id="36" portionsize="10" quantity="17"/>
         <material id="37" portionsize="10" quantity="6"/>
     </row>
-    <row category="Charge" group="Defender Missile" id="265" marketgroup="true" meta="0" name="Defender I" pi="false" portion="100" price="500" tech="Tech I" volume="0.015">
-        <material id="34" portionsize="100" quantity="58"/>
+    <row category="Charge" group="Heavy Defender Missile" id="265" marketgroup="true" meta="0" name="Heavy Defender Missile I" pi="false" portion="100" price="2012" tech="Tech I" volume="0.03">
+        <material id="34" portionsize="100" quantity="558"/>
         <material id="36" portionsize="100" quantity="12"/>
+        <material id="38" portionsize="100" quantity="1"/>
     </row>
     <row category="Charge" group="Rocket" id="266" marketgroup="true" meta="0" name="Scourge Rocket" pi="false" portion="100" price="240" tech="Tech I" volume="0.0050">
         <material id="34" portionsize="100" quantity="28"/>
@@ -1151,7 +1152,7 @@
         <material id="39" portionsize="1" quantity="13"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Ship" group="Rookie ship" id="588" marketgroup="false" meta="0" name="Reaper" pi="false" portion="1" price="0" tech="Tech I" volume="15800.0"/>
+    <row category="Ship" group="Rookie ship" id="588" marketgroup="true" meta="0" name="Reaper" pi="false" portion="1" price="0" tech="Tech I" volume="15800.0"/>
     <row category="Ship" group="Frigate" id="589" marketgroup="true" meta="0" name="Executioner" pi="false" portion="1" price="30000" tech="Tech I" volume="28100.0">
         <material id="34" portionsize="1" quantity="2752"/>
         <material id="35" portionsize="1" quantity="2510"/>
@@ -1196,7 +1197,7 @@
         <material id="37" portionsize="1" quantity="7"/>
     </row>
     <row category="Ship" group="Frigate" id="595" marketgroup="false" meta="0" name="Gallente Police Ship" pi="false" portion="1" price="0" tech="Tech I" volume="20400.0"/>
-    <row category="Ship" group="Rookie ship" id="596" marketgroup="false" meta="0" name="Impairor" pi="false" portion="1" price="0" tech="Tech I" volume="28100.0"/>
+    <row category="Ship" group="Rookie ship" id="596" marketgroup="true" meta="0" name="Impairor" pi="false" portion="1" price="0" tech="Tech I" volume="28100.0"/>
     <row category="Ship" group="Frigate" id="597" marketgroup="true" meta="0" name="Punisher" pi="false" portion="1" price="287500" tech="Tech I" volume="28600.0">
         <material id="34" portionsize="1" quantity="20518"/>
         <material id="35" portionsize="1" quantity="5520"/>
@@ -1219,7 +1220,7 @@
         <material id="37" portionsize="1" quantity="1"/>
     </row>
     <row category="Ship" group="Frigate" id="600" marketgroup="false" meta="0" name="Minmatar Peacekeeper Ship" pi="false" portion="1" price="0" tech="Tech I" volume="12000.0"/>
-    <row category="Ship" group="Rookie ship" id="601" marketgroup="false" meta="0" name="Ibis" pi="false" portion="1" price="0" tech="Tech I" volume="15000.0"/>
+    <row category="Ship" group="Rookie ship" id="601" marketgroup="true" meta="0" name="Ibis" pi="false" portion="1" price="0" tech="Tech I" volume="15000.0"/>
     <row category="Ship" group="Frigate" id="602" marketgroup="true" meta="0" name="Kestrel" pi="false" portion="1" price="225000" tech="Tech I" volume="19700.0">
         <material id="34" portionsize="1" quantity="14852"/>
         <material id="36" portionsize="1" quantity="2579"/>
@@ -1243,7 +1244,7 @@
         <material id="37" portionsize="1" quantity="124"/>
         <material id="38" portionsize="1" quantity="6"/>
     </row>
-    <row category="Ship" group="Rookie ship" id="606" marketgroup="false" meta="0" name="Velator" pi="false" portion="1" price="0" tech="Tech I" volume="24500.0"/>
+    <row category="Ship" group="Rookie ship" id="606" marketgroup="true" meta="0" name="Velator" pi="false" portion="1" price="0" tech="Tech I" volume="24500.0"/>
     <row category="Ship" group="Frigate" id="607" marketgroup="true" meta="0" name="Imicus" pi="false" portion="1" price="100250" tech="Tech I" volume="21500.0">
         <material id="34" portionsize="1" quantity="6629"/>
         <material id="35" portionsize="1" quantity="5422"/>
@@ -1895,9 +1896,9 @@
         <material id="39" portionsize="1" quantity="8"/>
     </row>
     <row category="Drone" group="Mining Drone" id="1202" marketgroup="true" meta="0" name="Civilian Mining Drone" pi="false" portion="1" price="12644" tech="Tech I" volume="5.0">
-        <material id="34" portionsize="1" quantity="69"/>
-        <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="12"/>
+        <material id="34" portionsize="1" quantity="50"/>
+        <material id="37" portionsize="1" quantity="2"/>
+        <material id="38" portionsize="1" quantity="8"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Armor Coating Blueprint" id="1204" marketgroup="true" meta="0" name="EM Plating I Blueprint" pi="false" portion="1" price="49740" tech="Tech I" volume="0.01"/>
@@ -1906,7 +1907,7 @@
     <row category="Blueprint" group="ECM Burst Blueprint" id="1210" marketgroup="true" meta="0" name="ECM Burst I Blueprint" pi="false" portion="1" price="416640" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Passive Targeting System Blueprint" id="1212" marketgroup="true" meta="0" name="Passive Targeter I Blueprint" pi="false" portion="1" price="250000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Combat Drone Blueprint" id="1214" marketgroup="true" meta="0" name="Wasp I Blueprint" pi="false" portion="1" price="5000000" tech="Tech I" volume="0.01"/>
-    <row category="Blueprint" group="Defender Missile Blueprint" id="1215" marketgroup="true" meta="0" name="Defender I Blueprint" pi="false" portion="1" price="150000" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Defender Missile Blueprint" id="1215" marketgroup="true" meta="0" name="Heavy Defender Missile I Blueprint" pi="false" portion="1" price="150000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Missile Blueprint" id="1216" marketgroup="true" meta="0" name="Seeker F.O.F. Light Missile I Blueprint" pi="false" portion="1" price="180000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Mine Blueprint" id="1217" marketgroup="false" meta="0" name="Python Mine Blueprint" pi="false" portion="1" price="136400" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Mining Drone Blueprint" id="1218" marketgroup="true" meta="0" name="Civilian Mining Drone Blueprint" pi="false" portion="1" price="1498600" tech="Tech I" volume="0.01"/>
@@ -3887,7 +3888,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="11399" portionsize="1" quantity="2"/>
     </row>
-    <row category="Commodity" group="Commodities" id="2887" marketgroup="false" meta="0" name="Gallente Admiral’s Corpse" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Commodities" id="2887" marketgroup="false" meta="0" name="Gallente Admiral's Corpse" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="2888" marketgroup="false" meta="0" name="Acceleration Gate Authentication Matrix" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Module" group="Projectile Weapon" id="2889" marketgroup="true" meta="5" name="200mm AutoCannon II" pi="false" portion="1" price="109744" tech="Tech II" volume="5.0">
         <material id="34" portionsize="1" quantity="1800"/>
@@ -4012,7 +4013,7 @@
         <material id="11399" portionsize="1" quantity="10"/>
     </row>
     <row category="Blueprint" group="Projectile Weapon Blueprint" id="2970" marketgroup="false" meta="0" name="720mm Howitzer Artillery II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
-    <row category="Commodity" group="Miscellaneous" id="2971" marketgroup="false" meta="0" name="Group of Haakar’s Striking Hawks" pi="false" portion="1" price="0" tech="Tech I" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="2971" marketgroup="false" meta="0" name="Group of Haakar's Striking Hawks" pi="false" portion="1" price="0" tech="Tech I" volume="10.0"/>
     <row category="Commodity" group="Miscellaneous" id="2972" marketgroup="false" meta="0" name="Ditanium Metal Plates" pi="false" portion="1" price="0" tech="Tech I" volume="30.0"/>
     <row category="Commodity" group="Miscellaneous" id="2973" marketgroup="false" meta="0" name="Pallet of Ditanium Metal Plates" pi="false" portion="1" price="0" tech="Tech I" volume="300.0"/>
     <row category="Commodity" group="Miscellaneous" id="2974" marketgroup="false" meta="0" name="Large Group of The Hooded Men" pi="false" portion="1" price="0" tech="Tech I" volume="100.0"/>
@@ -4080,9 +4081,9 @@
     <row category="Blueprint" group="Energy Weapon Blueprint" id="3002" marketgroup="false" meta="0" name="Dual Light Pulse Laser II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="3003" marketgroup="false" meta="0" name="Large Group of Angel Cartel VIPs" pi="false" portion="1" price="0" tech="Tech I" volume="100.0"/>
     <row category="Commodity" group="Livestock" id="3004" marketgroup="false" meta="0" name="Amarr Marine Counter-Boarding Company" pi="false" portion="1" price="50000" tech="Tech I" volume="300.0"/>
-    <row category="Commodity" group="Miscellaneous" id="3005" marketgroup="false" meta="0" name="Crate of Feille d’Marnne Champagne" pi="false" portion="1" price="0" tech="Tech I" volume="10.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3005" marketgroup="false" meta="0" name="Crate of Feille d'Marnne Champagne" pi="false" portion="1" price="0" tech="Tech I" volume="10.0"/>
     <row category="Commodity" group="Livestock" id="3006" marketgroup="false" meta="0" name="Conditioned House Slaves" pi="false" portion="1" price="4000" tech="Tech I" volume="30.0"/>
-    <row category="Commodity" group="Miscellaneous" id="3007" marketgroup="false" meta="0" name="Large Crate of Feille d’Marnne Champagne" pi="false" portion="1" price="0" tech="Tech I" volume="100.0"/>
+    <row category="Commodity" group="Miscellaneous" id="3007" marketgroup="false" meta="0" name="Large Crate of Feille d'Marnne Champagne" pi="false" portion="1" price="0" tech="Tech I" volume="100.0"/>
     <row category="Commodity" group="Livestock" id="3008" marketgroup="false" meta="0" name="Herd of Conditioned House Slaves" pi="false" portion="1" price="4000" tech="Tech I" volume="300.0"/>
     <row category="Module" group="Energy Weapon" id="3009" marketgroup="true" meta="5" name="Focused Medium Beam Laser II" pi="false" portion="1" price="366626" tech="Tech II" volume="10.0">
         <material id="34" portionsize="1" quantity="4561"/>
@@ -4457,7 +4458,7 @@
         <material id="36" portionsize="1" quantity="1356"/>
         <material id="11399" portionsize="1" quantity="6"/>
     </row>
-    <row category="Blueprint" group="Hybrid Weapon Blueprint" id="3131" marketgroup="true" meta="0" name="Heavy Electron Blaster II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Hybrid Weapon Blueprint" id="3131" marketgroup="false" meta="0" name="Heavy Electron Blaster II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Implant" group="Cyber Missile" id="3132" marketgroup="true" meta="0" name="Zainou 'Deadeye' Missile Bombardment MB-706" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
@@ -4767,17 +4768,17 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="3199" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-802" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="3199" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Smalll Projectie Turret SP-602" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="3200" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-804" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="3200" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-604" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="3201" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-806" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="3201" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-606" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -6486,17 +6487,17 @@
     <row category="Apparel" group="Footwear" id="4177" marketgroup="true" meta="0" name="Men's 'Trench' Boots (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Footwear" id="4178" marketgroup="true" meta="0" name="Men's 'Trench' Boots (gray)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Footwear" id="4179" marketgroup="true" meta="0" name="Men's 'Trench' Boots (tan)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4180" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4181" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4182" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4183" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (dark blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4184" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (dark red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4185" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (khaki)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4186" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (light gray)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4187" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (olive)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4188" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (dark camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4189" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (desert camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4190" marketgroup="true" meta="0" name="Men’s 'Form' Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4180" marketgroup="true" meta="0" name="Men's 'Form' Shirt (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4181" marketgroup="true" meta="0" name="Men's 'Form' Shirt (blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4182" marketgroup="true" meta="0" name="Men's 'Form' Shirt (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4183" marketgroup="true" meta="0" name="Men's 'Form' Shirt (dark blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4184" marketgroup="true" meta="0" name="Men's 'Form' Shirt (dark red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4185" marketgroup="true" meta="0" name="Men's 'Form' Shirt (khaki)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4186" marketgroup="true" meta="0" name="Men's 'Form' Shirt (light gray)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4187" marketgroup="true" meta="0" name="Men's 'Form' Shirt (olive)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4188" marketgroup="true" meta="0" name="Men's 'Form' Shirt (dark camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4189" marketgroup="true" meta="0" name="Men's 'Form' Shirt (desert camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4190" marketgroup="true" meta="0" name="Men's 'Form' Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4191" marketgroup="true" meta="0" name="Men's 'Street' Shirt (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4192" marketgroup="true" meta="0" name="Men's 'Street' Shirt (blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4193" marketgroup="true" meta="0" name="Men's 'Street' Shirt (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
@@ -6522,23 +6523,23 @@
     <row category="Apparel" group="Tops" id="4213" marketgroup="true" meta="0" name="Women's 'Function' Shirt (desert camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4214" marketgroup="true" meta="0" name="Women's 'Function' Shirt (red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4215" marketgroup="true" meta="0" name="Women's 'Function' Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4216" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4217" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (black leather)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4218" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4219" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4220" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (gray)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4221" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (green)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4222" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (orange)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4223" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (gray camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4224" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (orange camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4225" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (red patterned)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4226" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4227" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (lined brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4228" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (purple mesh)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4229" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (black and dark red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4230" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (pink camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4231" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tops" id="4232" marketgroup="true" meta="0" name="Women’s 'Avenue' Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4216" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4217" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (black leather)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4218" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4219" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4220" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (gray)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4221" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (green)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4222" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (orange)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4223" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (gray camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4224" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (orange camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4225" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (red patterned)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4226" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4227" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (lined brown)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4228" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (purple mesh)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4229" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (black and dark red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4230" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (pink camo)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4231" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="4232" marketgroup="true" meta="0" name="Women's 'Avenue' Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Outer" id="4233" marketgroup="true" meta="0" name="Men's 'Esquire' Coat (black)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Outer" id="4234" marketgroup="true" meta="0" name="Men's 'Esquire' Coat (green/gold)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Outer" id="4235" marketgroup="true" meta="0" name="Men's 'Esquire' Coat (matte graphite)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
@@ -6953,6 +6954,8 @@
     <row category="Apparel" group="Tops" id="4366" marketgroup="true" meta="0" name="Women's 'Quafe' T-shirt YC114" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4367" marketgroup="true" meta="0" name="Men's 'Sterling' Dress Shirt (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Tops" id="4368" marketgroup="true" meta="0" name="Women's 'Sterling' Dress Blouse (white)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Module" group="Rig Electronics Superiority" id="4369" marketgroup="false" meta="0" name="Small Targeting Amplifier I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
+    <row category="Blueprint" group="Rig Blueprint" id="4370" marketgroup="false" meta="0" name="Small Targeting Amplifier I Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="QA Module" id="4371" marketgroup="false" meta="5" name="QA Remote Armor Repair System - 5 Players" pi="false" portion="1" price="225664" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4372" marketgroup="false" meta="5" name="QA Shield Transporter - 5 Players" pi="false" portion="1" price="139968" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4373" marketgroup="false" meta="0" name="QA Damage Module" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
@@ -6961,9 +6964,90 @@
     <row category="Module" group="QA Module" id="4376" marketgroup="false" meta="0" name="QA Multiship Module - 40 Players" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4377" marketgroup="false" meta="0" name="QA Multiship Module - 5 Players" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4380" marketgroup="false" meta="0" name="QA Immunity Module" pi="false" portion="1" price="362408" tech="Tech I" volume="1.0"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="4384" marketgroup="false" meta="0" name="Micro Jump Drive I Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Skill" group="Navigation" id="4385" marketgroup="false" meta="0" name="Micro Jump Drive Operation" pi="false" portion="1" price="0" tech="Tech I" volume="0.0"/>
+    <row category="Deployable" group="Mobile Jump Disruptor" id="4386" marketgroup="true" meta="0" name="Mobile Large Jump Disruptor I" pi="false" portion="1" price="7671490" tech="Tech I" volume="585.0">
+        <material id="34" portionsize="1" quantity="192365"/>
+        <material id="35" portionsize="1" quantity="58809"/>
+        <material id="36" portionsize="1" quantity="31389"/>
+        <material id="37" portionsize="1" quantity="9117"/>
+        <material id="38" portionsize="1" quantity="1980"/>
+        <material id="39" portionsize="1" quantity="893"/>
+        <material id="40" portionsize="1" quantity="220"/>
+    </row>
+    <row category="Blueprint" group="Mobile Warp Disruptor Blueprint" id="4387" marketgroup="false" meta="0" name="Mobile Large Jump Disruptor I Blueprint" pi="false" portion="1" price="119764480" tech="Tech I" volume="0.01"/>
     <row category="Ship" group="Industrial" id="4388" marketgroup="false" meta="0" name="Iteron Mark IV Quafe Ultramarine Edition" pi="false" portion="1" price="600000" tech="Tech I" volume="265000.0"/>
     <row category="Blueprint" group="Industrial Blueprint" id="4389" marketgroup="false" meta="0" name="Iteron Mark IV Quafe Ultramarine Edition Blueprint" pi="false" portion="1" price="4287500" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="4390" marketgroup="false" meta="0" name="Pax Ammaria" pi="false" portion="1" price="3328" tech="Tech I" volume="0.1"/>
+    <row category="Module" group="Fueled Shield Booster" id="4391" marketgroup="true" meta="1" name="Large Ancillary Shield Booster" pi="false" portion="1" price="145856" tech="Tech I" volume="25.0">
+        <material id="36" portionsize="1" quantity="1194"/>
+        <material id="37" portionsize="1" quantity="433"/>
+        <material id="38" portionsize="1" quantity="102"/>
+    </row>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="4392" marketgroup="false" meta="0" name="Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Drone Damage Modules" id="4393" marketgroup="true" meta="0" name="Drone Damage Amplifier I" pi="false" portion="1" price="41982" tech="Tech I" volume="5.0">
+        <material id="34" portionsize="1" quantity="1107"/>
+        <material id="35" portionsize="1" quantity="211"/>
+        <material id="36" portionsize="1" quantity="342"/>
+        <material id="37" portionsize="1" quantity="4"/>
+        <material id="39" portionsize="1" quantity="5"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Drone Damage Module Blueprint" id="4394" marketgroup="true" meta="0" name="Drone Damage Amplifier I Blueprint" pi="false" portion="1" price="499200" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="4395" marketgroup="true" meta="0" name="Medium Processor Overclocking Unit I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0">
+        <material id="25597" portionsize="1" quantity="16"/>
+        <material id="25599" portionsize="1" quantity="20"/>
+        <material id="25604" portionsize="1" quantity="8"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="4396" marketgroup="true" meta="0" name="Medium Processor Overclocking Unit I Blueprint" pi="false" portion="1" price="750000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="4397" marketgroup="true" meta="0" name="Large Processor Overclocking Unit I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0">
+        <material id="25597" portionsize="1" quantity="80"/>
+        <material id="25599" portionsize="1" quantity="100"/>
+        <material id="25604" portionsize="1" quantity="40"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="4398" marketgroup="true" meta="0" name="Large Processor Overclocking Unit I Blueprint" pi="false" portion="1" price="1250000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="4399" marketgroup="true" meta="5" name="Medium Processor Overclocking Unit II" pi="false" portion="1" price="0" tech="Tech II" volume="5.0">
+        <material id="25616" portionsize="1" quantity="3"/>
+        <material id="25617" portionsize="1" quantity="4"/>
+        <material id="25623" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="4400" marketgroup="false" meta="0" name="Medium Processor Overclocking Unit II Blueprint" pi="false" portion="1" price="750000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="4401" marketgroup="true" meta="5" name="Large Processor Overclocking Unit II" pi="false" portion="1" price="0" tech="Tech II" volume="5.0">
+        <material id="25616" portionsize="1" quantity="16"/>
+        <material id="25617" portionsize="1" quantity="20"/>
+        <material id="25623" portionsize="1" quantity="8"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="4402" marketgroup="false" meta="0" name="Large Processor Overclocking Unit II Blueprint" pi="false" portion="1" price="1250000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Armor Resistance Shift Hardener" id="4403" marketgroup="true" meta="1" name="Reactive Armor Hardener" pi="false" portion="1" price="200000" tech="Tech I" volume="5.0">
+        <material id="34" portionsize="1" quantity="23084"/>
+        <material id="35" portionsize="1" quantity="18525"/>
+        <material id="38" portionsize="1" quantity="3"/>
+        <material id="39" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Armor Resistance Shift Hardener Blueprint" id="4404" marketgroup="false" meta="0" name="Reactive Armor Hardener Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.0"/>
+    <row category="Module" group="Drone Damage Modules" id="4405" marketgroup="true" meta="5" name="Drone Damage Amplifier II" pi="false" portion="1" price="126640" tech="Tech II" volume="5.0">
+        <material id="34" portionsize="1" quantity="816"/>
+        <material id="35" portionsize="1" quantity="330"/>
+        <material id="36" portionsize="1" quantity="472"/>
+        <material id="37" portionsize="1" quantity="6"/>
+        <material id="39" portionsize="1" quantity="8"/>
+        <material id="40" portionsize="1" quantity="3"/>
+        <material id="11399" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Drone Damage Module Blueprint" id="4406" marketgroup="false" meta="0" name="Drone Damage Amplifier II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Charge" group="Shield Booster Script" id="4407" marketgroup="false" meta="0" name="Shield Booster Fuel Allocation Script" pi="false" portion="1" price="12192" tech="Tech I" volume="1.0"/>
+    <row category="Blueprint" group="Script Blueprint" id="4408" marketgroup="false" meta="0" name="Shield Booster Fuel Allocation Script Blueprint" pi="false" portion="1" price="1500000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Target Breaker" id="4409" marketgroup="true" meta="1" name="Target Spectrum Breaker" pi="false" portion="1" price="54648" tech="Tech I" volume="5.0">
+        <material id="34" portionsize="1" quantity="572"/>
+        <material id="35" portionsize="1" quantity="56"/>
+        <material id="36" portionsize="1" quantity="322"/>
+        <material id="37" portionsize="1" quantity="10"/>
+        <material id="38" portionsize="1" quantity="5"/>
+        <material id="39" portionsize="1" quantity="3"/>
+        <material id="40" portionsize="1" quantity="4"/>
+    </row>
+    <row category="Blueprint" group="Target Breaker Blueprint" id="4410" marketgroup="false" meta="0" name="Target Spectrum Breaker Blueprint" pi="false" portion="1" price="296960" tech="Tech I" volume="0.01"/>
+    <row category="Skill" group="Electronics" id="4411" marketgroup="true" meta="0" name="Target Breaker" pi="false" portion="1" price="600000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Capacitor Recharger" id="4421" marketgroup="true" meta="0" name="F-a10 Buffer Capacitor Regenerator" pi="false" portion="1" price="828" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="38"/>
         <material id="35" portionsize="1" quantity="14"/>
@@ -14472,7 +14556,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="13225" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-803" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="13225" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-603" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -26703,7 +26787,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="19690" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-805" pi="false" portion="1" price="0" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="19690" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-605" pi="false" portion="1" price="0" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -32714,7 +32798,7 @@
         <material id="37" portionsize="1" quantity="4"/>
         <material id="38" portionsize="1" quantity="4"/>
     </row>
-    <row category="Blueprint" group="Electronic Warfare Drone Blueprint" id="23730" marketgroup="true" meta="0" name="Valkyrie SW-600 Blueprint" pi="false" portion="1" price="1500000" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Stasis Webifying Drone Blueprint" id="23730" marketgroup="true" meta="0" name="Valkyrie SW-600 Blueprint" pi="false" portion="1" price="1500000" tech="Tech I" volume="0.01"/>
     <row category="Drone" group="Stasis Webifying Drone" id="23731" marketgroup="true" meta="0" name="Warrior SW-300" pi="false" portion="1" price="4000" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="856"/>
         <material id="35" portionsize="1" quantity="6"/>
@@ -35619,10 +35703,18 @@
     <row category="Blueprint" group="Rig Blueprint" id="26926" marketgroup="false" meta="0" name="Drone Damage Rig I Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Rig Drones" id="26927" marketgroup="false" meta="0" name="Drone Damage Rig II" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="26928" marketgroup="false" meta="0" name="Drone Damage Rig II Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Rig Electronics" id="26929" marketgroup="false" meta="0" name="Processor Overclocking Unit I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
-    <row category="Blueprint" group="Rig Blueprint" id="26930" marketgroup="false" meta="0" name="Processor Overclocking Unit I Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Rig Electronics" id="26931" marketgroup="false" meta="0" name="Processor Overclocking Unit II" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
-    <row category="Blueprint" group="Rig Blueprint" id="26932" marketgroup="false" meta="0" name="Processor Overclocking Unit II Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="26929" marketgroup="true" meta="0" name="Small Processor Overclocking Unit I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0">
+        <material id="25597" portionsize="1" quantity="3"/>
+        <material id="25599" portionsize="1" quantity="4"/>
+        <material id="25604" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="26930" marketgroup="true" meta="0" name="Small Processor Overclocking Unit I Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Rig Electronics" id="26931" marketgroup="true" meta="5" name="Small Processor Overclocking Unit II" pi="false" portion="1" price="0" tech="Tech I" volume="5.0">
+        <material id="25616" portionsize="1" quantity="1"/>
+        <material id="25617" portionsize="1" quantity="1"/>
+        <material id="25623" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Blueprint" group="Rig Blueprint" id="26932" marketgroup="false" meta="0" name="Small Processor Overclocking Unit II Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Rig Electronics Superiority" id="26960" marketgroup="false" meta="0" name="Sensor Strength Rig I" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
     <row category="Blueprint" group="Rig Blueprint" id="26961" marketgroup="false" meta="0" name="Sensor Strength Rig I Blueprint" pi="false" portion="1" price="125000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Rig Electronics Superiority" id="26962" marketgroup="false" meta="0" name="Sensor Strength Rig II" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
@@ -35731,7 +35823,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Implant" group="Cyber Gunnery" id="27084" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-801" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
+    <row category="Implant" group="Cyber Gunnery" id="27084" marketgroup="true" meta="0" name="Eifyr and Co. 'Gunslinger' Small Projectile Turret SP-601" pi="false" portion="1" price="200000" tech="Tech I" volume="1.0">
         <material id="38" portionsize="1" quantity="2"/>
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="2"/>
@@ -42527,7 +42619,7 @@
     </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="32210" marketgroup="false" meta="0" name="Mimir Blueprint" pi="false" portion="1" price="68750000" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Miscellaneous" id="32218" marketgroup="false" meta="0" name="Encrypted Data Fragment" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Commodity" group="Miscellaneous" id="32220" marketgroup="false" meta="0" name="Ralie Ardanne’s Belongings" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Miscellaneous" id="32220" marketgroup="false" meta="0" name="Ralie Ardanne's Belongings" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32223" marketgroup="false" meta="0" name="Kidnapping Evidence" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="32225" marketgroup="false" meta="0" name="Encoded Message" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Sovereignty Structures" group="Territorial Claim Units" id="32226" marketgroup="true" meta="0" name="Territorial Claim Unit" pi="false" portion="1" price="100000000" tech="Tech I" volume="5000.0"/>
@@ -42689,7 +42781,7 @@
     <row category="Commodity" group="General" id="32374" marketgroup="false" meta="0" name="Holoreel GRS-81A" pi="false" portion="1" price="250" tech="Tech I" volume="0.5"/>
     <row category="Commodity" group="Miscellaneous" id="32375" marketgroup="false" meta="0" name="Proof of Discovery: Ladar Passkey" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32376" marketgroup="false" meta="0" name="Proof of Discovery: Ladar" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
-    <row category="Commodity" group="Miscellaneous" id="32383" marketgroup="false" meta="0" name="Guristas ‘Dirty’ Explosive System" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="32383" marketgroup="false" meta="0" name="Guristas ‘Dirty' Explosive System" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Livestock" id="32389" marketgroup="false" meta="0" name="Dread Guristas Strike Force" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32393" marketgroup="false" meta="0" name="Sealed Research Cache" pi="false" portion="1" price="0" tech="Tech I" volume="2.0"/>
     <row category="Commodity" group="Livestock" id="32398" marketgroup="false" meta="0" name="Lieutenant Kipo “Foxfire” Tekira" pi="false" portion="1" price="100" tech="Tech I" volume="1.0"/>
@@ -42755,4 +42847,27 @@
     <row category="Drone" group="Combat Drone" id="32465" marketgroup="false" meta="0" name="Civilian Hobgoblin" pi="false" portion="1" price="2500" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Shield Transporter" id="32467" marketgroup="false" meta="0" name="Civilian Remote Shield Transporter" pi="false" portion="1" price="4996" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Armor Repair Projector" id="32469" marketgroup="false" meta="0" name="Civilian Remote Armor Repair System" pi="false" portion="1" price="4996" tech="Tech I" volume="5.0"/>
+    <row category="Module" group="Fueled Shield Booster" id="32772" marketgroup="true" meta="1" name="Medium Ancillary Shield Booster" pi="false" portion="1" price="36464" tech="Tech I" volume="10.0">
+        <material id="35" portionsize="1" quantity="1194"/>
+        <material id="36" portionsize="1" quantity="433"/>
+        <material id="37" portionsize="1" quantity="102"/>
+    </row>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32773" marketgroup="false" meta="0" name="Medium Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Fueled Shield Booster" id="32774" marketgroup="true" meta="1" name="Small Ancillary Shield Booster" pi="false" portion="1" price="9116" tech="Tech I" volume="5.0">
+        <material id="34" portionsize="1" quantity="1194"/>
+        <material id="35" portionsize="1" quantity="433"/>
+        <material id="36" portionsize="1" quantity="102"/>
+    </row>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32775" marketgroup="false" meta="0" name="Small Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Fueled Shield Booster" id="32780" marketgroup="true" meta="1" name="X-Large Ancillary Shield Booster" pi="false" portion="1" price="585472" tech="Tech I" volume="50.0">
+        <material id="37" portionsize="1" quantity="1194"/>
+        <material id="38" portionsize="1" quantity="433"/>
+        <material id="39" portionsize="1" quantity="103"/>
+    </row>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32781" marketgroup="false" meta="0" name="X-Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Charge" group="Light Defender Missile" id="32782" marketgroup="true" meta="0" name="Light Defender Missile I" pi="false" portion="100" price="308" tech="Tech I" volume="0.015">
+        <material id="34" portionsize="100" quantity="58"/>
+        <material id="36" portionsize="100" quantity="6"/>
+    </row>
+    <row category="Blueprint" group="Defender Missile Blueprint" id="32783" marketgroup="true" meta="0" name="Light Defender Missile I Blueprint" pi="false" portion="1" price="150000" tech="Tech I" volume="0.01"/>
 </rows>
