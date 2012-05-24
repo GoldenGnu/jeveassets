@@ -19,7 +19,7 @@ ________________________________________________________________________________
 _2.2.0__________________________________________________________________________
 
 New Features:
--New Tool: Items (All items)
+-New Tool: Items (items database)
 -Table menu now works with multiple selection
 -Added EveMarketeer (As price source and to the lookup menu)
 -Added Eve Addicts to the lookup menu (eve.addicts.nl)
@@ -33,11 +33,10 @@ New Features:
 -Eve-MarketData: Added support for region selection
 -Added better program icons (for windows 7 taskbar etc.)
 -Added Flag path (as suggested by Scrapyard Bob)
--Added Always On Top option
+-Added window Always On Top option
 -Stockpile: Added table sorting
 -Assets: Added reprocessed value to the statusbar
--Assets: Added Buy Orders (Optional)
-
+-Assets: Added Buy Orders (Optional) (Sell orders are now optional as well)
 
 Changed:
 -Removed support for prices.c0rporation.com
@@ -45,6 +44,7 @@ Changed:
 -Tables: Columns auto resizing is now optional (again)
 -Highlight selected row(s) now work on all filter tools
 -Only filter on enter now works again and for all filter tools
+-Static data updated to Inferno 1.0.70633
 
 Bug Fixes:
 -Fixed a rare bug in the save filter dialog (text was locked)
