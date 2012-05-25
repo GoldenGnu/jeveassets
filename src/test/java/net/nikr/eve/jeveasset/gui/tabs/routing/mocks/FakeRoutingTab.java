@@ -37,19 +37,19 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
  */
 public class FakeRoutingTab extends RoutingTab {
 
-	RoutingAlgorithm ra;
+	private RoutingAlgorithm ra;
 
-	public FakeRoutingTab(Program program, Image image, RoutingAlgorithm ra) {
+	public FakeRoutingTab(final Program program, final Image image, final RoutingAlgorithm ra) {
 		super(false);
 		this.program = program;
 		this.ra = ra;
 	}
 
-	public void buildTestGraph(Settings settings) {
+	public void buildTestGraph(final Settings settings) {
 		super.buildGraph(settings);
 	}
 
-	public List<Node> getNodesFromNames(List<String> names) {
+	public List<Node> getNodesFromNames(final List<String> names) {
 		List<Node> nodes = new ArrayList<Node>();
 		for (String name : names) {
 			Node nn = null;

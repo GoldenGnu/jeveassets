@@ -39,7 +39,7 @@ public class PriceData {
 		return buyAvg;
 	}
 
-	public void setBuyAvg(double buyAvg) {
+	public void setBuyAvg(final double buyAvg) {
 		this.buyAvg = buyAvg;
 	}
 
@@ -47,7 +47,7 @@ public class PriceData {
 		return buyMax;
 	}
 
-	public void setBuyMax(double buyMax) {
+	public void setBuyMax(final double buyMax) {
 		this.buyMax = buyMax;
 	}
 
@@ -55,7 +55,7 @@ public class PriceData {
 		return buyMedian;
 	}
 
-	public void setBuyMedian(double buyMedian) {
+	public void setBuyMedian(final double buyMedian) {
 		this.buyMedian = buyMedian;
 	}
 
@@ -63,7 +63,7 @@ public class PriceData {
 		return buyMin;
 	}
 
-	public void setBuyMin(double buyMin) {
+	public void setBuyMin(final double buyMin) {
 		this.buyMin = buyMin;
 	}
 
@@ -71,7 +71,7 @@ public class PriceData {
 		return sellAvg;
 	}
 
-	public void setSellAvg(double sellAvg) {
+	public void setSellAvg(final double sellAvg) {
 		this.sellAvg = sellAvg;
 	}
 
@@ -79,7 +79,7 @@ public class PriceData {
 		return sellMax;
 	}
 
-	public void setSellMax(double sellMax) {
+	public void setSellMax(final double sellMax) {
 		this.sellMax = sellMax;
 	}
 
@@ -87,7 +87,7 @@ public class PriceData {
 		return sellMedian;
 	}
 
-	public void setSellMedian(double sellMedian) {
+	public void setSellMedian(final double sellMedian) {
 		this.sellMedian = sellMedian;
 	}
 
@@ -95,12 +95,12 @@ public class PriceData {
 		return sellMin;
 	}
 
-	public void setSellMin(double sellMin) {
+	public void setSellMin(final double sellMin) {
 		this.sellMin = sellMin;
 	}
 
-	public boolean isEmpty(){
-		if (sellMax > 0 || sellAvg > 0 || sellMedian > 0 || sellMin > 0 || buyMax > 0 || buyAvg > 0 || buyMedian > 0 || buyMin > 0){
+	public boolean isEmpty() {
+		if (sellMax > 0 || sellAvg > 0 || sellMedian > 0 || sellMin > 0 || buyMax > 0 || buyAvg > 0 || buyMedian > 0 || buyMin > 0) {
 			return false;
 		} else {
 			return true;

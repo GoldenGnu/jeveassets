@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
@@ -57,12 +57,12 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public void checkForProgramUpdates(Window parent) {
+	public void checkForProgramUpdates(final Window parent) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -108,7 +108,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void addMainTab(JMainTab jMainTab) {
+	public void addMainTab(final JMainTab jMainTab) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

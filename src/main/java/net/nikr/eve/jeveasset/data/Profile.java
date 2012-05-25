@@ -26,15 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class Profile implements Comparable<Profile>{
+public class Profile implements Comparable<Profile> {
 
-	private final static Logger LOG = LoggerFactory.getLogger(Profile.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Profile.class);
 
 	private String name;
 	private boolean defaultProfile;
 	private boolean activeProfile;
 
-	public Profile(String name, boolean defaultProfile, boolean activeProfile) {
+	public Profile(final String name, final boolean defaultProfile, final boolean activeProfile) {
 		this.name = name;
 		this.defaultProfile = defaultProfile;
 		this.activeProfile = activeProfile;
@@ -48,33 +48,33 @@ public class Profile implements Comparable<Profile>{
 		return activeProfile;
 	}
 
-	public void setActiveProfile(boolean activeProfile) {
+	public void setActiveProfile(final boolean activeProfile) {
 		this.activeProfile = activeProfile;
 	}
 
-	public String getBackupFilename(){
-		return getFilenameNoExtension()+".bac";
+	public String getBackupFilename() {
+		return getFilenameNoExtension() + ".bac";
 	}
 
 	public String getFilename() {
-		return getFilenameNoExtension()+".xml";
+		return getFilenameNoExtension() + ".xml";
 	}
 
-	public File getBackupFile(){
-		return new File(getFilenameNoExtension()+".bac");
+	public File getBackupFile() {
+		return new File(getFilenameNoExtension() + ".bac");
 	}
 
 	public File getFile() {
-		return new File(getFilenameNoExtension()+".xml");
+		return new File(getFilenameNoExtension() + ".xml");
 	}
 
-	private String getFilenameNoExtension(){
+	private String getFilenameNoExtension() {
 		String filename = getName();
 		filename = filename.replace(" ", "_");
-		if (defaultProfile){
-			filename = "#"+filename;
+		if (defaultProfile) {
+			filename = "#" + filename;
 		}
-		filename = Settings.getPathProfilesDirectory()+File.separator+filename;
+		filename = Settings.getPathProfilesDirectory() + File.separator + filename;
 		return filename;
 	}
 
@@ -82,8 +82,8 @@ public class Profile implements Comparable<Profile>{
 		return name;
 	}
 
-	public void setDefaultProfile(boolean defaultProfile) {
-		if (this.defaultProfile != defaultProfile){
+	public void setDefaultProfile(final boolean defaultProfile) {
+		if (this.defaultProfile != defaultProfile) {
 			File from = getFile();
 			File backFrom = getBackupFile();
 			this.defaultProfile = defaultProfile;
@@ -100,22 +100,22 @@ public class Profile implements Comparable<Profile>{
 		}
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		File from = getFile();
 		File backFrom = getBackupFile();
 		this.name = name;
 		File to = getFile();
 		File backTo = getBackupFile();
-		if (!from.equals(to)){
+		if (!from.equals(to)) {
 			from.renameTo(to);
 		}
-		if (!backFrom.equals(backTo)){
+		if (!backFrom.equals(backTo)) {
 			backFrom.renameTo(backTo);
 		}
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -139,15 +139,17 @@ public class Profile implements Comparable<Profile>{
 
 
 	@Override
-	public String toString(){
+	public String toString() {
 		String temp = name;
-		if (defaultProfile) temp = temp+" (default)";
+		if (defaultProfile) {
+			temp = temp + " (default)";
+		}
 		//if (activeProfile) temp = temp+" (active)";
 		return temp;
 	}
 
 	@Override
-	public int compareTo(Profile o) {
+	public int compareTo(final Profile o) {
 		return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
 	}
 }

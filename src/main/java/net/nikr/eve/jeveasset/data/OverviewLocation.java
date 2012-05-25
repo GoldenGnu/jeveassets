@@ -24,19 +24,17 @@ package net.nikr.eve.jeveasset.data;
 
 public class OverviewLocation {
 	public enum LocationType {
-		TYPE_STATION, TYPE_SYSTEM, TYPE_REGION,
-		;
+		TYPE_STATION, TYPE_SYSTEM, TYPE_REGION;
 	}
 
-	String name;
-	LocationType type;
+	private String name;
+	private LocationType type;
 
-	public OverviewLocation(String name) {
-		this.name = name;
-		this.type = null;
+	public OverviewLocation(final String name) {
+		this(name, null);
 	}
 
-	public OverviewLocation(String name, LocationType type) {
+	public OverviewLocation(final String name, final LocationType type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -49,28 +47,28 @@ public class OverviewLocation {
 		return type;
 	}
 
-	public boolean isStation(){
+	public boolean isStation() {
 		return type.equals(LocationType.TYPE_STATION);
 	}
 
-	public boolean isSystem(){
+	public boolean isSystem() {
 		return type.equals(LocationType.TYPE_SYSTEM);
 	}
 
-	public boolean isRegion(){
+	public boolean isRegion() {
 		return type.equals(LocationType.TYPE_REGION);
 	}
 
-	public boolean equalsLocation(Asset eveAsset){
-		return (name.equals(eveAsset.getLocation()) || name.equals(eveAsset.getSystem())|| name.equals(eveAsset.getRegion()));
+	public boolean equalsLocation(final Asset eveAsset) {
+		return (name.equals(eveAsset.getLocation()) || name.equals(eveAsset.getSystem()) || name.equals(eveAsset.getRegion()));
 	}
 
-	public boolean equalsLocation(Overview overview){
-		return (name.equals(overview.getName()) || name.equals(overview.getSolarSystem())|| name.equals(overview.getRegion()));
+	public boolean equalsLocation(final Overview overview) {
+		return (name.equals(overview.getName()) || name.equals(overview.getSolarSystem()) || name.equals(overview.getRegion()));
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

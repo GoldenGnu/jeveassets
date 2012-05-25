@@ -30,17 +30,20 @@ public abstract class TabsJobs extends Bundle {
 		return BundleCache.get(TabsJobs.class);
 	}
 
-	public static TabsJobs get(Locale locale) {
+	public static TabsJobs get(final Locale locale) {
 		return BundleCache.get(TabsJobs.class, locale);
 	}
 
-	public TabsJobs(Locale locale) {
+	public TabsJobs(final Locale locale) {
 		super(locale);
 	}
 
+	public abstract String active();
 	public abstract String all();
+	public abstract String completed();
 	public abstract String industry();
 	public abstract String install();
+	public abstract String inventionSuccess();
 	public abstract String no();
 	public abstract String whitespace(Object arg0);
 	public abstract String columnState();

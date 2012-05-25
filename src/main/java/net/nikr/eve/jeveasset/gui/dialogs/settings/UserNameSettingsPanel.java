@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
-	public UserNameSettingsPanel(Program program, SettingsDialog optionsDialog, DefaultMutableTreeNode parentNode) {
+	public UserNameSettingsPanel(final Program program, final SettingsDialog optionsDialog, final DefaultMutableTreeNode parentNode) {
 		super(program, optionsDialog, Images.SETTINGS_USER_NAME.getIcon(), parentNode,
 				DialoguesSettings.get().names(),
 				DialoguesSettings.get().name(),
@@ -40,7 +40,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 	}
 
 	@Override
-	protected String valueOf(String value) {
+	protected String valueOf(final String value) {
 		return value;
 	}
 
@@ -50,30 +50,30 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 	}
 
 	@Override
-	protected void setItems(Map<Long, UserItem<Long, String>> items) {
+	protected void setItems(final Map<Long, UserItem<Long, String>> items) {
 		program.getSettings().setUserItemNames(items);
 	}
 
 	@Override
-	protected UserItem<Long, String> newUserItem(UserItem<Long, String> userItem) {
+	protected UserItem<Long, String> newUserItem(final UserItem<Long, String> userItem) {
 		return new UserName(userItem);
 	}
 
-	public static class UserName extends UserItem<Long, String>{
+	public static class UserName extends UserItem<Long, String> {
 
-		public UserName(UserItem<Long, String> userItem) {
+		public UserName(final UserItem<Long, String> userItem) {
 			super(userItem);
 		}
-		public UserName(Asset eveAsset) {
+		public UserName(final Asset eveAsset) {
 			super(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
 		}
-		public UserName(String value, Long key, String name) {
+		public UserName(final String value, final Long key, final String name) {
 			super(value, key, name);
 		}
 
 		@Override
-		public String toString(){
-			return getValue()+" ["+getName()+"]";
+		public String toString() {
+			return getValue() + " [" + getName() + "]";
 		}
 
 		@Override
@@ -82,7 +82,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		}
 
 		@Override
-		public int compare(UserItem<Long, String> o1, UserItem<Long, String> o2) {
+		public int compare(final UserItem<Long, String> o1, final UserItem<Long, String> o2) {
 			return o1.getValue().compareTo(o2.getValue());
 		}
 	}

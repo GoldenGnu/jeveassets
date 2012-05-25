@@ -24,15 +24,9 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.Dimension;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 
 public class TreeSelectDialog extends JDialogCentered {
 
@@ -49,11 +43,11 @@ public class TreeSelectDialog extends JDialogCentered {
 	private JTree tree;
 	private JScrollPane treeScrollPane;
 
-	public TreeSelectDialog(Program program, String title) {
+	public TreeSelectDialog(final Program program, final String title) {
 		super(program, title);
 		dialog = getDialog();
 		dialog.setResizable(true);
-		dialog.setMinimumSize(new Dimension(300,400));
+		dialog.setMinimumSize(new Dimension(300, 400));
 		leafFilterLabel = new JLabel();
 		leafFilterTextField = new JTextField();
 		filterInfoLabel = new JLabel();
@@ -196,6 +190,6 @@ public class TreeSelectDialog extends JDialogCentered {
 	protected void windowShown() {	}
 
 	@Override
-	protected void save() {	}	
-	
+	protected void save() {	}
+
 }

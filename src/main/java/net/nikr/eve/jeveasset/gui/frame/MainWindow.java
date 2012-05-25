@@ -21,33 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class MainWindow implements WindowListener, ChangeListener {
 
-	private final static Logger LOG = LoggerFactory.getLogger(MainWindow.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
 	//GUI
 	private MainMenu mainMenu;
@@ -66,14 +51,19 @@ public class MainWindow implements WindowListener, ChangeListener {
 	//Data
 	private Program program;
 	private List<JMainTab> tabs = new ArrayList<JMainTab>();
-	
-	public MainWindow(Program program){
+
+	public MainWindow(final Program program) {
 		this.program = program;
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
-		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
-		jFrame.setIconImage(Images.TOOL_ASSETS.getImage());
+		setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
+		jFrame.setAlwaysOnTop(program.getSettings().isWindowAlwaysOnTop());
+		List<Image> icons = new ArrayList<Image>();
+		icons.add(Images.TOOL_ASSETS.getImage());
+		icons.add(Images.MISC_ASSETS_32.getImage());
+		icons.add(Images.MISC_ASSETS_64.getImage());
+		jFrame.setIconImages(icons);
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -85,7 +75,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame.getContentPane().add(jPanel);
 
 		mainMenu = new MainMenu(program);
-		jFrame.setJMenuBar( mainMenu );
+		jFrame.setJMenuBar(mainMenu);
 
 		jTabbedPane = new JTabbedPane();
 		jTabbedPane.addChangeListener(this);
@@ -103,39 +93,41 @@ public class MainWindow implements WindowListener, ChangeListener {
 		);
 	}
 
-	final public void updateTitle(){
-    jFrame.setTitle(GuiFrame.get().windowTitle(
-            Program.PROGRAM_NAME,
-            Program.PROGRAM_VERSION,
-            Settings.isPortable() ? 1 : 0,
-            program.getSettings().getProfiles().size(),
-            program.getSettings().getActiveProfile().getName()
-            ));
+	public final void updateTitle() {
+		jFrame.setTitle(GuiFrame.get().windowTitle(
+						Program.PROGRAM_NAME,
+						Program.PROGRAM_VERSION,
+						Settings.isPortable() ? 1 : 0,
+						program.getSettings().getProfiles().size(),
+						program.getSettings().getActiveProfile().getName()
+						));
 	}
-	
-	public void addTab(JMainTab jMainTab){
+
+	public void addTab(final JMainTab jMainTab) {
 		addTab(jMainTab, true);
 	}
 
-	public void addTab(JMainTab jMainTab, boolean focus){
-		if (!tabs.contains(jMainTab)){
-			LOG.info("Opening tab: "+jMainTab.getTitle());
+	public void addTab(final JMainTab jMainTab, final boolean focus) {
+		if (!tabs.contains(jMainTab)) {
+			LOG.info("Opening tab: " + jMainTab.getTitle());
 			jMainTab.updateData();
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
 		} else {
-			LOG.info("Focusing tab: "+jMainTab.getTitle());
+			LOG.info("Focusing tab: " + jMainTab.getTitle());
 		}
-		if (focus) jTabbedPane.setSelectedComponent(jMainTab.getPanel());
+		if (focus) {
+			jTabbedPane.setSelectedComponent(jMainTab.getPanel());
+		}
 	}
 
-	public JMainTab getSelectedTab(){
+	public JMainTab getSelectedTab() {
 		return tabs.get(jTabbedPane.getSelectedIndex());
 	}
 
-	public void removeTab(JMainTab jMainTab){
-		LOG.info("Closing tab: "+jMainTab.getTitle());
+	public void removeTab(final JMainTab jMainTab) {
+		LOG.info("Closing tab: " + jMainTab.getTitle());
 		int index = tabs.indexOf(jMainTab);
 		jTabbedPane.removeTabAt(index);
 		tabs.remove(index);
@@ -149,49 +141,61 @@ public class MainWindow implements WindowListener, ChangeListener {
 		return mainMenu;
 	}
 
-	public void show(){
+	public void show() {
 		jFrame.setVisible(true);
 	}
 
-	public final void setSizeAndLocation(Dimension windowSize, Point windowLocation, boolean windowMaximized) {
+	public final void setSizeAndLocation(final Dimension windowSize, final Point windowLocation, final boolean windowMaximized) {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
 		//Fix size
-		if (windowSize.width > screen.width) windowSize.width = screen.width;
-		if (windowSize.height > screen.height) windowSize.height = screen.height;
-		if (windowSize.width < 200) windowSize.width = 200;
-		if (windowSize.height < 200) windowSize.height = 200;
+		if (windowSize.width > screen.width) {
+			windowSize.width = screen.width;
+		}
+		if (windowSize.height > screen.height) {
+			windowSize.height = screen.height;
+		}
+		if (windowSize.width < 200) {
+			windowSize.width = 200;
+		}
+		if (windowSize.height < 200) {
+			windowSize.height = 200;
+		}
 
 		//Fix location
-		if (windowLocation.x + windowSize.width > screen.width){
+		if (windowLocation.x + windowSize.width > screen.width) {
 			windowLocation.x = screen.width - windowSize.width;
 		}
-		if (windowLocation.y + windowSize.height > screen.height){
+		if (windowLocation.y + windowSize.height > screen.height) {
 			windowLocation.y = screen.height - windowSize.height;
 		}
-		if (windowLocation.x < 0) windowLocation.x = 0;
-		if (windowLocation.y < 0) windowLocation.y = 0;
+		if (windowLocation.x < 0) {
+			windowLocation.x = 0;
+		}
+		if (windowLocation.y < 0) {
+			windowLocation.y = 0;
+		}
 
 		//Set location, size, and state
 		jFrame.setLocation(windowLocation);
 		jFrame.setSize(windowSize);
-		if (windowMaximized){
+		if (windowMaximized) {
 			jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		} else {
 			jFrame.setExtendedState(JFrame.NORMAL);
 		}
-    }
+	}
 
-	public void setEnabled(boolean b) {
-		if (b){
+	public void setEnabled(final boolean b) {
+		if (b) {
 			jFrame.setCursor(null);
 		} else {
 			jFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		}
-       jFrame.setEnabled(b);
-    }
+		jFrame.setEnabled(b);
+	}
 
-	public JFrame getFrame(){
+	public JFrame getFrame() {
 		return jFrame;
 	}
 
@@ -199,58 +203,58 @@ public class MainWindow implements WindowListener, ChangeListener {
 		return statusPanel;
 	}
 
-	public void updateSettings(){
-		if (program.getSettings().isWindowAutoSave()){
-			program.getSettings().setWindowMaximized( (jFrame.getState() == JFrame.MAXIMIZED_BOTH) );
-			if (jFrame.getExtendedState() != JFrame.MAXIMIZED_BOTH){
+	public void updateSettings() {
+		if (program.getSettings().isWindowAutoSave()) {
+			program.getSettings().setWindowMaximized(jFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH);
+			if (jFrame.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
 				program.getSettings().setWindowSize(jFrame.getSize());
 				program.getSettings().setWindowLocation(jFrame.getLocation());
 			}
 		}
 	}
-	
-	@Override
-	public void windowOpened(WindowEvent e) {}
 
 	@Override
-	public void windowClosing(WindowEvent e) {
+	public void windowOpened(final WindowEvent e) { }
+
+	@Override
+	public void windowClosing(final WindowEvent e) {
 		program.exit();
 	}
 
 	@Override
-	public void windowClosed(WindowEvent e) {}
+	public void windowClosed(final WindowEvent e) { }
 
 	@Override
-	public void windowIconified(WindowEvent e) {}
+	public void windowIconified(final WindowEvent e) { }
 
 	@Override
-	public void windowDeiconified(WindowEvent e) {}
+	public void windowDeiconified(final WindowEvent e) { }
 
 	@Override
-	public void windowActivated(WindowEvent e) {}
+	public void windowActivated(final WindowEvent e) { }
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {}
+	public void windowDeactivated(final WindowEvent e) { }
 
 	@Override
-	public void stateChanged(ChangeEvent e) {
+	public void stateChanged(final ChangeEvent e) {
 		program.tabChanged();
 	}
 
-	private class TabCloseButton extends JPanel{
+	private class TabCloseButton extends JPanel {
 
 		public TabCloseButton(final JMainTab jMainTab) {
 			super(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			this.setOpaque(false);
 			JLabel jTitle = new JLabel(jMainTab.getTitle(), jMainTab.getIcon(), SwingConstants.LEFT);
 			add(jTitle);
-			if (jMainTab.isCloseable()){
+			if (jMainTab.isCloseable()) {
 				this.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mousePressed(MouseEvent e) {
-						if (e.getButton() == MouseEvent.BUTTON2){
+					public void mousePressed(final MouseEvent e) {
+						if (e.getButton() == MouseEvent.BUTTON2) {
 							removeTab(jMainTab);
-						} else if (e.getButton() == MouseEvent.BUTTON1){
+						} else if (e.getButton() == MouseEvent.BUTTON1) {
 							jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 						}
 					}
@@ -268,15 +272,15 @@ public class MainWindow implements WindowListener, ChangeListener {
 				jClose.setRolloverEnabled(true);
 				jClose.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mousePressed(MouseEvent e) {
-						if (e.getButton() == MouseEvent.BUTTON2){
+					public void mousePressed(final MouseEvent e) {
+						if (e.getButton() == MouseEvent.BUTTON2) {
 							removeTab(jMainTab);
 						}
 					}
 				});
-				jClose.addActionListener( new ActionListener() {
+				jClose.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
+					public void actionPerformed(final ActionEvent e) {
 						removeTab(jMainTab);
 					}
 				});

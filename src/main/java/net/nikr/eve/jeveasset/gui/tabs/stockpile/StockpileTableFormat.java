@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -35,8 +36,18 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getName();
+		}
+	},
+	GROUP(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnGroup();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getGroup();
 		}
 	},
 	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
@@ -45,19 +56,16 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountMinimum();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getCountMinimum();
 		}
 		@Override
-		public boolean isColumnEditable(Object baseObject) {
-			if (baseObject instanceof StockpileTotal){
-				return false;
-			} else {
-				return true;
-			}
+		public boolean isColumnEditable(final Object baseObject) {
+			return !(baseObject instanceof StockpileTotal);
 		}
-		@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
-			if ((editedValue instanceof Long) && (baseObject instanceof StockpileItem)){
+
+		@Override public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
+			if ((editedValue instanceof Long) && (baseObject instanceof StockpileItem)) {
 				StockpileItem item = (StockpileItem) baseObject;
 				long l = (Long) editedValue;
 				item.setCountMinimum(l);
@@ -72,7 +80,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNow();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getCountNow();
 		}
 	},
@@ -82,8 +90,18 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNeeded();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getCountNeeded();
+		}
+	},
+	PERCENT_NEEDED(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnPercentNeeded();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return new Percent(from.getPercentNeeded());
 		}
 	},
 	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {
@@ -92,7 +110,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNowInventory();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getInventoryCountNow();
 		}
 	},
@@ -102,7 +120,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNowBuyOrders();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getBuyOrdersCountNow();
 		}
 	},
@@ -112,7 +130,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNowSellOrders();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getSellOrdersCountNow();
 		}
 	},
@@ -122,7 +140,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnCountNowJobs();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getJobsCountNow();
 		}
 	},
@@ -132,7 +150,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getPrice();
 		}
 	},
@@ -142,7 +160,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnValueNow();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getValueNow();
 		}
 	},
@@ -152,7 +170,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnValueNeeded();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getValueNeeded();
 		}
 	},
@@ -162,7 +180,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnVolumeNow();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getVolumeNow();
 		}
 	},
@@ -172,15 +190,15 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return TabsStockpile.get().columnVolumeNeeded();
 		}
 		@Override
-		public Object getColumnValue(StockpileItem from) {
+		public Object getColumnValue(final StockpileItem from) {
 			return from.getVolumeNeeded();
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private StockpileTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+
+	private StockpileTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -192,25 +210,21 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override
-	public String getColumnName() {
-		return getColumnName();
-	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(StockpileItem from) {
-		return getColumnValue(from);
-	}
+
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
-	@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
-
-	
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override public abstract Object getColumnValue(final StockpileItem from);
+	//XXX - TableFormat.getColumnName(...) Workaround
+	@Override public abstract String getColumnName();
 }

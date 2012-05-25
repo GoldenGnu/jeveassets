@@ -91,7 +91,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 			String getI18N() {
 				return DataModelIndustryJob.get().stateDestroyed();
 			}
-		},;
+		};
 		abstract String getI18N();
 		@Override
 		public String toString() {
@@ -142,7 +142,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				return DataModelIndustryJob.get().activityCopying();
 			}
 			@Override
-			public String getDescriptionOf(IndustryJob job) {
+			public String getDescriptionOf(final IndustryJob job) {
 				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
 				return DataModelIndustryJob.get().descriptionCopying(
 						String.valueOf(job.getInstalledItemTypeID()),
@@ -168,7 +168,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 			String getI18N() {
 				return DataModelIndustryJob.get().activityReverseInvention();
 			}
-		},;
+		};
 		abstract String getI18N();
 		@Override
 		public String toString() {
@@ -179,7 +179,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		 * @param job
 		 * @return a single line, human readable description of the job.
 		 */
-		public String getDescriptionOf(IndustryJob job) {
+		public String getDescriptionOf(final IndustryJob job) {
 			return toString();
 		}
 	}
@@ -192,7 +192,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private String region;
 	private String owner = "";
 
-	public IndustryJob(ApiIndustryJob apiIndustryJob, String name, String location, String system, String region, String owner) {
+	public IndustryJob(final ApiIndustryJob apiIndustryJob, final String name, final String location, final String system, final String region, final String owner) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -296,7 +296,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	}
 
 	@Override
-	public int compareTo(IndustryJob o) {
+	public int compareTo(final IndustryJob o) {
 		return 0;
 	}
 

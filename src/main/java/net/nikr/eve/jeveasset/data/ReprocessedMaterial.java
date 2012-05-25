@@ -23,11 +23,11 @@ package net.nikr.eve.jeveasset.data;
 
 
 public class ReprocessedMaterial {
-	int typeID; //TypeID : int
-	int quantity;
-	int portionSize;
+	private int typeID; //TypeID : int
+	private int quantity;
+	private int portionSize;
 
-	public ReprocessedMaterial(int typeID, int quantity, int portionSize) {
+	public ReprocessedMaterial(final int typeID, final int quantity, final int portionSize) {
 		this.typeID = typeID;
 		this.quantity = quantity;
 		this.portionSize = portionSize;

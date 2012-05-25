@@ -16,6 +16,48 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.2.0__________________________________________________________________________
+
+New Features:
+-New Tool: Items (items database)
+-Table menu now works with multiple selection
+-Added EveMarketeer (As price source and to the lookup menu)
+-Added Eve Addicts to the lookup menu (eve.addicts.nl)
+-Market Orders: Added info to the statusbar
+-Industry Jobs: Added invention success to the statusbar
+-Stockpile: Added percent full column
+-Hide/show columns now has Its own dialog
+-Market Orders: Joined the Buy and Sell table
+-Market Orders/Industry Jobs: Added some predefined filters
+-Filter Manager: Can now delete multiple items at once
+-Eve-MarketData: Added support for region selection
+-Added better program icons (for windows 7 taskbar etc.)
+-Added Flag path (as suggested by Scrapyard Bob)
+-Added window Always On Top option
+-Stockpile: Added table sorting
+-Assets: Added reprocessed value to the statusbar
+-Assets: Added Buy Orders (Optional) (Sell orders are now optional as well)
+
+Changed:
+-Removed support for prices.c0rporation.com
+-CSV Export: Now remember selected columns (again)
+-Tables: Columns auto resizing is now optional (again)
+-Highlight selected row(s) now work on all filter tools
+-Only filter on enter now works again and for all filter tools
+-Static data updated to Inferno 1.0.70633
+
+Bug Fixes:
+-Fixed a rare bug in the save filter dialog (text was locked)
+-Fixed a translation bug in Price Data Settings
+
+________________________________________________________________________________
+_2.1.1__________________________________________________________________________
+
+Bug Fixes:
+-CSV Export: Saved/Current Filter is broken
+-Load Filter: Scroll when needed (Also work with mouse wheel)
+
+________________________________________________________________________________
 _2.1.0__________________________________________________________________________
 
 New Features:

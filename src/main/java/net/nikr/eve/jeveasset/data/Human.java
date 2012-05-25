@@ -44,7 +44,7 @@ public class Human implements Comparable<Human> {
 	private List<ApiIndustryJob> industryJobs;
 	private List<Asset> assets;
 
-	public Human(Account parentAccount, Human human) {
+	public Human(final Account parentAccount, final Human human) {
 		name = human.getName();
 		ownerID = human.getOwnerID();
 		showAssets = human.isShowAssets();
@@ -59,11 +59,11 @@ public class Human implements Comparable<Human> {
 		assets = human.getAssets();
 	}
 
-	public Human(Account parentAccount, String name, long ownerID) {
+	public Human(final Account parentAccount, final String name, final long ownerID) {
 		this(parentAccount, name, ownerID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
 	}
 
-	public Human(Account parentAccount, String name, long ownerID, boolean showAssets, Date assetNextUpdate, Date balanceNextUpdate, Date marketOrdersNextUpdate, Date industryJobsNextUpdate) {
+	public Human(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date industryJobsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
@@ -80,47 +80,47 @@ public class Human implements Comparable<Human> {
 		industryJobs = new  ArrayList<ApiIndustryJob>();
 	}
 
-	public void setAccountBalances(List<EveAccountBalance> accountBalances) {
+	public void setAccountBalances(final List<EveAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
-	public void setAssets(List<Asset> assets) {
+	public void setAssets(final List<Asset> assets) {
 		this.assets = assets;
 	}
 
-	public void setAssetNextUpdate(Date nextUpdate) {
+	public void setAssetNextUpdate(final Date nextUpdate) {
 		this.assetNextUpdate = nextUpdate;
 	}
 
-	public void setBalanceNextUpdate(Date balanceNextUpdate) {
+	public void setBalanceNextUpdate(final Date balanceNextUpdate) {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setOwnerID(long ownerID) {
+	public void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
 
-	public void setIndustryJobs(List<ApiIndustryJob> industryJobs) {
+	public void setIndustryJobs(final List<ApiIndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
-	public void setIndustryJobsNextUpdate(Date industryJobsNextUpdate) {
+	public void setIndustryJobsNextUpdate(final Date industryJobsNextUpdate) {
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 	}
 
-	public void setMarketOrders(List<ApiMarketOrder> marketOrders) {
+	public void setMarketOrders(final List<ApiMarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
-	public void setMarketOrdersNextUpdate(Date marketOrdersNextUpdate) {
+	public void setMarketOrdersNextUpdate(final Date marketOrdersNextUpdate) {
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setShowAssets(boolean showAssets) {
+	public void setShowAssets(final boolean showAssets) {
 		this.showAssets = showAssets;
 	}
 
@@ -131,15 +131,15 @@ public class Human implements Comparable<Human> {
 	public boolean isCorporation() {
 		return parentAccount.isCorporation();
 	}
-	
-	public boolean isCharacter(){
+
+	public boolean isCharacter() {
 		return parentAccount.isCharacter();
 	}
 
 	public List<EveAccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
-	
+
 	public List<Asset> getAssets() {
 		return assets;
 	}
@@ -175,13 +175,13 @@ public class Human implements Comparable<Human> {
 	public String getName() {
 		return name;
 	}
-	
+
 	public Account getParentAccount() {
 		return parentAccount;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -205,24 +205,24 @@ public class Human implements Comparable<Human> {
 		hash = 89 * hash + (this.parentAccount != null ? this.parentAccount.hashCode() : 0);
 		return hash;
 	}
-	
+
 	@Override
-	public int compareTo(Human o) {
+	public int compareTo(final Human o) {
 		return this.getName().compareTo(o.getName());
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getName();
 	}
 
-	public static ApiAuthorization getApiAuthorization(Account account){
+	public static ApiAuthorization getApiAuthorization(final Account account) {
 		return getApiAuthorization(account, 0);
 	}
-	public static ApiAuthorization getApiAuthorization(Human human){
+	public static ApiAuthorization getApiAuthorization(final Human human) {
 		return getApiAuthorization(human.getParentAccount(), human.getOwnerID());
 	}
-	private static ApiAuthorization getApiAuthorization(Account account, long characterID){
+	private static ApiAuthorization getApiAuthorization(final Account account, final long characterID) {
 		return new ApiAuthorization(account.getKeyID(), characterID, account.getVCode());
 	}
 }

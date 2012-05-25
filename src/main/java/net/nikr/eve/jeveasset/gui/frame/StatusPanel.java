@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.frame;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -32,13 +31,13 @@ import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
 public class StatusPanel extends JGroupLayoutPanel {
-	
+
 	//GUI
-	
 	private JLabel jEveTime;
 	private JLabel jUpdatable;
 	private JToolBar jToolBar;
@@ -46,21 +45,19 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 	private List<JLabel> programStatus = new ArrayList<JLabel>();
 
-	public StatusPanel(Program program) {
+	public StatusPanel(final Program program) {
 		super(program);
-		
+
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
 
 		jToolBar = new JToolBar();
 		jToolBar.setFloatable(false);
 		jToolBar.setRollover(false);
-		
-		
 
 		jUpdatable = createIcon(Images.DIALOG_UPDATE.getIcon(), GuiFrame.get().updatable());
 		programStatus.add(jUpdatable);
-		
+
 		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
@@ -74,18 +71,18 @@ public class StatusPanel extends JGroupLayoutPanel {
 		);
 	}
 
-	public void tabChanged(){
+	public void tabChanged() {
 		doLayout();
 	}
-	
-	private void doLayout(){
+
+	private void doLayout() {
 		jToolBar.removeAll();
 		addSpace(5);
-		for (JLabel jLabel : programStatus){
+		for (JLabel jLabel : programStatus) {
 			jToolBar.add(jLabel);
 			addSpace(10);
 		}
-		for (JLabel jLabel : program.getMainWindow().getSelectedTab().getStatusbarLabels()){
+		for (JLabel jLabel : program.getMainWindow().getSelectedTab().getStatusbarLabels()) {
 			jToolBar.add(jLabel);
 			addSpace(10);
 		}
@@ -94,9 +91,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 	}
 
-	public void timerTicked(boolean updatable){
+	public void timerTicked(final boolean updatable) {
 		jEveTime.setText(GuiFrame.get().eveTime(Settings.getGmtNow()));
-		if (updatable){
+		if (updatable) {
 			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());
 		} else {
@@ -105,18 +102,18 @@ public class StatusPanel extends JGroupLayoutPanel {
 		}
 	}
 
-	public static JLabel createIcon(Icon icon, String toolTip){
+	public static JLabel createIcon(final Icon icon, final String toolTip) {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
 		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
-		jLabel.setMinimumSize( new Dimension(25, 25) );
-		jLabel.setPreferredSize( new Dimension(25, 25));
-		jLabel.setMaximumSize( new Dimension(25, 25));
+		jLabel.setMinimumSize(new Dimension(25, 25));
+		jLabel.setPreferredSize(new Dimension(25, 25));
+		jLabel.setMaximumSize(new Dimension(25, 25));
 		jLabel.setHorizontalAlignment(JLabel.CENTER);
 		jLabel.setToolTipText(toolTip);
 		return jLabel;
 	}
-	public static JLabel createLabel(String toolTip, Icon icon){
+	public static JLabel createLabel(final String toolTip, final Icon icon) {
 		JLabel jLabel = new JLabel();
 		jLabel.setIcon(icon);
 		jLabel.setForeground(jLabel.getBackground().darker().darker().darker());
@@ -124,11 +121,11 @@ public class StatusPanel extends JGroupLayoutPanel {
 		jLabel.setHorizontalAlignment(JLabel.LEFT);
 		return jLabel;
 	}
-	private void addSpace(int width){
+	private void addSpace(final int width) {
 		JLabel jSpace = new JLabel();
-		jSpace.setMinimumSize( new Dimension(width, 25) );
-		jSpace.setPreferredSize( new Dimension(width, 25));
-		jSpace.setMaximumSize( new Dimension(width, 25));
+		jSpace.setMinimumSize(new Dimension(width, 25));
+		jSpace.setPreferredSize(new Dimension(width, 25));
+		jSpace.setMaximumSize(new Dimension(width, 25));
 		jToolBar.add(jSpace);
 	}
 }

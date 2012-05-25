@@ -38,11 +38,11 @@ public abstract class JSettingsPanel {
 	protected Window parent;
 	protected DefaultMutableTreeNode treeNode;
 
-	public JSettingsPanel(Program program, SettingsDialog optionsDialog, String title, Icon icon) {
+	public JSettingsPanel(final Program program, final SettingsDialog optionsDialog, final String title, final Icon icon) {
 		this(program, optionsDialog, title, icon, null);
 	}
 
-	public JSettingsPanel(Program program, SettingsDialog optionsDialog, String title, Icon icon, DefaultMutableTreeNode parentNode) {
+	public JSettingsPanel(final Program program, final SettingsDialog optionsDialog, final String title, final Icon icon, final DefaultMutableTreeNode parentNode) {
 		this.program = program;
 		this.title = title;
 		this.parent = optionsDialog.getDialog();

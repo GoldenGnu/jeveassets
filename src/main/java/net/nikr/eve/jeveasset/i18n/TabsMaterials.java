@@ -30,11 +30,11 @@ public abstract class TabsMaterials extends Bundle {
 		return BundleCache.get(TabsMaterials.class);
 	}
 
-	public static TabsMaterials get(Locale locale) {
+	public static TabsMaterials get(final Locale locale) {
 		return BundleCache.get(TabsMaterials.class, locale);
 	}
 
-	public TabsMaterials(Locale locale) {
+	public TabsMaterials(final Locale locale) {
 		super(locale);
 	}
 

@@ -33,16 +33,16 @@ public class Module implements Comparable<Module> {
 	private String location;
 	private String flag;
 	private String owner;
-	private double price;
+	private Double price;
 	private double value;
 	private long count;
 	private boolean marketGroup;
-	private int typeID; //TypeID : int
+	private Integer typeID; //TypeID : int
 	private String system;
 	private String region;
 	private boolean first = false;
 
-	public Module(Asset eveAsset, String name, String typeName, String key, String flag, double price, double value, long count, boolean marketGroup, int typeID) {
+	public Module(final Asset eveAsset, final String name, final String typeName, final String key, final String flag, final Double price, final double value, final long count, final boolean marketGroup, final Integer typeID) {
 		this.name = name;
 		this.typeName = typeName;
 		this.key = key;
@@ -58,40 +58,88 @@ public class Module implements Comparable<Module> {
 		this.typeID = typeID;
 	}
 
-	private String convertFlat(String s){
-		if (s.contains("Total Value")) return "1Total Value";
-		if (s.contains("HiSlot")) return "2High Slots";
-		if (s.contains("MedSlot")) return "3Medium Slots";
-		if (s.contains("LoSlot")) return "4Low Slots";
-		if (s.contains("RigSlot")) return "5Rig Slots";
-		if (s.contains("SubSystem")) return "6Sub Systems";
-		if (s.contains("DroneBay")) return "7Drone Bay";
-		if (s.contains("SpecializedFuelBay")) return "8Fuel Bay";
-		if (s.contains("SpecializedOreHold")) return "8Ore Bay";
-		if (s.contains("SpecializedGasHold")) return "8Gas Bay";
-		if (s.contains("SpecializedMineralHold")) return "8Mineral Bay";
-		if (s.contains("SpecializedSalvageHold")) return "8Salvage Bay";
-		if (s.contains("SpecializedShipHold")) return " Ship Bay";
-		if (s.contains("SpecializedSmallShipHold")) return "8Small Ship Bay";
-		if (s.contains("SpecializedMediumShipHold")) return "8Medium Ship Bay";
-		if (s.contains("SpecializedLargeShipHold")) return "8Large Ship Bay";
-		if (s.contains("SpecializedIndustrialShipHold")) return "8Industrial Ship Bay";
-		if (s.contains("SpecializedAmmoHold")) return "8Ammo Bay";
-		return "8"+s;
+	private String convertFlat(final String s) {
+		if (s.contains("Total Value")) {
+			return "1Total Value";
+		}
+		if (s.contains("HiSlot")) {
+			return "2High Slots";
+		}
+		if (s.contains("MedSlot")) {
+			return "3Medium Slots";
+		}
+		if (s.contains("LoSlot")) {
+			return "4Low Slots";
+		}
+		if (s.contains("RigSlot")) {
+			return "5Rig Slots";
+		}
+		if (s.contains("SubSystem")) {
+			return "6Sub Systems";
+		}
+		if (s.contains("DroneBay")) {
+			return "7Drone Bay";
+		}
+		if (s.contains("Cargo")) {
+			return "8Cargo";
+		}
+		if (s.contains("SpecializedFuelBay")) {
+			return "9Fuel Bay";
+		}
+		if (s.contains("SpecializedOreHold")) {
+			return "9Ore Bay";
+		}
+		if (s.contains("SpecializedGasHold")) {
+			return "9Gas Bay";
+		}
+		if (s.contains("SpecializedMineralHold")) {
+			return "9Mineral Bay";
+		}
+		if (s.contains("SpecializedSalvageHold")) {
+			return "9Salvage Bay";
+		}
+		if (s.contains("SpecializedShipHold")) {
+			return "9Ship Bay";
+		}
+		if (s.contains("SpecializedSmallShipHold")) {
+			return "9Small Ship Bay";
+		}
+		if (s.contains("SpecializedMediumShipHold")) {
+			return "9Medium Ship Bay";
+		}
+		if (s.contains("SpecializedLargeShipHold")) {
+			return "9Large Ship Bay";
+		}
+		if (s.contains("SpecializedIndustrialShipHold")) {
+			return "9Industrial Ship Bay";
+		}
+		if (s.contains("SpecializedAmmoHold")) {
+			return "9Ammo Bay";
+		}
+		if (s.contains("QuafeBay")) {
+			return "9Quafe Bay";
+		}
+		if (s.contains("SpecializedCommandCenterHold")) {
+			return "9Command Center Bay";
+		}
+		if (s.contains("SpecializedPlanetaryCommoditiesHold")) {
+			return "9Planetary Commodities Bay";
+		}
+		return "10" + s;
 	}
 
-	public void addCount(long count){
-		this.count = this.count + count;
+	public void addCount(final long addCount) {
+		this.count = this.count + addCount;
 	}
-	public void addValue(double value){
-		this.value = this.value + value;
+	public void addValue(final double addValue) {
+		this.value = this.value + addValue;
 	}
 
 	public long getCount() {
 		return count;
 	}
-	
-	public double getPrice() {
+
+	public Double getPrice() {
 		return price;
 	}
 
@@ -100,8 +148,8 @@ public class Module implements Comparable<Module> {
 	}
 
 	public String getName() {
-		if (getCount() > 1){
-			return getCount()+"x "+name.substring(1);
+		if (getCount() > 1) {
+			return getCount() + "x " + name.substring(1);
 		} else {
 			return name.substring(1);
 		}
@@ -127,7 +175,7 @@ public class Module implements Comparable<Module> {
 		return system;
 	}
 
-	public int getTypeID() {
+	public Integer getTypeID() {
 		return typeID;
 	}
 
@@ -135,7 +183,7 @@ public class Module implements Comparable<Module> {
 		return typeName;
 	}
 
-	public ModulePriceValue getModulePriceValue(){
+	public ModulePriceValue getModulePriceValue() {
 		return new ModulePriceValue(price, value, count);
 	}
 
@@ -143,24 +191,24 @@ public class Module implements Comparable<Module> {
 		return first;
 	}
 
-	public void first(){
+	public void first() {
 		first = true;
 	}
 
-	public String getKey(){
+	public String getKey() {
 		return key;
 	}
 
-	public String getSeperator(){
+	public String getSeperator() {
 		return convertFlat(flag);
 	}
 
 	protected String getCompare() {
-		return key+convertFlat(flag)+flag+name;
+		return key + convertFlat(flag) + flag + name;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -193,21 +241,21 @@ public class Module implements Comparable<Module> {
 		return hash;
 	}
 	/***
-	 * Used by Collections.sort(...);
+	 * Used by Collections.sort(...).
 	 * @param o
 	 * @return
 	 */
 	@Override
-	public int compareTo(Module o) {
+	public int compareTo(final Module o) {
 		return this.getCompare().compareTo(o.getCompare());
 	}
 
-	public static class ModulePriceValue{
-		private double price;
+	public static class ModulePriceValue {
+		private Double price;
 		private double value;
 		private long count;
 
-		public ModulePriceValue(double price, double value, long count) {
+		public ModulePriceValue(final Double price, final double value, final long count) {
 			this.price = price;
 			this.value = value;
 			this.count = count;
@@ -215,24 +263,24 @@ public class Module implements Comparable<Module> {
 
 		@Override
 		public String toString() {
-			if (count > 1){
-				return Formater.iskFormat(price)+" ("+Formater.iskFormat(value)+")";
+			if (count > 1 && price != null) {
+				return Formater.iskFormat(price) + " (" + Formater.iskFormat(value) + ")";
 			} else {
 				return Formater.iskFormat(value);
 			}
 		}
 	}
 
-	public static class ModuleMatcher implements Matcher<Module>{
+	public static class ModuleMatcher implements Matcher<Module> {
 
 		private String key;
 
-		public ModuleMatcher(String key) {
+		public ModuleMatcher(final String key) {
 			this.key = key;
 		}
 
 		@Override
-		public boolean matches(Module item) {
+		public boolean matches(final Module item) {
 			return item.getKey().equals(key);
 		}
 

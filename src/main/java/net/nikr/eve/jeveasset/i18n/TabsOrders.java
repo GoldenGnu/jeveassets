@@ -30,16 +30,18 @@ public abstract class TabsOrders extends Bundle {
 		return BundleCache.get(TabsOrders.class);
 	}
 
-	public static TabsOrders get(Locale locale) {
+	public static TabsOrders get(final Locale locale) {
 		return BundleCache.get(TabsOrders.class, locale);
 	}
 
-	public TabsOrders(Locale locale) {
+	public TabsOrders(final Locale locale) {
 		super(locale);
 	}
 
+	public abstract String activeBuyOrders();
+	public abstract String activeSellOrders();
 	public abstract String buy();
-	public abstract String buy1();
+	public abstract String columnOrderType();
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
@@ -53,8 +55,23 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnLocation();
 	public abstract String columnRegion();
 	public abstract String market();
-	public abstract String no();
+	public abstract String rangeStation();
+	public abstract String rangeSolarSystem();
+	public abstract String rangeRegion();
+	public abstract String rangeJump();
+	public abstract String rangeJumps(int range);
 	public abstract String sell();
-	public abstract String sell1();
+	public abstract String statusActive();
+	public abstract String statusClosed();
+	public abstract String statusFulfilled();
+	public abstract String statusExpired();
+	public abstract String statusPartiallyFulfilled();
+	public abstract String statusCancelled();
+	public abstract String statusPending();
+	public abstract String statusCharacterDeleted();
+	public abstract String totalSellOrders();
+	public abstract String totalBuyOrders();
+	public abstract String totalEscrow();
+	public abstract String totalToCover();
 	public abstract String whitespace(Object arg0);
 }

@@ -31,11 +31,11 @@ public abstract class GuiFrame extends Bundle {
 		return BundleCache.get(GuiFrame.class);
 	}
 
-	public static GuiFrame get(Locale locale) {
+	public static GuiFrame get(final Locale locale) {
 		return BundleCache.get(GuiFrame.class, locale);
 	}
 
-	public GuiFrame(Locale locale) {
+	public GuiFrame(final Locale locale) {
 		super(locale);
 	}
 
@@ -48,6 +48,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String exit();
 	public abstract String file();
 	public abstract String help();
+	public abstract String items();
 	public abstract String industry();
 	public abstract String industryPlot();
 	public abstract String license();

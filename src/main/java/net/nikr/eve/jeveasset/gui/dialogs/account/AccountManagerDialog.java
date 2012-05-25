@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
@@ -29,42 +28,38 @@ import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Dimension;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
 public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
 
 	// TODO action enum - more string enum pattern, to be converted to an enum
-	private final static String ACTION_ADD = "ACTION_ADD";
-	private final static String ACTION_CLOSE = "ACTION_CLOSE";
-	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private final static String ACTION_EXPAND = "ACTION_EXPAND";
-	private final static String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
-	private final static String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
-	private final static String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
-	private final static String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
-	
+	private static final String ACTION_ADD = "ACTION_ADD";
+	private static final String ACTION_CLOSE = "ACTION_CLOSE";
+	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
+	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private static final String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
+	private static final String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
+	private static final String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
+	private static final String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
+
 	//GUI
 	private AccountImportDialog accountImportDialog;
 	private JSeparatorTable jTable;
@@ -81,7 +76,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private Map<Human, Boolean> shownAssets;
 	private boolean forceUpdate = false;
 
-	public AccountManagerDialog(Program program) {
+	public AccountManagerDialog(final Program program) {
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
@@ -91,7 +86,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
 		EnumTableFormatAdaptor<HumanTableFormat, Human> humanTableFormat = new EnumTableFormatAdaptor<HumanTableFormat, Human>(HumanTableFormat.class);
 		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
-		jTable = new JSeparatorTable(tableModel);
+		jTable = new JSeparatorTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
 		jTable.setSeparatorEditor(new HumanSeparatorTableCell(this, jTable, separatorList));
@@ -99,7 +94,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		
+
 		selectionModel = new EventSelectionModel<Human>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
@@ -125,12 +120,12 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		menuItem.setActionCommand(ACTION_ASSETS_CHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
-		
+
 		menuItem = new JMenuItem(DialoguesAccount.get().uncheckAll());
 		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_ALL);
 		menuItem.addActionListener(this);
 		jAssets.add(menuItem);
-		
+
 		jAssets.addSeparator();
 
 		menuItem = new JMenuItem(DialoguesAccount.get().checkSelected());
@@ -159,7 +154,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addGap(0, 0, Short.MAX_VALUE)
-					.addComponent(jAssets, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20, Program.BUTTONS_WIDTH+20)
+					.addComponent(jAssets, Program.BUTTONS_WIDTH + 20, Program.BUTTONS_WIDTH + 20, Program.BUTTONS_WIDTH + 20)
 				)
 		);
 		layout.setVerticalGroup(
@@ -172,7 +167,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				)
 				.addComponent(jTableScroll, 300, 300, Short.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				
 		);
 		// Pack then take the dialog dimensions to use as the minimun dimension.
 		getDialog().pack();
@@ -181,22 +175,21 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		getDialog().setResizable(true);
 	}
 
-	public void forceUpdate(){
+	public void forceUpdate() {
 		forceUpdate = true;
 	}
 
-	public void updateTable(){
+	public void updateTable() {
 		//Update rows (Add all rows)
-		
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
 				eventList.add(human);
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
-		if (!eventList.isEmpty()){
+		if (!eventList.isEmpty()) {
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -208,24 +201,24 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		}
 	}
 
-	private void checkAssets(boolean selected, boolean check){
-		if (selected){ //Set selected to check value
+	private void checkAssets(final boolean selected, final boolean check) {
+		if (selected) { //Set selected to check value
 			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++){
+			for (int a = 0; a < selectedRows.length; a++) {
 				Object o = tableModel.getElementAt(selectedRows[a]);
-				if (o instanceof Human){
+				if (o instanceof Human) {
 					Human human = (Human) o;
 					human.setShowAssets(check);
 				}
 			}
 		} else { //Set all the check value
-			for (Account account : program.getSettings().getAccounts()){
-				for (Human human : account.getHumans()){
+			for (Account account : program.getSettings().getAccounts()) {
+				for (Human human : account.getHumans()) {
 					human.setShowAssets(check);
 				}
 			}
 		}
-		for (int row = 0; row < jTable.getRowCount(); row++){
+		for (int row = 0; row < jTable.getRowCount(); row++) {
 			tableModel.fireTableCellUpdated(row, 0);
 		}
 	}
@@ -242,7 +235,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected void windowShown() {
-		if (program.getSettings().getAccounts().isEmpty()){
+		if (program.getSettings().getAccounts().isEmpty()) {
 			accountImportDialog.show();
 		}
 	}
@@ -250,29 +243,31 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	@Override
 	protected void save() {
 		boolean changed = false;
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (!shownAssets.containsKey(human)){ //New account
-					if (human.isShowAssets())  changed = true; //if shown: Updated
-				} else if (human.isShowAssets() != shownAssets.get(human)){ //Old account changed: Update
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
+				if (!shownAssets.containsKey(human)) { //New account
+					if (human.isShowAssets()) { //if shown: Updated
+						changed = true;
+					}
+				} else if (human.isShowAssets() != shownAssets.get(human)) { //Old account changed: Update
 					changed = true;
 				}
 			}
 		}
-		if (changed || forceUpdate){
+		if (changed || forceUpdate) {
 			program.updateEventList();
 		}
 		this.setVisible(false);
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
+	public void setVisible(final boolean b) {
+		if (b) {
 			forceUpdate = false;
 			updateTable();
 			shownAssets = new HashMap<Human, Boolean>();
-			for (Account account : program.getSettings().getAccounts()){
-				for (Human human : account.getHumans()){
+			for (Account account : program.getSettings().getAccounts()) {
+				for (Human human : account.getHumans()) {
 					shownAssets.put(human, human.isShowAssets());
 				}
 			}
@@ -281,7 +276,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			accountImportDialog.show();
 		}
@@ -297,7 +292,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (HumanSeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
-			if (o instanceof SeparatorList.Separator<?>){
+			if (o instanceof SeparatorList.Separator<?>) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 				Human human = (Human) separator.first();
 				Account account = human.getParentAccount();
@@ -307,35 +302,35 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (HumanSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
-			if (o instanceof SeparatorList.Separator<?>){
+			if (o instanceof SeparatorList.Separator<?>) {
 				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame()
 						, DialoguesAccount.get().deleteAccountQuestion()
 						, DialoguesAccount.get().deleteAccount()
 						, JOptionPane.YES_NO_OPTION
 						, JOptionPane.PLAIN_MESSAGE);
-				if (nReturn == JOptionPane.YES_OPTION){
+				if (nReturn == JOptionPane.YES_OPTION) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Human human = (Human) separator.first();
 					Account account = human.getParentAccount();
-					program.getSettings().getAccounts().remove( account );
+					program.getSettings().getAccounts().remove(account);
 					forceUpdate();
 					updateTable();
 				}
 			}
 		}
-		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())){
+		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())) {
 			checkAssets(false, true);
 		}
 
-		if (ACTION_ASSETS_UNCHECK_ALL.equals(e.getActionCommand())){
+		if (ACTION_ASSETS_UNCHECK_ALL.equals(e.getActionCommand())) {
 			checkAssets(false, false);
 		}
 
-		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())){
+		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())) {
 			checkAssets(true, true);
 		}
 
-		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())){
+		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())) {
 			checkAssets(true, false);
 		}
 	}

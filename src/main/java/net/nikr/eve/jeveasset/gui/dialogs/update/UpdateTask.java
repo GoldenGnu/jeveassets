@@ -37,11 +37,7 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
@@ -52,15 +48,13 @@ import org.slf4j.LoggerFactory;
 public abstract class UpdateTask extends SwingWorker<Void, Void> {
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateTask.class);
 
-	private boolean done = false;
+	private boolean taskDone = false;
 	private JLabel jText;
 	private Map<String, String> errors;
 	private String name;
 	private boolean errorShown = false;
 
-	
-
-	public UpdateTask(String name) {
+	public UpdateTask(final String name) {
 		this.name = name;
 		this.addPropertyChangeListener(new Listener());
 		jText = new JLabel(name);
@@ -73,15 +67,15 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return name;
 	}
 
-	public JLabel getTextLabel(){
+	public JLabel getTextLabel() {
 		return jText;
 	}
 
-	public void addError(String human, String error){
+	public void addError(final String human, final String error) {
 		errors.put(human, error);
 	}
 
-	public boolean hasError(){
+	public boolean hasError() {
 		return !errors.isEmpty();
 	}
 
@@ -104,38 +98,38 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			LOG.error(ex.getMessage(), ex);
 			throw new RuntimeException(ex);
 		}
-		done = true;
+		taskDone = true;
 		setProgress(100);
 	}
 
-	public boolean isTaskDone(){
-		return done;
+	public boolean isTaskDone() {
+		return taskDone;
 	}
 
-	public void setTaskDone(boolean done) {
-		this.done = done;
+	public void setTaskDone(final boolean done) {
+		this.taskDone = done;
 	}
 
-	protected void setTaskProgress(int progress){
+	protected void setTaskProgress(final int progress) {
 		this.setProgress(progress);
 	}
 
-	public void setError(JTextPane jError){
-		if (!errors.isEmpty()){
+	public void setError(final JTextPane jError) {
+		if (!errors.isEmpty()) {
 			StyledDocument doc = new DefaultStyledDocument();
 			SimpleAttributeSet errorAttributeSet = new SimpleAttributeSet();
 			errorAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, jText.getBackground().darker().darker());
 
 			try {
 				boolean first = true;
-				for (Map.Entry<String, String> entry : errors.entrySet()){
-					if (first){
+				for (Map.Entry<String, String> entry : errors.entrySet()) {
+					if (first) {
 						first = false;
 					} else {
 						doc.insertString(doc.getLength(), "\n\r", null);
 					}
 					doc.insertString(doc.getLength(), entry.getKey(), null);
-					doc.insertString(doc.getLength(), "\r\n"+processError(entry.getValue()), errorAttributeSet);
+					doc.insertString(doc.getLength(), "\r\n" + processError(entry.getValue()), errorAttributeSet);
 				}
 			} catch (BadLocationException ex) {
 				LOG.warn("Ignoring exception: " + ex.getMessage(), ex);
@@ -144,26 +138,25 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		}
 	}
 
-	public void setTaskProgress(float end, float done, int start, int max){
-		int progress = Math.round(((done/end)*(max-start))+start);
+	public void setTaskProgress(final float end, final float done, final int start, final int max) {
+		int progress = Math.round(((done / end) * (max - start)) + start);
 		this.setProgress(progress);
 	}
 
-	public void cancelled(){
+	public void cancelled() {
 		jText.setIcon(Images.UPDATE_CANCELLED.getIcon());
 	}
 
-	public void showError(boolean b){
-		if (!errors.isEmpty()){
+	public void showError(final boolean b) {
+		if (!errors.isEmpty()) {
 			Font font = jText.getFont();
-			if (b){
+			if (b) {
 				errorShown = true;
-				jText.setFont( new Font(font.getName(), Font.BOLD, font.getSize()) );
+				jText.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
 				jText.setText(DialoguesUpdate.get().clickToHide(name));
-				
 			} else {
 				errorShown = false;
-				jText.setFont( new Font(font.getName(), Font.PLAIN, font.getSize()) );
+				jText.setFont(new Font(font.getName(), Font.PLAIN, font.getSize()));
 				jText.setText(DialoguesUpdate.get().clickToShow(name));
 			}
 		}
@@ -173,8 +166,10 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return errorShown;
 	}
 
-	private String processError(String error){
-		if (error == null) return "";
+	private String processError(String error) {
+		if (error == null) {
+			return "";
+		}
 		Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Matcher m = p.matcher(error);
@@ -188,26 +183,26 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			} catch (ParseException ex) {
 				time = error.substring(start, end);
 			}
-			error = error.substring(0, start)+time+" GMT"+error.substring(end);
+			error = error.substring(0, start) + time + " GMT" + error.substring(end);
 			error = error.replace("retry after", "\r\n" + DialoguesUpdate.get().nextUpdate());
 		}
 		return error;
 	}
-	
-	class Listener implements PropertyChangeListener{
-	
+
+	class Listener implements PropertyChangeListener {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(final PropertyChangeEvent evt) {
 			int value = getProgress();
-			if (value == 100){
-				if (errors.isEmpty()){
+			if (value == 100) {
+				if (errors.isEmpty()) {
 					jText.setIcon(Images.UPDATE_DONE_OK.getIcon());
-				} else if (isCancelled()){
+				} else if (isCancelled()) {
 					jText.setIcon(Images.UPDATE_DONE_SOME.getIcon());
 				} else {
 					jText.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 				}
-				if (!errors.isEmpty()){
+				if (!errors.isEmpty()) {
 					jText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 					jText.setText(DialoguesUpdate.get().clickToShow(name));
 				}

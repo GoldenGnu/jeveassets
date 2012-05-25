@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.core.ApiException;
-import com.beimin.eveapi.shared.assetlist.EveAsset;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
+import com.beimin.eveapi.shared.assetlist.EveAsset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,14 +43,14 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		super("Assets", 2, true, false);
 	}
 
-	public void load(UpdateTask updateTask, Settings settings) {
-		this.settings = settings;
-		super.load(updateTask, settings.isForceUpdate(), settings.getAccounts());
+	public void load(final UpdateTask updateTask, final Settings loadSettings) {
+		this.settings = loadSettings;
+		super.load(updateTask, loadSettings.isForceUpdate(), loadSettings.getAccounts());
 	}
 
 	@Override
-	protected AssetListResponse getResponse(boolean bCorp) throws ApiException {
-		if (bCorp){
+	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
+		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.assetlist.AssetListParser.getInstance()
 					.getResponse(Human.getApiAuthorization(getHuman()));
@@ -67,19 +67,19 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
-	protected void setNextUpdate(Date nextUpdate) {
+	protected void setNextUpdate(final Date nextUpdate) {
 		getHuman().setAssetNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected void setData(AssetListResponse response) {
+	protected void setData(final AssetListResponse response) {
 		List<EveAsset<?>> apiAssets = new ArrayList<EveAsset<?>>(response.getAll());
 		List<Asset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, settings);
 		getHuman().setAssets(assets);
 	}
-	
+
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo){
+	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setAssets(humanFrom.getAssets());
 		humanTo.setAssetNextUpdate(humanFrom.getAssetNextUpdate());
 	}

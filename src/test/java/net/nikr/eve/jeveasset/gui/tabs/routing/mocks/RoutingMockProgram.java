@@ -31,9 +31,9 @@ import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
  */
 public class RoutingMockProgram extends FakeProgram {
 
-	FakeSettings fakeSettings;
+	private FakeSettings fakeSettings;
 
-	public RoutingMockProgram(RoutingMockSettings routingMockSettings) {
+	public RoutingMockProgram(final RoutingMockSettings routingMockSettings) {
 		this.fakeSettings = routingMockSettings;
 	}
 

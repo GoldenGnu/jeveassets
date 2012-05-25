@@ -78,12 +78,6 @@ A: Right click the asset you want to change in the assets table
 
 ________________________________________________________________________________
 
-Q: The [...] library is missing
-
-A: Please re-download jEveAssets from http://eve.nikr.net/jeveasset
-   And leave the unzipped folder intact
-________________________________________________________________________________
-
 Q: How do I use portable settings?
 
 A: Add the command line argument: -portable
@@ -116,7 +110,7 @@ email:
   niklaskr@gmail.com (English or Danish)
 
 Eve-Online forum thread:
-  http://www.eveonline.com/ingameboard.asp?a=topic&threadID=1103224
+  https://forums.eveonline.com/default.aspx?g=posts&t=6419
 
 ________________________________________________________________________________
 ________________________________________________________________________________

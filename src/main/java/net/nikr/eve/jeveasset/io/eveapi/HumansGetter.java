@@ -36,23 +36,23 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	private int fails = 0;
-	
+
 	public HumansGetter() {
 		super("Accounts", 0, false, true);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, Account account) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
 		super.load(updateTask, forceUpdate, account);
 	}
 
 	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
-	protected ApiKeyInfoResponse getResponse(boolean bCorp) throws ApiException {
+	protected ApiKeyInfoResponse getResponse(final boolean bCorp) throws ApiException {
 		return com.beimin.eveapi.account.apikeyinfo
 				.ApiKeyInfoParser.getInstance()
 				.getResponse(Human.getApiAuthorization(getAccount()));
@@ -64,35 +64,43 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 	}
 
 	@Override
-	protected void setNextUpdate(Date nextUpdate) {
+	protected void setNextUpdate(final Date nextUpdate) {
 		getAccount().setCharactersNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected void setData(ApiKeyInfoResponse response) {
+	protected void setData(final ApiKeyInfoResponse response) {
 		//Changed between Char and Corp AKA should be treated as a new api
 		boolean typeChanged = !getAccount().compareTypes(response.getType());
-		
+
 		//Update account
 		getAccount().setAccessMask(response.getAccessMask());
 		getAccount().setExpires(response.getExpires());
 		getAccount().setType(response.getType());
-		
+
 		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
 		List<Human> humans = new ArrayList<Human>();
-		
+
 		fails = 0;
-		if (isForceUpdate()){
-			if (!getAccount().isAccountBalance()) fails++;
-			if (!getAccount().isIndustryJobs()) fails++;
-			if (!getAccount().isMarketOrders()) fails++;
-			if (!getAccount().isAssetList()) fails = 4; //Can not work without it...
+		if (isForceUpdate()) {
+			if (!getAccount().isAccountBalance()) {
+				fails++;
+			}
+			if (!getAccount().isIndustryJobs()) {
+				fails++;
+			}
+			if (!getAccount().isMarketOrders()) {
+				fails++;
+			}
+			if (!getAccount().isAssetList()) { //Can not work without it...
+				fails = 4;
+			}
 		}
-		
-		for (EveCharacter apiCharacter : characters){
+
+		for (EveCharacter apiCharacter : characters) {
 			boolean found = false;
-			for (Human human : getAccount().getHumans()){
-				if ( (human.getOwnerID() == apiCharacter.getCharacterID() || human.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged){
+			for (Human human : getAccount().getHumans()) {
+				if ((human.getOwnerID() == apiCharacter.getCharacterID() || human.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
 					human.setName(getName(apiCharacter));
 					human.setOwnerID(getID(apiCharacter));
 					humans.add(human);
@@ -100,31 +108,31 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 					break;
 				}
 			}
-			if (!found){ //Add New
+			if (!found) { //Add New
 				humans.add(new Human(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
 		}
 		getAccount().setHumans(humans);
 	}
-	
+
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo){}
-	
-	private String getName(EveCharacter apiCharacter){
-		if (getAccount().isCharacter()){
+	protected void updateFailed(final Human humanFrom, final Human humanTo) { }
+
+	private String getName(final EveCharacter apiCharacter) {
+		if (getAccount().isCharacter()) {
 			return apiCharacter.getName();
 		} else {
 			return apiCharacter.getCorporationName();
 		}
 	}
-	private long getID(EveCharacter apiCharacter){
-		if (getAccount().isCharacter()){
+	private long getID(final EveCharacter apiCharacter) {
+		if (getAccount().isCharacter()) {
 			return apiCharacter.getCharacterID();
 		} else {
 			return apiCharacter.getCorporationID();
 		}
 	}
-	
+
 	public int getFails() {
 		return fails;
 	}

@@ -26,22 +26,20 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class Material implements Comparable<Material>{
-	
-	public enum MaterialType{
-		
+public class Material implements Comparable<Material> {
+
+	public enum MaterialType {
 		LOCATIONS(2, 1, 1),
 		LOCATIONS_TOTAL(2, 2, 1),
 		LOCATIONS_ALL(2, 2, 2),
 		SUMMARY(1, 1, 1),
 		SUMMARY_TOTAL(1, 2, 1),
-		SUMMARY_ALL(1, 2, 2),
-		;
+		SUMMARY_ALL(1, 2, 2);
 
 		private int locationOrder;
 		private int goupeOrder;
 		private int nameOrder;
-		private MaterialType(int locationOrder, int goupeOrder, int nameOrder) {
+		private MaterialType(final int locationOrder, final int goupeOrder, final int nameOrder) {
 			this.locationOrder = locationOrder;
 			this.goupeOrder = goupeOrder;
 			this.nameOrder = nameOrder;
@@ -59,28 +57,28 @@ public class Material implements Comparable<Material>{
 			return nameOrder;
 		}
 	}
-	
+
 	private final String name;
 	private final String location;
 	private final String group;
 	private final String typeName;
 	private final boolean marketGroup;
-	private final int typeID; //TypeID : int
+	private final Integer typeID; //TypeID : int
 	private final String station;
 	private final String system;
 	private final String region;
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
-	private final double price;
+	private final Double price;
 	private final MaterialType type;
 
-	public Material(MaterialType type, String name, String location, String group, Asset eveAsset) {
+	public Material(final MaterialType type, final String name, final String location, final String group, final Asset eveAsset) {
 		this.type = type;
 		this.name = name;
 		this.location = location;
 		this.group = group;
-		if (eveAsset != null){
+		if (eveAsset != null) {
 			this.typeName = eveAsset.getName();
 			this.marketGroup = eveAsset.isMarketGroup();
 			this.typeID = eveAsset.getTypeID();
@@ -89,20 +87,19 @@ public class Material implements Comparable<Material>{
 			this.region = eveAsset.getRegion();
 			this.price = eveAsset.getPrice();
 		} else {
-			this.typeName = "";
+			this.typeName = null;
 			this.marketGroup = false;
-			this.typeID = 0;
+			this.typeID = null;
 			this.station = null;
 			this.system = null;
 			this.region = null;
-			this.price = 0;
+			this.price = null;
 		}
-		
 	}
 
-	public void updateValue(long count, double price){
-		this.count = this.count + count;
-		this.value = this.value + (count*price);
+	public void updateValue(final long updateCount, final double updatePrice) {
+		this.count = this.count + updateCount;
+		this.value = this.value + (updateCount * updatePrice);
 	}
 
 	public long getCount() {
@@ -133,7 +130,7 @@ public class Material implements Comparable<Material>{
 		return system;
 	}
 
-	public int getTypeID() {
+	public Integer getTypeID() {
 		return typeID;
 	}
 
@@ -149,11 +146,11 @@ public class Material implements Comparable<Material>{
 		return first;
 	}
 
-	public void first(){
+	public void first() {
 		first = true;
 	}
-	
-	public double getPrice() {
+
+	public Double getPrice() {
 		return price;
 	}
 
@@ -161,16 +158,16 @@ public class Material implements Comparable<Material>{
 		return Formater.round(value, 2);
 	}
 
-	public String getSeperator(){
-		return type.getLocationOrder()+location+type.getGoupeOrder()+group;
+	public String getSeperator() {
+		return type.getLocationOrder() + location + type.getGoupeOrder() + group;
 	}
 
-	protected String getCompare(){
-		return type.getLocationOrder()+location+type.getGoupeOrder()+group+type.getNameOrder()+name;
+	protected String getCompare() {
+		return type.getLocationOrder() + location + type.getGoupeOrder() + group + type.getNameOrder() + name;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -200,15 +197,15 @@ public class Material implements Comparable<Material>{
 	}
 
 	@Override
-	public int compareTo(Material o) {
+	public int compareTo(final Material o) {
 		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
-	
-	public static class ISK{
+
+	public static class ISK {
 
 		private String price;
 
-		public ISK(String price) {
+		public ISK(final String price) {
 			this.price = price;
 		}
 

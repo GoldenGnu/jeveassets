@@ -26,12 +26,13 @@ import ca.odell.glazedlists.gui.WritableTableFormat;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,72 +43,121 @@ import org.slf4j.LoggerFactory;
  */
 public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
 
-	private final static Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
-	
+	private static final  Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
+
+	public static enum ResizeMode {
+		TEXT {
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeText();
+			}
+		},
+		WINDOW {
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeWindow();
+			}
+		},
+		NONE {
+			@Override String getI18N() {
+				return GuiShared.get().tableResizeNone();
+			}
+		};
+
+		abstract String getI18N();
+
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
+
 	private Class<T> enumClass;
 	private List<T> shownColumns;
 	private List<T> orderColumns;
 	private ColumnComparator columnComparator;
 
-	public EnumTableFormatAdaptor(Class<T> enumClass) {
+	private JMenu jMenu;
+	private EditColumnsDialog<T, Q> dialog;
+	private ResizeMode resizeMode;
+
+	public EnumTableFormatAdaptor(final Class<T> enumClass) {
 		this.enumClass = enumClass;
 		columnComparator = new ColumnComparator();
+		resizeMode = ResizeMode.TEXT;
 		reset();
 	}
-	
-	private void reset(){
+
+	private void reset() {
 		shownColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
 		orderColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
 	}
 
-	public List<T> getShownColumns(){
+	public List<T> getShownColumns() {
 		return shownColumns;
 	}
 
-	public List<T> getOrderColumns(){
+	public List<T> getOrderColumns() {
 		return orderColumns;
 	}
-	
-	public void setColumns(List<SimpleColumn> columns){
-		if (columns == null) return;
+
+	public ResizeMode getResizeMode() {
+		return resizeMode;
+	}
+
+	public void setResizeMode(final ResizeMode resizeMode) {
+		if (resizeMode == null) {
+			return;
+		}
+		this.resizeMode = resizeMode;
+	}
+
+	public void setColumns(final List<SimpleColumn> columns) {
+		if (columns == null) {
+			return;
+		}
 		orderColumns = new ArrayList<T>();
 		shownColumns = new ArrayList<T>();
-		List<T> originalColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));		
-		for (SimpleColumn column : columns){
+		List<T> originalColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
+		for (SimpleColumn column : columns) {
 			try {
-				T t = Enum.valueOf(enumClass, column.getName());
+				T t = Enum.valueOf(enumClass, column.getEnumName());
 				orderColumns.add(t);
-				if (column.isShown()) shownColumns.add(t);
+				if (column.isShown()) {
+					shownColumns.add(t);
+				}
 			} catch (IllegalArgumentException ex) {
-				LOG.info("Removing column: "+column.getName());
+				LOG.info("Removing column: " + column.getEnumName());
 			}
-			
 		}
 		//Add new columns
-		for (T t : originalColumns){
-			if (!orderColumns.contains(t)){
-				LOG.info("Adding column: "+t.getColumnName());
+		for (T t : originalColumns) {
+			if (!orderColumns.contains(t)) {
+				LOG.info("Adding column: " + t.getColumnName());
 				int index = originalColumns.indexOf(t);
-				if (index >= orderColumns.size()) index = orderColumns.size() - 1;
+				if (index >= orderColumns.size()) {
+					index = orderColumns.size() - 1;
+				}
 				orderColumns.add(index, t);
 				shownColumns.add(t);
 			}
 		}
 		updateColumns();
 	}
-	
-	public List<SimpleColumn> getColumns(){
+
+	public List<SimpleColumn> getColumns() {
 		List<SimpleColumn> columns = new ArrayList<SimpleColumn>(orderColumns.size());
-		for (T t : orderColumns){
-			String name = t.name();
+		for (T t : orderColumns) {
+			String columnName = t.getColumnName();
+			String enumName = t.name();
 			boolean shown = shownColumns.contains(t);
-			columns.add(new SimpleColumn(name, shown));
+			columns.add(new SimpleColumn(enumName, columnName, shown));
 		}
 		return columns;
 	}
 
-	public void moveColumn(int from, int to){
-		if (from == to) return;
+	public void moveColumn(final int from, final int to) {
+		if (from == to) {
+			return;
+		}
 		T fromColumn = getColumn(from);
 		T toColumn = getColumn(to);
 
@@ -115,41 +165,96 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		orderColumns.remove(fromIndex);
 
 		int toIndex = orderColumns.indexOf(toColumn);
-		if (to > from) toIndex++;
+		if (to > from) {
+			toIndex++;
+		}
 		orderColumns.add(toIndex, fromColumn);
 
 		updateColumns();
 	}
 
-	public void hideColumn(T column){
-		if (!shownColumns.contains(column)) return;
+	public void hideColumn(final T column) {
+		if (!shownColumns.contains(column)) {
+			return;
+		}
 		shownColumns.remove(column);
 		updateColumns();
 	}
 
-	public void showColumn(T column){
-		if (shownColumns.contains(column)) return;
+	public void showColumn(final T column) {
+		if (shownColumns.contains(column)) {
+			return;
+		}
 		shownColumns.add(column);
 		updateColumns();
 	}
-	
-	public JMenu getMenu(AbstractTableModel tableModel, JAutoColumnTable jTable){
-		return new JColumnsMenu(tableModel, jTable);
+
+	public JMenuItem getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable) {
+		if (dialog == null) { //Create dialog (only once)
+			dialog = new EditColumnsDialog<T, Q>(program, this);
+		}
+
+		if (jMenu == null) { //Create menu (only once)
+			jMenu = new JMenu(GuiShared.get().tableSettings());
+			jMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
+ 			JMenuItem jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
+			jMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(final ActionEvent e) {
+					dialog.setVisible(true);
+					tableModel.fireTableStructureChanged();
+					jTable.autoResizeColumns();
+				}
+			});
+			jMenu.add(jMenuItem);
+
+			jMenu.addSeparator();
+
+			jMenuItem = new JMenuItem(GuiShared.get().tableColumnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
+			jMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(final ActionEvent e) {
+					reset();
+					tableModel.fireTableStructureChanged();
+					jTable.autoResizeColumns();
+				}
+			});
+			jMenu.add(jMenuItem);
+
+			jMenu.addSeparator();
+
+			ButtonGroup buttonGroup = new ButtonGroup();
+			JRadioButtonMenuItem jRadioButton;
+			for (final ResizeMode mode : ResizeMode.values()) {
+				jRadioButton = new JRadioButtonMenuItem(mode.toString(), Images.TABLE_COLUMN_RESIZE.getIcon());
+				jRadioButton.setSelected(resizeMode == mode);
+				jRadioButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(final ActionEvent e) {
+						setResizeMode(mode);
+						jTable.autoResizeColumns();
+					}
+				});
+				buttonGroup.add(jRadioButton);
+				jMenu.add(jRadioButton);
+			}
+		}
+		return jMenu;
 	}
 
-	private T getColumn(int i){
+	private T getColumn(final int i) {
 		return shownColumns.get(i);
 	}
 
-	private void updateColumns(){
+	private void updateColumns() {
 		Collections.sort(shownColumns, columnComparator);
 	}
 
-	@Override public Class getColumnClass(int i) {
+	@Override public Class getColumnClass(final int i) {
 		return getColumn(i).getType();
 	}
 
-	@Override public Comparator getColumnComparator(int i) {
+	@Override public Comparator getColumnComparator(final int i) {
 		return getColumn(i).getComparator();
 	}
 
@@ -157,101 +262,63 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		return getShownColumns().size();
 	}
 
-	@Override public String getColumnName(int i) {
+	@Override public String getColumnName(final int i) {
 		return getColumn(i).getColumnName();
 	}
 
-	@Override public Object getColumnValue(Q e, int i) {
+	@Override public Object getColumnValue(final Q e, final int i) {
 		return getColumn(i).getColumnValue(e);
 	}
 
 
 	//Used by the JSeparatorTable
-	@Override public boolean isEditable(Q baseObject, int i) {
+	@Override public boolean isEditable(final Q baseObject, final int i) {
 		return getColumn(i).isColumnEditable(baseObject);
 	}
-	@Override public Q setColumnValue(Q baseObject, Object editedValue, int i) {
+	@Override public Q setColumnValue(final Q baseObject, final Object editedValue, final int i) {
 		return getColumn(i).setColumnValue(baseObject, editedValue);
 	}
 
-	class ColumnComparator implements Comparator<T>{
+	class ColumnComparator implements Comparator<T> {
 
 		@Override
-		public int compare(T o1, T o2) {
+		public int compare(final T o1, final T o2) {
 			return orderColumns.indexOf(o1) - orderColumns.indexOf(o2);
 		}
 
 	}
-	
-	public static class SimpleColumn{
-		private final String name;
-		private final boolean shown;
 
-		public SimpleColumn(String name, boolean shown) {
-			this.name = name;
+	public static class SimpleColumn {
+		private final String enumName;
+		private final String columnName;
+		private boolean shown;
+
+		public SimpleColumn(final String enumName, final boolean shown) {
+			this.enumName = enumName;
+			this.columnName = "";
 			this.shown = shown;
 		}
 
-		public String getName() {
-			return name;
+		public SimpleColumn(final String enumName, final String columnName, final boolean shown) {
+			this.enumName = enumName;
+			this.columnName = columnName;
+			this.shown = shown;
+		}
+
+		public String getColumnName() {
+			return columnName;
+		}
+
+		public String getEnumName() {
+			return enumName;
 		}
 
 		public boolean isShown() {
 			return shown;
 		}
-	}
-	
-	private class JColumnsMenu extends JMenu implements ActionListener{
-	
-		private AbstractTableModel tableModel;
-		private JAutoColumnTable jTable;
-		
-		private JColumnsMenu(AbstractTableModel tableModel, JAutoColumnTable jTable) {
-			super(GuiShared.get().columns());
-			this.tableModel = tableModel;
-			this.jTable = jTable;
-			setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
 
-			JCheckBoxMenuItem jCheckBoxMenuItem;
-			JMenuItem  jMenuItem;
-
-			jMenuItem = new JMenuItem(GuiShared.get().reset());
-			jMenuItem.setActionCommand("");
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-			
-			addSeparator();
-
-			for (T enumColumn : getOrderColumns()){
-				jCheckBoxMenuItem = new JCheckBoxMenuItem(enumColumn.toString());
-				jCheckBoxMenuItem.setActionCommand(enumColumn.name());
-				jCheckBoxMenuItem.addActionListener(this);
-				jCheckBoxMenuItem.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
-				jCheckBoxMenuItem.setSelected(getShownColumns().contains(enumColumn));
-				add(jCheckBoxMenuItem);
-			}
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().isEmpty()){
-				reset();
-				tableModel.fireTableStructureChanged();
-				jTable.autoResizeColumns();
-			} else {
-				for (final T enumColumn : getOrderColumns()){
-					if (enumColumn.name().equals(e.getActionCommand())){
-						final boolean shown = getShownColumns().contains(enumColumn);
-						if (shown){
-							hideColumn(enumColumn);
-						} else {
-							showColumn(enumColumn);
-						}
-						tableModel.fireTableStructureChanged();
-						jTable.autoResizeColumns();
-					}
-				}
-			}
+		public void setShown(final boolean shown) {
+			this.shown = shown;
 		}
 	}
 }

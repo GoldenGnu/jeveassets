@@ -29,7 +29,7 @@ public class Location implements Comparable<Location> {
 	private String security;
 	private long systemID; //LocationID : long
 
-	public Location(long locationID, String name, long regionID, String security, long systemID) {
+	public Location(final long locationID, final String name, final long regionID, final String security, final long systemID) {
 		this.locationID = locationID;
 		this.name = name;
 		this.regionID = regionID;
@@ -52,28 +52,32 @@ public class Location implements Comparable<Location> {
 	public String getSecurity() {
 		return security;
 	}
-	
-	public boolean isRegion(){
+
+	public boolean isRegion() {
 		return regionID == locationID && locationID > 0;
 	}
-	public boolean isSystem(){
+	public boolean isSystem() {
 		return systemID == locationID && locationID > 0;
 	}
-	public boolean isStation(){
+	public boolean isStation() {
 		return !isSystem() && !isRegion() && locationID > 0;
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return name;
 	}
 
 	public long getSystemID() {
-		return systemID == 0 ? locationID : systemID;
+		if (systemID == 0) {
+			return locationID;
+		} else {
+			return systemID;
+		}
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -99,7 +103,7 @@ public class Location implements Comparable<Location> {
 	}
 
 	@Override
-	public int compareTo(Location o) {
+	public int compareTo(final Location o) {
 		return this.getName().compareTo(o.getName());
 	}
 }

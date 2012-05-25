@@ -32,20 +32,22 @@ import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 
 
-public class CsvWriter {
+public final class CsvWriter {
 
-	private final static Logger LOG = LoggerFactory.getLogger(CsvWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CsvWriter.class);
 
-	public static boolean save(String filename, List<HashMap<String, ? super Object>> data, String[] header, CsvPreference csvPreference) {
+	private CsvWriter() { }
+
+	public static boolean save(final String filename, final List<HashMap<String, ? super Object>> data, final String[] header, final CsvPreference csvPreference) {
 		ICsvMapWriter writer;
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);
 			writer.writeHeader(header);
-			for (int a = 0; a < data.size(); a++){
+			for (int a = 0; a < data.size(); a++) {
 				writer.write(data.get(a), header);
 			}
 			writer.close();
-		} catch (IOException ex){
+		} catch (IOException ex) {
 			LOG.warn("CSV file not saved");
 			return false;
 		}

@@ -36,7 +36,7 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return TabsMaterials.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(Material from) {
+		public Object getColumnValue(final Material from) {
 			return from.getName();
 		}
 	},
@@ -46,7 +46,7 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return TabsMaterials.get().columnCount();
 		}
 		@Override
-		public Object getColumnValue(Material from) {
+		public Object getColumnValue(final Material from) {
 			return from.getCount();
 		}
 	},
@@ -56,11 +56,11 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return TabsMaterials.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(Material from) {
-			if (from.getPrice() != 0){
+		public Object getColumnValue(final Material from) {
+			if (from.getPrice() != null) {
 				return new ISK(Formater.iskFormat(from.getPrice()));
 			} else {
-				return new ISK("("+Formater.iskFormat(from.getValue()/from.getCount())+")");
+				return new ISK("(" + Formater.iskFormat(from.getValue() / from.getCount()) + ")");
 			}
 		}
 	},
@@ -70,15 +70,14 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 			return TabsMaterials.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(Material from) {
+		public Object getColumnValue(final Material from) {
 			return new ISK(Formater.iskFormat(from.getValue()));
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private MaterialTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+	private MaterialTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -90,10 +89,10 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
-	@Override public Material setColumnValue(Object baseObject, Object editedValue) {
+	@Override public Material setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 }

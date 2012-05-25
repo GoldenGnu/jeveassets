@@ -18,517 +18,425 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
 package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 public class PriceDataSettings {
 
-	//TODO - PriceDataSettings is a mess
-	
-	private final static Logger LOG = LoggerFactory.getLogger(PriceDataSettings.class);
-
-	// should re-factor these two into an emum. - Candle 2010-09-13
-	public final static String SOURCE_EVE_CENTRAL = "eve-central";
-	private final static String SOURCE_EVE_METRICS = "eve-metrics";
-	public final static String SOURCE_EVE_MARKETDATA = "eve-marketdata";
-
-	public final static String[] SOURCES = {SOURCE_EVE_CENTRAL, SOURCE_EVE_MARKETDATA};
-	
-	public enum FactionPrice {
-		PRICES_C0RPORATION() {
-			@Override
-			String getI18N() {
-				return DataModelPriceDataSettings.get().factionPriceC0rporation();
+	public enum PriceSource {
+		EVE_CENTRAL("eve-central", true, false) {
+			@Override public PriceMode[] getPriceTypes() {
+				return PriceMode.values();
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		NONE() {
-			@Override
-			String getI18N() {
-				return DataModelPriceDataSettings.get().factionPriceNone();
+		EVE_MARKETDATA("eve-marketdata", false, true) {
+			@Override public PriceMode[] getPriceTypes() {
+				return new PriceMode[]{PriceMode.PRICE_SELL_MIN, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_MAX};
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
-		;
+		EVEMARKETEER("evemarketeer", false, true) {
+			@Override public PriceMode[] getPriceTypes() {
+				return PriceMode.values();
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveMarketeer();
+			}
+		};
+		private String name;
+		private boolean supportsMultipleLocations;
+		private boolean supportsSingleLocations;
+
+		private PriceSource(final String name, final boolean supportMultipleLocations, final boolean supportsSingleLocations) {
+			this.name = name;
+			this.supportsMultipleLocations = supportMultipleLocations;
+			this.supportsSingleLocations = supportsSingleLocations;
+		}
+
+		public abstract PriceMode[] getPriceTypes();
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public boolean supportsMultipleLocations() {
+			return supportsMultipleLocations;
+		}
+
+		public boolean supportsSingleLocations() {
+			return supportsSingleLocations;
 		}
 	}
 
 	public enum RegionType {
-		REGION_EMPIRE() {
-			@Override
-			String getI18N() {
+		EMPIRE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEmpire();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				//Amarr
+				regions.add(10000054L); //Amarr: Aridia
+				regions.add(10000036L); //Amarr: Devoid
+				regions.add(10000043L); //Amarr: Domain
+				regions.add(10000067L); //Amarr: Genesis
+				regions.add(10000052L); //Amarr: Kador
+				regions.add(10000065L); //Amarr: Kor-Azor
+				regions.add(10000020L); //Amarr: Tash-Murkon
+				regions.add(10000038L); //Amarr: The Bleak Lands
+				//Caldari
+				regions.add(10000069L); //Caldari: Black Rise
+				regions.add(10000016L); //Caldari: Lonetrek
+				regions.add(10000033L); //Caldari: The Citadel
+				regions.add(10000002L); //Caldari: The Forge
+				//Gallente
+				regions.add(10000064L); //Gallente: Essence
+				regions.add(10000037L); //Gallente: Everyshore
+				regions.add(10000048L); //Gallente: Placid
+				regions.add(10000032L); //Gallente: Sinq Laison
+				regions.add(10000044L); //Gallente: Solitude
+				regions.add(10000068L); //Gallente: Verge Vendor
+				//Minmatar
+				regions.add(10000042L); //Minmatar : Metropolis
+				regions.add(10000030L); //Minmatar : Heimatar
+				regions.add(10000028L); //Minmatar : Molden Heath
+				//Others
+				regions.add(10000001L); //Ammatar: Derelik
+				regions.add(10000049L); //Khanid: Khanid
+				return regions;
+			}
 		},
-		REGION_MARKET_HUBS() {
-			@Override
-			String getI18N() {
+		MARKET_HUBS() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMarketHubs();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				regions.add(10000002L); //Caldari: The Forge (Jita)
+				regions.add(10000042L); //Minmatar : Metropolis (Hek)
+				regions.add(10000030L); //Minmatar : Heimatar (Rens)
+				regions.add(10000064L); //Gallente: Essence (Oursalert)
+				regions.add(10000043L); //Amarr: Domain (Amarr)
+				return regions;
+			}
 		},
-		REGION_ALL_AMARR() {
-			@Override
-			String getI18N() {
+		ALL_AMARR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllAmarr();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				regions.add(10000054L); //Amarr: Aridia
+				regions.add(10000036L); //Amarr: Devoid
+				regions.add(10000043L); //Amarr: Domain
+				regions.add(10000067L); //Amarr: Genesis
+				regions.add(10000052L); //Amarr: Kador
+				regions.add(10000065L); //Amarr: Kor-Azor
+				regions.add(10000020L); //Amarr: Tash-Murkon
+				regions.add(10000038L); //Amarr: The Bleak Lands
+				return regions;
+			}
 		},
-		REGION_ALL_GALLENTE() {
-			@Override
-			String getI18N() {
+		ALL_GALLENTE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllGallente();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				regions.add(10000064L); //Gallente: Essence
+				regions.add(10000037L); //Gallente: Everyshore
+				regions.add(10000048L); //Gallente: Placid
+				regions.add(10000032L); //Gallente: Sinq Laison
+				regions.add(10000044L); //Gallente: Solitude
+				regions.add(10000068L); //Gallente: Verge Vendor
+				return regions;
+			}
 		},
-		REGION_ALL_MINMATAR() {
-			@Override
-			String getI18N() {
+		ALL_MINMATAR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllMinmatar();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				regions.add(10000042L); //Minmatar : Metropolis
+				regions.add(10000030L); //Minmatar : Heimatar
+				regions.add(10000028L); //Minmatar : Molden Heath
+				return regions;
+			}
 		},
-		REGION_ALL_CALDARI() {
-			@Override
-			String getI18N() {
+		ALL_CALDARI() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllCaldari();
 			}
+			@Override List<Long> getRegions() {
+				List<Long> regions = new ArrayList<Long>();
+				regions.add(10000069L); //Caldari: Black Rise
+				regions.add(10000016L); //Caldari: Lonetrek
+				regions.add(10000033L); //Caldari: The Citadel
+				regions.add(10000002L); //Caldari: The Forge
+				return regions;
+			}
 		},
-		REGION_ARIDIA() {
-			@Override
-			String getI18N() {
+		ARIDIA() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAridia();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000054L); //Amarr: Aridia
+			}
 		},
-		REGION_DEVOID() {
-			@Override
-			String getI18N() {
+		DEVOID() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionDevoid();
 			}
+
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000036L); //Amarr: Devoid
+			}
 		},
-		REGION_DOMAIN() {
-			@Override
-			String getI18N() {
+		DOMAIN() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionDomain();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000043L); //Amarr: Domain
+			}
 		},
-		REGION_GENESIS() {
-			@Override
-			String getI18N() {
+		GENESIS() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionGenesis();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000067L); //Amarr: Genesis
+			}
 		},
-		REGION_KADOR() {
-			@Override
-			String getI18N() {
+		KADOR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKador();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000052L); //Amarr: Kador
+			}
 		},
-		REGION_KOR_AZOR() {
-			@Override
-			String getI18N() {
+		KOR_AZOR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKorAzor();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000065L); //Amarr: Kor-Azor
+			}
 		},
-		REGION_TASH_MURKON() {
-			@Override
-			String getI18N() {
+		TASH_MURKON() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTashMurkon();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000020L); //Amarr: Tash-Murkon
+			}
 		},
-		REGION_THE_BLEAK_LANDS() {
-			@Override
-			String getI18N() {
+		THE_BLEAK_LANDS() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheBleakLands();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000038L); //Amarr: The Bleak Lands
+			}
 		},
-		REGION_BLACK_RISE() {
-			@Override
-			String getI18N() {
+		BLACK_RISE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionBlackRise();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000069L); //Caldari: Black Rise
+			}
 		},
-		REGION_LONETREK() {
-			@Override
-			String getI18N() {
+		LONETREK() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionLonetrek();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000016L); //Caldari: Lonetrek
+			}
 		},
-		REGION_THE_CITADEL() {
-			@Override
-			String getI18N() {
+		THE_CITADEL() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheCitadel();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000033L); //Caldari: The Citadel
+			}
 		},
-		REGION_THE_FORGE() {
-			@Override
-			String getI18N() {
+		THE_FORGE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheForge();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000002L); //Caldari: The Forge
+			}
 		},
-		REGION_ESSENCE() {
-			@Override
-			String getI18N() {
+		ESSENCE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEssence();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000064L); //Gallente: Essence
+			}
 		},
-		REGION_EVERYSHORE() {
-			@Override
-			String getI18N() {
+		EVERYSHORE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEveryshore();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000037L); //Gallente: Everyshore
+			}
 		},
-		REGION_PLACID() {
-			@Override
-			String getI18N() {
+		PLACID() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionPlacid();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000048L); //Gallente: Placid
+			}
 		},
-		REGION_SINQ_LAISON() {
-			@Override
-			String getI18N() {
+		SINQ_LAISON() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionSinqLaison();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000032L); //Gallente: Sinq Laison
+			}
 		},
-		REGION_SOLITUDE() {
-			@Override
-			String getI18N() {
+		SOLITUDE() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionSolitude();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000044L); //Gallente: Solitude
+			}
 		},
-		REGION_VERGE_VENDOR() {
-			@Override
-			String getI18N() {
+		VERGE_VENDOR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionVergeVendor();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000068L); //Gallente: Verge Vendor
+			}
 		},
-		REGION_METROPOLIS() {
-			@Override
-			String getI18N() {
+		METROPOLIS() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMetropolis();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000042L); //Minmatar : Metropolis
+			}
 		},
-		REGION_HEIMATAR() {
-			@Override
-			String getI18N() {
+		HEIMATAR() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionHeimatar();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000030L); //Minmatar : Heimatar
+			}
 		},
-		REGION_MOLDEN_HEATH() {
-			@Override
-			String getI18N() {
+		MOLDEN_HEATH() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMoldenHeath();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000028L); //Minmatar : Molden Heath
+			}
 		},
-		REGION_DERELIK() {
-			@Override
-			String getI18N() {
+		DERELIK() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionDerelik();
 			}
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000001L); //Ammatar: Derelik
+			}
 		},
-		REGION_KHANID() {
-			@Override
-			String getI18N() {
+		KHANID() {
+			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKhanid();
 			}
-		},;
+			@Override List<Long> getRegions() {
+				return Collections.singletonList(10000049L); //Khanid: Khanid
+			}
+		};
+		private static RegionType[] singleLocations = null;
+
 		abstract String getI18N();
+		abstract List<Long> getRegions();
+
 		@Override
 		public String toString() {
 			return getI18N();
 		}
-	}
-
-	public final static RegionType[] REGIONS_EVE_CENTRAL = {RegionType.REGION_EMPIRE
-											,RegionType.REGION_MARKET_HUBS
-											,RegionType.REGION_ALL_AMARR
-											,RegionType.REGION_ALL_GALLENTE
-											,RegionType.REGION_ALL_MINMATAR
-											,RegionType.REGION_ALL_CALDARI
-											,RegionType.REGION_ARIDIA
-											,RegionType.REGION_BLACK_RISE
-											,RegionType.REGION_DERELIK
-											,RegionType.REGION_DEVOID
-											,RegionType.REGION_DOMAIN
-											,RegionType.REGION_ESSENCE
-											,RegionType.REGION_EVERYSHORE
-											,RegionType.REGION_GENESIS
-											,RegionType.REGION_HEIMATAR
-											,RegionType.REGION_KADOR
-											,RegionType.REGION_KHANID
-											,RegionType.REGION_KOR_AZOR
-											,RegionType.REGION_LONETREK
-											,RegionType.REGION_METROPOLIS
-											,RegionType.REGION_MOLDEN_HEATH
-											,RegionType.REGION_PLACID
-											,RegionType.REGION_SINQ_LAISON
-											,RegionType.REGION_SOLITUDE
-											,RegionType.REGION_TASH_MURKON
-											,RegionType.REGION_THE_BLEAK_LANDS
-											,RegionType.REGION_THE_CITADEL
-											,RegionType.REGION_THE_FORGE
-											,RegionType.REGION_VERGE_VENDOR
-											};
-
-	private final static RegionType[] REGIONS_EVE_METRICS = {
-											RegionType.REGION_ARIDIA
-											,RegionType.REGION_BLACK_RISE
-											,RegionType.REGION_DERELIK
-											,RegionType.REGION_DEVOID
-											,RegionType.REGION_DOMAIN
-											,RegionType.REGION_ESSENCE
-											,RegionType.REGION_EVERYSHORE
-											,RegionType.REGION_GENESIS
-											,RegionType.REGION_HEIMATAR
-											,RegionType.REGION_KADOR
-											,RegionType.REGION_KHANID
-											,RegionType.REGION_KOR_AZOR
-											,RegionType.REGION_LONETREK
-											,RegionType.REGION_METROPOLIS
-											,RegionType.REGION_MOLDEN_HEATH
-											,RegionType.REGION_PLACID
-											,RegionType.REGION_SINQ_LAISON
-											,RegionType.REGION_SOLITUDE
-											,RegionType.REGION_TASH_MURKON
-											,RegionType.REGION_THE_BLEAK_LANDS
-											,RegionType.REGION_THE_CITADEL
-											,RegionType.REGION_THE_FORGE
-											,RegionType.REGION_VERGE_VENDOR
-											};
-
-	public final static RegionType[] REGIONS_EVE_MARKETDATA = {
-											RegionType.REGION_ARIDIA
-											,RegionType.REGION_BLACK_RISE
-											,RegionType.REGION_DERELIK
-											,RegionType.REGION_DEVOID
-											,RegionType.REGION_DOMAIN
-											,RegionType.REGION_ESSENCE
-											,RegionType.REGION_EVERYSHORE
-											,RegionType.REGION_GENESIS
-											,RegionType.REGION_HEIMATAR
-											,RegionType.REGION_KADOR
-											,RegionType.REGION_KHANID
-											,RegionType.REGION_KOR_AZOR
-											,RegionType.REGION_LONETREK
-											,RegionType.REGION_METROPOLIS
-											,RegionType.REGION_MOLDEN_HEATH
-											,RegionType.REGION_PLACID
-											,RegionType.REGION_SINQ_LAISON
-											,RegionType.REGION_SOLITUDE
-											,RegionType.REGION_TASH_MURKON
-											,RegionType.REGION_THE_BLEAK_LANDS
-											,RegionType.REGION_THE_CITADEL
-											,RegionType.REGION_THE_FORGE
-											,RegionType.REGION_VERGE_VENDOR
-											};
-
-	private int region;
-	private String source;
-	private FactionPrice factionPrice;
-
-	public PriceDataSettings(int region, String source, FactionPrice factionPrice) {
-		this.region = region;
-		this.source = source;
-		this.factionPrice = factionPrice;
-		if (this.source.equals(SOURCE_EVE_METRICS)){
-			LOG.warn("PriceDataSettings: source is set to "+SOURCE_EVE_METRICS+" using "+SOURCE_EVE_CENTRAL+" instead");
-			this.source = SOURCE_EVE_CENTRAL;
-			RegionType metrics = REGIONS_EVE_METRICS[region];
-			for (int i = 0; i < REGIONS_EVE_CENTRAL.length; i++){
-				RegionType eveCentral = REGIONS_EVE_CENTRAL[i];
-				if (metrics.equals(eveCentral)){
-					this.region = i;
-					break;
+		public static RegionType[] getSingleLocations() {
+			if (singleLocations == null) {
+				List<RegionType> list = new ArrayList<RegionType>();
+				for (RegionType regionType : RegionType.values()) {
+					if (regionType.getRegions().size() == 1) {
+						list.add(regionType);
+					}
 				}
+				singleLocations = list.toArray(new RegionType[list.size()]);
 			}
-			
+			return singleLocations;
 		}
-		
+		public static RegionType[] getMultipleLocations() {
+			return RegionType.values();
+		}
+	}
+	private RegionType regionType;
+	private PriceSource priceSource;
+
+	public PriceDataSettings() {
+		regionType = getDefaultRegionType();
+		priceSource = getDefaultPriceSource();
 	}
 
-	public int getRegion() {
-		if (source.equals(SOURCE_EVE_CENTRAL) && region >= REGIONS_EVE_CENTRAL.length){
-			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-central)");
-			return 0;
-		}
-		if (source.equals(SOURCE_EVE_MARKETDATA) && region >= REGIONS_EVE_CENTRAL.length){
-			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-marketdata)");
-			return 0;
-		}
-		if (source.equals(SOURCE_EVE_MARKETDATA) && region >= REGIONS_EVE_MARKETDATA.length){
-			LOG.warn("PriceDataSettings: region index is larger then the region array (eve-marketdata)");
-			return 0;
-		}
-		return region;
+	public PriceDataSettings(final RegionType region, final PriceSource source) {
+		this.regionType = region;
+		this.priceSource = source;
 	}
 
-	public String getSource(){
-		return source;
+	public RegionType getRegion() {
+		return regionType;
 	}
 
-	public FactionPrice getFactionPrice() {
-		return factionPrice;
+	public PriceSource getSource() {
+		return priceSource;
 	}
 
-	public List<Long> getRegions(){
-		List<Long> regions = new ArrayList<Long>();
-		RegionType regionType = null;
-		if (source.equals(SOURCE_EVE_CENTRAL)){
-			regionType = REGIONS_EVE_CENTRAL[getRegion()];
-		}
-		if (source.equals(SOURCE_EVE_METRICS)){
-			regionType = REGIONS_EVE_METRICS[getRegion()];
-		}
-		if (source.equals(SOURCE_EVE_MARKETDATA)){
-			regionType = REGIONS_EVE_MARKETDATA[getRegion()];
-		}
-		if (regionType.equals(RegionType.REGION_EMPIRE)){
-		//Amarr
-			regions.add(10000054l); //Amarr: Aridia
-			regions.add(10000036l); //Amarr: Devoid
-			regions.add(10000043l); //Amarr: Domain
-			regions.add(10000067l); //Amarr: Genesis
-			regions.add(10000052l); //Amarr: Kador
-			regions.add(10000065l); //Amarr: Kor-Azor
-			regions.add(10000020l); //Amarr: Tash-Murkon
-			regions.add(10000038l); //Amarr: The Bleak Lands
-		//Caldari
-			regions.add(10000069l); //Caldari: Black Rise
-			regions.add(10000016l); //Caldari: Lonetrek
-			regions.add(10000033l); //Caldari: The Citadel
-			regions.add(10000002l); //Caldari: The Forge
-		//Gallente
-			regions.add(10000064l); //Gallente: Essence
-			regions.add(10000037l); //Gallente: Everyshore
-			regions.add(10000048l); //Gallente: Placid
-			regions.add(10000032l); //Gallente: Sinq Laison
-			regions.add(10000044l); //Gallente: Solitude
-			regions.add(10000068l); //Gallente: Verge Vendor
-		//Minmatar
-			regions.add(10000042l); //Minmatar : Metropolis
-			regions.add(10000030l); //Minmatar : Heimatar
-			regions.add(10000028l); //Minmatar : Molden Heath
-		//Others
-			regions.add(10000001l); //Ammatar: Derelik
-			regions.add(10000049l); //Khanid: Khanid
-		}
-		if (regionType.equals(RegionType.REGION_MARKET_HUBS)){
-			regions.add(10000002l); //Caldari: The Forge (Jita)
-			regions.add(10000042l); //Minmatar : Metropolis (Hek)
-			regions.add(10000030l); //Minmatar : Heimatar (Rens)
-			regions.add(10000064l); //Gallente: Essence (Oursalert)
-			regions.add(10000043l); //Amarr: Domain (Amarr)
-		}
-		if (regionType.equals(RegionType.REGION_ALL_AMARR)){
-			regions.add(10000054l); //Amarr: Aridia
-			regions.add(10000036l); //Amarr: Devoid
-			regions.add(10000043l); //Amarr: Domain
-			regions.add(10000067l); //Amarr: Genesis
-			regions.add(10000052l); //Amarr: Kador
-			regions.add(10000065l); //Amarr: Kor-Azor
-			regions.add(10000020l); //Amarr: Tash-Murkon
-			regions.add(10000038l); //Amarr: The Bleak Lands
-		}
-		if (regionType.equals(RegionType.REGION_ALL_GALLENTE)){
-			regions.add(10000064l); //Gallente: Essence
-			regions.add(10000037l); //Gallente: Everyshore
-			regions.add(10000048l); //Gallente: Placid
-			regions.add(10000032l); //Gallente: Sinq Laison
-			regions.add(10000044l); //Gallente: Solitude
-			regions.add(10000068l); //Gallente: Verge Vendor
-		}
-		if (regionType.equals(RegionType.REGION_ALL_MINMATAR)){
-			regions.add(10000042l); //Minmatar : Metropolis
-			regions.add(10000030l); //Minmatar : Heimatar
-			regions.add(10000028l); //Minmatar : Molden Heath
-		}
-		if (regionType.equals(RegionType.REGION_ALL_CALDARI)){
-			regions.add(10000069l); //Caldari: Black Rise
-			regions.add(10000016l); //Caldari: Lonetrek
-			regions.add(10000033l); //Caldari: The Citadel
-			regions.add(10000002l); //Caldari: The Forge
-		}
-		if (regionType.equals(RegionType.REGION_ARIDIA)){
-			//Amarr: Aridia
-			regions.add(10000054l);
-		}
-		if (regionType.equals(RegionType.REGION_DEVOID)){
-			//Amarr: Devoid
-			regions.add(10000036l);
-		}
-		if (regionType.equals(RegionType.REGION_DOMAIN)){
-			regions.add(10000043l); //Amarr: Domain
-		}
-		if (regionType.equals(RegionType.REGION_GENESIS)){
-			regions.add(10000067l); //Amarr: Genesis
-		}
-		if (regionType.equals(RegionType.REGION_KADOR)){
-			regions.add(10000052l); //Amarr: Kador
-		}
-		if (regionType.equals(RegionType.REGION_KOR_AZOR)){
-			regions.add(10000065l); //Amarr: Kor-Azor
-		}
-		if (regionType.equals(RegionType.REGION_TASH_MURKON)){
-			regions.add(10000020l); //Amarr: Tash-Murkon
-		}
-		if (regionType.equals(RegionType.REGION_THE_BLEAK_LANDS)){
-			regions.add(10000038l); //Amarr: The Bleak Lands
-		}
-		if (regionType.equals(RegionType.REGION_BLACK_RISE)){
-			regions.add(10000069l); //Caldari: Black Rise
-		}
-		if (regionType.equals(RegionType.REGION_LONETREK)){
-			regions.add(10000016l); //Caldari: Lonetrek
-		}
-		if (regionType.equals(RegionType.REGION_THE_CITADEL)){
-			regions.add(10000033l); //Caldari: The Citadel
-		}
-		if (regionType.equals(RegionType.REGION_THE_FORGE)){
-			regions.add(10000002l); //Caldari: The Forge
-		}
-		if (regionType.equals(RegionType.REGION_ESSENCE)){
-			regions.add(10000064l); //Gallente: Essence
-		}
-		if (regionType.equals(RegionType.REGION_EVERYSHORE)){
-			regions.add(10000037l); //Gallente: Everyshore
-		}
-		if (regionType.equals(RegionType.REGION_PLACID)){
-			regions.add(10000048l); //Gallente: Placid
-		}
-		if (regionType.equals(RegionType.REGION_SINQ_LAISON)){
-			regions.add(10000032l); //Gallente: Sinq Laison
-		}
-		if (regionType.equals(RegionType.REGION_SOLITUDE)){
-			regions.add(10000044l); //Gallente: Solitude
-		}
-		if (regionType.equals(RegionType.REGION_VERGE_VENDOR)){
-			regions.add(10000068l); //Gallente: Verge Vendor
-		}
-		if (regionType.equals(RegionType.REGION_METROPOLIS)){
-			regions.add(10000042l); //Minmatar : Metropolis
-		}
-		if (regionType.equals(RegionType.REGION_HEIMATAR)){
-			regions.add(10000030l); //Minmatar : Heimatar
-		}
-		if (regionType.equals(RegionType.REGION_MOLDEN_HEATH)){
-			regions.add(10000028l); //Minmatar : Molden Heath
-		}
-		if (regionType.equals(RegionType.REGION_DERELIK)){
-			regions.add(10000001l); //Ammatar: Derelik
-		}
-		if (regionType.equals(RegionType.REGION_KHANID)){
-			regions.add(10000049l); //Khanid: Khanid
-		}
-		return regions;
+	public List<Long> getRegions() {
+		return regionType.getRegions();
+	}
+
+	public static RegionType getDefaultRegionType() {
+		return RegionType.THE_FORGE;
+	}
+
+	public static PriceSource getDefaultPriceSource() {
+		return PriceSource.EVE_CENTRAL;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -536,13 +444,10 @@ public class PriceDataSettings {
 			return false;
 		}
 		final PriceDataSettings other = (PriceDataSettings) obj;
-		if (this.region != other.region) {
+		if (this.regionType != other.regionType) {
 			return false;
 		}
-		if ((this.source == null) ? (other.source != null) : !this.source.equals(other.source)) {
-			return false;
-		}
-		if (this.factionPrice != other.factionPrice) {
+		if (this.priceSource != other.priceSource) {
 			return false;
 		}
 		return true;
@@ -551,9 +456,8 @@ public class PriceDataSettings {
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 53 * hash + this.region;
-		hash = 53 * hash + (this.source != null ? this.source.hashCode() : 0);
-		hash = 53 * hash + (this.factionPrice != null ? this.factionPrice.hashCode() : 0);
+		hash = 79 * hash + (this.regionType != null ? this.regionType.hashCode() : 0);
+		hash = 79 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
 		return hash;
 	}
 }

@@ -30,13 +30,13 @@ import org.junit.Test;
 
 public class ImagesTest {
 
-    public ImagesTest() {}
+	public ImagesTest() { }
 
 	@Test
 	public void testExists() {
-		for (Images i : Images.values()){
+		for (Images i : Images.values()) {
 			BufferedImage image = Images.getBufferedImage(i.getFilename());
-			assertNotNull(i.getFilename()+" not found", image);
+			assertNotNull(i.getFilename() + " not found", image);
 		}
 	}
 
@@ -54,39 +54,40 @@ public class ImagesTest {
 
 			if (children != null) {
 				for (String filename : children) {
-					if (filename.equals("Images.class")) continue;
+					if (filename.equals("Images.class")) {
+						continue;
+					}
 					boolean ok = false;
 					//Images Class
 					for (Images i : Images.values()) {
-						if (filename.equals(i.getFilename())){
+						if (filename.equals(i.getFilename())) {
 							ok = true;
 							break;
 						}
 					}
 					//loading 01-08
-					for (int a = 0; a < 8; a++){
-						if (filename.equals("loading0"+(a+1)+".png")){
+					for (int a = 0; a < 8; a++) {
+						if (filename.equals("loading0" + (a + 1) + ".png")) {
 							ok = true;
 							break;
 						}
 					}
 					//working 01-24
-					for (int a = 0; a < 24; a++){
+					for (int a = 0; a < 24; a++) {
 						String number;
-						if ((a+1)<10){
-							number = "0"+(a+1);
+						if ((a + 1) < 10) {
+							number = "0" + (a + 1);
 						} else {
-							number = ""+(a+1);
+							number = "" + (a + 1);
 						}
-						if (filename.equals("working"+number+".png")){
+						if (filename.equals("working" + number + ".png")) {
 							ok = true;
 							break;
 						}
 					}
-					assertTrue(filename+" is not used anywhere",ok);
+					assertTrue(filename + " is not used anywhere", ok);
 				}
 			}
-			
 		} catch (URISyntaxException ex) {
 			fail("Directory not found");
 		}
@@ -95,9 +96,9 @@ public class ImagesTest {
 	@Test
 	public void testFilenames() {
 		for (Images i : Images.values()) {
-			String properFilename = i.toString().toLowerCase()+".png";
-			if (!properFilename.equals(i.getFilename())){
-				fail(i.toString()+" filename should be "+properFilename+" but is "+i.getFilename());
+			String properFilename = i.toString().toLowerCase() + ".png";
+			if (!properFilename.equals(i.getFilename())) {
+				fail(i.toString() + " filename should be " + properFilename + " but is " + i.getFilename());
 			}
 		}
 	}

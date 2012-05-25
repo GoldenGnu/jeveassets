@@ -36,7 +36,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getName();
 		}
 	},
@@ -46,7 +46,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnGroup();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getGroup();
 		}
 	},
@@ -56,7 +56,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnCategory();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getCategory();
 		}
 	},
@@ -66,7 +66,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getOwner();
 		}
 	},
@@ -76,7 +76,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnLocation();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getLocation();
 		}
 	},
@@ -86,7 +86,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnSecurity();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getSecurity();
 		}
 	},
@@ -96,7 +96,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getRegion();
 		}
 	},
@@ -106,7 +106,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnContainer();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getContainer();
 		}
 	},
@@ -116,7 +116,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnFlag();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getFlag();
 		}
 	},
@@ -126,7 +126,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getPrice();
 		}
 	},
@@ -136,7 +136,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceSellMin();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getPriceSellMin();
 		}
 	},
@@ -146,7 +146,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceBuyMax();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getPriceBuyMax();
 		}
 	},
@@ -156,7 +156,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceReprocessed();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getPriceReprocessed();
 		}
 	},
@@ -166,7 +166,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceBase();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getPriceBase();
 		}
 	},
@@ -176,7 +176,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnValueReprocessed();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getValueReprocessed();
 		}
 	},
@@ -186,18 +186,17 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getValue();
 		}
 	},
-	
 	COUNT(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnCount();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getCount();
 		}
 	},
@@ -207,7 +206,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnTypeCount();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getTypeCount();
 		}
 	},
@@ -217,7 +216,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMeta();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getMeta();
 		}
 	},
@@ -227,7 +226,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnTech();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getTech();
 		}
 	},
@@ -237,7 +236,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnVolume();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getVolume();
 		}
 	},
@@ -247,7 +246,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnVolumeTotal();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getVolumeTotal();
 		}
 	},
@@ -257,7 +256,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnSingleton();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getSingleton();
 		}
 	},
@@ -267,26 +266,25 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnItemID();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return new LongInt(from.getItemID());
 		}
 	},
-	
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTypeID();
 		}
 		@Override
-		public Object getColumnValue(Asset from) {
+		public Object getColumnValue(final Asset from) {
 			return from.getTypeID();
 		}
-	},
-	;
+	};
 
-	Class type;
-	Comparator<?> comparator;
-	private EveAssetTableFormat(Class type, Comparator<?> comparator) {
+	private Class type;
+	private Comparator<?> comparator;
+
+	private EveAssetTableFormat(final Class type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -298,29 +296,28 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override
-	public Object getColumnValue(Asset from) {
-		return getColumnValue(from);
-	}
 	@Override
 	public String toString() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(Object baseObject) {
+	@Override
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
 	}
-	@Override public Asset setColumnValue(Object baseObject, Object editedValue) {
+	@Override
+	public Asset setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
-	
-	public class LongInt implements Comparable<LongInt> {
-		Long number;
+	//XXX - TableFormat.getColumnValue(...) Workaround
+	@Override public abstract Object getColumnValue(final Asset from);
 
-		public LongInt(Long number) {
+	public class LongInt implements Comparable<LongInt> {
+		private Long number;
+
+		public LongInt(final Long number) {
 			this.number = number;
 		}
-		
+
 		public Long getNumber() {
 			return number;
 		}
@@ -331,7 +328,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 
 		@Override
-		public int compareTo(LongInt o) {
+		public int compareTo(final LongInt o) {
 			return number.compareTo(o.getNumber());
 		}
 	}

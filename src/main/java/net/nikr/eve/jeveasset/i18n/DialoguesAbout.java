@@ -33,10 +33,10 @@ public abstract class DialoguesAbout extends Bundle {
 	public static DialoguesAbout get() {
 		return BundleCache.get(DialoguesAbout.class);
 	}
-	public static DialoguesAbout get(Locale locale) {
+	public static DialoguesAbout get(final Locale locale) {
 		return BundleCache.get(DialoguesAbout.class, locale);
 	}
-	public DialoguesAbout(Locale locale) {
+	public DialoguesAbout(final Locale locale) {
 		super(locale);
 	}
 	public abstract String about();

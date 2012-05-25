@@ -31,14 +31,14 @@ public abstract class TabsStockpile extends Bundle {
 		return BundleCache.get(TabsStockpile.class);
 	}
 
-	public static TabsStockpile get(Locale locale) {
+	public static TabsStockpile get(final Locale locale) {
 		return BundleCache.get(TabsStockpile.class, locale);
 	}
 
-	public TabsStockpile(Locale locale) {
+	public TabsStockpile(final Locale locale) {
 		super(locale);
 	}
-	
+
 	public abstract String stockpile();
 	public abstract String newStockpile();
 	public abstract String addStockpileTitle();
@@ -47,6 +47,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String editStockpile();
 	public abstract String cloneStockpile();
 	public abstract String deleteStockpile();
+	public abstract String deleteItems(int size);
 	public abstract String allLocations();
 	public abstract String myLocations();
 	public abstract String name();
@@ -100,6 +101,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importNotValid();
 	public abstract String stockpilePercent();
 	public abstract String columnName();
+	public abstract String columnGroup();
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();
 	public abstract String columnCountNowBuyOrders();
@@ -107,6 +109,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountNowJobs();
 	public abstract String columnCountNeeded();
 	public abstract String columnCountMinimum();
+	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
 	public abstract String columnValueNow();
 	public abstract String columnValueNeeded();

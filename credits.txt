@@ -26,6 +26,7 @@ Developers:
 
 Testers:
   Varo Jan*
+  Scrapyard Bob*
 
 * Eve Online in-game name
 
@@ -35,7 +36,7 @@ _SPECIAL_THANKS_________________________________________________________________
 jEveAssets is heavily based on the user interface in EVE Asset Manager
 
 Copyright:
-  William J Rogers
+  William J. Rogers
 
 Link:
   http://wiki.heavyduck.com/EveAssetManager
@@ -64,18 +65,18 @@ Link:
 ________________________________________________________________________________
 _EVE-MARKETDATA_________________________________________________________________
 
-jEveAssets use eve-marketdata.com API to get price data
+jEveAssets use Eve-MarketData.com API to get price data
 
 Link:
   http://eve-marketdata.com/
 
 ________________________________________________________________________________
-_PRICES.C0RPORATION_____________________________________________________________
+_EVEMARKETEER___________________________________________________________________
 
-jEveAssets use Prices.c0rporation.com to get faction prices
+jEveAssets use EveMarketeer.com API to get price data
 
 Link:
-  http://prices.c0rporation.com/
+  http://www.evemarketeer.com/
 
 ________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________

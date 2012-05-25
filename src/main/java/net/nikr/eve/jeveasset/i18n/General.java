@@ -34,16 +34,17 @@ public abstract class General extends Bundle {
 		return BundleCache.get(General.class);
 	}
 
-	public static General get(Locale locale) {
+	public static General get(final Locale locale) {
 		return BundleCache.get(General.class, locale);
 	}
 
-	public General(Locale locale) {
+	public General(final Locale locale) {
 		super(locale);
 	}
 
 	public abstract String uncaughtErrorMessage();
 	public abstract String error();
-	public abstract String marketOrderFlag();
+	public abstract String marketOrderSellFlag();
+	public abstract String marketOrderBuyFlag();
 
 }

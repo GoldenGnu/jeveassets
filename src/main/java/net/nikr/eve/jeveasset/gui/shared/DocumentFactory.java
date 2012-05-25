@@ -29,28 +29,31 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.PlainDocument;
 
 
-public class DocumentFactory {
+public final class DocumentFactory {
 
-	public static IntegerPlainDocument getIntegerPlainDocument(){
+	public static IntegerPlainDocument getIntegerPlainDocument() {
 		return new IntegerPlainDocument();
 	}
-	public static WordPlainDocument getWordPlainDocument(){
+	public static WordPlainDocument getWordPlainDocument() {
 		return new WordPlainDocument();
 	}
-	public static DoublePlainDocument getDoublePlainDocument(){
+	public static DoublePlainDocument getDoublePlainDocument() {
 		return new DoublePlainDocument();
 	}
-	public static MaxLengthPlainDocument getMaxLengthPlainDocument(int maxLength){
+	public static MaxLengthPlainDocument getMaxLengthPlainDocument(final int maxLength) {
 		return new MaxLengthPlainDocument(maxLength);
 	}
-	public static MaxLengthStyledDocument getMaxLengthStyledDocument(int maxLength){
+	public static MaxLengthStyledDocument getMaxLengthStyledDocument(final int maxLength) {
 		return new MaxLengthStyledDocument(maxLength);
 	}
+
+	private DocumentFactory() {	}
+
 
 	public static class IntegerPlainDocument extends PlainDocument {
 
 		@Override
-		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
 			if (string == null) {
 				return;
@@ -77,7 +80,7 @@ public class DocumentFactory {
 	public static class DoublePlainDocument extends PlainDocument {
 
 		@Override
-		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
 			if (string == null) {
 				return;
@@ -103,7 +106,7 @@ public class DocumentFactory {
 	public static class WordPlainDocument extends PlainDocument {
 
 		@Override
-		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
 			if (string == null) {
 				return;
@@ -118,29 +121,29 @@ public class DocumentFactory {
 				newValue = currentBuffer.toString();
 			}
 			boolean b = Pattern.matches("[\\w\\s]*", newValue);
-			if (b && !newValue.isEmpty()){
+			if (b && !newValue.isEmpty()) {
 				super.insertString(offset, string, attributes);
 			} else {
 				Toolkit.getDefaultToolkit().beep();
 			}
 		}
 	}
-	
-	public static class MaxLengthPlainDocument extends PlainDocument{
+
+	public static class MaxLengthPlainDocument extends PlainDocument {
 
 		private int maxLength;
 
-		public MaxLengthPlainDocument(int maxLength) {
+		public MaxLengthPlainDocument(final int maxLength) {
 			this.maxLength = maxLength;
 		}
 
 		@Override
-		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
 			if (string == null) {
 				return;
 			}
-			if (length+string.length() > maxLength){
+			if (length + string.length() > maxLength) {
 				Toolkit.getDefaultToolkit().beep();
 				return;
 			}
@@ -149,21 +152,21 @@ public class DocumentFactory {
 
 	}
 
-	public static class MaxLengthStyledDocument extends DefaultStyledDocument{
+	public static class MaxLengthStyledDocument extends DefaultStyledDocument {
 
 		private int maxLength;
 
-		public MaxLengthStyledDocument(int maxLength) {
+		public MaxLengthStyledDocument(final int maxLength) {
 			this.maxLength = maxLength;
 		}
 
 		@Override
-		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
 			if (string == null) {
 				return;
 			}
-			if (length+string.length() > maxLength){
+			if (length + string.length() > maxLength) {
 				Toolkit.getDefaultToolkit().beep();
 				return;
 			}

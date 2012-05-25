@@ -38,7 +38,7 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -46,12 +46,12 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 public class StockpileDialog extends JDialogCentered implements ActionListener, ItemListener, CaretListener {
 
-	private final static String ACTION_FILTER_LOCATIONS = "ACTION_FILTER_LOCATIONS";
-	private final static String ACTION_CANCEL = "ACTION_CANCEL";
-	private final static String ACTION_OK = "ACTION_OK";
-	
-	private final static int FIELD_WIDTH = 320;
-	
+	private static final String ACTION_FILTER_LOCATIONS = "ACTION_FILTER_LOCATIONS";
+	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private static final String ACTION_OK = "ACTION_OK";
+
+	private static final int FIELD_WIDTH = 320;
+
 	private JTextField jName;
 	private JComboBox jOwner;
 	private JComboBox jLocations;
@@ -72,66 +72,63 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private List<String> myLocations;
 	private final Human humanAll = new Human(null, TabsStockpile.get().all(), -1);
 	private final ItemFlag itemFlagAll = new ItemFlag(-1, TabsStockpile.get().all(), "");
-	public static final Location locationAll = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
+	public static final Location LOCATION_ALL = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
 	private AutoCompleteSupport<Location> locationsAutoComplete;
 	private boolean updated = false;
-	
-	public StockpileDialog(Program program) {
+
+	public StockpileDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
-		
+
 		JLabel jNameLabel = new JLabel(TabsStockpile.get().name());
 		jName = new JTextField();
 		jName.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusGained(FocusEvent e) {
+			public void focusGained(final FocusEvent e) {
 				jName.selectAll();
 			}
 		});
 		jName.addCaretListener(this);
-		
-		
-		
+
 		JLabel jCharactersLabel = new JLabel(TabsStockpile.get().owner());
 		jOwner = new JComboBox();
-		
+
 		ButtonGroup group = new ButtonGroup();
-	
+
 		jStations = new JRadioButton(TabsStockpile.get().stations());
 		jStations.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jStations.addActionListener(this);
 		group.add(jStations);
-		
+
 		jSystems = new JRadioButton(TabsStockpile.get().systems());
 		jSystems.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jSystems.addActionListener(this);
 		group.add(jSystems);
-		
+
 		jRegions = new JRadioButton(TabsStockpile.get().regions());
 		jRegions.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jRegions.addActionListener(this);
 		group.add(jRegions);
-		
+
 		jUniverse = new JRadioButton(TabsStockpile.get().allLocations());
 		jUniverse.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jUniverse.addActionListener(this);
 		group.add(jUniverse);
-		
+
 		jMyLocations = new JCheckBox(TabsStockpile.get().myLocations());
 		jMyLocations.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jMyLocations.addActionListener(this);
-	
 		JLabel jIncludeLabel = new JLabel(TabsStockpile.get().include());
-		
+
 		jInventory = new JCheckBox(TabsStockpile.get().inventory());
-		
+
 		jBuyOrders = new JCheckBox(TabsStockpile.get().buyOrders());
-	
+
 		jSellOrders = new JCheckBox(TabsStockpile.get().sellOrders());
-		
+
 		jJobs = new JCheckBox(TabsStockpile.get().jobs());
-		
+
 		JLabel jLocationsLabel = new JLabel(TabsStockpile.get().locations());
 		jLocations = new JComboBox();
 		jLocations.addItemListener(this);
@@ -139,23 +136,22 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		locationsAutoComplete = AutoCompleteSupport.install(jLocations, locationsFilter, new LocationsFilterator());
 		locationsAutoComplete.setStrict(true);
 		locationsAutoComplete.setCorrectsCase(true);
-		
+
 		JLabel jFlagLabel = new JLabel(TabsStockpile.get().flag());
 		jFlag = new JComboBox();
 
 		JLabel jContainerLabel = new JLabel(TabsStockpile.get().container());
 		jContainer = new JComboBox();
-		
+
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 		jOK.setEnabled(false);
-		
+
 		JButton jCancel = new JButton(TabsStockpile.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
-		
-		
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
@@ -236,44 +232,50 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
-		
 	}
-	
-	private Stockpile getStockpile(){
+
+	private Stockpile getStockpile() {
 		//Name
 		String name = jName.getText();
 		//Character
 		Human human = (Human) jOwner.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
-		
 		String station = null;
 		String system = null;
 		String region = null;
-		if (location.isRegion() || location.isSystem() || location.isStation()){
+		if (location.isRegion() || location.isSystem() || location.isStation()) {
 			region = ApiIdConverter.regionName(location.getLocationID(), null, program.getSettings().getLocations());
 		}
-		if (location.isSystem() || location.isStation()){
+		if (location.isSystem() || location.isStation()) {
 			system = ApiIdConverter.systemName(location.getLocationID(), null, program.getSettings().getLocations());
 		}
-		if (location.isStation()){
+		if (location.isStation()) {
 			station = ApiIdConverter.locationName(location.getLocationID(), null, program.getSettings().getLocations());
+		} else if (location.isSystem()) {
+			station = system;
+		} else if (location.isRegion()) {
+			station = region;
 		}
 		//Flag
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
 		//Container
-		String container = (String)jContainer.getSelectedItem();
+		String container = (String) jContainer.getSelectedItem();
 		//Add
-		
+
 		return new Stockpile(name, human.getOwnerID(), human.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
 	}
-	
-	private void autoValidate(){
+
+	private void autoValidate() {
 		boolean b = true;
-		if (jLocations.getSelectedItem() == null) b = false;
-		if (jName.getText().isEmpty()) b = false;
-		if (program.getSettings().getStockpiles().contains(getStockpile())){
-			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())){
+		if (jLocations.getSelectedItem() == null) {
+			b = false;
+		}
+		if (jName.getText().isEmpty()) {
+			b = false;
+		}
+		if (program.getSettings().getStockpiles().contains(getStockpile())) {
+			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())) {
 				jName.setBackground(Color.WHITE);
 			} else {
 				b = false;
@@ -284,54 +286,58 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		}
 		jOK.setEnabled(b);
 	}
-	
-	boolean showEdit(Stockpile stockpile) {
+
+	boolean showEdit(final Stockpile stockpile) {
 		updateData();
 		this.stockpile = stockpile;
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileTitle());
-		
+
 		//Include
 		jInventory.setSelected(stockpile.isInventory());
 		jSellOrders.setSelected(stockpile.isSellOrders());
 		jBuyOrders.setSelected(stockpile.isBuyOrders());
 		jJobs.setSelected(stockpile.isJobs());
-		
+
 		//Name
 		jName.setText(stockpile.getName());
-		
+
 		//Characters
 		Human humanSelected = humanAll;
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (human.getOwnerID() == stockpile.getOwnerID()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
+				if (human.getOwnerID() == stockpile.getOwnerID()) {
 					humanSelected = human;
 				}
 			}
 		}
 		jOwner.setSelectedItem(humanSelected);
-		
+
 		//Location
 		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
-		if (location == null) location = locationAll;
-		if (location.getLocationID() < 0){
+		if (location == null) {
+			location = LOCATION_ALL;
+		}
+		if (location.getLocationID() < 0) {
 			jUniverse.setSelected(true);
-		} else if (location.isRegion()){
+		} else if (location.isRegion()) {
 			jRegions.setSelected(true);
-		} else if (location.isSystem()){
+		} else if (location.isSystem()) {
 			jSystems.setSelected(true);
-		} else if (location.isStation()){
+		} else if (location.isStation()) {
 			jStations.setSelected(true);
 		}
 		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
 		refilter();
 		jLocations.setSelectedItem(location);
-		
+
 		//Flag
 		ItemFlag itemFlag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
-		if (itemFlag == null) itemFlag = itemFlagAll;
+		if (itemFlag == null) {
+			itemFlag = itemFlagAll;
+		}
 		jFlag.setSelectedItem(itemFlag);
-		
+
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
@@ -344,7 +350,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 		return stockpile;
 	}
-	Stockpile showAdd(String name) {
+	Stockpile showAdd(final String name) {
 		updateData();
 		jName.setText(name);
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
@@ -352,135 +358,68 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		return stockpile;
 	}
 
-	Stockpile showAdd(long locationID) {
-		updateData();
-		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
-		//Location
-		Location location = program.getSettings().getLocations().get(locationID);
-		if (location == null){
-			jStations.setSelected(true); //Default
-		} else if (location.isRegion()){
-			jRegions.setSelected(true);
-		} else if (location.isSystem()){
-			jSystems.setSelected(true);
-		} else if (location.isStation()){
-			jStations.setSelected(true);
-		}
-		if (location != null){
-			jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
-			refilter();
-			jLocations.setSelectedItem(location);
-		}
-		
-		show();
-		return stockpile;
-	}
-	
-	Stockpile showAdd(Asset asset) {
-		updateData();
-		//Title
-		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
-		
-		//Characters
-		Human humanSelected = humanAll;
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (human.getName().equals(asset.getOwner())){
-					humanSelected = human;
-				}
-			}
-		}
-		jOwner.setSelectedItem(humanSelected);
-		
-		//Location
-		Location location = program.getSettings().getLocations().get(asset.getLocationID());
-		if (location == null) location = locationAll;
-		if (location.getLocationID() < 0){
-			jUniverse.setSelected(true);
-		} else if (location.isRegion()){
-			jRegions.setSelected(true);
-		} else if (location.isSystem()){
-			jSystems.setSelected(true);
-		} else if (location.isStation()){
-			jStations.setSelected(true);
-		}
-		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
-		refilter();
-		jLocations.setSelectedItem(location);
-		
-		//Flag
-		ItemFlag itemFlag = itemFlagAll;
-		for (ItemFlag flag : program.getSettings().getItemFlags().values()){
-			if (asset.getFlag().equals(flag.getFlagName())){
-				itemFlag = flag;
-			}
-		}
-		jFlag.setSelectedItem(itemFlag);
-		
-		//Container
-		jContainer.setSelectedItem(asset.getContainer());
-		show();
-		return stockpile;
-	}
-	
-	boolean showClone(Stockpile stockpile) {
+	boolean showClone(final Stockpile stockpile) {
 		updateData();
 		this.cloneStockpile = stockpile.clone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
-		
+
 		//Include
 		jInventory.setSelected(stockpile.isInventory());
 		jSellOrders.setSelected(stockpile.isSellOrders());
 		jBuyOrders.setSelected(stockpile.isBuyOrders());
 		jJobs.setSelected(stockpile.isJobs());
-		
+
 		//Characters
 		Human humanSelected = humanAll;
-		for (Account account : program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
-				if (human.getOwnerID() == stockpile.getOwnerID()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
+				if (human.getOwnerID() == stockpile.getOwnerID()) {
 					humanSelected = human;
 				}
 			}
 		}
 		jOwner.setSelectedItem(humanSelected);
-		
+
 		//Location
 		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
-		if (location == null) location = locationAll;
-		if (location.getLocationID() < 0){
+		if (location == null) {
+			location = LOCATION_ALL;
+		}
+		if (location.getLocationID() < 0) {
 			jUniverse.setSelected(true);
-		} else if (location.isRegion()){
+		} else if (location.isRegion()) {
 			jRegions.setSelected(true);
-		} else if (location.isSystem()){
+		} else if (location.isSystem()) {
 			jSystems.setSelected(true);
-		} else if (location.isStation()){
+		} else if (location.isStation()) {
 			jStations.setSelected(true);
 		}
 		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
 		refilter();
 		jLocations.setSelectedItem(location);
-		
+
 		//Flag
 		ItemFlag itemFlag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
-		if (itemFlag == null) itemFlag = itemFlagAll;
+		if (itemFlag == null) {
+			itemFlag = itemFlagAll;
+		}
 		jFlag.setSelectedItem(itemFlag);
-		
+
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
 		return updated;
 	}
-	
-	private void show(){
+
+	private void show() {
 		updated = false;
 		super.setVisible(true);
 	}
-	
-	private void refilter(){
-		if (jUniverse.isSelected()){
-			locationsAutoComplete.setFirstItem( locationAll );
+
+	private void refilter() {
+		if (jUniverse.isSelected()) {
+			locationsAutoComplete.setFirstItem(LOCATION_ALL);
 			locationsFilter.setMatcher(null);
 			jLocations.setEnabled(false);
 
@@ -491,8 +430,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		}
 		jLocations.setSelectedIndex(0);
 	}
-	
-	private void updateData(){
+
+	private void updateData() {
 		stockpile = null;
 		cloneStockpile = null;
 
@@ -501,25 +440,25 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jSellOrders.setSelected(false);
 		jBuyOrders.setSelected(false);
 		jJobs.setSelected(false);
-		
+
 		//Name
 		jName.setText("");
 
 		//Characters
 		List<Human> characters = new ArrayList<Human>();
-		for (Account account :program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
 				characters.add(human);
 			}
 		}
-		if (characters.isEmpty()){
+		if (characters.isEmpty()) {
 			characters.add(humanAll);
-			jOwner.setModel( new DefaultComboBoxModel(characters.toArray()));
+			jOwner.setModel(new DefaultComboBoxModel(characters.toArray()));
 			jOwner.setEnabled(false);
 		} else {
 			Collections.sort(characters);
 			characters.add(0, humanAll);
-			jOwner.setModel( new DefaultComboBoxModel(characters.toArray()));
+			jOwner.setModel(new DefaultComboBoxModel(characters.toArray()));
 			jOwner.setEnabled(true);
 		}
 		//Locations
@@ -537,53 +476,54 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		List<ItemFlag> itemFlags = new ArrayList<ItemFlag>(program.getSettings().getItemFlags().values());
 		Collections.sort(itemFlags);
 		itemFlags.add(0, itemFlagAll);
-		jFlag.setModel( new DefaultComboBoxModel(itemFlags.toArray()));
+		jFlag.setModel(new DefaultComboBoxModel(itemFlags.toArray()));
 
 		//Containers & Locations Loop
 		List<String> containers = new ArrayList<String>();
 		myLocations = new ArrayList<String>();
-		for (Asset asset : program.getEveAssetEventList()){
-			if (!containers.contains(asset.getContainer()) && !asset.getContainer().isEmpty()){
+		for (Asset asset : program.getEveAssetEventList()) {
+			if (!containers.contains(asset.getContainer()) && !asset.getContainer().isEmpty()) {
 				containers.add(asset.getContainer());
 			}
-			if (!myLocations.contains(asset.getLocation())){
+			if (!myLocations.contains(asset.getLocation())) {
 				myLocations.add(asset.getLocation());
 			}
-			if (!myLocations.contains(asset.getSystem())){
+			if (!myLocations.contains(asset.getSystem())) {
 				myLocations.add(asset.getSystem());
 			}
-			if (!myLocations.contains(asset.getRegion())){
+			if (!myLocations.contains(asset.getRegion())) {
 				myLocations.add(asset.getRegion());
 			}
 		}
-		for (Account account :program.getSettings().getAccounts()){
-			for (Human human : account.getHumans()){
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Human human : account.getHumans()) {
 				List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-				for (IndustryJob industryJob : industryJobs){
-					if (!myLocations.contains(industryJob.getLocation())){
+				for (IndustryJob industryJob : industryJobs) {
+					if (!myLocations.contains(industryJob.getLocation())) {
 						myLocations.add(industryJob.getLocation());
 					}
-					if (!myLocations.contains(industryJob.getSystem())){
+					if (!myLocations.contains(industryJob.getSystem())) {
 						myLocations.add(industryJob.getSystem());
 					}
-					if (!myLocations.contains(industryJob.getRegion())){
+					if (!myLocations.contains(industryJob.getRegion())) {
 						myLocations.add(industryJob.getRegion());
 					}
 				}
 				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
-				for (MarketOrder marketOrder : marketOrders){
-					if (!myLocations.contains(marketOrder.getLocation())){
+				for (MarketOrder marketOrder : marketOrders) {
+					if (!myLocations.contains(marketOrder.getLocation())) {
 						myLocations.add(marketOrder.getLocation());
 					}
-					if (!myLocations.contains(marketOrder.getSystem())){
+					if (!myLocations.contains(marketOrder.getSystem())) {
 						myLocations.add(marketOrder.getSystem());
 					}
-					if (!myLocations.contains(marketOrder.getRegion())){
+					if (!myLocations.contains(marketOrder.getRegion())) {
 						myLocations.add(marketOrder.getRegion());
 					}
 				}
 			}
 		}
+		//FIXME - Consider making "All Locations" the default for the Add Stockpile Dialog
 		jMyLocations.setSelected(true);
 		jStations.setSelected(true);
 		locationsAutoComplete.removeFirstItem();
@@ -591,18 +531,18 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jLocations.setEnabled(true);
 		jLocations.setSelectedIndex(0);
 		//Containers
-		if (containers.isEmpty()){
+		if (containers.isEmpty()) {
 			containers.add(0, TabsStockpile.get().all());
-			jContainer.setModel( new DefaultComboBoxModel(containers.toArray()));
+			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(false);
 		} else {
 			Collections.sort(containers);
 			containers.add(0, TabsStockpile.get().all());
-			jContainer.setModel( new DefaultComboBoxModel(containers.toArray()));
+			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(true);
 		}
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jName;
@@ -614,11 +554,11 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	}
 
 	@Override
-	protected void windowShown() {}
-	
+	protected void windowShown() { }
+
 	@Override
 	protected void save() {
-		if (stockpile != null){ //Edit
+		if (stockpile != null) { //Edit
 			stockpile.update(getStockpile());
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
@@ -632,59 +572,59 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_FILTER_LOCATIONS.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_FILTER_LOCATIONS.equals(e.getActionCommand())) {
 			refilter();
 		}
-		if (ACTION_OK.equals(e.getActionCommand())){
+		if (ACTION_OK.equals(e.getActionCommand())) {
 			save();
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
 		}
 	}
 
 	@Override
-	public void itemStateChanged(ItemEvent e) {
+	public void itemStateChanged(final ItemEvent e) {
 		autoValidate();
 	}
 
 	@Override
-	public void caretUpdate(CaretEvent e) {
+	public void caretUpdate(final CaretEvent e) {
 		autoValidate();
 	}
-	
-	class HumanFilterator implements TextFilterator<Human>{
+
+	static class HumanFilterator implements TextFilterator<Human> {
 		@Override
-		public void getFilterStrings(List<String> baseList, Human element) {
+		public void getFilterStrings(final List<String> baseList, final Human element) {
 			baseList.add(element.getName());
 		}
 	}
-	class ItemFlagFilterator implements TextFilterator<ItemFlag>{
+	static class ItemFlagFilterator implements TextFilterator<ItemFlag> {
 		@Override
-		public void getFilterStrings(List<String> baseList, ItemFlag element) {
+		public void getFilterStrings(final List<String> baseList, final ItemFlag element) {
 			baseList.add(element.getFlagName());
 		}
 	}
-	class LocationsFilterator implements TextFilterator<Location>{
+	static class LocationsFilterator implements TextFilterator<Location> {
 		@Override
-		public void getFilterStrings(List<String> baseList, Location element) {
+		public void getFilterStrings(final List<String> baseList, final Location element) {
 			baseList.add(element.getName());
 		}
 	}
-	
-	class LocationsMatcher implements Matcher<Location>{
+
+	static class LocationsMatcher implements Matcher<Location> {
 
 		private boolean regions;
 		private boolean systems;
 		private boolean stations;
 		private List<String> myLocations;
 
-		public LocationsMatcher(List<String> myLocations) {
+		public LocationsMatcher(final List<String> myLocations) {
 			this(false, false, true, myLocations);
 		}
 
-		public LocationsMatcher(boolean regions, boolean systems, boolean stations, List<String> myLocations) {
+		public LocationsMatcher(final boolean regions, final boolean systems, final boolean stations, final List<String> myLocations) {
 			this.regions = regions;
 			this.systems = systems;
 			this.stations = stations;
@@ -692,17 +632,16 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		}
 
 		@Override
-		public boolean matches(Location item) {
-			if (item.isRegion()){
+		public boolean matches(final Location item) {
+			if (item.isRegion()) {
 				return regions && (myLocations.contains(item.getName()) || myLocations.isEmpty());
-			} else if (item.isSystem()){
+			} else if (item.isSystem()) {
 				return systems && (myLocations.contains(item.getName()) || myLocations.isEmpty());
-			} else if (item.isStation()){
+			} else if (item.isStation()) {
 				return stations && (myLocations.contains(item.getName()) || myLocations.isEmpty());
 			} else {
 				return false;
 			}
 		}
-		
 	}
 }

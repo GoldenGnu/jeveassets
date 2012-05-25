@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
-	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, DefaultMutableTreeNode parentNode) {
+	public UserPriceSettingsPanel(final Program program, final SettingsDialog optionsDialog, final DefaultMutableTreeNode parentNode) {
 		super(program, optionsDialog, Images.SETTINGS_USER_PRICE.getIcon(), parentNode,
 				DialoguesSettings.get().pricePrices(),
 				DialoguesSettings.get().pricePrice(),
@@ -44,17 +44,17 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 	}
 
 	@Override
-	protected Map<Integer, UserItem<Integer,Double>> getItems() {
+	protected Map<Integer, UserItem<Integer, Double>> getItems() {
 		return program.getSettings().getUserPrices();
 	}
 
 	@Override
-	protected void setItems(Map<Integer, UserItem<Integer,Double>> items) {
+	protected void setItems(final Map<Integer, UserItem<Integer, Double>> items) {
 		program.getSettings().setUserPrices(items);
 	}
 
 	@Override
-	protected Double valueOf(String value) {
+	protected Double valueOf(final String value) {
 		try {
 			return Double.valueOf(value);
 		}  catch (NumberFormatException ex) {
@@ -63,26 +63,26 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 	}
 
 	@Override
-	protected UserItem<Integer, Double> newUserItem(UserItem<Integer, Double> userItem) {
+	protected UserItem<Integer, Double> newUserItem(final UserItem<Integer, Double> userItem) {
 		return new UserPrice(userItem);
 	}
 
-	public static class UserPrice extends UserItem<Integer, Double>{
+	public static class UserPrice extends UserItem<Integer, Double> {
 
 		private DecimalFormat simpleFormat  = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 
-		public UserPrice(UserItem<Integer, Double> userItem) {
+		public UserPrice(final UserItem<Integer, Double> userItem) {
 			super(userItem);
 		}
-		public UserPrice(Asset eveAsset) {
+		public UserPrice(final Asset eveAsset) {
 			super(eveAsset.getPrice(), (eveAsset.isBlueprint() && !eveAsset.isBpo()) ? -eveAsset.getTypeID() : eveAsset.getTypeID(), eveAsset.getTypeName());
 		}
-		public UserPrice(Double value, Integer key, String name) {
+		public UserPrice(final Double value, final Integer key, final String name) {
 			super(value, key, name);
 		}
 
 		@Override
-		public String toString(){
+		public String toString() {
 			return getName();
 		}
 
@@ -92,7 +92,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 		}
 
 		@Override
-		public int compare(UserItem<Integer, Double> o1, UserItem<Integer, Double> o2) {
+		public int compare(final UserItem<Integer, Double> o1, final UserItem<Integer, Double> o2) {
 			return o1.getName().compareTo(o2.getName());
 		}
 	}

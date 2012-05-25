@@ -33,7 +33,7 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 
 	private JCheckBox jIgnoreSecureContainers;
 
-	public OverviewToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
+	public OverviewToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
 		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon(), parentNode);
 		jIgnoreSecureContainers = new JCheckBox(DialoguesSettings.get().ignoreAuditLogContainers());
 

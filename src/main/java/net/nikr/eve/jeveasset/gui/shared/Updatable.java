@@ -33,11 +33,11 @@ public class Updatable {
 	private boolean updatable;
 	private Settings settings;
 
-	public Updatable(Settings settings) {
+	public Updatable(final Settings settings) {
 		this.settings = settings;
 	}
 
-	public boolean isUpdatable(){
+	public boolean isUpdatable() {
 		List<Account> accounts = settings.getAccounts();
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
@@ -45,14 +45,14 @@ public class Updatable {
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
 		Date priceDataNextUpdate = settings.getPriceDataNextUpdate();
-		for (int a = 0; a < accounts.size(); a++){
+		for (int a = 0; a < accounts.size(); a++) {
 			Account account = accounts.get(a);
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getCharactersNextUpdate());
 			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++){
+			for (int b = 0; b < humans.size(); b++) {
 				Human human = humans.get(b);
-				if (human.isShowAssets()){
+				if (human.isShowAssets()) {
 					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, human.getIndustryJobsNextUpdate());
 					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, human.getMarketOrdersNextUpdate());
 					assetsNextUpdate = nextUpdate(assetsNextUpdate, human.getAssetNextUpdate());
@@ -70,22 +70,24 @@ public class Updatable {
 		return updatable;
 	}
 
-	private void isUpdatable(Date nextUpdate){
+	private void isUpdatable(final Date nextUpdate) {
 		isUpdatable(nextUpdate, true);
 	}
 
-	private void isUpdatable(Date nextUpdate, boolean ignoreOnProxy){
-		if (nextUpdate == null) nextUpdate = Settings.getGmtNow();
-		if (settings.isUpdatable(nextUpdate, ignoreOnProxy)){
+	private void isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
+		if (nextUpdate == null) {
+			nextUpdate = Settings.getGmtNow();
+		}
+		if (settings.isUpdatable(nextUpdate, ignoreOnProxy)) {
 			updatable = true;
 		}
 	}
 
-	private Date nextUpdate(Date nextUpdate, Date thisUpdate){
-		if (nextUpdate == null){
+	private Date nextUpdate(Date nextUpdate, final Date thisUpdate) {
+		if (nextUpdate == null) {
 				nextUpdate = thisUpdate;
 		}
-		if (thisUpdate.before(nextUpdate)){
+		if (thisUpdate.before(nextUpdate)) {
 			nextUpdate = thisUpdate;
 		}
 		return nextUpdate;

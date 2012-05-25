@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
@@ -43,10 +43,11 @@ import net.nikr.eve.jeveasset.gui.frame.MainMenu;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
+import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
@@ -60,11 +61,11 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Program implements ActionListener{
-	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
+public class Program implements ActionListener {
+	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.2.0 DEV BUILD 1";
+	public static final String PROGRAM_VERSION = "2.2.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -72,7 +73,7 @@ public class Program implements ActionListener{
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	private final static String ACTION_TIMER = "ACTION_TIMER";
+	private static final String ACTION_TIMER = "ACTION_TIMER";
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -80,7 +81,7 @@ public class Program implements ActionListener{
 
 	//GUI
 	private MainWindow mainWindow;
-	
+
 	//Dialogs
 	private AccountManagerDialog accountManagerDialog;
 	private AboutDialog aboutDialog;
@@ -99,6 +100,7 @@ public class Program implements ActionListener{
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
+	private ItemsTab itemsTab;
 
 	//Settings Panels
 	private GeneralSettingsPanel generalSettingsPanel;
@@ -116,19 +118,19 @@ public class Program implements ActionListener{
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
-	
+
 	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private Settings settings;
 	private EventList<Asset> eveAssetEventList;
-	
-	public Program(){
+
+	public Program() {
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
-		LOG.info("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version"));
-		LOG.info("Java: "+System.getProperty("java.vendor")+" "+System.getProperty("java.version"));
-		
-		if(debug){
+		LOG.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+		LOG.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+
+		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
 
@@ -183,55 +185,58 @@ public class Program implements ActionListener{
 		LOG.info("Loading: Stockpile Tab");
 		stockpileTab = new StockpileTab(this);
 		SplashUpdater.setProgress(74);
+		LOG.info("Loading: Items Tab");
+		itemsTab = new ItemsTab(this);
+		SplashUpdater.setProgress(76);
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(76);
+		SplashUpdater.setProgress(78);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(80);
 		LOG.info("Loading: Profiles Dialog");
 		profileDialog = new ProfileDialog(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(82);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		SplashUpdater.setProgress(82);
+		SplashUpdater.setProgress(84);
 	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(85);
 		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(85);
+		SplashUpdater.setProgress(86);
 		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
 		LOG.info("Loading: Assets Tool Settings Panel");
 		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(86);
+		SplashUpdater.setProgress(87);
 		LOG.info("Loading: Overview Tool Settings Panel");
 		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(87);
+		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Stockpile Tool Settings Panel");
 		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(88);
+		SplashUpdater.setProgress(89);
 		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(89);
+		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Assets Name Settings Panel");
 		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(90);
+		SplashUpdater.setProgress(91);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(92);
+		SplashUpdater.setProgress(93);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(94);
+		SplashUpdater.setProgress(95);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
@@ -242,12 +247,12 @@ public class Program implements ActionListener{
 		//Start timer
 		timerTicked();
 		LOG.info("Startup Done");
-		if(debug){
+		if (debug) {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		programUpdateChecker.showMessages();
-		if (settings.getAccounts().isEmpty()){
+		if (settings.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
@@ -257,70 +262,70 @@ public class Program implements ActionListener{
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected Program(boolean load) { }
+	protected Program(final boolean load) { }
 
-	public void addMainTab(JMainTab jMainTab){
+	public void addMainTab(final JMainTab jMainTab) {
 		jMainTabs.add(jMainTab);
 	}
-	
-	private void timerTicked(){
-		if (!timer.isRunning()){
+
+	private void timerTicked() {
+		if (!timer.isRunning()) {
 			timer.start();
 		}
 		this.getStatusPanel().timerTicked(updatable.isUpdatable());
 		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
 	}
-	
-	final public void updateEventList(){
+
+	public final void updateEventList() {
 		LOG.info("Updating EventList");
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
-		eveAssetEventList.addAll( settings.getEventListAssets() );
+		eveAssetEventList.addAll(settings.getEventListAssets());
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
-		for (JMainTab jMainTab : mainWindow.getTabs()){
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
 		}
 	}
 
-	public void saveSettings(){
+	public void saveSettings() {
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
-		for (JMainTab jMainTab : jMainTabs){
+		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.updateSettings();
 		}
 		settings.saveSettings();
 	}
-	
-	public void exit(){
+
+	public void exit() {
 		saveSettings();
 		LOG.info("Exiting...");
 		System.exit(0);
 	}
 
-	public void showAbout(){
+	public void showAbout() {
 		aboutDialog.setVisible(true);
 	}
 
-	public void showSettings(){
+	public void showSettings() {
 		settingsDialog.setVisible(true);
 	}
 
-	public void checkForProgramUpdates(Window parent){
+	public void checkForProgramUpdates(final Window parent) {
 		programUpdateChecker.showMessages(parent, true);
 	}
 
-	public String getProgramDataVersion(){
+	public String getProgramDataVersion() {
 		return programUpdateChecker.getProgramDataVersion();
 	}
 
-	private void macOsxCode(){
+	private void macOsxCode() {
 		if (onMac()) {
 			try {
 				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
-				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[])null));
-				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[])null));
+				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
+				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
 			} catch (NoSuchMethodException ex) {
 				LOG.error("NoSuchMethodException: " + ex.getMessage(), ex);
 			} catch (SecurityException ex) {
@@ -329,21 +334,21 @@ public class Program implements ActionListener{
 		}
 	}
 
-	public Settings getSettings(){
+	public Settings getSettings() {
 		return settings;
 	}
-	public MainWindow getMainWindow(){
+	public MainWindow getMainWindow() {
 		return mainWindow;
 	}
-	public AssetsTab getAssetsTab(){
+	public AssetsTab getAssetsTab() {
 		return assetsTab;
 	}
 
 	public OverviewTab getOverviewTab() {
 		return overviewTab;
 	}
-	
-	public StatusPanel getStatusPanel(){
+
+	public StatusPanel getStatusPanel() {
 		return this.getMainWindow().getStatusPanel();
 	}
 	public UserNameSettingsPanel getUserNameSettingsPanel() {
@@ -356,7 +361,7 @@ public class Program implements ActionListener{
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;
 	}
-	
+
 	public EventList<Asset> getEveAssetEventList() {
 		return eveAssetEventList;
 	}
@@ -368,7 +373,7 @@ public class Program implements ActionListener{
 		return debug;
 	}
 
-	public static void setDebug(boolean debug) {
+	public static void setDebug(final boolean debug) {
 		Program.debug = debug;
 	}
 
@@ -376,7 +381,7 @@ public class Program implements ActionListener{
 		return forceNoUpdate;
 	}
 
-	public static void setForceNoUpdate(boolean forceNoUpdate) {
+	public static void setForceNoUpdate(final boolean forceNoUpdate) {
 		Program.forceNoUpdate = forceNoUpdate;
 	}
 
@@ -384,35 +389,34 @@ public class Program implements ActionListener{
 		return forceUpdate;
 	}
 
-	public static void setForceUpdate(boolean forceUpdate) {
+	public static void setForceUpdate(final boolean forceUpdate) {
 		Program.forceUpdate = forceUpdate;
 	}
 
 	/**
-	 * Called when Overview Groups are changed
+	 * Called when Overview Groups are changed.
 	 */
-	public void overviewGroupsChanged(){
+	public void overviewGroupsChanged() {
 		routingTab.updateData();
-		
 	}
 
 	/**
-	 * Called when the table menu needs update
+	 * Called when the table menu needs update.
 	 */
-	public void updateTableMenu(){
+	public void updateTableMenu() {
 		this.getMainWindow().getSelectedTab().updateTableMenu(this.getMainWindow().getMenu().getTableMenu());
 	}
 
 	/**
-	 * Called when the active tab is change (close/open/change)
+	 * Called when the active tab is change (close/open/change).
 	 */
-	public void tabChanged(){
+	public void tabChanged() {
 		getStatusPanel().tabChanged();
 		updateTableMenu();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			mainWindow.addTab(valuesTab);
@@ -442,6 +446,9 @@ public class Program implements ActionListener{
 		}
 		if (MainMenu.ACTION_OPEN_STOCKPILE.equals(e.getActionCommand())) {
 			mainWindow.addTab(stockpileTab);
+		}
+		if (MainMenu.ACTION_OPEN_ITEMS.equals(e.getActionCommand())) {
+			mainWindow.addTab(itemsTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {

@@ -35,17 +35,16 @@ import org.xml.sax.SAXException;
 
 
 public abstract class AbstractXmlReader {
-	private final static Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
-	protected static Element getDocumentElement(String filename) throws XmlException, IOException {
+	protected static Element getDocumentElement(final String filename) throws XmlException, IOException {
 		return getDocumentElement(filename, false);
 	}
-	
-	private static Element getDocumentElement(String filename, boolean usingBackupFile) throws XmlException, IOException {
-		DocumentBuilderFactory factory = null;
-		DocumentBuilder builder = null;
-		
-		Document doc = null;
+
+	private static Element getDocumentElement(final String filename, final boolean usingBackupFile) throws XmlException, IOException {
+		DocumentBuilderFactory factory;
+		DocumentBuilder builder;
+		Document doc;
 		FileInputStream is = null;
 		try {
 			is = new FileInputStream(new File(filename));
@@ -54,32 +53,36 @@ public abstract class AbstractXmlReader {
 			doc = builder.parse(is);
 			return doc.getDocumentElement();
 		} catch (SAXException ex) {
-			if (is != null) is.close(); //Close file - so we can delete it...
-			if (!usingBackupFile && restoreBackupFile(filename)){
+			if (is != null) { //Close file - so we can delete it...
+				is.close();
+			}
+			if (!usingBackupFile && restoreBackupFile(filename)) {
 				return getDocumentElement(filename, true);
 			}
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
-			if (is != null) is.close();
+			if (is != null) {
+				is.close();
+			}
 		}
 	}
 
-	private static boolean restoreBackupFile(String filename){
+	private static boolean restoreBackupFile(final String filename) {
 		int end = filename.lastIndexOf(".");
-		String backup = filename.substring(0, end)+".bac";
+		String backup = filename.substring(0, end) + ".bac";
 		File backupFile = new File(backup);
 		File inputFile = new File(filename);
-		if (!backupFile.exists()){
+		if (!backupFile.exists()) {
 			LOG.warn("No backup file found: {}", backup);
 			return false;
 		}
-		if (inputFile.exists() && !inputFile.delete()){
+		if (inputFile.exists() && !inputFile.delete()) {
 			LOG.warn("Was not able to delete buggy inputfile: {}", filename);
 			return false;
 		}
-		if (backupFile.renameTo(inputFile)){
+		if (backupFile.renameTo(inputFile)) {
 			LOG.warn("Backup file restored: {}", backup);
 			return true;
 		} else {

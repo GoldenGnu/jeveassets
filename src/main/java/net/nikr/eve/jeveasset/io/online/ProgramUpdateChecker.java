@@ -49,70 +49,70 @@ import org.xml.sax.SAXException;
 
 public class ProgramUpdateChecker {
 
-	private final static Logger LOG = LoggerFactory.getLogger(ProgramUpdateChecker.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProgramUpdateChecker.class);
 
 	private Program program;
 	private String programDataVersion = "";
 	private Version stable = new Version();
 	private Version dev = new Version();
 
-	public ProgramUpdateChecker(Program program) {
+	public ProgramUpdateChecker(final Program program) {
 		this.program = program;
 		parseDataVersion();
-		if ((program.getSettings().isAutoUpdate())){
+		if ((program.getSettings().isAutoUpdate())) {
 			parseUpdateVersion();
 		}
 	}
 
-	public String getProgramDataVersion(){
+	public String getProgramDataVersion() {
 		int end = programDataVersion.lastIndexOf(".");
-		if (programDataVersion.length() >= end){
+		if (programDataVersion.length() >= end) {
 			return programDataVersion.substring(0, end);
 		}
 		return programDataVersion;
 	}
 
-	public void showMessages(){
+	public void showMessages() {
 		showMessages(program.getMainWindow().getFrame(), false);
 	}
 
-	public void showMessages(Window parent, boolean requestedUpdate){
-		if (requestedUpdate){
+	public void showMessages(final Window parent, final boolean requestedUpdate) {
+		if (requestedUpdate) {
 			parseUpdateVersion();
 		}
-		if (isStableUpdateAvailable()){
-			int value = JOptionPane.showConfirmDialog(parent, "A new version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Version Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION){
+		if (isStableUpdateAvailable()) {
+			int value = JOptionPane.showConfirmDialog(parent, "A new version of " + Program.PROGRAM_NAME + " is available\r\nGo to website now?", "New Version Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value == JOptionPane.YES_OPTION) {
 				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
 			}
 		}
-		if (isDevUpdateAvailable()){
-			int value = JOptionPane.showConfirmDialog(parent, "A new "+dev.getType().toLowerCase()+" version of "+Program.PROGRAM_NAME+" is available\r\nGo to website now?", "New Build Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION){
+		if (isDevUpdateAvailable()) {
+			int value = JOptionPane.showConfirmDialog(parent, "A new " + dev.getType().toLowerCase() + " version of " + Program.PROGRAM_NAME + " is available\r\nGo to website now?", "New Build Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (value == JOptionPane.YES_OPTION) {
 				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
 			}
 		}
-		if (requestedUpdate && !isStableUpdateAvailable() && !isDevUpdateAvailable()){
+		if (requestedUpdate && !isStableUpdateAvailable() && !isDevUpdateAvailable()) {
 			JOptionPane.showMessageDialog(parent, "No updates available", "Program Updates", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
-	private boolean isStableUpdateAvailable(){
+	private boolean isStableUpdateAvailable() {
 		return stable.isNewerThen(getProgram()) && (stable.isNewerThen(dev)	|| !program.getSettings().isUpdateDev());
 	}
 
-	private boolean isDevUpdateAvailable(){
+	private boolean isDevUpdateAvailable() {
 		return dev.isNewerThen(getProgram()) && dev.isNewerThen(stable) && program.getSettings().isUpdateDev();
 	}
 
-	private Version getProgram(){
+	private Version getProgram() {
 		return new Version(Program.PROGRAM_VERSION, programDataVersion);
 	}
 
-	private Element parse(InputStream is) throws XmlException {
-		DocumentBuilderFactory factory = null;
-		DocumentBuilder builder = null;
-		Document doc = null;
+	private Element parse(final InputStream is) throws XmlException {
+		DocumentBuilderFactory factory;
+		DocumentBuilder builder;
+		Document doc;
 		try {
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
@@ -128,30 +128,31 @@ public class ProgramUpdateChecker {
 		}
 	}
 
-	private void parseDataVersion(){
+	private void parseDataVersion() {
 		try {
 			InputStream is = new FileInputStream(Settings.getPathDataVersion());
 			parseDataVersion(parse(is));
+			is.close();
 		} catch (IOException ex) {
-			LOG.info("Failed to get data.xml information"+ex.getMessage());
+			LOG.info("Failed to get data.xml information" + ex.getMessage());
 		} catch (XmlException ex) {
-			LOG.info("Failed to get data.xml information"+ex.getMessage());
+			LOG.info("Failed to get data.xml information" + ex.getMessage());
 		}
 	}
-	private void parseDataVersion(Element element) {
+	private void parseDataVersion(final Element element) {
 		if (!element.getNodeName().equals("rows")) {
 			LOG.info("Failed to get update information: Wrong root element name");
 			return;
 		}
 		//row
 		NodeList nodes = element.getElementsByTagName("row");
-		if (nodes.getLength() == 1){
+		if (nodes.getLength() == 1) {
 			Element node = (Element) nodes.item(0);
 			programDataVersion = AttributeGetters.getString(node, "version");
 		}
 	}
 
-	private void parseUpdateVersion(){
+	private void parseUpdateVersion() {
 		try {
 			URL url = new URL(Program.PROGRAM_UPDATE_URL);
 			URLConnection connection = url.openConnection(program.getSettings().getProxy());
@@ -159,35 +160,35 @@ public class ProgramUpdateChecker {
 			InputStream is = connection.getInputStream();
 			parseUpdate(parse(is));
 		} catch (MalformedURLException ex) {
-			LOG.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: " + ex.getMessage());
 		} catch (IOException ex) {
-			LOG.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: " + ex.getMessage());
 		} catch (XmlException ex) {
-			LOG.info("Failed to get update information: "+ex.getMessage());
+			LOG.info("Failed to get update information: " + ex.getMessage());
 		}
 	}
 
 
-	private void parseUpdate(Element element) {
+	private void parseUpdate(final Element element) {
 		if (!element.getNodeName().equals("update")) {
 			LOG.info("Failed to get update information: Wrong root element name");
 		}
 		//jEveAssets
 		NodeList nodes = element.getElementsByTagName("jeveassets");
-		if (nodes.getLength() == 1){
+		if (nodes.getLength() == 1) {
 			Element node = (Element) nodes.item(0);
 			parseJeveassets(node);
 		}
 	}
-	
-	private void parseJeveassets(Element element){
+
+	private void parseJeveassets(final Element element) {
 		stable = update(element, "stable");
 		dev = update(element, "dev");
 	}
 
-	private Version update(Element element, String tagName){
+	private Version update(final Element element, final String tagName) {
 		NodeList nodes = element.getElementsByTagName(tagName);
-		if (nodes.getLength() == 1){
+		if (nodes.getLength() == 1) {
 			Element node = (Element) nodes.item(0);
 			String version = AttributeGetters.getString(node, "version");
 			String data = AttributeGetters.getString(node, "data");
@@ -197,19 +198,17 @@ public class ProgramUpdateChecker {
 		}
 	}
 
-	
+	private static class Version {
+		private static final int DEV_BUILD = 1;
+		private static final int BETA = 2;
+		private static final int RELEASE_CANDIDATE = 3;
+		private static final int STABLE = 4;
 
-	private class Version{
-		private final static int DEV_BUILD = 1;
-		private final static int BETA = 2;
-		private final static int RELEASE_CANDIDATE = 3;
-		private final static int STABLE = 4;
-
-		private final static int VERSION_MAJOR = 0;
-		private final static int VERSION_MINOR = 1;
-		private final static int VERSION_BUGFIX = 2;
-		private final static int VERSION_TYPE = 3;
-		private final static int VERSION_TYPE_NUMBER = 4;
+		private static final int VERSION_MAJOR = 0;
+		private static final int VERSION_MINOR = 1;
+		private static final int VERSION_BUGFIX = 2;
+		private static final int VERSION_TYPE = 3;
+		private static final int VERSION_TYPE_NUMBER = 4;
 
 		private int[] arrVersion;
 		private String version;
@@ -220,7 +219,7 @@ public class ProgramUpdateChecker {
 			this.version = "";
 			this.data = "";
 		}
-		public Version(String version, String data) {
+		public Version(final String version, final String data) {
 			this.version = version;
 			this.data = data;
 			this.arrVersion = getVersion(version);
@@ -238,25 +237,23 @@ public class ProgramUpdateChecker {
 			return version;
 		}
 
-		public boolean isNewerThen(Version updateInfo) {
+		public boolean isNewerThen(final Version updateInfo) {
 			int[] compateTo = updateInfo.getArrVersion();
-			for (int a = 0; a < compateTo.length && a < arrVersion.length; a++){
-				if (compateTo[a] < arrVersion[a]){
+			for (int a = 0; a < compateTo.length && a < arrVersion.length; a++) {
+				if (compateTo[a] < arrVersion[a]) {
 					return true; //This is newer
-				} else if (compateTo[a] > arrVersion[a]){
+				} else if (compateTo[a] > arrVersion[a]) {
 					return false; //This is older
 				}
 			} //Versions are equal
-			if (!data.toLowerCase().equals(updateInfo.getData().toLowerCase()) && !data.isEmpty() && !updateInfo.getData().isEmpty()){
+			if (!data.toLowerCase().equals(updateInfo.getData().toLowerCase()) && !data.isEmpty() && !updateInfo.getData().isEmpty()) {
 				return true; //There is a different data set available
 			} //equal data sets (not newer)
 			return false;
 		}
 
-		
-
-		public String getType(){
-			switch (arrVersion[VERSION_TYPE]){
+		public String getType() {
+			switch (arrVersion[VERSION_TYPE]) {
 				case DEV_BUILD:
 					return "Dev Build";
 				case BETA:
@@ -269,11 +266,11 @@ public class ProgramUpdateChecker {
 			}
 		}
 
-		private int[] getVersion(String version){
+		private int[] getVersion(final String version) {
 			Pattern p = Pattern.compile("\\d+\\.\\d+\\.\\d+");
 			Matcher m = p.matcher(version);
-			String[] strings = new String[0];
-			if (m.find()){
+			String[] strings;
+			if (m.find()) {
 				int start = m.start();
 				int end = m.end();
 				strings = version.substring(start, end).split("\\.");
@@ -281,7 +278,9 @@ public class ProgramUpdateChecker {
 				LOG.info("Failed to get update information: Reg Exp didn't find X.X.X in program version");
 				return new int[0];
 			}
-			if (strings.length != 3) return new int[0];
+			if (strings.length != 3) {
+				return new int[0];
+			}
 			int[] integers = new int[5];
 			integers[VERSION_MAJOR] = Integer.parseInt(strings[0]);
 			integers[VERSION_MINOR] = Integer.parseInt(strings[1]);
@@ -291,30 +290,34 @@ public class ProgramUpdateChecker {
 			return integers;
 		}
 
-		private int getType(String version){
-			if (version.toLowerCase().contains("dev")){
+		private int getType(final String version) {
+			if (version.toLowerCase().contains("dev")) {
 				return DEV_BUILD;
 			}
-			if (version.toLowerCase().contains("beta")){
+			if (version.toLowerCase().contains("beta")) {
 				return BETA;
 			}
-			if (version.toLowerCase().contains("release candidate")){
+			if (version.toLowerCase().contains("release candidate")) {
 				return RELEASE_CANDIDATE;
 			}
-			if (version.toLowerCase().contains("rc")){
+			if (version.toLowerCase().contains("rc")) {
 				return RELEASE_CANDIDATE;
 			}
 			return STABLE;
 		}
 
-		private int getTypeNumber(String version){
+		private int getTypeNumber(String version) {
 			Pattern p = Pattern.compile("beta \\d+|release candidate \\d+|rc \\d+|build #?\\d+", Pattern.CASE_INSENSITIVE);
 			Matcher m = p.matcher(version);
-			if (!m.find())return 0; //Not found - return zero
+			if (!m.find()) { //Not found - return zero
+				return 0;
+			}
 			version = version.substring(m.start(), m.end());
 			p = Pattern.compile("\\d+");
 			m = p.matcher(version);
-			if (!m.find()) return 0; //Not found - return zero
+			if (!m.find()) { //Not found - return zero
+				return 0;
+			}
 			version = version.substring(m.start(), m.end());
 			return Integer.parseInt(version);
 		}

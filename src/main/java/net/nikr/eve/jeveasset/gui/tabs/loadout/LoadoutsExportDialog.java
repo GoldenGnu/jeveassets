@@ -21,27 +21,21 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
 public class LoadoutsExportDialog extends JDialogCentered implements ActionListener {
 
-	public final static String ACTION_EXPORT_OK = "ACTION_EXPORT_OK";
-	public final static String ACTION_EXPORT_CANCEL = "ACTION_EXPORT_CANCEL";
+	public static final String ACTION_EXPORT_OK = "ACTION_EXPORT_OK";
+	public static final String ACTION_EXPORT_CANCEL = "ACTION_EXPORT_CANCEL";
 
 	private JTextField jName;
 	private JTextPane jDescription;
@@ -49,7 +43,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 
 	private LoadoutsTab loadoutsDialog;
 
-	public LoadoutsExportDialog(Program program, LoadoutsTab loadoutsDialog) {
+	public LoadoutsExportDialog(final Program program, final LoadoutsTab loadoutsDialog) {
 		super(program, TabsLoadout.get().export(), Images.TOOL_SHIP_LOADOUTS.getImage());
 		this.loadoutsDialog = loadoutsDialog;
 
@@ -109,10 +103,10 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		);
 	}
 
-	public String getFittingName(){
+	public String getFittingName() {
 		return jName.getText();
 	}
-	public String getFittingDescription(){
+	public String getFittingDescription() {
 		String text = jDescription.getText();
 		text = text.replace("\r\n", "&lt;br&gt;");
 		text = text.replace("\r", "&lt;br&gt;");
@@ -131,7 +125,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
@@ -139,16 +133,16 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
+	public void setVisible(final boolean b) {
+		if (b) {
 			jName.setText("");
 			jDescription.setText("");
 		}
 		super.setVisible(b);
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_EXPORT_OK.equals(e.getActionCommand())) {
 			save();
 		}

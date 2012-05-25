@@ -26,18 +26,20 @@ import java.net.URL;
 import net.nikr.eve.jeveasset.data.Settings;
 
 
-public class Online {
+public final class Online {
 
-	public static boolean isOnline(Settings settings){
+	private Online() { }
+
+	public static boolean isOnline(final Settings settings) {
 		try {
 			URL ourURL = new URL("http://www.google.com"); //Coding Forums RSS Feed
-			HttpURLConnection huc = (HttpURLConnection)ourURL.openConnection(settings.getProxy());
+			HttpURLConnection huc = (HttpURLConnection) ourURL.openConnection(settings.getProxy());
 			huc.setRequestMethod("GET");
 			huc.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; JVM)");
 			huc.setRequestProperty("Pragma", "no-cache");
 			huc.connect();
 			huc.disconnect();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;

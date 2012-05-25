@@ -32,6 +32,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
@@ -112,12 +113,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, UserItem<Long,String>> getUserItemNames() {
+	public Map<Long, UserItem<Long, String>> getUserItemNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public Map<Integer, UserItem<Integer,Double>> getUserPrices() {
+	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -142,11 +143,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isFilterOnEnter() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isForceUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -167,12 +163,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdatable(Date date) {
+	public boolean isUpdatable(final Date date) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public boolean isUpdatable(Date date, boolean ignoreOnProxy) {
+	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -207,112 +203,112 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setAccounts(List<Account> accounts) {
+	public void setAccounts(final List<Account> accounts) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setActiveProfile(Profile activeProfile) {
+	public void setActiveProfile(final Profile activeProfile) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setApiProxy(String apiProxy) {
+	public void setApiProxy(final String apiProxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setAutoUpdate(boolean updateStable) {
+	public void setAutoUpdate(final boolean updateStable) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setConquerableStationsNextUpdate(Date conquerableStationNextUpdate) {
+	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setFilterOnEnter(boolean filterOnEnter) {
+	public void setFilterOnEnter(final boolean filterOnEnter) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setHighlightSelectedRows(boolean filterOnEnter) {
+	public void setHighlightSelectedRows(final boolean filterOnEnter) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setPriceData(Map<Integer, PriceData> priceData) {
+	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setPriceDataSettings(PriceDataSettings priceDataSettings) {
+	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setProfiles(List<Profile> profiles) {
+	public void setProfiles(final List<Profile> profiles) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setProxy(Proxy proxy) {
+	public void setProxy(final Proxy proxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setProxy(String host, int port, String type) throws IllegalArgumentException {
+	public void setProxy(final String host, final int port, final String type) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setProxy(String host, int port, Type type) throws IllegalArgumentException {
+	public void setProxy(final String host, final int port, final Type type) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setReprocessColors(boolean updateDev) {
+	public void setReprocessColors(final boolean updateDev) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setReprocessSettings(ReprocessSettings reprocessSettings) {
+	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUpdateDev(boolean updateDev) {
+	public void setUpdateDev(final boolean updateDev) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUserItemNames(Map<Long, UserItem<Long,String>> userItemNames) {
+	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setUserPrices(Map<Integer, UserItem<Integer,Double>> userPrices) {
+	public void setUserPrices(final Map<Integer, UserItem<Integer, Double>> userPrices) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setWindowAutoSave(boolean windowAutoSave) {
+	public void setWindowAutoSave(final boolean windowAutoSave) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setWindowLocation(Point windowLocation) {
+	public void setWindowLocation(final Point windowLocation) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setWindowMaximized(boolean windowMaximized) {
+	public void setWindowMaximized(final boolean windowMaximized) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setWindowSize(Dimension windowSize) {
+	public void setWindowSize(final Dimension windowSize) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -357,7 +353,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setIgnoreSecureContainers(boolean ignoreSecureContainers) {
+	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -367,22 +363,17 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, PriceData> getPriceFactionData() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public List<Stockpile> getStockpiles() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Long, ApiStation> conquerableStations) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public double getPrice(int typeID, boolean isBlueprintCopy) {
+	public double getPrice(final int typeID, final boolean isBlueprintCopy) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -397,12 +388,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, List<Filter>> getTableFilters(String key) {
+	public Map<String, List<Filter>> getTableFilters(final String key) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public float getVolume(int typeID, boolean packaged) {
+	public float getVolume(final int typeID, final boolean packaged) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -417,17 +408,27 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setStockpileFocusTab(boolean stockpileFocusOnAdd) {
+	public void setStockpileFocusTab(final boolean stockpileFocusOnAdd) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public void setStockpileHalfColors(boolean stockpileHalfColors) {
+	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public List<SimpleColumn> getTableColumns(String key) {
-		return super.getTableColumns(key);
+	public Map<String, ResizeMode> getTableResize() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isWindowAlwaysOnTop() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
+		throw new UnsupportedOperationException("not implemented");
 	}
 }

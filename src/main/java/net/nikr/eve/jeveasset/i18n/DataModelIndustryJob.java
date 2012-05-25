@@ -35,11 +35,11 @@ public abstract class DataModelIndustryJob extends Bundle {
 		return BundleCache.get(DataModelIndustryJob.class);
 	}
 
-	public static DataModelIndustryJob get(Locale locale) {
+	public static DataModelIndustryJob get(final Locale locale) {
 		return BundleCache.get(DataModelIndustryJob.class, locale);
 	}
 
-	public DataModelIndustryJob(Locale locale) {
+	public DataModelIndustryJob(final Locale locale) {
 		super(locale);
 	}
 

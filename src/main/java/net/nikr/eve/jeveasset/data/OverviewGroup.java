@@ -29,26 +29,28 @@ public class OverviewGroup {
 	private List<OverviewLocation> locations;
 	private String name;
 
-	public OverviewGroup(String name) {
+	public OverviewGroup(final String name) {
 		this.name = name;
 		locations = new ArrayList<OverviewLocation>();
 	}
 
-	public void add(OverviewLocation location){
-		if (locations.contains(location)) locations.remove(location);
+	public void add(final OverviewLocation location) {
+		if (locations.contains(location)) {
+			locations.remove(location);
+		}
 		locations.add(location);
 	}
 
-	public void addAll(List<OverviewLocation> list){
-		for (OverviewLocation location : list){
+	public void addAll(final List<OverviewLocation> list) {
+		for (OverviewLocation location : list) {
 			add(location);
 		}
 	}
 
-	public void remove(OverviewLocation location){
+	public void remove(final OverviewLocation location) {
 		locations.remove(location);
 	}
-	public void removeAll(List<OverviewLocation> list){
+	public void removeAll(final List<OverviewLocation> list) {
 		locations.removeAll(list);
 	}
 
@@ -60,7 +62,7 @@ public class OverviewGroup {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 

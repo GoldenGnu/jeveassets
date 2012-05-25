@@ -32,11 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum Images {
-	ASSETS_CLEAR_FIELDS ("assets_clear_fields.png"),
-	ASSETS_SAVE_FILTERS ("assets_save_filters.png"),
-	ASSETS_LOAD_FILTER ("assets_load_filter.png"),
 	ASSETS_AVERAGE ("assets_average.png"),
 	ASSETS_VOLUME ("assets_volume.png"),
+
+	JOBS_INVENTION_SUCCESS ("jobs_invention_success.png"),
+
+	ORDERS_SELL ("orders_sell.png"),
+	ORDERS_BUY ("orders_buy.png"),
+	ORDERS_ESCROW ("orders_escrow.png"),
+	ORDERS_TO_COVER ("orders_to_cover.png"),
 
 	DIALOG_UPDATE ("dialog_update.png"),
 	DIALOG_UPDATE_DISABLED ("dialog_update_disabled.png"),
@@ -54,6 +58,10 @@ public enum Images {
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
 
+	FILTER_CLEAR ("filter_clear.png"),
+	FILTER_SAVE ("filter_save.png"),
+	FILTER_LOAD ("filter_load.png"),
+	FILTER_LOAD_DEFAULT ("filter_load_default.png"),
 	FILTER_NOT_CONTAIN ("filter_not_contain.png"),
 	FILTER_CONTAIN ("filter_contain.png"),
 	FILTER_NOT_EQUAL ("filter_not_equal.png"),
@@ -73,11 +81,13 @@ public enum Images {
 	FILTER_AFTER_COLUMN ("filter_after_column.png"),
 	FILTER_BEFORE_COLUMN ("filter_before_column.png"),
 
-	LINK_LOOKUP ("link_lookup.png"),
+	LINK_EVE_ADDICTS ("link_eve_addicts.png"),
+	LINK_EVE_CENTRAL ("link_eve_central.png"),
+	LINK_EVEMARKETEER ("link_evemarketeer.png"),
+	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
 	LINK_EVE_MARKETS ("link_eve_markets.png"),
 	LINK_DOTLAN_EVEMAPS ("link_dotlan_evemaps.png"),
-	LINK_EVE_CENTRAL ("link_eve_central.png"),
-	LINK_EVE_MARKETDATA ("link_eve_marketdata.png"),
+	LINK_LOOKUP ("link_lookup.png"),
 	LINK_CHRUKER ("link_chruker.png"),
 
 	LOC_GROUPS ("loc_groups.png"),
@@ -93,6 +103,7 @@ public enum Images {
 	MISC_COLLAPSED ("misc_collapsed.png"),
 	MISC_EXPANDED_WHITE ("misc_expanded_white.png"),
 	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
+	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
@@ -108,7 +119,6 @@ public enum Images {
 
 	TABLE_COLUMN_RESIZE ("table_column_resize.png"),
 	TABLE_COLUMN_SHOW ("table_column_show.png"),
-	TABLE_COLUMN_SETTINGS ("table_column_settings.png"),
 
 	TOOL_ASSETS ("tool_assets.png"),
 	TOOL_OVERVIEW ("tool_overview.png"),
@@ -119,24 +129,24 @@ public enum Images {
 	TOOL_MATERIALS ("tool_materials.png"),
 	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),
 	TOOL_STOCKPILE ("tool_stockpile.png"),
+	TOOL_ITEMS ("tool_items.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),
 	UPDATE_CANCELLED ("update_cancelled.png"),
 	UPDATE_DONE_OK ("update_done_ok.png"),
 	UPDATE_DONE_SOME ("update_done_some.png"),
-	UPDATE_DONE_ERROR ("update_done_error.png"),
-	;
+	UPDATE_DONE_ERROR ("update_done_error.png");
 
-	private static Logger LOG = LoggerFactory.getLogger(Images.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Images.class);
 	private final String filename;   // in kilograms
 	private BufferedImage image = null;
 
-	Images(String filename) {
+	Images(final String filename) {
 		this.filename = filename;
 	}
 
-	public Icon getIcon(){
+	public Icon getIcon() {
 		load();
 		return new ImageIcon(image);
 	}
@@ -150,36 +160,36 @@ public enum Images {
 		return filename;
 	}
 
-	private boolean load(){
-		if (image == null){
+	private boolean load() {
+		if (image == null) {
 			image = getBufferedImage(filename);
 		}
 		return (image != null);
 	}
 
-	public static boolean preload(){
+	public static boolean preload() {
 		int count = 0;
 		boolean ok = true;
-		for (Images i : Images.values()){
-			if (!i.load()){
+		for (Images i : Images.values()) {
+			if (!i.load()) {
 				ok = false;
 			}
 			count++;
-			SplashUpdater.setSubProgress((int)(count * 100.0 / Images.values().length));
+			SplashUpdater.setSubProgress((int) (count * 100.0 / Images.values().length));
 		}
 		return ok;
 	}
 
-	public static BufferedImage getBufferedImage(String s) {
+	public static BufferedImage getBufferedImage(final String s) {
 		try {
 			java.net.URL imgURL = Images.class.getResource(s);
-			if (imgURL != null){
+			if (imgURL != null) {
 				return ImageIO.read(imgURL);
 			} else {
-				LOG.warn("image: "+s+" not found (URL == null)");
+				LOG.warn("image: " + s + " not found (URL == null)");
 			}
 		} catch (IOException ex) {
-			LOG.warn("image: "+s+" not found (IOException)");
+			LOG.warn("image: " + s + " not found (IOException)");
 		}
 		return null;
 	}

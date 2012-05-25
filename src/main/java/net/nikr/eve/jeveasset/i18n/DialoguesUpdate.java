@@ -33,10 +33,10 @@ public abstract class DialoguesUpdate extends Bundle {
 	public static DialoguesUpdate get() {
 		return BundleCache.get(DialoguesUpdate.class);
 	}
-	public static DialoguesUpdate get(Locale locale) {
+	public static DialoguesUpdate get(final Locale locale) {
 		return BundleCache.get(DialoguesUpdate.class, locale);
 	}
-	public DialoguesUpdate(Locale locale) {
+	public DialoguesUpdate(final Locale locale) {
 		super(locale);
 	}
 	public abstract String updating();

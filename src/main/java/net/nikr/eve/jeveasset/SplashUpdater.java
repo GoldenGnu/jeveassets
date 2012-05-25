@@ -21,11 +21,7 @@
 
 package net.nikr.eve.jeveasset;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.SplashScreen;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -33,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class SplashUpdater extends Thread{
-	private final static Logger LOG = LoggerFactory.getLogger(SplashUpdater.class);
+public class SplashUpdater extends Thread {
+	private static final Logger LOG = LoggerFactory.getLogger(SplashUpdater.class);
 
 	private static int nProgress = 0;
 	private static int nSubProgress = 0;
@@ -42,32 +38,31 @@ public class SplashUpdater extends Thread{
 	private static int currentLoadingImage = 0;
 	private static BufferedImage[] loadingImages;
 	private static SplashScreen splash;
-	private static final int updateDelay = 200;
+	private static final int UPDATE_DELAY = 200;
 
-	/** Creates a new instance of SplashUpdater (Should never be called, as all functions are static) */
+	/** Creates a new instance of SplashUpdater. */
 	public SplashUpdater() {
 		splash = SplashScreen.getSplashScreen();
 		loadingImages = new BufferedImage[8];
-		for (int a = 0; a < 8; a++){
+		for (int a = 0; a < 8; a++) {
 			try {
-				loadingImages[a] = ImageIO.read(getClass().getResource("gui/images/loading0"+(a+1)+".png"));
+				loadingImages[a] = ImageIO.read(getClass().getResource("gui/images/loading0" + (a + 1) + ".png"));
 			} catch (IOException ex) {
-				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (a+1));
+				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (a + 1));
 			}
 		}
-		
 	}
 
-
-
 	@Override
-	public void run(){
-		while (splash != null && splash.isVisible()){
+	public void run() {
+		while (splash != null && splash.isVisible()) {
 			currentLoadingImage++;
-			if (currentLoadingImage >= 8) currentLoadingImage = 0;
+			if (currentLoadingImage >= 8) {
+				currentLoadingImage = 0;
+			}
 			update();
 			try {
-				Thread.sleep(updateDelay);
+				Thread.sleep(UPDATE_DELAY);
 			} catch (InterruptedException e) {
 				break;
 			}
@@ -75,29 +70,35 @@ public class SplashUpdater extends Thread{
 	}
 
 	/**
-	 * Set splash screen text
+	 * Set splash screen text.
 	 * @param s	 String to show on splash screen
 	 */
-	public static void setText(String s){
+	public static void setText(final String s) {
 		sText = s;
 	}
 
-	public static void setSubProgress(int n) {
-		if (n >= 100) n = 0;
-		nSubProgress = n;
+	public static void setSubProgress(final int n) {
+		int number = n;
+		if (number >= 100) {
+			number = 0;
+		}
+		nSubProgress = number;
 	}
 
 	/**
-	 * Set progress of splash screen progressbar in the range 0-100
+	 * Set progress of splash screen progressbar in the range 0-100.
 	 * @param n	 Set progress in the range 0-100
 	 */
-	public static void setProgress(int n){
-		if (n > 100) n = 100;
-		nProgress = n;
+	public static void setProgress(final int n) {
+		int number = n;
+		if (number > 100) {
+			number = 100;
+		}
+		nProgress = number;
 	}
 
-	private static void update(){
-		if (splash != null){
+	private static void update() {
+		if (splash != null) {
 			try {
 				Graphics2D g = splash.createGraphics();
 				//Clear Screen
@@ -105,25 +106,27 @@ public class SplashUpdater extends Thread{
 				Dimension size = splash.getSize();
 				g.fillRect(0, 0, size.width, size.height);
 				g.setPaintMode();
-				if (Program.isDebug()){
+				if (Program.isDebug()) {
 					g.setColor(Color.GRAY);
 					g.drawString("DEBUG", 344, 232);
 					g.setColor(Color.WHITE);
 					g.drawString("DEBUG", 343, 231);
 				}
-				if (!sText.equals("")){
+				if (!sText.equals("")) {
 					g.setColor(Color.BLACK);
 					g.fillRect(0, 235, 90, 24);
 					g.setColor(Color.WHITE);
 					g.drawString(sText, 5, 252);
 				}
 				g.setColor(Color.WHITE);
-				g.fillRect(106, 242, (int) (nProgress*2.6), 12);
-				if (nSubProgress > 0){
+				g.fillRect(106, 242, (int) (nProgress * 2.6), 12);
+				if (nSubProgress > 0) {
 					g.setColor(Color.LIGHT_GRAY);
-					g.fillRect(106, 248, (int) (nSubProgress*2.6), 6);
+					g.fillRect(106, 248, (int) (nSubProgress * 2.6), 6);
 				}
-				if (loadingImages[currentLoadingImage] != null) g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
+				if (loadingImages[currentLoadingImage] != null) {
+					g.drawImage(loadingImages[currentLoadingImage], 368, 238, null);
+				}
 				splash.update();
 			} catch (IllegalStateException ex) {
 				LOG.info("SplashScreen: Closed before painting ended (NO PROBLEM)");

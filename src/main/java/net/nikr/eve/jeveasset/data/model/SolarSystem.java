@@ -27,14 +27,14 @@ import java.util.TreeSet;
 
 public class SolarSystem  extends GalacticObject {
 
-	Region region;
+	private Region region;
 	private String security;
-	Set<SolarSystem> jumps;
-	Set<Station> stations;
+	private Set<SolarSystem> jumps;
+	private Set<Station> stations;
 
-	public enum SecurityStatus {HIGH_SEC, LOW_SEC, NULL_SEC}
-	
-	SolarSystem(String id, String name, String security, Region region) {
+	public enum SecurityStatus { HIGH_SEC, LOW_SEC, NULL_SEC }
+
+	SolarSystem(final String id, final String name, final String security, final Region region) {
 		super(id, name);
 		this.security = security;
 		this.region = region;
@@ -75,30 +75,30 @@ public class SolarSystem  extends GalacticObject {
 	public Set<SolarSystem> getJumps() {
 		return Collections.unmodifiableSet(jumps);
 	}
-	
+
 	public int getStationCount() {
 		return stations.size();
 	}
-	
+
 	public int getJumpCount() {
 		return jumps.size();
 	}
-	
+
 	public String toStringFull() {
-		return getName() + " (" + getSecurity() + " sec, " +
-				getStationCount() + " station" + (getStationCount() == 1 ? ", " : "s, ") +
-				getJumpCount() + " stargate" + (getJumpCount() == 1 ? ")" : "s)");
+		return getName() + " (" + getSecurity() + " sec, "
+				+ getStationCount() + " station" + (getStationCount() == 1 ? ", " : "s, ")
+				+ getJumpCount() + " stargate" + (getJumpCount() == 1 ? ")" : "s)");
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Package level model construction methods">
 
 
 
-	void addJump(SolarSystem system) {
+	void addJump(final SolarSystem system) {
 		jumps.add(system);
 	}
 
-	void addStation(String id, String name) {
+	void addStation(final String id, final String name) {
 		stations.add(new Station(id, name, this));
 	}
 	// </editor-fold>

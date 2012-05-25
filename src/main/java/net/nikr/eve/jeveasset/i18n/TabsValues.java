@@ -30,11 +30,11 @@ public abstract class TabsValues extends Bundle {
 		return BundleCache.get(TabsValues.class);
 	}
 
-	public static TabsValues get(Locale locale) {
+	public static TabsValues get(final Locale locale) {
 		return BundleCache.get(TabsValues.class, locale);
 	}
 
-	public TabsValues(Locale locale) {
+	public TabsValues(final Locale locale) {
 		super(locale);
 	}
 
@@ -46,7 +46,6 @@ public abstract class TabsValues extends Bundle {
 	public abstract String corporation();
 	public abstract String escrows();
 	public abstract String grand();
-	public abstract String market();
 	public abstract String no();
 	public abstract String no1();
 	public abstract String none();

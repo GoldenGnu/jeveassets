@@ -37,36 +37,40 @@ import org.w3c.dom.Element;
 
 public class EveFittingWriter extends AbstractXmlWriter {
 
-	private final static Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
 
-	public static void save(List<Asset> eveassets, String filename){
+	public static void save(final List<Asset> eveassets, final String filename) {
 		save(eveassets, filename, null, null);
 	}
 
-	public static void save(List<Asset> eveassets, String filename, String setupName, String description){
+	public static void save(final List<Asset> eveassets, final String filename, String setupName, String description) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("fittings");
 		} catch (XmlException ex) {
-			LOG.error("Eve fitting not saved "+ex.getMessage(), ex);
+			LOG.error("Eve fitting not saved " + ex.getMessage(), ex);
 		}
 
 		boolean noSetupName = (setupName == null);
-		if (description == null) description = Program.PROGRAM_NAME+" export all";
+		if (description == null) {
+			description = Program.PROGRAM_NAME + " export all";
+		}
 
-		for (int a = 0; a < eveassets.size(); a++){
-			if (noSetupName) setupName = eveassets.get(a).getName();
+		for (int a = 0; a < eveassets.size(); a++) {
+			if (noSetupName) {
+				setupName = eveassets.get(a).getName();
+			}
 			writeFitting(xmldoc, eveassets.get(a), setupName, description);
 		}
 		try {
 			//writeXmlFile(xmldoc, filename, "UTF-8");
-			writeXmlFile(xmldoc, filename);
+			writeXmlFile(xmldoc, filename, false);
 		} catch (XmlException ex) {
-			LOG.error("Eve fitting not saved "+ex.getMessage(), ex);
+			LOG.error("Eve fitting not saved " + ex.getMessage(), ex);
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private static void writeFitting(Document xmldoc, Asset eveAsset, String setupName, String description) {
+	private static void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);
@@ -82,63 +86,68 @@ public class EveFittingWriter extends AbstractXmlWriter {
 
 		Map<String, List<Asset>> modules = new HashMap<String, List<Asset>>();
 			List<Asset> assets = eveAsset.getAssets();
-			for (int a = 0; a < assets.size(); a++){
+			for (int a = 0; a < assets.size(); a++) {
 				Asset module = assets.get(a);
-				if (modules.containsKey(module.getFlag())){
-					modules.get(module.getFlag()).add(module);
+				String flag = module.getFlag();
+				if (flag.contains(" > ")) {
+					int start = flag.indexOf(" > ") + 3;
+					flag = flag.substring(start);
+				}
+				if (modules.containsKey(flag)) {
+					modules.get(flag).add(module);
 				} else {
 					List<Asset> subModules = new ArrayList<Asset>();
 					subModules.add(module);
-					modules.put(module.getFlag(), subModules);
+					modules.put(flag, subModules);
 				}
 			}
 			Element hardwareNode;
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("LoSlot"+a)){
+			for (int a = 0; a < 8; a++) {
+				if (modules.containsKey("LoSlot" + a)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "low slot "+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "low slot " + a);
+					hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("MedSlot"+a)){
+			for (int a = 0; a < 8; a++) {
+				if (modules.containsKey("MedSlot" + a)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "med slot "+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "med slot " + a);
+					hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("HiSlot"+a)){
+			for (int a = 0; a < 8; a++) {
+				if (modules.containsKey("HiSlot" + a)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "hi slot "+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "hi slot " + a);
+					hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++){
-				if (modules.containsKey("RigSlot"+a)){
+			for (int a = 0; a < 8; a++) {
+				if (modules.containsKey("RigSlot" + a)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "rig slot "+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "rig slot " + a);
+					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 5; a++){
-				if (modules.containsKey("SubSystem"+a)){
+			for (int a = 0; a < 5; a++) {
+				if (modules.containsKey("SubSystem" + a)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "subsystem slot"+a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem"+a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + a);
+					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + a).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			if (modules.containsKey("DroneBay")){
+			if (modules.containsKey("DroneBay")) {
 				Map<String, Long> moduleCount = new HashMap<String, Long>();
 				List<Asset> subModules = modules.get("DroneBay");
-				for (int a = 0; a < subModules.size(); a++){
+				for (int a = 0; a < subModules.size(); a++) {
 					Asset subModule = subModules.get(a);
-					if (moduleCount.containsKey(subModule.getName())){
+					if (moduleCount.containsKey(subModule.getName())) {
 						long count = moduleCount.get(subModule.getName());
 						moduleCount.remove(subModule.getName());
 						count = count +  subModule.getCount();
@@ -147,10 +156,10 @@ public class EveFittingWriter extends AbstractXmlWriter {
 						moduleCount.put(subModule.getName(), subModule.getCount());
 					}
 				}
-				for (Map.Entry<String, Long> entry : moduleCount.entrySet()){
+				for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
 					hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
-					hardwareNode.setAttributeNS(null, "slot", "dronebay");
+					hardwareNode.setAttributeNS(null, "slot", "drone bay");
 					hardwareNode.setAttributeNS(null, "type", entry.getKey());
 					fittingNode.appendChild(hardwareNode);
 				}

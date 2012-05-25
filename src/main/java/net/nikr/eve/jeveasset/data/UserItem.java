@@ -22,17 +22,17 @@
 package net.nikr.eve.jeveasset.data;
 
 
-public abstract class UserItem<K, V extends Comparable<V>> implements Comparable<UserItem<K,V>> {
+public abstract class UserItem<K, V extends Comparable<V>> implements Comparable<UserItem<K, V>> {
 
 	private V value;
 	private String name;
 	private K key;
 
-	public UserItem(UserItem<K, V> item) {
+	public UserItem(final UserItem<K, V> item) {
 		this(item.getValue(), item.getKey(), item.getName());
 	}
 
-	public UserItem(V value, K key, String name) {
+	public UserItem(final V value, final K key, final String name) {
 		this.value = value;
 		this.key = key;
 		this.name = name;
@@ -46,7 +46,7 @@ public abstract class UserItem<K, V extends Comparable<V>> implements Comparable
 		return value;
 	}
 
-	public void setValue(V value) {
+	public void setValue(final V value) {
 		this.value = value;
 	}
 
@@ -54,16 +54,16 @@ public abstract class UserItem<K, V extends Comparable<V>> implements Comparable
 		return name;
 	}
 
-	abstract public String getValueFormated();
-	abstract public int compare(UserItem<K,V> o1, UserItem<K,V> o2);
+	public abstract String getValueFormated();
+	public abstract int compare(UserItem<K, V> o1, UserItem<K, V> o2);
 
 	@Override
-	public int compareTo(UserItem<K,V> o) {
+	public int compareTo(final UserItem<K, V> o) {
 		return compare(this, o);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

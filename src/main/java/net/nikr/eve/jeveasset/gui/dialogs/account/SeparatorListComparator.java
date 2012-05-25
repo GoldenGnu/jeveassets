@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.data.Human;
 public class SeparatorListComparator implements Comparator<Human> {
 
 	@Override
-	public int compare(Human o1, Human o2) {
+	public int compare(final Human o1, final Human o2) {
 		Integer keyid1 = o1.getParentAccount().getKeyID();
 		Integer keyid2 = o2.getParentAccount().getKeyID();
 		return keyid1.compareTo(keyid2);

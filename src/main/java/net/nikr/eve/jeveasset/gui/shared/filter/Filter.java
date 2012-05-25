@@ -27,87 +27,85 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class Filter {
-	
-	public enum ExtraColumns{
+
+	public enum ExtraColumns {
 		ALL() {
 			@Override
-			public String getI18N(){
+			public String getI18N() {
 				return GuiShared.get().filterAll();
 			}
-		},
-		;
-		
+		};
+
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
 		}
 	}
-	
-	public enum CompareType{
+
+	public enum CompareType {
 		CONTAINS(Images.FILTER_CONTAIN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterContains(); }
+			@Override String getI18N() { return GuiShared.get().filterContains(); }
 		},
 		CONTAINS_NOT(Images.FILTER_NOT_CONTAIN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterContainsNot(); }
+			@Override String getI18N() { return GuiShared.get().filterContainsNot(); }
 		},
 		EQUALS(Images.FILTER_EQUAL.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEquals(); }
+			@Override String getI18N() { return GuiShared.get().filterEquals(); }
 		},
 		EQUALS_NOT(Images.FILTER_NOT_EQUAL.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEqualsNot(); }
+			@Override String getI18N() { return GuiShared.get().filterEqualsNot(); }
 		},
 		GREATER_THAN(Images.FILTER_GREATER_THAN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterGreaterThan(); }
+			@Override String getI18N() { return GuiShared.get().filterGreaterThan(); }
 		},
 		LESS_THAN(Images.FILTER_LESS_THAN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterLessThan(); }
+			@Override String getI18N() { return GuiShared.get().filterLessThan(); }
 		},
 		EQUALS_DATE(Images.FILTER_EQUAL_DATE.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEqualsDate(); }
+			@Override String getI18N() { return GuiShared.get().filterEqualsDate(); }
 		},
 		EQUALS_NOT_DATE(Images.FILTER_NOT_EQUAL_DATE.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEqualsNotDate(); }
+			@Override String getI18N() { return GuiShared.get().filterEqualsNotDate(); }
 		},
 		BEFORE(Images.FILTER_BEFORE.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterBefore(); }
+			@Override String getI18N() { return GuiShared.get().filterBefore(); }
 		},
 		AFTER(Images.FILTER_AFTER.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterAfter(); }
+			@Override String getI18N() { return GuiShared.get().filterAfter(); }
 		},
 		CONTAINS_COLUMN(Images.FILTER_CONTAIN_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterContainsColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterContainsColumn(); }
 		},
 		CONTAINS_NOT_COLUMN(Images.FILTER_NOT_CONTAIN_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterContainsNotColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterContainsNotColumn(); }
 		},
 		EQUALS_COLUMN(Images.FILTER_EQUAL_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEqualsColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterEqualsColumn(); }
 		},
 		EQUALS_NOT_COLUMN(Images.FILTER_NOT_EQUAL_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterEqualsNotColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterEqualsNotColumn(); }
 		},
 		GREATER_THAN_COLUMN(Images.FILTER_GREATER_THAN_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterGreaterThanColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterGreaterThanColumn(); }
 		},
 		LESS_THAN_COLUMN(Images.FILTER_LESS_THAN_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterLessThanColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterLessThanColumn(); }
 		},
 		BEFORE_COLUMN(Images.FILTER_BEFORE_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterBeforeColumn(); }
+			@Override String getI18N() { return GuiShared.get().filterBeforeColumn(); }
 		},
 		AFTER_COLUMN(Images.FILTER_AFTER_COLUMN.getIcon()) {
-			@Override String getI18N(){ return GuiShared.get().filterAfterColumn(); }
-		},
-		;
-		
-		private final static CompareType[] VALUES_ALL = new CompareType[]
+			@Override String getI18N() { return GuiShared.get().filterAfterColumn(); }
+		};
+
+		private static final CompareType[] VALUES_ALL = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
 		};
-		private final static CompareType[] VALUES_STRING = new CompareType[]
+		private static final CompareType[] VALUES_STRING = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
 			EQUALS,
@@ -117,7 +115,7 @@ public class Filter {
 			EQUALS_COLUMN,
 			EQUALS_NOT_COLUMN
 		};
-		private final static CompareType[] VALUES_NUMERIC = new CompareType[]
+		private static final CompareType[] VALUES_NUMERIC = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
 			EQUALS,
@@ -131,7 +129,7 @@ public class Filter {
 			GREATER_THAN_COLUMN,
 			LESS_THAN_COLUMN,
 		};
-		private final static CompareType[] VALUES_DATE = new CompareType[]
+		private static final CompareType[] VALUES_DATE = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
 			EQUALS,
@@ -149,100 +147,95 @@ public class Filter {
 		};
 
 		private Icon icon;
-		private CompareType(Icon icon) {
+		private CompareType(final Icon icon) {
 			this.icon = icon;
 		}
 
 		public Icon getIcon() {
 			return icon;
 		}
-		
+
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
 		}
-		public static CompareType[] valuesAll(){
+		public static CompareType[] valuesAll() {
 			return VALUES_ALL;
 		}
-		public static CompareType[] valuesString(){
+		public static CompareType[] valuesString() {
 			return VALUES_STRING;
 		}
-		public static CompareType[] valuesNumeric(){
+		public static CompareType[] valuesNumeric() {
 			return VALUES_NUMERIC;
 		}
-		public static CompareType[] valuesDate(){
+		public static CompareType[] valuesDate() {
 			return VALUES_DATE;
 		}
-		
-		public static boolean isNot(CompareType compareType){
-			return compareType == CompareType.CONTAINS_NOT 
+
+		public static boolean isNot(final CompareType compareType) {
+			return compareType == CompareType.CONTAINS_NOT
 				|| compareType == CompareType.CONTAINS_NOT_COLUMN
 				|| compareType == CompareType.EQUALS_NOT
 				|| compareType == CompareType.EQUALS_NOT_COLUMN
-				|| compareType == CompareType.EQUALS_NOT_DATE
-				;
+				|| compareType == CompareType.EQUALS_NOT_DATE;
 		}
-		public static boolean isColumnCompare(CompareType compareType){
-			return compareType == CompareType.GREATER_THAN_COLUMN 
+		public static boolean isColumnCompare(final CompareType compareType) {
+			return compareType == CompareType.GREATER_THAN_COLUMN
 				|| compareType == CompareType.LESS_THAN_COLUMN
 				|| compareType == CompareType.EQUALS_COLUMN
 				|| compareType == CompareType.EQUALS_NOT_COLUMN
 				|| compareType == CompareType.CONTAINS_COLUMN
 				|| compareType == CompareType.CONTAINS_NOT_COLUMN
 				|| compareType == CompareType.BEFORE_COLUMN
-				|| compareType == CompareType.AFTER_COLUMN
-				;
+				|| compareType == CompareType.AFTER_COLUMN;
 		}
-		public static boolean isNumericCompare(CompareType compareType){
-			return compareType == CompareType.GREATER_THAN_COLUMN 
+		public static boolean isNumericCompare(final CompareType compareType) {
+			return compareType == CompareType.GREATER_THAN_COLUMN
 				|| compareType == CompareType.LESS_THAN_COLUMN
 				|| compareType == CompareType.GREATER_THAN
-				|| compareType == CompareType.LESS_THAN
-				;
+				|| compareType == CompareType.LESS_THAN;
 		}
-		public static boolean isDateCompare(CompareType compareType){
+		public static boolean isDateCompare(final CompareType compareType) {
 			return compareType == CompareType.BEFORE
 				|| compareType == CompareType.AFTER
 				|| compareType == CompareType.EQUALS_DATE
 				|| compareType == CompareType.EQUALS_NOT_DATE
 				|| compareType == CompareType.BEFORE_COLUMN
-				|| compareType == CompareType.AFTER_COLUMN
-				;
+				|| compareType == CompareType.AFTER_COLUMN;
 		}
 	}
-	public enum LogicType{
+	public enum LogicType {
 		AND() {
 			@Override
-			public String getI18N(){
+			public String getI18N() {
 				return GuiShared.get().filterAnd();
 			}
 		},
 		OR() {
 			@Override
-			public String getI18N(){
+			public String getI18N() {
 				return GuiShared.get().filterOr();
 			}
-		},
-		;
-		
+		};
+
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
 		}
 	}
-	
+
 	private LogicType logic;
 	private Enum column;
 	private CompareType compare;
 	private String text;
-	
-	public Filter(String logic, Enum column, String compare, String text) {
+
+	public Filter(final String logic, final Enum column, final String compare, final String text) {
 		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text);
 	}
 
-	public Filter(LogicType logic, Enum column, CompareType compare, String text) {
+	public Filter(final LogicType logic, final Enum column, final CompareType compare, final String text) {
 		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
@@ -252,7 +245,7 @@ public class Filter {
 	public Enum getColumn() {
 		return column;
 	}
-	
+
 	public CompareType getCompareType() {
 		return compare;
 	}
@@ -264,8 +257,8 @@ public class Filter {
 	public LogicType getLogic() {
 		return logic;
 	}
-	
-	public boolean isEmpty(){
+
+	public boolean isEmpty() {
 		return text.isEmpty();
 	}
 
@@ -279,7 +272,7 @@ public class Filter {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

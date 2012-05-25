@@ -34,28 +34,30 @@ public abstract class DialoguesSettings extends Bundle {
 		return BundleCache.get(DialoguesSettings.class);
 	}
 
-	public static DialoguesSettings get(Locale locale) {
+	public static DialoguesSettings get(final Locale locale) {
 		return BundleCache.get(DialoguesSettings.class, locale);
 	}
 
-	public DialoguesSettings(Locale locale) {
+	public DialoguesSettings(final Locale locale) {
 		super(locale);
 	}
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
-	public abstract String enterFilter();
-	public abstract String hilightSelected();
 	public abstract String showSellOrReprocessColours();
+	public abstract String includeSellOrders();
+	public abstract String includeBuyOrders();
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
 	public abstract String searchForNewVersion(String programName);
 	public abstract String searchForNewVersionBeta();
+	public abstract String enterFilter();
+	public abstract String highlightSelectedRow();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
 	public abstract String ignoreAuditLogContainers();
-	
+
 	// used in StockpileToolSettingsPanel
 	public abstract String stockpile();
 	public abstract String stockpileSwitchTab();
@@ -71,7 +73,7 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeRegions();
 	public abstract String price();
 	public abstract String source();
-	public abstract String faction();
+	public abstract String notConfigurable();
 
 	// used in ProxySettingsPanel
 	public abstract String proxy();
@@ -118,6 +120,7 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in WindowSettingsPanel
 	public abstract String windowWindow();
 	public abstract String windowSaveOnExit();
+	public abstract String windowAlwaysOnTop();
 	public abstract String windowFixed();
 	public abstract String windowWidth();
 	public abstract String windowHeight();

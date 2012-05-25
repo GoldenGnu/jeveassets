@@ -27,7 +27,7 @@ import java.util.Comparator;
 public class MaterialSeparatorComparator implements Comparator<Material> {
 
 	@Override
-	public int compare(Material o1, Material o2) {
+	public int compare(final Material o1, final Material o2) {
 		return o1.getSeperator().compareTo(o2.getSeperator());
 	}
 

@@ -30,34 +30,34 @@ import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
 public class MainMenu extends JMenuBar {
-	
-	private static final long serialVersionUID = 1l;
 
-	public final static String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
-	public final static String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
-	public final static String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
-	public final static String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
-	public final static String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
-	public final static String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
-	public final static String ACTION_OPEN_MATERIALS = "ACTION_OPEN_METERIALS";
-	public final static String ACTION_OPEN_ACCOUNT_MANAGER = "ACTION_OPEN_API_MANAGER";
-	public final static String ACTION_OPEN_PROFILES = "ACTION_OPEN_PROFILES";
-	public final static String ACTION_OPEN_OPTIONS = "ACTION_OPEN_SETTINGS";
-	public final static String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
-	public final static String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
-	public final static String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
-	public final static String ACTION_OPEN_README = "ACTION_OPEN_README";
-	public final static String ACTION_OPEN_CHANGELOG = "ACTION_OPEN_CHANGELOG";
-	public final static String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
-	public final static String ACTION_OPEN_STOCKPILE = "ACTION_OPEN_STOCKPILE";
-	public final static String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
-	public final static String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
+	private static final long serialVersionUID = 1L;
+
+	public static final String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
+	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
+	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
+	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
+	public static final String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
+	public static final String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
+	public static final String ACTION_OPEN_MATERIALS = "ACTION_OPEN_METERIALS";
+	public static final String ACTION_OPEN_ACCOUNT_MANAGER = "ACTION_OPEN_API_MANAGER";
+	public static final String ACTION_OPEN_PROFILES = "ACTION_OPEN_PROFILES";
+	public static final String ACTION_OPEN_OPTIONS = "ACTION_OPEN_SETTINGS";
+	public static final String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
+	public static final String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
+	public static final String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
+	public static final String ACTION_OPEN_README = "ACTION_OPEN_README";
+	public static final String ACTION_OPEN_CHANGELOG = "ACTION_OPEN_CHANGELOG";
+	public static final String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
+	public static final String ACTION_OPEN_STOCKPILE = "ACTION_OPEN_STOCKPILE";
+	public static final String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
+	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
+	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
 	private JMenuItem jUpdatable;
 	private JMenuItem jTable;
 
-	public MainMenu(Program program) {
-		
+	public MainMenu(final Program program) {
 		JMenu menu;
 		JMenuItem menuItem;
 
@@ -78,6 +78,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_VALUES);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().items());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_ITEMS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
@@ -182,7 +189,7 @@ public class MainMenu extends JMenuBar {
 		menuItem.setActionCommand(ACTION_OPEN_OPTIONS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-		
+
 		menu = new JMenu(GuiFrame.get().help());
 		//menu.setActionCommand("Something");
 		this.add(menu);
@@ -231,8 +238,8 @@ public class MainMenu extends JMenuBar {
 		return jTable;
 	}
 
-	public void timerTicked(boolean updatable){
-		if (updatable){
+	public void timerTicked(final boolean updatable) {
+		if (updatable) {
 			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());
 		} else {

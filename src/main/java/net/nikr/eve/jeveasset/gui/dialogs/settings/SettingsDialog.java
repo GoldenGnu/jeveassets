@@ -27,35 +27,21 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class SettingsDialog extends JDialogCentered implements ActionListener, TreeSelectionListener {
 
-	public final static String ACTION_OK = "ACTION_OK";
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_APPLY = "ACTION_APPLY";
+	public static final String ACTION_OK = "ACTION_OK";
+	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	public static final String ACTION_APPLY = "ACTION_APPLY";
 
 	private JTree jTree;
 	private JPanel jContent;
@@ -68,7 +54,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 
 	private boolean tabSelected = false;
 
-	public SettingsDialog(Program program) {
+	public SettingsDialog(final Program program) {
 		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
 		settingsPanels = new HashMap<String, JSettingsPanel>();
@@ -84,7 +70,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		jTree.setRootVisible(false);
 		jTree.setShowsRootHandles(true);
 		jTree.addTreeSelectionListener(this);
-		
+
 		JScrollPane jTreeScroller = new JScrollPane(jTree);
 
 		cardLayout = new CardLayout();
@@ -133,17 +119,17 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		);
 	}
 
-	public DefaultMutableTreeNode addGroup(String name, Icon icon){
+	public DefaultMutableTreeNode addGroup(final String name, final Icon icon) {
 		SettingsGroup group = new SettingsGroup(program, this, name, icon);
 		return group.getTreeNode();
 	}
 
-	public DefaultMutableTreeNode add(JSettingsPanel jSettingsPanel, Icon icon, DefaultMutableTreeNode parentNode){
+	public DefaultMutableTreeNode add(final JSettingsPanel jSettingsPanel, final Icon icon, final DefaultMutableTreeNode parentNode) {
 		settingsPanels.put(jSettingsPanel.getTitle(), jSettingsPanel);
 		icons.put(jSettingsPanel.getTitle(), icon);
 		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(jSettingsPanel.getTitle());
-		if (parentNode == null){
+		if (parentNode == null) {
 			treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
 		} else {
 			treeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
@@ -151,11 +137,11 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		return node;
 	}
 
-	private void expandAll(TreePath parent, boolean expand) {
-		TreeNode node = (TreeNode)parent.getLastPathComponent();
+	private void expandAll(final TreePath parent, final boolean expand) {
+		TreeNode node = (TreeNode) parent.getLastPathComponent();
 		if (node.getChildCount() >= 0) {
-			for (Enumeration e=node.children(); e.hasMoreElements(); ) {
-				TreeNode n = (TreeNode)e.nextElement();
+			for (Enumeration e = node.children(); e.hasMoreElements();) {
+				TreeNode n = (TreeNode) e.nextElement();
 				TreePath path = parent.pathByAddingChild(n);
 				expandAll(path, expand);
 			}
@@ -178,35 +164,35 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
 	protected void save() {
 		boolean update = false;
-		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()){
-			if (entry.getValue().save()){
+		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
+			if (entry.getValue().save()) {
 				update = true;
 			}
 		}
-		if (update){
+		if (update) {
 			program.updateEventList();
 		}
 	}
 
-	public void setVisible(JSettingsPanel c) {
+	public void setVisible(final JSettingsPanel c) {
 		jTree.setSelectionPath(new TreePath(c.getTreeNode()));
 		tabSelected = true;
 		setVisible(true);
 	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
-			for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()){
+	public void setVisible(final boolean b) {
+		if (b) {
+			for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
 				entry.getValue().load();
 			}
 			expandAll(new TreePath((rootNode)), true);
-			if (!tabSelected){
+			if (!tabSelected) {
 				jTree.setSelectionRow(0);
 			}
 		}
@@ -215,38 +201,38 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_OK.equals(e.getActionCommand())) {
 			save();
 			setVisible(false);
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			setVisible(false);
 		}
-		if (ACTION_APPLY.equals(e.getActionCommand())){
+		if (ACTION_APPLY.equals(e.getActionCommand())) {
 			save();
 		}
 	}
 
 	@Override
-	public void valueChanged(TreeSelectionEvent e) {
+	public void valueChanged(final TreeSelectionEvent e) {
 		TreePath[] paths = jTree.getSelectionPaths();
-		if (paths != null && paths.length == 1){
+		if (paths != null && paths.length == 1) {
 			cardLayout.show(jContent, paths[0].getLastPathComponent().toString());
 		}
 	}
 
-	public class IconTreeCellRenderer implements TreeCellRenderer{
+	public class IconTreeCellRenderer implements TreeCellRenderer {
 
 		private Map<Object, Icon> icons = null;
 		private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
 
-		public IconTreeCellRenderer(Map<Object, Icon> icons) {
+		public IconTreeCellRenderer(final Map<Object, Icon> icons) {
 			this.icons = icons;
 		}
 
 		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
 			JLabel label = (JLabel) cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 			label.setIcon(icons.get(value.toString()));
 			return label;
@@ -254,9 +240,9 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 
 	}
 
-	private static class SettingsGroup extends JSettingsPanel{
+	private static class SettingsGroup extends JSettingsPanel {
 
-		public SettingsGroup(Program program, SettingsDialog settingsDialog, String sTitle, Icon icon) {
+		public SettingsGroup(final Program program, final SettingsDialog settingsDialog, final String sTitle, final Icon icon) {
 			super(program, settingsDialog, sTitle, icon);
 		}
 
@@ -264,7 +250,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		public boolean save() { return false; }
 
 		@Override
-		public void load() {}
+		public void load() { }
 
 	}
 }

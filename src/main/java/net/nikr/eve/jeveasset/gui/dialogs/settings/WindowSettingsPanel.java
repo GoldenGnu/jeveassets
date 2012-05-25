@@ -25,40 +25,34 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class WindowSettingsPanel extends JSettingsPanel implements ActionListener {
 
-	private final static String ACTION_AUTO_SAVE = "ACTION_AUTO_SAVE";
-	private final static String ACTION_FIXED = "ACTION_FIXED";
-	private final static String ACTION_DEFAULT = "ACTION_DEFAULT";
+	private static final String ACTION_AUTO_SAVE = "ACTION_AUTO_SAVE";
+	private static final String ACTION_FIXED = "ACTION_FIXED";
+	private static final String ACTION_DEFAULT = "ACTION_DEFAULT";
 
-	public final static int SAVE_ON_EXIT = 1;
-	public final static int FLAG_SAVE_MAXIMIZED = 2;
-	public final static int FLAG_SAVE_FIXED = 3;
+	public static final int SAVE_ON_EXIT = 1;
+	public static final int FLAG_SAVE_MAXIMIZED = 2;
+	public static final int FLAG_SAVE_FIXED = 3;
 
-	JRadioButton jAutoSave;
-	JRadioButton jFixed;
-	JTextField jWidth;
-	JTextField jHeight;
-	JTextField jX;
-	JTextField jY;
-	JCheckBox jMaximized;
-	JButton jDefault;
+	private JRadioButton jAutoSave;
+	private JRadioButton jFixed;
+	private JTextField jWidth;
+	private JTextField jHeight;
+	private JTextField jX;
+	private JTextField jY;
+	private JCheckBox jMaximized;
+	private JCheckBox jAlwaysOnTop;
+	private JButton jDefault;
 
-	public WindowSettingsPanel(Program program, SettingsDialog optionsDialog) {
+	public WindowSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), Images.SETTINGS_WINDOW.getIcon());
 
 		jAutoSave = new JRadioButton(DialoguesSettings.get().windowSaveOnExit());
@@ -81,8 +75,9 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		JLabel jYLabel = new JLabel(DialoguesSettings.get().windowY());
 		jY = new JNumberField();
 
-		JLabel jMaximizedLabel = new JLabel(DialoguesSettings.get().windowMaximised());
-		jMaximized = new JCheckBox();
+		jMaximized = new JCheckBox(DialoguesSettings.get().windowMaximised());
+
+		jAlwaysOnTop = new JCheckBox(DialoguesSettings.get().windowAlwaysOnTop());
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jAutoSave);
@@ -96,24 +91,21 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jAlwaysOnTop)
 				.addComponent(jAutoSave)
 				.addComponent(jFixed)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jWidthLabel)
 						.addComponent(jHeightLabel)
-						.addComponent(jMaximizedLabel)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jWidth)
 						.addComponent(jHeight)
-						.addComponent(jMaximized)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jXLabel)
 						.addComponent(jYLabel)
-
-
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 						.addComponent(jX)
@@ -121,10 +113,12 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 						.addComponent(jDefault)
 					)
 				)
+				.addComponent(jMaximized)
 		);
 
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jAlwaysOnTop, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAutoSave, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jFixed, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -140,41 +134,42 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 					.addComponent(jY, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jMaximizedLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jMaximized, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
 	}
 
-	private void setValuesFromSettings(){
-		jWidth.setText( String.valueOf(program.getMainWindow().getFrame().getSize().width));
-		jHeight.setText( String.valueOf(program.getMainWindow().getFrame().getSize().height));
-		jX.setText( String.valueOf(program.getMainWindow().getFrame().getLocation().x));
-		jY.setText( String.valueOf(program.getMainWindow().getFrame().getLocation().y));
-		jMaximized.setSelected( program.getMainWindow().getFrame().getState() == JFrame.MAXIMIZED_BOTH );
+	private void setValuesFromSettings() {
+		jWidth.setText(String.valueOf(program.getMainWindow().getFrame().getSize().width));
+		jHeight.setText(String.valueOf(program.getMainWindow().getFrame().getSize().height));
+		jX.setText(String.valueOf(program.getMainWindow().getFrame().getLocation().x));
+		jY.setText(String.valueOf(program.getMainWindow().getFrame().getLocation().y));
+		jMaximized.setSelected(program.getMainWindow().getFrame().getState() == JFrame.MAXIMIZED_BOTH);
 	}
 
-	private void setValuesFromWindow(){
-		jWidth.setText( String.valueOf(program.getSettings().getWindowSize().width));
-		jHeight.setText( String.valueOf(program.getSettings().getWindowSize().height));
-		jX.setText( String.valueOf(program.getSettings().getWindowLocation().x));
-		jY.setText( String.valueOf(program.getSettings().getWindowLocation().y));
-		jMaximized.setSelected( program.getSettings().isWindowMaximized() );
+	private void setValuesFromWindow() {
+		jWidth.setText(String.valueOf(program.getSettings().getWindowSize().width));
+		jHeight.setText(String.valueOf(program.getSettings().getWindowSize().height));
+		jX.setText(String.valueOf(program.getSettings().getWindowLocation().x));
+		jY.setText(String.valueOf(program.getSettings().getWindowLocation().y));
+		jMaximized.setSelected(program.getSettings().isWindowMaximized());
 	}
 
-	private int validate(String s){
+	private int validate(final String s) {
 		int n;
 		try {
 			n = Integer.valueOf(s);
-		} catch(NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			n = 0;
 		}
-		if (n < 0) n = 0;
+		if (n < 0) {
+			n = 0;
+		}
 		return n;
 	}
 
-	private void setInputEnabled(boolean b){
+	private void setInputEnabled(final boolean b) {
 		jWidth.setEnabled(b);
 		jHeight.setEnabled(b);
 		jX.setEnabled(b);
@@ -185,7 +180,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 
 	@Override
 	public boolean save() {
-		if (jAutoSave.isSelected()){
+		if (jAutoSave.isSelected()) {
 			program.getSettings().setWindowAutoSave(true);
 		} else {
 			int width = validate(jWidth.getText());
@@ -199,24 +194,27 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			program.getSettings().setWindowAutoSave(false);
 
 			//if changed...
-			if ((program.getSettings().getWindowSize().height != d.height) 
+			if ((program.getSettings().getWindowSize().height != d.height)
 					|| (program.getSettings().getWindowSize().width != d.width)
 					|| (program.getSettings().getWindowLocation().x != p.x)
 					|| (program.getSettings().getWindowLocation().y != p.y)
 					|| (program.getSettings().isWindowMaximized() != maximized)
-					|| first){
-				program.getSettings().setWindowSize( d );
-				program.getSettings().setWindowLocation( p );
+					|| first) {
+				program.getSettings().setWindowSize(d);
+				program.getSettings().setWindowLocation(p);
 				program.getSettings().setWindowMaximized(maximized);
 				program.getMainWindow().setSizeAndLocation(d, p, maximized);
 			}
 		}
+		boolean alwaysOnTop = jAlwaysOnTop.isSelected();
+		program.getSettings().setWindowAlwaysOnTop(alwaysOnTop);
+		program.getMainWindow().getFrame().setAlwaysOnTop(alwaysOnTop);
 		return false;
 	}
 
 	@Override
 	public void load() {
-		if (program.getSettings().isWindowAutoSave()){
+		if (program.getSettings().isWindowAutoSave()) {
 			jAutoSave.setSelected(true);
 			setValuesFromSettings();
 			setInputEnabled(false);
@@ -225,17 +223,18 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			setValuesFromWindow();
 			setInputEnabled(true);
 		}
+		jAlwaysOnTop.setSelected(program.getSettings().isWindowAlwaysOnTop());
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_AUTO_SAVE.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_AUTO_SAVE.equals(e.getActionCommand())) {
 			setInputEnabled(false);
 		}
-		if (ACTION_FIXED.equals(e.getActionCommand())){
+		if (ACTION_FIXED.equals(e.getActionCommand())) {
 			setInputEnabled(true);
 		}
-		if (ACTION_DEFAULT.equals(e.getActionCommand())){
+		if (ACTION_DEFAULT.equals(e.getActionCommand())) {
 			jWidth.setText("800");
 			jHeight.setText("600");
 			jX.setText("0");

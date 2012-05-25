@@ -31,44 +31,54 @@ public abstract class GuiShared extends Bundle {
 		return BundleCache.get(GuiShared.class);
 	}
 
-	public static GuiShared get(Locale locale) {
+	public static GuiShared get(final Locale locale) {
 		return BundleCache.get(GuiShared.class, locale);
 	}
 
-	public GuiShared(Locale locale) {
+	public GuiShared(final Locale locale) {
 		super(locale);
 	}
 
 	public abstract String add();
 	public abstract String addStockpileItem();
-	public abstract String autoText();
-	public abstract String autoWindow();
+	public abstract String checkAll();
 	public abstract String chruker();
-	public abstract String columns();
 	public abstract String copy();
 	public abstract String cut();
-	public abstract String disable();
 	public abstract String dotlan();
 	public abstract String editItem();
 	public abstract String editName();
 	public abstract String editPrice();
 	public abstract String emptyString();
+	public abstract String eveAddicts();
 	public abstract String eveCentral();
 	public abstract String eveMarketdata();
+	public abstract String eveMarketeer();
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String item();
 	public abstract String lookup();
 	public abstract String newStockpile();
+	public abstract String ok();
+	public abstract String openLinks(int size);
+	public abstract String openLinksTitle();
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();
 	public abstract String region();
-	public abstract String reset();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();
-	public abstract String today(Object arg0); 
+	public abstract String tableColumns();
+	public abstract String tableColumnsReset();
+	public abstract String tableColumnsTip();
+	public abstract String tableColumnsTitle();
+	public abstract String tableResizeText();
+	public abstract String tableResizeWindow();
+	public abstract String tableResizeNone();
+	public abstract String tableSettings();
+
+	public abstract String today(Object arg0);
 	public abstract String weekdayAndTime(Date datetime);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
@@ -78,6 +88,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String save();
 	public abstract String cancel();
 	public abstract String noFilterName();
+	public abstract String overwriteDefaultFilter();
 	public abstract String overwriteFilter();
 	public abstract String addField();
 	public abstract String clearField();
@@ -92,7 +103,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String managerDone();
 	public abstract String renameFilter();
 	public abstract String deleteFilter();
-	public abstract String deleteFilterName(Object arg0);
+	public abstract String deleteFilters(int size);
 	public abstract String mergeFilters();
 	public abstract String managerMerge();
 	public abstract String filterAll();

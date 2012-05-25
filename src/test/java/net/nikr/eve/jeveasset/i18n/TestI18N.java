@@ -32,17 +32,7 @@ import uk.me.candle.translations.Bundle;
  * @author Candle
  */
 public class TestI18N {
-	
-	@Test
-	public void testDataModelAssetFilterBundle_en() throws Exception {
-		DataModelAssetFilter g = Bundle.load(DataModelAssetFilter.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.modeContain());
-	}
-	
+
 	@Test
 	public void testDataModelEveAssetBundle_en() throws Exception {
 		DataModelEveAsset g = Bundle.load(DataModelEveAsset.class, Locale.ENGLISH,
@@ -52,7 +42,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.priceSellMax());
 	}
-	
+
 	@Test
 	public void testDataModelIndustryJobBundle_en() throws Exception {
 		DataModelIndustryJob g = Bundle.load(DataModelIndustryJob.class, Locale.ENGLISH,
@@ -62,7 +52,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.activityAll());
 	}
-	
+
 	@Test
 	public void testDataModelPriceDataSettings_en() throws Exception {
 		DataModelPriceDataSettings g = Bundle.load(DataModelPriceDataSettings.class, Locale.ENGLISH,
@@ -72,7 +62,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.regionDerelik());
 	}
-	
+
 	@Test
 	public void testDialoguesAbout_en() throws Exception {
 		DialoguesAbout g = Bundle.load(DialoguesAbout.class, Locale.ENGLISH,
@@ -82,7 +72,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.about());
 	}
-	
+
 	@Test
 	public void testDialoguesAccount_en() throws Exception {
 		DialoguesAccount g = Bundle.load(DialoguesAccount.class, Locale.ENGLISH,
@@ -92,7 +82,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.helpText());
 	}
-	
+
 	@Test
 	public void testDialoguesAddSystem_en() throws Exception {
 		DialoguesAddSystem g = Bundle.load(DialoguesAddSystem.class, Locale.ENGLISH,
@@ -102,7 +92,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.filterResult(5));
 	}
-	
+
 	@Test
 	public void testDialoguesCsvExport_en() throws Exception {
 		DialoguesCsvExport g = Bundle.load(DialoguesCsvExport.class, Locale.ENGLISH,
@@ -112,7 +102,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.noFilter());
 	}
-	
+
 	@Test
 	public void testDialoguesProfiles_en() throws Exception {
 		DialoguesProfiles g = Bundle.load(DialoguesProfiles.class, Locale.ENGLISH,
@@ -122,7 +112,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.deleteProfileConfirm("delete me!"));
 	}
-	
+
 	@Test
 	public void testDialoguesSettings_en() throws Exception {
 		DialoguesSettings g = Bundle.load(DialoguesSettings.class, Locale.ENGLISH,
@@ -132,7 +122,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.enterFilter());
 	}
-	
+
 	@Test
 	public void testDialoguesUpdate_en() throws Exception {
 		DialoguesUpdate g = Bundle.load(DialoguesUpdate.class, Locale.ENGLISH,
@@ -151,7 +141,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.uncaughtErrorMessage());
 	}
-	
+
 	@Test public void testGuiFrameBundle_en() throws Exception {
 		GuiFrame g = Bundle.load(GuiFrame.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -160,7 +150,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.about());
 	}
-	
+
 	@Test public void testGuiSharedBundle_en() throws Exception {
 		GuiShared g = Bundle.load(GuiShared.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -169,7 +159,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.add());
 	}
-	
+
 	@Test public void testTabsAssetsBundle_en() throws Exception {
 		TabsAssets g = Bundle.load(TabsAssets.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -178,7 +168,16 @@ public class TestI18N {
 				);
 		assertNotNull(g.assets());
 	}
-	
+
+	@Test public void testTabsItemsBundle_en() throws Exception {
+		TabsItems g = Bundle.load(TabsItems.class, Locale.ENGLISH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
+		assertNotNull(g.columnName());
+	}
+
 	@Test public void testTabsJobsBundle_en() throws Exception {
 		TabsJobs g = Bundle.load(TabsJobs.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -187,7 +186,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.all());
 	}
-	
+
 	@Test public void testTabsLoadoutBundle_en() throws Exception {
 		TabsLoadout g = Bundle.load(TabsLoadout.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -196,7 +195,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.cancel());
 	}
-	
+
 	@Test public void testTabsMaterialsBundle_en() throws Exception {
 		TabsMaterials g = Bundle.load(TabsMaterials.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -205,16 +204,16 @@ public class TestI18N {
 				);
 		assertNotNull(g.collapse());
 	}
-	
+
 	@Test public void testTabsOrdersBundle_en() throws Exception {
 		TabsOrders g = Bundle.load(TabsOrders.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.buy());
+		assertNotNull(g.columnExpires());
 	}
-	
+
 	@Test public void testTabsOverviewBundle_en() throws Exception {
 		TabsOverview g = Bundle.load(TabsOverview.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -223,7 +222,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.add());
 	}
-	
+
 	@Test public void testTabsRoutingBundle_en() throws Exception {
 		TabsRouting g = Bundle.load(TabsRouting.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -232,7 +231,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.add());
 	}
-	
+
 	@Test public void testTabsStockpileBundle_en() throws Exception {
 		TabsStockpile g = Bundle.load(TabsStockpile.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,
@@ -241,7 +240,7 @@ public class TestI18N {
 				);
 		assertNotNull(g.addItem());
 	}
-	
+
 	@Test public void testTabsValuesBundle_en() throws Exception {
 		TabsValues g = Bundle.load(TabsValues.class, Locale.ENGLISH,
 				Bundle.LoadIgnoreMissing.NO,

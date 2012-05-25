@@ -25,39 +25,45 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
-import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
+import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class FilterSave extends JDialogCentered implements ActionListener {
 
-	public final static String ACTION_SAVE = "ACTION_SAVE";
-	public final static String ACTION_CANCEL = "ACTION_CANCEL";
-	public final static String ACTION_SELECTED = "ACTION_SELECTED";
+	public static final String ACTION_SAVE = "ACTION_SAVE";
+	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 
-	private EventList<String> filters;
+	private final EventList<String> filters;
+	private final List<String> defaultFilters = new ArrayList<String>();
 	private JComboBox jName;
 	private JButton jSave;
 
-	public FilterSave(JFrame jFrame) {
+	private String returnString;
+
+	public FilterSave(final JFrame jFrame) {
 		super(null, GuiShared.get().saveFilter(), jFrame);
-		
+
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox();
-		jName.setActionCommand(ACTION_SELECTED);
-		jName.addActionListener(this);
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new BasicEventList<String>();
-		AutoCompleteSupport.install(jName, filters, new Filterator());
-		
+		AutoCompleteSupport<String> autoCompleteSupport = AutoCompleteSupport.install(jName, filters, new Filterator());
+		autoCompleteSupport.setSelectsTextOnFocusGain(false);
+		autoCompleteSupport.setFirstItem("");
+
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
@@ -87,34 +93,43 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 				)
 		);
 	}
-	
-	String show(List<String> list){
-		Collections.sort(list);
-		filters.clear();
-		filters.addAll(list);
+
+	String show(final List<String> filters, final List<String> defaultFilters) {
+		returnString = null;
+		Collections.sort(filters);
+		this.filters.clear();
+		this.filters.addAll(filters);
+		this.defaultFilters.clear();
+		this.defaultFilters.addAll(defaultFilters);
 		this.setVisible(true);
-		return (String) jName.getSelectedItem();
+		return returnString;
 	}
-	
-	private boolean validate(){
+
+	private boolean validate() {
 		String name = (String) jName.getSelectedItem();
-		if (name == null){
+		if (name == null) {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		if (name.length() == 0) {
+		if (name.isEmpty()) {
 			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
-		if (filters.contains(name)){
+		for (String filter : defaultFilters) {
+			if (filter.toLowerCase().equals(name.toLowerCase())) { //Case insetitive contains
+				JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().overwriteDefaultFilter(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
+				return false;
+			}
+		}
+		if (filters.contains(name)) {
 			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION){
+			if (nReturn == JOptionPane.NO_OPTION) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected JComponent getDefaultFocus() {
 		return jName;
@@ -126,39 +141,50 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	}
 
 	@Override
-	protected void windowShown() {}
+	protected void windowShown() { }
 
 	@Override
-	protected void save() {}
+	protected void save() {
+		if (validate()) {
+			returnString = (String) jName.getSelectedItem();
+			setVisible(false);
+		}
+		//XXX - Workaround for strange bug:
+		// 1. Doing validate JOptionPane lost focus (to another program)
+		// 2. JOptionPane is hidden (by mouse click)
+		// 3. jName is not responding (string is locked)
+		try {
+			Robot robot = new Robot();
+			robot.keyRelease(KeyEvent.VK_ENTER);
+		} catch (AWTException e) {
+
+		}
+	}
 
 	@Override
-	public void setVisible(boolean b) {
-		if (b){
-			jName.getModel().setSelectedItem("");
+	public void setVisible(final boolean b) {
+		if (b) {
+			jName.setSelectedIndex(0);
 		}
 		super.setVisible(b);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SAVE.equals(e.getActionCommand())){
-			if (validate()){
-				this.setVisible(false);
-			}
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_SAVE.equals(e.getActionCommand())) {
+			save();
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
-			jName.getModel().setSelectedItem(null);
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
-		}
-		if (ACTION_SELECTED.equals(e.getActionCommand()) && jName.getSelectedItem() == null) {
-			jName.getModel().setSelectedItem("");
 		}
 	}
 
-	class Filterator implements TextFilterator<String>{
+	private static class Filterator implements TextFilterator<String> {
 		@Override
-		public void getFilterStrings(List<String> baseList, String element) {
-			if (element.length() > 0) baseList.add(element);
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			if (element.length() > 0) {
+				baseList.add(element);
+			}
 		}
 	}
 }

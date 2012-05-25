@@ -30,11 +30,11 @@ public abstract class TabsRouting extends Bundle {
 		return BundleCache.get(TabsRouting.class);
 	}
 
-	public static TabsRouting get(Locale locale) {
+	public static TabsRouting get(final Locale locale) {
 		return BundleCache.get(TabsRouting.class, locale);
 	}
 
-	public TabsRouting(Locale locale) {
+	public TabsRouting(final Locale locale) {
 		super(locale);
 	}
 

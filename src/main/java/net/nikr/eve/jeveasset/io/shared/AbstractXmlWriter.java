@@ -21,20 +21,11 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
@@ -45,9 +36,9 @@ import org.w3c.dom.Document;
 
 public abstract class AbstractXmlWriter {
 
-	private final static Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
 
-	protected static Document getXmlDocument(String rootname) throws XmlException  {
+	protected static Document getXmlDocument(final String rootname) throws XmlException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -57,14 +48,16 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		}
 	}
-	protected static void writeXmlFile(Document doc, String filename) throws XmlException  {
-		writeXmlFile(doc, filename, "UTF-16");
+	protected static void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
+		writeXmlFile(doc, filename, "UTF-16", createBackup);
 	}
 
-	protected static void writeXmlFile(Document doc, String filename, String encoding) throws XmlException  {
+	private static void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
 		DOMSource source = new DOMSource(doc);
 		try {
-			backupFile(filename);
+			if (createBackup) {
+				backupFile(filename);
+			}
 			File outputFile = new File(filename);
 			FileOutputStream outputStream = new FileOutputStream(outputFile);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
@@ -91,15 +84,15 @@ public abstract class AbstractXmlWriter {
 		}
 	}
 
-	private static void backupFile(String filename){
+	private static void backupFile(final String filename) {
 		File outputFile = new File(filename);
 		int end = filename.lastIndexOf(".");
-		String backup = filename.substring(0, end)+".bac";
+		String backup = filename.substring(0, end) + ".bac";
 		File backupFile = new File(backup);
-		if (backupFile.exists() && !backupFile.delete()){
+		if (backupFile.exists() && !backupFile.delete()) {
 			LOG.warn("Was not able to delete previous backup file: {}", backup);
 		}
-		if (outputFile.exists() && !outputFile.renameTo(backupFile)){
+		if (outputFile.exists() && !outputFile.renameTo(backupFile)) {
 			LOG.warn("Was not able to make backup of: {}", filename);
 		}
 	}

@@ -20,27 +20,18 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs.addsystem;
 
-import net.nikr.eve.jeveasset.gui.shared.TreeSelectDialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.model.SolarSystem;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.data.model.Region;
+import net.nikr.eve.jeveasset.data.model.SolarSystem;
+import net.nikr.eve.jeveasset.gui.shared.TreeSelectDialog;
 import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
 
 public class AddSystemController {
@@ -49,7 +40,7 @@ public class AddSystemController {
 	private TreeSelectDialog view;
 	private int leafCount;
 
-	public AddSystemController(Program program) {
+	public AddSystemController(final Program program) {
 
 		model = program.getSettings().getGalaxyModel();
 		leafCount = 0;
@@ -72,7 +63,7 @@ public class AddSystemController {
 	private void registerListeners() {
 		view.getDialog().addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosed(final WindowEvent e) {
 				view = null;
 				model = null;
 			}
@@ -80,7 +71,7 @@ public class AddSystemController {
 
 		view.getCancelButton().addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				view.getDialog().dispose();
 			}
 
@@ -88,7 +79,7 @@ public class AddSystemController {
 
 		view.getLeafFilterTextField().addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
+			public void keyReleased(final KeyEvent e) {
 				JLabel label = view.getFilterInfoResultLabel();
 				JTextField tf = (JTextField) e.getSource();
 				setFilterText(tf.getText());
@@ -99,7 +90,7 @@ public class AddSystemController {
 
 		view.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
-			public void valueChanged(TreeSelectionEvent e) {
+			public void valueChanged(final TreeSelectionEvent e) {
 				JTree tree = view.getTree();
 				JButton button = view.getAddButton();
 				JLabel label = view.getSelectedLeafValueLabel();
@@ -116,7 +107,7 @@ public class AddSystemController {
 		});
 	}
 
-	private void setFilterText(String text) {
+	private void setFilterText(final String text) {
 		JTree tree = view.getTree();
 		tree.setModel(new DefaultTreeModel(buildTree(text)));
 		if (leafCount <= 30) {
@@ -126,7 +117,7 @@ public class AddSystemController {
 		}
 	}
 
-	private DefaultMutableTreeNode buildTree(String filter) {
+	private DefaultMutableTreeNode buildTree(final String filter) {
 
 		leafCount = 0;
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(model);
@@ -148,7 +139,7 @@ public class AddSystemController {
 		return root;
 	}
 
-	private String generateFilterResultString(int resultCount) {
+	private String generateFilterResultString(final int resultCount) {
 		JTextField tf = view.getLeafFilterTextField();
 		if ("".equals(tf.getText())) {
 			return DialoguesAddSystem.get().defaultFilterResult();

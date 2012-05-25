@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -33,13 +34,20 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	private JCheckBox jStable;
 	private JCheckBox jDev;
 
+	private JCheckBox jEnterFilters;
+	private JCheckBox jHighlightSelectedRow;
 
-	public GeneralSettingsPanel(Program program, SettingsDialog optionsDialog) {
+
+	public GeneralSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().general(),  Images.DIALOG_SETTINGS.getIcon());
 
 		jStable = new JCheckBox(DialoguesSettings.get().searchForNewVersion(Program.PROGRAM_NAME));
 
 		jDev = new JCheckBox(DialoguesSettings.get().searchForNewVersionBeta());
+
+		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
+
+		jHighlightSelectedRow = new JCheckBox(DialoguesSettings.get().highlightSelectedRow());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -48,11 +56,16 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 					.addGap(20)
 					.addComponent(jDev)
 				)
+				.addComponent(jEnterFilters)
+				.addComponent(jHighlightSelectedRow)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jStable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jDev, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addGap(20)
+				.addComponent(jEnterFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jHighlightSelectedRow, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
@@ -60,12 +73,17 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 	public boolean save() {
 		program.getSettings().setAutoUpdate(jStable.isSelected());
 		program.getSettings().setUpdateDev(jDev.isSelected());
-		return false;
+		boolean update = jHighlightSelectedRow.isSelected() != program.getSettings().isHighlightSelectedRows();
+		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
+		program.getSettings().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
+		return update;
 	}
 
 	@Override
 	public void load() {
 		jStable.setSelected(program.getSettings().isAutoUpdate());
 		jDev.setSelected(program.getSettings().isUpdateDev());
+		jEnterFilters.setSelected(Settings.isFilterOnEnter());
+		jHighlightSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
 	}
 }
