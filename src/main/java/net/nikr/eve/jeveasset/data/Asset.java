@@ -46,6 +46,12 @@ public class Asset implements Comparable<Asset> {
 				return DataModelEveAsset.get().priceSellMedian();
 			}
 		},
+		PRICE_SELL_PERCENTILE {
+			@Override
+			String getI18N() {
+				return DataModelEveAsset.get().priceSellPercentile();
+			}
+		},
 		PRICE_SELL_MIN {
 			@Override
 			String getI18N() {
@@ -62,6 +68,12 @@ public class Asset implements Comparable<Asset> {
 			@Override
 			String getI18N() {
 				return DataModelEveAsset.get().priceBuyMax();
+			}
+		},
+		PRICE_BUY_PERCENTILE {
+			@Override
+			String getI18N() {
+				return DataModelEveAsset.get().priceBuyPercentile();
 			}
 		},
 		PRICE_BUY_AVG {
@@ -199,6 +211,9 @@ public class Asset implements Comparable<Asset> {
 			if (priceType.equals(PriceMode.PRICE_SELL_MEDIAN)) {
 				return priceData.getSellMedian();
 			}
+			if (priceType.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
+				return priceData.getSellPercentile();
+			}
 			if (priceType.equals(PriceMode.PRICE_SELL_MIN)) {
 				return priceData.getSellMin();
 			}
@@ -213,6 +228,9 @@ public class Asset implements Comparable<Asset> {
 			}
 			if (priceType.equals(PriceMode.PRICE_BUY_MEDIAN)) {
 				return priceData.getBuyMedian();
+			}
+			if (priceType.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
+				return priceData.getBuyPercentile();
 			}
 			if (priceType.equals(PriceMode.PRICE_BUY_MIN)) {
 				return priceData.getBuyMin();

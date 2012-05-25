@@ -183,23 +183,27 @@ public class PriceDataGetter implements PricingListener {
 		Double sellMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.SELL);
 		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
 		Double sellMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.SELL);
+		Double sellPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.SELL);
 		Double sellMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.SELL);
 		Double buyMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.BUY);
 		Double buyAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.BUY);
 		Double buyMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.BUY);
+		Double buyPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.BUY);
 		Double buyMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.BUY);
 
-		if (sellMax != null && sellAvg != null && sellMedian != null && sellMin != null
-			&& buyMax != null && buyAvg != null && buyMedian != null && buyMin != null
+		if (sellMax != null && sellAvg != null && sellMedian != null && sellPercentile != null && sellMin != null
+			&& buyMax != null && buyAvg != null && buyMedian != null && buyPercentile != null && buyMin != null
 				) {
 			PriceData priceData = new PriceData();
 			priceData.setSellMax(sellMax);
 			priceData.setSellAvg(sellAvg);
 			priceData.setSellMedian(sellMedian);
+			priceData.setSellPercentile(sellPercentile);
 			priceData.setSellMin(sellMin);
 			priceData.setBuyMax(buyMax);
 			priceData.setBuyAvg(buyAvg);
 			priceData.setBuyMedian(buyMedian);
+			priceData.setBuyPercentile(buyPercentile);
 			priceData.setBuyMin(buyMin);
 			priceDataList.put(typeID, priceData);
 		}

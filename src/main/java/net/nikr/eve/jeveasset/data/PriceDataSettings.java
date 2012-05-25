@@ -39,7 +39,7 @@ public class PriceDataSettings {
 		},
 		EVE_MARKETDATA("eve-marketdata", false, true) {
 			@Override public PriceMode[] getPriceTypes() {
-				return new PriceMode[]{PriceMode.PRICE_SELL_MIN, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_MAX};
+				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();

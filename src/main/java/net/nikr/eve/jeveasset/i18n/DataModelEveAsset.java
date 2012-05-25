@@ -46,10 +46,12 @@ public abstract class DataModelEveAsset extends Bundle {
 	public abstract String priceSellAvg();
 	public abstract String priceSellMedian();
 	public abstract String priceSellMin();
+	public abstract String priceSellPercentile();
 	public abstract String priceMidpoint();
 	public abstract String priceBuyMax();
 	public abstract String priceBuyAvg();
 	public abstract String priceBuyMedian();
+	public abstract String priceBuyPercentile();
 	public abstract String priceBuyMin();
 
 }
