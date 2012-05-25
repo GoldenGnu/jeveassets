@@ -52,6 +52,14 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEveMarketeer();
 			}
+		},
+		EVE_ADDICTS("eveaddicts", false, true) {
+			@Override public PriceMode[] getPriceTypes() {
+				return new PriceMode[]{PriceMode.PRICE_SELL_AVG, PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE, PriceMode.PRICE_BUY_AVG};
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveAddicts();
+			}
 		};
 		private String name;
 		private boolean supportsMultipleLocations;

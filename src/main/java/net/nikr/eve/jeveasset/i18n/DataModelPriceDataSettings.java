@@ -39,6 +39,7 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 	public DataModelPriceDataSettings(final Locale locale) {
 		super(locale);
 	}
+	public abstract String sourceEveAddicts();
 	public abstract String sourceEveCentral();
 	public abstract String sourceEveMarketdata();
 	public abstract String sourceEveMarketeer();
