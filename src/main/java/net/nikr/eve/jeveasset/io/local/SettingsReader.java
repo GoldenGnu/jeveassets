@@ -58,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import uk.me.candle.eve.pricing.options.LocationType;
 
 
 public class SettingsReader extends AbstractXmlReader {
@@ -356,19 +357,39 @@ public class SettingsReader extends AbstractXmlReader {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		Asset.setPriceType(priceType);
-		RegionType regionType = PriceDataSettings.getDefaultRegionType();
+		//null = default
+		List<Long> locations = null;
+		LocationType locationType = null;
+		//Backward compatibility
 		if (AttributeGetters.haveAttribute(element, "regiontype")) {
-			regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
+			RegionType regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
+			locations = regionType.getRegions();
+			locationType = LocationType.REGION;
+		}
+		if (AttributeGetters.haveAttribute(element, "locations")) {
+			String string = AttributeGetters.getString(element, "locations");
+			String[] split = string.split(",");
+			locations = new ArrayList<Long>();
+			for (String s : split){
+				try {
+					locations.add(Long.valueOf(s));
+				} catch (NumberFormatException ex) {
+					LOG.warn("Could not parse locations long: "+s);
+				}
+			}
+		}
+		if (AttributeGetters.haveAttribute(element, "type")) {
+			locationType = LocationType.valueOf(AttributeGetters.getString(element, "type"));
 		}
 		PriceSource priceSource = PriceDataSettings.getDefaultPriceSource();
 		if (AttributeGetters.haveAttribute(element, "pricesource")) {
 			try {
 				priceSource = PriceSource.valueOf(AttributeGetters.getString(element, "pricesource"));
 			} catch (IllegalArgumentException ex) {
-				//In case a price source is removed: Use to default
+				//In case a price source is removed: Use the default
 			}
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(regionType, priceSource));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource));
 	}
 
 	private static void parseFlags(final Element element, final Settings settings) {

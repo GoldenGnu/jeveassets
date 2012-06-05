@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.pricing.Pricing;
 import uk.me.candle.eve.pricing.PricingFactory;
 import uk.me.candle.eve.pricing.PricingListener;
+import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
@@ -232,8 +233,13 @@ public class PriceDataGetter implements PricingListener {
 		}
 
 		@Override
-		public List<Long> getRegions() {
-			return settings.getPriceDataSettings().getRegions();
+		public LocationType getLocationType() {
+			return settings.getPriceDataSettings().getLocationType();
+		}
+
+		@Override
+		public List<Long> getLocations() {
+			return settings.getPriceDataSettings().getLocations();
 		}
 
 		@Override

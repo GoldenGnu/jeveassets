@@ -53,7 +53,6 @@ public class PriceDataSettingsTest {
 	@Test
 	public void testGetRegion() {
 		Settings settings = new PriceDataSettingsMock();
-		LocationsReader.load(settings);
 		for (RegionType regionType : RegionType.values()) {
 			List<Long> regions = regionType.getRegions();
 			if (regions.size() == 1) { //Single location
@@ -73,7 +72,9 @@ public class PriceDataSettingsTest {
 
 	private Map<Long, Location> locations = new HashMap<Long, Location>();
 
-	public PriceDataSettingsMock() { }
+	public PriceDataSettingsMock() {
+		LocationsReader.load(this);
+	}
 
 	@Override
 	public Map<Long, Location> getLocations() {

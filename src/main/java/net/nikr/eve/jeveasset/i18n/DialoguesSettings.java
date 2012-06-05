@@ -71,6 +71,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceData();
 	public abstract String changeSourceWarning();
 	public abstract String includeRegions();
+	public abstract String includeStations();
+	public abstract String includeSystems();
 	public abstract String price();
 	public abstract String source();
 	public abstract String notConfigurable();
