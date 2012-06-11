@@ -70,15 +70,15 @@ public class SettingsReader extends AbstractXmlReader {
 	public static boolean load(final Settings settings) {
 		try {
 			Update updater = new Update();
-			updater.performUpdates(SETTINGS_VERSION);
+			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(Settings.getPathSettings());
+			Element element = getDocumentElement(settings.getPathSettings());
 			parseSettings(element, settings);
 		} catch (IOException ex) {
 			LOG.info("Settings not loaded");
 			return false;
 		} catch (XmlException ex) {
-			LOG.error("Settings parser error: (" + Settings.getPathSettings() + ")" + ex.getMessage(), ex);
+			LOG.error("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
 		}
 		LOG.info("Settings loaded");
 		return true;

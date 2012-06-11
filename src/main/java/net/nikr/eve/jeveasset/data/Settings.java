@@ -792,7 +792,7 @@ public class Settings {
 		return overviewGroups;
 	}
 
-	public static String getPathSettings() {
+	public String getPathSettings() {
 		return getLocalFile(Settings.PATH_SETTINGS, !portable);
 	}
 	public static String getPathConquerableStations() {

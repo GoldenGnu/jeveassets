@@ -431,4 +431,29 @@ public abstract class FakeSettings extends Settings {
 	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public String getPathSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeBuyOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeSellOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeBuyOrders(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeSellOrders(boolean includeSellOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

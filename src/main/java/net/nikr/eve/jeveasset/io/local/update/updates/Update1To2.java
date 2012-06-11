@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -45,7 +44,7 @@ public class Update1To2 implements LocalUpdate {
 	private static final Logger LOG = LoggerFactory.getLogger(Update1To2.class);
 
 	@Override
-	public void performUpdate() {
+	public void performUpdate(String path) {
 		LOG.info("Performing update from v1 to v2");
 		LOG.info(" - modifies files:");
 		LOG.info("  - settings.xml");
@@ -57,14 +56,13 @@ public class Update1To2 implements LocalUpdate {
 			// 2. settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
 			// 3. settings/columns/column --> settings/tables/table/column
 			// settings/flags/flag --> removed two flags (now in settings/tables/table)
-			String settingPath = Settings.getPathSettings();
 			SAXReader xmlReader = new SAXReader();
-			Document doc = xmlReader.read(settingPath);
+			Document doc = xmlReader.read(path);
 			convertDefaultPriceModes(doc);
 			convertModes(doc);
 			convertTableSettings(doc);
 
-			FileOutputStream fos = new FileOutputStream(settingPath);
+			FileOutputStream fos = new FileOutputStream(path);
 			OutputFormat outformat = OutputFormat.createPrettyPrint();
 			outformat.setEncoding("UTF-16");
 			XMLWriter writer = new XMLWriter(fos, outformat);

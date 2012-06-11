@@ -69,7 +69,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeCsv(xmldoc, Settings.getCsvSettings());
 		try {
-			writeXmlFile(xmldoc, Settings.getPathSettings(), true);
+			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
 		}
