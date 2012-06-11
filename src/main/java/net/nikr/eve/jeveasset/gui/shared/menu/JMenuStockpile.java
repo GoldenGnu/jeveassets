@@ -38,7 +38,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 
 	private static final String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
 	private static final String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
-	private static final int DEFAULT_ADD_COUNT = 0;
+	private static final int DEFAULT_ADD_COUNT = 1;
 
 	public JMenuStockpile(final Program program, final List<T> items) {
 		super(GuiShared.get().stockpile(), program, items); //
