@@ -425,8 +425,6 @@ public class OverviewTab extends JMainTab {
 			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			overviewTableModel.fireTableStructureChanged();
 		}
-		//XXX - set default comparator or we can get IndexOutOfBoundsException
-		overviewSortedList.setComparator(GlazedLists.comparableComparator());
 		try {
 			overviewEventList.getReadWriteLock().writeLock().lock();
 			overviewEventList.clear();
@@ -509,6 +507,14 @@ public class OverviewTab extends JMainTab {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_UPDATE_LIST.equals(e.getActionCommand())) {
+				if (e.getSource().equals(jStations)
+						|| e.getSource().equals(jSystems)
+						|| e.getSource().equals(jRegions)
+						|| e.getSource().equals(jGroups)
+						) {
+					//XXX - set default comparator or we can get IndexOutOfBoundsException
+					overviewSortedList.setComparator(GlazedLists.comparableComparator());
+				}
 				updateTable();
 			}
 			//Group
