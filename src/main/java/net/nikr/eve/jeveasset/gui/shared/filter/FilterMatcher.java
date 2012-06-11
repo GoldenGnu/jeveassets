@@ -260,8 +260,12 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return null;
 		}
 	}
-
+	
 	static String format(final Object object) {
+		return format(object, true);
+	}
+
+	static String format(final Object object, final boolean toLowerCase) {
 		if (object == null) {
 			return null;
 		}
@@ -269,16 +273,24 @@ public class FilterMatcher<E> implements Matcher<E> {
 		//Number
 		Number number = getNumber(object);
 		if (number != null) {
-			return Formater.compareFormat(number).toLowerCase();
+			return toLowerCase(Formater.compareFormat(number), toLowerCase);
 		}
 
 		//Date
 		Date date = getDate(object);
 		if (date != null) {
-			return Formater.columnDate(date).toLowerCase();
+			return toLowerCase(Formater.columnDate(date), toLowerCase);
 		}
 
 		//String
-		return object.toString().toLowerCase();
+		return toLowerCase(object.toString(), toLowerCase);
+	}
+
+	private static String toLowerCase(String s, boolean toLowerCase){
+		if (toLowerCase){
+			return s.toLowerCase();
+		} else {
+			return s;
+		}
 	}
 }
