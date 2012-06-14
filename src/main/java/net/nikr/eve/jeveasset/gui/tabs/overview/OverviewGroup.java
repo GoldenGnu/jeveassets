@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 import java.util.ArrayList;
 import java.util.List;

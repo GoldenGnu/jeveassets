@@ -23,9 +23,10 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 
-public class Asset implements Comparable<Asset> {
+public class Asset implements Comparable<Asset>, InfoItem {
 
 	public enum PriceMode {
 		PRICE_SELL_MAX() {
@@ -189,6 +190,7 @@ public class Asset implements Comparable<Asset> {
 		return container;
 	}
 
+	@Override
 	public long getCount() {
 		return count;
 	}
@@ -386,10 +388,12 @@ public class Asset implements Comparable<Asset> {
 		return userPrice;
 	}
 
+	@Override
 	public double getValue() {
 		return Formater.round(this.getPrice() * this.getCount(), 2);
 	}
 
+	@Override
 	public double getValueReprocessed() {
 		return Formater.round(this.getPriceReprocessed() * this.getCount(), 2);
 	}
@@ -398,7 +402,8 @@ public class Asset implements Comparable<Asset> {
 		return volume;
 	}
 
-	public float getVolumeTotal() {
+	@Override
+	public double getVolumeTotal() {
 		return volume * count;
 	}
 

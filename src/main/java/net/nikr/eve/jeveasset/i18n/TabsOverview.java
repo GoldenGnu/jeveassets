@@ -42,6 +42,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String add();
 	public abstract String addGroup();
 	public abstract String allAssets();
+	public abstract String average();
 	public abstract String cancel();
 	public abstract String character();
 	public abstract String deleteGroup();
@@ -66,6 +67,10 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String systems();
 	public abstract String the();
 	public abstract String the1();
+	public abstract String totalCount();
+	public abstract String totalReprocessed();
+	public abstract String totalValue();
+	public abstract String totalVolume();
 	public abstract String view();
 	public abstract String whitespace();
 	public abstract String whitespace1(Object arg0);

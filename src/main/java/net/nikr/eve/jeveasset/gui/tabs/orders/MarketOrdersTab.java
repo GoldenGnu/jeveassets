@@ -22,13 +22,14 @@
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -42,10 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
+import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
@@ -53,7 +51,7 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersTab extends JMainTab implements TableModelListener {
+public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -82,11 +80,11 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener {
 		eventList = new BasicEventList<MarketOrder>();
 		//Backend
 		filterList = new FilterList<MarketOrder>(eventList);
+		filterList.addListEventListener(this);
 		//For soring the table
 		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, tableFormat);
-		tableModel.addTableModelListener(this);
 		//Tables
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -174,6 +172,8 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener {
 		jComponent.add(new JMenuLookup<MarketOrder>(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	//INFO
+		JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
@@ -213,7 +213,7 @@ public class MarketOrdersTab extends JMainTab implements TableModelListener {
 	}
 
 	@Override
-	public void tableChanged(final TableModelEvent e) {
+	public void listChanged(ListEvent<MarketOrder> listChanges) {
 		double sellOrdersTotal = 0;
 		double buyOrdersTotal = 0;
 		double toCoverTotal = 0;

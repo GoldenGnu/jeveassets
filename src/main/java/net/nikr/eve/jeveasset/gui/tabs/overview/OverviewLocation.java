@@ -19,7 +19,9 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.overview;
+
+import net.nikr.eve.jeveasset.data.Asset;
 
 
 public class OverviewLocation {

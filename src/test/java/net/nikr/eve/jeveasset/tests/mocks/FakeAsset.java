@@ -109,7 +109,7 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public float getVolumeTotal() {
+	public double getVolumeTotal() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -300,6 +300,11 @@ public class FakeAsset extends Asset {
 
 	@Override
 	public String toString() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getFlagID() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

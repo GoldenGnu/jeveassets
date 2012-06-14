@@ -145,6 +145,10 @@ public class Material implements Comparable<Material> {
 		return system;
 	}
 
+	public MaterialType getType() {
+		return type;
+	}
+
 	public Integer getTypeID() {
 		return typeID;
 	}

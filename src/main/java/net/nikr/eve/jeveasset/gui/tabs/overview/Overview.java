@@ -19,25 +19,28 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.overview;
+
+import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 
-public class Overview implements Comparable<Overview> {
+public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
 	private String name;
 	private String solarSystem;
 	private String region;
 	private String security;
-	private double reprocessedValue;
+	private double valueReprocessed;
 	private double volume;
 	private long count;
 	private double value;
 
-	public Overview(final String name, final String solarSystem, final String region, final String security, final double reprocessedValue, final double volume, final long count, final double value) {
+	public Overview(final String name, final String solarSystem, final String region, final String security, final double valueReprocessed, final double volume, final long count, final double value) {
 		this.name = name;
 		this.solarSystem = solarSystem;
 		this.region = region;
 		this.security = security;
-		this.reprocessedValue = reprocessedValue;
+		this.valueReprocessed = valueReprocessed;
 		this.volume = volume;
 		this.count = count;
 		this.value = value;
@@ -51,6 +54,7 @@ public class Overview implements Comparable<Overview> {
 		}
 	}
 
+	@Override
 	public long getCount() {
 		return count;
 	}
@@ -63,8 +67,9 @@ public class Overview implements Comparable<Overview> {
 		return region;
 	}
 
-	public double getReprocessedValue() {
-		return reprocessedValue;
+	@Override
+	public double getValueReprocessed() {
+		return valueReprocessed;
 	}
 
 	public String getSecurity() {
@@ -75,11 +80,13 @@ public class Overview implements Comparable<Overview> {
 		return solarSystem;
 	}
 
+	@Override
 	public double getValue() {
 		return value;
 	}
 
-	public double getVolume() {
+	@Override
+	public double getVolumeTotal() {
 		return volume;
 	}
 
@@ -111,7 +118,7 @@ public class Overview implements Comparable<Overview> {
 		this.volume = this.volume + addVolume;
 	}
 	public void addReprocessedValue(final double addReprocessedValue) {
-		this.reprocessedValue = this.reprocessedValue + addReprocessedValue;
+		this.valueReprocessed = this.valueReprocessed + addReprocessedValue;
 	}
 
 	@Override

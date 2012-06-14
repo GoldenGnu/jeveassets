@@ -24,14 +24,87 @@ package net.nikr.eve.jeveasset.data;
 
 import ca.odell.glazedlists.matchers.Matcher;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
 public class Module implements Comparable<Module> {
+
+	public enum FlagType {
+		TOTAL_VALUE("Total Value", 1){
+			@Override String i18n() {
+				return TabsLoadout.get().flagTotalValue();
+			}
+		},
+		HIGH_SLOT("HiSlot", 2){
+			@Override String i18n() {
+				return TabsLoadout.get().flagHighSlot();
+			}
+		},
+		MEDIUM_SLOT("MedSlot", 3){
+			@Override String i18n() {
+				return TabsLoadout.get().flagMediumSlot();
+			}
+		},
+		LOW_SLOT("LoSlot", 4){
+			@Override String i18n() {
+				return TabsLoadout.get().flagLowSlot();
+			}
+		},
+		RIG_SLOTS("RigSlot", 5){
+			@Override String i18n() {
+				return TabsLoadout.get().flagRigSlot();
+			}
+		},
+		SUB_SYSTEMS("SubSystem", 6){
+			@Override String i18n() {
+				return TabsLoadout.get().flagSubSystem();
+			}
+		},
+		DRONE_BAY("DroneBay", 7){
+			@Override String i18n() {
+				return TabsLoadout.get().flagDroneBay();
+			}
+		},
+		CARGO("Cargo", 8){
+			@Override String i18n() {
+				return TabsLoadout.get().flagCargo();
+			}
+		},
+		OTHER("", 9){
+			@Override String i18n() {
+				return TabsLoadout.get().flagOther();
+			}
+		}
+		;
+
+		private String flag;
+		private int order;
+		private FlagType(String flag, int order) {
+			this.flag = flag;
+			this.order = order;
+		}
+
+		abstract String i18n();
+
+		public String getFlag() {
+			return flag;
+		}
+
+		public int getOrder() {
+			return order;
+		}
+
+		@Override
+		public String toString() {
+			return i18n();
+		}
+	}
+
 	private String name;
 	private String typeName;
 	private String key;
 	private String location;
-	private String flag;
+	private FlagType flag;
 	private String owner;
 	private Double price;
 	private double value;
@@ -47,7 +120,7 @@ public class Module implements Comparable<Module> {
 		this.typeName = typeName;
 		this.key = key;
 		this.location = eveAsset.getLocation();
-		this.flag = flag;
+		this.flag = convertFlag(flag);
 		this.system = eveAsset.getSystem();
 		this.region = eveAsset.getRegion();
 		this.owner = eveAsset.getOwner();
@@ -58,74 +131,25 @@ public class Module implements Comparable<Module> {
 		this.typeID = typeID;
 	}
 
-	private String convertFlat(final String s) {
-		if (s.contains("Total Value")) {
-			return "1Total Value";
+	private FlagType convertFlag(final String s) {
+		for (FlagType type : FlagType.values()){
+			if (s.contains(type.getFlag())){
+				return type;
+			}
 		}
-		if (s.contains("HiSlot")) {
-			return "2High Slots";
+		return FlagType.OTHER;
+	}
+
+	private String convertName(final String name) {
+		if (name.equals(TabsLoadout.get().totalShip())) {
+			return "1";
+		} else if (name.equals(TabsLoadout.get().totalModules())) {
+			return "2";
+		} else if (name.equals(TabsLoadout.get().totalAll())) {
+			return "3";
+		} else {
+			return name;
 		}
-		if (s.contains("MedSlot")) {
-			return "3Medium Slots";
-		}
-		if (s.contains("LoSlot")) {
-			return "4Low Slots";
-		}
-		if (s.contains("RigSlot")) {
-			return "5Rig Slots";
-		}
-		if (s.contains("SubSystem")) {
-			return "6Sub Systems";
-		}
-		if (s.contains("DroneBay")) {
-			return "7Drone Bay";
-		}
-		if (s.contains("Cargo")) {
-			return "8Cargo";
-		}
-		if (s.contains("SpecializedFuelBay")) {
-			return "9Fuel Bay";
-		}
-		if (s.contains("SpecializedOreHold")) {
-			return "9Ore Bay";
-		}
-		if (s.contains("SpecializedGasHold")) {
-			return "9Gas Bay";
-		}
-		if (s.contains("SpecializedMineralHold")) {
-			return "9Mineral Bay";
-		}
-		if (s.contains("SpecializedSalvageHold")) {
-			return "9Salvage Bay";
-		}
-		if (s.contains("SpecializedShipHold")) {
-			return "9Ship Bay";
-		}
-		if (s.contains("SpecializedSmallShipHold")) {
-			return "9Small Ship Bay";
-		}
-		if (s.contains("SpecializedMediumShipHold")) {
-			return "9Medium Ship Bay";
-		}
-		if (s.contains("SpecializedLargeShipHold")) {
-			return "9Large Ship Bay";
-		}
-		if (s.contains("SpecializedIndustrialShipHold")) {
-			return "9Industrial Ship Bay";
-		}
-		if (s.contains("SpecializedAmmoHold")) {
-			return "9Ammo Bay";
-		}
-		if (s.contains("QuafeBay")) {
-			return "9Quafe Bay";
-		}
-		if (s.contains("SpecializedCommandCenterHold")) {
-			return "9Command Center Bay";
-		}
-		if (s.contains("SpecializedPlanetaryCommoditiesHold")) {
-			return "9Planetary Commodities Bay";
-		}
-		return "10" + s;
 	}
 
 	public void addCount(final long addCount) {
@@ -143,15 +167,19 @@ public class Module implements Comparable<Module> {
 		return price;
 	}
 
+	public double getValue() {
+		return value;
+	}
+
 	public String getFlag() {
-		return convertFlat(flag).substring(1);
+		return flag.toString();
 	}
 
 	public String getName() {
-		if (getCount() > 1) {
-			return getCount() + "x " + name.substring(1);
+		if (getCount() > 1 && flag != FlagType.TOTAL_VALUE) {
+			return getCount() + "x " + name;
 		} else {
-			return name.substring(1);
+			return name;
 		}
 	}
 
@@ -200,11 +228,11 @@ public class Module implements Comparable<Module> {
 	}
 
 	public String getSeperator() {
-		return convertFlat(flag);
+		return String.valueOf(flag.getOrder());
 	}
 
 	protected String getCompare() {
-		return key + convertFlat(flag) + flag + name;
+		return key + flag.getOrder() + convertName(name);
 	}
 
 	@Override
