@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.*;
 
 public class ModuleTest {
-	
+
 	public ModuleTest() {
 	}
 
@@ -39,11 +39,11 @@ public class ModuleTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 	}
-	
+
 	@Before
 	public void setUp() {
 	}
-	
+
 	@After
 	public void tearDown() {
 	}
@@ -55,19 +55,23 @@ public class ModuleTest {
 	public void testFlags() {
 		ModuleSettings settings = new ModuleSettings();
 		List<ItemFlag> flags = new ArrayList<ItemFlag>(settings.getItemFlags().values());
-		
-		for (FlagType type : FlagType.values()){
-			if (type == FlagType.TOTAL_VALUE) continue;
-			if (type == FlagType.OTHER) continue;
+
+		for (FlagType type : FlagType.values()) {
+			if (type == FlagType.TOTAL_VALUE) {
+				continue;
+			}
+			if (type == FlagType.OTHER) {
+				continue;
+			}
 			boolean found = false;
-			for (ItemFlag flag : flags){
+			for (ItemFlag flag : flags) {
 				System.out.println(flag.getFlagName());
-				if (flag.getFlagName().contains(type.getFlag())){
+				if (flag.getFlagName().contains(type.getFlag())) {
 					found = true;
 					break;
 				}
 			}
-			assertTrue(type.name()+" flag value ("+type.getFlag()+") is no longer valid", found);
+			assertTrue(type.name() + " flag value (" + type.getFlag() + ") is no longer valid", found);
 		}
 	}
 }

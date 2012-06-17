@@ -30,56 +30,55 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 public class Module implements Comparable<Module> {
 
 	public enum FlagType {
-		TOTAL_VALUE("Total Value", 1){
+		TOTAL_VALUE("Total Value", 1) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagTotalValue();
 			}
 		},
-		HIGH_SLOT("HiSlot", 2){
+		HIGH_SLOT("HiSlot", 2) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagHighSlot();
 			}
 		},
-		MEDIUM_SLOT("MedSlot", 3){
+		MEDIUM_SLOT("MedSlot", 3) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagMediumSlot();
 			}
 		},
-		LOW_SLOT("LoSlot", 4){
+		LOW_SLOT("LoSlot", 4) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagLowSlot();
 			}
 		},
-		RIG_SLOTS("RigSlot", 5){
+		RIG_SLOTS("RigSlot", 5) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagRigSlot();
 			}
 		},
-		SUB_SYSTEMS("SubSystem", 6){
+		SUB_SYSTEMS("SubSystem", 6) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagSubSystem();
 			}
 		},
-		DRONE_BAY("DroneBay", 7){
+		DRONE_BAY("DroneBay", 7) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagDroneBay();
 			}
 		},
-		CARGO("Cargo", 8){
+		CARGO("Cargo", 8) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagCargo();
 			}
 		},
-		OTHER("", 9){
+		OTHER("", 9) {
 			@Override String i18n() {
 				return TabsLoadout.get().flagOther();
 			}
-		}
-		;
+		};
 
 		private String flag;
 		private int order;
-		private FlagType(String flag, int order) {
+		private FlagType(final String flag, final int order) {
 			this.flag = flag;
 			this.order = order;
 		}
@@ -132,23 +131,23 @@ public class Module implements Comparable<Module> {
 	}
 
 	private FlagType convertFlag(final String s) {
-		for (FlagType type : FlagType.values()){
-			if (s.contains(type.getFlag())){
+		for (FlagType type : FlagType.values()) {
+			if (s.contains(type.getFlag())) {
 				return type;
 			}
 		}
 		return FlagType.OTHER;
 	}
 
-	private String convertName(final String name) {
-		if (name.equals(TabsLoadout.get().totalShip())) {
+	private String convertName(final String nameFix) {
+		if (nameFix.equals(TabsLoadout.get().totalShip())) {
 			return "1";
-		} else if (name.equals(TabsLoadout.get().totalModules())) {
+		} else if (nameFix.equals(TabsLoadout.get().totalModules())) {
 			return "2";
-		} else if (name.equals(TabsLoadout.get().totalAll())) {
+		} else if (nameFix.equals(TabsLoadout.get().totalAll())) {
 			return "3";
 		} else {
-			return name;
+			return nameFix;
 		}
 	}
 

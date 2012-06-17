@@ -68,7 +68,7 @@ public class JMenuInfoTest {
 	private static final String GROUP_2 = "GROUP_2";
 	private static final String LOCATION_1 = "LOCATION_1";
 	private static final String LOCATION_2 = "LOCATION_2";
-	private static final List<Material> all = new ArrayList<Material>();
+	private static final List<Material> ALL = new ArrayList<Material>();
 
 	public JMenuInfoTest() {
 	}
@@ -77,73 +77,73 @@ public class JMenuInfoTest {
 	public static void setUpClass() throws Exception {
 		summaryAll = new Material(Material.MaterialType.SUMMARY_ALL, "", TabsMaterials.get().summary(), "", null);
 		summaryAll.updateValue(1, 400);
-		all.add(summaryAll);
+		ALL.add(summaryAll);
 
 		summaryTotal_group1 = new Material(Material.MaterialType.SUMMARY_TOTAL, GROUP_1, TabsMaterials.get().summary(), "", null);
 		summaryTotal_group1.updateValue(1, 200);
-		all.add(summaryTotal_group1);
+		ALL.add(summaryTotal_group1);
 
 		summaryTotal_group2 = new Material(Material.MaterialType.SUMMARY_TOTAL, GROUP_2, TabsMaterials.get().summary(), "", null);
 		summaryTotal_group2.updateValue(1, 200);
-		all.add(summaryTotal_group2);
+		ALL.add(summaryTotal_group2);
 
 		summary_group1 = new Material(Material.MaterialType.SUMMARY, NAME_1, TabsMaterials.get().summary(), GROUP_1, null);
 		summary_group1.updateValue(1, 200);
-		all.add(summary_group1);
+		ALL.add(summary_group1);
 
 		summary_group2 = new Material(Material.MaterialType.SUMMARY, NAME_2, TabsMaterials.get().summary(), GROUP_2, null);
 		summary_group2.updateValue(1, 200);
-		all.add(summary_group2);
+		ALL.add(summary_group2);
 
 		all_location1 = new Material(Material.MaterialType.LOCATIONS_ALL, "", LOCATION_1, "", null);
 		all_location1.updateValue(1, 200);
-		all.add(all_location1);
+		ALL.add(all_location1);
 
 		all_location2 = new Material(Material.MaterialType.LOCATIONS_ALL, "", LOCATION_2, "", null);
 		all_location2.updateValue(1, 200);
-		all.add(all_location2);
+		ALL.add(all_location2);
 
 		total_location1_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_1, LOCATION_1, "", null);
 		total_location1_group1.updateValue(1, 100);
-		all.add(total_location1_group1);
+		ALL.add(total_location1_group1);
 
 		total_location1_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_2, LOCATION_1, "", null);
 		total_location1_group2.updateValue(1, 100);
-		all.add(total_location1_group2);
+		ALL.add(total_location1_group2);
 
 		total_location2_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_1, LOCATION_2, "", null);
 		total_location2_group1.updateValue(1, 100);
-		all.add(total_location2_group1);
+		ALL.add(total_location2_group1);
 
 		total_location2_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_2, LOCATION_2, "", null);
 		total_location2_group2.updateValue(1, 100);
-		all.add(total_location2_group2);
+		ALL.add(total_location2_group2);
 
 		name1_location1_group1 = new Material(Material.MaterialType.LOCATIONS, NAME_1, LOCATION_1, GROUP_1, null);
 		name1_location1_group1.updateValue(1, 100);
-		all.add(name1_location1_group1);
+		ALL.add(name1_location1_group1);
 
 		name2_location1_group2 = new Material(Material.MaterialType.LOCATIONS, NAME_2, LOCATION_1, GROUP_2, null);
 		name2_location1_group2.updateValue(1, 100);
-		all.add(name2_location1_group2);
+		ALL.add(name2_location1_group2);
 
 		name1_location2_group1 = new Material(Material.MaterialType.LOCATIONS, NAME_1, LOCATION_2, GROUP_1, null);
 		name1_location2_group1.updateValue(1, 100);
-		all.add(name1_location2_group1);
+		ALL.add(name1_location2_group1);
 
 		name2_location2_group2 = new Material(Material.MaterialType.LOCATIONS, NAME_2, LOCATION_2, GROUP_2, null);
 		name2_location2_group2.updateValue(1, 100);
-		all.add(name2_location2_group2);
+		ALL.add(name2_location2_group2);
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 	}
-	
+
 	@Before
 	public void setUp() {
 	}
-	
+
 	@After
 	public void tearDown() {
 	}
@@ -172,7 +172,7 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		EventList<Material> materialEventList = new BasicEventList<Material>();
@@ -192,7 +192,7 @@ public class JMenuInfoTest {
 		materialEventList.add(name1_location2_group1);
 		materialEventList.add(name2_location2_group2);
 		SeparatorList<Material> separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
-		result = JMenuInfo.calcMaterialTotal(separatorList, all);
+		result = JMenuInfo.calcMaterialTotal(separatorList, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
@@ -210,7 +210,7 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
@@ -226,7 +226,7 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
@@ -240,7 +240,7 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
@@ -252,7 +252,7 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
@@ -260,85 +260,85 @@ public class JMenuInfoTest {
 		selected.add(name2_location1_group2);
 		selected.add(name1_location2_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(400, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(all_location1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(all_location1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(total_location1_group1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(200, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(total_location1_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(total_location1_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(name1_location1_group1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(200, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(name2_location1_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(name1_location2_group1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(200, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summary_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(name1_location1_group1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(200, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(name2_location1_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(name1_location2_group1);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(200, result.getTotalValue(), 0);
 
 		selected = new ArrayList<Material>();
 		selected.add(summaryTotal_group1);
 		selected.add(name2_location2_group2);
-		result = JMenuInfo.calcMaterialTotal(selected, all);
+		result = JMenuInfo.calcMaterialTotal(selected, ALL);
 		assertEquals(300, result.getTotalValue(), 0);
 	}
 }

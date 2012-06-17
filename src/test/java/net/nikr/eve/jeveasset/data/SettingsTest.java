@@ -28,203 +28,203 @@ import org.junit.Test;
 public class SettingsTest {
 
 	@Test
-	public void backwardCompatibility100() throws URISyntaxException{
+	public void backwardCompatibility100() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-0-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility110() throws URISyntaxException{
+	public void backwardCompatibility110() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-1-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility120() throws URISyntaxException{
+	public void backwardCompatibility120() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility121() throws URISyntaxException{
+	public void backwardCompatibility121() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility122() throws URISyntaxException{
+	public void backwardCompatibility122() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-2");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility123() throws URISyntaxException{
+	public void backwardCompatibility123() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-3");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility130() throws URISyntaxException{
+	public void backwardCompatibility130() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-3-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility140() throws URISyntaxException{
+	public void backwardCompatibility140() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility141() throws URISyntaxException{
+	public void backwardCompatibility141() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility150() throws URISyntaxException{
+	public void backwardCompatibility150() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-5-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility160() throws URISyntaxException{
+	public void backwardCompatibility160() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-6-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility161() throws URISyntaxException{
+	public void backwardCompatibility161() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-6-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility162() throws URISyntaxException{
+	public void backwardCompatibility162() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-6-2");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility163() throws URISyntaxException{
+	public void backwardCompatibility163() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-6-3");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility164() throws URISyntaxException{
+	public void backwardCompatibility164() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-6-4");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility170() throws URISyntaxException{
+	public void backwardCompatibility170() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-7-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility171() throws URISyntaxException{
+	public void backwardCompatibility171() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-7-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility172() throws URISyntaxException{
+	public void backwardCompatibility172() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-7-2");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility173() throws URISyntaxException{
+	public void backwardCompatibility173() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-7-3");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility180() throws URISyntaxException{
+	public void backwardCompatibility180() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility181() throws URISyntaxException{
+	public void backwardCompatibility181() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility190() throws URISyntaxException{
+	public void backwardCompatibility190() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility191() throws URISyntaxException{
+	public void backwardCompatibility191() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility192() throws URISyntaxException{
+	public void backwardCompatibility192() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-2");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility200() throws URISyntaxException{
+	public void backwardCompatibility200() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-0-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility210() throws URISyntaxException{
+	public void backwardCompatibility210() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-0");
 		SettingsReader.load(settings);
 		settings.print();
 	}
- 
+
 	@Test
-	public void backwardCompatibility211() throws URISyntaxException{
+	public void backwardCompatibility211() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-1");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility212() throws URISyntaxException{
+	public void backwardCompatibility212() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-2");
 		SettingsReader.load(settings);
 		settings.print();
 	}
 
 	@Test
-	public void backwardCompatibility220() throws URISyntaxException{
+	public void backwardCompatibility220() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-2-0");
 		SettingsReader.load(settings);
 		settings.print();

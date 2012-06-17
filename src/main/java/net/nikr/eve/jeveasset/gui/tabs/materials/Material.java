@@ -80,7 +80,7 @@ public class Material implements Comparable<Material> {
 		this.group = group;
 		if (eveAsset != null) {
 			//Has item
-			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY){
+			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY) {
 				this.typeName = eveAsset.getName();
 				this.marketGroup = eveAsset.isMarketGroup();
 				this.typeID = eveAsset.getTypeID();
@@ -92,7 +92,7 @@ public class Material implements Comparable<Material> {
 				this.price = null;
 			}
 			//Has location
-			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL){
+			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
 				this.station = eveAsset.getLocation();
 				this.system = eveAsset.getSystem();
 				this.region = eveAsset.getRegion();

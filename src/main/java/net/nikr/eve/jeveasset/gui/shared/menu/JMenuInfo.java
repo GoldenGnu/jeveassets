@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
@@ -280,9 +279,9 @@ public class JMenuInfo {
 				Object object = selected.get(i);
 				if (object instanceof Module) {
 					Module module = (Module) object;
-					if (module.getName().equals(TabsLoadout.get().totalShip())){
+					if (module.getName().equals(TabsLoadout.get().totalShip())) {
 						totalShip = module;
-					} else if (module.getName().equals(TabsLoadout.get().totalModules())){
+					} else if (module.getName().equals(TabsLoadout.get().totalModules())) {
 						totalModule = module;
 					} else if (module.getName().equals(TabsLoadout.get().totalAll())) {
 						totalAll = module;
@@ -317,7 +316,7 @@ public class JMenuInfo {
 		}
 	}
 
-	private static void createMenuItem(JPopupMenu jPopupMenu, String text, String toolTipText, Icon icon) {
+	private static void createMenuItem(final JPopupMenu jPopupMenu, final String text, final String toolTipText, final Icon icon) {
 		JMenuItem jMenuItem = new JMenuItem(text);
 		jMenuItem.setToolTipText(toolTipText);
 		jMenuItem.setEnabled(false);
@@ -325,24 +324,24 @@ public class JMenuInfo {
 		jMenuItem.setHorizontalAlignment(SwingConstants.RIGHT);
 		jPopupMenu.add(jMenuItem);
 	}
-	private static void createMenuItemGroup(JPopupMenu jPopupMenu, String text) {
+	private static void createMenuItemGroup(final JPopupMenu jPopupMenu, final String text) {
 		JMenuItem jMenuItem = new JMenuItem(text);
 		jMenuItem.setEnabled(false);
-		if (border == null){
+		if (border == null) {
 			border = BorderFactory.createCompoundBorder(
 				BorderFactory.createCompoundBorder(
 					BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().darker())
-					,BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().brighter()))
-				,BorderFactory.createCompoundBorder(
+					, BorderFactory.createMatteBorder(1, 0, 0, 0, jMenuItem.getBackground().brighter()))
+				, BorderFactory.createCompoundBorder(
 					BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().brighter())
-					,BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().darker())));
+					, BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().darker())));
 		}
 		jMenuItem.setBorder(border);
 		jMenuItem.setBorderPainted(true);
 		jPopupMenu.add(jMenuItem);
 	}
 
-	private static void createDefault(JPopupMenu jPopupMenu){
+	private static void createDefault(final JPopupMenu jPopupMenu) {
 		JMenuItem jMenuItem;
 
 		jPopupMenu.addSeparator();
@@ -365,7 +364,7 @@ public class JMenuInfo {
 		private double totalValue;
 		private double averageValue;
 
-		public MaterialTotal(long totalCount, double totalValue, double averageValue) {
+		public MaterialTotal(final long totalCount, final double totalValue, final double averageValue) {
 			this.totalCount = totalCount;
 			this.totalValue = totalValue;
 			this.averageValue = averageValue;
@@ -385,9 +384,9 @@ public class JMenuInfo {
 	}
 
 	public interface InfoItem {
-		public double getValue();
-		public long getCount();
-		public double getVolumeTotal();
-		public double getValueReprocessed();
+		double getValue();
+		long getCount();
+		double getVolumeTotal();
+		double getValueReprocessed();
 	}
 }

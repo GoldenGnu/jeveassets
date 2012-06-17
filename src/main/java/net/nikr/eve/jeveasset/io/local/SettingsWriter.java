@@ -220,8 +220,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
 		StringBuilder builder = new StringBuilder();
-		for (long location : priceDataSettings.getLocations()){
-			if (builder.length() > 0) builder.append(",");
+		for (long location : priceDataSettings.getLocations()) {
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
 			builder.append(location);
 		}
 		parentNode.setAttributeNS(null, "locations", builder.toString());

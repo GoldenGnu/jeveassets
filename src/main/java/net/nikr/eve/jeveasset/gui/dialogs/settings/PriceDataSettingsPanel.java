@@ -60,7 +60,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private JComboBox jSource;
 
 	private EventList<RegionType> regions = new BasicEventList<RegionType>();
-	AutoCompleteSupport<RegionType> regionsAutoComplete;
+	private AutoCompleteSupport<RegionType> regionsAutoComplete;
 	private AutoCompleteSupport<Location> systemsAutoComplete;
 	private AutoCompleteSupport<Location> stationsAutoComplete;
 
@@ -73,16 +73,16 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		EventList<Location> stationsEventList = new BasicEventList<Location>();
 		String system = "";
 		String station = "";
-		for (Location location : program.getSettings().getLocations().values()){
-			if (location.isStation()){
+		for (Location location : program.getSettings().getLocations().values()) {
+			if (location.isStation()) {
 				stationsEventList.add(location);
-				if (station.length() < location.getName().length()){
+				if (station.length() < location.getName().length()) {
 					station = location.getName();
 				}
 			}
-			if (location.isSystem()){
+			if (location.isSystem()) {
 				systemsEventList.add(location);
-				if (system.length() < location.getName().length()){
+				if (system.length() < location.getName().length()) {
 					system = location.getName();
 				}
 			}
@@ -111,7 +111,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jRegions = new JComboBox();
 		jRegions.getEditor().getEditorComponent().addFocusListener(listener);
 		regionsAutoComplete = AutoCompleteSupport.install(jRegions, regions, new RegionTypeFilterator());
-		regionsAutoComplete.setStrict(true);		
+		regionsAutoComplete.setStrict(true);
 
 		JLabel jSystemsLabel = new JLabel(DialoguesSettings.get().includeSystems());
 		jSystems = new JComboBox();
@@ -202,9 +202,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		Object object;
 		List<Long> locations = null;
 		LocationType locationType = null;
-		if (jRadioRegions.isSelected()){
+		if (jRadioRegions.isSelected()) {
 			locationType = LocationType.REGION;
-			RegionType regionType = (RegionType)jRegions.getSelectedItem();
+			RegionType regionType = (RegionType) jRegions.getSelectedItem();
 			locations = regionType.getRegions();
 		} else if (jRadioSystems.isSelected()) {
 			locationType = LocationType.SYSTEM;
@@ -257,7 +257,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jPriceType.setEnabled(true);
 		}
-		
+
 		//Default
 		jRadioRegions.setSelected(true);
 
@@ -266,7 +266,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			try {
 				regions.getReadWriteLock().writeLock().lock();
 				regions.clear();
-				if (source.supportsMultipleRegions()){
+				if (source.supportsMultipleRegions()) {
 					regions.addAll(RegionType.getMultipleLocations());
 				} else { //Single Region
 					regions.addAll(RegionType.getSingleLocations());
@@ -283,10 +283,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			regionsAutoComplete.setFirstItem(RegionType.NOT_CONFIGURABLE);
 		}
 		jRegions.setSelectedIndex(0);
-		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()){
-			if (!locations.isEmpty()){
-				for (RegionType regionType : RegionType.values()){
-					if (regionType.getRegions().equals(locations)){
+		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
+			if (!locations.isEmpty()) {
+				for (RegionType regionType : RegionType.values()) {
+					if (regionType.getRegions().equals(locations)) {
 						jRegions.setSelectedItem(regionType);
 						break;
 					}
@@ -295,7 +295,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jRadioRegions.setSelected(true);
 		}
 	//SYSTEM
-		if (source.supportsSystem()){
+		if (source.supportsSystem()) {
 			systemsAutoComplete.removeFirstItem();
 			jRadioSystems.setEnabled(true);
 			jSystems.setEnabled(true);
@@ -304,8 +304,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jSystems.setEnabled(false);
 			systemsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1));
 		}
-		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()){
-			if (!locations.isEmpty()){
+		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
+			if (!locations.isEmpty()) {
 				jSystems.setSelectedItem(program.getSettings().getLocations().get(locations.get(0)));
 			}
 			jRadioSystems.setSelected(true);
@@ -313,7 +313,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jSystems.setSelectedIndex(0);
 		}
 	//STATION
-		if (source.supportsStation()){
+		if (source.supportsStation()) {
 			stationsAutoComplete.removeFirstItem();
 			jRadioStations.setEnabled(true);
 			jStations.setEnabled(true);
@@ -322,8 +322,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jStations.setEnabled(false);
 			stationsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1));
 		}
-		if (locationType == LocationType.STATION && jRadioStations.isEnabled()){
-			if (!locations.isEmpty()){
+		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
+			if (!locations.isEmpty()) {
 				jStations.setSelectedItem(program.getSettings().getLocations().get(locations.get(0)));
 			}
 			jRadioStations.setSelected(true);
@@ -332,7 +332,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 	}
 
-	private class ListenerClass implements ActionListener, FocusListener{
+	private class ListenerClass implements ActionListener, FocusListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -341,33 +341,31 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				updateSource(priceSource);
 			}
 			if (ACTION_LOCATION_SELECTED.equals(e.getActionCommand())) {
-				if (jRadioRegions.isSelected()){
+				if (jRadioRegions.isSelected()) {
 					jRegions.requestFocusInWindow();
-				} else if (jRadioSystems.isSelected()){
+				} else if (jRadioSystems.isSelected()) {
 					jSystems.requestFocusInWindow();
-				} else if (jRadioStations.isSelected()){
+				} else if (jRadioStations.isSelected()) {
 					jStations.requestFocusInWindow();
 				}
 			}
 		}
 
 		@Override
-		public void focusGained(FocusEvent e) {
-			if (jRegions.getEditor().getEditorComponent().equals(e.getSource())){
+		public void focusGained(final FocusEvent e) {
+			if (jRegions.getEditor().getEditorComponent().equals(e.getSource())) {
 				jRadioRegions.setSelected(true);
 			}
-			if (jSystems.getEditor().getEditorComponent().equals(e.getSource())){
+			if (jSystems.getEditor().getEditorComponent().equals(e.getSource())) {
 				jRadioSystems.setSelected(true);
 			}
-			if (jStations.getEditor().getEditorComponent().equals(e.getSource())){
+			if (jStations.getEditor().getEditorComponent().equals(e.getSource())) {
 				jRadioStations.setSelected(true);
 			}
 		}
 
 		@Override
-		public void focusLost(FocusEvent e) {
-			
-		}
+		public void focusLost(final FocusEvent e) { }
 	}
 
 	static class LocationsFilterator implements TextFilterator<Location> {

@@ -470,13 +470,13 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		double valueNow = 0;
 		double valueNeeded = 0;
 
-		for (StockpileItem item : items){
+		for (StockpileItem item : items) {
 			volumnNow = volumnNow + item.getVolumeNow();
-			if (item.getVolumeNeeded() < 0){ //Only add if negative
+			if (item.getVolumeNeeded() < 0) { //Only add if negative
 				volumnNeeded = volumnNeeded + item.getVolumeNeeded();
 			}
 			valueNow = valueNow + item.getValueNow();
-			if (item.getValueNeeded() < 0){ //Only add if negative
+			if (item.getValueNeeded() < 0) { //Only add if negative
 				valueNeeded = valueNeeded + item.getValueNeeded();
 			}
 		}

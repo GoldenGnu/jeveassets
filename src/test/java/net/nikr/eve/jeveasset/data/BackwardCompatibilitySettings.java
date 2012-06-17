@@ -40,7 +40,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	private String name;
 	private Map<String, Boolean> ok = new HashMap<String, Boolean>();
 
-	public BackwardCompatibilitySettings(String name) throws URISyntaxException {
+	public BackwardCompatibilitySettings(final String name) throws URISyntaxException {
 		this.name = name;
 
 		ok.put("setPriceDataSettings", false);
@@ -65,7 +65,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		ok.put("getStockpiles", false);
 		ok.put("getItems", false);
 
-		URL resource = BackwardCompatibilitySettings.class.getResource("/"+name+"/settings.xml");
+		URL resource = BackwardCompatibilitySettings.class.getResource("/" + name + "/settings.xml");
 		settingsPath = new File(resource.toURI()).getAbsolutePath();
 	}
 
@@ -190,14 +190,14 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		return new ArrayList<Stockpile>();
 	}
 
-	public void print(){
-		System.out.println("Tested: "+name);
+	public void print() {
+		System.out.println("Tested: " + name);
 		TreeSet<String> keys = new TreeSet<String>(ok.keySet());
 		for (String key : keys) {
-			if (ok.get(key)){
-				System.out.println(key+": OK");
+			if (ok.get(key)) {
+				System.out.println(key + ": OK");
 			} else {
-				System.out.println(key+": Default");
+				System.out.println(key + ": Default");
 			}
 		}
 	}

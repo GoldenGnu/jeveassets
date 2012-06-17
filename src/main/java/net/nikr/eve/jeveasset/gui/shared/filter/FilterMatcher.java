@@ -116,7 +116,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		}
 	}
 
-	private boolean matchesAll(final E item, final Filter.CompareType compare, final String formatedText) {
+	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
 		String haystack = "";
 		for (Enum testColumn : filterControl.getColumns()) {
 			Object columnValue = filterControl.getColumnValue(item, testColumn.name());
@@ -124,13 +124,13 @@ public class FilterMatcher<E> implements Matcher<E> {
 				haystack = haystack + "\n" + format(columnValue) + "\r";
 			}
 		}
-		if (compare == Filter.CompareType.CONTAINS) {
+		if (compareType == Filter.CompareType.CONTAINS) {
 			return haystack.contains(formatedText);
-		} else if (compare == Filter.CompareType.CONTAINS_NOT) {
+		} else if (compareType == Filter.CompareType.CONTAINS_NOT) {
 			return !haystack.contains(formatedText);
-		} else if (compare == Filter.CompareType.EQUALS || compare == Filter.CompareType.EQUALS_DATE) {
+		} else if (compareType == Filter.CompareType.EQUALS || compareType == Filter.CompareType.EQUALS_DATE) {
 			return haystack.contains("\n" + formatedText + "\r");
-		} else if (compare == Filter.CompareType.EQUALS_NOT || compare == Filter.CompareType.EQUALS_NOT_DATE) {
+		} else if (compareType == Filter.CompareType.EQUALS_NOT || compareType == Filter.CompareType.EQUALS_NOT_DATE) {
 			return !haystack.contains("\n" + formatedText + "\r");
 		} else {
 			return true;
@@ -260,7 +260,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return null;
 		}
 	}
-	
+
 	static String format(final Object object) {
 		return format(object, true);
 	}
@@ -286,8 +286,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return toLowerCase(object.toString(), toLowerCase);
 	}
 
-	private static String toLowerCase(String s, boolean toLowerCase){
-		if (toLowerCase){
+	private static String toLowerCase(final String s, final boolean toLowerCase) {
+		if (toLowerCase) {
 			return s.toLowerCase();
 		} else {
 			return s;

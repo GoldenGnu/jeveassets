@@ -205,18 +205,18 @@ public class JSeparatorTable extends JAutoColumnTable {
 		return super.prepareRenderer(renderer, row, column);
 	}
 
-	private void fixRowHeight(final int row){
+	private void fixRowHeight(final int row) {
 		int height = 0;
 		final Object rowValue = getEventTableModel().getElementAt(row);
 		final int key = rowValue.hashCode();
-		if (rowsHeight.containsKey(key)){ //Load row height
+		if (rowsHeight.containsKey(key)) { //Load row height
 			height = rowsHeight.get(key);
 		} else if (rowValue instanceof SeparatorList.Separator) { //Calculate the Separator row height
 			TableCellRenderer renderer = this.getCellRenderer(row, 0);
 			Component component = super.prepareRenderer(renderer, row, 0);
 			height = component.getPreferredSize().height;
 		} else { //Calculate the row height
-			for (int i = 0; i < this.getColumnCount(); i++){
+			for (int i = 0; i < this.getColumnCount(); i++) {
 				TableCellRenderer renderer = this.getCellRenderer(row, i);
 				Component component = super.prepareRenderer(renderer, row, i);
 				height = Math.max(height, component.getPreferredSize().height);

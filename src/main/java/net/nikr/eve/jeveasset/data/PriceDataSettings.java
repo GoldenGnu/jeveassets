@@ -433,10 +433,10 @@ public class PriceDataSettings {
 			return singleLocations;
 		}
 		public static List<RegionType> getMultipleLocations() {
-			if (multipleLocations == null){
+			if (multipleLocations == null) {
 				multipleLocations = new ArrayList<RegionType>();
 				for (RegionType regionType : RegionType.values()) {
-					if (!regionType.getRegions().isEmpty()) { //Ignore NOT_CONFIGURABLE 
+					if (!regionType.getRegions().isEmpty()) { //Ignore NOT_CONFIGURABLE
 						multipleLocations.add(regionType);
 					}
 				}
@@ -456,7 +456,7 @@ public class PriceDataSettings {
 	}
 
 	public PriceDataSettings(final LocationType locationType, final List<Long> locations, final PriceSource priceSource) {
-		if (locationType != null && locations != null && !locations.isEmpty()){
+		if (locationType != null && locations != null && !locations.isEmpty()) {
 			this.locationType = locationType;
 			this.locations = locations;
 		} else {
@@ -487,7 +487,7 @@ public class PriceDataSettings {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}

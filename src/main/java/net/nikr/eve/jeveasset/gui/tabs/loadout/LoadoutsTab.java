@@ -366,7 +366,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					continue;
 				}
 				if (!character.equals(eveAsset.getOwner())
-						&& !character.equals( TabsLoadout.get().whitespace9(eveAsset.getOwner()))
+						&& !character.equals(TabsLoadout.get().whitespace9(eveAsset.getOwner()))
 						&& !character.equals(TabsLoadout.get().all())
 						) {
 					continue;

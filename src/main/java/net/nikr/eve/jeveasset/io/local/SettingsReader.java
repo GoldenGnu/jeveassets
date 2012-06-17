@@ -372,11 +372,11 @@ public class SettingsReader extends AbstractXmlReader {
 			String string = AttributeGetters.getString(element, "locations");
 			String[] split = string.split(",");
 			locations = new ArrayList<Long>();
-			for (String s : split){
+			for (String s : split) {
 				try {
 					locations.add(Long.valueOf(s));
 				} catch (NumberFormatException ex) {
-					LOG.warn("Could not parse locations long: "+s);
+					LOG.warn("Could not parse locations long: " + s);
 				}
 			}
 		}

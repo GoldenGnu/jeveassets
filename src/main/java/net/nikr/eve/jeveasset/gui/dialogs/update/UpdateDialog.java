@@ -451,7 +451,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		private boolean update;
 
 		public PriceDataTask(final boolean update) {
-			super(DialoguesUpdate.get().priceData()+" ("+(program.getSettings().getPriceDataSettings().getSource().toString())+")");
+			super(DialoguesUpdate.get().priceData() + " (" + (program.getSettings().getPriceDataSettings().getSource().toString()) + ")");
 			this.update = update;
 		}
 
