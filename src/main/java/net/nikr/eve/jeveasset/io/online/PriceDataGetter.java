@@ -89,9 +89,9 @@ public class PriceDataGetter implements PricingListener {
 		this.update = processUpdate;
 
 		if (processUpdate) {
-			LOG.info("Price data update:");
+			LOG.info("Price data update ("+settings.getPriceDataSettings().getSource()+"):");
 		} else {
-			LOG.info("Price data loading:");
+			LOG.info("Price data loading ("+settings.getPriceDataSettings().getSource()+"):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
