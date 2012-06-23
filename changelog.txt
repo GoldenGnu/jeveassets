@@ -16,6 +16,25 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.3.0__________________________________________________________________________
+
+New Features:
+-Added "Selection Information" to all tables menus
+-Added info to the Overview statusbar
+-Added Station/System selection to the price sources that support it
+-Added eve.addicts.nl as price source
+-Added percentile/5% to all price sources
+
+Changed:
+-The stockpile statusbar now show values for shown item (not for all items)
+
+Bug Fixes:
+-Fixed bug: CSV export: New filter is not available
+-Fixed bug: Incompatible with Java 6u33 & 7u5 (Thank you Flaming Candle!)
+-Fixed bug: Hide/show columns could crash the program
+-A lot of minor bug fixes
+
+________________________________________________________________________________
 _2.2.0__________________________________________________________________________
 
 New Features:
