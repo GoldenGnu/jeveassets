@@ -29,7 +29,9 @@ import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.BundleCache;
+import uk.me.candle.translations.conf.DefaultBundleConfiguration;
+import uk.me.candle.translations.service.BasicBundleService;
+import uk.me.candle.translations.service.BundleService;
 
 
 public final class Main {
@@ -39,6 +41,7 @@ public final class Main {
 	 *
 	 */
 	private static Logger log;
+	private static BundleService bundleService;
 
 	/**
 	 * JEveAssets main launcher.
@@ -105,9 +108,6 @@ public final class Main {
 		Program.setForceNoUpdate(hasNoUpdate && Program.isDebug());
 		Program.setForceUpdate(hasUpdate && Program.isDebug());
 
-		//XXX Workaround for default language
-		BundleCache.setThreadLocale(Locale.ENGLISH);
-
 		// fix the uncaught exception handlers
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
@@ -148,5 +148,13 @@ public final class Main {
 		} catch (Exception ex) {
 			log.error("Failed to set LookAndFeel: " + lookAndFeel, ex);
 		}
+	}
+
+	public static BundleService getBundleService() {
+		//XXX Workaround for default language
+		if (bundleService == null){
+			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
+		}
+		return bundleService;
 	}
 }

@@ -22,20 +22,17 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
  * @author Candle
  */
 public abstract class DialoguesAddSystem extends Bundle {
-	public static DialoguesAddSystem get() {
-		return BundleCache.get(DialoguesAddSystem.class);
-	}
 
-	public static DialoguesAddSystem get(final Locale locale) {
-		return BundleCache.get(DialoguesAddSystem.class, locale);
+	public static DialoguesAddSystem get() {
+		return Main.getBundleService().get(DialoguesAddSystem.class);
 	}
 
 	public DialoguesAddSystem(final Locale locale) {

@@ -22,14 +22,12 @@ package net.nikr.eve.jeveasset.data;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
-import uk.me.candle.translations.BundleCache;
 
 
 public class PriceDataSettingsTest {

@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
@@ -31,10 +31,7 @@ import uk.me.candle.translations.BundleCache;
  */
 public abstract class DataModelPriceDataSettings extends Bundle {
 	public static DataModelPriceDataSettings get() {
-		return BundleCache.get(DataModelPriceDataSettings.class);
-	}
-	public static DataModelPriceDataSettings get(final Locale locale) {
-		return BundleCache.get(DataModelPriceDataSettings.class, locale);
+		return Main.getBundleService().get(DataModelPriceDataSettings.class);
 	}
 	public DataModelPriceDataSettings(final Locale locale) {
 		super(locale);

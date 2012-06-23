@@ -22,231 +22,138 @@
 package net.nikr.eve.jeveasset.i18n;
 
 
-import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import uk.me.candle.translations.Bundle;
 
 /**
  *
  * @author Candle
  */
 public class TestI18N {
-
+	
 	@Test
-	public void testDataModelEveAssetBundle_en() throws Exception {
-		DataModelEveAsset g = Bundle.load(DataModelEveAsset.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
-		assertNotNull(g.priceSellMax());
+	public void testDataModelAssetBundle_en() throws Exception {
+		DataModelEveAsset g = Main.getBundleService().get(DataModelEveAsset.class);
+		assertNotNull(g.priceBuyAvg());
 	}
 
 	@Test
 	public void testDataModelIndustryJobBundle_en() throws Exception {
-		DataModelIndustryJob g = Bundle.load(DataModelIndustryJob.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DataModelIndustryJob g = Main.getBundleService().get(DataModelIndustryJob.class);
 		assertNotNull(g.activityAll());
 	}
 
 	@Test
 	public void testDataModelPriceDataSettings_en() throws Exception {
-		DataModelPriceDataSettings g = Bundle.load(DataModelPriceDataSettings.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DataModelPriceDataSettings g = Main.getBundleService().get(DataModelPriceDataSettings.class);
 		assertNotNull(g.regionDerelik());
 	}
 
 	@Test
 	public void testDialoguesAbout_en() throws Exception {
-		DialoguesAbout g = Bundle.load(DialoguesAbout.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesAbout g = Main.getBundleService().get(DialoguesAbout.class);
 		assertNotNull(g.about());
 	}
 
 	@Test
 	public void testDialoguesAccount_en() throws Exception {
-		DialoguesAccount g = Bundle.load(DialoguesAccount.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesAccount g = Main.getBundleService().get(DialoguesAccount.class);
 		assertNotNull(g.helpText());
 	}
 
 	@Test
 	public void testDialoguesAddSystem_en() throws Exception {
-		DialoguesAddSystem g = Bundle.load(DialoguesAddSystem.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesAddSystem g = Main.getBundleService().get(DialoguesAddSystem.class);
 		assertNotNull(g.filterResult(5));
 	}
 
 	@Test
 	public void testDialoguesCsvExport_en() throws Exception {
-		DialoguesCsvExport g = Bundle.load(DialoguesCsvExport.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesCsvExport g = Main.getBundleService().get(DialoguesCsvExport.class);
 		assertNotNull(g.noFilter());
 	}
 
 	@Test
 	public void testDialoguesProfiles_en() throws Exception {
-		DialoguesProfiles g = Bundle.load(DialoguesProfiles.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesProfiles g = Main.getBundleService().get(DialoguesProfiles.class);
 		assertNotNull(g.deleteProfileConfirm("delete me!"));
 	}
 
 	@Test
 	public void testDialoguesSettings_en() throws Exception {
-		DialoguesSettings g = Bundle.load(DialoguesSettings.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesSettings g = Main.getBundleService().get(DialoguesSettings.class);
 		assertNotNull(g.enterFilter());
 	}
 
 	@Test
 	public void testDialoguesUpdate_en() throws Exception {
-		DialoguesUpdate g = Bundle.load(DialoguesUpdate.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		DialoguesUpdate g = Main.getBundleService().get(DialoguesUpdate.class);
 		assertNotNull(g.accountBlances());
 	}
 
 	@Test public void testGeneralBundle_en() throws Exception {
-		General g = Bundle.load(General.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		General g = Main.getBundleService().get(General.class);
 		assertNotNull(g.uncaughtErrorMessage());
 	}
 
 	@Test public void testGuiFrameBundle_en() throws Exception {
-		GuiFrame g = Bundle.load(GuiFrame.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		GuiFrame g = Main.getBundleService().get(GuiFrame.class);
 		assertNotNull(g.about());
 	}
 
 	@Test public void testGuiSharedBundle_en() throws Exception {
-		GuiShared g = Bundle.load(GuiShared.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		GuiShared g = Main.getBundleService().get(GuiShared.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsAssetsBundle_en() throws Exception {
-		TabsAssets g = Bundle.load(TabsAssets.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsAssets g = Main.getBundleService().get(TabsAssets.class);
 		assertNotNull(g.assets());
 	}
 
 	@Test public void testTabsItemsBundle_en() throws Exception {
-		TabsItems g = Bundle.load(TabsItems.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsItems g = Main.getBundleService().get(TabsItems.class);
 		assertNotNull(g.columnName());
 	}
 
 	@Test public void testTabsJobsBundle_en() throws Exception {
-		TabsJobs g = Bundle.load(TabsJobs.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsJobs g = Main.getBundleService().get(TabsJobs.class);
 		assertNotNull(g.all());
 	}
 
 	@Test public void testTabsLoadoutBundle_en() throws Exception {
-		TabsLoadout g = Bundle.load(TabsLoadout.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsLoadout g = Main.getBundleService().get(TabsLoadout.class);
 		assertNotNull(g.cancel());
 	}
 
 	@Test public void testTabsMaterialsBundle_en() throws Exception {
-		TabsMaterials g = Bundle.load(TabsMaterials.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsMaterials g = Main.getBundleService().get(TabsMaterials.class);
 		assertNotNull(g.collapse());
 	}
 
 	@Test public void testTabsOrdersBundle_en() throws Exception {
-		TabsOrders g = Bundle.load(TabsOrders.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsOrders g = Main.getBundleService().get(TabsOrders.class);
 		assertNotNull(g.columnExpires());
 	}
 
 	@Test public void testTabsOverviewBundle_en() throws Exception {
-		TabsOverview g = Bundle.load(TabsOverview.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsOverview g = Main.getBundleService().get(TabsOverview.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsRoutingBundle_en() throws Exception {
-		TabsRouting g = Bundle.load(TabsRouting.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsRouting g = Main.getBundleService().get(TabsRouting.class);
 		assertNotNull(g.add());
 	}
 
 	@Test public void testTabsStockpileBundle_en() throws Exception {
-		TabsStockpile g = Bundle.load(TabsStockpile.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsStockpile g = Main.getBundleService().get(TabsStockpile.class);
 		assertNotNull(g.addItem());
 	}
 
 	@Test public void testTabsValuesBundle_en() throws Exception {
-		TabsValues g = Bundle.load(TabsValues.class, Locale.ENGLISH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
-				);
+		TabsValues g = Main.getBundleService().get(TabsValues.class);
 		assertNotNull(g.assets());
 	}
 }
