@@ -229,4 +229,11 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		settings.print();
 	}
+
+	@Test
+	public void backwardCompatibility230() throws URISyntaxException {
+		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-3-0");
+		SettingsReader.load(settings);
+		settings.print();
+	}
 }
