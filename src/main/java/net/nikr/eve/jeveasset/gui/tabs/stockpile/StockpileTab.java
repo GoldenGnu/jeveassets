@@ -22,6 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -45,10 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -60,7 +59,7 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class StockpileTab extends JMainTab implements ActionListener {
+public class StockpileTab extends JMainTab implements ActionListener, ListEventListener<StockpileItem> {
 
 	private static final String ACTION_ADD = "ACTION_ADD";
 	private static final String ACTION_IMPORT = "ACTION_IMPORT";
@@ -87,6 +86,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 	private EventTableModel<StockpileItem> tableModel;
 	private EventList<StockpileItem> eventList;
+	private FilterList<StockpileItem> filterList;
 	private SeparatorList<StockpileItem> separatorList;
 	private EventSelectionModel<StockpileItem> selectionModel;
 	private StockpileFilterControl filterControl;
@@ -148,7 +148,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 
 		eventList = new BasicEventList<StockpileItem>();
 		//Filter
-		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(eventList);
+		filterList = new FilterList<StockpileItem>(eventList);
+		filterList.addListEventListener(this);
 		//Sorting (per column)
 		SortedList<StockpileItem> sortedListColumn = new SortedList<StockpileItem>(filterList);
 		//Sorting Total (Ensure that total is always last)
@@ -205,11 +206,11 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jVolumeNow = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNow(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolumeNow);
 
-		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon());
-		this.addStatusbarLabel(jVolumeNeeded);
-
 		jValueNow = StatusPanel.createLabel(TabsStockpile.get().shownValueNow(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValueNow);
+
+		jVolumeNeeded = StatusPanel.createLabel(TabsStockpile.get().shownVolumeNeeded(), Images.ASSETS_VOLUME.getIcon());
+		this.addStatusbarLabel(jVolumeNeeded);
 
 		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValueNeeded);
@@ -354,6 +355,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuEditItem<StockpileItem>(program, selected));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	//INFO
+		JMenuInfo.stockpileItem(jComponent, selected);
 	}
 
 	@Override
@@ -376,10 +379,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				regions.put(location.getName(), location.getLocationID());
 			}
 		}
-		double volumnNow = 0;
-		double volumnNeeded = 0;
-		double valueNow = 0;
-		double valueNeeded = 0;
 
 		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
 			stockpileItems.addAll(stockpile.getItems());
@@ -438,16 +437,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				}
 			}
 			stockpile.updateTotal();
-			volumnNow = volumnNow + stockpile.getTotal().getVolumeNow();
-			volumnNeeded = volumnNeeded + stockpile.getTotal().getVolumeNeeded();
-			valueNow = valueNow + stockpile.getTotal().getValueNow();
-			valueNeeded = valueNeeded + stockpile.getTotal().getValueNeeded();
 		}
-
-		jVolumeNow.setText(TabsStockpile.get().now() + Formater.doubleFormat(volumnNow));
-		jVolumeNeeded.setText(TabsStockpile.get().needed() + Formater.doubleFormat(volumnNeeded));
-		jValueNow.setText(TabsStockpile.get().now() + Formater.iskFormat(valueNow));
-		jValueNeeded.setText(TabsStockpile.get().needed() + Formater.iskFormat(valueNeeded));
 
 		//Save separator expanded/collapsed state
 		saveExpandedState();
@@ -461,6 +451,40 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		//Restore separator expanded/collapsed state
 		loadExpandedState();
+	}
+
+	@Override
+	public void listChanged(ListEvent<StockpileItem> listChanges) {
+		List<StockpileItem> items = new ArrayList<StockpileItem>(filterList);
+		//Remove StockpileTotal and SeparatorList.Separator
+		for (int i = 0; i < items.size(); i++) {
+			Object object = items.get(i);
+			if ((object instanceof SeparatorList.Separator) || (object instanceof StockpileTotal)) {
+				items.remove(i);
+				i--;
+			}
+		}
+
+		double volumnNow = 0;
+		double volumnNeeded = 0;
+		double valueNow = 0;
+		double valueNeeded = 0;
+
+		for (StockpileItem item : items) {
+			volumnNow = volumnNow + item.getVolumeNow();
+			if (item.getVolumeNeeded() < 0) { //Only add if negative
+				volumnNeeded = volumnNeeded + item.getVolumeNeeded();
+			}
+			valueNow = valueNow + item.getValueNow();
+			if (item.getValueNeeded() < 0) { //Only add if negative
+				valueNeeded = valueNeeded + item.getValueNeeded();
+			}
+		}
+
+		jVolumeNow.setText(TabsStockpile.get().now() + Formater.doubleFormat(volumnNow));
+		jValueNow.setText(TabsStockpile.get().now() + Formater.iskFormat(valueNow));
+		jVolumeNeeded.setText(TabsStockpile.get().needed() + Formater.doubleFormat(volumnNeeded));
+		jValueNeeded.setText(TabsStockpile.get().needed() + Formater.iskFormat(valueNeeded));
 	}
 
 	@Override
@@ -492,7 +516,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			//FIXME do some more validation...
+			//FIXME do some more validation of EFT imports
 
 			//Format and split
 			fit = fit.replace("[", "").replace("]", "");

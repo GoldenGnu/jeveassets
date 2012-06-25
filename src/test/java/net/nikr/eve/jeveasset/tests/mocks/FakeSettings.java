@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
@@ -429,6 +430,31 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public String getPathSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeBuyOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeSellOrders() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeBuyOrders(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeSellOrders(boolean includeSellOrders) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

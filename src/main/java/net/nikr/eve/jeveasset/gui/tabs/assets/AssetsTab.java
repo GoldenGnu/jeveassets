@@ -30,7 +30,6 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,10 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
+import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
@@ -167,25 +163,25 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	}
 
 	private void updateStatusbar() {
-		float volume = 0;
-		long count = 0;
-		double average = 0;
+		double averageValue = 0;
+		double totalValue = 0;
+		long totalCount = 0;
+		double totalVolume = 0;
 		double totalReprocessed = 0;
-		double total = 0;
-		for (Asset asset : filterList) {
-			volume = volume + (asset.getVolume() * asset.getCount());
-			count = count + asset.getCount();
-			totalReprocessed = totalReprocessed + (asset.getPriceReprocessed() * asset.getCount());
-			total = total + (asset.getPrice() * asset.getCount());
+		for (JMenuInfo.InfoItem infoItem : filterList) {
+			totalValue = totalValue + infoItem.getValue();
+			totalCount = totalCount + infoItem.getCount();
+			totalVolume = totalVolume + infoItem.getVolumeTotal();
+			totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
 		}
-		if (count > 0 && total > 0) {
-			average = total / count;
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
 		}
-		jVolume.setText(Formater.doubleFormat(volume));
-		jCount.setText(Formater.itemsFormat(count));
-		jAverage.setText(Formater.iskFormat(average));
+		jVolume.setText(Formater.doubleFormat(totalVolume));
+		jCount.setText(Formater.itemsFormat(totalCount));
+		jAverage.setText(Formater.iskFormat(averageValue));
 		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
-		jValue.setText(Formater.iskFormat(total));
+		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
 	public Asset getSelectedAsset() {
@@ -229,54 +225,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
-		if (jComponent instanceof JPopupMenu) {
-			addSeparator(jComponent);
-
-			jMenuItem = new JMenuItem(TabsAssets.get().selection());
-			jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
-			jMenuItem.setEnabled(false);
-			jComponent.add(jMenuItem);
-
-			JPanel jSpacePanel = new JPanel();
-			jSpacePanel.setMinimumSize(new Dimension(50, 5));
-			jSpacePanel.setPreferredSize(new Dimension(50, 5));
-			jSpacePanel.setMaximumSize(new Dimension(50, 5));
-			jComponent.add(jSpacePanel);
-
-			double total = 0;
-			long count = 0;
-			float volume = 0;
-			for (int a = 0; a < selectedRows.length; a++) {
-				Asset eveAsset = tableModel.getElementAt(selectedRows[a]);
-				total = total + (eveAsset.getPrice() * eveAsset.getCount());
-				count = count + eveAsset.getCount();
-				volume = volume + (eveAsset.getVolume() * eveAsset.getCount());
-			}
-
-			jMenuItem = new JMenuItem(Formater.iskFormat(total));
-			jMenuItem.setDisabledIcon(Images.TOOL_VALUES.getIcon());
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().value());
-			jComponent.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(Formater.iskFormat(total / count));
-			jMenuItem.setDisabledIcon(Images.ASSETS_AVERAGE.getIcon());
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().average1());
-			jComponent.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(Formater.itemsFormat(count));
-			jMenuItem.setDisabledIcon(Images.EDIT_ADD.getIcon());
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().count());
-			jComponent.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(Formater.doubleFormat(volume));
-			jMenuItem.setDisabledIcon(Images.ASSETS_VOLUME.getIcon());
-			jMenuItem.setEnabled(false);
-			jMenuItem.setToolTipText(TabsAssets.get().volume());
-			jComponent.add(jMenuItem);
-		}
+		JMenuInfo.asset(jComponent, selectionModel.getSelected());
 	}
 
 	@Override

@@ -23,16 +23,12 @@ package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Date;
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 public abstract class GuiFrame extends Bundle {
 	public static GuiFrame get() {
-		return BundleCache.get(GuiFrame.class);
-	}
-
-	public static GuiFrame get(final Locale locale) {
-		return BundleCache.get(GuiFrame.class, locale);
+		return Main.getBundleService().get(GuiFrame.class);
 	}
 
 	public GuiFrame(final Locale locale) {

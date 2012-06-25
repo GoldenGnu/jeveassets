@@ -70,16 +70,14 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 
 	private JCustomFileChooser jCsvFileChooser;
 
-	private Map<String, List<Filter>> filters;
 	private List<EventList<E>> eventLists;
 	private Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
 	private List<String> columnNames;
 	private FilterControl<E> matcherControl;
 
-	public CsvExportDialog(final JFrame jFrame, final FilterControl<E> matcherControl, final Map<String, List<Filter>> filters, final List<EventList<E>> eventLists, final List<EnumTableColumn<E>> enumColumns) {
+	public CsvExportDialog(final JFrame jFrame, final FilterControl<E> matcherControl, final List<EventList<E>> eventLists, final List<EnumTableColumn<E>> enumColumns) {
 		super(null, DialoguesCsvExport.get().csvExport(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
 		this.matcherControl = matcherControl;
-		this.filters = filters;
 		this.eventLists = eventLists;
 
 		columnNames = new ArrayList<String>();
@@ -334,7 +332,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		if (b) {
 			loadCsvSettings();
 			jFilters.setEnabled(false);
-			if (filters.isEmpty()) {
+			if (matcherControl.getAllFilters().isEmpty()) {
 				if (jSavedFilter.isSelected()) {
 					jNoFilter.setSelected(true);
 				}
@@ -345,7 +343,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 					jFilters.setEnabled(true);
 				}
 				jSavedFilter.setEnabled(true);
-				List<String> filterNames = new ArrayList<String>(filters.keySet());
+				List<String> filterNames = new ArrayList<String>(matcherControl.getAllFilters().keySet());
 				Collections.sort(filterNames);
 				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
 			}
@@ -433,7 +431,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			}
 		} else if (jSavedFilter.isSelected()) {
 			String filterName = (String) jFilters.getSelectedItem();
-			List<Filter> filter = filters.get(filterName);
+			List<Filter> filter = matcherControl.getAllFilters().get(filterName);
 			for (EventList<E> eventList : eventLists) {
 				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(matcherControl, filter));
 				for (E e : filterList) {

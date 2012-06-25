@@ -60,10 +60,7 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		jName = new JComboBox();
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
 		filters = new BasicEventList<String>();
-		AutoCompleteSupport<String> autoCompleteSupport = AutoCompleteSupport.install(jName, filters, new Filterator());
-		autoCompleteSupport.setSelectsTextOnFocusGain(false);
-		autoCompleteSupport.setFirstItem("");
-
+		AutoCompleteSupport.install(jName, filters, new Filterator());
 		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
@@ -150,9 +147,10 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 			setVisible(false);
 		}
 		//XXX - Workaround for strange bug:
-		// 1. Doing validate JOptionPane lost focus (to another program)
-		// 2. JOptionPane is hidden (by mouse click)
-		// 3. jName is not responding (string is locked)
+		// 1. Tricker validation by pressing enter in the jName JComboBox
+		// 2. Doing validate JOptionPane is shown and lose focus (to another program)
+		// 3. JOptionPane is hidden (by mouse click)
+		// 4. jName is not responding (string is locked)
 		try {
 			Robot robot = new Robot();
 			robot.keyRelease(KeyEvent.VK_ENTER);
@@ -164,7 +162,7 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
-			jName.setSelectedIndex(0);
+			jName.getModel().setSelectedItem("");
 		}
 		super.setVisible(b);
 	}

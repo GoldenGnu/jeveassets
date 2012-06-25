@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import uk.me.candle.eve.pricing.Pricing;
 import uk.me.candle.eve.pricing.PricingFactory;
 import uk.me.candle.eve.pricing.PricingListener;
+import uk.me.candle.eve.pricing.options.LocationType;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
@@ -88,9 +89,9 @@ public class PriceDataGetter implements PricingListener {
 		this.update = processUpdate;
 
 		if (processUpdate) {
-			LOG.info("Price data update:");
+			LOG.info("Price data update ("+settings.getPriceDataSettings().getSource()+"):");
 		} else {
-			LOG.info("Price data loading:");
+			LOG.info("Price data loading ("+settings.getPriceDataSettings().getSource()+"):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
@@ -183,23 +184,27 @@ public class PriceDataGetter implements PricingListener {
 		Double sellMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.SELL);
 		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
 		Double sellMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.SELL);
+		Double sellPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.SELL);
 		Double sellMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.SELL);
 		Double buyMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.BUY);
 		Double buyAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.BUY);
 		Double buyMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.BUY);
+		Double buyPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.BUY);
 		Double buyMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.BUY);
 
-		if (sellMax != null && sellAvg != null && sellMedian != null && sellMin != null
-			&& buyMax != null && buyAvg != null && buyMedian != null && buyMin != null
+		if (sellMax != null && sellAvg != null && sellMedian != null && sellPercentile != null && sellMin != null
+			&& buyMax != null && buyAvg != null && buyMedian != null && buyPercentile != null && buyMin != null
 				) {
 			PriceData priceData = new PriceData();
 			priceData.setSellMax(sellMax);
 			priceData.setSellAvg(sellAvg);
 			priceData.setSellMedian(sellMedian);
+			priceData.setSellPercentile(sellPercentile);
 			priceData.setSellMin(sellMin);
 			priceData.setBuyMax(buyMax);
 			priceData.setBuyAvg(buyAvg);
 			priceData.setBuyMedian(buyMedian);
+			priceData.setBuyPercentile(buyPercentile);
 			priceData.setBuyMin(buyMin);
 			priceDataList.put(typeID, priceData);
 		}
@@ -228,8 +233,13 @@ public class PriceDataGetter implements PricingListener {
 		}
 
 		@Override
-		public List<Long> getRegions() {
-			return settings.getPriceDataSettings().getRegions();
+		public LocationType getLocationType() {
+			return settings.getPriceDataSettings().getLocationType();
+		}
+
+		@Override
+		public List<Long> getLocations() {
+			return settings.getPriceDataSettings().getLocations();
 		}
 
 		@Override

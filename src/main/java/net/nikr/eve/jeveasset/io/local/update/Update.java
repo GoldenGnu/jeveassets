@@ -94,19 +94,19 @@ public class Update extends AbstractXmlReader {
 	 * in the correct order. - Candle 2010-09-19
 	 * @param requiredVersion
 	 */
-	public void performUpdates(final int requiredVersion) {
-		File xml = new File(Settings.getPathSettings());
+	public void performUpdates(final int requiredVersion, String path) {
+		File xml = new File(path);
 		if (!xml.exists()) {
 			LOG.info("No settings.xml file found - nothing to update");
 			return;
 		}
 		try {
-			int currentVersion = getVersion(Settings.getPathSettings());
+			int currentVersion = getVersion(path);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");
 				Update1To2 update = new Update1To2();
-				update.performUpdate();
-				setVersion(new File(Settings.getPathSettings()), requiredVersion);
+				update.performUpdate(path);
+				setVersion(new File(path), requiredVersion);
 			} else {
 				LOG.info("settings.xml are up to date.");
 			}

@@ -22,16 +22,12 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 public abstract class TabsJobs extends Bundle {
 	public static TabsJobs get() {
-		return BundleCache.get(TabsJobs.class);
-	}
-
-	public static TabsJobs get(final Locale locale) {
-		return BundleCache.get(TabsJobs.class, locale);
+		return Main.getBundleService().get(TabsJobs.class);
 	}
 
 	public TabsJobs(final Locale locale) {

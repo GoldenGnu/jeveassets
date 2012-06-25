@@ -184,6 +184,8 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuLookup<Material>(program, selectionModel.getSelected()));
 	//EDIT
 		jComponent.add(new JMenuEditItem<Material>(program, selectionModel.getSelected()));
+	//INFO
+		JMenuInfo.material(jComponent, selectionModel.getSelected(), materialEventList);
 	}
 
 
@@ -218,7 +220,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 			//Locations Total
 			if (!totalMaterials.containsKey(eveAsset.getLocation() + eveAsset.getGroup())) { //New
-				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, eveAsset.getGroup(), eveAsset.getLocation(), TabsMaterials.get().total(), null);
+				Material totalMaterial = new Material(MaterialType.LOCATIONS_TOTAL, eveAsset.getGroup(), eveAsset.getLocation(), TabsMaterials.get().total(), eveAsset);
 				totalMaterials.put(eveAsset.getLocation() + eveAsset.getGroup(), totalMaterial);
 				materials.add(totalMaterial);
 			}
@@ -226,7 +228,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 			//Locations Total All
 			if (!totalAllMaterials.containsKey(eveAsset.getLocation())) { //New
-				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), null);
+				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), eveAsset);
 				totalAllMaterials.put(eveAsset.getLocation(), totalAllMaterial);
 				materials.add(totalAllMaterial);
 			}

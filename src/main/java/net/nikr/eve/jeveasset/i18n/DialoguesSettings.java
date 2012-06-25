@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
@@ -31,11 +31,7 @@ import uk.me.candle.translations.BundleCache;
  */
 public abstract class DialoguesSettings extends Bundle {
 	public static DialoguesSettings get() {
-		return BundleCache.get(DialoguesSettings.class);
-	}
-
-	public static DialoguesSettings get(final Locale locale) {
-		return BundleCache.get(DialoguesSettings.class, locale);
+		return Main.getBundleService().get(DialoguesSettings.class);
 	}
 
 	public DialoguesSettings(final Locale locale) {
@@ -71,6 +67,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String priceData();
 	public abstract String changeSourceWarning();
 	public abstract String includeRegions();
+	public abstract String includeStations();
+	public abstract String includeSystems();
 	public abstract String price();
 	public abstract String source();
 	public abstract String notConfigurable();

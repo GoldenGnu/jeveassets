@@ -88,6 +88,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://eve-marketdata.com/\">EVE-Marketdata.com</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://www.evemarketeer.com/\">EveMarketeer.com</a> (price data api)<br>"
+				+ "&nbsp;<a href=\"http://eve.addicts.nl/\">Eve.Addicts.nl</a> (price data api)<br>"
 				+ "&nbsp;<a href=\"http://www.famfamfam.com/lab/icons/silk/\">Silk icons</a> (icons)<br>"
 				+ "<br>"
 				+ "<b>Libraries</b><br>"

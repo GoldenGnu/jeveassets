@@ -23,16 +23,12 @@ package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Date;
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 public abstract class GuiShared extends Bundle {
 	public static GuiShared get() {
-		return BundleCache.get(GuiShared.class);
-	}
-
-	public static GuiShared get(final Locale locale) {
-		return BundleCache.get(GuiShared.class, locale);
+		return Main.getBundleService().get(GuiShared.class);
 	}
 
 	public GuiShared(final Locale locale) {
@@ -66,6 +62,23 @@ public abstract class GuiShared extends Bundle {
 	public abstract String overwriteFile();
 	public abstract String paste();
 	public abstract String region();
+	public abstract String selectionAverage();
+	public abstract String selectionCount();
+	public abstract String selectionInventionSuccess();
+	public abstract String selectionOrdersBuy();
+	public abstract String selectionOrdersEscrow();
+	public abstract String selectionOrdersSell();
+	public abstract String selectionOrdersToCover();
+	public abstract String selectionTitle();
+	public abstract String selectionTitleNeeded();
+	public abstract String selectionTitleNow();
+	public abstract String selectionValue();
+	public abstract String selectionValueNeeded();
+	public abstract String selectionValueNow();
+	public abstract String selectionValueReprocessed();
+	public abstract String selectionVolume();
+	public abstract String selectionVolumeNeeded();
+	public abstract String selectionVolumeNow();
 	public abstract String station();
 	public abstract String stockpile();
 	public abstract String system();

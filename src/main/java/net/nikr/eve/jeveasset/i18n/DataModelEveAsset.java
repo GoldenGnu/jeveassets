@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
@@ -31,11 +31,7 @@ import uk.me.candle.translations.BundleCache;
  */
 public abstract class DataModelEveAsset extends Bundle {
 	public static DataModelEveAsset get() {
-		return BundleCache.get(DataModelEveAsset.class);
-	}
-
-	public static DataModelEveAsset get(final Locale locale) {
-		return BundleCache.get(DataModelEveAsset.class, locale);
+		return Main.getBundleService().get(DataModelEveAsset.class);
 	}
 
 	public DataModelEveAsset(final Locale locale) {
@@ -46,10 +42,12 @@ public abstract class DataModelEveAsset extends Bundle {
 	public abstract String priceSellAvg();
 	public abstract String priceSellMedian();
 	public abstract String priceSellMin();
+	public abstract String priceSellPercentile();
 	public abstract String priceMidpoint();
 	public abstract String priceBuyMax();
 	public abstract String priceBuyAvg();
 	public abstract String priceBuyMedian();
+	public abstract String priceBuyPercentile();
 	public abstract String priceBuyMin();
 
 }

@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -69,7 +70,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeCsv(xmldoc, Settings.getCsvSettings());
 		try {
-			writeXmlFile(xmldoc, Settings.getPathSettings(), true);
+			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
 		}
@@ -217,8 +218,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private static void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
-		parentNode.setAttributeNS(null, "regiontype", priceDataSettings.getRegion().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
+		StringBuilder builder = new StringBuilder();
+		for (long location : priceDataSettings.getLocations()) {
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
+			builder.append(location);
+		}
+		parentNode.setAttributeNS(null, "locations", builder.toString());
+		parentNode.setAttributeNS(null, "type", priceDataSettings.getLocationType().name());
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 

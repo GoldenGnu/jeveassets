@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
@@ -31,11 +31,7 @@ import uk.me.candle.translations.BundleCache;
  */
 public abstract class DialoguesCsvExport extends Bundle {
 	public static DialoguesCsvExport get() {
-		return BundleCache.get(DialoguesCsvExport.class);
-	}
-
-	public static DialoguesCsvExport get(final Locale locale) {
-		return BundleCache.get(DialoguesCsvExport.class, locale);
+		return Main.getBundleService().get(DialoguesCsvExport.class);
 	}
 
 	public DialoguesCsvExport(final Locale locale) {

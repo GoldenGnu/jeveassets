@@ -30,19 +30,24 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
-
 
 public class OverviewTab extends JMainTab {
 
@@ -59,6 +64,11 @@ public class OverviewTab extends JMainTab {
 	private JToggleButton jGroups;
 	private JComboBox jSource;
 	private JComboBox jCharacters;
+	private JLabel jValue;
+	private JLabel jReprocessed;
+	private JLabel jCount;
+	private JLabel jAverage;
+	private JLabel jVolume;
 
 	private AddToGroup addToGroup = new AddToGroup();
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
@@ -135,6 +145,21 @@ public class OverviewTab extends JMainTab {
 		installTableMenu(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		
+		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
+		this.addStatusbarLabel(jVolume);
+
+		jCount = StatusPanel.createLabel(TabsOverview.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
+		this.addStatusbarLabel(jCount);
+
+		jAverage = StatusPanel.createLabel(TabsOverview.get().average(), Images.ASSETS_AVERAGE.getIcon());
+		this.addStatusbarLabel(jAverage);
+
+		jReprocessed = StatusPanel.createLabel(TabsOverview.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
+		this.addStatusbarLabel(jReprocessed);
+
+		jValue = StatusPanel.createLabel(TabsOverview.get().totalValue(), Images.TOOL_VALUES.getIcon());
+		this.addStatusbarLabel(jValue);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -287,6 +312,30 @@ public class OverviewTab extends JMainTab {
 		jComponent.add(jSubMenuItem);
 	//LOOKUP
 		jComponent.add(new JMenuLookup<Overview>(program, selectionModel.getSelected()));
+	//INFO
+		JMenuInfo.overview(jComponent, selectionModel.getSelected());
+	}
+	
+	private void updateStatusbar() {
+		double averageValue = 0;
+		double totalValue = 0;
+		long totalCount = 0;
+		double totalVolume = 0;
+		double totalReprocessed = 0;
+		for (InfoItem infoItem : overviewEventList) {
+			totalValue = totalValue + infoItem.getValue();
+			totalCount = totalCount + infoItem.getCount();
+			totalVolume = totalVolume + infoItem.getVolumeTotal();
+			totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
+		}
+		if (totalCount > 0 && totalValue > 0) {
+			averageValue = totalValue / totalCount;
+		}
+		jVolume.setText(Formater.doubleFormat(totalVolume));
+		jCount.setText(Formater.itemsFormat(totalCount));
+		jAverage.setText(Formater.iskFormat(averageValue));
+		jReprocessed.setText(Formater.iskFormat(totalReprocessed));
+		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
 	private String getSelectedView() {
@@ -347,9 +396,9 @@ public class OverviewTab extends JMainTab {
 			}
 
 			double reprocessedValue = eveAsset.getValueReprocessed();
-			double value = eveAsset.getPrice() * eveAsset.getCount();
+			double value = eveAsset.getValue();
 			long count = eveAsset.getCount();
-			double volume = eveAsset.getVolume() * eveAsset.getCount();
+			double volume = eveAsset.getVolumeTotal();
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
 				String location = TabsOverview.get().whitespace();
 				if (view.equals(TabsOverview.get().regions())) {
@@ -425,8 +474,6 @@ public class OverviewTab extends JMainTab {
 			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			overviewTableModel.fireTableStructureChanged();
 		}
-		//XXX - set default comparator or we can get IndexOutOfBoundsException
-		overviewSortedList.setComparator(GlazedLists.comparableComparator());
 		try {
 			overviewEventList.getReadWriteLock().writeLock().lock();
 			overviewEventList.clear();
@@ -438,6 +485,7 @@ public class OverviewTab extends JMainTab {
 		} finally {
 			overviewEventList.getReadWriteLock().writeLock().unlock();
 		}
+		updateStatusbar();
 		program.overviewGroupsChanged();
 	}
 
@@ -509,6 +557,14 @@ public class OverviewTab extends JMainTab {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_UPDATE_LIST.equals(e.getActionCommand())) {
+				if (e.getSource().equals(jStations)
+						|| e.getSource().equals(jSystems)
+						|| e.getSource().equals(jRegions)
+						|| e.getSource().equals(jGroups)
+						) {
+					//XXX - set default comparator or we can get IndexOutOfBoundsException
+					overviewSortedList.setComparator(GlazedLists.comparableComparator());
+				}
 				updateTable();
 			}
 			//Group

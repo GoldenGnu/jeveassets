@@ -22,16 +22,12 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 public abstract class TabsAssets extends Bundle {
 	public static TabsAssets get() {
-		return BundleCache.get(TabsAssets.class);
-	}
-
-	public static TabsAssets get(final Locale locale) {
-		return BundleCache.get(TabsAssets.class, locale);
+		return Main.getBundleService().get(TabsAssets.class);
 	}
 
 	public TabsAssets(final Locale locale) {
@@ -40,15 +36,10 @@ public abstract class TabsAssets extends Bundle {
 
 	public abstract String assets();
 	public abstract String average();
-	public abstract String average1();
-	public abstract String count();
-	public abstract String selection();
 	public abstract String totalCount();
 	public abstract String totalReprocessed();
 	public abstract String totalValue();
 	public abstract String totalVolume();
-	public abstract String value();
-	public abstract String volume();
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCategory();

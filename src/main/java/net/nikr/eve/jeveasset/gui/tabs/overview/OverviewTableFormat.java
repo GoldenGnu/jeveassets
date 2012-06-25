@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
@@ -77,7 +76,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getVolume();
+			return from.getVolumeTotal();
 		}
 	},
 	VALUE(Double.class, GlazedLists.comparableComparator()) {
@@ -117,7 +116,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getReprocessedValue();
+			return from.getValueReprocessed();
 		}
 	};
 	private Class type;

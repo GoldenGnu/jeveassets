@@ -111,8 +111,10 @@ public class Stockpile implements Comparable<Stockpile> {
 	}
 
 	public void add(final StockpileItem item) {
-		items.add(item);
-		Collections.sort(items);
+		if (!items.contains(item)) { //Only one of each type
+			items.add(item);
+			Collections.sort(items);
+		}
 	}
 
 	public void remove(final StockpileItem item) {

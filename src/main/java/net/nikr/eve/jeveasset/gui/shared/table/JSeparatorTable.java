@@ -11,7 +11,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
@@ -27,9 +29,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** working with separator cells. */
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
-	private Boolean revalidateLocked = null;
-	private boolean tableChanged = true;
-
+	private final Map<Integer, Integer> rowsHeight = new HashMap<Integer, Integer>();
 
 	public JSeparatorTable(final Program program, final EventTableModel tableModel) {
 		super(program, tableModel);
@@ -38,7 +38,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
-		revalidateLocked = false;
 	}
 
 	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
@@ -200,10 +199,41 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.valueChanged(e);
 	}
 
+	@Override
+	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
+		fixRowHeight(row);
+		return super.prepareRenderer(renderer, row, column);
+	}
+
+	private void fixRowHeight(final int row) {
+		int height = 0;
+		final Object rowValue = getEventTableModel().getElementAt(row);
+		final int key = rowValue.hashCode();
+		if (rowsHeight.containsKey(key)) { //Load row height
+			height = rowsHeight.get(key);
+		} else if (rowValue instanceof SeparatorList.Separator) { //Calculate the Separator row height
+			TableCellRenderer renderer = this.getCellRenderer(row, 0);
+			Component component = super.prepareRenderer(renderer, row, 0);
+			height = component.getPreferredSize().height;
+		} else { //Calculate the row height
+			for (int i = 0; i < this.getColumnCount(); i++) {
+				TableCellRenderer renderer = this.getCellRenderer(row, i);
+				Component component = super.prepareRenderer(renderer, row, i);
+				height = Math.max(height, component.getPreferredSize().height);
+			}
+		}
+		//Save row height so we don't have to calculate it all the time
+		rowsHeight.put(key, height);
+
+		//Set row height, if needed (is expensive because repaint is needed)
+		if (this.getRowHeight(row) != height) {
+			this.setRowHeight(row, height);
+		}
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void tableChanged(final TableModelEvent e) {
-		tableChanged = true;
 		// stop edits when the table changes, or else we might
 		// get a relocated edit in the wrong cell!
 		if (isEditing()) {
@@ -212,24 +242,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 		// handle the change event
 		super.tableChanged(e);
-	}
-
-	//XXX - Dirty hack is dirty
-	@Override
-	public void revalidate() {
-		if (revalidateLocked != null && !revalidateLocked && tableChanged) {
-			revalidateLocked = true;
-			for (int row = 0; row < this.getRowCount(); row++) {
-				TableCellRenderer renderer = this.getCellRenderer(row, 0);
-				Component component = this.prepareRenderer(renderer, row, 0);
-				if (this.getRowHeight(row) != component.getPreferredSize().height) {
-					this.setRowHeight(row, component.getPreferredSize().height);
-				}
-			}
-			revalidateLocked = false;
-			tableChanged = false;
-		}
-		super.revalidate();
 	}
 }
 /**

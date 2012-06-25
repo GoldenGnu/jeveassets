@@ -25,11 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
+import uk.me.candle.eve.pricing.options.LocationType;
 
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		EVE_CENTRAL("eve-central", true, false) {
+		EVE_CENTRAL("eve-central", true, false, true, false) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
@@ -37,30 +39,46 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		EVE_MARKETDATA("eve-marketdata", false, true) {
+		EVE_MARKETDATA("eve-marketdata", false, true, false, false) {
 			@Override public PriceMode[] getPriceTypes() {
-				return new PriceMode[]{PriceMode.PRICE_SELL_MIN, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_MAX};
+				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
-		EVEMARKETEER("evemarketeer", false, true) {
+		EVEMARKETEER("evemarketeer", false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().sourceEveMarketeer();
 			}
+		},
+		EVE_ADDICTS("eveaddicts", false, true, false, true) {
+			@Override public PriceMode[] getPriceTypes() {
+				return new PriceMode[]{PriceMode.PRICE_SELL_AVG, PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE, PriceMode.PRICE_BUY_AVG};
+			}
+			@Override String getI18N() {
+				return DataModelPriceDataSettings.get().sourceEveAddicts();
+			}
 		};
 		private String name;
-		private boolean supportsMultipleLocations;
-		private boolean supportsSingleLocations;
+		private final boolean supportsMultipleRegions;
+		private final boolean supportsSingleRegion;
+		private final boolean supportsSystem;
+		private final boolean supportsStation;
 
-		private PriceSource(final String name, final boolean supportMultipleLocations, final boolean supportsSingleLocations) {
+		private PriceSource(final String name,
+				final boolean supportsMultipleRegions,
+				final boolean supportsSingleRegion,
+				final boolean supportsSystem,
+				final boolean supportsStation) {
 			this.name = name;
-			this.supportsMultipleLocations = supportMultipleLocations;
-			this.supportsSingleLocations = supportsSingleLocations;
+			this.supportsMultipleRegions = supportsMultipleRegions;
+			this.supportsSingleRegion = supportsSingleRegion;
+			this.supportsSystem = supportsSystem;
+			this.supportsStation = supportsStation;
 		}
 
 		public abstract PriceMode[] getPriceTypes();
@@ -74,21 +92,37 @@ public class PriceDataSettings {
 			return name;
 		}
 
-		public boolean supportsMultipleLocations() {
-			return supportsMultipleLocations;
+		public boolean supportsMultipleRegions() {
+			return supportsMultipleRegions;
 		}
 
-		public boolean supportsSingleLocations() {
-			return supportsSingleLocations;
+		public boolean supportsSingleRegion() {
+			return supportsSingleRegion;
+		}
+
+		public boolean supportsStation() {
+			return supportsStation;
+		}
+
+		public boolean supportsSystem() {
+			return supportsSystem;
 		}
 	}
 
 	public enum RegionType {
+		NOT_CONFIGURABLE() {
+			@Override String getI18N() {
+				return DialoguesSettings.get().notConfigurable();
+			}
+			@Override public List<Long> getRegions() {
+				return new ArrayList<Long>();
+			}
+		},
 		EMPIRE() {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEmpire();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				//Amarr
 				regions.add(10000054L); //Amarr: Aridia
@@ -125,7 +159,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMarketHubs();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				regions.add(10000002L); //Caldari: The Forge (Jita)
 				regions.add(10000042L); //Minmatar : Metropolis (Hek)
@@ -139,7 +173,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllAmarr();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				regions.add(10000054L); //Amarr: Aridia
 				regions.add(10000036L); //Amarr: Devoid
@@ -156,7 +190,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllGallente();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				regions.add(10000064L); //Gallente: Essence
 				regions.add(10000037L); //Gallente: Everyshore
@@ -171,7 +205,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllMinmatar();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				regions.add(10000042L); //Minmatar : Metropolis
 				regions.add(10000030L); //Minmatar : Heimatar
@@ -183,7 +217,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAllCaldari();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				List<Long> regions = new ArrayList<Long>();
 				regions.add(10000069L); //Caldari: Black Rise
 				regions.add(10000016L); //Caldari: Lonetrek
@@ -196,7 +230,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionAridia();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000054L); //Amarr: Aridia
 			}
 		},
@@ -205,7 +239,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().regionDevoid();
 			}
 
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000036L); //Amarr: Devoid
 			}
 		},
@@ -213,7 +247,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionDomain();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000043L); //Amarr: Domain
 			}
 		},
@@ -221,7 +255,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionGenesis();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000067L); //Amarr: Genesis
 			}
 		},
@@ -229,7 +263,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKador();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000052L); //Amarr: Kador
 			}
 		},
@@ -237,7 +271,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKorAzor();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000065L); //Amarr: Kor-Azor
 			}
 		},
@@ -245,7 +279,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTashMurkon();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000020L); //Amarr: Tash-Murkon
 			}
 		},
@@ -253,7 +287,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheBleakLands();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000038L); //Amarr: The Bleak Lands
 			}
 		},
@@ -261,7 +295,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionBlackRise();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000069L); //Caldari: Black Rise
 			}
 		},
@@ -269,7 +303,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionLonetrek();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000016L); //Caldari: Lonetrek
 			}
 		},
@@ -277,7 +311,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheCitadel();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000033L); //Caldari: The Citadel
 			}
 		},
@@ -285,7 +319,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionTheForge();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000002L); //Caldari: The Forge
 			}
 		},
@@ -293,7 +327,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEssence();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000064L); //Gallente: Essence
 			}
 		},
@@ -301,7 +335,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionEveryshore();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000037L); //Gallente: Everyshore
 			}
 		},
@@ -309,7 +343,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionPlacid();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000048L); //Gallente: Placid
 			}
 		},
@@ -317,7 +351,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionSinqLaison();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000032L); //Gallente: Sinq Laison
 			}
 		},
@@ -325,7 +359,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionSolitude();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000044L); //Gallente: Solitude
 			}
 		},
@@ -333,7 +367,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionVergeVendor();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000068L); //Gallente: Verge Vendor
 			}
 		},
@@ -341,7 +375,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMetropolis();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000042L); //Minmatar : Metropolis
 			}
 		},
@@ -349,7 +383,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionHeimatar();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000030L); //Minmatar : Heimatar
 			}
 		},
@@ -357,7 +391,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionMoldenHeath();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000028L); //Minmatar : Molden Heath
 			}
 		},
@@ -365,7 +399,7 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionDerelik();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000001L); //Ammatar: Derelik
 			}
 		},
@@ -373,58 +407,75 @@ public class PriceDataSettings {
 			@Override String getI18N() {
 				return DataModelPriceDataSettings.get().regionKhanid();
 			}
-			@Override List<Long> getRegions() {
+			@Override public List<Long> getRegions() {
 				return Collections.singletonList(10000049L); //Khanid: Khanid
 			}
 		};
-		private static RegionType[] singleLocations = null;
+		private static List<RegionType> singleLocations = null;
+		private static List<RegionType> multipleLocations = null;
 
 		abstract String getI18N();
-		abstract List<Long> getRegions();
+		public abstract List<Long> getRegions();
 
 		@Override
 		public String toString() {
 			return getI18N();
 		}
-		public static RegionType[] getSingleLocations() {
+		public static List<RegionType> getSingleLocations() {
 			if (singleLocations == null) {
-				List<RegionType> list = new ArrayList<RegionType>();
+				singleLocations = new ArrayList<RegionType>();
 				for (RegionType regionType : RegionType.values()) {
 					if (regionType.getRegions().size() == 1) {
-						list.add(regionType);
+						singleLocations.add(regionType);
 					}
 				}
-				singleLocations = list.toArray(new RegionType[list.size()]);
 			}
 			return singleLocations;
 		}
-		public static RegionType[] getMultipleLocations() {
-			return RegionType.values();
+		public static List<RegionType> getMultipleLocations() {
+			if (multipleLocations == null) {
+				multipleLocations = new ArrayList<RegionType>();
+				for (RegionType regionType : RegionType.values()) {
+					if (!regionType.getRegions().isEmpty()) { //Ignore NOT_CONFIGURABLE
+						multipleLocations.add(regionType);
+					}
+				}
+			}
+			return multipleLocations;
 		}
 	}
-	private RegionType regionType;
-	private PriceSource priceSource;
+
+	private final LocationType locationType;
+	private final List<Long> locations;
+	private final PriceSource priceSource;
 
 	public PriceDataSettings() {
-		regionType = getDefaultRegionType();
+		locationType = LocationType.REGION;
+		locations = getDefaultRegionType().getRegions();
 		priceSource = getDefaultPriceSource();
 	}
 
-	public PriceDataSettings(final RegionType region, final PriceSource source) {
-		this.regionType = region;
-		this.priceSource = source;
-	}
-
-	public RegionType getRegion() {
-		return regionType;
+	public PriceDataSettings(final LocationType locationType, final List<Long> locations, final PriceSource priceSource) {
+		if (locationType != null && locations != null && !locations.isEmpty()) {
+			this.locationType = locationType;
+			this.locations = locations;
+		} else {
+			this.locationType = LocationType.REGION;
+			this.locations = getDefaultRegionType().getRegions();
+		}
+		this.priceSource = priceSource;
 	}
 
 	public PriceSource getSource() {
 		return priceSource;
 	}
 
-	public List<Long> getRegions() {
-		return regionType.getRegions();
+	public List<Long> getLocations() {
+		return locations;
+	}
+
+	public LocationType getLocationType() {
+		return locationType;
 	}
 
 	public static RegionType getDefaultRegionType() {
@@ -444,7 +495,10 @@ public class PriceDataSettings {
 			return false;
 		}
 		final PriceDataSettings other = (PriceDataSettings) obj;
-		if (this.regionType != other.regionType) {
+		if (this.locationType != other.locationType) {
+			return false;
+		}
+		if (this.locations != other.locations && (this.locations == null || !this.locations.equals(other.locations))) {
 			return false;
 		}
 		if (this.priceSource != other.priceSource) {
@@ -455,9 +509,10 @@ public class PriceDataSettings {
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 79 * hash + (this.regionType != null ? this.regionType.hashCode() : 0);
-		hash = 79 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
+		int hash = 7;
+		hash = 19 * hash + (this.locationType != null ? this.locationType.hashCode() : 0);
+		hash = 19 * hash + (this.locations != null ? this.locations.hashCode() : 0);
+		hash = 19 * hash + (this.priceSource != null ? this.priceSource.hashCode() : 0);
 		return hash;
 	}
 }

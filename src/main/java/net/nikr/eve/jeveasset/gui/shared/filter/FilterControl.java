@@ -123,9 +123,8 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 					column = (Enum) adaptor.getShownColumns().get(columnIndex);
 					isNumeric = isNumeric(column);
 					isDate = isDate(column);
-					text = FilterMatcher.format(getColumnValue(items.get(0), column.name()));
+					text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
 				}
-
 			}
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);

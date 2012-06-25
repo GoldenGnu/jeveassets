@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 

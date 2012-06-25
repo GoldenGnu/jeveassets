@@ -22,20 +22,19 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 /**
  *
  * @author Andrew
  */
 public abstract class DialoguesProfiles extends Bundle {
+
 	public static DialoguesProfiles get() {
-		return BundleCache.get(DialoguesProfiles.class);
+		return Main.getBundleService().get(DialoguesProfiles.class);
 	}
-	public static DialoguesProfiles get(final Locale locale) {
-		return BundleCache.get(DialoguesProfiles.class, locale);
-	}
+
 	public DialoguesProfiles(final Locale locale) {
 		super(locale);
 	}

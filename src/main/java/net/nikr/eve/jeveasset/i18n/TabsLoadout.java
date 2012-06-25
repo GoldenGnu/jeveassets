@@ -22,22 +22,19 @@
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
+import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCache;
 
 public abstract class TabsLoadout extends Bundle {
 	public static TabsLoadout get() {
-		return BundleCache.get(TabsLoadout.class);
-	}
-
-	public static TabsLoadout get(final Locale locale) {
-		return BundleCache.get(TabsLoadout.class, locale);
+		return Main.getBundleService().get(TabsLoadout.class);
 	}
 
 	public TabsLoadout(final Locale locale) {
 		super(locale);
 	}
 
+	public abstract String all();
 	public abstract String cancel();
 	public abstract String character();
 	public abstract String collapse();
@@ -49,6 +46,15 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String export();
 	public abstract String export1();
 	public abstract String export2();
+	public abstract String flagCargo();
+	public abstract String flagDroneBay();
+	public abstract String flagHighSlot();
+	public abstract String flagLowSlot();
+	public abstract String flagMediumSlot();
+	public abstract String flagOther();
+	public abstract String flagRigSlot();
+	public abstract String flagSubSystem();
+	public abstract String flagTotalValue();
 	public abstract String name();
 	public abstract String name1();
 	public abstract String no();
@@ -56,6 +62,9 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String oK();
 	public abstract String ship();
 	public abstract String ship1();
+	public abstract String totalAll();
+	public abstract String totalModules();
+	public abstract String totalShip();
 	public abstract String whitespace10(Object arg0);
 	public abstract String whitespace9(Object arg0);
 }

@@ -26,14 +26,15 @@ public class PriceData {
 	private double sellMax;
 	private double sellAvg;
 	private double sellMedian;
+	private double sellPercentile;
 	private double sellMin;
 	private double buyMax;
 	private double buyAvg;
 	private double buyMedian;
+	private double buyPercentile;
 	private double buyMin;
 
-	public PriceData() {
-	}
+	public PriceData() { }
 
 	public double getBuyAvg() {
 		return buyAvg;
@@ -95,15 +96,37 @@ public class PriceData {
 		return sellMin;
 	}
 
+	public double getBuyPercentile() {
+		return buyPercentile;
+	}
+
+	public void setBuyPercentile(final double buyPercentile) {
+		this.buyPercentile = buyPercentile;
+	}
+
+	public double getSellPercentile() {
+		return sellPercentile;
+	}
+
+	public void setSellPercentile(final double sellPercentile) {
+		this.sellPercentile = sellPercentile;
+	}
+
 	public void setSellMin(final double sellMin) {
 		this.sellMin = sellMin;
 	}
 
 	public boolean isEmpty() {
-		if (sellMax > 0 || sellAvg > 0 || sellMedian > 0 || sellMin > 0 || buyMax > 0 || buyAvg > 0 || buyMedian > 0 || buyMin > 0) {
-			return false;
-		} else {
-			return true;
-		}
+		return !(sellMax > 0
+				|| sellAvg > 0
+				|| sellMedian > 0
+				|| sellPercentile > 0
+				|| sellMin > 0
+				|| buyMax > 0
+				|| buyAvg > 0
+				|| buyMedian > 0
+				|| buyPercentile > 0
+				|| buyMin > 0
+				);
 	}
 }

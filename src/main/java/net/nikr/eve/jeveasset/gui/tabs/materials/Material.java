@@ -79,13 +79,28 @@ public class Material implements Comparable<Material> {
 		this.location = location;
 		this.group = group;
 		if (eveAsset != null) {
-			this.typeName = eveAsset.getName();
-			this.marketGroup = eveAsset.isMarketGroup();
-			this.typeID = eveAsset.getTypeID();
-			this.station = eveAsset.getLocation();
-			this.system = eveAsset.getSystem();
-			this.region = eveAsset.getRegion();
-			this.price = eveAsset.getPrice();
+			//Has item
+			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY) {
+				this.typeName = eveAsset.getName();
+				this.marketGroup = eveAsset.isMarketGroup();
+				this.typeID = eveAsset.getTypeID();
+				this.price = eveAsset.getPrice();
+			} else {
+				this.typeName = null;
+				this.marketGroup = false;
+				this.typeID = null;
+				this.price = null;
+			}
+			//Has location
+			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
+				this.station = eveAsset.getLocation();
+				this.system = eveAsset.getSystem();
+				this.region = eveAsset.getRegion();
+			} else {
+				this.station = null;
+				this.system = null;
+				this.region = null;
+			}
 		} else {
 			this.typeName = null;
 			this.marketGroup = false;
@@ -128,6 +143,10 @@ public class Material implements Comparable<Material> {
 
 	public String getSystem() {
 		return system;
+	}
+
+	public MaterialType getType() {
+		return type;
 	}
 
 	public Integer getTypeID() {

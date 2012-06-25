@@ -47,6 +47,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.io.local.update.Update;
@@ -58,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import uk.me.candle.eve.pricing.options.LocationType;
 
 
 public class SettingsReader extends AbstractXmlReader {
@@ -69,15 +72,15 @@ public class SettingsReader extends AbstractXmlReader {
 	public static boolean load(final Settings settings) {
 		try {
 			Update updater = new Update();
-			updater.performUpdates(SETTINGS_VERSION);
+			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(Settings.getPathSettings());
+			Element element = getDocumentElement(settings.getPathSettings());
 			parseSettings(element, settings);
 		} catch (IOException ex) {
 			LOG.info("Settings not loaded");
 			return false;
 		} catch (XmlException ex) {
-			LOG.error("Settings parser error: (" + Settings.getPathSettings() + ")" + ex.getMessage(), ex);
+			LOG.error("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
 		}
 		LOG.info("Settings loaded");
 		return true;
@@ -356,19 +359,39 @@ public class SettingsReader extends AbstractXmlReader {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		Asset.setPriceType(priceType);
-		RegionType regionType = PriceDataSettings.getDefaultRegionType();
+		//null = default
+		List<Long> locations = null;
+		LocationType locationType = null;
+		//Backward compatibility
 		if (AttributeGetters.haveAttribute(element, "regiontype")) {
-			regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
+			RegionType regionType = RegionType.valueOf(AttributeGetters.getString(element, "regiontype"));
+			locations = regionType.getRegions();
+			locationType = LocationType.REGION;
+		}
+		if (AttributeGetters.haveAttribute(element, "locations")) {
+			String string = AttributeGetters.getString(element, "locations");
+			String[] split = string.split(",");
+			locations = new ArrayList<Long>();
+			for (String s : split) {
+				try {
+					locations.add(Long.valueOf(s));
+				} catch (NumberFormatException ex) {
+					LOG.warn("Could not parse locations long: " + s);
+				}
+			}
+		}
+		if (AttributeGetters.haveAttribute(element, "type")) {
+			locationType = LocationType.valueOf(AttributeGetters.getString(element, "type"));
 		}
 		PriceSource priceSource = PriceDataSettings.getDefaultPriceSource();
 		if (AttributeGetters.haveAttribute(element, "pricesource")) {
 			try {
 				priceSource = PriceSource.valueOf(AttributeGetters.getString(element, "pricesource"));
 			} catch (IllegalArgumentException ex) {
-				//In case a price source is removed: Use to default
+				//In case a price source is removed: Use the default
 			}
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(regionType, priceSource));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource));
 	}
 
 	private static void parseFlags(final Element element, final Settings settings) {

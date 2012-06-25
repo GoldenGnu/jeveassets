@@ -64,7 +64,7 @@ class FilterGui<E> implements ActionListener {
 		this.jFrame = jFrame;
 		this.matcherControl = matcherControl;
 
-		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getAllFilters(), matcherControl.getEventLists(), matcherControl.getEnumColumns());
+		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getEventLists(), matcherControl.getEnumColumns());
 
 		jPanel = new JPanel();
 
