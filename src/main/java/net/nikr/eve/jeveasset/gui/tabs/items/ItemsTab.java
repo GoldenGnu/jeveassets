@@ -25,6 +25,7 @@ import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,7 @@ public class ItemsTab extends JMainTab {
 
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME)
@@ -154,8 +156,11 @@ public class ItemsTab extends JMainTab {
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 
-		public ItemsFilterControl(final JFrame jFrame, final EventList<Item> eventList, final FilterList<Item> filterList, final Map<String, List<Filter>> filters) {
+		private EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
+
+		public ItemsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat, final EventList<Item> eventList, final FilterList<Item> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
+			this.tableFormat = tableFormat;
 		}
 
 		@Override
@@ -198,6 +203,11 @@ public class ItemsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Item>> getEnumColumns() {
 			return columnsAsList(ItemTableFormat.values());
+		}
+
+		@Override
+		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Item>>(tableFormat.getShownColumns());
 		}
 	}
 }

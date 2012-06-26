@@ -168,6 +168,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 
 	protected abstract Enum[] getColumns();
 	protected abstract List<EnumTableColumn<E>> getEnumColumns();
+	protected abstract List<EnumTableColumn<E>> getEnumShownColumns();
 	protected abstract Enum valueOf(String column);
 	/**
 	 * Use isNumeric(Enum column) instead.

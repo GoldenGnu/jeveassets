@@ -37,26 +37,27 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public DialoguesCsvExport(final Locale locale) {
 		super(locale);
 	}
-	public abstract String csvExport();
-	public abstract String filters();
-	public abstract String noFilter();
-	public abstract String currentFilter();
-	public abstract String savedFilter();
-	public abstract String fieldTerminated();
-	public abstract String comma();
-	public abstract String semicolon();
-	public abstract String linesTerminated();
-	public abstract String decimalSeperator();
-	public abstract String dot();
-	public abstract String columns();
-	public abstract String ok();
 	public abstract String cancel();
-	public abstract String defaultSettings();
-	public abstract String selectOne();
+	public abstract String columns();
+	public abstract String comma();
 	public abstract String confirmStupidDecision();
+	public abstract String csvExport();
+	public abstract String currentFilter();
+	public abstract String decimalSeperator();
+	public abstract String defaultSettings();
+	public abstract String dot();
 	public abstract String failedToSave();
-	public abstract String lineEndingsWindows();
+	public abstract String fieldTerminated();
+	public abstract String filters();
 	public abstract String lineEndingsMac();
+	public abstract String lineEndingsWindows();
 	public abstract String lineEndingsUnix();
+	public abstract String linesTerminated();
+	public abstract String noFilter();
 	public abstract String noSavedFilter();
+	public abstract String ok();
+	public abstract String savedFilter();
+	public abstract String selectOne();
+	public abstract String semicolon();
+	public abstract String toolColumns();
 }

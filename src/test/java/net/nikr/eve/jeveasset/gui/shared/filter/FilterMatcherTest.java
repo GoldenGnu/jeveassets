@@ -453,5 +453,10 @@ public class FilterMatcherTest {
 		protected List<EnumTableColumn<Item>> getEnumColumns() {
 			return null; //Only used by the GUI
 		}
+
+		@Override
+		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
+			return null; //Only used by the GUI
+		}
 	}
 }

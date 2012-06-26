@@ -29,7 +29,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
@@ -112,6 +111,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		//Filter
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME),
@@ -210,8 +210,11 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
 
-		public IndustryJobsFilterControl(final JFrame jFrame, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+
+		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
+			this.tableFormat = tableFormat;
 		}
 
 		@Override
@@ -253,6 +256,11 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		@Override
 		protected List<EnumTableColumn<IndustryJob>> getEnumColumns() {
 			return columnsAsList(IndustryJobTableFormat.values());
+		}
+
+		@Override
+		protected List<EnumTableColumn<IndustryJob>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<IndustryJob>>(tableFormat.getShownColumns());
 		}
 	}
 }

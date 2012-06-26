@@ -177,6 +177,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME)
@@ -698,9 +699,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<StockpileItem>> columns = null;
+		private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
-		public StockpileFilterControl(final JFrame jFrame, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
+		public StockpileFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
+			this.tableFormat = tableFormat;
 		}
 
 		@Override
@@ -788,6 +791,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				columns.addAll(Arrays.asList(StockpileTableFormat.values()));
 			}
 			return columns;
+		}
+
+		@Override
+		protected List<EnumTableColumn<StockpileItem>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<StockpileItem>>(tableFormat.getShownColumns());
 		}
 	}
 

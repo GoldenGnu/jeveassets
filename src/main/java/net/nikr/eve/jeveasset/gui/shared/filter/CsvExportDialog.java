@@ -54,6 +54,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	public static final String ACTION_OK = "ACTION_OK";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 	public static final String ACTION_DEFAULT = "ACTION_DEFAULT";
+	public static final String ACTION_TOOL_COLUMNS = "ACTION_TOOL_COLUMNS";
 
 	private JRadioButton jNoFilter;
 	private JRadioButton jSavedFilter;
@@ -62,6 +63,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	private JComboBox jFieldDelimiter;
 	private JComboBox jLineDelimiter;
 	private JComboBox jDecimalSeparator;
+	private JCheckBox jToolColumns;
 	private JMultiSelectionList jColumnSelection;
 	private JButton jOK;
 
@@ -85,6 +87,10 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			columns.put(column.getColumnName(), column);
 			columnNames.add(column.getColumnName());
 		}
+
+		jToolColumns = new JCheckBox(DialoguesCsvExport.get().toolColumns());
+		jToolColumns.setActionCommand(ACTION_TOOL_COLUMNS);
+		jToolColumns.addActionListener(this);
 
 		try {
 			jCsvFileChooser = new JCustomFileChooser(jFrame, "csv");
@@ -180,6 +186,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 					.addGap(30)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jColumnSelectionLabel)
+						.addComponent(jToolColumns)
 						.addComponent(jColumnSelectionPanel, 165, 165, 165)
 					)
 				)
@@ -202,6 +209,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 					)
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jColumnSelectionLabel)
+						.addComponent(jToolColumns)
 						.addComponent(jColumnSelectionPanel, 120, 120, 120)
 					)
 					.addGroup(layout.createSequentialGroup()
@@ -380,13 +388,29 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 
 		List<E> items = new ArrayList<E>();
 	//Columns + Header
-		Object[] values = jColumnSelection.getSelectedValues();
-
-		if (values.length == 0) {
+		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
+		List<String> header = new ArrayList<String>();
+		if (jToolColumns.isSelected()){ //Use the tools current shown columns + order
+			selectedColumns = matcherControl.getEnumShownColumns();
+			for (EnumTableColumn<E> column : selectedColumns){
+				header.add(column.getColumnName());
+			}
+		} else { //Use custom columns
+			Object[] values = jColumnSelection.getSelectedValues();
+			for (Object object : values) {
+				if (object instanceof String) {
+					String columnName = (String) object;
+					EnumTableColumn<E> column = columns.get(columnName);
+					header.add(column.getColumnName());
+					selectedColumns.add(column);
+				}
+			}
+		}
+	//Bad choises
+		if (selectedColumns.isEmpty() || header.isEmpty()) {
 			JOptionPane.showMessageDialog(getDialog(), DialoguesCsvExport.get().selectOne(), DialoguesCsvExport.get().csvExport(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-
 		if (Settings.getCsvSettings().getDecimalSeperator() == DecimalSeperator.COMMA && Settings.getCsvSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
 			int nReturn = JOptionPane.showConfirmDialog(
 					getDialog(),
@@ -398,23 +422,12 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				return;
 			}
 		}
-
+	//Save location
 		boolean ok = browse();
 		if (!ok) {
 			return;
 		}
-
-		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
-		List<String> header = new ArrayList<String>();
-		for (Object object : values) {
-			if (object instanceof String) {
-				String columnName = (String) object;
-				EnumTableColumn<E> column = columns.get(columnName);
-				header.add(column.getColumnName());
-				selectedColumns.add(column);
-			}
-		}
-
+	//Data source
 		if (jNoFilter.isSelected()) {
 			for (EventList<E> eventList : eventLists) {
 				for (E e : eventList) {
@@ -439,7 +452,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				}
 			}
 		}
-
+	//Add data
 		for (E e : items) {
 			HashMap<String, ? super Object> line = new HashMap<String, Object>();
 			for (EnumTableColumn<E> column : selectedColumns) {
@@ -447,7 +460,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			}
 			data.add(line);
 		}
-
+	//Save file - CSV
 		if (!CsvWriter.save(Settings.getCsvSettings().getFilename(), data, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.getCsvSettings().getFieldDelimiter().getValue(), Settings.getCsvSettings().getLineDelimiter().getValue()))) {
 			JOptionPane.showMessageDialog(getDialog(),
 					DialoguesCsvExport.get().failedToSave(),
@@ -480,6 +493,9 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			setVisible(false);
+		}
+		if (ACTION_TOOL_COLUMNS.equals(e.getActionCommand())) {
+			jColumnSelection.setEnabled(!jToolColumns.isSelected());
 		}
 	}
 }

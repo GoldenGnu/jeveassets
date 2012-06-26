@@ -121,6 +121,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		filterControl = new AssetFilterControl(
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME)
@@ -239,8 +240,11 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 	public static class AssetFilterControl extends FilterControl<Asset> {
 
-		public AssetFilterControl(final JFrame jFrame, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
+
+		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
+			this.tableFormat = tableFormat;
 		}
 
 		@Override
@@ -291,6 +295,11 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		@Override
 		protected List<EnumTableColumn<Asset>> getEnumColumns() {
 			return columnsAsList(EveAssetTableFormat.values());
+		}
+
+		@Override
+		protected List<EnumTableColumn<Asset>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
 		}
 	}
 }
