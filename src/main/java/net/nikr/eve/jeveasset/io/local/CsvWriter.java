@@ -23,8 +23,8 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvMapWriter;
@@ -38,7 +38,7 @@ public final class CsvWriter {
 
 	private CsvWriter() { }
 
-	public static boolean save(final String filename, final List<HashMap<String, ? super Object>> data, final String[] header, final CsvPreference csvPreference) {
+	public static boolean save(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
 		ICsvMapWriter writer;
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);

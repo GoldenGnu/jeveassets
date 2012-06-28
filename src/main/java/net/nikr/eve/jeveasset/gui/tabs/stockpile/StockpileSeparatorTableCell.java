@@ -195,25 +195,13 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 			jColor.setBackground(new Color(255, 200, 200));
 		}
 		String location = stockpileItem.getStockpile().getLocation();
-		if (location != null) {
-			jLocation.setText(location);
-			jLocation.setToolTipText(location);
-			jLocationLabel.setToolTipText(location);
-		} else {
-			jLocation.setText(TabsStockpile.get().all());
-			jLocation.setToolTipText(TabsStockpile.get().all());
-			jLocationLabel.setToolTipText(TabsStockpile.get().all());
-		}
+		jLocation.setText(location);
+		jLocation.setToolTipText(location);
+		jLocationLabel.setToolTipText(location);
 		String owner = stockpileItem.getStockpile().getOwner();
-		if (owner != null && !owner.isEmpty()) {
-			jOwner.setText(owner);
-			jOwner.setToolTipText(owner);
-			jOwnerLabel.setToolTipText(owner);
-		} else {
-			jOwner.setText(TabsStockpile.get().all());
-			jOwner.setToolTipText(TabsStockpile.get().all());
-			jOwnerLabel.setToolTipText(TabsStockpile.get().all());
-		}
+		jOwner.setText(owner);
+		jOwner.setToolTipText(owner);
+		jOwnerLabel.setToolTipText(owner);
 	}
 
 	protected JViewport getParentViewport() {

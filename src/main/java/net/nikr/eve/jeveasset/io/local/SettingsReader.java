@@ -26,9 +26,9 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
-import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
-import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
-import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.*;
@@ -98,11 +98,11 @@ public class SettingsReader extends AbstractXmlReader {
 			parseStockpiles(stockpilesElement, settings);
 		}
 
-		//CsvExport
-		NodeList csvNodes = element.getElementsByTagName("csvexport");
-		if (csvNodes.getLength() == 1) {
-			Element csvElement = (Element) csvNodes.item(0);
-			parseCsv(csvElement);
+		//Export Settings
+		NodeList exportNodes = element.getElementsByTagName("csvexport");
+		if (exportNodes.getLength() == 1) {
+			Element exportElement = (Element) exportNodes.item(0);
+			parseExportSettings(exportElement);
 		}
 
 		//Overview
@@ -608,18 +608,42 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setApiProxy(proxyURL);
 	}
 
-	private static void parseCsv(final Element element) {
+	private static void parseExportSettings(final Element element) {
+		//CSV
 		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
-		if (AttributeGetters.haveAttribute(element, "filename")) {
-			String filename = AttributeGetters.getString(element, "filename");
-			Settings.getCsvSettings().setFilename(filename);
+		Settings.getExportSettings().setDecimalSeperator(decimal);
+		Settings.getExportSettings().setFieldDelimiter(field);
+		Settings.getExportSettings().setLineDelimiter(line);
+		//SQL
+		if (AttributeGetters.haveAttribute(element, "sqlcreatetable")) {
+			boolean createTable = AttributeGetters.getBoolean(element, "sqlcreatetable");
+			Settings.getExportSettings().setCreateTable(createTable);
 		}
-		Settings.getCsvSettings().setDecimalSeperator(decimal);
-		Settings.getCsvSettings().setFieldDelimiter(field);
-		Settings.getCsvSettings().setLineDelimiter(line);
-
+		if (AttributeGetters.haveAttribute(element, "sqldroptable")) {
+			boolean dropTable = AttributeGetters.getBoolean(element, "sqldroptable");
+			Settings.getExportSettings().setDropTable(dropTable);
+		}
+		if (AttributeGetters.haveAttribute(element, "sqlextendedinserts")) {
+			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
+			Settings.getExportSettings().setExtendedInserts(extendedInserts);
+		}
+		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
+		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
+			Element tableNameNode = (Element) tableNamesNodeList.item(a);
+			String tool = AttributeGetters.getString(tableNameNode, "tool");
+			String tableName = AttributeGetters.getString(tableNameNode, "tablename");
+			Settings.getExportSettings().putTableName(tool, tableName);
+		}
+		//Shared
+		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
+		for (int a = 0; a < fileNamesNodeList.getLength(); a++) {
+			Element tableNameNode = (Element) fileNamesNodeList.item(a);
+			String tool = AttributeGetters.getString(tableNameNode, "tool");
+			String fileName = AttributeGetters.getString(tableNameNode, "filename");
+			Settings.getExportSettings().putFilename(tool, fileName);
+		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<String> columns = new ArrayList<String>();
@@ -631,7 +655,7 @@ public class SettingsReader extends AbstractXmlReader {
 				String name = AttributeGetters.getString(columnNode, "name");
 				columns.add(name);
 			}
-			Settings.getCsvSettings().putTableExportColumns(tableName, columns);
+			Settings.getExportSettings().putTableExportColumns(tableName, columns);
 		}
 	}
 }

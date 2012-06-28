@@ -23,6 +23,8 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -32,18 +34,23 @@ import java.text.DecimalFormatSymbols;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.CsvSettings;
-import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
-import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
-import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings;
+import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
+import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
+import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
+import net.nikr.eve.jeveasset.io.local.HtmlWriter;
+import net.nikr.eve.jeveasset.io.local.SqlWriter;
 import org.supercsv.prefs.CsvPreference;
 
 
@@ -56,21 +63,34 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	public static final String ACTION_DEFAULT = "ACTION_DEFAULT";
 	public static final String ACTION_TOOL_COLUMNS = "ACTION_TOOL_COLUMNS";
 
+	public static final String EXPORT_CSV = "csv";
+	public static final String EXPORT_HTML = "html";
+	public static final String EXPORT_SQL = "sql";
+
+	//Filter
 	private JRadioButton jNoFilter;
 	private JRadioButton jSavedFilter;
 	private JRadioButton jCurrentFilter;
 	private JComboBox jFilters;
+	//Columns
+	private JCheckBox jToolColumns;
+	private JMultiSelectionList jColumnSelection;
+	//CSV
 	private JComboBox jFieldDelimiter;
 	private JComboBox jLineDelimiter;
 	private JComboBox jDecimalSeparator;
-	private JCheckBox jToolColumns;
-	private JMultiSelectionList jColumnSelection;
+	//SQL
+	private JTextField jTableName;
+	private JCheckBox jDropTable;
+	private JCheckBox jCreateTable;
+	private JCheckBox jExtendedInserts;
+
 	private JButton jOK;
 
-	private static DecimalFormat enNumberFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
-	private static DecimalFormat euNumberFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
+	private static final DecimalFormat EN_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
+	private static final DecimalFormat EU_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
 
-	private JCustomFileChooser jCsvFileChooser;
+	private JCustomFileChooser jFileChooser;
 
 	private List<EventList<E>> eventLists;
 	private Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
@@ -78,9 +98,11 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	private FilterControl<E> matcherControl;
 
 	public CsvExportDialog(final JFrame jFrame, final FilterControl<E> matcherControl, final List<EventList<E>> eventLists, final List<EnumTableColumn<E>> enumColumns) {
-		super(null, DialoguesCsvExport.get().csvExport(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
+		super(null, DialoguesExport.get().export(), jFrame, Images.DIALOG_CSV_EXPORT.getImage());
 		this.matcherControl = matcherControl;
 		this.eventLists = eventLists;
+
+		//layout.setAutoCreateContainerGaps(false);
 
 		columnNames = new ArrayList<String>();
 		for (EnumTableColumn<E> column : enumColumns) {
@@ -88,37 +110,39 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			columnNames.add(column.getColumnName());
 		}
 
-		jToolColumns = new JCheckBox(DialoguesCsvExport.get().toolColumns());
+		jToolColumns = new JCheckBox(DialoguesExport.get().toolColumns());
 		jToolColumns.setActionCommand(ACTION_TOOL_COLUMNS);
 		jToolColumns.addActionListener(this);
 
 		try {
-			jCsvFileChooser = new JCustomFileChooser(jFrame, "csv");
+			jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
 		} catch (RuntimeException e) {
 			// Workaround for JRE bug 4711700. A NullPointer is thrown
 			// sometimes on the first construction under XP look and feel,
 			// but construction succeeds on successive attempts.
 			try {
-				jCsvFileChooser = new JCustomFileChooser(jFrame, "csv");
+				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
 			} catch (RuntimeException npe) {
 				// ok, now we use the metal file chooser, takes a long time to load
 				// but the user can still use the program
 				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jCsvFileChooser = new JCustomFileChooser(jFrame, "csv");
+				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
 			}
 		}
+	//Filters
+		JLabel jFiltersLabel = new JLabel(DialoguesExport.get().filters());
+		jFiltersLabel.setFont(new Font(jFiltersLabel.getFont().getName(), Font.BOLD, jFiltersLabel.getFont().getSize()));
 
-		JLabel jAssetsLabel = new JLabel(DialoguesCsvExport.get().filters());
-		jNoFilter = new JRadioButton(DialoguesCsvExport.get().noFilter());
+		jNoFilter = new JRadioButton(DialoguesExport.get().noFilter());
 		jNoFilter.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
 		jNoFilter.addActionListener(this);
 		jNoFilter.setSelected(true);
 
-		jCurrentFilter = new JRadioButton(DialoguesCsvExport.get().currentFilter());
+		jCurrentFilter = new JRadioButton(DialoguesExport.get().currentFilter());
 		jCurrentFilter.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
 		jCurrentFilter.addActionListener(this);
 
-		jSavedFilter = new JRadioButton(DialoguesCsvExport.get().savedFilter());
+		jSavedFilter = new JRadioButton(DialoguesExport.get().savedFilter());
 		jSavedFilter.setActionCommand(ACTION_ENABLE_SAVED_FILTERS);
 		jSavedFilter.addActionListener(this);
 
@@ -130,105 +154,176 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		jFilters = new JComboBox();
 		jFilters.setEnabled(false);
 
-		JLabel jFieldDelimiterLabel = new JLabel(DialoguesCsvExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
+	//Columns
+		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
+		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
 
-		JLabel jLineDelimiterLabel = new JLabel(DialoguesCsvExport.get().linesTerminated());
-		jLineDelimiter = new JComboBox(LineDelimiter.values());
-
-		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesCsvExport.get().decimalSeperator());
-		jDecimalSeparator = new JComboBox(DecimalSeperator.values());
-
-		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
 		jColumnSelection = new JMultiSelectionList(columnNames);
 		jColumnSelection.selectAll();
+
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 
-		JSeparator jSeparator = new JSeparator();
+	//Csv
+		JLabel jCsvLable = new JLabel(DialoguesExport.get().csv());
+		jCsvLable.setFont(new Font(jCsvLable.getFont().getName(), Font.BOLD, jCsvLable.getFont().getSize()));
 
-		jOK = new JButton(DialoguesCsvExport.get().ok());
+		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
+		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
+
+		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
+		jLineDelimiter = new JComboBox(LineDelimiter.values());
+
+		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeperator());
+		jDecimalSeparator = new JComboBox(DecimalSeperator.values());
+
+	//Sql
+		JLabel jSqlLable = new JLabel(DialoguesExport.get().sql());
+		jSqlLable.setFont(new Font(jSqlLable.getFont().getName(), Font.BOLD, jSqlLable.getFont().getSize()));
+
+		JLabel jTableNameLable = new JLabel(DialoguesExport.get().tableName());
+		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + matcherControl.getName().toLowerCase());
+		jTableName.setDocument(DocumentFactory.getWordPlainDocument());
+
+		jDropTable = new JCheckBox(DialoguesExport.get().dropTable());
+
+		jCreateTable = new JCheckBox(DialoguesExport.get().createTable());
+
+		jExtendedInserts = new JCheckBox(DialoguesExport.get().extendedInserts());
+
+	//Separatora
+		JSeparator jHorizontalSeparator = new JSeparator(SwingConstants.HORIZONTAL);
+		JSeparator jVerticalSeparator = new JSeparator(SwingConstants.VERTICAL);
+
+	//Buttons
+		JSeparator jButtonSeparator = new JSeparator();
+
+		jOK = new JButton(DialoguesExport.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
 
-		JButton jDefault = new JButton(DialoguesCsvExport.get().defaultSettings());
+		JButton jDefault = new JButton(DialoguesExport.get().defaultSettings());
 		jDefault.setActionCommand(ACTION_DEFAULT);
 		jDefault.addActionListener(this);
 
-		JButton jCancel = new JButton(DialoguesCsvExport.get().cancel());
+		JButton jCancel = new JButton(DialoguesExport.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
+					.addGap(15)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jAssetsLabel)
-						.addComponent(jNoFilter)
-						.addComponent(jCurrentFilter)
-						.addComponent(jSavedFilter)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-							.addGroup(layout.createSequentialGroup()
-								.addGap(20)
-								.addComponent(jFilters, 150, 150, 150)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jFiltersLabel, GroupLayout.Alignment.CENTER)
+							.addComponent(jNoFilter)
+							.addComponent(jCurrentFilter)
+							.addComponent(jSavedFilter)
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+								.addGroup(layout.createSequentialGroup()
+									.addGap(20)
+									.addComponent(jFilters, 150, 150, 150)
+								)
 							)
 						)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jCsvLable, GroupLayout.Alignment.CENTER)
+							.addComponent(jFieldDelimiterLabel)
+							.addComponent(jFieldDelimiter)
+							.addComponent(jLineDelimiterLabel)
+							.addComponent(jLineDelimiter)
+							.addComponent(jDecimalSeparatorLabel)
+							.addComponent(jDecimalSeparator)
+						)
 					)
-					.addGap(30)
+					.addGap(15)
+					.addComponent(jVerticalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(15)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jFieldDelimiterLabel)
-						.addComponent(jFieldDelimiter)
-						.addComponent(jLineDelimiterLabel)
-						.addComponent(jLineDelimiter)
-						.addComponent(jDecimalSeparatorLabel)
-						.addComponent(jDecimalSeparator)
-
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jColumnLabel, GroupLayout.Alignment.CENTER)
+							.addComponent(jToolColumns)
+							.addComponent(jColumnSelectionPanel, 165, 165, 165)
+						)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(jSqlLable, GroupLayout.Alignment.CENTER)
+							.addComponent(jTableNameLable)
+							.addComponent(jTableName)
+							.addComponent(jDropTable)
+							.addComponent(jCreateTable)
+							.addComponent(jExtendedInserts)
+						)
 					)
-					.addGap(30)
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jColumnSelectionLabel)
-						.addComponent(jToolColumns)
-						.addComponent(jColumnSelectionPanel, 165, 165, 165)
-					)
+					.addGap(15)
 				)
-				.addComponent(jSeparator)
+				.addComponent(jHorizontalSeparator)
+				.addComponent(jButtonSeparator)
 				.addGroup(layout.createSequentialGroup()
+					//.addGap(15)
 					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					//.addGap(15)
 				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jVerticalSeparator)
 					.addGroup(layout.createSequentialGroup()
-						.addComponent(jAssetsLabel)
-						.addComponent(jNoFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jCurrentFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jSavedFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addGap(10)
+						.addGroup(layout.createParallelGroup()
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jFiltersLabel)
+								.addGap(10)
+								.addComponent(jNoFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jCurrentFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jSavedFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							)
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jColumnLabel)
+								.addGap(10)
+								.addComponent(jToolColumns)
+								.addComponent(jColumnSelectionPanel, 120, 120, 120)
+							)
+						)
+						.addGap(15)
+						.addComponent(jHorizontalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGap(10)
+						.addGroup(layout.createParallelGroup()
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jCsvLable)
+								.addGap(10)
+								.addComponent(jFieldDelimiterLabel)
+								.addComponent(jFieldDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jLineDelimiterLabel)
+								.addComponent(jLineDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jDecimalSeparatorLabel)
+								.addComponent(jDecimalSeparator, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							)
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jSqlLable)
+								.addGap(10)
+								.addComponent(jTableNameLable)
+								.addComponent(jTableName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jDropTable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jCreateTable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jExtendedInserts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							)
+						)
+						.addGap(20)
 					)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jColumnSelectionLabel)
-						.addComponent(jToolColumns)
-						.addComponent(jColumnSelectionPanel, 120, 120, 120)
-					)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jFieldDelimiterLabel)
-						.addComponent(jFieldDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jLineDelimiterLabel)
-						.addComponent(jLineDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jDecimalSeparatorLabel)
-						.addComponent(jDecimalSeparator, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					)
-
-
 				)
-				.addComponent(jSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addGap(0)
+				.addComponent(jButtonSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addGap(10)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
+				.addGap(10)
 		);
 	}
 
@@ -249,7 +344,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	}
 
 	private boolean browse() {
-		String current = Settings.getCsvSettings().getFilename();
+		String current = Settings.getExportSettings().getFilename(matcherControl.getName());
 		int end = current.lastIndexOf(File.separator);
 		if (end > 0) {
 			current = current.substring(0, end + 1);
@@ -257,55 +352,70 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		File currentPath = new File(current);
 
 		if (currentPath.exists()) {
-			jCsvFileChooser.setCurrentDirectory(currentPath);
-			jCsvFileChooser.setSelectedFile(new File(Settings.getCsvSettings().getFilename()));
+			jFileChooser.setCurrentDirectory(currentPath);
+			jFileChooser.setSelectedFile(new File(Settings.getExportSettings().getFilename(matcherControl.getName())));
 		} else {
-			jCsvFileChooser.setCurrentDirectory(new File(CsvSettings.getDefaultPath()));
-			jCsvFileChooser.setSelectedFile(new File(CsvSettings.getDefaultFilename()));
+			jFileChooser.setCurrentDirectory(new File(ExportSettings.getDefaultPath()));
+			jFileChooser.setSelectedFile(new File(ExportSettings.getDefaultFilename(matcherControl.getName())));
 		}
-		int bFound = jCsvFileChooser.showDialog(getDialog(), "OK"); //.showSaveDialog(); //; //.showOpenDialog(this);
+		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
-			File file = jCsvFileChooser.getSelectedFile();
-			Settings.getCsvSettings().setFilename(file.getAbsolutePath());
+			File file = jFileChooser.getSelectedFile();
+			Settings.getExportSettings().putFilename(matcherControl.getName(), file.getAbsolutePath());
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private String getValue(final Object object, final DecimalSeperator decimalSeperator) {
-		if (object instanceof Number) {
-			Number number = (Number) object;
-			if (decimalSeperator == DecimalSeperator.DOT) {
-				return enNumberFormat.format(number);
-			} else {
-				return euNumberFormat.format(number);
-			}
-		}
+	private String format(final Object object, final DecimalSeperator decimalSeperator) {
 		if (object == null) {
 			return "";
+		} else if (object instanceof Number) {
+			Number number = (Number) object;
+			if (decimalSeperator == DecimalSeperator.DOT) {
+				return EN_NUMBER_FORMAT.format(number);
+			} else {
+				return EU_NUMBER_FORMAT.format(number);
+			}
+		} else if (object instanceof Date) {
+			return Formater.columnDate(object);
 		} else {
 			return object.toString();
 		}
 	}
 
-	private void saveCsvSettings() {
-		Settings.getCsvSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
-		Settings.getCsvSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.getCsvSettings().setDecimalSeperator((DecimalSeperator) jDecimalSeparator.getSelectedItem());
+	private void saveSettings() {
+		//CSV
+		Settings.getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
+		Settings.getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
+		Settings.getExportSettings().setDecimalSeperator((DecimalSeperator) jDecimalSeparator.getSelectedItem());
+		//SQL
+		Settings.getExportSettings().putTableName(matcherControl.getName(), jTableName.getText());
+		Settings.getExportSettings().setDropTable(jDropTable.isSelected());
+		Settings.getExportSettings().setCreateTable(jCreateTable.isSelected());
+		Settings.getExportSettings().setExtendedInserts(jExtendedInserts.isSelected());
+		//Shared
 		if (jColumnSelection.getSelectedIndices().length == columnNames.size()) { //All is selected - nothing worth saving...
-			Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), null);
+			Settings.getExportSettings().putTableExportColumns(matcherControl.getName(), null);
 		} else {
-			Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), getExportColumns());
+			Settings.getExportSettings().putTableExportColumns(matcherControl.getName(), getExportColumns());
 		}
 	}
 
-	private void loadCsvSettings() {
-		jFieldDelimiter.setSelectedItem(Settings.getCsvSettings().getFieldDelimiter());
-		jLineDelimiter.setSelectedItem(Settings.getCsvSettings().getLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.getCsvSettings().getDecimalSeperator());
+	private void loadSettings() {
+		//CSV
+		jFieldDelimiter.setSelectedItem(Settings.getExportSettings().getFieldDelimiter());
+		jLineDelimiter.setSelectedItem(Settings.getExportSettings().getLineDelimiter());
+		jDecimalSeparator.setSelectedItem(Settings.getExportSettings().getDecimalSeperator());
+		//SQL
+		jTableName.setText(Settings.getExportSettings().getTableName(matcherControl.getName()));
+		jDropTable.setSelected(Settings.getExportSettings().isDropTable());
+		jCreateTable.setSelected(Settings.getExportSettings().isCreateTable());
+		jExtendedInserts.setSelected(Settings.getExportSettings().isExtendedInserts());
+		//Shared
 		jColumnSelection.clearSelection();
-		List<String> list = Settings.getCsvSettings().getTableExportColumns(matcherControl.getName());
+		List<String> list = Settings.getExportSettings().getTableExportColumns(matcherControl.getName());
 		if (list == null) {
 			jColumnSelection.selectAll();
 			list = new ArrayList<String>(getExportColumns());
@@ -326,26 +436,33 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		jColumnSelection.setSelectedIndices(indices);
 	}
 
-	private void resetCsvSettings() {
-		Settings.getCsvSettings().setFieldDelimiter(FieldDelimiter.COMMA);
-		Settings.getCsvSettings().setLineDelimiter(LineDelimiter.DOS);
-		Settings.getCsvSettings().setDecimalSeperator(DecimalSeperator.DOT);
-		Settings.getCsvSettings().setFilename(CsvSettings.getDefaultFilename());
-		Settings.getCsvSettings().putTableExportColumns(matcherControl.getName(), null);
-		loadCsvSettings();
+	private void resetSettings() {
+		//CSV
+		Settings.getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
+		Settings.getExportSettings().setLineDelimiter(LineDelimiter.DOS);
+		Settings.getExportSettings().setDecimalSeperator(DecimalSeperator.DOT);
+		//SQL
+		Settings.getExportSettings().putTableName(matcherControl.getName(), "");
+		Settings.getExportSettings().setDropTable(true);
+		Settings.getExportSettings().setCreateTable(true);
+		Settings.getExportSettings().setExtendedInserts(true);
+		//Shared
+		Settings.getExportSettings().putFilename(matcherControl.getName(), ExportSettings.getDefaultFilename(matcherControl.getName()));
+		Settings.getExportSettings().putTableExportColumns(matcherControl.getName(), null);
+		loadSettings();
 	}
 
 	@Override
 	public void setVisible(final boolean b) {
 		if (b) {
-			loadCsvSettings();
+			loadSettings();
 			jFilters.setEnabled(false);
 			if (matcherControl.getAllFilters().isEmpty()) {
 				if (jSavedFilter.isSelected()) {
 					jNoFilter.setSelected(true);
 				}
 				jSavedFilter.setEnabled(false);
-				jFilters.getModel().setSelectedItem(DialoguesCsvExport.get().noSavedFilter());
+				jFilters.getModel().setSelectedItem(DialoguesExport.get().noSavedFilter());
 			} else {
 				if (jSavedFilter.isSelected()) {
 					jFilters.setEnabled(true);
@@ -364,7 +481,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				jCurrentFilter.setEnabled(true);
 			}
 		} else {
-			saveCsvSettings();
+			saveSettings();
 		}
 		super.setVisible(b);
 	}
@@ -384,18 +501,21 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 
 	@Override
 	protected void save() {
-		List<HashMap<String, ? super Object>> data = new ArrayList<HashMap<String, ? super Object>>();
-
+		List<Map<String, String>> stringRows = new ArrayList<Map<String, String>>();
+		List<Map<String, Object>> objectRows = new ArrayList<Map<String, Object>>();
 		List<E> items = new ArrayList<E>();
+
 	//Columns + Header
 		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
 		List<String> header = new ArrayList<String>();
-		if (jToolColumns.isSelected()){ //Use the tools current shown columns + order
+		if (jToolColumns.isSelected()) {
+			//Use the tool current shown columns + order
 			selectedColumns = matcherControl.getEnumShownColumns();
-			for (EnumTableColumn<E> column : selectedColumns){
+			for (EnumTableColumn<E> column : selectedColumns) {
 				header.add(column.getColumnName());
 			}
-		} else { //Use custom columns
+		} else {
+			//Use custom columns
 			Object[] values = jColumnSelection.getSelectedValues();
 			for (Object object : values) {
 				if (object instanceof String) {
@@ -406,21 +526,10 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				}
 			}
 		}
-	//Bad choises
+	//Bad selection
 		if (selectedColumns.isEmpty() || header.isEmpty()) {
-			JOptionPane.showMessageDialog(getDialog(), DialoguesCsvExport.get().selectOne(), DialoguesCsvExport.get().csvExport(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(getDialog(), DialoguesExport.get().selectOne(), DialoguesExport.get().export(), JOptionPane.PLAIN_MESSAGE);
 			return;
-		}
-		if (Settings.getCsvSettings().getDecimalSeperator() == DecimalSeperator.COMMA && Settings.getCsvSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
-			int nReturn = JOptionPane.showConfirmDialog(
-					getDialog(),
-					DialoguesCsvExport.get().confirmStupidDecision(),
-					DialoguesCsvExport.get().csvExport(),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-			if (nReturn == JOptionPane.NO_OPTION) {
-				return;
-			}
 		}
 	//Save location
 		boolean ok = browse();
@@ -454,17 +563,48 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 	//Add data
 		for (E e : items) {
-			HashMap<String, ? super Object> line = new HashMap<String, Object>();
+			Map<String, String> line = new HashMap<String, String>();
+			Map<String, Object> row = new HashMap<String, Object>();
 			for (EnumTableColumn<E> column : selectedColumns) {
-				line.put(column.getColumnName(), getValue(column.getColumnValue(e), Settings.getCsvSettings().getDecimalSeperator()));
+				line.put(column.getColumnName(), format(column.getColumnValue(e), Settings.getExportSettings().getDecimalSeperator()));
+				row.put(column.getColumnName(), column.getColumnValue(e));
 			}
-			data.add(line);
+			objectRows.add(row);
+			stringRows.add(line);
 		}
-	//Save file - CSV
-		if (!CsvWriter.save(Settings.getCsvSettings().getFilename(), data, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.getCsvSettings().getFieldDelimiter().getValue(), Settings.getCsvSettings().getLineDelimiter().getValue()))) {
+	//Save settings
+		saveSettings();
+	//Save file
+		String extension = jFileChooser.getExtension();
+		boolean saved;
+		if (extension.equals(EXPORT_CSV)) {
+			//CSV
+			//Bad selection
+			if (Settings.getExportSettings().getDecimalSeperator() == DecimalSeperator.COMMA && Settings.getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
+				int nReturn = JOptionPane.showConfirmDialog(
+						getDialog(),
+						DialoguesExport.get().confirmStupidDecision(),
+						DialoguesExport.get().export(),
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE);
+				if (nReturn == JOptionPane.NO_OPTION) {
+					return;
+				}
+			}
+			saved = CsvWriter.save(Settings.getExportSettings().getFilename(matcherControl.getName()), stringRows, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.getExportSettings().getFieldDelimiter().getValue(), Settings.getExportSettings().getLineDelimiter().getValue()));
+		} else if (extension.equals(EXPORT_HTML)) {
+			//HTML
+			saved = HtmlWriter.save(Settings.getExportSettings().getFilename(matcherControl.getName()), stringRows, header);
+		} else if (extension.equals(EXPORT_SQL)) {
+			//SQL
+			saved = SqlWriter.save(Settings.getExportSettings().getFilename(matcherControl.getName()), objectRows, header, Settings.getExportSettings().getTableName(matcherControl.getName()), Settings.getExportSettings().isDropTable(), Settings.getExportSettings().isCreateTable(), Settings.getExportSettings().isExtendedInserts());
+		} else {
+			saved = false;
+		}
+		if (!saved) {
 			JOptionPane.showMessageDialog(getDialog(),
-					DialoguesCsvExport.get().failedToSave(),
-					DialoguesCsvExport.get().csvExport(),
+					DialoguesExport.get().failedToSave(),
+					DialoguesExport.get().export(),
 					JOptionPane.PLAIN_MESSAGE);
 		}
 
@@ -474,7 +614,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	@Override
 	public void windowClosing(final WindowEvent e) {
 		super.windowClosing(e);
-		saveCsvSettings();
+		saveSettings();
 	}
 
 	@Override
@@ -489,7 +629,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			save();
 		}
 		if (ACTION_DEFAULT.equals(e.getActionCommand())) {
-			resetCsvSettings();
+			resetSettings();
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			setVisible(false);

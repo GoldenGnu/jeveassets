@@ -115,7 +115,7 @@ public class Settings {
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
-	private static CsvSettings csvSettings = new CsvSettings();
+	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
 
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
@@ -199,8 +199,8 @@ public class Settings {
 		constructEveApiConnector();
 	}
 
-	public static CsvSettings getCsvSettings() {
-		return csvSettings;
+	public static ExportSettings getExportSettings() {
+		return exportSettings;
 	}
 
 	/**

@@ -293,19 +293,18 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	private String getClipboardContents() {
-		String result = "";
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		//odd: the Object param of getContents is not currently used
 		Transferable contents = clipboard.getContents(null);
 		boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
 		if (hasTransferableText) {
 			try {
-				result = (String) contents.getTransferData(DataFlavor.stringFlavor);
+				return (String) contents.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception ex) {
-				//Return empty line...
+				return "";
 			}
 		}
-		return result;
+		return "";
 	}
 
 	@Override
@@ -383,10 +382,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
 			stockpileItems.addAll(stockpile.getItems());
+			//Update owner name
 			stockpile.setOwner(ownersName.get(stockpile.getOwnerID()));
+			//Update Item flag name
 			ItemFlag flag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
 			if (flag != null) {
 				stockpile.setFlag(flag.getFlagName());
+			} else {
+				stockpile.setFlag(null);
 			}
 			stockpile.reset();
 			if (!stockpile.isEmpty()) {
@@ -455,7 +458,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	@Override
-	public void listChanged(ListEvent<StockpileItem> listChanges) {
+	public void listChanged(final ListEvent<StockpileItem> listChanges) {
 		List<StockpileItem> items = new ArrayList<StockpileItem>(filterList);
 		//Remove StockpileTotal and SeparatorList.Separator
 		for (int i = 0; i < items.size(); i++) {

@@ -24,22 +24,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
+import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 
 
-public class CsvSettings {
+public class ExportSettings {
 
 	public enum FieldDelimiter {
 		COMMA(',') {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().comma();
+				return DialoguesExport.get().comma();
 			}
 		},
 		SEMICOLON(';') {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().semicolon();
+				return DialoguesExport.get().semicolon();
 			}
 		};
 		private char character;
@@ -59,19 +59,19 @@ public class CsvSettings {
 		DOS("\r\n") {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsWindows();
+				return DialoguesExport.get().lineEndingsWindows();
 			}
 		},
 		MAC("\r") {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsMac();
+				return DialoguesExport.get().lineEndingsMac();
 			}
 		},
 		UNIX("\n") {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().lineEndingsUnix();
+				return DialoguesExport.get().lineEndingsUnix();
 			}
 		};
 		private String string;
@@ -91,13 +91,13 @@ public class CsvSettings {
 		DOT() {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().dot();
+				return DialoguesExport.get().dot();
 			}
 		},
 		COMMA() {
 			@Override
 			String getI18N() {
-				return DialoguesCsvExport.get().comma();
+				return DialoguesExport.get().comma();
 			}
 		};
 		@Override
@@ -108,20 +108,28 @@ public class CsvSettings {
 	}
 
 	private static final String PATH = Settings.getUserDirectory();
-	private static final String FILENAME = Settings.getUserDirectory() + "export.csv";
-
-	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
-
+	//CSV
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeperator decimalSeperator;
-	private String filename = FILENAME;
+	//SQL
+	private final Map<String, String> tableNames = new HashMap<String, String>();
+	private boolean createTable;
+	private boolean dropTable;
+	private boolean extendedInserts;
+	//Shared
+	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
+	private final Map<String, String> filenames = new HashMap<String, String>();
+	//private String filename = FILENAME;
 
-	public CsvSettings() {
+	public ExportSettings() {
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
 		decimalSeperator = DecimalSeperator.DOT;
-		filename = FILENAME;
+		//filename = FILENAME;
+		createTable = true;
+		dropTable = true;
+		extendedInserts = true;
 	}
 
 	public DecimalSeperator getDecimalSeperator() {
@@ -148,12 +156,60 @@ public class CsvSettings {
 		this.lineDelimiter = lineDelimiter;
 	}
 
-	public String getFilename() {
-		return filename;
+	public boolean isCreateTable() {
+		return createTable;
 	}
 
-	public void setFilename(final String filename) {
-		this.filename = filename;
+	public void setCreateTable(final boolean createTable) {
+		this.createTable = createTable;
+	}
+
+	public boolean isDropTable() {
+		return dropTable;
+	}
+
+	public void setDropTable(final boolean dropTable) {
+		this.dropTable = dropTable;
+	}
+
+	public boolean isExtendedInserts() {
+		return extendedInserts;
+	}
+
+	public void setExtendedInserts(final boolean extendedInserts) {
+		this.extendedInserts = extendedInserts;
+	}
+
+	public Map<String, String> getTableNames() {
+		return tableNames;
+	}
+
+	public String getTableName(final String tool) {
+		if (tableNames.containsKey(tool)) {
+			return tableNames.get(tool);
+		} else {
+			return "";
+		}
+	}
+
+	public void putTableName(final String tool, final String tableName) {
+		tableNames.put(tool, tableName);
+	}
+
+	public String getFilename(final String tool) {
+		if (filenames.containsKey(tool)) {
+			return filenames.get(tool);
+		} else {
+			return getDefaultFilename(tool);
+		}
+	}
+
+	public void putFilename(final String tool, final String filename) {
+		filenames.put(tool, filename);
+	}
+
+	public Map<String, String> getFilenames() {
+		return filenames;
 	}
 
 	public List<String> getTableExportColumns(final String key) {
@@ -173,7 +229,8 @@ public class CsvSettings {
 	public static String getDefaultPath() {
 		return PATH;
 	}
-	public static String getDefaultFilename() {
-		return FILENAME;
+
+	public static String getDefaultFilename(final String tool) {
+		return Settings.getUserDirectory() + tool + "_export.csv";
 	}
 }

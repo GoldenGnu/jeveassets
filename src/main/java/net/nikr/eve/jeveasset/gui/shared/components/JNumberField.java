@@ -21,41 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 
 
-public class JNumberField extends JTextField implements FocusListener {
-
-	private String defaultValue;
+public class JNumberField extends JDefaultField implements FocusListener {
 
 	public JNumberField() {
 		this("0");
 	}
 
 	public JNumberField(final String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.addFocusListener(this);
+		super(defaultValue);
 		this.setDocument(DocumentFactory.getIntegerPlainDocument());
-	}
-
-	@Override
-	public void focusGained(final FocusEvent e) { }
-
-	@Override
-	public void focusLost(final FocusEvent e) {
-		if (super.getText().length() == 0) {
-			super.setText(defaultValue);
-		}
-	}
-
-	@Override
-	public String getText() {
-		if (super.getText().length() == 0) {
-			super.setText(defaultValue);
-		}
-		return super.getText();
 	}
 }

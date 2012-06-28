@@ -29,23 +29,27 @@ import uk.me.candle.translations.Bundle;
  *
  * @author Candle
  */
-public abstract class DialoguesCsvExport extends Bundle {
-	public static DialoguesCsvExport get() {
-		return Main.getBundleService().get(DialoguesCsvExport.class);
+public abstract class DialoguesExport extends Bundle {
+	public static DialoguesExport get() {
+		return Main.getBundleService().get(DialoguesExport.class);
 	}
 
-	public DialoguesCsvExport(final Locale locale) {
+	public DialoguesExport(final Locale locale) {
 		super(locale);
 	}
 	public abstract String cancel();
 	public abstract String columns();
 	public abstract String comma();
 	public abstract String confirmStupidDecision();
-	public abstract String csvExport();
+	public abstract String createTable();
+	public abstract String csv();
 	public abstract String currentFilter();
 	public abstract String decimalSeperator();
 	public abstract String defaultSettings();
 	public abstract String dot();
+	public abstract String dropTable();
+	public abstract String export();
+	public abstract String extendedInserts();
 	public abstract String failedToSave();
 	public abstract String fieldTerminated();
 	public abstract String filters();
@@ -59,5 +63,7 @@ public abstract class DialoguesCsvExport extends Bundle {
 	public abstract String savedFilter();
 	public abstract String selectOne();
 	public abstract String semicolon();
+	public abstract String sql();
+	public abstract String tableName();
 	public abstract String toolColumns();
 }

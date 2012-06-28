@@ -31,7 +31,7 @@ import org.junit.Test;
  * @author Candle
  */
 public class TestI18N {
-	
+
 	@Test
 	public void testDataModelAssetBundle_en() throws Exception {
 		DataModelEveAsset g = Main.getBundleService().get(DataModelEveAsset.class);
@@ -69,8 +69,8 @@ public class TestI18N {
 	}
 
 	@Test
-	public void testDialoguesCsvExport_en() throws Exception {
-		DialoguesCsvExport g = Main.getBundleService().get(DialoguesCsvExport.class);
+	public void testDialoguesExport_en() throws Exception {
+		DialoguesExport g = Main.getBundleService().get(DialoguesExport.class);
 		assertNotNull(g.noFilter());
 	}
 

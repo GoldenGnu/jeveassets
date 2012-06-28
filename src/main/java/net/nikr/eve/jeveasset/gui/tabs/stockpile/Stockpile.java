@@ -66,13 +66,13 @@ public class Stockpile implements Comparable<Stockpile> {
 	public Stockpile(final String name, final long ownerID, final String owner, final long locationID, final String location, final String system, final String region, final int flagID, final String flag, final String container, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs) {
 		this.name = name;
 		this.ownerID = ownerID;
-		this.owner = owner;
+		setOwner(owner);
 		this.locationID = locationID;
-		this.location = location;
+		setLocation(location);
 		this.system = system;
 		this.region = region;
 		this.flagID = flagID;
-		this.flag = flag;
+		setFlag(flag);
 		this.container = container;
 		this.inventory = inventory;
 		this.sellOrders = sellOrders;
@@ -160,11 +160,19 @@ public class Stockpile implements Comparable<Stockpile> {
 		return owner;
 	}
 
-	public void setOwner(final String owner) {
+	public final void setOwner(final String owner) {
 		if (owner == null) {
-			this.owner = "";
+			this.owner = TabsStockpile.get().all();
 		} else {
 			this.owner = owner;
+		}
+	}
+
+	private void setLocation(final String location) {
+		if (location == null) {
+			this.location = TabsStockpile.get().all();
+		} else {
+			this.location = location;
 		}
 	}
 
@@ -176,8 +184,12 @@ public class Stockpile implements Comparable<Stockpile> {
 		return flag;
 	}
 
-	public void setFlag(final String flag) {
-		this.flag = flag;
+	public final void setFlag(final String flag) {
+		if (flag == null) {
+			this.flag = TabsStockpile.get().all();
+		} else {
+			this.flag = flag;
+		}
 	}
 
 	public int getFlagID() {
@@ -337,8 +349,7 @@ public class Stockpile implements Comparable<Stockpile> {
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
-					&& ((stockpile.getLocation() != null
-					&& stockpile.getLocation().equals(asset.getLocation())) //LocationID can be an office...
+					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
 					|| stockpile.getLocationID() == regionID
 					|| stockpile.getLocationID() < 0)
