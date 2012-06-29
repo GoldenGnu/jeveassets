@@ -167,6 +167,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Selection Model
@@ -221,6 +223,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public Stockpile showAddStockpile() {

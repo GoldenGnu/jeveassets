@@ -93,6 +93,8 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
 		TableComparatorChooser.install(jTable, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
@@ -148,6 +150,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	@Override

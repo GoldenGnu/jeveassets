@@ -89,6 +89,8 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
@@ -137,6 +139,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	@Override

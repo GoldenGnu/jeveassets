@@ -101,6 +101,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -142,6 +144,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public boolean isFiltersEmpty() {
@@ -204,10 +207,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
-
-		JMenuItem jMenuItem;
 	//Logic
-		int[] selectedRows = jTable.getSelectedRows();
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
 	//COPY

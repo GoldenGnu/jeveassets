@@ -120,6 +120,7 @@ public class Settings {
 
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 
 	public Settings() {
@@ -673,6 +674,10 @@ public class Settings {
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		return tableColumns;
+	}
+
+	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
+		return tableColumnsWidth;
 	}
 
 	public Map<String, ResizeMode> getTableResize() {

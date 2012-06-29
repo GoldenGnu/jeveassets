@@ -81,6 +81,7 @@ public class SettingsReader extends AbstractXmlReader {
 			return false;
 		} catch (XmlException ex) {
 			LOG.error("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
+			return false;
 		}
 		LOG.info("Settings loaded");
 		return true;
@@ -183,6 +184,13 @@ public class SettingsReader extends AbstractXmlReader {
 		if (tablecolumnsNodes.getLength() == 1) {
 			Element tablecolumnsElement = (Element) tablecolumnsNodes.item(0);
 			parseTableColumns(tablecolumnsElement, settings);
+		}
+
+		//Table Columns Width
+		NodeList tableColumnsWidthNodes = element.getElementsByTagName("tablecolumnswidth");
+		if (tableColumnsWidthNodes.getLength() == 1) {
+			Element tableColumnsWidthElement = (Element) tableColumnsWidthNodes.item(0);
+			parseTableColumnsWidth(tableColumnsWidthElement, settings);
 		}
 
 		//Table Resize
@@ -439,6 +447,24 @@ public class SettingsReader extends AbstractXmlReader {
 			settings.getTableColumns().put(tableName, columns);
 		}
 	}
+
+	private static void parseTableColumnsWidth(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Map<String, Integer> columns = new HashMap<String, Integer>();
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++) {
+				Element columnNode = (Element) columnNodeList.item(b);
+				int width = AttributeGetters.getInt(columnNode, "width");
+				String column = AttributeGetters.getString(columnNode, "column");
+				columns.put(column, width);
+			}
+			settings.getTableColumnsWidth().put(tableName, columns);
+		}
+	}
+
 	private static void parseTableResize(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {

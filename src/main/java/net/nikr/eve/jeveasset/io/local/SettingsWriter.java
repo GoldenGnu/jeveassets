@@ -67,6 +67,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTableColumns(xmldoc, settings.getTableColumns());
+		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeExportSettings(xmldoc, Settings.getExportSettings());
 		try {
@@ -115,6 +116,23 @@ public class SettingsWriter extends AbstractXmlWriter {
 			}
 		}
 	}
+
+	private static void writeTableColumnsWidth(final Document xmldoc, final Map<String, Map<String, Integer>> tableColumnsWidth) {
+		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumnswidth");
+		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		for (Map.Entry<String, Map<String, Integer>> table : tableColumnsWidth.entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", table.getKey());
+			tablecolumnsNode.appendChild(nameNode);
+			for (Map.Entry<String, Integer> column : table.getValue().entrySet()) {
+				Element node = xmldoc.createElementNS(null, "column");
+				node.setAttributeNS(null, "column", String.valueOf(column.getKey()));
+				node.setAttributeNS(null, "width", String.valueOf(column.getValue()));
+				nameNode.appendChild(node);
+			}
+		}
+	}
+
 	private static void writeTablesResize(final Document xmldoc, final Map<String, ResizeMode> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tableresize");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
