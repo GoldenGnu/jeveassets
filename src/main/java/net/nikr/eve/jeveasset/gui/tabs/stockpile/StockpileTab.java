@@ -401,7 +401,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						continue;
 					}
 					int typeID = item.getTypeID();
-					double price = program.getSettings().getPrice(typeID, false);
+					double price = program.getSettings().getPrice(typeID, item.isBPC());
 					float volume = program.getSettings().getVolume(typeID, true);
 					boolean marketGroup = ApiIdConverter.marketGroup(typeID, program.getSettings().getItems());
 					item.updateValues(price, volume, marketGroup);

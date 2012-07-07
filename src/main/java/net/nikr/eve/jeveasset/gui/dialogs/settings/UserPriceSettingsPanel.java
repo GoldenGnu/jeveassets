@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -74,9 +73,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 		public UserPrice(final UserItem<Integer, Double> userItem) {
 			super(userItem);
 		}
-		public UserPrice(final Asset eveAsset) {
-			super(eveAsset.getPrice(), (eveAsset.isBlueprint() && !eveAsset.isBpo()) ? -eveAsset.getTypeID() : eveAsset.getTypeID(), eveAsset.getTypeName());
-		}
+
 		public UserPrice(final Double value, final Integer key, final String name) {
 			super(value, key, name);
 		}

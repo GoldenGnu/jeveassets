@@ -36,6 +36,7 @@ public abstract class TabsStockpile extends Bundle {
 	}
 
 	public abstract String stockpile();
+	public abstract String copy();
 	public abstract String newStockpile();
 	public abstract String addStockpileTitle();
 	public abstract String editStockpileTitle();

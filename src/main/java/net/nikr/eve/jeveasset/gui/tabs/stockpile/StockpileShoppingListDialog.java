@@ -127,7 +127,7 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 		double volume = 0;
 		double value = 0;
 		for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()) {
-			if (stockpileItem.getTypeID() > 0) {
+			if (stockpileItem.getItemTypeID() != 0) { //Ignore Total
 				final double minimumCount = (stockpileItem.getCountMinimum() * percent / 100.0);
 				final double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
 				if (countNeeded > 0) {

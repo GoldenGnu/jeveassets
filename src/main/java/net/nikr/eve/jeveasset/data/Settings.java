@@ -455,6 +455,12 @@ public class Settings {
 		if (userPrice != null) {
 			return userPrice.getValue();
 		}
+
+		//Blueprint Copy (Default Zero)
+		if (isBlueprintCopy) {
+			return 0;
+		}
+
 		//Price data
 		PriceData priceData = null;
 		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price

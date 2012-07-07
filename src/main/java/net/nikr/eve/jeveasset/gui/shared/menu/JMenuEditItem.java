@@ -68,12 +68,10 @@ public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
 			UserPrice userPrice;
-			if (asset != null) {
-				userPrice = new UserPrice(asset);
-			} else {
-				userPrice = new UserPrice(prices.get(0), typeIDs.get(0), typeNames.get(0));
+			if (!blueprintTypeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty()) {
+				userPrice = new UserPrice(prices.get(0), blueprintTypeIDs.get(0), typeNames.get(0));
+				program.getUserPriceSettingsPanel().edit(userPrice);
 			}
-			program.getUserPriceSettingsPanel().edit(userPrice);
 		}
 		if (ACTION_USER_NAME_EDIT.equals(e.getActionCommand())) {
 			program.getUserNameSettingsPanel().edit(new UserName(asset));

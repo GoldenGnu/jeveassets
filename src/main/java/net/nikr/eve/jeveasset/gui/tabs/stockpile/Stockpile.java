@@ -56,7 +56,7 @@ public class Stockpile implements Comparable<Stockpile> {
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
 		for (StockpileItem item : stockpile.getItems()) {
-			if (item.getTypeID() > 0) { //Ignore Total
+			if (item.getItemTypeID() != 0) { //Ignore Total
 				items.add(new StockpileItem(this, item));
 			}
 		}
@@ -305,9 +305,9 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public StockpileItem(final Stockpile stockpile, final StockpileItem stockpileItem) {
 			this(stockpile,
-					stockpileItem.getName(),
+					stockpileItem.getTypeName(),
 					stockpileItem.getGroup(),
-					stockpileItem.getTypeID(),
+					stockpileItem.getItemTypeID(),
 					stockpileItem.getCountMinimum()
 					);
 		}
@@ -345,7 +345,8 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public void updateAsset(final Asset asset, final Long characterID, final Long regionID) {
 			if (asset != null && characterID != null && regionID != null //better safe then sorry
-					&& typeID == asset.getTypeID()
+					&& (typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
+						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //Copy
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
@@ -427,7 +428,29 @@ public class Stockpile implements Comparable<Stockpile> {
 			return stockpile;
 		}
 
+		public boolean isBPC(){
+			return (typeID < 0);
+		}
+
+		public boolean isBPO(){
+			return isBlueprint() && !isBPC();
+		}
+
+		public boolean isBlueprint(){
+			return name.toLowerCase().contains("blueprint");
+		}
+
 		public String getName() {
+			if (isBPC()) { //Blueprint copy
+				return name+" (BPC)";
+			} else if (isBPO()) { //Blueprint original
+				return name+" (BPO)";
+			} else { //Everything else
+				return name;
+			}
+		}
+
+		public String getTypeName(){
 			return name;
 		}
 
@@ -473,8 +496,12 @@ public class Stockpile implements Comparable<Stockpile> {
 			return price;
 		}
 
-		public int getTypeID() {
+		public int getItemTypeID() {
 			return typeID;
+		}
+
+		public int getTypeID() {
+			return Math.abs(typeID);
 		}
 
 		public double getVolume() {

@@ -23,19 +23,9 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -62,11 +52,11 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 		jItems = new JComboBox();
 
-		jEdit = new JButton("Edit");
+		jEdit = new JButton("Edit"); //FIXME i18n
 		jEdit.setActionCommand(ACTION_EDIT);
 		jEdit.addActionListener(listener);
 
-		jDelete = new JButton("Delete");
+		jDelete = new JButton("Delete"); //FIXME i18n
 		jDelete.setActionCommand(ACTION_DELETE);
 		jDelete.addActionListener(listener);
 
