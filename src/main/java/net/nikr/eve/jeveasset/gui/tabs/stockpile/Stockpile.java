@@ -378,6 +378,7 @@ public class Stockpile implements Comparable<Stockpile> {
 			if (marketOrder != null && ownerID != null && location != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
 					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
+					&& marketOrder.getOrderState() == 0 //Open/Active
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
 					|| stockpile.getLocationID() == location.getRegionID()
