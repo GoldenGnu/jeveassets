@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -321,6 +322,7 @@ public class JMenuInfo {
 		jMenuItem.setToolTipText(toolTipText);
 		jMenuItem.setEnabled(false);
 		jMenuItem.setDisabledIcon(icon);
+		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setHorizontalAlignment(SwingConstants.RIGHT);
 		jPopupMenu.add(jMenuItem);
 	}
@@ -336,6 +338,7 @@ public class JMenuInfo {
 					BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().brighter())
 					, BorderFactory.createMatteBorder(0, 0, 1, 0, jMenuItem.getBackground().darker())));
 		}
+		jMenuItem.setForeground(Color.BLACK);
 		jMenuItem.setBorder(border);
 		jMenuItem.setBorderPainted(true);
 		jPopupMenu.add(jMenuItem);
@@ -349,6 +352,7 @@ public class JMenuInfo {
 		jMenuItem = new JMenuItem(GuiShared.get().selectionTitle());
 		jMenuItem.setDisabledIcon(Images.DIALOG_ABOUT.getIcon());
 		jMenuItem.setEnabled(false);
+		jMenuItem.setForeground(Color.BLACK);
 		jPopupMenu.add(jMenuItem);
 
 		JPanel jSpacePanel = new JPanel();
