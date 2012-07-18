@@ -606,7 +606,7 @@
         <material id="35" portionsize="1" quantity="245"/>
         <material id="36" portionsize="1" quantity="194"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="434" marketgroup="true" meta="0" name="1MN MicroWarpdrive I" pi="false" portion="1" price="31604" tech="Tech I" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="434" marketgroup="true" meta="0" name="1MN Microwarpdrive I" pi="false" portion="1" price="31604" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="3570"/>
         <material id="35" portionsize="1" quantity="1918"/>
         <material id="36" portionsize="1" quantity="205"/>
@@ -626,7 +626,7 @@
         <material id="36" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="440" marketgroup="true" meta="5" name="1MN MicroWarpdrive II" pi="false" portion="1" price="396228" tech="Tech II" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="440" marketgroup="true" meta="5" name="1MN Microwarpdrive II" pi="false" portion="1" price="396228" tech="Tech II" volume="10.0">
         <material id="34" portionsize="1" quantity="4130"/>
         <material id="35" portionsize="1" quantity="2068"/>
         <material id="36" portionsize="1" quantity="235"/>
@@ -1745,10 +1745,10 @@
     <row category="Blueprint" group="Shield Recharger Blueprint" id="1027" marketgroup="false" meta="0" name="Shield Recharger II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Shield Booster Blueprint" id="1032" marketgroup="true" meta="0" name="Small Shield Booster I Blueprint" pi="false" portion="1" price="91160" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Shield Booster Blueprint" id="1033" marketgroup="false" meta="0" name="Small Shield Booster II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="1067" marketgroup="true" meta="0" name="1MN MicroWarpdrive I Blueprint" pi="false" portion="1" price="316360" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="1067" marketgroup="true" meta="0" name="1MN Microwarpdrive I Blueprint" pi="false" portion="1" price="316360" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="1071" marketgroup="false" meta="0" name="1MN Afterburner II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="1072" marketgroup="true" meta="0" name="1MN Afterburner I Blueprint" pi="false" portion="1" price="64500" tech="Tech I" volume="0.01"/>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="1073" marketgroup="false" meta="0" name="1MN MicroWarpdrive II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="1073" marketgroup="false" meta="0" name="1MN Microwarpdrive II Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Cargo Scanner Blueprint" id="1074" marketgroup="true" meta="0" name="Cargo Scanner I Blueprint" pi="false" portion="1" price="15000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Ship Scanner Blueprint" id="1075" marketgroup="true" meta="0" name="Ship Scanner I Blueprint" pi="false" portion="1" price="19840" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Survey Scanner Blueprint" id="1076" marketgroup="true" meta="0" name="Survey Scanner I Blueprint" pi="false" portion="1" price="20000" tech="Tech I" volume="0.01"/>
@@ -3827,7 +3827,7 @@
     <row category="Blueprint" group="Structures - Laser Battery Blueprints" id="2828" marketgroup="true" meta="0" name="Medium Beam Laser Battery Blueprint" pi="false" portion="1" price="50000000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Structures - Laser Battery Blueprints" id="2829" marketgroup="true" meta="0" name="Large Pulse Laser Battery Blueprint" pi="false" portion="1" price="100000000" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Structures - Laser Battery Blueprints" id="2830" marketgroup="true" meta="0" name="Large Beam Laser Battery Blueprint" pi="false" portion="1" price="100000000" tech="Tech I" volume="0.01"/>
-    <row category="Accessories" group="Game Time" id="2833" marketgroup="false" meta="0" name="Aurum Token" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Accessories" group="Game Time" id="2833" marketgroup="true" meta="0" name="1000 Aurum Token" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Ship" group="Assault Ship" id="2834" marketgroup="true" meta="5" name="Utu" pi="false" portion="1" price="220000" tech="Tech I" volume="29500.0">
         <material id="34" portionsize="1" quantity="11528"/>
         <material id="35" portionsize="1" quantity="9882"/>
@@ -3852,9 +3852,7 @@
     <row category="Commodity" group="Miscellaneous" id="2853" marketgroup="false" meta="0" name="Salvaged Electronics" pi="false" portion="1" price="0" tech="Tech I" volume="20.0"/>
     <row category="Commodity" group="Miscellaneous" id="2861" marketgroup="false" meta="0" name="Crate of Manportable Electromagnetic Pulse Weapons" pi="false" portion="1" price="0" tech="Tech I" volume="250.0"/>
     <row category="Commodity" group="Miscellaneous" id="2862" marketgroup="false" meta="0" name="Special Forces Weapons and Equipment " pi="false" portion="1" price="0" tech="Tech I" volume="25.0"/>
-    <row category="Ship" group="Industrial" id="2863" marketgroup="true" meta="0" name="Primae" pi="false" portion="1" price="0" tech="Tech I" volume="270000.0">
-        <material id="34" portionsize="1" quantity="0"/>
-    </row>
+    <row category="Ship" group="Industrial" id="2863" marketgroup="true" meta="0" name="Primae" pi="false" portion="1" price="0" tech="Tech I" volume="270000.0"/>
     <row category="Blueprint" group="Industrial Blueprint" id="2864" marketgroup="false" meta="0" name="Primae Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Projectile Weapon" id="2865" marketgroup="true" meta="5" name="1200mm Artillery Cannon II" pi="false" portion="1" price="1987540" tech="Tech II" volume="20.0">
         <material id="34" portionsize="1" quantity="92050"/>
@@ -6316,7 +6314,6 @@
         <material id="35" portionsize="1" quantity="226"/>
         <material id="36" portionsize="1" quantity="94"/>
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Apparel" group="Bottoms" id="4026" marketgroup="true" meta="0" name="Women's 'Excursion' Pants (matte blue)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Module" group="Stasis Web" id="4027" marketgroup="true" meta="4" name="Fleeting Propulsion Inhibitor I" pi="false" portion="1" price="5804" tech="Tech I" volume="5.0">
@@ -6324,7 +6321,6 @@
         <material id="35" portionsize="1" quantity="226"/>
         <material id="36" portionsize="1" quantity="94"/>
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Apparel" group="Bottoms" id="4028" marketgroup="true" meta="0" name="Women's 'Excursion' Pants (matte green)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Module" group="Stasis Web" id="4029" marketgroup="true" meta="1" name="'Langour' Drive Disruptor I" pi="false" portion="1" price="5804" tech="Tech I" volume="5.0">
@@ -6332,7 +6328,6 @@
         <material id="35" portionsize="1" quantity="226"/>
         <material id="36" portionsize="1" quantity="94"/>
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Apparel" group="Bottoms" id="4030" marketgroup="true" meta="0" name="Women's 'Excursion' Pants (matte red)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Module" group="Stasis Web" id="4031" marketgroup="true" meta="2" name="Patterned Stasis Web I" pi="false" portion="1" price="5804" tech="Tech I" volume="5.0">
@@ -6340,7 +6335,6 @@
         <material id="35" portionsize="1" quantity="226"/>
         <material id="36" portionsize="1" quantity="94"/>
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Apparel" group="Bottoms" id="4032" marketgroup="true" meta="0" name="Women's 'Excursion' Pants (silver)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Apparel" group="Bottoms" id="4033" marketgroup="true" meta="0" name="Women's 'Impress' Skirt (black leather)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
@@ -6964,6 +6958,7 @@
     <row category="Module" group="QA Module" id="4376" marketgroup="false" meta="0" name="QA Multiship Module - 40 Players" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4377" marketgroup="false" meta="0" name="QA Multiship Module - 5 Players" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Module" group="QA Module" id="4380" marketgroup="false" meta="0" name="QA Immunity Module" pi="false" portion="1" price="362408" tech="Tech I" volume="1.0"/>
+    <row category="Module" group="Propulsion Module" id="4383" marketgroup="false" meta="0" name="Micro Jump Drive I" pi="false" portion="1" price="1100466" tech="Tech I" volume="10.0"/>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="4384" marketgroup="false" meta="0" name="Micro Jump Drive I Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Skill" group="Navigation" id="4385" marketgroup="false" meta="0" name="Micro Jump Drive Operation" pi="false" portion="1" price="0" tech="Tech I" volume="0.0"/>
     <row category="Deployable" group="Mobile Jump Disruptor" id="4386" marketgroup="true" meta="0" name="Mobile Large Jump Disruptor I" pi="false" portion="1" price="7671490" tech="Tech I" volume="585.0">
@@ -7047,7 +7042,7 @@
         <material id="40" portionsize="1" quantity="4"/>
     </row>
     <row category="Blueprint" group="Target Breaker Blueprint" id="4410" marketgroup="false" meta="0" name="Target Spectrum Breaker Blueprint" pi="false" portion="1" price="296960" tech="Tech I" volume="0.01"/>
-    <row category="Skill" group="Electronics" id="4411" marketgroup="true" meta="0" name="Target Breaker" pi="false" portion="1" price="600000" tech="Tech I" volume="0.01"/>
+    <row category="Skill" group="Electronics" id="4411" marketgroup="true" meta="0" name="Target Breaker Amplification" pi="false" portion="1" price="600000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Capacitor Recharger" id="4421" marketgroup="true" meta="0" name="F-a10 Buffer Capacitor Regenerator" pi="false" portion="1" price="828" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="38"/>
         <material id="35" portionsize="1" quantity="14"/>
@@ -7074,55 +7069,43 @@
     </row>
     <row category="Module" group="Capacitor Recharger" id="4431" marketgroup="true" meta="3" name="F-b10 Nominal Capacitor Regenerator" pi="false" portion="1" price="1040" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="114"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Recharger" id="4433" marketgroup="true" meta="1" name="Barton Reactor Capacitor Recharger I" pi="false" portion="1" price="1040" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="114"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Recharger" id="4435" marketgroup="true" meta="4" name="Eutectic Capacitor Charge Array" pi="false" portion="1" price="1040" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="114"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Recharger" id="4437" marketgroup="true" meta="2" name="Fixed Parallel Link-Capacitor I" pi="false" portion="1" price="1040" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="114"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Destabilizer" id="4471" marketgroup="true" meta="3" name="5W Infectious Power System Malfunction" pi="false" portion="1" price="8956" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="234"/>
         <material id="35" portionsize="1" quantity="17"/>
         <material id="36" portionsize="1" quantity="89"/>
         <material id="37" portionsize="1" quantity="43"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Destabilizer" id="4473" marketgroup="true" meta="1" name="Small Rudimentary Energy Destabilizer I" pi="false" portion="1" price="8956" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="234"/>
         <material id="35" portionsize="1" quantity="17"/>
         <material id="36" portionsize="1" quantity="89"/>
         <material id="37" portionsize="1" quantity="43"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Destabilizer" id="4475" marketgroup="true" meta="4" name="Small Unstable Power Fluctuator I" pi="false" portion="1" price="8956" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="234"/>
         <material id="35" portionsize="1" quantity="17"/>
         <material id="36" portionsize="1" quantity="89"/>
         <material id="37" portionsize="1" quantity="43"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Destabilizer" id="4477" marketgroup="true" meta="2" name="Small 'Gremlin' Power Core Disruptor I" pi="false" portion="1" price="8956" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="234"/>
         <material id="35" portionsize="1" quantity="17"/>
         <material id="36" portionsize="1" quantity="89"/>
         <material id="37" portionsize="1" quantity="43"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="4529" marketgroup="true" meta="1" name="Small I-a Polarized Armor Regenerator" pi="false" portion="1" price="9996" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="386"/>
@@ -7148,28 +7131,24 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="4571" marketgroup="true" meta="2" name="Medium Inefficient Armor Repair Unit" pi="false" portion="1" price="19916" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="4573" marketgroup="true" meta="4" name="Medium 'Accommodation' Vestment Reconstructer I" pi="false" portion="1" price="19916" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="4575" marketgroup="true" meta="3" name="Medium Automated Carapace Restoration" pi="false" portion="1" price="19916" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="4579" marketgroup="false" meta="4" name="Medium Nano Armor Repair Unit I" pi="false" portion="1" price="49728" tech="Tech I" volume="10.0"/>
@@ -7331,14 +7310,12 @@
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Booster" id="5009" marketgroup="true" meta="1" name="Small Brief Capacitor Overcharge I" pi="false" portion="1" price="3472" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Booster" id="5011" marketgroup="true" meta="4" name="Small Electrochemical Capacitor Booster I" pi="false" portion="1" price="3472" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
@@ -7351,7 +7328,6 @@
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Booster" id="5017" marketgroup="false" meta="6" name="Small Perishable Capacitor Overcharge II" pi="false" portion="1" price="195308" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Capacitor Booster" id="5047" marketgroup="true" meta="3" name="Heavy F-RX Prototype Capacitor Boost" pi="false" portion="1" price="195308" tech="Tech I" volume="20.0">
@@ -7459,28 +7435,24 @@
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="5217" marketgroup="true" meta="1" name="Dual Afocal Pulse Maser I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="5219" marketgroup="true" meta="4" name="Dual Modulated Pulse Energy Beam I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="5221" marketgroup="true" meta="3" name="Dual Anode Pulse Particle Stream I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Mining Laser" id="5231" marketgroup="true" meta="0" name="EP-R Argon Ion Basic Excavation Pulse" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Mining Laser" id="5233" marketgroup="true" meta="0" name="Single Diode Basic Mining Laser" pi="false" portion="1" price="0" tech="Tech I" volume="5.0"/>
@@ -7515,28 +7487,24 @@
         <material id="35" portionsize="1" quantity="270"/>
         <material id="36" portionsize="1" quantity="102"/>
         <material id="37" portionsize="1" quantity="31"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Remote Sensor Booster" id="5280" marketgroup="true" meta="3" name="Connected Scanning CPU Uplink" pi="false" portion="1" price="9664" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="136"/>
         <material id="35" portionsize="1" quantity="270"/>
         <material id="36" portionsize="1" quantity="102"/>
         <material id="37" portionsize="1" quantity="31"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Remote Sensor Booster" id="5281" marketgroup="true" meta="1" name="Coadjunct Linked Sensor Array I" pi="false" portion="1" price="9664" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="136"/>
         <material id="35" portionsize="1" quantity="270"/>
         <material id="36" portionsize="1" quantity="102"/>
         <material id="37" portionsize="1" quantity="31"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Remote Sensor Booster" id="5282" marketgroup="true" meta="2" name="Linked Sensor Network" pi="false" portion="1" price="9664" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="136"/>
         <material id="35" portionsize="1" quantity="270"/>
         <material id="36" portionsize="1" quantity="102"/>
         <material id="37" portionsize="1" quantity="31"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Remote Sensor Damper" id="5299" marketgroup="true" meta="3" name="Low Frequency Sensor Suppressor I" pi="false" portion="1" price="13948" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="206"/>
@@ -7732,34 +7700,26 @@
     </row>
     <row category="Module" group="Expanded Cargohold" id="5487" marketgroup="true" meta="1" name="Mark I Modified SS Expanded Cargo" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Expanded Cargohold" id="5489" marketgroup="true" meta="4" name="Local Hull Conversion Expanded Cargo I" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Expanded Cargohold" id="5491" marketgroup="true" meta="3" name="Beta Hull Mod Expanded Cargo" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Expanded Cargohold" id="5493" marketgroup="true" meta="2" name="Type-D Altered SS Expanded Cargo" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Inertia Stabilizer" id="5519" marketgroup="true" meta="1" name="Marked Modified SS Inertial Stabilizers" pi="false" portion="1" price="1024" tech="Tech I" volume="5.0">
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Inertia Stabilizer" id="5521" marketgroup="true" meta="0" name="Partial Hull Conversion Inertial Stabilizers" pi="false" portion="1" price="1024" tech="Tech I" volume="5.0">
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Inertia Stabilizer" id="5523" marketgroup="true" meta="0" name="Alpha Hull Mod Inertial Stabilizers" pi="false" portion="1" price="1024" tech="Tech I" volume="5.0">
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Inertia Stabilizer" id="5525" marketgroup="true" meta="0" name="Type-E Altered SS Inertial Stabilizers" pi="false" portion="1" price="1024" tech="Tech I" volume="5.0">
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Inertia Stabilizer" id="5527" marketgroup="true" meta="1" name="Mark I Modified SS Inertial Stabilizers" pi="false" portion="1" price="40960" tech="Tech I" volume="5.0">
@@ -7776,83 +7736,63 @@
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5559" marketgroup="true" meta="0" name="Partial Hull Conversion Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5561" marketgroup="true" meta="4" name="Local Hull Conversion Nanofiber Structure I" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5591" marketgroup="true" meta="0" name="Alpha Hull Mod Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5593" marketgroup="true" meta="0" name="Type-E Altered SS Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5595" marketgroup="true" meta="0" name="Marked Modified SS Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5597" marketgroup="true" meta="3" name="Beta Hull Mod Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5599" marketgroup="true" meta="2" name="Type-D Altered SS Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="5601" marketgroup="true" meta="1" name="Mark I Modified SS Nanofiber Structure" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5611" marketgroup="true" meta="0" name="Partial Hull Conversion Overdrive Injector" pi="false" portion="1" price="8192" tech="Tech I" volume="5.0">
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="4"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5613" marketgroup="true" meta="0" name="Alpha Hull Mod Overdrive Injector" pi="false" portion="1" price="8192" tech="Tech I" volume="5.0">
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="4"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5615" marketgroup="true" meta="0" name="Type-E Altered SS Overdrive Injector" pi="false" portion="1" price="8192" tech="Tech I" volume="5.0">
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="4"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5617" marketgroup="true" meta="0" name="Marked Modified SS Overdrive Injector" pi="false" portion="1" price="8192" tech="Tech I" volume="5.0">
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="4"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5627" marketgroup="true" meta="4" name="Local Hull Conversion Overdrive Injector I" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5629" marketgroup="true" meta="3" name="Beta Hull Mod Overdrive Injector" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5631" marketgroup="true" meta="2" name="Type-D Altered SS Overdrive Injector" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Overdrive Injector System" id="5633" marketgroup="true" meta="1" name="Mark I Modified SS Overdrive Injector" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reinforced Bulkhead" id="5643" marketgroup="true" meta="4" name="Local Hull Conversion Reinforced Bulkheads I" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reinforced Bulkhead" id="5645" marketgroup="true" meta="3" name="Beta Hull Mod Reinforced Bulkheads" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reinforced Bulkhead" id="5647" marketgroup="true" meta="2" name="Type-D Altered SS Reinforced Bulkheads" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reinforced Bulkhead" id="5649" marketgroup="true" meta="1" name="Mark I Modified SS Reinforced Bulkheads" pi="false" portion="1" price="512" tech="Tech I" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reinforced Bulkhead" id="5675" marketgroup="true" meta="0" name="Partial Hull Conversion Reinforced Bulkheads" pi="false" portion="1" price="22528" tech="Tech I" volume="5.0">
         <material id="39" portionsize="1" quantity="3"/>
@@ -7966,25 +7906,21 @@
         <material id="34" portionsize="1" quantity="294"/>
         <material id="35" portionsize="1" quantity="3"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Damage Control" id="5831" marketgroup="true" meta="0" name="Interior Force Field Array" pi="false" portion="1" price="740" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
         <material id="35" portionsize="1" quantity="3"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Damage Control" id="5833" marketgroup="true" meta="0" name="Systematic Damage Control" pi="false" portion="1" price="740" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
         <material id="35" portionsize="1" quantity="3"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Damage Control" id="5835" marketgroup="true" meta="0" name="F84 Local Damage System" pi="false" portion="1" price="740" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
         <material id="35" portionsize="1" quantity="3"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Damage Control" id="5837" marketgroup="true" meta="3" name="Pseudoelectron Containment Field I" pi="false" portion="1" price="2244" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="478"/>
@@ -8014,7 +7950,6 @@
         <material id="34" portionsize="1" quantity="116"/>
         <material id="35" portionsize="1" quantity="79"/>
         <material id="36" portionsize="1" quantity="103"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Heat Sink" id="5846" marketgroup="true" meta="1" name="Thermal Exhaust System I" pi="false" portion="1" price="7360" tech="Tech I" volume="5.0">
@@ -8022,34 +7957,29 @@
         <material id="36" portionsize="1" quantity="143"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Heat Sink" id="5849" marketgroup="true" meta="4" name="Extruded Heat Sink I" pi="false" portion="1" price="7360" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="304"/>
         <material id="36" portionsize="1" quantity="143"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Heat Sink" id="5854" marketgroup="true" meta="0" name="Stamped Heat Sink" pi="false" portion="1" price="4672" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="116"/>
         <material id="35" portionsize="1" quantity="79"/>
         <material id="36" portionsize="1" quantity="103"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Heat Sink" id="5855" marketgroup="true" meta="0" name="'Boreas' Coolant System" pi="false" portion="1" price="4672" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="116"/>
         <material id="35" portionsize="1" quantity="79"/>
         <material id="36" portionsize="1" quantity="103"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Heat Sink" id="5856" marketgroup="true" meta="0" name="C3S Convection Thermal Radiator" pi="false" portion="1" price="4672" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="116"/>
         <material id="35" portionsize="1" quantity="79"/>
         <material id="36" portionsize="1" quantity="103"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Heat Sink" id="5857" marketgroup="true" meta="3" name="'Skadi' Coolant System I" pi="false" portion="1" price="7360" tech="Tech I" volume="5.0">
@@ -8057,14 +7987,12 @@
         <material id="36" portionsize="1" quantity="143"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Heat Sink" id="5858" marketgroup="true" meta="2" name="C4S Coiled Circuit Thermal Radiator" pi="false" portion="1" price="7360" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="304"/>
         <material id="36" portionsize="1" quantity="143"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Passive Targeting System" id="5865" marketgroup="true" meta="2" name="Indirect Target Acquisition I" pi="false" portion="1" price="934" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="51"/>
@@ -8090,28 +8018,24 @@
         <material id="34" portionsize="1" quantity="254"/>
         <material id="35" portionsize="1" quantity="44"/>
         <material id="36" portionsize="1" quantity="107"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Gyrostabilizer" id="5915" marketgroup="true" meta="0" name="Lateral Gyrostabilizer" pi="false" portion="1" price="4796" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="254"/>
         <material id="35" portionsize="1" quantity="44"/>
         <material id="36" portionsize="1" quantity="107"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Gyrostabilizer" id="5917" marketgroup="true" meta="0" name="Stabilized Weapon Mounts" pi="false" portion="1" price="4796" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="254"/>
         <material id="35" portionsize="1" quantity="44"/>
         <material id="36" portionsize="1" quantity="107"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Gyrostabilizer" id="5919" marketgroup="true" meta="0" name="F-M2 Weapon Inertial Suspensor" pi="false" portion="1" price="4796" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="254"/>
         <material id="35" portionsize="1" quantity="44"/>
         <material id="36" portionsize="1" quantity="107"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Gyrostabilizer" id="5929" marketgroup="true" meta="3" name="Pneumatic Stabilization Actuator I" pi="false" portion="1" price="12096" tech="Tech I" volume="5.0">
@@ -8142,7 +8066,7 @@
         <material id="37" portionsize="1" quantity="1"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="5945" marketgroup="true" meta="4" name="Prototype 100MN MicroWarpdrive I" pi="false" portion="1" price="790940" tech="Tech I" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="5945" marketgroup="true" meta="4" name="Prototype 100MN Microwarpdrive I" pi="false" portion="1" price="790940" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -8168,7 +8092,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="4"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="5973" marketgroup="true" meta="2" name="Limited 1MN MicroWarpdrive I" pi="false" portion="1" price="37748" tech="Tech I" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="5973" marketgroup="true" meta="2" name="Limited 1MN Microwarpdrive I" pi="false" portion="1" price="37748" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="134"/>
         <material id="35" portionsize="1" quantity="21"/>
         <material id="36" portionsize="1" quantity="42"/>
@@ -8176,7 +8100,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="4"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="5975" marketgroup="true" meta="3" name="Experimental 10MN MicroWarpdrive I" pi="false" portion="1" price="37748" tech="Tech I" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="5975" marketgroup="true" meta="3" name="Experimental 10MN Microwarpdrive I" pi="false" portion="1" price="37748" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="134"/>
         <material id="35" portionsize="1" quantity="21"/>
         <material id="36" portionsize="1" quantity="42"/>
@@ -8186,19 +8110,16 @@
     </row>
     <row category="Module" group="Propulsion Module" id="6001" marketgroup="true" meta="2" name="Limited 1MN Afterburner I" pi="false" portion="1" price="3952" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="110"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="8"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Propulsion Module" id="6003" marketgroup="true" meta="3" name="Experimental 1MN Afterburner I" pi="false" portion="1" price="3952" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="110"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="8"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Propulsion Module" id="6005" marketgroup="true" meta="3" name="Experimental 10MN Afterburner I" pi="false" portion="1" price="3952" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="110"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="8"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
@@ -8231,28 +8152,24 @@
         <material id="35" portionsize="1" quantity="476"/>
         <material id="36" portionsize="1" quantity="222"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Battery" id="6083" marketgroup="true" meta="4" name="Medium Peroxide Capacitor Power Cell" pi="false" portion="1" price="12244" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="602"/>
         <material id="35" portionsize="1" quantity="476"/>
         <material id="36" portionsize="1" quantity="222"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Battery" id="6097" marketgroup="true" meta="2" name="Medium Ohm Capacitor Reserve I" pi="false" portion="1" price="12244" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="602"/>
         <material id="35" portionsize="1" quantity="476"/>
         <material id="36" portionsize="1" quantity="222"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Battery" id="6111" marketgroup="true" meta="3" name="Medium F-4a Ld-Sulfate Capacitor Charge Unit" pi="false" portion="1" price="12244" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="602"/>
         <material id="35" portionsize="1" quantity="476"/>
         <material id="36" portionsize="1" quantity="222"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Cargo Scanner" id="6129" marketgroup="true" meta="1" name="Surface Cargo Scanner I" pi="false" portion="1" price="730" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="265"/>
@@ -8277,50 +8194,42 @@
     <row category="Module" group="Sensor Booster" id="6157" marketgroup="true" meta="2" name="Supplemental Scanning CPU I" pi="false" portion="1" price="2460" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="106"/>
         <material id="35" portionsize="1" quantity="169"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="7"/>
     </row>
     <row category="Module" group="Sensor Booster" id="6158" marketgroup="true" meta="1" name="Prototype Sensor Booster" pi="false" portion="1" price="2460" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="106"/>
         <material id="35" portionsize="1" quantity="169"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="7"/>
     </row>
     <row category="Module" group="Sensor Booster" id="6159" marketgroup="true" meta="3" name="Alumel-Wired Sensor Augmentation" pi="false" portion="1" price="2460" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="106"/>
         <material id="35" portionsize="1" quantity="169"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="7"/>
     </row>
     <row category="Module" group="Sensor Booster" id="6160" marketgroup="true" meta="4" name="F-90 Positional Sensor Subroutines" pi="false" portion="1" price="2460" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="106"/>
         <material id="35" portionsize="1" quantity="169"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="7"/>
     </row>
     <row category="Module" group="Tracking Computer" id="6173" marketgroup="true" meta="4" name="Optical Tracking Computer I" pi="false" portion="1" price="1420" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="86"/>
         <material id="35" portionsize="1" quantity="52"/>
         <material id="36" portionsize="1" quantity="26"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Tracking Computer" id="6174" marketgroup="true" meta="1" name="Monopulse Tracking Mechanism I" pi="false" portion="1" price="1420" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="86"/>
         <material id="35" portionsize="1" quantity="52"/>
         <material id="36" portionsize="1" quantity="26"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Tracking Computer" id="6175" marketgroup="true" meta="3" name="'Orion' Tracking CPU I" pi="false" portion="1" price="1420" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="86"/>
         <material id="35" portionsize="1" quantity="52"/>
         <material id="36" portionsize="1" quantity="26"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Tracking Computer" id="6176" marketgroup="true" meta="2" name="F-12 Nonlinear Tracking Processor" pi="false" portion="1" price="1420" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="86"/>
         <material id="35" portionsize="1" quantity="52"/>
         <material id="36" portionsize="1" quantity="26"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Sensor Backup Array" id="6193" marketgroup="true" meta="0" name="Emergency Magnetometric Scanners" pi="false" portion="1" price="2350" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="55"/>
@@ -8534,53 +8443,41 @@
         <material id="34" portionsize="1" quantity="186"/>
         <material id="35" portionsize="1" quantity="35"/>
         <material id="36" portionsize="1" quantity="66"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6294" marketgroup="true" meta="1" name="'Mendicant' Signal Booster I" pi="false" portion="1" price="4812" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="186"/>
         <material id="35" portionsize="1" quantity="35"/>
         <material id="36" portionsize="1" quantity="66"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6295" marketgroup="true" meta="4" name="Type-D Attenuation Signal Augmentation" pi="false" portion="1" price="4812" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="186"/>
         <material id="35" portionsize="1" quantity="35"/>
         <material id="36" portionsize="1" quantity="66"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6296" marketgroup="true" meta="3" name="F-89 Synchronized Signal Amplifier" pi="false" portion="1" price="4812" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="186"/>
         <material id="35" portionsize="1" quantity="35"/>
         <material id="36" portionsize="1" quantity="66"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6309" marketgroup="true" meta="0" name="Amplitude Signal Enhancer" pi="false" portion="1" price="1264" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="126"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6310" marketgroup="true" meta="0" name="'Acolyth' Signal Booster" pi="false" portion="1" price="1264" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="126"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6311" marketgroup="true" meta="0" name="Type-E Discriminative Signal Augmentation" pi="false" portion="1" price="1264" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="126"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Signal Amplifier" id="6312" marketgroup="true" meta="0" name="F-90 Positional Signal Amplifier" pi="false" portion="1" price="1264" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="126"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Tracking Enhancer" id="6321" marketgroup="true" meta="0" name="Beam Parallax Tracking Program" pi="false" portion="1" price="2796" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="74"/>
@@ -8610,28 +8507,24 @@
         <material id="34" portionsize="1" quantity="242"/>
         <material id="35" portionsize="1" quantity="39"/>
         <material id="36" portionsize="1" quantity="166"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Tracking Enhancer" id="6326" marketgroup="true" meta="1" name="Sigma-Nought Tracking Mode I" pi="false" portion="1" price="7132" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="242"/>
         <material id="35" portionsize="1" quantity="39"/>
         <material id="36" portionsize="1" quantity="166"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Tracking Enhancer" id="6327" marketgroup="true" meta="2" name="Auto-Gain Control Tracking Enhancer I" pi="false" portion="1" price="7132" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="242"/>
         <material id="35" portionsize="1" quantity="39"/>
         <material id="36" portionsize="1" quantity="166"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Tracking Enhancer" id="6328" marketgroup="true" meta="3" name="F-aQ Phase Code Tracking Subroutines" pi="false" portion="1" price="7132" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="242"/>
         <material id="35" portionsize="1" quantity="39"/>
         <material id="36" portionsize="1" quantity="166"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Shield Booster" id="6437" marketgroup="true" meta="4" name="Small C5-L Emergency Shield Overload I" pi="false" portion="1" price="4554" tech="Tech I" volume="5.0">
@@ -8715,28 +8608,24 @@
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6633" marketgroup="true" meta="1" name="Dual Afocal Light Maser I" pi="false" portion="1" price="3472" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6635" marketgroup="true" meta="4" name="Dual Modulated Light Energy Beam I" pi="false" portion="1" price="3472" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6637" marketgroup="true" meta="3" name="Dual Anode Light Particle Stream I" pi="false" portion="1" price="3472" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6671" marketgroup="true" meta="2" name="Medium Modal Pulse Laser I" pi="false" portion="1" price="5984" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="700"/>
@@ -8814,77 +8703,65 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6807" marketgroup="true" meta="1" name="Focused Afocal Pulse Maser I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6809" marketgroup="true" meta="4" name="Focused Modulated Pulse Energy Beam I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6811" marketgroup="true" meta="3" name="Focused Anode Pulse Particle Stream I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6859" marketgroup="true" meta="2" name="Focused Modal Medium Laser I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6861" marketgroup="true" meta="1" name="Focused Afocal Medium Maser I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6863" marketgroup="true" meta="4" name="Focused Modulated Medium Energy Beam I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6865" marketgroup="true" meta="3" name="Focused Anode Medium Particle Stream I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6919" marketgroup="true" meta="2" name="Heavy Modal Pulse Laser I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6921" marketgroup="true" meta="1" name="Heavy Afocal Pulse Maser I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6923" marketgroup="true" meta="4" name="Heavy Modulated Pulse Energy Beam I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6925" marketgroup="true" meta="3" name="Heavy Anode Pulse Particle Stream I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="6959" marketgroup="true" meta="2" name="Heavy Modal Laser I" pi="false" portion="1" price="74980" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4110"/>
@@ -8918,28 +8795,24 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="7001" marketgroup="true" meta="1" name="Dual Heavy Afocal Pulse Maser I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="7003" marketgroup="true" meta="4" name="Dual Heavy Modulated Pulse Energy Beam I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="7005" marketgroup="true" meta="3" name="Dual Heavy Anode Pulse Particle Stream I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="7043" marketgroup="true" meta="2" name="Dual Modal Heavy Laser I" pi="false" portion="1" price="298716" tech="Tech I" volume="20.0">
@@ -9190,28 +9063,24 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7409" marketgroup="true" meta="2" name="Dual 250mm 'Scout' Accelerator Cannon" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7411" marketgroup="true" meta="1" name="Dual 250mm Carbide Railgun I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7413" marketgroup="true" meta="3" name="Dual 250mm Compressed Coil Gun I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7447" marketgroup="true" meta="4" name="425mm Prototype Gauss Gun" pi="false" portion="1" price="744812" tech="Tech I" volume="20.0">
@@ -9253,22 +9122,18 @@
     <row category="Module" group="Hybrid Weapon" id="7487" marketgroup="true" meta="4" name="Modal Light Electron Particle Accelerator I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7489" marketgroup="true" meta="2" name="Limited Light Electron Blaster I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7491" marketgroup="true" meta="1" name="Regulated Light Electron Phase Cannon I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7493" marketgroup="true" meta="3" name="Anode Light Electron Particle Cannon I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7535" marketgroup="true" meta="4" name="Modal Light Ion Particle Accelerator I" pi="false" portion="1" price="4484" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="750"/>
@@ -9318,77 +9183,65 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7621" marketgroup="true" meta="2" name="Limited Electron Blaster I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7623" marketgroup="true" meta="1" name="Regulated Electron Phase Cannon I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7625" marketgroup="true" meta="3" name="Anode Electron Particle Cannon I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7663" marketgroup="true" meta="4" name="Modal Ion Particle Accelerator I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7665" marketgroup="true" meta="2" name="Limited Ion Blaster I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7667" marketgroup="true" meta="1" name="Regulated Ion Phase Cannon I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7669" marketgroup="true" meta="3" name="Anode Ion Particle Cannon I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7703" marketgroup="true" meta="4" name="Modal Neutron Particle Accelerator I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7705" marketgroup="true" meta="2" name="Limited Neutron Blaster I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7707" marketgroup="true" meta="1" name="Regulated Neutron Phase Cannon I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7709" marketgroup="true" meta="3" name="Anode Neutron Particle Cannon I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="7743" marketgroup="true" meta="4" name="Modal Mega Electron Particle Accelerator I" pi="false" portion="1" price="298716" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="20498"/>
@@ -9497,8 +9350,6 @@
     <row category="Module" group="ECCM" id="7867" marketgroup="true" meta="2" name="Supplemental Ladar ECCM Scanning Array I" pi="false" portion="1" price="452" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="26"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7869" marketgroup="true" meta="2" name="Supplemental Gravimetric ECCM Scanning Array I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="76"/>
@@ -9516,24 +9367,18 @@
     <row category="Module" group="ECCM" id="7887" marketgroup="true" meta="2" name="Supplemental Radar ECCM Scanning Array I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="68"/>
         <material id="36" portionsize="1" quantity="21"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7889" marketgroup="true" meta="2" name="Supplemental Magnetometric ECCM Scanning Array I" pi="false" portion="1" price="448" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="24"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7892" marketgroup="true" meta="4" name="Prototype ECCM Radar Sensor Cluster" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="68"/>
         <material id="36" portionsize="1" quantity="21"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7893" marketgroup="true" meta="4" name="Prototype ECCM Ladar Sensor Cluster" pi="false" portion="1" price="452" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="26"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7895" marketgroup="true" meta="4" name="Prototype ECCM Gravimetric Sensor Cluster" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="76"/>
@@ -9551,19 +9396,14 @@
     <row category="Module" group="ECCM" id="7914" marketgroup="true" meta="4" name="Prototype ECCM Magnetometric Sensor Cluster" pi="false" portion="1" price="448" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="24"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7917" marketgroup="true" meta="1" name="Alumel Radar ECCM Sensor Array I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="68"/>
         <material id="36" portionsize="1" quantity="21"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7918" marketgroup="true" meta="1" name="Alumel Ladar ECCM Sensor Array I" pi="false" portion="1" price="452" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="26"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7922" marketgroup="true" meta="1" name="Alumel Gravimetric ECCM Sensor Array I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="76"/>
@@ -9581,8 +9421,6 @@
     <row category="Module" group="ECCM" id="7937" marketgroup="true" meta="1" name="Alumel Magnetometric ECCM Sensor Array I" pi="false" portion="1" price="448" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="24"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7948" marketgroup="true" meta="3" name="Gravimetric Positional ECCM Sensor System I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="76"/>
@@ -9594,7 +9432,6 @@
     <row category="Module" group="ECCM" id="7964" marketgroup="true" meta="3" name="Radar Positional ECCM Sensor System I" pi="false" portion="1" price="1216" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="68"/>
         <material id="36" portionsize="1" quantity="21"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7965" marketgroup="true" meta="3" name="Omni Positional ECCM Sensor System I" pi="false" portion="1" price="2656" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="48"/>
@@ -9605,14 +9442,10 @@
     <row category="Module" group="ECCM" id="7966" marketgroup="true" meta="3" name="Ladar Positional ECCM Sensor System I" pi="false" portion="1" price="452" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="26"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="ECCM" id="7970" marketgroup="true" meta="3" name="Magnetometric Positional ECCM Sensor System I" pi="false" portion="1" price="448" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="24"/>
         <material id="35" portionsize="1" quantity="50"/>
-        <material id="36" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Missile Launcher Light" id="7993" marketgroup="true" meta="3" name="Experimental TE-2100 Light Missile Launcher" pi="false" portion="1" price="3000" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="212"/>
@@ -9627,9 +9460,6 @@
         <material id="34" portionsize="1" quantity="3278"/>
         <material id="35" portionsize="1" quantity="1725"/>
         <material id="36" portionsize="1" quantity="7"/>
-        <material id="37" portionsize="1" quantity="0"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Missile Launcher Rapid Light" id="8007" marketgroup="true" meta="3" name="Experimental SV-2000 Rapid Light Missile Launcher" pi="false" portion="1" price="4224" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="252"/>
@@ -9690,17 +9520,11 @@
         <material id="34" portionsize="1" quantity="3278"/>
         <material id="35" portionsize="1" quantity="1725"/>
         <material id="36" portionsize="1" quantity="7"/>
-        <material id="37" portionsize="1" quantity="0"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Missile Launcher Torpedo" id="8115" marketgroup="true" meta="2" name="Limited 'Limos' Torpedo Launcher" pi="false" portion="1" price="20580" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="3278"/>
         <material id="35" portionsize="1" quantity="1725"/>
         <material id="36" portionsize="1" quantity="7"/>
-        <material id="37" portionsize="1" quantity="0"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Missile Launcher Torpedo" id="8117" marketgroup="true" meta="4" name="Prototype 'Arbalest' Torpedo Launcher" pi="false" portion="1" price="20580" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="3278"/>
@@ -9753,31 +9577,19 @@
     </row>
     <row category="Module" group="Capacitor Power Relay" id="8171" marketgroup="true" meta="2" name="Local Power Plant Manager: Capacity Power Relay I" pi="false" portion="1" price="1996" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
-        <material id="35" portionsize="1" quantity="0"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="11"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Power Relay" id="8173" marketgroup="true" meta="4" name="Beta Reactor Control: Capacitor Power Relay I" pi="false" portion="1" price="1996" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
-        <material id="35" portionsize="1" quantity="0"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="11"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Power Relay" id="8175" marketgroup="true" meta="1" name="Type-D Power Core Modification: Capacitor Power Relay" pi="false" portion="1" price="1996" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
-        <material id="35" portionsize="1" quantity="0"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="11"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Power Relay" id="8177" marketgroup="true" meta="3" name="Mark I Generator Refitting: Capacitor Power Relay" pi="false" portion="1" price="1996" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="294"/>
-        <material id="35" portionsize="1" quantity="0"/>
-        <material id="36" portionsize="1" quantity="0"/>
         <material id="37" portionsize="1" quantity="11"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Capacitor Power Relay" id="8203" marketgroup="true" meta="0" name="Partial Power Plant Manager: Capacity Power Relay" pi="false" portion="1" price="2112" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="24"/>
@@ -9835,28 +9647,24 @@
         <material id="35" portionsize="1" quantity="296"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Power Diagnostic System" id="8221" marketgroup="true" meta="4" name="Beta Reactor Control: Diagnostic System I" pi="false" portion="1" price="4704" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="296"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Power Diagnostic System" id="8223" marketgroup="true" meta="1" name="Type-D Power Core Modification: Diagnostic System" pi="false" portion="1" price="4704" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="296"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Power Diagnostic System" id="8225" marketgroup="true" meta="3" name="Mark I Generator Refitting: Diagnostic System" pi="false" portion="1" price="4704" tech="Tech I" volume="5.0">
         <material id="35" portionsize="1" quantity="296"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="2"/>
-        <material id="38" portionsize="1" quantity="0"/>
         <material id="39" portionsize="1" quantity="1"/>
     </row>
     <row category="Module" group="Reactor Control Unit" id="8251" marketgroup="true" meta="0" name="Partial Power Plant Manager: Reaction Control" pi="false" portion="1" price="1968" tech="Tech I" volume="5.0">
@@ -9952,28 +9760,24 @@
         <material id="35" portionsize="1" quantity="209"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Power Relay" id="8333" marketgroup="true" meta="4" name="Beta Reactor Control: Shield Power Relay I" pi="false" portion="1" price="2012" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="90"/>
         <material id="35" portionsize="1" quantity="209"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Power Relay" id="8335" marketgroup="true" meta="1" name="Type-D Power Core Modification: Shield Power Relay" pi="false" portion="1" price="2012" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="90"/>
         <material id="35" portionsize="1" quantity="209"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Power Relay" id="8337" marketgroup="true" meta="3" name="Mark I Generator Refitting: Shield Power Relay" pi="false" portion="1" price="2012" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="90"/>
         <material id="35" portionsize="1" quantity="209"/>
         <material id="36" portionsize="1" quantity="1"/>
         <material id="37" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Power Relay" id="8339" marketgroup="true" meta="0" name="Partial Power Plant Manager: Shield Power Relay" pi="false" portion="1" price="2096" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="120"/>
@@ -10286,22 +10090,18 @@
     <row category="Module" group="Projectile Weapon" id="8815" marketgroup="true" meta="4" name="150mm Light 'Scout' Autocannon I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="8817" marketgroup="true" meta="1" name="150mm Light Carbine Repeating Cannon I" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="8819" marketgroup="true" meta="2" name="150mm Light Gallium Machine Gun" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="8821" marketgroup="true" meta="3" name="150mm Light Prototype Automatic Cannon" pi="false" portion="1" price="1976" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="8863" marketgroup="true" meta="4" name="200mm Light 'Scout' Autocannon I" pi="false" portion="1" price="4484" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="750"/>
@@ -10371,104 +10171,88 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9129" marketgroup="true" meta="1" name="220mm Medium Carbine Repeating Cannon I" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9131" marketgroup="true" meta="2" name="220mm Medium Gallium Machine Gun" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9133" marketgroup="true" meta="3" name="220mm Medium Prototype Automatic Cannon" pi="false" portion="1" price="25888" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9135" marketgroup="true" meta="4" name="425mm Medium 'Scout' Autocannon I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9137" marketgroup="true" meta="1" name="425mm Medium Carbine Repeating Cannon I" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9139" marketgroup="true" meta="2" name="425mm Medium Gallium Machine Gun" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9141" marketgroup="true" meta="3" name="425mm Medium Prototype Automatic Cannon" pi="false" portion="1" price="44740" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9207" marketgroup="true" meta="4" name="650mm Medium 'Scout' Artillery I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9209" marketgroup="true" meta="1" name="650mm Medium Carbine Howitzer I" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9211" marketgroup="true" meta="2" name="650mm Medium Gallium Cannon" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9213" marketgroup="true" meta="3" name="650mm Medium Prototype Siege Cannon" pi="false" portion="1" price="59676" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9247" marketgroup="true" meta="4" name="Dual 425mm 'Scout' Autocannon I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9249" marketgroup="true" meta="1" name="Dual 425mm Carbine Repeating Cannon I" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9251" marketgroup="true" meta="2" name="Dual 425mm Gallium Machine Gun" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9253" marketgroup="true" meta="3" name="Dual 425mm Prototype Automatic Cannon" pi="false" portion="1" price="98972" tech="Tech I" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="9287" marketgroup="true" meta="4" name="Dual 650mm 'Scout' Repeating Artillery I" pi="false" portion="1" price="298716" tech="Tech I" volume="20.0">
@@ -10726,7 +10510,6 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="9622" marketgroup="true" meta="2" name="Limited 'Anointed' EM Ward Field" pi="false" portion="1" price="45412" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="50"/>
@@ -10792,14 +10575,10 @@
     <row category="Module" group="Smart Bomb" id="9702" marketgroup="true" meta="0" name="Micro Rudimentary Concussion Bomb I" pi="false" portion="1" price="8560" tech="Tech I" volume="2.5">
         <material id="35" portionsize="1" quantity="42"/>
         <material id="36" portionsize="1" quantity="257"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Smart Bomb" id="9706" marketgroup="true" meta="0" name="Micro 'Vehemence' Shockwave Charge" pi="false" portion="1" price="8560" tech="Tech I" volume="2.5">
         <material id="35" portionsize="1" quantity="42"/>
         <material id="36" portionsize="1" quantity="257"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Smart Bomb" id="9728" marketgroup="true" meta="1" name="Medium Rudimentary Concussion Bomb I" pi="false" portion="1" price="769744" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1076"/>
@@ -10828,8 +10607,6 @@
     <row category="Module" group="Smart Bomb" id="9750" marketgroup="true" meta="0" name="Micro 'Notos' Explosive Charge I" pi="false" portion="1" price="8560" tech="Tech I" volume="2.5">
         <material id="35" portionsize="1" quantity="42"/>
         <material id="36" portionsize="1" quantity="257"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Smart Bomb" id="9762" marketgroup="true" meta="2" name="Medium 'Notos' Explosive Charge I" pi="false" portion="1" price="769744" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1076"/>
@@ -10857,8 +10634,6 @@
     <row category="Module" group="Smart Bomb" id="9790" marketgroup="true" meta="0" name="Micro YF-12a Smartbomb" pi="false" portion="1" price="8560" tech="Tech I" volume="2.5">
         <material id="35" portionsize="1" quantity="42"/>
         <material id="36" portionsize="1" quantity="257"/>
-        <material id="38" portionsize="1" quantity="0"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Smart Bomb" id="9800" marketgroup="true" meta="1" name="Medium YF-12a Smartbomb" pi="false" portion="1" price="769744" tech="Tech I" volume="10.0">
         <material id="34" portionsize="1" quantity="1076"/>
@@ -13330,7 +13105,7 @@
     </row>
     <row category="Blueprint" group="Frigate Blueprint" id="12045" marketgroup="true" meta="0" name="Enyo Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Livestock" id="12049" marketgroup="true" meta="0" name="Slaver" pi="false" portion="1" price="0" tech="Tech I" volume="2.0"/>
-    <row category="Module" group="Propulsion Module" id="12052" marketgroup="true" meta="0" name="10MN MicroWarpdrive I" pi="false" portion="1" price="158188" tech="Tech I" volume="25.0">
+    <row category="Module" group="Propulsion Module" id="12052" marketgroup="true" meta="0" name="10MN Microwarpdrive I" pi="false" portion="1" price="158188" tech="Tech I" volume="25.0">
         <material id="34" portionsize="1" quantity="15630"/>
         <material id="35" portionsize="1" quantity="13238"/>
         <material id="36" portionsize="1" quantity="61"/>
@@ -13339,8 +13114,8 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="12053" marketgroup="true" meta="0" name="10MN MicroWarpdrive I Blueprint" pi="false" portion="1" price="1581880" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="12054" marketgroup="true" meta="0" name="100MN MicroWarpdrive I" pi="false" portion="1" price="790940" tech="Tech I" volume="50.0">
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="12053" marketgroup="true" meta="0" name="10MN Microwarpdrive I Blueprint" pi="false" portion="1" price="1581880" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Propulsion Module" id="12054" marketgroup="true" meta="0" name="100MN Microwarpdrive I" pi="false" portion="1" price="790940" tech="Tech I" volume="50.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -13349,7 +13124,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="12055" marketgroup="true" meta="0" name="100MN MicroWarpdrive I Blueprint" pi="false" portion="1" price="7909400" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="12055" marketgroup="true" meta="0" name="100MN Microwarpdrive I Blueprint" pi="false" portion="1" price="7909400" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="12056" marketgroup="true" meta="0" name="10MN Afterburner I" pi="false" portion="1" price="32256" tech="Tech I" volume="25.0">
         <material id="34" portionsize="1" quantity="3436"/>
         <material id="35" portionsize="1" quantity="3129"/>
@@ -13385,7 +13160,7 @@
         <material id="11399" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="12069" marketgroup="false" meta="0" name="100MN Afterburner II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="12076" marketgroup="true" meta="5" name="10MN MicroWarpdrive II" pi="false" portion="1" price="905592" tech="Tech II" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="12076" marketgroup="true" meta="5" name="10MN Microwarpdrive II" pi="false" portion="1" price="905592" tech="Tech II" volume="10.0">
         <material id="34" portionsize="1" quantity="18060"/>
         <material id="35" portionsize="1" quantity="14508"/>
         <material id="36" portionsize="1" quantity="80"/>
@@ -13395,8 +13170,8 @@
         <material id="40" portionsize="1" quantity="3"/>
         <material id="11399" portionsize="1" quantity="22"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="12077" marketgroup="false" meta="0" name="10MN MicroWarpdrive II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="12084" marketgroup="true" meta="5" name="100MN MicroWarpdrive II" pi="false" portion="1" price="2586036" tech="Tech II" volume="10.0">
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="12077" marketgroup="false" meta="0" name="10MN Microwarpdrive II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Propulsion Module" id="12084" marketgroup="true" meta="5" name="100MN Microwarpdrive II" pi="false" portion="1" price="2586036" tech="Tech II" volume="10.0">
         <material id="34" portionsize="1" quantity="68050"/>
         <material id="35" portionsize="1" quantity="16050"/>
         <material id="36" portionsize="1" quantity="4660"/>
@@ -13406,7 +13181,7 @@
         <material id="40" portionsize="1" quantity="12"/>
         <material id="11399" portionsize="1" quantity="50"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="12085" marketgroup="false" meta="0" name="100MN MicroWarpdrive II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="12085" marketgroup="false" meta="0" name="100MN Microwarpdrive II Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Skill" group="Spaceship Command" id="12092" marketgroup="true" meta="0" name="Interceptors" pi="false" portion="1" price="1000000" tech="Tech I" volume="0.01"/>
     <row category="Skill" group="Spaceship Command" id="12093" marketgroup="true" meta="0" name="Covert Ops" pi="false" portion="1" price="4000000" tech="Tech I" volume="0.01"/>
     <row category="Skill" group="Spaceship Command" id="12095" marketgroup="true" meta="0" name="Assault Ships" pi="false" portion="1" price="4000000" tech="Tech I" volume="0.01"/>
@@ -14819,7 +14594,6 @@
     <row category="Module" group="Projectile Weapon" id="13776" marketgroup="true" meta="7" name="Domination 150mm Autocannon" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="13777" marketgroup="true" meta="7" name="Domination 200mm Autocannon" pi="false" portion="1" price="4484" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="750"/>
@@ -14831,7 +14605,6 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="13779" marketgroup="true" meta="7" name="Domination 250mm Artillery" pi="false" portion="1" price="5996" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="718"/>
@@ -14849,14 +14622,12 @@
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="13783" marketgroup="true" meta="7" name="Domination 650mm Artillery" pi="false" portion="1" price="59676" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="13784" marketgroup="true" meta="7" name="Domination 720mm Howitzer Artillery" pi="false" portion="1" price="74980" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4110"/>
@@ -14883,7 +14654,6 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="13788" marketgroup="true" meta="7" name="Domination Dual 650mm Repeating Artillery" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
@@ -14898,7 +14668,6 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13793" marketgroup="true" meta="8" name="Dark Blood Dual Heavy Beam Laser" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
@@ -14914,26 +14683,22 @@
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13797" marketgroup="true" meta="8" name="Dark Blood Dual Light Pulse Laser" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13799" marketgroup="true" meta="8" name="Dark Blood Focused Medium Beam Laser" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13801" marketgroup="true" meta="8" name="Dark Blood Focused Medium Pulse Laser" pi="false" portion="1" price="25888" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13803" marketgroup="true" meta="8" name="Dark Blood Gatling Pulse Laser" pi="false" portion="1" price="1000" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="104"/>
@@ -14951,7 +14716,6 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13809" marketgroup="true" meta="8" name="Dark Blood Medium Beam Laser" pi="false" portion="1" price="7484" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="990"/>
@@ -15010,7 +14774,6 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13822" marketgroup="true" meta="8" name="True Sansha Dual Light Beam Laser" pi="false" portion="1" price="3472" tech="Faction" volume="5.0">
@@ -15018,26 +14781,22 @@
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13823" marketgroup="true" meta="8" name="True Sansha Dual Light Pulse Laser" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13824" marketgroup="true" meta="8" name="True Sansha Focused Medium Beam Laser" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13825" marketgroup="true" meta="8" name="True Sansha Focused Medium Pulse Laser" pi="false" portion="1" price="25888" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13826" marketgroup="true" meta="8" name="True Sansha Gatling Pulse Laser" pi="false" portion="1" price="1000" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="104"/>
@@ -15055,7 +14814,6 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="13829" marketgroup="true" meta="8" name="True Sansha Medium Beam Laser" pi="false" portion="1" price="7484" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="990"/>
@@ -15218,32 +14976,27 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13883" marketgroup="true" meta="8" name="Dread Guristas Dual 250mm Railgun" pi="false" portion="1" price="98972" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13884" marketgroup="true" meta="8" name="Shadow Serpentis Heavy Electron Blaster" pi="false" portion="1" price="25888" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13885" marketgroup="true" meta="8" name="Shadow Serpentis Heavy Ion Blaster" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13886" marketgroup="true" meta="8" name="Shadow Serpentis Light Electron Blaster" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13887" marketgroup="true" meta="8" name="Shadow Serpentis Light Ion Blaster" pi="false" portion="1" price="4484" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="750"/>
@@ -15287,7 +15040,6 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="13893" marketgroup="true" meta="8" name="Dread Guristas 75mm Railgun" pi="false" portion="1" price="1000" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="104"/>
@@ -15466,21 +15218,18 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="13959" marketgroup="true" meta="9" name="True Sansha Medium Armor Repairer" pi="false" portion="1" price="19916" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="13960" marketgroup="true" meta="9" name="Dark Blood Medium Armor Repairer" pi="false" portion="1" price="19916" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="13962" marketgroup="true" meta="7" name="Domination Small Armor Repairer" pi="false" portion="1" price="9996" tech="Faction" volume="5.0">
@@ -15527,7 +15276,6 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="13969" marketgroup="true" meta="9" name="Dread Guristas Adaptive Invulnerability Field" pi="false" portion="1" price="63062" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="75"/>
@@ -15650,7 +15398,6 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="13998" marketgroup="true" meta="8" name="Domination Adaptive Invulnerability Field" pi="false" portion="1" price="63062" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="75"/>
@@ -15859,7 +15606,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="14069" marketgroup="true" meta="8" name="Shadow Serpentis Small Armor Repairer" pi="false" portion="1" price="9996" tech="Faction" volume="5.0">
@@ -16021,7 +15767,7 @@
         <material id="36" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14114" marketgroup="true" meta="8" name="Domination 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14114" marketgroup="true" meta="8" name="Domination 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -16030,7 +15776,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14116" marketgroup="true" meta="6" name="Shadow Serpentis 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14116" marketgroup="true" meta="6" name="Shadow Serpentis 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -16039,7 +15785,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14118" marketgroup="true" meta="8" name="Domination 10MN MicroWarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14118" marketgroup="true" meta="8" name="Domination 10MN Microwarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="15630"/>
         <material id="35" portionsize="1" quantity="13238"/>
         <material id="36" portionsize="1" quantity="61"/>
@@ -16048,7 +15794,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14120" marketgroup="true" meta="6" name="Shadow Serpentis 10MN MicroWarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14120" marketgroup="true" meta="6" name="Shadow Serpentis 10MN Microwarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="15630"/>
         <material id="35" portionsize="1" quantity="13238"/>
         <material id="36" portionsize="1" quantity="61"/>
@@ -16057,14 +15803,14 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14122" marketgroup="true" meta="8" name="Domination 1MN MicroWarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14122" marketgroup="true" meta="8" name="Domination 1MN Microwarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="3570"/>
         <material id="35" portionsize="1" quantity="1918"/>
         <material id="36" portionsize="1" quantity="206"/>
         <material id="37" portionsize="1" quantity="12"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14124" marketgroup="true" meta="6" name="Shadow Serpentis 1MN MicroWarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14124" marketgroup="true" meta="6" name="Shadow Serpentis 1MN Microwarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="3570"/>
         <material id="35" portionsize="1" quantity="1918"/>
         <material id="36" portionsize="1" quantity="206"/>
@@ -16073,11 +15819,9 @@
     </row>
     <row category="Module" group="Overdrive Injector System" id="14126" marketgroup="true" meta="8" name="Domination Overdrive Injector" pi="false" portion="1" price="512" tech="Faction" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="14127" marketgroup="true" meta="8" name="Domination Nanofiber Structure" pi="false" portion="1" price="512" tech="Faction" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Reactor Control Unit" id="14128" marketgroup="true" meta="8" name="Dark Blood Reactor Control Unit" pi="false" portion="1" price="9920" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="464"/>
@@ -17079,7 +16823,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14492" marketgroup="true" meta="11" name="Mizuro's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14492" marketgroup="true" meta="11" name="Mizuro's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17088,7 +16832,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14494" marketgroup="true" meta="12" name="Hakim's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14494" marketgroup="true" meta="12" name="Hakim's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17097,7 +16841,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14496" marketgroup="true" meta="13" name="Gotan's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14496" marketgroup="true" meta="13" name="Gotan's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17106,7 +16850,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14498" marketgroup="true" meta="14" name="Tobias' Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14498" marketgroup="true" meta="14" name="Tobias' Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17151,7 +16895,7 @@
         <material id="39" portionsize="1" quantity="2"/>
         <material id="40" portionsize="1" quantity="1"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14508" marketgroup="true" meta="11" name="Brynn's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14508" marketgroup="true" meta="11" name="Brynn's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17160,7 +16904,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14510" marketgroup="true" meta="12" name="Tuvan's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14510" marketgroup="true" meta="12" name="Tuvan's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17169,7 +16913,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14512" marketgroup="true" meta="13" name="Setele's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14512" marketgroup="true" meta="13" name="Setele's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17178,7 +16922,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="14514" marketgroup="true" meta="14" name="Cormack's Modified 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="14514" marketgroup="true" meta="14" name="Cormack's Modified 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Officer" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -17772,28 +17516,24 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="14749" marketgroup="true" meta="12" name="Thon's Modified Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Officer" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="14750" marketgroup="true" meta="13" name="Vepas's Modified Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Officer" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="14751" marketgroup="true" meta="14" name="Estamel's Modified Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Officer" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="14752" marketgroup="true" meta="11" name="Kaikka's Modified EM Ward Field" pi="false" portion="1" price="45412" tech="Officer" volume="5.0">
         <material id="34" portionsize="1" quantity="50"/>
@@ -20202,7 +19942,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="15743" marketgroup="true" meta="9" name="Ammatar Navy Large Armor Repairer" pi="false" portion="1" price="39996" tech="Faction" volume="50.0">
@@ -20221,7 +19960,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="15746" marketgroup="true" meta="8" name="Federation Navy Large Armor Repairer" pi="false" portion="1" price="39996" tech="Faction" volume="50.0">
@@ -20231,14 +19969,14 @@
         <material id="37" portionsize="1" quantity="20"/>
         <material id="38" portionsize="1" quantity="23"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="15747" marketgroup="true" meta="8" name="Republic Fleet 1MN MicroWarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15747" marketgroup="true" meta="8" name="Republic Fleet 1MN Microwarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="3570"/>
         <material id="35" portionsize="1" quantity="1918"/>
         <material id="36" portionsize="1" quantity="206"/>
         <material id="37" portionsize="1" quantity="12"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15748" marketgroup="false" meta="0" name="Republic Fleet 1MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15748" marketgroup="false" meta="0" name="Republic Fleet 1MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15749" marketgroup="true" meta="8" name="Republic Fleet 1MN Afterburner" pi="false" portion="1" price="6450" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="637"/>
         <material id="35" portionsize="1" quantity="579"/>
@@ -20246,7 +19984,7 @@
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="15750" marketgroup="false" meta="0" name="Republic Fleet 1MN Afterburner Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="15751" marketgroup="true" meta="8" name="Republic Fleet 10MN MicroWarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15751" marketgroup="true" meta="8" name="Republic Fleet 10MN Microwarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="15630"/>
         <material id="35" portionsize="1" quantity="13238"/>
         <material id="36" portionsize="1" quantity="61"/>
@@ -20255,7 +19993,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15752" marketgroup="false" meta="0" name="Republic Fleet 10MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15752" marketgroup="false" meta="0" name="Republic Fleet 10MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15753" marketgroup="true" meta="8" name="Republic Fleet 10MN Afterburner" pi="false" portion="1" price="32256" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="3436"/>
         <material id="35" portionsize="1" quantity="3129"/>
@@ -20263,7 +20001,7 @@
         <material id="37" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="15754" marketgroup="false" meta="0" name="Republic Fleet 10MN Afterburner Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="15755" marketgroup="true" meta="8" name="Republic Fleet 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15755" marketgroup="true" meta="8" name="Republic Fleet 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -20272,7 +20010,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15756" marketgroup="false" meta="0" name="Republic Fleet 100MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15756" marketgroup="false" meta="0" name="Republic Fleet 100MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15757" marketgroup="true" meta="8" name="Republic Fleet 100MN Afterburner" pi="false" portion="1" price="161280" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="17896"/>
         <material id="35" portionsize="1" quantity="8030"/>
@@ -20283,14 +20021,14 @@
         <material id="40" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="15758" marketgroup="false" meta="0" name="Republic Fleet 100MN Afterburner Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="15759" marketgroup="true" meta="6" name="Federation Navy 1MN MicroWarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15759" marketgroup="true" meta="6" name="Federation Navy 1MN Microwarpdrive" pi="false" portion="1" price="31636" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="3570"/>
         <material id="35" portionsize="1" quantity="1918"/>
         <material id="36" portionsize="1" quantity="206"/>
         <material id="37" portionsize="1" quantity="12"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15760" marketgroup="false" meta="0" name="Federation Navy 1MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15760" marketgroup="false" meta="0" name="Federation Navy 1MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15761" marketgroup="true" meta="7" name="Federation Navy 1MN Afterburner" pi="false" portion="1" price="6450" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="637"/>
         <material id="35" portionsize="1" quantity="579"/>
@@ -20298,7 +20036,7 @@
         <material id="38" portionsize="1" quantity="1"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="15762" marketgroup="false" meta="0" name="Federation Navy 1MN Afterburner Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="15764" marketgroup="true" meta="6" name="Federation Navy 10MN MicroWarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15764" marketgroup="true" meta="6" name="Federation Navy 10MN Microwarpdrive" pi="false" portion="1" price="158188" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="15630"/>
         <material id="35" portionsize="1" quantity="13238"/>
         <material id="36" portionsize="1" quantity="61"/>
@@ -20307,7 +20045,7 @@
         <material id="39" portionsize="1" quantity="1"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15765" marketgroup="false" meta="0" name="Federation Navy 10MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15765" marketgroup="false" meta="0" name="Federation Navy 10MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15766" marketgroup="true" meta="7" name="Federation Navy 10MN Afterburner" pi="false" portion="1" price="32256" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="3436"/>
         <material id="35" portionsize="1" quantity="3129"/>
@@ -20315,7 +20053,7 @@
         <material id="37" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Propulsion Module Blueprint" id="15767" marketgroup="false" meta="0" name="Federation Navy 10MN Afterburner Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Propulsion Module" id="15768" marketgroup="true" meta="6" name="Federation Navy 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="15768" marketgroup="true" meta="6" name="Federation Navy 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -20324,7 +20062,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Blueprint" group="Propulsion Module Blueprint" id="15769" marketgroup="false" meta="0" name="Federation Navy 100MN MicroWarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Propulsion Module Blueprint" id="15769" marketgroup="false" meta="0" name="Federation Navy 100MN Microwarpdrive Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Propulsion Module" id="15770" marketgroup="true" meta="7" name="Federation Navy 100MN Afterburner" pi="false" portion="1" price="161280" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="17896"/>
         <material id="35" portionsize="1" quantity="8030"/>
@@ -20492,17 +20230,14 @@
     <row category="Blueprint" group="Heat Sink Blueprint" id="15811" marketgroup="false" meta="0" name="Imperial Navy Heat Sink Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Overdrive Injector System" id="15812" marketgroup="true" meta="8" name="Republic Fleet Overdrive Injector" pi="false" portion="1" price="512" tech="Faction" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Nanofiber Internal Structure" id="15813" marketgroup="true" meta="8" name="Republic Fleet Nanofiber Structure" pi="false" portion="1" price="512" tech="Faction" volume="5.0">
         <material id="37" portionsize="1" quantity="4"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15814" marketgroup="true" meta="8" name="Caldari Navy Dual 250mm Railgun" pi="false" portion="1" price="98972" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15815" marketgroup="true" meta="8" name="Caldari Navy Dual 150mm Railgun" pi="false" portion="1" price="10000" tech="Faction" volume="10.0">
@@ -20584,7 +20319,6 @@
     <row category="Module" group="Hybrid Weapon" id="15828" marketgroup="true" meta="8" name="Federation Navy Light Electron Blaster" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15829" marketgroup="true" meta="8" name="Federation Navy Ion Blaster Cannon" pi="false" portion="1" price="448700" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="30738"/>
@@ -20600,19 +20334,16 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15831" marketgroup="true" meta="8" name="Federation Navy Heavy Ion Blaster" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15832" marketgroup="true" meta="8" name="Federation Navy Heavy Electron Blaster" pi="false" portion="1" price="25888" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15833" marketgroup="true" meta="8" name="Federation Navy Electron Blaster Cannon" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="20498"/>
@@ -20626,7 +20357,6 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Hybrid Weapon" id="15835" marketgroup="true" meta="8" name="Federation Navy Dual 150mm Railgun" pi="false" portion="1" price="10000" tech="Faction" volume="10.0">
@@ -20735,7 +20465,6 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15852" marketgroup="true" meta="8" name="Ammatar Navy Heavy Beam Laser" pi="false" portion="1" price="74980" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4110"/>
@@ -20752,33 +20481,28 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15855" marketgroup="true" meta="8" name="Ammatar Navy Focused Medium Beam Laser" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15856" marketgroup="true" meta="8" name="Ammatar Navy Dual Light Pulse Laser" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15857" marketgroup="true" meta="8" name="Ammatar Navy Dual Light Beam Laser" pi="false" portion="1" price="3472" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15858" marketgroup="true" meta="8" name="Ammatar Navy Dual Heavy Pulse Laser" pi="false" portion="1" price="98972" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15859" marketgroup="true" meta="8" name="Ammatar Navy Dual Heavy Beam Laser" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
@@ -20839,7 +20563,6 @@
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15867" marketgroup="true" meta="8" name="Imperial Navy Heavy Beam Laser" pi="false" portion="1" price="74980" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4110"/>
@@ -20856,33 +20579,28 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15870" marketgroup="true" meta="8" name="Imperial Navy Focused Medium Beam Laser" pi="false" portion="1" price="44740" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15871" marketgroup="true" meta="8" name="Imperial Navy Dual Light Pulse Laser" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="496"/>
         <material id="35" portionsize="1" quantity="51"/>
         <material id="36" portionsize="1" quantity="2"/>
         <material id="38" portionsize="1" quantity="1"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15872" marketgroup="true" meta="8" name="Imperial Navy Dual Light Beam Laser" pi="false" portion="1" price="3472" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="784"/>
         <material id="35" portionsize="1" quantity="2"/>
         <material id="36" portionsize="1" quantity="35"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15873" marketgroup="true" meta="8" name="Imperial Navy Dual Heavy Pulse Laser" pi="false" portion="1" price="98972" tech="Faction" volume="20.0">
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Energy Weapon" id="15874" marketgroup="true" meta="8" name="Imperial Navy Dual Heavy Beam Laser" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
@@ -21285,7 +21003,6 @@
     <row category="Module" group="Projectile Weapon" id="16049" marketgroup="true" meta="7" name="Republic Fleet 150mm Autocannon" pi="false" portion="1" price="1976" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="448"/>
         <material id="35" portionsize="1" quantity="135"/>
-        <material id="39" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="16050" marketgroup="true" meta="7" name="Republic Fleet 200mm Autocannon" pi="false" portion="1" price="4484" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="750"/>
@@ -21297,7 +21014,6 @@
         <material id="34" portionsize="1" quantity="2004"/>
         <material id="35" portionsize="1" quantity="579"/>
         <material id="36" portionsize="1" quantity="539"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="16052" marketgroup="true" meta="7" name="Republic Fleet 250mm Artillery" pi="false" portion="1" price="5996" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="718"/>
@@ -21314,14 +21030,12 @@
         <material id="34" portionsize="1" quantity="2038"/>
         <material id="35" portionsize="1" quantity="739"/>
         <material id="36" portionsize="1" quantity="1086"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="16055" marketgroup="true" meta="7" name="Republic Fleet 650mm Artillery" pi="false" portion="1" price="59676" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4090"/>
         <material id="35" portionsize="1" quantity="1253"/>
         <material id="36" portionsize="1" quantity="1272"/>
         <material id="37" portionsize="1" quantity="6"/>
-        <material id="38" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="16056" marketgroup="true" meta="7" name="Republic Fleet 720mm Howitzer Artillery" pi="false" portion="1" price="74980" tech="Faction" volume="10.0">
         <material id="34" portionsize="1" quantity="4110"/>
@@ -21348,7 +21062,6 @@
         <material id="34" portionsize="1" quantity="6158"/>
         <material id="35" portionsize="1" quantity="1852"/>
         <material id="36" portionsize="1" quantity="1733"/>
-        <material id="39" portionsize="1" quantity="0"/>
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Projectile Weapon" id="16060" marketgroup="true" meta="7" name="Republic Fleet Dual 650mm Repeating Artillery" pi="false" portion="1" price="298716" tech="Faction" volume="20.0">
@@ -23203,7 +22916,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="17494" marketgroup="true" meta="7" name="Republic Fleet Small Armor Repairer" pi="false" portion="1" price="9996" tech="Faction" volume="5.0">
@@ -23216,7 +22928,6 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="17496" marketgroup="true" meta="9" name="Caldari Navy Explosive Deflection Field" pi="false" portion="1" price="45412" tech="Faction" volume="5.0">
         <material id="34" portionsize="1" quantity="50"/>
@@ -23406,7 +23117,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Armor Repair Unit" id="17548" marketgroup="true" meta="9" name="Imperial Navy Small Armor Repairer" pi="false" portion="1" price="9996" tech="Faction" volume="5.0">
@@ -26134,14 +25844,12 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19258" marketgroup="true" meta="11" name="Pith C-Type Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19259" marketgroup="true" meta="11" name="Gist C-Type Explosive Deflection Field" pi="false" portion="1" price="45412" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="50"/>
@@ -26244,28 +25952,24 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19272" marketgroup="true" meta="12" name="Pith B-Type Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19273" marketgroup="true" meta="13" name="Gist A-Type Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19274" marketgroup="true" meta="13" name="Pith A-Type Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19275" marketgroup="true" meta="13" name="Gist A-Type Explosive Deflection Field" pi="false" portion="1" price="45412" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="50"/>
@@ -26368,14 +26072,12 @@
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Hardener" id="19288" marketgroup="true" meta="14" name="Pith X-Type Kinetic Deflection Field" pi="false" portion="1" price="5808" tech="Deadspace" volume="5.0">
         <material id="34" portionsize="1" quantity="168"/>
         <material id="36" portionsize="1" quantity="135"/>
         <material id="37" portionsize="1" quantity="1"/>
         <material id="38" portionsize="1" quantity="2"/>
-        <material id="40" portionsize="1" quantity="0"/>
     </row>
     <row category="Module" group="Shield Boost Amplifier" id="19289" marketgroup="true" meta="11" name="Pith C-Type Shield Boost Amplifier" pi="false" portion="1" price="350000" tech="Deadspace" volume="5.0">
         <material id="35" portionsize="1" quantity="21330"/>
@@ -26425,7 +26127,7 @@
         <material id="38" portionsize="1" quantity="78"/>
         <material id="40" portionsize="1" quantity="15"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19313" marketgroup="true" meta="11" name="Coreli C-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19313" marketgroup="true" meta="11" name="Coreli C-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26434,7 +26136,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19315" marketgroup="true" meta="11" name="Corelum C-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19315" marketgroup="true" meta="11" name="Corelum C-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26443,7 +26145,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19317" marketgroup="true" meta="11" name="Core C-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19317" marketgroup="true" meta="11" name="Core C-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26452,7 +26154,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19319" marketgroup="true" meta="12" name="Coreli B-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19319" marketgroup="true" meta="12" name="Coreli B-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26461,7 +26163,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19321" marketgroup="true" meta="12" name="Corelum B-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19321" marketgroup="true" meta="12" name="Corelum B-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26470,7 +26172,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19323" marketgroup="true" meta="12" name="Core B-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19323" marketgroup="true" meta="12" name="Core B-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26479,7 +26181,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19325" marketgroup="true" meta="13" name="Coreli A-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19325" marketgroup="true" meta="13" name="Coreli A-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26488,7 +26190,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19327" marketgroup="true" meta="13" name="Corelum A-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19327" marketgroup="true" meta="13" name="Corelum A-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26497,7 +26199,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19329" marketgroup="true" meta="13" name="Core A-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19329" marketgroup="true" meta="13" name="Core A-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26506,7 +26208,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19335" marketgroup="true" meta="14" name="Core X-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19335" marketgroup="true" meta="14" name="Core X-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26515,7 +26217,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19337" marketgroup="true" meta="11" name="Gistii C-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19337" marketgroup="true" meta="11" name="Gistii C-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26524,7 +26226,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19339" marketgroup="true" meta="11" name="Gistum C-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19339" marketgroup="true" meta="11" name="Gistum C-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26533,7 +26235,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19341" marketgroup="true" meta="11" name="Gist C-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19341" marketgroup="true" meta="11" name="Gist C-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26542,7 +26244,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19343" marketgroup="true" meta="12" name="Gistii B-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19343" marketgroup="true" meta="12" name="Gistii B-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26551,7 +26253,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19345" marketgroup="true" meta="12" name="Gistum B-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19345" marketgroup="true" meta="12" name="Gistum B-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26560,7 +26262,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19347" marketgroup="true" meta="12" name="Gist B-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19347" marketgroup="true" meta="12" name="Gist B-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26569,7 +26271,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19349" marketgroup="true" meta="13" name="Gistii A-Type 1MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19349" marketgroup="true" meta="13" name="Gistii A-Type 1MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26578,7 +26280,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19351" marketgroup="true" meta="13" name="Gistum A-Type 10MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19351" marketgroup="true" meta="13" name="Gistum A-Type 10MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26587,7 +26289,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19353" marketgroup="true" meta="13" name="Gist A-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19353" marketgroup="true" meta="13" name="Gist A-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -26596,7 +26298,7 @@
         <material id="39" portionsize="1" quantity="50"/>
         <material id="40" portionsize="1" quantity="9"/>
     </row>
-    <row category="Module" group="Propulsion Module" id="19359" marketgroup="true" meta="14" name="Gist X-Type 100MN MicroWarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
+    <row category="Module" group="Propulsion Module" id="19359" marketgroup="true" meta="14" name="Gist X-Type 100MN Microwarpdrive" pi="false" portion="1" price="790940" tech="Deadspace" volume="10.0">
         <material id="34" portionsize="1" quantity="57378"/>
         <material id="35" portionsize="1" quantity="14743"/>
         <material id="36" portionsize="1" quantity="3889"/>
@@ -38211,7 +37913,6 @@
         <material id="34" portionsize="1" quantity="1022"/>
         <material id="35" portionsize="1" quantity="478"/>
         <material id="36" portionsize="1" quantity="407"/>
-        <material id="37" portionsize="1" quantity="0"/>
         <material id="38" portionsize="1" quantity="2"/>
     </row>
     <row category="Module" group="Smart Bomb" id="28550" marketgroup="true" meta="9" name="Khanid Navy Medium EMP Smartbomb" pi="false" portion="1" price="39382" tech="Faction" volume="10.0">
@@ -42869,5 +42570,37 @@
         <material id="34" portionsize="100" quantity="58"/>
         <material id="36" portionsize="100" quantity="6"/>
     </row>
-    <row category="Blueprint" group="Defender Missile Blueprint" id="32783" marketgroup="true" meta="0" name="Light Defender Missile I Blueprint" pi="false" portion="1" price="150000" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Defender Missile Blueprint" id="32783" marketgroup="true" meta="0" name="Light Defender Missile I Blueprint" pi="false" portion="1" price="120000" tech="Tech I" volume="0.01"/>
+    <row category="Drone" group="Salvage Drone" id="32787" marketgroup="false" meta="0" name="Salvage Drone I" pi="false" portion="1" price="10" tech="Tech I" volume="10.0"/>
+    <row category="Ship" group="Assault Ship" id="32788" marketgroup="true" meta="5" name="Cambion" pi="false" portion="1" price="285000" tech="Tech I" volume="16500.0">
+        <material id="34" portionsize="1" quantity="18964"/>
+        <material id="35" portionsize="1" quantity="8444"/>
+        <material id="36" portionsize="1" quantity="2814"/>
+        <material id="37" portionsize="1" quantity="531"/>
+        <material id="38" portionsize="1" quantity="2"/>
+        <material id="39" portionsize="1" quantity="2"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Frigate Blueprint" id="32789" marketgroup="false" meta="0" name="Cambion Blueprint" pi="false" portion="1" price="2850000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Logistics" id="32790" marketgroup="true" meta="5" name="Etana" pi="false" portion="1" price="14973304" tech="Tech I" volume="107000.0">
+        <material id="34" portionsize="1" quantity="14588"/>
+        <material id="35" portionsize="1" quantity="6185"/>
+        <material id="36" portionsize="1" quantity="16111"/>
+        <material id="38" portionsize="1" quantity="2718"/>
+        <material id="39" portionsize="1" quantity="223"/>
+        <material id="40" portionsize="1" quantity="13"/>
+        <material id="3828" portionsize="1" quantity="50"/>
+        <material id="11399" portionsize="1" quantity="60"/>
+        <material id="11533" portionsize="1" quantity="50"/>
+        <material id="11534" portionsize="1" quantity="175"/>
+        <material id="11540" portionsize="1" quantity="1200"/>
+        <material id="11544" portionsize="1" quantity="1500"/>
+        <material id="11550" portionsize="1" quantity="15"/>
+        <material id="11552" portionsize="1" quantity="500"/>
+        <material id="11558" portionsize="1" quantity="100"/>
+    </row>
+    <row category="Blueprint" group="Cruiser Blueprint" id="32791" marketgroup="false" meta="0" name="Etana Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Accessories" group="Game Time" id="32792" marketgroup="true" meta="0" name="100 Aurum Token" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Accessories" group="Game Time" id="32793" marketgroup="true" meta="0" name="500 Aurum Token" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Skill" group="Mechanics" id="32797" marketgroup="true" meta="0" name="Armor Resistance Phasing" pi="false" portion="1" price="500000" tech="Tech I" volume="0.01"/>
 </rows>

@@ -13143,19 +13143,19 @@
     <row id="60015077" name="Rakapas II - State Protectorate Logistic Support" region="10000069" security="0.2" solarsystem="30045349"/>
     <row id="60015078" name="Eha III - State Protectorate Logistic Support" region="10000069" security="0.4" solarsystem="30045319"/>
     <row id="60015079" name="Aivonen VI - State Protectorate Logistic Support" region="10000069" security="0.4" solarsystem="30045340"/>
-    <row id="60015080" name="Fliet III - Federal Defence Union Logistic Support" region="10000064" security="0.3" solarsystem="30004980"/>
-    <row id="60015081" name="Parts I - Federal Defence Union Logistic Support" region="10000064" security="0.4" solarsystem="30004998"/>
-    <row id="60015082" name="Costolle V - Federal Defence Union Logistic Support" region="10000068" security="0.2" solarsystem="30005298"/>
-    <row id="60015083" name="Ouelletta II - Federal Defence Union Logistic Support" region="10000068" security="0.4" solarsystem="30005297"/>
-    <row id="60015084" name="Esesier IX - Federal Defence Union Logistic Support" region="10000048" security="0.3" solarsystem="30003842"/>
-    <row id="60015085" name="Eugales V - Federal Defence Union Assembly Plant" region="10000048" security="0.4" solarsystem="30003825"/>
-    <row id="60015086" name="Moclinamaud VII - Federal Defence Union Logistic Support" region="10000048" security="0.4" solarsystem="30003828"/>
-    <row id="60015087" name="Mercomesier III - Federal Defence Union Logistic Support" region="10000048" security="0.1" solarsystem="30003853"/>
-    <row id="60015088" name="Intaki II - Federal Defence Union Logistic Support" region="10000048" security="0.1" solarsystem="30003788"/>
-    <row id="60015089" name="Ostingele IV - Federal Defence Union Testing Facilities" region="10000048" security="0.2" solarsystem="30003792"/>
-    <row id="60015090" name="Covryn III - Federal Defence Union Logistic Support" region="10000048" security="0.4" solarsystem="30003795"/>
-    <row id="60015091" name="Uphallant II - Federal Defence Union Logistic Support" region="10000048" security="0.2" solarsystem="30003799"/>
-    <row id="60015092" name="Jufvitte IV - Federal Defence Union Logistic Support" region="10000068" security="0.5" solarsystem="30005308"/>
+    <row id="60015080" name="Fliet III - Federal Defense Union Logistic Support" region="10000064" security="0.3" solarsystem="30004980"/>
+    <row id="60015081" name="Parts I - Federal Defense Union Logistic Support" region="10000064" security="0.4" solarsystem="30004998"/>
+    <row id="60015082" name="Costolle V - Federal Defense Union Logistic Support" region="10000068" security="0.2" solarsystem="30005298"/>
+    <row id="60015083" name="Ouelletta II - Federal Defense Union Logistic Support" region="10000068" security="0.4" solarsystem="30005297"/>
+    <row id="60015084" name="Esesier IX - Federal Defense Union Logistic Support" region="10000048" security="0.3" solarsystem="30003842"/>
+    <row id="60015085" name="Eugales V - Federal Defense Union Assembly Plant" region="10000048" security="0.4" solarsystem="30003825"/>
+    <row id="60015086" name="Moclinamaud VII - Federal Defense Union Logistic Support" region="10000048" security="0.4" solarsystem="30003828"/>
+    <row id="60015087" name="Mercomesier III - Federal Defense Union Logistic Support" region="10000048" security="0.1" solarsystem="30003853"/>
+    <row id="60015088" name="Intaki II - Federal Defense Union Logistic Support" region="10000048" security="0.1" solarsystem="30003788"/>
+    <row id="60015089" name="Ostingele IV - Federal Defense Union Testing Facilities" region="10000048" security="0.2" solarsystem="30003792"/>
+    <row id="60015090" name="Covryn III - Federal Defense Union Logistic Support" region="10000048" security="0.4" solarsystem="30003795"/>
+    <row id="60015091" name="Uphallant II - Federal Defense Union Logistic Support" region="10000048" security="0.2" solarsystem="30003799"/>
+    <row id="60015092" name="Jufvitte IV - Federal Defense Union Logistic Support" region="10000068" security="0.5" solarsystem="30005308"/>
     <row id="60015093" name="Dal I - Tribal Liberation Force Logistic Support" region="10000030" security="0.4" solarsystem="30002541"/>
     <row id="60015094" name="Lulm IV - Tribal Liberation Force Logistic Support" region="10000030" security="0.3" solarsystem="30002516"/>
     <row id="60015095" name="Olfeim IV - Tribal Liberation Force Logistic Support" region="10000030" security="0.4" solarsystem="30002515"/>
@@ -13205,10 +13205,10 @@
     <row id="60015139" name="Abudban IV - Tribal Liberation Force Logistic Support" region="10000030" security="0.7" solarsystem="30002507"/>
     <row id="60015140" name="Hek VII - Tribal Liberation Force Logistic Support" region="10000042" security="0.5" solarsystem="30002053"/>
     <row id="60015141" name="Anher I - Tribal Liberation Force Logistic Support" region="10000042" security="0.5" solarsystem="30002051"/>
-    <row id="60015142" name="Caslemon III - Federal Defence Union Logistic Support" region="10000064" security="0.6" solarsystem="30004973"/>
-    <row id="60015143" name="Aidart IV - Federal Defence Union Logistic Support" region="10000068" security="0.6" solarsystem="30005307"/>
-    <row id="60015144" name="Villore VI - Federal Defence Union Logistic Support" region="10000064" security="0.5" solarsystem="30004993"/>
-    <row id="60015145" name="Orvolle VII - Federal Defence Union Logistic Support" region="10000048" security="0.7" solarsystem="30003830"/>
+    <row id="60015142" name="Caslemon III - Federal Defense Union Logistic Support" region="10000064" security="0.6" solarsystem="30004973"/>
+    <row id="60015143" name="Aidart IV - Federal Defense Union Logistic Support" region="10000068" security="0.6" solarsystem="30005307"/>
+    <row id="60015144" name="Villore VI - Federal Defense Union Logistic Support" region="10000064" security="0.5" solarsystem="30004993"/>
+    <row id="60015145" name="Orvolle VII - Federal Defense Union Logistic Support" region="10000048" security="0.7" solarsystem="30003830"/>
     <row id="60015146" name="Tintoh VIII - Caldari Navy Testing Facilities" region="10000033" security="0.8" solarsystem="30002784"/>
     <row id="60015147" name="Ichoriya V - Caldari Navy Logistic Support" region="10000069" security="0.6" solarsystem="30045329"/>
     <row id="61000001" name="DB1R-4 II - duperTum Corp Minmatar Service Outpost" region="10000004" security="0.0" solarsystem="30000377"/>
