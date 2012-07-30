@@ -81,7 +81,21 @@ public class JAssetTable extends JAutoColumnTable {
 
 		//Reproccessing Colors
 		if (program.getSettings().isReprocessColors() && !isSelected) {
-			if (asset.getPriceReprocessed() > asset.getPrice()) { //Reprocessed highest
+			//Zero price (White)
+			if (asset.getPriceReprocessed() == 0 || asset.getPrice() == 0) {
+				return component;
+			}
+			//Equal price (Yellow)
+			if (asset.getPriceReprocessed() == asset.getPrice()) {
+				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+					component.setBackground(new Color(255, 255, 160));
+				} else {
+					component.setBackground(new Color(255, 255, 200));
+				}
+				return component;
+			}
+			//Reprocessed highest (Red)
+			if (asset.getPriceReprocessed() > asset.getPrice()) {
 				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 160, 160));
 				} else {
@@ -89,7 +103,8 @@ public class JAssetTable extends JAutoColumnTable {
 				}
 				return component;
 			}
-			if (asset.getPriceReprocessed() < asset.getPrice()) { //Price highest
+			//Price highest (Green)
+			if (asset.getPriceReprocessed() < asset.getPrice()) {
 				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
 					component.setBackground(new Color(160, 255, 160));
 				} else {
@@ -97,7 +112,6 @@ public class JAssetTable extends JAutoColumnTable {
 				}
 				return component;
 			}
-
 		}
 
 		//Reproccessed is greater then price
