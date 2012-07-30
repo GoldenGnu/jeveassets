@@ -190,6 +190,16 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getValue();
 		}
 	},
+	PRICE_REPROCESSED_DIFFERENCE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceReprocessedDifference();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getPriceReprocessedDifference();
+		}
+	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

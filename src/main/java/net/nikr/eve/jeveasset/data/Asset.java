@@ -328,6 +328,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return priceReprocessed;
 	}
 
+	public double getPriceReprocessedDifference() {
+		return getPrice() - getPriceReprocessed();
+	}
+
 	public double getPriceSellMin() {
 		if (isBlueprint() && !isBpo()) {
 			return 0;
