@@ -92,7 +92,14 @@ public class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//CsvExport
+		//Asset Settings
+		NodeList assetSettingsNodes = element.getElementsByTagName("assetsettings");
+		if (assetSettingsNodes.getLength() == 1) {
+			Element assetSettingsElement = (Element) assetSettingsNodes.item(0);
+			parseAssetSettings(assetSettingsElement, settings);
+		}
+
+		//Stockpiles
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
@@ -221,6 +228,11 @@ public class SettingsReader extends AbstractXmlReader {
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
 		}
+	}
+
+	private static void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
+		int maximumPurchaseAge = AttributeGetters.getInt(stockpilesElement, "maximumpurchaseage");
+		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
 	private static void parseStockpiles(final Element stockpilesElement, final Settings settings) {

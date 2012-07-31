@@ -53,6 +53,10 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnPriceSellMin();
 	public abstract String columnPriceBuyMax();
 	public abstract String columnPriceReprocessed();
+	public abstract String columnMarketOrderLatest();
+	public abstract String columnMarketOrderAverage();
+	public abstract String columnMarketOrderMaximum();
+	public abstract String columnMarketOrderMinimum();
 	public abstract String columnPriceBase();
 	public abstract String columnPriceReprocessedDifference();
 	public abstract String columnValueReprocessed();

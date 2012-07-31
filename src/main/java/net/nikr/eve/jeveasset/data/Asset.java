@@ -139,6 +139,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private String system;
 	private int rawQuantity;
 	private boolean piMaterial;
+	private MarketPriceData marketPriceData;
 
 	/**
 	 * For mockups...
@@ -267,6 +268,14 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public long getLocationID() {
 		return locationID;
+	}
+
+	public MarketPriceData getMarketPriceData() {
+		if (marketPriceData != null) {
+			return marketPriceData;
+		} else {
+			return new MarketPriceData();
+		}
 	}
 
 	public int getMeta() {
@@ -457,6 +466,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public void setContainer(final String container) {
 		this.container = container;
+	}
+
+	public void setMarketPriceData(MarketPriceData marketPriceData) {
+		this.marketPriceData = marketPriceData;
 	}
 
 	public void setName(final String name) {

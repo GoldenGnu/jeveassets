@@ -54,6 +54,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
 
+		writeAssetSettings(xmldoc, settings);
 		writeStockpiles(xmldoc, settings.getStockpiles());
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
@@ -142,6 +143,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 			nameNode.setAttributeNS(null, "resize", entry.getValue().name());
 			tablecolumnsNode.appendChild(nameNode);
 		}
+	}
+
+	private static void writeAssetSettings(final Document xmldoc, final Settings settings) {
+		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		parentNode.setAttributeNS(null, "maximumpurchaseage", String.valueOf(settings.getMaximumPurchaseAge()));
 	}
 
 	private static void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {

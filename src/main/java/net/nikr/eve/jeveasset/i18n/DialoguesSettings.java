@@ -42,6 +42,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String showSellOrReprocessColours();
 	public abstract String includeSellOrders();
 	public abstract String includeBuyOrders();
+	public abstract String maximumPurchaseAge();
+	public abstract String days();
 
 	// used in GeneralSettingsPanel
 	public abstract String general();

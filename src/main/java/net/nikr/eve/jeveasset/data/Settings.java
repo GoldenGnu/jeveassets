@@ -92,6 +92,7 @@ public class Settings {
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
+	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
@@ -110,6 +111,7 @@ public class Settings {
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
 	private boolean windowAlwaysOnTop;
+	private int maximumPurchaseAge = 0;
 	private Profile activeProfile;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
@@ -294,6 +296,30 @@ public class Settings {
 			List<String> ownersOrders = new ArrayList<String>();
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
+			//Create Market Price Data
+			marketPriceData= new HashMap<Integer, MarketPriceData>();
+			//Date - maximumPurchaseAge in days
+			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
+			for (Account account : accounts) {
+				for (Human human : account.getHumans()) {
+					for (ApiMarketOrder marketOrder : human.getMarketOrders()) {
+						if (marketOrder.getBid() > 0 //Buy orders only
+								//at least one bought
+								&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
+								//Date in range or unlimited
+								&& (marketOrder.getIssued().after(maxAge) || maximumPurchaseAge == 0)
+								) {
+							int typeID = marketOrder.getTypeID();
+							if (!marketPriceData.containsKey(typeID)) {
+								marketPriceData.put(typeID, new MarketPriceData());
+							}
+							MarketPriceData data = marketPriceData.get(typeID);
+							data.update(marketOrder.getPrice(), marketOrder.getIssued());
+						}
+					}
+				}
+			}
+			//Add assets
 			for (Account account : accounts) {
 				for (Human human : account.getHumans()) {
 					//Market Orders
@@ -355,7 +381,8 @@ public class Settings {
 				} else { //All other
 					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
 				}
-
+				//Market price
+				eveAsset.setMarketPriceData(marketPriceData.get(eveAsset.getTypeID()));
 				//User Item Names
 				if (userNames.containsKey(eveAsset.getItemID())) {
 					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
@@ -688,6 +715,14 @@ public class Settings {
 
 	public Map<String, ResizeMode> getTableResize() {
 		return tableResize;
+	}
+
+	public int getMaximumPurchaseAge() {
+		return maximumPurchaseAge;
+	}
+
+	public void setMaximumPurchaseAge(final int maximumPurchaseAge) {
+		this.maximumPurchaseAge = maximumPurchaseAge;
 	}
 
 	public static boolean isFilterOnEnter() {

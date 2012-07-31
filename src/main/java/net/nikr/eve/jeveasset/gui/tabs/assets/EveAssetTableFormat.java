@@ -160,6 +160,46 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getPriceReprocessed();
 		}
 	},
+	MARKET_ORDER_LATEST(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderLatest();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getLatest();
+		}
+	},
+	MARKET_ORDER_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderAverage();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getAverage();
+		}
+	},
+	MARKET_ORDER_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderMaximum();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getMaximum();
+		}
+	},
+	MARKET_ORDER_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderMinimum();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getMinimum();
+		}
+	},
 	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

@@ -65,7 +65,6 @@ public class ModuleTest {
 			}
 			boolean found = false;
 			for (ItemFlag flag : flags) {
-				System.out.println(flag.getFlagName());
 				if (flag.getFlagName().contains(type.getFlag())) {
 					found = true;
 					break;
