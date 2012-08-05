@@ -162,6 +162,10 @@ class FilterGui<E> implements ActionListener {
 		for (FilterList<E> filterList : matcherControl.getFilterLists()) {
 			showing = showing + filterList.size();
 		}
+		jShowing.setText(GuiShared.get().filterShowing(showing, matcherControl.getTotalSize(), getCurrentFilterName()));
+	}
+
+	String getCurrentFilterName() {
 		String filterName = GuiShared.get().filterUntitled();
 		if (getFilters().isEmpty()) {
 			filterName = GuiShared.get().filterEmpty();
@@ -175,7 +179,7 @@ class FilterGui<E> implements ActionListener {
 				}
 			}
 		}
-		jShowing.setText(GuiShared.get().filterShowing(showing, matcherControl.getTotalSize(), filterName));
+		return filterName;
 	}
 
 	List<Filter> getFilters() {
@@ -284,7 +288,7 @@ class FilterGui<E> implements ActionListener {
 		addFilters(Collections.singletonList(filter));
 	}
 
-	private void addFilters(final List<Filter> filters) {
+	void addFilters(final List<Filter> filters) {
 		//Remove single empty filter...
 		if (filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty()) {
 			remove(filterPanels.get(0));
@@ -334,6 +338,7 @@ class FilterGui<E> implements ActionListener {
 			jLoadFilter.add(jMenuItem);
 		}
 		updateShowing();
+		matcherControl.updateFilters();
 	}
 
 	void refilter() {

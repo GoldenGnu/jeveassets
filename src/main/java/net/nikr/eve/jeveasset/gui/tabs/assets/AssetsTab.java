@@ -122,6 +122,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		this.addStatusbarLabel(jValue);
 
 		filterControl = new AssetFilterControl(
+				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
 				eventList,
@@ -153,11 +154,17 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void addFilter(final Filter filter) {
 		filterControl.addFilter(filter);
 	}
+	public void addFilters(final List<Filter> filters) {
+		filterControl.addFilters(filters);
+	}
 	private List<Filter> getFilters() {
 		return filterControl.getCurrentFilters();
 	}
 	public void clearFilters() {
 		filterControl.clearCurrentFilters();
+	}
+	public String getCurrentFilterName(){
+		return filterControl.getCurrentFilterName();
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(final List<Filter> filters) {
 		return new FilterLogicalMatcher<Asset>(filterControl, filters);
@@ -241,10 +248,12 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public static class AssetFilterControl extends FilterControl<Asset> {
 
 		private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
+		private Program program;
 
-		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
+			this.program = program;
 		}
 
 		@Override
@@ -300,6 +309,13 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		@Override
 		protected List<EnumTableColumn<Asset>> getEnumShownColumns() {
 			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void updateFilters() {
+			if (program != null && program.getOverviewTab() != null){
+				program.getOverviewTab().updateFilters();
+			}
 		}
 	}
 }
