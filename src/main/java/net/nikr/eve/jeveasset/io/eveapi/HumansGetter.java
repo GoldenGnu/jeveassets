@@ -60,12 +60,12 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	@Override
 	protected Date getNextUpdate() {
-		return getAccount().getCharactersNextUpdate();
+		return getAccount().getAccountNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getAccount().setCharactersNextUpdate(nextUpdate);
+		getAccount().setAccountNextUpdate(nextUpdate);
 	}
 
 	@Override

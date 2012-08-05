@@ -150,10 +150,10 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 		data.updateData();
 
-		if (!data.getCharacters().isEmpty()) {
+		if (!data.getOwners().isEmpty()) {
 			jTable.setEnabled(true);
-			Collections.sort(data.getCharacters());
-			data.getCharacters().add(0, TabsJobs.get().all());
+			Collections.sort(data.getOwners());
+			data.getOwners().add(0, TabsJobs.get().all());
 		} else {
 			jTable.setEnabled(false);
 		}

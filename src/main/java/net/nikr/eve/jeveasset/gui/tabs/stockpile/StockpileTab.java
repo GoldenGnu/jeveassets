@@ -366,7 +366,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public void updateData() {
 		//Items
 		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
-		//Characters Look-Up
+		//Owners Look-Up
 		Map<String, Long> ownersID = new HashMap<String, Long>();
 		Map<Long, String> ownersName = new HashMap<Long, String>();
 		for (Account account : program.getSettings().getAccounts()) {

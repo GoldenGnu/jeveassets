@@ -49,7 +49,7 @@ public class IndustryJobData {
 	 * This is a Vector because it needs to be passed to a GUI component that
 	 * only takes a Vector rather then a List.
 	 */
-	private Vector<String> characters;
+	private Vector<String> owners;
 
 	private Program program;
 
@@ -59,8 +59,7 @@ public class IndustryJobData {
 
 	public void updateData() {
 		List<String> unique = new ArrayList<String>();
-		characters = new Vector<String>();
-		//characters.add("All");
+		owners = new Vector<String>();
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
 		for (Account account : program.getSettings().getAccounts()) {
@@ -73,15 +72,15 @@ public class IndustryJobData {
 						name = human.getName();
 					}
 					//Only add names once
-					if (!characters.contains(name)) {
-						characters.add(name);
+					if (!owners.contains(name)) {
+						owners.add(name);
 						jobs.put(name, new ArrayList<IndustryJob>()); //Make sure empty is not null
 					}
 					//Only add once and don't add empty jobs
-					List<IndustryJob> characterIndustryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
-					if (!unique.contains(name) && !characterIndustryJobs.isEmpty()) {
-						jobs.put(name, characterIndustryJobs);
-						all.addAll(characterIndustryJobs);
+					List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
+					if (!unique.contains(name) && !industryJobs.isEmpty()) {
+						jobs.put(name, industryJobs);
+						all.addAll(industryJobs);
 						unique.add(name);
 					}
 				}
@@ -93,8 +92,8 @@ public class IndustryJobData {
 		return Collections.unmodifiableList(all);
 	}
 
-	public Vector<String> getCharacters() {
-		return characters;
+	public Vector<String> getOwners() {
+		return owners;
 	}
 
 	public Map<String, List<IndustryJob>> getJobs() {

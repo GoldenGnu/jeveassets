@@ -53,7 +53,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
 
 	//GUI
-	private JComboBox jCharacters;
+	private JComboBox jOwners;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JCheckBox jPiMaterial;
@@ -75,9 +75,9 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jPiMaterial.setActionCommand(ACTION_SELECTED);
 		jPiMaterial.addActionListener(this);
 
-		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_SELECTED);
-		jCharacters.addActionListener(this);
+		jOwners = new JComboBox();
+		jOwners.setActionCommand(ACTION_SELECTED);
+		jOwners.addActionListener(this);
 
 		jCollapse = new JButton(TabsMaterials.get().collapse());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
@@ -109,7 +109,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCharacters, 200, 200, 200)
+					.addComponent(jOwners, 200, 200, 200)
 					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jPiMaterial)
@@ -119,7 +119,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -130,7 +130,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		List<String> characters = new ArrayList<String>();
+		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
 			for (Human human : account.getHumans()) {
@@ -141,26 +141,26 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 					} else {
 						name = human.getName();
 					}
-					if (!characters.contains(name)) {
-						characters.add(name);
+					if (!owners.contains(name)) {
+						owners.add(name);
 					}
 				}
 			}
 		}
-		if (!characters.isEmpty()) {
+		if (!owners.isEmpty()) {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
-			jCharacters.setEnabled(true);
-			Collections.sort(characters);
-			characters.add(0, TabsMaterials.get().all());
-			jCharacters.setModel(new DefaultComboBoxModel(characters.toArray()));
-			jCharacters.setSelectedIndex(0);
+			jOwners.setEnabled(true);
+			Collections.sort(owners);
+			owners.add(0, TabsMaterials.get().all());
+			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
+			jOwners.setSelectedIndex(0);
 		} else {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
-			jCharacters.setEnabled(false);
-			jCharacters.setModel(new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem(TabsMaterials.get().no());
+			jOwners.setEnabled(false);
+			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}
 
@@ -190,7 +190,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 
 	private void updateTable() {
-		String character = (String) jCharacters.getSelectedItem();
+		String owner = (String) jOwners.getSelectedItem();
 		List<Material> materials = new ArrayList<Material>();
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
 		Map<String, Material> totalMaterials = new HashMap<String, Material>();
@@ -206,7 +206,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 				continue;
 			}
 			//Skip not selected owners
-			if (!character.equals(eveAsset.getOwner()) && !character.equals(TabsMaterials.get().whitespace(eveAsset.getOwner())) && !character.equals(TabsMaterials.get().all())) {
+			if (!owner.equals(eveAsset.getOwner()) && !owner.equals(TabsMaterials.get().whitespace(eveAsset.getOwner())) && !owner.equals(TabsMaterials.get().all())) {
 				continue;
 			}
 

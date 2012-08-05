@@ -371,7 +371,7 @@ public class OverviewTab extends JMainTab {
 		return "";
 	}
 
-	private List<Overview> getList(final List<Asset> input, final String character, final String view) {
+	private List<Overview> getList(final List<Asset> input, final String owner, final String view) {
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -409,7 +409,7 @@ public class OverviewTab extends JMainTab {
 				continue;
 			}
 			//Filters
-			if (!character.equals(name) && !character.equals(TabsOverview.get().all())) {
+			if (!owner.equals(name) && !owner.equals(TabsOverview.get().all())) {
 				continue;
 			}
 
@@ -488,7 +488,7 @@ public class OverviewTab extends JMainTab {
 		if (!program.getMainWindow().getTabs().contains(this)) {
 			return;
 		}
-		String character = (String) jOwner.getSelectedItem();
+		String owner = (String) jOwner.getSelectedItem();
 		String view = getSelectedView();
 		if (view.equals(TabsOverview.get().regions())) {
 			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
@@ -517,7 +517,7 @@ public class OverviewTab extends JMainTab {
 		try {
 			overviewEventList.getReadWriteLock().writeLock().lock();
 			overviewEventList.clear();
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view));
+			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
 		} finally {
 			overviewEventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -567,7 +567,7 @@ public class OverviewTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		List<String> characters = new ArrayList<String>();
+		List<String> owners = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Human human : account.getHumans()) {
 				if (human.isShowAssets()) {
@@ -577,15 +577,15 @@ public class OverviewTab extends JMainTab {
 					} else {
 						name = human.getName();
 					}
-					if (!characters.contains(name)) {
-						characters.add(name);
+					if (!owners.contains(name)) {
+						owners.add(name);
 					}
 				}
 			}
 		}
-		Collections.sort(characters);
-		characters.add(0, TabsOverview.get().all());
-		jOwner.setModel(new DefaultComboBoxModel(characters.toArray()));
+		Collections.sort(owners);
+		owners.add(0, TabsOverview.get().all());
+		jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 		updateTable();
 	}
 

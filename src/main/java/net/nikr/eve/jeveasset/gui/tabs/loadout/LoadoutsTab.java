@@ -51,17 +51,17 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
-	public static final String ACTION_FILTER = "ACTION_FILTER";
-	public static final String ACTION_CHARACTERS = "ACTION_CHARACTERS";
-	public static final String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
-	public static final String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
+	private static final String ACTION_FILTER = "ACTION_FILTER";
+	private static final String ACTION_OWNERS = "ACTION_OWNERS";
+	private static final String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
+	private static final String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
 
 	private static final String SHIP_CATEGORY = "Ship";
 
 	//GUI
-	private JComboBox jCharacters;
+	private JComboBox jOwners;
 	private JComboBox jShips;
 	private JButton jExpand;
 	private JButton jCollapse;
@@ -100,10 +100,10 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			}
 		}
-		JLabel jCharactersLabel = new JLabel(TabsLoadout.get().character());
-		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_CHARACTERS);
-		jCharacters.addActionListener(this);
+		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
+		jOwners = new JComboBox();
+		jOwners.setActionCommand(ACTION_OWNERS);
+		jOwners.addActionListener(this);
 
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jShips = new JComboBox();
@@ -150,8 +150,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCharactersLabel)
-					.addComponent(jCharacters, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jOwnersLabel)
+					.addComponent(jOwners, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jShipsLabel)
 					.addComponent(jShips, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
@@ -166,8 +166,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOwnersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShipsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShips, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -321,7 +321,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		List<String> characters = new ArrayList<String>();
+		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
 			for (Human human : account.getHumans()) {
@@ -332,22 +332,22 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 					} else {
 						name = human.getName();
 					}
-					if (!characters.contains(name)) {
-						characters.add(name);
+					if (!owners.contains(name)) {
+						owners.add(name);
 					}
 				}
 			}
 		}
-		if (!characters.isEmpty()) {
-			jCharacters.setEnabled(true);
-			Collections.sort(characters);
-			characters.add(0, TabsLoadout.get().all());
-			jCharacters.setModel(new DefaultComboBoxModel(characters.toArray()));
-			jCharacters.setSelectedIndex(0);
+		if (!owners.isEmpty()) {
+			jOwners.setEnabled(true);
+			Collections.sort(owners);
+			owners.add(0, TabsLoadout.get().all());
+			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
+			jOwners.setSelectedIndex(0);
 		} else {
-			jCharacters.setEnabled(false);
-			jCharacters.setModel(new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem(TabsLoadout.get().no());
+			jOwners.setEnabled(false);
+			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
 			jShips.setModel(new DefaultComboBoxModel());
 			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
@@ -356,8 +356,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_CHARACTERS.equals(e.getActionCommand())) {
-			String character = (String) jCharacters.getSelectedItem();
+		if (ACTION_OWNERS.equals(e.getActionCommand())) {
+			String owner = (String) jOwners.getSelectedItem();
 			List<String> charShips = new ArrayList<String>();
 			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 			for (Asset eveAsset : eveAssetEventList) {
@@ -365,9 +365,9 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
 					continue;
 				}
-				if (!character.equals(eveAsset.getOwner())
-						&& !character.equals(TabsLoadout.get().whitespace9(eveAsset.getOwner()))
-						&& !character.equals(TabsLoadout.get().all())
+				if (!owner.equals(eveAsset.getOwner())
+						&& !owner.equals(TabsLoadout.get().whitespace9(eveAsset.getOwner()))
+						&& !owner.equals(TabsLoadout.get().all())
 						) {
 					continue;
 				}
@@ -379,7 +379,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jCollapse.setEnabled(true);
 				jExport.setEnabled(true);
 				jExportAll.setEnabled(true);
-				jCharacters.setEnabled(true);
+				jOwners.setEnabled(true);
 				jShips.setEnabled(true);
 				jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
 				jShips.setSelectedIndex(0);

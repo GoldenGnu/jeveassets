@@ -91,7 +91,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		});
 		jName.addCaretListener(this);
 
-		JLabel jCharactersLabel = new JLabel(TabsStockpile.get().owner());
+		JLabel jOwnersLabel = new JLabel(TabsStockpile.get().owner());
 		jOwner = new JComboBox();
 
 		ButtonGroup group = new ButtonGroup();
@@ -157,7 +157,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jNameLabel)
-						.addComponent(jCharactersLabel)
+						.addComponent(jOwnersLabel)
 						.addComponent(jLocationsLabel)
 						.addComponent(jIncludeLabel)
 						.addComponent(jFlagLabel)
@@ -216,7 +216,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 					.addComponent(jJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOwnersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
@@ -237,7 +237,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private Stockpile getStockpile() {
 		//Name
 		String name = jName.getText();
-		//Character
+		//Owner
 		Human human = (Human) jOwner.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
@@ -302,7 +302,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Name
 		jName.setText(stockpile.getName());
 
-		//Characters
+		//Owners
 		Human humanSelected = humanAll;
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Human human : account.getHumans()) {
@@ -370,7 +370,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jBuyOrders.setSelected(stockpile.isBuyOrders());
 		jJobs.setSelected(stockpile.isJobs());
 
-		//Characters
+		//Owners
 		Human humanSelected = humanAll;
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Human human : account.getHumans()) {
@@ -444,21 +444,21 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Name
 		jName.setText("");
 
-		//Characters
-		List<Human> characters = new ArrayList<Human>();
+		//Owners
+		List<Human> owners = new ArrayList<Human>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Human human : account.getHumans()) {
-				characters.add(human);
+				owners.add(human);
 			}
 		}
-		if (characters.isEmpty()) {
-			characters.add(humanAll);
-			jOwner.setModel(new DefaultComboBoxModel(characters.toArray()));
+		if (owners.isEmpty()) {
+			owners.add(humanAll);
+			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwner.setEnabled(false);
 		} else {
-			Collections.sort(characters);
-			characters.add(0, humanAll);
-			jOwner.setModel(new DefaultComboBoxModel(characters.toArray()));
+			Collections.sort(owners);
+			owners.add(0, humanAll);
+			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwner.setEnabled(true);
 		}
 		//Locations

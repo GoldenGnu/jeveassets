@@ -48,7 +48,7 @@ public class Updatable {
 		for (int a = 0; a < accounts.size(); a++) {
 			Account account = accounts.get(a);
 			//Account
-			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getCharactersNextUpdate());
+			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++) {
 				Human human = humans.get(b);
