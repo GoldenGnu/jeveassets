@@ -191,7 +191,7 @@ public class Settings {
 		activeProfile = new Profile("Default", true, true);
 		profiles.add(activeProfile);
 
-		conquerableStationsNextUpdate = Settings.getGmtNow();
+		conquerableStationsNextUpdate = Settings.getNow();
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -923,25 +923,8 @@ public class Settings {
 		return null;
 	}
 
-	public static Date getGmtNow() {
-		return getGmt(new Date());
-	}
-
-	public static Date getGmt(final Date date) {
-		TimeZone tz = TimeZone.getDefault();
-		Date ret = new Date(date.getTime() - tz.getRawOffset());
-
-		// if we are now in DST, back off by the delta.  Note that we are checking the GMT date, this is the KEY.
-		if (tz.inDaylightTime(ret)) {
-			Date dstDate = new Date(ret.getTime() - tz.getDSTSavings());
-
-			// check to make sure we have not crossed back into standard time
-			// this happens when we are on the cusp of DST (7pm the day before the change for PDT)
-			if (tz.inDaylightTime(dstDate)) {
-				ret = dstDate;
-			}
-		}
-		return ret;
+	public static Date getNow() {
+		return new Date();
 	}
 
 	public static DateFormat getSettingsDateFormat() {
@@ -953,8 +936,8 @@ public class Settings {
 	}
 
 	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
-		return ((Settings.getGmtNow().after(date)
-				|| Settings.getGmtNow().equals(date)
+		return ((Settings.getNow().after(date)
+				|| Settings.getNow().equals(date)
 				|| Program.isForceUpdate()
 				|| (getApiProxy() != null && ignoreOnProxy))
 				&& !Program.isForceNoUpdate());

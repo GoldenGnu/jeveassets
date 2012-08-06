@@ -186,7 +186,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 		public String toString() {
 			if (expirer == null) {
 				return "Never";
-			} else if (Settings.getGmtNow().after(expirer)) {
+			} else if (Settings.getNow().after(expirer)) {
 				return "Expired";
 			} else {
 				return Formater.dateOnly(expirer);

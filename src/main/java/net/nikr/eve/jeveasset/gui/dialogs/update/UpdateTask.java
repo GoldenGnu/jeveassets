@@ -183,7 +183,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 			} catch (ParseException ex) {
 				time = error.substring(start, end);
 			}
-			error = error.substring(0, start) + time + " GMT" + error.substring(end);
+			error = error.substring(0, start) + time + error.substring(end);
 			error = error.replace("retry after", "\r\n" + DialoguesUpdate.get().nextUpdate());
 		}
 		return error;

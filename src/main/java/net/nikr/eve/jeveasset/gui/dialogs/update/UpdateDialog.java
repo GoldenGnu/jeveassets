@@ -253,7 +253,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 	private void setUpdateLabel(final JLabel jLabel, final JCheckBox jCheckBox, Date nextUpdate, final boolean updateAll, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getGmtNow();
+			nextUpdate = Settings.getNow();
 		}
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			if (updateAll) {
@@ -276,7 +276,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 	private void setUpdatableButton(Date nextUpdate, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getGmtNow();
+			nextUpdate = Settings.getNow();
 		}
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			jUpdate.setEnabled(true);

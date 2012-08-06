@@ -76,7 +76,7 @@ public class Updatable {
 
 	private void isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getGmtNow();
+			nextUpdate = Settings.getNow();
 		}
 		if (settings.isUpdatable(nextUpdate, ignoreOnProxy)) {
 			updatable = true;

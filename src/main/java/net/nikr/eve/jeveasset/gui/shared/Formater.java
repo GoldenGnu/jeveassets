@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.text.*;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterMatcher;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -44,13 +45,46 @@ public final class Formater {
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
 	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
 
-	private static DateFormat columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
-	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
-	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
-	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
-	private static DateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
+	private static DateFormat columnDate = null;
+	private static DateFormat todaysDate = null;
+	private static DateFormat timeOnly = null;
+	private static DateFormat eveTime = null;
+	private static DateFormat weekdayAndTime = null;
+	private static DateFormat simpleDate = null;
+	private static DateFormat dateOnly = null;
+
+	private static boolean initDate = false;
 
 	private Formater() { }
+
+	private static void initDate(){
+		if (!initDate) {
+			initDate = true;
+
+			//FIXME - consider using local time in GUI
+			columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
+			columnDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
+			todaysDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			timeOnly = new SimpleDateFormat("HH:mm z", new Locale("en"));
+			timeOnly.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			weekdayAndTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
+			weekdayAndTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
+			simpleDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
+			dateOnly.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			//Always GMT
+			eveTime = new SimpleDateFormat("HH:mm z", new Locale("en"));
+			eveTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+		}
+	}
 
 	public static String iskFormat(final Double number) {
 		return iskFormat.format(number);
@@ -92,19 +126,24 @@ public final class Formater {
 		return Math.round(number * modifier) / modifier;
 	}
 
+//DATE
+
 	public static String weekdayAndTime(final Date date) {
+		initDate();
 		if (today(date)) {
 			return GuiShared.get().today(timeOnly.format(date));
 		} else {
-			return GuiShared.get().weekdayAndTime(date);
+			return weekdayAndTime.format(date);
 		}
 	}
 
 	public static String columnDate(final Object date) {
+		initDate();
 		return columnDate.format(date);
 	}
 
 	public static Date columnStringToDate(final String date) {
+		initDate();
 		if (!date.matches("\\d{2}-\\d{2}-\\d{4}")) {
 			return null;
 		}
@@ -115,20 +154,29 @@ public final class Formater {
 		}
 	}
 	public static String timeOnly(final Date date) {
+		initDate();
+		return timeOnly.format(date);
+	}
+
+	public static String eveTime(Date date) {
+		initDate();
 		return timeOnly.format(date);
 	}
 
 	public static String simpleDate(final Date date) {
+		initDate();
 		return simpleDate.format(date);
 	}
 
 	public static String dateOnly(final Object date) {
+		initDate();
 		return dateOnly.format(date);
 	}
 
 	private static boolean today(final Date date) {
+		initDate();
 		String sDate = todaysDate.format(date);
-		String sNow = todaysDate.format(Settings.getGmtNow());
+		String sNow = todaysDate.format(Settings.getNow());
 		return sDate.equals(sNow);
 	}
 

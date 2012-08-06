@@ -45,14 +45,14 @@ public class Human implements Comparable<Human> {
 	private List<Asset> assets;
 
 	public Human(final Account parentAccount, final Human human) {
-		name = human.getName();
-		ownerID = human.getOwnerID();
-		showAssets = human.isShowAssets();
-		assetNextUpdate = human.getAssetNextUpdate();
-		balanceNextUpdate = human.getBalanceNextUpdate();
-		marketOrdersNextUpdate = human.getMarketOrdersNextUpdate();
-		industryJobsNextUpdate = human.getIndustryJobsNextUpdate();
-		this.parentAccount = parentAccount;
+		this(parentAccount,
+				human.getName(),
+				human.getOwnerID(),
+				human.isShowAssets(),
+				human.getAssetNextUpdate(),
+				human.getBalanceNextUpdate(),
+				human.getMarketOrdersNextUpdate(),
+				human.getIndustryJobsNextUpdate());
 		accountBalances = human.getAccountBalances();
 		marketOrders = human.getMarketOrders();
 		industryJobs = human.getIndustryJobs();
@@ -60,7 +60,7 @@ public class Human implements Comparable<Human> {
 	}
 
 	public Human(final Account parentAccount, final String name, final long ownerID) {
-		this(parentAccount, name, ownerID, true, Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow(), Settings.getGmtNow());
+		this(parentAccount, name, ownerID, true, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
 	public Human(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date industryJobsNextUpdate) {

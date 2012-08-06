@@ -267,8 +267,8 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 			case 0:
 				if (this.isCompleted()) {
 					state = IndustryJobState.STATE_FAILED;
-				} else if (start.before(Settings.getGmtNow())) {
-					if (end.before(Settings.getGmtNow())) {
+				} else if (start.before(Settings.getNow())) {
+					if (end.before(Settings.getNow())) {
 						state = IndustryJobState.STATE_READY;
 					} else {
 						state = IndustryJobState.STATE_ACTIVE;

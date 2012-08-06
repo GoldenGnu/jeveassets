@@ -39,20 +39,20 @@ public class Account {
 	private List<Human> humans = new ArrayList<Human>();
 
 	public Account(final Account account) {
-		this.keyID = account.getKeyID();
-		this.vCode = account.getVCode();
-		this.name = account.getName();
-		this.accountNextUpdate = account.getAccountNextUpdate();
-		this.accessMask = account.getAccessMask();
-		this.type = account.getType();
-		this.expires = account.getExpires();
+		this(account.getKeyID(),
+				account.getVCode(),
+				account.getName(),
+				account.getAccountNextUpdate(),
+				account.getAccessMask(),
+				account.getType(),
+				account.getExpires());
 		for (Human human : account.getHumans()) {
 			humans.add(new Human(this, human));
 		}
 	}
 
 	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getGmtNow(), 0, "", null);
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, "", null);
 	}
 
 	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final int accessMask, final String type, final Date expires) {
@@ -105,7 +105,7 @@ public class Account {
 		if (getExpires() == null) {
 			return false;
 		} else {
-			return Settings.getGmtNow().after(getExpires());
+			return Settings.getNow().after(getExpires());
 		}
 	}
 
