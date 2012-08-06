@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -90,31 +91,31 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 
 		JMenuItem jMenuItem;
 
-		JMenuItem jAdd = new JMenuItem(TabsStockpile.get().addItem());
+		JMenuItem jAdd = new JMenuItem(TabsStockpile.get().addItem(), Images.EDIT_ADD.getIcon());
 		jAdd.setActionCommand(ACTION_ADD_ITEM);
 		jAdd.addActionListener(actionListener);
 		jStockpile.add(jAdd);
 
 		jStockpile.addSeparator();
 
-		jMenuItem = new JMenuItem(TabsStockpile.get().editStockpile());
+		jMenuItem = new JMenuItem(TabsStockpile.get().editStockpile(), Images.EDIT_EDIT.getIcon());
 		jMenuItem.setActionCommand(ACTION_EDIT_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
-		jMenuItem = new JMenuItem(TabsStockpile.get().cloneStockpile());
+		jMenuItem = new JMenuItem(TabsStockpile.get().cloneStockpile(), Images.EDIT_COPY.getIcon());
 		jMenuItem.setActionCommand(ACTION_CLONE_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
-		jMenuItem = new JMenuItem(TabsStockpile.get().deleteStockpile());
+		jMenuItem = new JMenuItem(TabsStockpile.get().deleteStockpile(), Images.EDIT_DELETE.getIcon());
 		jMenuItem.setActionCommand(ACTION_DELETE_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
 		jStockpile.addSeparator();
 
-		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList());
+		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);

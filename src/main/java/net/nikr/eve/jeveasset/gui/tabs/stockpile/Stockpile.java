@@ -253,6 +253,11 @@ public class Stockpile implements Comparable<Stockpile> {
 	}
 
 	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;

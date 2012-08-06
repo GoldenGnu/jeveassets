@@ -62,6 +62,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class StockpileTab extends JMainTab implements ActionListener, ListEventListener<StockpileItem> {
 
 	private static final String ACTION_ADD = "ACTION_ADD";
+	private static final String ACTION_SHOPPING_LIST = "ACTION_SHOPPING_LIST";
 	private static final String ACTION_IMPORT = "ACTION_IMPORT";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -70,6 +71,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	private JButton jAdd;
 	private JButton jImport;
+	private JButton jShoppingList;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
@@ -81,6 +83,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private StockpileDialog stockpileDialog;
 	private StockpileItemDialog stockpileItemDialog;
 	private StockpileShoppingListDialog stockpileShoppingListDialog;
+	private StockpileSelectionDialog stockpileSelectionDialog;
 
 	//Table
 	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
@@ -99,6 +102,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		stockpileShoppingListDialog = new StockpileShoppingListDialog(program);
+		stockpileSelectionDialog = new StockpileSelectionDialog(program);
 
 		JToolBar jToolBarLeft = new JToolBar();
 		jToolBarLeft.setFloatable(false);
@@ -111,6 +115,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jAdd.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarLeft.add(jAdd);
+
+		jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		jShoppingList.setActionCommand(ACTION_SHOPPING_LIST);
+		jShoppingList.addActionListener(this);
+		jShoppingList.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
+		jShoppingList.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
+		jShoppingList.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBarLeft.add(jShoppingList);
 
 		jToolBarLeft.addSeparator();
 
@@ -500,6 +512,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			Stockpile stockpile = stockpileDialog.showAdd();
 			if (stockpile != null) {
 				updateData();
+			}
+		}
+		if (ACTION_SHOPPING_LIST.equals(e.getActionCommand())) {
+			List<Stockpile> stockpiles = stockpileSelectionDialog.show();
+			if (stockpiles != null) {
+				stockpileShoppingListDialog.show(stockpiles);
 			}
 		}
 		if (ACTION_IMPORT.equals(e.getActionCommand())) {

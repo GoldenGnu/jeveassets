@@ -114,6 +114,8 @@ public enum Images {
 	SETTINGS_PROXY ("settings_proxy.png"),
 	SETTINGS_WINDOW ("settings_window.png"),
 
+	STOCKPILE_SHOPPING_LIST ("stockpile_shopping_list.png"),
+
 	TAB_CLOSE ("tab_close.png"),
 	TAB_CLOSE_ACTIVE ("tab_close_active.png"),
 
