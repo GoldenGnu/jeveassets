@@ -50,7 +50,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 	private List<Stockpile> stockpiles;
 
 	public StockpileSelectionDialog(Program program) {
-		super(program, TabsStockpile.get().selectStockpiles()); //FIXME - i18n
+		super(program, TabsStockpile.get().selectStockpiles());
 
 		jList = new JMultiSelectionList();
 		jList.addListSelectionListener(this);

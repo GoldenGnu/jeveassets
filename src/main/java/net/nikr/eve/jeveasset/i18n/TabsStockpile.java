@@ -38,6 +38,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String addItem();
 	public abstract String addStockpileItem();
 	public abstract String addStockpileTitle();
+	public abstract String addToNewStockpile();
+	public abstract String addToStockpile();
 	public abstract String all();
 	public abstract String allLocations();
 	public abstract String buyOrders();

@@ -67,11 +67,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
 	private static final String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
+	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
 	private static final String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 
 	private JButton jAdd;
-	private JButton jImport;
 	private JButton jShoppingList;
+	private JButton jImport;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
@@ -115,6 +116,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jAdd.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarLeft.add(jAdd);
+
+		jToolBarLeft.addSeparator();
 
 		jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jShoppingList.setActionCommand(ACTION_SHOPPING_LIST);
@@ -353,13 +356,32 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jMenu.setIcon(Images.TOOL_STOCKPILE.getIcon());
 		jComponent.add(jMenu);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), selected);
+		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
+		jSubMenu.setEnabled(!selected.isEmpty());
+		jMenu.add(jSubMenu);
+		if (!selected.isEmpty()) {
+			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), selected);
+			jMenuItem.setActionCommand(ACTION_ADD_TO);
+			jMenuItem.addActionListener(this);
+			jSubMenu.add(jMenuItem);
+
+			jSubMenu.addSeparator();
+
+			for (Stockpile stockpile : program.getSettings().getStockpiles()) {
+				jMenuItem = new JStockpileMenuItem(Images.TOOL_STOCKPILE.getIcon(), stockpile, selected);
+				jMenuItem.setActionCommand(ACTION_ADD_TO);
+				jMenuItem.addActionListener(this);
+				jSubMenu.add(jMenuItem);
+			}
+		}
+
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), selected);
 		jMenuItem.setActionCommand(ACTION_EDIT_ITEM);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setEnabled(selected.size() == 1);
 		jMenu.add(jMenuItem);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), selected);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), selected);
 		jMenuItem.setActionCommand(ACTION_DELETE_ITEM);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setEnabled(!selected.isEmpty());
@@ -662,6 +684,25 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 			}
 		}
+		if (ACTION_ADD_TO.equals(e.getActionCommand())) {
+			Object source = e.getSource();
+			if (source instanceof JStockpileMenuItem) {
+				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+				Stockpile stockpile = jMenuItem.getStockpile();
+				if (stockpile == null) { //new stockpile
+					stockpile = stockpileDialog.showAdd();
+				}
+				if (stockpile != null) { //Add items
+					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
+						//Clone item
+						StockpileItem item = new StockpileItem(stockpile, stockpileItem);
+						//Add new - ignore existing
+						stockpile.add(item);
+					}
+					updateData();
+				}
+			}
+		}
 		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())) {
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem) {
@@ -707,15 +748,27 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	public static class JStockpileMenuItem extends JMenuItem {
 
-		private List<StockpileItem> items;
+		private final List<StockpileItem> items;
+		private final Stockpile stockpile;
 
-		public JStockpileMenuItem(final String title, final List<StockpileItem> items) {
-			super(title);
+		public JStockpileMenuItem(final Icon icon, final Stockpile stockpile, final List<StockpileItem> items) {
+			super(stockpile.getName(), icon);
 			this.items = items;
+			this.stockpile = stockpile;
+		}
+
+		public JStockpileMenuItem(final String title, final Icon icon, final List<StockpileItem> items) {
+			super(title, icon);
+			this.items = items;
+			this.stockpile = null;
 		}
 
 		public List<StockpileItem> getItems() {
 			return items;
+		}
+
+		public Stockpile getStockpile() {
+			return stockpile;
 		}
 	}
 
