@@ -188,6 +188,10 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 		return false;
 	}
 	@Override
+	public boolean isShowDefault() {
+		return true;
+	}
+	@Override
 	public MarketOrder setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}

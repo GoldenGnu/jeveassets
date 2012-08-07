@@ -355,6 +355,10 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		return false;
 	}
 	@Override
+	public boolean isShowDefault() {
+		return true;
+	}
+	@Override
 	public Asset setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}

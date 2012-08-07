@@ -89,8 +89,13 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(final Object baseObject) {
+	@Override
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
+	}
+	@Override
+	public boolean isShowDefault() {
+		return true;
 	}
 	@Override public Material setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;

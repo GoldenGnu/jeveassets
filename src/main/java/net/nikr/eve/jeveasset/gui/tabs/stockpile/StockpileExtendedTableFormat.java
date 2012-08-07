@@ -103,6 +103,10 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		return false;
 	}
 	@Override
+	public boolean isShowDefault() {
+		return true;
+	}
+	@Override
 	public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
