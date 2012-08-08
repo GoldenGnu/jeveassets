@@ -23,58 +23,71 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuEditItem<T> extends JMenuTool<T> implements ActionListener {
+public class JMenuPrice<T> extends JMenuTool<T> implements ActionListener {
 
 	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
-	public static final String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
+	public static final String ACTION_USER_PRICE_DELETE = "ACTION_USER_PRICE_DELETE";
 
-	private Asset asset = null;
+	private List<UserItem<Integer, Double>> itemPrices;
 
-	public JMenuEditItem(final Program program, final List<T> items) {
-		super(GuiShared.get().editItem(), program, items); //
-		this.setIcon(Images.EDIT_EDIT.getIcon());
+	public JMenuPrice(final Program program, final List<T> items) {
+		super(GuiShared.get().itemPriceTitle(), program, items); //
+		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
+
+		createList();
 
 		JMenuItem jMenuItem;
 
-		jMenuItem = new JMenuItem(GuiShared.get().editPrice());
-		jMenuItem.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
-		jMenuItem.setEnabled(!typeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty() && items.size() == 1);
+		jMenuItem = new JMenuItem(GuiShared.get().itemEdit());
+		jMenuItem.setIcon(Images.EDIT_EDIT.getIcon());
+		jMenuItem.setEnabled(!prices.isEmpty());
 		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
-		if (!items.isEmpty() && (items.get(0) instanceof Asset)) {
-			asset = (Asset) items.get(0);
-			jMenuItem = new JMenuItem(GuiShared.get().editName());
-			jMenuItem.setIcon(Images.SETTINGS_USER_NAME.getIcon());
-			jMenuItem.setEnabled(!typeIDs.isEmpty() && items.size() == 1);
-			jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-		}
+		jMenuItem = new JMenuItem(GuiShared.get().itemDelete());
+		jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
+		jMenuItem.setEnabled(!prices.isEmpty() && program.getUserPriceSettingsPanel().contains(itemPrices));
+		jMenuItem.setActionCommand(ACTION_USER_PRICE_DELETE);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
 	}
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
-			UserPrice userPrice;
 			if (!blueprintTypeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty()) {
-				userPrice = new UserPrice(prices.get(0), blueprintTypeIDs.get(0), typeNames.get(0));
-				program.getUserPriceSettingsPanel().edit(userPrice);
+				program.getUserPriceSettingsPanel().edit(itemPrices);
 			}
 		}
-		if (ACTION_USER_NAME_EDIT.equals(e.getActionCommand())) {
-			program.getUserNameSettingsPanel().edit(new UserName(asset));
+		if (ACTION_USER_PRICE_DELETE.equals(e.getActionCommand())) {
+			if (!blueprintTypeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty()) {
+				program.getUserPriceSettingsPanel().delete(itemPrices);
+			}
+		}
+	}
+
+	private void createList(){
+		itemPrices = new ArrayList<UserItem<Integer, Double>>();
+		for (Map.Entry<Integer, Double> entry : prices.entrySet()) {
+			Item item = program.getSettings().getItems().get(entry.getKey());
+			String name = "";
+			if (item != null) {
+				name = item.getName();					
+			}
+			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
 		}
 	}
 }

@@ -22,7 +22,9 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
@@ -35,7 +37,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 public abstract class JMenuTool<T> extends JMenu {
 	protected final Program program;
 	protected final List<Integer> typeIDs = new ArrayList<Integer>();
-	protected final List<Double> prices = new ArrayList<Double>();
+	protected final Map<Integer, Double> prices = new HashMap<Integer, Double>();
 	protected final List<String> typeNames = new ArrayList<String>();
 	protected final List<String> stations = new ArrayList<String>();
 	protected final List<String> systems = new ArrayList<String>();
@@ -176,6 +178,9 @@ public abstract class JMenuTool<T> extends JMenu {
 			if (!blueprintTypeIDs.contains(blueprintTypeID)){
 				blueprintTypeIDs.add(blueprintTypeID);
 			}
+			if (price != null) { //Not unique
+				prices.put(blueprintTypeID, price);
+			}
 		}
 		if (typeID != null && !typeIDs.contains(typeID)) {
 			typeIDs.add(typeID);
@@ -191,9 +196,6 @@ public abstract class JMenuTool<T> extends JMenu {
 		}
 		if (region != null && !regions.contains(region)) {
 			regions.add(region);
-		}
-		if (price != null && !prices.contains(price)) {
-			prices.add(price);
 		}
 	}
 }

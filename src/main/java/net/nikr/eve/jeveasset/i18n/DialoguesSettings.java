@@ -112,6 +112,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String name();
 	public abstract String namesInstruction();
 
+	// used in JUserListPanel
+	public abstract String badInput();
+	public abstract String deleteItem();
+	public abstract String deleteTypeTitle(String type);
+	public abstract String editItem();
+	public abstract String editTypeTitle(String type);
+	public abstract String inputNotValid();
+	public abstract String itemEmpty();
+	public abstract String items(int size);
+
 	// used in UserPriceSettingsPanel
 	public abstract String pricePrices();
 	public abstract String pricePrice();

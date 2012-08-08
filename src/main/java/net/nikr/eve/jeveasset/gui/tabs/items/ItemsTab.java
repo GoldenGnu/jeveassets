@@ -148,7 +148,7 @@ public class ItemsTab extends JMainTab {
 	//LOOKUP
 		jComponent.add(new JMenuLookup<Item>(program, selectionModel.getSelected()));
 	//EDIT
-		jComponent.add(new JMenuEditItem<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Item>(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	}

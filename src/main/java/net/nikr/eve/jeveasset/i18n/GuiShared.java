@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.i18n;
 
-import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
@@ -42,9 +41,6 @@ public abstract class GuiShared extends Bundle {
 	public abstract String copy();
 	public abstract String cut();
 	public abstract String dotlan();
-	public abstract String editItem();
-	public abstract String editName();
-	public abstract String editPrice();
 	public abstract String emptyString();
 	public abstract String eveAddicts();
 	public abstract String eveCentral();
@@ -53,6 +49,10 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
 	public abstract String item();
+	public abstract String itemDelete();
+	public abstract String itemEdit();
+	public abstract String itemNameTitle();
+	public abstract String itemPriceTitle();
 	public abstract String lookup();
 	public abstract String newStockpile();
 	public abstract String ok();

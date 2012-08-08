@@ -73,7 +73,7 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 		@Override
 		public String toString() {
-			return getValue() + " [" + getName() + "]";
+			return getValue();
 		}
 
 		@Override
