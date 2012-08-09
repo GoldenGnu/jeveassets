@@ -425,7 +425,7 @@ public class Settings {
 							if (userPrices.containsKey(material.getTypeID())) {
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
-								price = Asset.getDefaultPrice(priceData);
+								price = Asset.getDefaultPriceReprocessed(priceData);
 							}
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}

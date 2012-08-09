@@ -57,6 +57,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private JComboBox jSystems;
 	private JComboBox jStations;
 	private JComboBox jPriceType;
+	private JComboBox jPriceReprocessedType;
 	private JComboBox jSource;
 
 	private EventList<RegionType> regions = new BasicEventList<RegionType>();
@@ -130,6 +131,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
 		jPriceType = new JComboBox(PriceMode.values());
 
+		JLabel jPriceReprocessedTypeLabel = new JLabel(DialoguesSettings.get().priceReprocessed());
+		jPriceReprocessedType = new JComboBox(PriceMode.values());
+
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceSource.values());
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
@@ -144,26 +148,33 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jWarning.setEditable(false);
 
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jRegionsLabel)
-						.addComponent(jSystemsLabel)
-						.addComponent(jStationsLabel)
-						.addComponent(jPriceTypeLabel)
+					.addGroup(layout.createParallelGroup()
 						.addComponent(jSourceLabel)
+						.addComponent(jPriceTypeLabel)
+						.addComponent(jPriceReprocessedTypeLabel)
+						.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup()
+								.addComponent(jRegionsLabel)
+								.addComponent(jSystemsLabel)
+								.addComponent(jStationsLabel)
+							)
+							.addGap(0, 0, 100)
+							.addGroup(layout.createParallelGroup()
+								.addComponent(jRadioRegions, GroupLayout.Alignment.TRAILING)
+								.addComponent(jRadioSystems, GroupLayout.Alignment.TRAILING)
+								.addComponent(jRadioStations, GroupLayout.Alignment.TRAILING)
+							)
+						)
 					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(jRadioRegions)
-						.addComponent(jRadioSystems)
-						.addComponent(jRadioStations)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+					.addGroup(layout.createParallelGroup()
+						.addComponent(jSource, 200, 200, 200)
 						.addComponent(jRegions, 200, 200, 200)
 						.addComponent(jSystems, 200, 200, 200)
 						.addComponent(jStations, 200, 200, 200)
 						.addComponent(jPriceType, 200, 200, 200)
-						.addComponent(jSource, 200, 200, 200)
+						.addComponent(jPriceReprocessedType, 200, 200, 200)
 					)
 				)
 				.addComponent(jWarning)
@@ -192,6 +203,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jPriceTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jPriceReprocessedTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceReprocessedType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jWarning, 48, 48, 48)
 		);
@@ -225,15 +240,26 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			priceType = Asset.getPriceType();
 		}
 
+		//Price Reprocessed Type (can be a String)
+		object = jPriceReprocessedType.getSelectedItem();
+		PriceMode priceReprocessedType;
+		if (object  instanceof PriceMode) {
+			priceReprocessedType = (PriceMode) object;
+		} else {
+			priceReprocessedType = Asset.getPriceReprocessedType();
+		}
+
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
 
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(Asset.getPriceType());
+		boolean updateTable = !priceType.equals(Asset.getPriceType())
+								|| !priceReprocessedType.equals(Asset.getPriceReprocessedType());
 
 		//Update settings
 		program.getSettings().setPriceDataSettings(new PriceDataSettings(locationType, locations, source));
 		Asset.setPriceType(priceType);
+		Asset.setPriceReprocessedType(priceReprocessedType);
 
 		//Update table if needed
 		return updateTable;
@@ -258,19 +284,31 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			jPriceType.setEnabled(true);
 		}
 
+		//Price Reprocessed Types
+		jPriceReprocessedType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
+		jPriceReprocessedType.setSelectedItem(Asset.getPriceReprocessedType());
+		if (source.getPriceTypes().length <= 0) { //Empty
+			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
+			jPriceReprocessedType.setEnabled(false);
+		} else {
+			jPriceReprocessedType.setEnabled(true);
+		}
+
 		//Default
 		jRadioRegions.setSelected(true);
 
 	//REGIONS
+		final List<RegionType> regionTypes;
+		if (source.supportsMultipleRegions()) {
+			regionTypes = RegionType.getMultipleLocations();
+		} else { //Single Region
+			regionTypes = RegionType.getSingleLocations();
+		}
 		if (source.supportsMultipleRegions() || source.supportsSingleRegion()) {
 			try {
 				regions.getReadWriteLock().writeLock().lock();
 				regions.clear();
-				if (source.supportsMultipleRegions()) {
-					regions.addAll(RegionType.getMultipleLocations());
-				} else { //Single Region
-					regions.addAll(RegionType.getSingleLocations());
-				}
+				regions.addAll(regionTypes);
 			} finally {
 				regions.getReadWriteLock().writeLock().unlock();
 			}
@@ -285,7 +323,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jRegions.setSelectedIndex(0);
 		if (locationType == LocationType.REGION && jRadioRegions.isEnabled()) {
 			if (!locations.isEmpty()) {
-				for (RegionType regionType : RegionType.values()) {
+				for (RegionType regionType : regionTypes) {
 					if (regionType.getRegions().equals(locations)) {
 						jRegions.setSelectedItem(regionType);
 						break;

@@ -379,6 +379,13 @@ public class SettingsReader extends AbstractXmlReader {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		Asset.setPriceType(priceType);
+
+		PriceMode priceReprocessedType = Asset.getDefaultPriceType();
+		if (AttributeGetters.haveAttribute(element, "defaultreprocessedprice")) {
+			priceReprocessedType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultreprocessedprice"));
+		}
+		Asset.setPriceReprocessedType(priceReprocessedType);
+
 		//null = default
 		List<Long> locations = null;
 		LocationType locationType = null;

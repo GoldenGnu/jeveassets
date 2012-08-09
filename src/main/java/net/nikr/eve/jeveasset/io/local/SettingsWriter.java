@@ -243,6 +243,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private static void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
+		parentNode.setAttributeNS(null, "defaultreprocessedprice", Asset.getPriceReprocessedType().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
 		StringBuilder builder = new StringBuilder();
 		for (long location : priceDataSettings.getLocations()) {
