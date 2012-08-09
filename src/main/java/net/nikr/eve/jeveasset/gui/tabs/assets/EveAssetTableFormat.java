@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
@@ -238,6 +239,16 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		@Override
 		public Object getColumnValue(final Asset from) {
 			return from.getPriceReprocessedDifference();
+		}
+	},
+	PRICE_REPROCESSED_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceReprocessedPercent();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return new Percent(from.getPriceReprocessedPercent());
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {

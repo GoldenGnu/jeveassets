@@ -59,6 +59,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnMarketOrderMinimum();
 	public abstract String columnPriceBase();
 	public abstract String columnPriceReprocessedDifference();
+	public abstract String columnPriceReprocessedPercent();
 	public abstract String columnValueReprocessed();
 	public abstract String columnValue();
 	public abstract String columnCount();

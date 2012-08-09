@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -734,28 +733,6 @@ public class Stockpile implements Comparable<Stockpile> {
 		@Override
 		public double getPercentNeeded() {
 			return getStockpile().getPercentFull();
-		}
-	}
-
-	static class Percent implements Comparable<Percent> {
-		private double percent;
-
-		public Percent(final double percent) {
-			this.percent = percent;
-		}
-
-		@Override
-		public String toString() {
-			if (Double.isInfinite(percent)) {
-				return Formater.integerFormat(percent);
-			} else {
-				return Formater.percentFormat(percent);
-			}
-		}
-
-		@Override
-		public int compareTo(final Percent o) {
-			return Double.compare(percent, o.percent);
 		}
 	}
 }

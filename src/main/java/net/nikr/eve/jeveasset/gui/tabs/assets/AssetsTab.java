@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -272,6 +273,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		protected boolean isNumericColumn(final Enum column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else if (format.getType().getName().equals(Percent.class.getName())) {
 				return true;
 			} else if (format == EveAssetTableFormat.ITEM_ID) {
 				return true;
