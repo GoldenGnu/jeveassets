@@ -199,13 +199,10 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.valueChanged(e);
 	}
 
-	@Override
-	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
-		fixRowHeight(row);
-		return super.prepareRenderer(renderer, row, column);
-	}
-
 	private void fixRowHeight(final int row) {
+		if (row < 0 || row > getEventTableModel().getRowCount()) {
+			return;
+		}
 		int height = 0;
 		final Object rowValue = getEventTableModel().getElementAt(row);
 		final int key = rowValue.hashCode();
@@ -242,6 +239,11 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 		// handle the change event
 		super.tableChanged(e);
+
+		//set row heigh
+		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
+			fixRowHeight(row);
+		}
 	}
 }
 /**
