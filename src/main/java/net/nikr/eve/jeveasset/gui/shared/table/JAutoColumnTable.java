@@ -78,6 +78,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
+
+		autoResizeColumns();
 	}
 
 	@Override
@@ -101,7 +103,7 @@ public class JAutoColumnTable extends JTable {
 		return component;
 	}
 
-	public void autoResizeColumns() {
+	public final void autoResizeColumns() {
 		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
 		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();
