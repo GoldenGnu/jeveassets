@@ -82,10 +82,22 @@ public class JMenuPrice<T> extends JMenuTool<T> implements ActionListener {
 	private void createList(){
 		itemPrices = new ArrayList<UserItem<Integer, Double>>();
 		for (Map.Entry<Integer, Double> entry : prices.entrySet()) {
-			Item item = program.getSettings().getItems().get(entry.getKey());
+			Item item = program.getSettings().getItems().get(Math.abs(entry.getKey()));
 			String name = "";
 			if (item != null) {
-				name = item.getName();					
+				if (item.getName().toLowerCase().contains("blueprint")){
+					//Blueprint
+					if (entry.getKey() < 0) {
+						//Copy
+						name = item.getName()+" (BPC)";
+					} else {
+						//Original
+						name = item.getName()+" (BPO)";
+					}
+				} else {
+					//Not blueprint
+					name = item.getName();
+				}					
 			}
 			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
 		}
