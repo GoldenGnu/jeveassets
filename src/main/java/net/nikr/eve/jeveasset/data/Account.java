@@ -31,7 +31,7 @@ public class Account {
 	private int keyID;
 	private String vCode;
 	private String name;
-	private Date charactersNextUpdate;
+	private Date accountNextUpdate;
 	private int accessMask;
 	private String type;
 	private Date expires;
@@ -39,27 +39,27 @@ public class Account {
 	private List<Human> humans = new ArrayList<Human>();
 
 	public Account(final Account account) {
-		this.keyID = account.getKeyID();
-		this.vCode = account.getVCode();
-		this.name = account.getName();
-		this.charactersNextUpdate = account.getCharactersNextUpdate();
-		this.accessMask = account.getAccessMask();
-		this.type = account.getType();
-		this.expires = account.getExpires();
+		this(account.getKeyID(),
+				account.getVCode(),
+				account.getName(),
+				account.getAccountNextUpdate(),
+				account.getAccessMask(),
+				account.getType(),
+				account.getExpires());
 		for (Human human : account.getHumans()) {
 			humans.add(new Human(this, human));
 		}
 	}
 
 	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getGmtNow(), 0, "", null);
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, "", null);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date charactersNextUpdate, final int accessMask, final String type, final Date expires) {
+	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final int accessMask, final String type, final Date expires) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
-		this.charactersNextUpdate = charactersNextUpdate;
+		this.accountNextUpdate = accountNextUpdate;
 		this.accessMask = accessMask;
 		this.type = type;
 		this.expires = expires;
@@ -73,12 +73,12 @@ public class Account {
 		return keyID;
 	}
 
-	public Date getCharactersNextUpdate() {
-		return charactersNextUpdate;
+	public Date getAccountNextUpdate() {
+		return accountNextUpdate;
 	}
 
-	public void setCharactersNextUpdate(final Date charactersNextUpdate) {
-		this.charactersNextUpdate = charactersNextUpdate;
+	public void setAccountNextUpdate(final Date accountNextUpdate) {
+		this.accountNextUpdate = accountNextUpdate;
 	}
 
 	public String getName() {
@@ -105,7 +105,7 @@ public class Account {
 		if (getExpires() == null) {
 			return false;
 		} else {
-			return Settings.getGmtNow().after(getExpires());
+			return Settings.getNow().after(getExpires());
 		}
 	}
 

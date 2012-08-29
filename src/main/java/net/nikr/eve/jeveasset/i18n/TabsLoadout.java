@@ -36,7 +36,6 @@ public abstract class TabsLoadout extends Bundle {
 
 	public abstract String all();
 	public abstract String cancel();
-	public abstract String character();
 	public abstract String collapse();
 	public abstract String columnValue();
 	public abstract String columnName();
@@ -60,6 +59,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String no();
 	public abstract String no1();
 	public abstract String oK();
+	public abstract String owner();
 	public abstract String ship();
 	public abstract String ship1();
 	public abstract String totalAll();

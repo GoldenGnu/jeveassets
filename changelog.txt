@@ -16,6 +16,32 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.4.0__________________________________________________________________________
+
+New Features:
+-Export: Use tool column selection and order
+-Export: Html & SQL export
+-Tables: Save column width (Auto resize off)
+-Stockpile: Distinction betwen BPC and BPO
+-Reprocessed Colors: Zero = Gray
+-New Columns: Reprocessed & Price Difference (Value & Percent)
+-New Columns: Market Orders price
+-Overview: Load asset filter
+-Stockpile: Shopping list for multiple stockpiles
+-Stockpile: Add to stockpile - can be used to merge (multiple selection)
+-Better UI for custom Price/Name (multiple selection - prices only)
+-Price Data: Reprocessed Price selectable seperate
+
+Changed:
+-Updated static data to Inferno 1.2.76477
+
+Bug Fixes:
+-Stockpile included non-active orders
+-GMT mixup
+-IPv6 connection failure (force IPv4)
+-Some minor bug fixes and optimization
+
+________________________________________________________________________________
 _2.3.0__________________________________________________________________________
 
 New Features:

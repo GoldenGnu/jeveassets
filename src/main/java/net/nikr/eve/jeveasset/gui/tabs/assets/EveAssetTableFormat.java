@@ -25,6 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
@@ -160,6 +161,46 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getPriceReprocessed();
 		}
 	},
+	MARKET_ORDER_LATEST(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderLatest();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getLatest();
+		}
+	},
+	MARKET_ORDER_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderAverage();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getAverage();
+		}
+	},
+	MARKET_ORDER_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderMaximum();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getMaximum();
+		}
+	},
+	MARKET_ORDER_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnMarketOrderMinimum();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getMarketPriceData().getMinimum();
+		}
+	},
 	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -188,6 +229,26 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		@Override
 		public Object getColumnValue(final Asset from) {
 			return from.getValue();
+		}
+	},
+	PRICE_REPROCESSED_DIFFERENCE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceReprocessedDifference();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getPriceReprocessedDifference();
+		}
+	},
+	PRICE_REPROCESSED_PERCENT(Percent.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnPriceReprocessedPercent();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return new Percent(from.getPriceReprocessedPercent());
 		}
 	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {
@@ -303,6 +364,10 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	@Override
 	public boolean isColumnEditable(final Object baseObject) {
 		return false;
+	}
+	@Override
+	public boolean isShowDefault() {
+		return true;
 	}
 	@Override
 	public Asset setColumnValue(final Object baseObject, final Object editedValue) {

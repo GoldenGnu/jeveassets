@@ -160,7 +160,7 @@ public class PriceDataGetter implements PricingListener {
 	}
 
 	public Date getNextUpdate() {
-		return Settings.getGmt(new Date(nextUpdate + priceCacheTimer));
+		return new Date(nextUpdate + priceCacheTimer);
 	}
 
 	@Override

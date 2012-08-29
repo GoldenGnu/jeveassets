@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.i18n;
 
-import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
@@ -66,5 +65,4 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String update1();
 	public abstract String values();
 	public abstract String windowTitle(String programName, String programVersion, int portable, int profileCount, String activeProfileName);
-	public abstract String eveTime(Date date);
 }

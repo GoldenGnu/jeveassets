@@ -34,6 +34,9 @@ public final class DocumentFactory {
 	public static IntegerPlainDocument getIntegerPlainDocument() {
 		return new IntegerPlainDocument();
 	}
+	public static IntegerPositivePlainDocument getIntegerPositivePlainDocument() {
+		return new IntegerPositivePlainDocument();
+	}
 	public static WordPlainDocument getWordPlainDocument() {
 		return new WordPlainDocument();
 	}
@@ -76,6 +79,31 @@ public final class DocumentFactory {
 		}
 	}
 
+	public static class IntegerPositivePlainDocument extends PlainDocument {
+
+		@Override
+		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
+			int length = getLength();
+			if (string == null) {
+				return;
+			}
+			String newValue;
+			if (length == 0) {
+				newValue = string;
+			} else {
+				String currentContent = getText(0, length);
+				StringBuilder currentBuffer = new StringBuilder(currentContent);
+				currentBuffer.insert(offset, string);
+				newValue = currentBuffer.toString();
+			}
+			boolean b = Pattern.matches("[\\d]*", newValue);
+			if (b && !newValue.isEmpty()) {
+				super.insertString(offset, string, attributes);
+			} else {
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
+	}
 
 	public static class DoublePlainDocument extends PlainDocument {
 

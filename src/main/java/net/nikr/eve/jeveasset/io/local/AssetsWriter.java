@@ -67,7 +67,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "keyid", String.valueOf(account.getKeyID()));
 			node.setAttributeNS(null, "vcode", account.getVCode());
 			node.setAttributeNS(null, "name", account.getName());
-			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getCharactersNextUpdate().getTime()));
+			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getAccountNextUpdate().getTime()));
 			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
 			node.setAttributeNS(null, "type", account.getType());
 			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));

@@ -87,7 +87,12 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	}
 
 	private void reset() {
-		shownColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
+		shownColumns = new ArrayList<T>();
+		for (T t : enumClass.getEnumConstants()) {
+			if (t.isShowDefault()) {
+				shownColumns.add(t);
+			}
+		}
 		orderColumns = new ArrayList<T>(Arrays.asList(enumClass.getEnumConstants()));
 	}
 
@@ -137,7 +142,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 					index = orderColumns.size() - 1;
 				}
 				orderColumns.add(index, t);
-				shownColumns.add(t);
+				if (t.isShowDefault()) {
+					shownColumns.add(t);
+				}
 			}
 		}
 		updateColumns();

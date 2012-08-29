@@ -26,6 +26,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -47,7 +51,7 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 	private JButton jClose;
 	private JTextField jPercent;
 
-	private Stockpile stockpile;
+	private List<Stockpile> stockpiles;
 
 	StockpileShoppingListDialog(final Program program) {
 		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
@@ -106,8 +110,14 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 		);
 	}
 
-	void show(final Stockpile showStockpile) {
-		this.stockpile = showStockpile;
+	void show(final Stockpile stockpile) {
+		this.stockpiles = Collections.singletonList(stockpile);
+		jPercent.setText("100");
+		updateList();
+		super.setVisible(true);
+	}
+	void show(final List<Stockpile> addStockpiles) {
+		this.stockpiles = addStockpiles;
 		jPercent.setText("100");
 		updateList();
 		super.setVisible(true);
@@ -126,16 +136,33 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 		String s = "";
 		double volume = 0;
 		double value = 0;
-		for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()) {
-			if (stockpileItem.getTypeID() > 0) {
-				final double minimumCount = (stockpileItem.getCountMinimum() * percent / 100.0);
-				final double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
-				if (countNeeded > 0) {
-					volume = volume + (countNeeded * stockpileItem.getVolume());
-					value = value + (countNeeded * stockpileItem.getPrice());
-					s = s + Formater.longFormat(countNeeded) + "x " + stockpileItem.getName() + "\r\n";
+		String stockpileNames = "";
+		Map<String, Double> shoppingList = new HashMap<String, Double>();
+		for (Stockpile stockpile : stockpiles) {
+			if (!stockpileNames.isEmpty()) {
+				stockpileNames = stockpileNames + ", ";
+			}
+			stockpileNames = stockpileNames + stockpile.getName();
+			for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()) {
+				if (stockpileItem.getItemTypeID() != 0) { //Ignore Total
+					final double minimumCount = (stockpileItem.getCountMinimum() * percent / 100.0);
+					double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
+					if (countNeeded > 0) {
+						volume = volume + (countNeeded * stockpileItem.getVolume());
+						value = value + (countNeeded * stockpileItem.getPrice());
+						String key = stockpileItem.getName();
+
+						//Add
+						if (shoppingList.containsKey(key)) {
+							countNeeded = countNeeded + shoppingList.get(key);
+						}
+						shoppingList.put(key, countNeeded);
+					}
 				}
 			}
+		}
+		for (Map.Entry<String, Double> entry : shoppingList.entrySet()) {
+			s = s + Formater.longFormat(entry.getValue()) + "x " + entry.getKey() + "\r\n";
 		}
 		if (s.isEmpty()) {
 			s = TabsStockpile.get().nothingNeeded();
@@ -145,9 +172,9 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 			s = s + TabsStockpile.get().estimatedMarketValue() + Formater.iskFormat(Math.abs(value)) + "\r\n";
 		}
 		if (percent != 100) {
-			s = stockpile.getName() + " (" + percent + TabsStockpile.get().percent() + ")\r\n\r\n" + s;
+			s = stockpileNames + " (" + percent + TabsStockpile.get().percent() + ")\r\n\r\n" + s;
 		} else {
-			s = stockpile.getName() + "\r\n\r\n" + s;
+			s = stockpileNames + "\r\n\r\n" + s;
 		}
 		jText.setText(s);
 	}

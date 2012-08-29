@@ -22,7 +22,9 @@
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
@@ -33,14 +35,15 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 
 public abstract class JMenuTool<T> extends JMenu {
-	protected Program program;
-	protected List<Integer> typeIDs = new ArrayList<Integer>();
-	protected List<Double> prices = new ArrayList<Double>();
-	protected List<String> typeNames = new ArrayList<String>();
-	protected List<String> stations = new ArrayList<String>();
-	protected List<String> systems = new ArrayList<String>();
-	protected List<String> regions = new ArrayList<String>();
-	protected List<Integer> marketTypeIDs = new ArrayList<Integer>();
+	protected final Program program;
+	protected final List<Integer> typeIDs = new ArrayList<Integer>();
+	protected final Map<Integer, Double> prices = new HashMap<Integer, Double>();
+	protected final List<String> typeNames = new ArrayList<String>();
+	protected final List<String> stations = new ArrayList<String>();
+	protected final List<String> systems = new ArrayList<String>();
+	protected final List<String> regions = new ArrayList<String>();
+	protected final List<Integer> marketTypeIDs = new ArrayList<Integer>();
+	protected final List<Integer> blueprintTypeIDs = new ArrayList<Integer>();
 
 	protected JMenuTool(final String title, final Program program, final List<T> items) {
 		super(title);
@@ -66,7 +69,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						material.getStation(),
 						material.getSystem(),
 						material.getRegion(),
-						material.getPrice()
+						material.getPrice(),
+						false
 						);
 			}
 			if (t instanceof Module) {
@@ -77,7 +81,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						module.getLocation(),
 						module.getSystem(),
 						module.getRegion(),
-						module.getPrice()
+						module.getPrice(),
+						false
 						);
 			}
 			if (t instanceof MarketOrder) {
@@ -88,7 +93,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						marketOrder.getLocation(),
 						marketOrder.getSystem(),
 						marketOrder.getRegion(),
-						null //TODO - can not edit price from Orders Tool
+						null, //TODO - can not edit price from Orders Tool
+						false
 						);
 			}
 			if (t instanceof IndustryJob) {
@@ -99,7 +105,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						industryJob.getLocation(),
 						industryJob.getSystem(),
 						industryJob.getRegion(),
-						null //TODO - can not edit price from Jobs Tool
+						null, //TODO - can not edit price from Jobs Tool
+						industryJob.getInstalledItemCopy() > 0
 						);
 			}
 			if (t instanceof Asset) {
@@ -110,7 +117,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						eveAsset.getLocation(),
 						eveAsset.getSystem(),
 						eveAsset.getRegion(),
-						eveAsset.getPrice()
+						eveAsset.getPrice(),
+						(eveAsset.isBlueprint() && !eveAsset.isBpo())
 						);
 			}
 			if (t instanceof Overview) {
@@ -121,7 +129,8 @@ public abstract class JMenuTool<T> extends JMenu {
 						overview.isStation() && !overview.isGroup() ? overview.getName() : null,
 						!overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null,
 						!overview.isGroup() ? overview.getRegion() : null,
-						null
+						null,
+						false
 						);
 			}
 			if (t instanceof Item) {
@@ -132,29 +141,46 @@ public abstract class JMenuTool<T> extends JMenu {
 						null,
 						null,
 						null,
-						(double) item.getPrice()
+						(double) item.getPrice(),
+						false
 						);
 			}
 			if (t instanceof StockpileItem) { //
 				StockpileItem item = (StockpileItem) t;
 				init(item.isMarketGroup(),
-						(t instanceof StockpileTotal) ? null : item.getName(),
+						(t instanceof StockpileTotal) ? null : item.getTypeName(),
 						(t instanceof StockpileTotal) ? null : item.getTypeID(),
 						item.getStockpile().getLocation(),
 						item.getStockpile().getSystem(),
 						item.getStockpile().getRegion(),
-						item.getPrice()
+						item.getPrice(),
+						item.isBPC()
 						);
 			}
 		}
 	}
 
-	private void init(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price) {
+	private void init(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price, final boolean copy) {
 		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) {
 			marketTypeIDs.add(typeID);
 		}
 		if (typeName != null && !typeNames.contains(typeName)) {
 			typeNames.add(typeName);
+		}
+		
+		if (typeID != null) {
+			int blueprintTypeID;
+			if (copy){
+				blueprintTypeID = -typeID;
+			} else {
+				blueprintTypeID = typeID;
+			}
+			if (!blueprintTypeIDs.contains(blueprintTypeID)){
+				blueprintTypeIDs.add(blueprintTypeID);
+			}
+			if (price != null) { //Not unique
+				prices.put(blueprintTypeID, price);
+			}
 		}
 		if (typeID != null && !typeIDs.contains(typeID)) {
 			typeIDs.add(typeID);
@@ -170,9 +196,6 @@ public abstract class JMenuTool<T> extends JMenu {
 		}
 		if (region != null && !regions.contains(region)) {
 			regions.add(region);
-		}
-		if (price != null && !prices.contains(price)) {
-			prices.add(price);
 		}
 	}
 }

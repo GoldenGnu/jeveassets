@@ -90,6 +90,14 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		gui.addFilter(filter);
 	}
 
+	public void addFilters(final List<Filter> filters) {
+		gui.addFilters(filters);
+	}
+
+	public String getCurrentFilterName() {
+		return gui.getCurrentFilterName();
+	}
+
 	public JPanel getPanel() {
 		return gui.getPanel();
 	}
@@ -168,6 +176,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 
 	protected abstract Enum[] getColumns();
 	protected abstract List<EnumTableColumn<E>> getEnumColumns();
+	protected abstract List<EnumTableColumn<E>> getEnumShownColumns();
 	protected abstract Enum valueOf(String column);
 	/**
 	 * Use isNumeric(Enum column) instead.
@@ -188,6 +197,11 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 	 * Overwrite to do stuff after filtering.
 	 */
 	protected void afterFilter() { }
+
+	/**
+	 * Overwrite to do stuff after saved filters have been changed.
+	 */
+	protected void updateFilters() { }
 
 	protected List<EnumTableColumn<E>> columnsAsList(final EnumTableColumn<E>[] fixme) {
 		List<EnumTableColumn<E>> columns = new ArrayList<EnumTableColumn<E>>();

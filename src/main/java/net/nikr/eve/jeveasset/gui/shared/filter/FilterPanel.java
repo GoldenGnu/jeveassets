@@ -121,7 +121,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jCompareColumn.addActionListener(this);
 		jCompareColumn.setActionCommand(ACTION_FILTER);
 
-		jDate = new JDateChooser(Settings.getGmtNow());
+		jDate = new JDateChooser(Settings.getNow());
 		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText("Today");

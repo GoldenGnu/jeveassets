@@ -42,6 +42,8 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String showSellOrReprocessColours();
 	public abstract String includeSellOrders();
 	public abstract String includeBuyOrders();
+	public abstract String maximumPurchaseAge();
+	public abstract String days();
 
 	// used in GeneralSettingsPanel
 	public abstract String general();
@@ -64,14 +66,15 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String stockpile100();
 
 	// used in PriceDataSettingsPanel
-	public abstract String priceData();
 	public abstract String changeSourceWarning();
 	public abstract String includeRegions();
 	public abstract String includeStations();
 	public abstract String includeSystems();
-	public abstract String price();
-	public abstract String source();
 	public abstract String notConfigurable();
+	public abstract String price();
+	public abstract String priceData();
+	public abstract String priceReprocessed();
+	public abstract String source();
 
 	// used in ProxySettingsPanel
 	public abstract String proxy();
@@ -109,6 +112,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String names();
 	public abstract String name();
 	public abstract String namesInstruction();
+
+	// used in JUserListPanel
+	public abstract String badInput();
+	public abstract String deleteItem();
+	public abstract String deleteTypeTitle(String type);
+	public abstract String editItem();
+	public abstract String editTypeTitle(String type);
+	public abstract String inputNotValid();
+	public abstract String itemEmpty();
+	public abstract String items(int size);
 
 	// used in UserPriceSettingsPanel
 	public abstract String pricePrices();

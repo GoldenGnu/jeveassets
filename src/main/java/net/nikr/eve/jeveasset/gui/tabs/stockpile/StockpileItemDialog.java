@@ -45,11 +45,13 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 
 	private static final String ACTION_CANCEL = "ACTION_CANCEL";
 	private static final String ACTION_OK = "ACTION_OK";
+	private static final String ACTION_COPY = "ACTION_COPY";
 
 	private JButton jOK;
 	private JButton jCancel;
 	private JComboBox jItems;
 	private JTextField jCountMinimum;
+	private JCheckBox jCopy;
 
 	private EventList<Item> items = new BasicEventList<Item>();
 	private Stockpile stockpile;
@@ -76,6 +78,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		});
 		jCountMinimum.addCaretListener(this);
 
+		jCopy = new JCheckBox(TabsStockpile.get().copy());
+		jCopy.setActionCommand(ACTION_COPY);
+		jCopy.addActionListener(this);
+
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
@@ -95,7 +101,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jItems, 300, 300, 300)
-						.addComponent(jCountMinimum, 300, 300, 300)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jCountMinimum, 100, 100, Short.MAX_VALUE)
+							.addComponent(jCopy)
+						)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -112,6 +121,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCountMinimumLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCountMinimum, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCopy, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -126,6 +136,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
 		Item item = program.getSettings().getItems().get(addStockpileItem.getTypeID());
 		jItems.setSelectedItem(item);
+		jCopy.setSelected(addStockpileItem.isBPC());
 		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
 		show();
 		return updated;
@@ -135,17 +146,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		updateData();
 		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
-		show();
-		return updated;
-	}
-
-	boolean showAdd(final Stockpile addStockpile, final int typeID) {
-		updateData();
-		this.stockpile = addStockpile;
-		Item item = program.getSettings().getItems().get(typeID);
-		jItems.setSelectedItem(item);
-		jItems.setEnabled(false);
-		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
+		jCopy.setSelected(false);
 		show();
 		return updated;
 	}
@@ -177,8 +178,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private Stockpile getStockpile() {
 		if (stockpile != null) {
 			return stockpile;
-		} else {
+		} else if (stockpileItem != null) {
 			return stockpileItem.getStockpile();
+		} else {
+			return null;
 		}
 	}
 
@@ -190,7 +193,14 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		} catch (NumberFormatException ex) {
 			countMinimum = 0;
 		}
-		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), item.getTypeID(), countMinimum);
+		boolean copy = jCopy.isSelected() && jCopy.isEnabled();
+		int typeID;
+		if (copy) {
+			typeID = -item.getTypeID();
+		} else {
+			typeID = item.getTypeID();
+		}
+		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), typeID, countMinimum);
 	}
 
 	private boolean itemExist() {
@@ -199,9 +209,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 
 	private StockpileItem getExistingItem() {
 		Item typeItem = (Item) jItems.getSelectedItem();
-		if (stockpile != null && typeItem != null) {
-			for (StockpileItem item : stockpile.getItems()) {
-				if (item.getTypeID() == typeItem.getTypeID()) {
+		boolean copy = jCopy.isSelected();
+		if (getStockpile() != null && typeItem != null) {
+			for (StockpileItem item : getStockpile().getItems()) {
+				if (item.getTypeID() == typeItem.getTypeID() && (copy == item.isBPC())) {
 					return item;
 				}
 			}
@@ -214,6 +225,15 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		boolean color = false;
 		if (jItems.getSelectedItem() == null) {
 			b = false;
+			jCopy.setEnabled(false);
+			jCopy.setSelected(false);
+		} else {
+			Item item = (Item) jItems.getSelectedItem();
+			boolean blueprint = item.getName().toLowerCase().contains("blueprint");
+			jCopy.setEnabled(blueprint);
+			if (!blueprint){
+				jCopy.setSelected(blueprint);
+			}
 		}
 		if (itemExist() || stockpileItem != null) {
 			color = true;
@@ -290,6 +310,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		}
 		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
+		}
+		if (ACTION_COPY.equals(e.getActionCommand())) {
+			autoSet();
+			autoValidate();
 		}
 	}
 

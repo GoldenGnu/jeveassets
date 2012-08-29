@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -56,7 +55,7 @@ public class Stockpile implements Comparable<Stockpile> {
 	private Stockpile(final Stockpile stockpile) {
 		update(stockpile);
 		for (StockpileItem item : stockpile.getItems()) {
-			if (item.getTypeID() > 0) { //Ignore Total
+			if (item.getItemTypeID() != 0) { //Ignore Total
 				items.add(new StockpileItem(this, item));
 			}
 		}
@@ -66,13 +65,13 @@ public class Stockpile implements Comparable<Stockpile> {
 	public Stockpile(final String name, final long ownerID, final String owner, final long locationID, final String location, final String system, final String region, final int flagID, final String flag, final String container, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs) {
 		this.name = name;
 		this.ownerID = ownerID;
-		this.owner = owner;
+		setOwner(owner);
 		this.locationID = locationID;
-		this.location = location;
+		setLocation(location);
 		this.system = system;
 		this.region = region;
 		this.flagID = flagID;
-		this.flag = flag;
+		setFlag(flag);
 		this.container = container;
 		this.inventory = inventory;
 		this.sellOrders = sellOrders;
@@ -160,11 +159,19 @@ public class Stockpile implements Comparable<Stockpile> {
 		return owner;
 	}
 
-	public void setOwner(final String owner) {
+	public final void setOwner(final String owner) {
 		if (owner == null) {
-			this.owner = "";
+			this.owner = TabsStockpile.get().all();
 		} else {
 			this.owner = owner;
+		}
+	}
+
+	private void setLocation(final String location) {
+		if (location == null) {
+			this.location = TabsStockpile.get().all();
+		} else {
+			this.location = location;
 		}
 	}
 
@@ -176,8 +183,12 @@ public class Stockpile implements Comparable<Stockpile> {
 		return flag;
 	}
 
-	public void setFlag(final String flag) {
-		this.flag = flag;
+	public final void setFlag(final String flag) {
+		if (flag == null) {
+			this.flag = TabsStockpile.get().all();
+		} else {
+			this.flag = flag;
+		}
 	}
 
 	public int getFlagID() {
@@ -241,6 +252,11 @@ public class Stockpile implements Comparable<Stockpile> {
 	}
 
 	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
@@ -293,9 +309,9 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public StockpileItem(final Stockpile stockpile, final StockpileItem stockpileItem) {
 			this(stockpile,
-					stockpileItem.getName(),
+					stockpileItem.getTypeName(),
 					stockpileItem.getGroup(),
-					stockpileItem.getTypeID(),
+					stockpileItem.getItemTypeID(),
 					stockpileItem.getCountMinimum()
 					);
 		}
@@ -333,12 +349,12 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public void updateAsset(final Asset asset, final Long characterID, final Long regionID) {
 			if (asset != null && characterID != null && regionID != null //better safe then sorry
-					&& typeID == asset.getTypeID()
+					&& (typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
+						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //Copy
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
-					&& ((stockpile.getLocation() != null
-					&& stockpile.getLocation().equals(asset.getLocation())) //LocationID can be an office...
+					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
 					|| stockpile.getLocationID() == regionID
 					|| stockpile.getLocationID() < 0)
@@ -366,6 +382,7 @@ public class Stockpile implements Comparable<Stockpile> {
 			if (marketOrder != null && ownerID != null && location != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
 					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
+					&& marketOrder.getOrderState() == 0 //Open/Active
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
 					|| stockpile.getLocationID() == location.getRegionID()
@@ -416,7 +433,29 @@ public class Stockpile implements Comparable<Stockpile> {
 			return stockpile;
 		}
 
+		public boolean isBPC(){
+			return (typeID < 0);
+		}
+
+		public boolean isBPO(){
+			return isBlueprint() && !isBPC();
+		}
+
+		public boolean isBlueprint(){
+			return name.toLowerCase().contains("blueprint");
+		}
+
 		public String getName() {
+			if (isBPC()) { //Blueprint copy
+				return name+" (BPC)";
+			} else if (isBPO()) { //Blueprint original
+				return name+" (BPO)";
+			} else { //Everything else
+				return name;
+			}
+		}
+
+		public String getTypeName(){
 			return name;
 		}
 
@@ -462,8 +501,12 @@ public class Stockpile implements Comparable<Stockpile> {
 			return price;
 		}
 
-		public int getTypeID() {
+		public int getItemTypeID() {
 			return typeID;
+		}
+
+		public int getTypeID() {
+			return Math.abs(typeID);
 		}
 
 		public double getVolume() {
@@ -690,28 +733,6 @@ public class Stockpile implements Comparable<Stockpile> {
 		@Override
 		public double getPercentNeeded() {
 			return getStockpile().getPercentFull();
-		}
-	}
-
-	static class Percent implements Comparable<Percent> {
-		private double percent;
-
-		public Percent(final double percent) {
-			this.percent = percent;
-		}
-
-		@Override
-		public String toString() {
-			if (Double.isInfinite(percent)) {
-				return Formater.integerFormat(percent);
-			} else {
-				return Formater.percentFormat(percent);
-			}
-		}
-
-		@Override
-		public int compareTo(final Percent o) {
-			return Double.compare(percent, o.percent);
 		}
 	}
 }

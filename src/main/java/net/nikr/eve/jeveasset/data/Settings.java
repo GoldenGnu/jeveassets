@@ -92,6 +92,7 @@ public class Settings {
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
+	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
@@ -110,16 +111,18 @@ public class Settings {
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
 	private boolean windowAlwaysOnTop;
+	private int maximumPurchaseAge = 0;
 	private Profile activeProfile;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
-	private static CsvSettings csvSettings = new CsvSettings();
+	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
 
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 
 	public Settings() {
@@ -188,7 +191,7 @@ public class Settings {
 		activeProfile = new Profile("Default", true, true);
 		profiles.add(activeProfile);
 
-		conquerableStationsNextUpdate = Settings.getGmtNow();
+		conquerableStationsNextUpdate = Settings.getNow();
 
 		windowLocation = new Point(0, 0);
 		windowSize = new Dimension(800, 600);
@@ -199,8 +202,8 @@ public class Settings {
 		constructEveApiConnector();
 	}
 
-	public static CsvSettings getCsvSettings() {
-		return csvSettings;
+	public static ExportSettings getExportSettings() {
+		return exportSettings;
 	}
 
 	/**
@@ -293,6 +296,30 @@ public class Settings {
 			List<String> ownersOrders = new ArrayList<String>();
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
+			//Create Market Price Data
+			marketPriceData= new HashMap<Integer, MarketPriceData>();
+			//Date - maximumPurchaseAge in days
+			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
+			for (Account account : accounts) {
+				for (Human human : account.getHumans()) {
+					for (ApiMarketOrder marketOrder : human.getMarketOrders()) {
+						if (marketOrder.getBid() > 0 //Buy orders only
+								//at least one bought
+								&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
+								//Date in range or unlimited
+								&& (marketOrder.getIssued().after(maxAge) || maximumPurchaseAge == 0)
+								) {
+							int typeID = marketOrder.getTypeID();
+							if (!marketPriceData.containsKey(typeID)) {
+								marketPriceData.put(typeID, new MarketPriceData());
+							}
+							MarketPriceData data = marketPriceData.get(typeID);
+							data.update(marketOrder.getPrice(), marketOrder.getIssued());
+						}
+					}
+				}
+			}
+			//Add assets
 			for (Account account : accounts) {
 				for (Human human : account.getHumans()) {
 					//Market Orders
@@ -354,7 +381,8 @@ public class Settings {
 				} else { //All other
 					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
 				}
-
+				//Market price
+				eveAsset.setMarketPriceData(marketPriceData.get(eveAsset.getTypeID()));
 				//User Item Names
 				if (userNames.containsKey(eveAsset.getItemID())) {
 					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
@@ -397,7 +425,7 @@ public class Settings {
 							if (userPrices.containsKey(material.getTypeID())) {
 								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
-								price = Asset.getDefaultPrice(priceData);
+								price = Asset.getDefaultPriceReprocessed(priceData);
 							}
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
@@ -454,6 +482,12 @@ public class Settings {
 		if (userPrice != null) {
 			return userPrice.getValue();
 		}
+
+		//Blueprint Copy (Default Zero)
+		if (isBlueprintCopy) {
+			return 0;
+		}
+
 		//Price data
 		PriceData priceData = null;
 		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price
@@ -675,8 +709,20 @@ public class Settings {
 		return tableColumns;
 	}
 
+	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
+		return tableColumnsWidth;
+	}
+
 	public Map<String, ResizeMode> getTableResize() {
 		return tableResize;
+	}
+
+	public int getMaximumPurchaseAge() {
+		return maximumPurchaseAge;
+	}
+
+	public void setMaximumPurchaseAge(final int maximumPurchaseAge) {
+		this.maximumPurchaseAge = maximumPurchaseAge;
 	}
 
 	public static boolean isFilterOnEnter() {
@@ -877,25 +923,8 @@ public class Settings {
 		return null;
 	}
 
-	public static Date getGmtNow() {
-		return getGmt(new Date());
-	}
-
-	public static Date getGmt(final Date date) {
-		TimeZone tz = TimeZone.getDefault();
-		Date ret = new Date(date.getTime() - tz.getRawOffset());
-
-		// if we are now in DST, back off by the delta.  Note that we are checking the GMT date, this is the KEY.
-		if (tz.inDaylightTime(ret)) {
-			Date dstDate = new Date(ret.getTime() - tz.getDSTSavings());
-
-			// check to make sure we have not crossed back into standard time
-			// this happens when we are on the cusp of DST (7pm the day before the change for PDT)
-			if (tz.inDaylightTime(dstDate)) {
-				ret = dstDate;
-			}
-		}
-		return ret;
+	public static Date getNow() {
+		return new Date();
 	}
 
 	public static DateFormat getSettingsDateFormat() {
@@ -907,8 +936,8 @@ public class Settings {
 	}
 
 	public boolean isUpdatable(final Date date, final boolean ignoreOnProxy) {
-		return ((Settings.getGmtNow().after(date)
-				|| Settings.getGmtNow().equals(date)
+		return ((Settings.getNow().after(date)
+				|| Settings.getNow().equals(date)
 				|| Program.isForceUpdate()
 				|| (getApiProxy() != null && ignoreOnProxy))
 				&& !Program.isForceNoUpdate());

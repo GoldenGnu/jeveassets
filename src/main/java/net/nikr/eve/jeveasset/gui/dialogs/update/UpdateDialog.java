@@ -212,7 +212,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		for (int a = 0; a < accounts.size(); a++) {
 			Account account = accounts.get(a);
 			//Account
-			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getCharactersNextUpdate());
+			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);
 			List<Human> humans = account.getHumans();
 			for (int b = 0; b < humans.size(); b++) {
@@ -253,7 +253,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 	private void setUpdateLabel(final JLabel jLabel, final JCheckBox jCheckBox, Date nextUpdate, final boolean updateAll, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getGmtNow();
+			nextUpdate = Settings.getNow();
 		}
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			if (updateAll) {
@@ -276,7 +276,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 	private void setUpdatableButton(Date nextUpdate, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getGmtNow();
+			nextUpdate = Settings.getNow();
 		}
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			jUpdate.setEnabled(true);

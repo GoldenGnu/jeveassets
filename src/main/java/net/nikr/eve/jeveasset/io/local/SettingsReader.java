@@ -26,9 +26,9 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
-import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
-import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
-import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
+import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.*;
@@ -81,6 +81,7 @@ public class SettingsReader extends AbstractXmlReader {
 			return false;
 		} catch (XmlException ex) {
 			LOG.error("Settings parser error: (" + settings.getPathSettings() + ")" + ex.getMessage(), ex);
+			return false;
 		}
 		LOG.info("Settings loaded");
 		return true;
@@ -91,18 +92,25 @@ public class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
-		//CsvExport
+		//Asset Settings
+		NodeList assetSettingsNodes = element.getElementsByTagName("assetsettings");
+		if (assetSettingsNodes.getLength() == 1) {
+			Element assetSettingsElement = (Element) assetSettingsNodes.item(0);
+			parseAssetSettings(assetSettingsElement, settings);
+		}
+
+		//Stockpiles
 		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, settings);
 		}
 
-		//CsvExport
-		NodeList csvNodes = element.getElementsByTagName("csvexport");
-		if (csvNodes.getLength() == 1) {
-			Element csvElement = (Element) csvNodes.item(0);
-			parseCsv(csvElement);
+		//Export Settings
+		NodeList exportNodes = element.getElementsByTagName("csvexport");
+		if (exportNodes.getLength() == 1) {
+			Element exportElement = (Element) exportNodes.item(0);
+			parseExportSettings(exportElement);
 		}
 
 		//Overview
@@ -185,6 +193,13 @@ public class SettingsReader extends AbstractXmlReader {
 			parseTableColumns(tablecolumnsElement, settings);
 		}
 
+		//Table Columns Width
+		NodeList tableColumnsWidthNodes = element.getElementsByTagName("tablecolumnswidth");
+		if (tableColumnsWidthNodes.getLength() == 1) {
+			Element tableColumnsWidthElement = (Element) tableColumnsWidthNodes.item(0);
+			parseTableColumnsWidth(tableColumnsWidthElement, settings);
+		}
+
 		//Table Resize
 		NodeList tableResizeNodes = element.getElementsByTagName("tableresize");
 		if (tableResizeNodes.getLength() == 1) {
@@ -213,6 +228,11 @@ public class SettingsReader extends AbstractXmlReader {
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
 		}
+	}
+
+	private static void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
+		int maximumPurchaseAge = AttributeGetters.getInt(stockpilesElement, "maximumpurchaseage");
+		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
 	private static void parseStockpiles(final Element stockpilesElement, final Settings settings) {
@@ -258,9 +278,9 @@ public class SettingsReader extends AbstractXmlReader {
 				Element itemNode = (Element) itemNodes.item(b);
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
-				if (typeID > 0) { //Ignore Total
-					String itemName = ApiIdConverter.typeName(typeID, settings.getItems());
-					String itemGroup = ApiIdConverter.group(typeID, settings.getItems());
+				if (typeID != 0) { //Ignore Total
+					String itemName = ApiIdConverter.typeName(Math.abs(typeID), settings.getItems());
+					String itemGroup = ApiIdConverter.group(Math.abs(typeID), settings.getItems());
 					StockpileItem item = new StockpileItem(stockpile, itemName, itemGroup, typeID, countMinimum);
 					stockpile.add(item);
 				}
@@ -359,6 +379,13 @@ public class SettingsReader extends AbstractXmlReader {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
 		Asset.setPriceType(priceType);
+
+		PriceMode priceReprocessedType = Asset.getDefaultPriceType();
+		if (AttributeGetters.haveAttribute(element, "defaultreprocessedprice")) {
+			priceReprocessedType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultreprocessedprice"));
+		}
+		Asset.setPriceReprocessedType(priceReprocessedType);
+
 		//null = default
 		List<Long> locations = null;
 		LocationType locationType = null;
@@ -439,6 +466,24 @@ public class SettingsReader extends AbstractXmlReader {
 			settings.getTableColumns().put(tableName, columns);
 		}
 	}
+
+	private static void parseTableColumnsWidth(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			Map<String, Integer> columns = new HashMap<String, Integer>();
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++) {
+				Element columnNode = (Element) columnNodeList.item(b);
+				int width = AttributeGetters.getInt(columnNode, "width");
+				String column = AttributeGetters.getString(columnNode, "column");
+				columns.put(column, width);
+			}
+			settings.getTableColumnsWidth().put(tableName, columns);
+		}
+	}
+
 	private static void parseTableResize(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -608,18 +653,42 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setApiProxy(proxyURL);
 	}
 
-	private static void parseCsv(final Element element) {
+	private static void parseExportSettings(final Element element) {
+		//CSV
 		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
-		if (AttributeGetters.haveAttribute(element, "filename")) {
-			String filename = AttributeGetters.getString(element, "filename");
-			Settings.getCsvSettings().setFilename(filename);
+		Settings.getExportSettings().setDecimalSeperator(decimal);
+		Settings.getExportSettings().setFieldDelimiter(field);
+		Settings.getExportSettings().setLineDelimiter(line);
+		//SQL
+		if (AttributeGetters.haveAttribute(element, "sqlcreatetable")) {
+			boolean createTable = AttributeGetters.getBoolean(element, "sqlcreatetable");
+			Settings.getExportSettings().setCreateTable(createTable);
 		}
-		Settings.getCsvSettings().setDecimalSeperator(decimal);
-		Settings.getCsvSettings().setFieldDelimiter(field);
-		Settings.getCsvSettings().setLineDelimiter(line);
-
+		if (AttributeGetters.haveAttribute(element, "sqldroptable")) {
+			boolean dropTable = AttributeGetters.getBoolean(element, "sqldroptable");
+			Settings.getExportSettings().setDropTable(dropTable);
+		}
+		if (AttributeGetters.haveAttribute(element, "sqlextendedinserts")) {
+			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
+			Settings.getExportSettings().setExtendedInserts(extendedInserts);
+		}
+		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
+		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
+			Element tableNameNode = (Element) tableNamesNodeList.item(a);
+			String tool = AttributeGetters.getString(tableNameNode, "tool");
+			String tableName = AttributeGetters.getString(tableNameNode, "tablename");
+			Settings.getExportSettings().putTableName(tool, tableName);
+		}
+		//Shared
+		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
+		for (int a = 0; a < fileNamesNodeList.getLength(); a++) {
+			Element tableNameNode = (Element) fileNamesNodeList.item(a);
+			String tool = AttributeGetters.getString(tableNameNode, "tool");
+			String fileName = AttributeGetters.getString(tableNameNode, "filename");
+			Settings.getExportSettings().putFilename(tool, fileName);
+		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<String> columns = new ArrayList<String>();
@@ -631,7 +700,7 @@ public class SettingsReader extends AbstractXmlReader {
 				String name = AttributeGetters.getString(columnNode, "name");
 				columns.add(name);
 			}
-			Settings.getCsvSettings().putTableExportColumns(tableName, columns);
+			Settings.getExportSettings().putTableExportColumns(tableName, columns);
 		}
 	}
 }

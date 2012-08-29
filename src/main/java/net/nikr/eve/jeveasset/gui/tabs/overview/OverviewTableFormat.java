@@ -138,6 +138,10 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		return false;
 	}
 	@Override
+	public boolean isShowDefault() {
+		return true;
+	}
+	@Override
 	public Overview setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}

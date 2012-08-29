@@ -29,7 +29,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
@@ -94,6 +93,8 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
 		TableComparatorChooser.install(jTable, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
@@ -126,6 +127,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME),
@@ -148,6 +150,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	@Override
@@ -235,8 +238,11 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder> {
 
-		public MarketOrdersFilterControl(final JFrame jFrame, final EventList<MarketOrder> eventList, final FilterList<MarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
+
+		public MarketOrdersFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat, final EventList<MarketOrder> eventList, final FilterList<MarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
+			this.tableFormat = tableFormat;
 		}
 
 		@Override
@@ -286,6 +292,11 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		@Override
 		protected List<EnumTableColumn<MarketOrder>> getEnumColumns() {
 			return columnsAsList(MarketTableFormat.values());
+		}
+
+		@Override
+		protected List<EnumTableColumn<MarketOrder>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<MarketOrder>>(tableFormat.getShownColumns());
 		}
 	}
 }

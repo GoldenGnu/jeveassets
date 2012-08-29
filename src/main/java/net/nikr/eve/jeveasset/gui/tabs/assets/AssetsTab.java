@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
+import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -101,6 +102,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -120,7 +123,9 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		this.addStatusbarLabel(jValue);
 
 		filterControl = new AssetFilterControl(
+				program,
 				program.getMainWindow().getFrame(),
+				tableFormat,
 				eventList,
 				filterList,
 				program.getSettings().getTableFilters(NAME)
@@ -141,6 +146,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void updateSettings() {
 		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
 		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
+		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public boolean isFiltersEmpty() {
@@ -149,11 +155,17 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void addFilter(final Filter filter) {
 		filterControl.addFilter(filter);
 	}
+	public void addFilters(final List<Filter> filters) {
+		filterControl.addFilters(filters);
+	}
 	private List<Filter> getFilters() {
 		return filterControl.getCurrentFilters();
 	}
 	public void clearFilters() {
 		filterControl.clearCurrentFilters();
+	}
+	public String getCurrentFilterName(){
+		return filterControl.getCurrentFilterName();
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(final List<Filter> filters) {
 		return new FilterLogicalMatcher<Asset>(filterControl, filters);
@@ -203,10 +215,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
-
-		JMenuItem jMenuItem;
 	//Logic
-		int[] selectedRows = jTable.getSelectedRows();
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
 
 	//COPY
@@ -221,7 +230,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	//LOOKUP
 		jComponent.add(new JMenuLookup<Asset>(program, selectionModel.getSelected()));
 	//EDIT
-		jComponent.add(new JMenuEditItem<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuName(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
@@ -239,8 +249,13 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 	public static class AssetFilterControl extends FilterControl<Asset> {
 
-		public AssetFilterControl(final JFrame jFrame, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
+		private Program program;
+
+		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
+			this.tableFormat = tableFormat;
+			this.program = program;
 		}
 
 		@Override
@@ -258,6 +273,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		protected boolean isNumericColumn(final Enum column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else if (format.getType().getName().equals(Percent.class.getName())) {
 				return true;
 			} else if (format == EveAssetTableFormat.ITEM_ID) {
 				return true;
@@ -291,6 +308,18 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		@Override
 		protected List<EnumTableColumn<Asset>> getEnumColumns() {
 			return columnsAsList(EveAssetTableFormat.values());
+		}
+
+		@Override
+		protected List<EnumTableColumn<Asset>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void updateFilters() {
+			if (program != null && program.getOverviewTab() != null){
+				program.getOverviewTab().updateFilters();
+			}
 		}
 	}
 }

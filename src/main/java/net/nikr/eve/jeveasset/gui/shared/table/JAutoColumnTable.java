@@ -29,7 +29,7 @@ import java.awt.Container;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Date;
+import java.util.*;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -38,6 +38,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
@@ -51,6 +52,8 @@ public class JAutoColumnTable extends JTable {
 	private JViewport jViewport = null;
 	private int size = 0;
 	private ResizeMode resizeMode = null;
+	private boolean loadingWidth = false;
+	private final Map<String, Integer> columnsWidth = new HashMap<String, Integer>();
 	protected Program program;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
@@ -75,6 +78,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
+
+		autoResizeColumns();
 	}
 
 	@Override
@@ -98,11 +103,12 @@ public class JAutoColumnTable extends JTable {
 		return component;
 	}
 
-	public void autoResizeColumns() {
+	public final void autoResizeColumns() {
 		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
 		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();
 		}
+		loadingWidth = true;
 		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			resizeColumnsText();
 		} else if (tableFormat.getResizeMode() == ResizeMode.WINDOW) {
@@ -110,6 +116,17 @@ public class JAutoColumnTable extends JTable {
 		} else if (tableFormat.getResizeMode() == ResizeMode.NONE) {
 			resizeColumnsNone();
 		}
+		loadingWidth = false;
+	}
+
+	public void setColumnsWidth(final Map<String, Integer> columnsWidth) {
+		if (columnsWidth != null) {
+			this.columnsWidth.putAll(columnsWidth);
+		}
+	}
+
+	public Map<String, Integer> getColumnsWidth() {
+		return columnsWidth;
 	}
 
 	private JTable getTable() {
@@ -165,11 +182,16 @@ public class JAutoColumnTable extends JTable {
 		updateScroll();
 	}
 	public void resizeColumnsNone() {
-		if (resizeMode != ResizeMode.NONE) { //Only do once
-			resizeMode = ResizeMode.NONE;
-			for (int i = 0; i < getColumnCount(); i++) {
-				int width = getColumnModel().getColumn(i).getWidth();
-				getColumnModel().getColumn(i).setPreferredWidth(width);
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+		List<SimpleColumn> columns = tableFormat.getColumns();
+		int i = 0;
+		for (SimpleColumn column : columns) {
+			if (column.isShown()) {
+				Integer width = columnsWidth.get(column.getEnumName());
+				if (width != null) {
+					getColumnModel().getColumn(i).setPreferredWidth(width);
+				}
+				i++;
 			}
 		}
 		updateScroll();
@@ -210,6 +232,21 @@ public class JAutoColumnTable extends JTable {
 		}
 		column.setPreferredWidth(maxWidth + 4);
 		return maxWidth + 4;
+	}
+
+	private void saveColumnsWidth() {
+		if (!loadingWidth) {
+			EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+			List<SimpleColumn> columns = tableFormat.getColumns();
+			int i = 0;
+			for (SimpleColumn column : columns) {
+				if (column.isShown()) {
+					int width = getColumnModel().getColumn(i).getPreferredWidth();
+					columnsWidth.put(column.getEnumName(), width);
+					i++;
+				}
+			}
+		}
 	}
 
 	private class ModelListener implements TableModelListener, ComponentListener,
@@ -313,7 +350,9 @@ public class JAutoColumnTable extends JTable {
 		}
 
 		@Override
-		public void columnMarginChanged(final ChangeEvent e) { }
+		public void columnMarginChanged(final ChangeEvent e) {
+			saveColumnsWidth();
+		}
 
 		@Override
 		public void columnSelectionChanged(final ListSelectionEvent e) { }

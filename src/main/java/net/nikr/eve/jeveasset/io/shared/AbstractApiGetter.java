@@ -249,8 +249,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected abstract void updateFailed(Human humanFrom, Human humanTo);
 
 	private boolean isUpdatable(final Date date) {
-		return ((Settings.getGmtNow().after(date)
-				|| Settings.getGmtNow().equals(date)
+		return ((Settings.getNow().after(date)
+				|| Settings.getNow().equals(date)
 				|| forceUpdate
 				|| Program.isForceUpdate()
 				)

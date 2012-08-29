@@ -103,9 +103,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	//Default
-	private static PriceMode defaultPriceType = PriceMode.PRICE_MIDPOINT;
+	private static final PriceMode DEFAULT_PRICE_TYPE = PriceMode.PRICE_MIDPOINT;
 
 	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
+	private static PriceMode priceReprocessedType = PriceMode.PRICE_MIDPOINT;
 
 	private List<Asset> assets = new ArrayList<Asset>();
 	private long locationID; //LocationID : long
@@ -139,6 +140,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private String system;
 	private int rawQuantity;
 	private boolean piMaterial;
+	private MarketPriceData marketPriceData;
 
 	/**
 	 * For mockups...
@@ -203,38 +205,44 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	 * These should be methods on the PriceMode enum.
 	 */
 	public static double getDefaultPrice(final PriceData priceData) {
+		return getDefaultPrice(priceData, priceType);
+	}
+	public static double getDefaultPriceReprocessed(final PriceData priceData) {
+		return getDefaultPrice(priceData, priceReprocessedType);
+	}
+	private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
 		if (priceData != null) {
-			if (priceType.equals(PriceMode.PRICE_SELL_MAX)) {
+			if (priceMode.equals(PriceMode.PRICE_SELL_MAX)) {
 				return priceData.getSellMax();
 			}
-			if (priceType.equals(PriceMode.PRICE_SELL_AVG)) {
+			if (priceMode.equals(PriceMode.PRICE_SELL_AVG)) {
 				return priceData.getSellAvg();
 			}
-			if (priceType.equals(PriceMode.PRICE_SELL_MEDIAN)) {
+			if (priceMode.equals(PriceMode.PRICE_SELL_MEDIAN)) {
 				return priceData.getSellMedian();
 			}
-			if (priceType.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
+			if (priceMode.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
 				return priceData.getSellPercentile();
 			}
-			if (priceType.equals(PriceMode.PRICE_SELL_MIN)) {
+			if (priceMode.equals(PriceMode.PRICE_SELL_MIN)) {
 				return priceData.getSellMin();
 			}
-			if (priceType.equals(PriceMode.PRICE_MIDPOINT)) {
+			if (priceMode.equals(PriceMode.PRICE_MIDPOINT)) {
 				return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
 			}
-			if (priceType.equals(PriceMode.PRICE_BUY_MAX)) {
+			if (priceMode.equals(PriceMode.PRICE_BUY_MAX)) {
 				return priceData.getBuyMax();
 			}
-			if (priceType.equals(PriceMode.PRICE_BUY_AVG)) {
+			if (priceMode.equals(PriceMode.PRICE_BUY_AVG)) {
 				return priceData.getBuyAvg();
 			}
-			if (priceType.equals(PriceMode.PRICE_BUY_MEDIAN)) {
+			if (priceMode.equals(PriceMode.PRICE_BUY_MEDIAN)) {
 				return priceData.getBuyMedian();
 			}
-			if (priceType.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
+			if (priceMode.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
 				return priceData.getBuyPercentile();
 			}
-			if (priceType.equals(PriceMode.PRICE_BUY_MIN)) {
+			if (priceMode.equals(PriceMode.PRICE_BUY_MIN)) {
 				return priceData.getBuyMin();
 			}
 		}
@@ -242,7 +250,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public static PriceMode getDefaultPriceType() {
-		return defaultPriceType;
+		return DEFAULT_PRICE_TYPE;
 	}
 
 	public String getFlag() {
@@ -267,6 +275,14 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public long getLocationID() {
 		return locationID;
+	}
+
+	public MarketPriceData getMarketPriceData() {
+		if (marketPriceData != null) {
+			return marketPriceData;
+		} else {
+			return new MarketPriceData();
+		}
 	}
 
 	public int getMeta() {
@@ -328,6 +344,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return priceReprocessed;
 	}
 
+	public double getPriceReprocessedDifference() {
+		return getPrice() - getPriceReprocessed();
+	}
+
+	public double getPriceReprocessedPercent() {
+		if (getPrice() > 0 && getPriceReprocessed() > 0) {
+			return (getPrice() / getPriceReprocessed());
+		} else {
+			return 0;
+		}
+	}
+
 	public double getPriceSellMin() {
 		if (isBlueprint() && !isBpo()) {
 			return 0;
@@ -342,6 +370,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public static PriceMode getPriceType() {
 		return priceType;
+	}
+
+	public static PriceMode getPriceReprocessedType() {
+		return priceReprocessedType;
 	}
 
 	public int getRawQuantity() {
@@ -455,6 +487,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.container = container;
 	}
 
+	public void setMarketPriceData(MarketPriceData marketPriceData) {
+		this.marketPriceData = marketPriceData;
+	}
+
 	public void setName(final String name) {
 		this.name = name;
 	}
@@ -469,6 +505,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public static void setPriceType(final PriceMode priceSource) {
 		Asset.priceType = priceSource;
+	}
+
+	public static void setPriceReprocessedType(PriceMode reprocessedPriceType) {
+		Asset.priceReprocessedType = reprocessedPriceType;
 	}
 
 	public void setTypeCount(final long typeCount) {

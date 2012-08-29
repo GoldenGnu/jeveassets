@@ -23,22 +23,13 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettingsPanel {
@@ -62,11 +53,11 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 		jItems = new JComboBox();
 
-		jEdit = new JButton("Edit");
+		jEdit = new JButton(DialoguesSettings.get().editItem());
 		jEdit.setActionCommand(ACTION_EDIT);
 		jEdit.addActionListener(listener);
 
-		jDelete = new JButton("Delete");
+		jDelete = new JButton(DialoguesSettings.get().deleteItem());
 		jDelete.setActionCommand(ACTION_DELETE);
 		jDelete.addActionListener(listener);
 
@@ -107,30 +98,65 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		jDelete.setEnabled(b);
 	}
 
+	public boolean contains(final List<UserItem<K, V>> userItems) {
+		load();
+		for (UserItem<K, V> userItem : userItems) {
+			if (items.containsKey(userItem.getKey())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void edit(final UserItem<K, V> userItem) {
-		edit(userItem, true);
+		edit(Collections.singletonList(userItem), true, null);
+	}
+
+	public void edit(final List<UserItem<K, V>> userItems) {
+		edit(userItems, true, null);
 	}
 
 	private void edit(final UserItem<K, V> userItem, final boolean save) {
-		edit(userItem, save, null);
+		edit(Collections.singletonList(userItem), save, null);
 	}
 
-	private void edit(UserItem<K, V> userItem, final boolean save, final String oldValue) {
+	private void edit(final List<UserItem<K, V>> userItems, final boolean save, final String oldValue) {
 		if (save) {
 			load();
 		}
-		String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit " + type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
+		String name;
+		String formatedValue = oldValue;
+		if (userItems.size() == 1) {
+			name = userItems.get(0).getName();
+			if (oldValue == null) {
+				formatedValue = userItems.get(0).getValueFormated();
+			}
+		} else {
+			int count = 0;
+			for (UserItem<K, V> userItem : userItems) {
+				if (items.containsKey(userItem.getKey())) {
+					count++;
+				}
+			}
+			name = DialoguesSettings.get().items(count);
+		}
+		if (formatedValue == null) {
+			formatedValue = "0";
+		}
+		String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().editTypeTitle(type), JOptionPane.PLAIN_MESSAGE, null, null, formatedValue);
 		if (value != null) {
 			V v = valueOf(value);
 			if (v != null) { //Update value
-				if (!items.containsKey(userItem.getKey())) { //Add if needed
-					items.put(userItem.getKey(), userItem);
-					listItems.add(userItem);
-				} else { //Get from items list
-					userItem = items.get(userItem.getKey());
+				for (UserItem<K, V> userItem : userItems) {
+					if (!items.containsKey(userItem.getKey())) { //Add if needed
+						items.put(userItem.getKey(), userItem);
+						listItems.add(userItem);
+					} else { //Get from items list
+						userItem = items.get(userItem.getKey());
+					}
+					//Update Value
+					userItem.setValue(v);
 				}
-				//Update Value
-				userItem.setValue(v);
 				//Update GUI
 				updateGUI();
 				if (save) { //Save (if not in setttings dialog)
@@ -140,24 +166,44 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Input not valid", "Bad input", JOptionPane.PLAIN_MESSAGE);
-				edit(userItem, save, value);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), DialoguesSettings.get().inputNotValid(), DialoguesSettings.get().badInput(), JOptionPane.PLAIN_MESSAGE);
+				edit(userItems, save, value);
 			}
 		}
 	}
 
-	public void delete(final UserItem<K, V> userItem) {
-		delete(userItem, true);
+	public void delete(final List<UserItem<K, V>> userItems) {
+		delete(userItems, true);
 	}
 
 	private void delete(final UserItem<K, V> userItem, final boolean save) {
+		delete(Collections.singletonList(userItem), save);
+	}
+
+	private void delete(final List<UserItem<K, V>> userItems, final boolean save) {
 		if (save) {
 			load();
 		}
-		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName() + "\n[" + userItem.getValueFormated() + "]", "Delete " + type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int count = 0;
+		String name = ""; //Never used
+		for (UserItem<K, V> userItem : userItems) {
+			if (items.containsKey(userItem.getKey())) {
+				count++;
+				name = userItem.getName();
+			}
+		}
+		if (count > 1) {
+			name = DialoguesSettings.get().items(count);
+		}
+		if (name.isEmpty()) { //this should never happen!
+			return;
+		}
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().deleteTypeTitle(type), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
-			items.remove(userItem.getKey());
-			listItems.remove(userItem);
+			for (UserItem<K, V> userItem : userItems) {
+				items.remove(userItem.getKey());
+				listItems.remove(userItem);
+			}
 			updateGUI();
 			if (save) {
 				boolean update = save();
@@ -172,7 +218,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		if (items.isEmpty()) {
 			setEnabledAll(false);
 			jItems.setModel(new DefaultComboBoxModel());
-			jItems.getModel().setSelectedItem("Empty");
+			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
 		} else {
 			setEnabledAll(true);
 			Collections.sort(listItems);

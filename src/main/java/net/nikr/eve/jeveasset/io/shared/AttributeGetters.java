@@ -58,7 +58,7 @@ public final class AttributeGetters {
 		Node attributeNode = node.getAttributes().getNamedItem(attributeName);
 		if (attributeNode == null) {
 			LOG.warn("Failed to parse attribute from node: {} > {}", node.getNodeName(), attributeName);
-			return Settings.getGmtNow();
+			return Settings.getNow();
 		}
 		String dTemp = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
@@ -75,7 +75,7 @@ public final class AttributeGetters {
 			return date;
 		} else {
 			LOG.warn("Failed to convert string to date: {} from node: {} > {}", new Object[]{dTemp, node.getNodeName(), attributeName});
-			return Settings.getGmtNow();
+			return Settings.getNow();
 		}
 	}
 

@@ -37,6 +37,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 	//public static final Locale LOCALE = Locale.getDefault();
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
 	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(LOCALE);
+	private static final NumberFormat PERCENT_FORMAT = NumberFormat.getPercentInstance(LOCALE);
 
 	private final FilterControl<E> filterControl;
 	private final Filter.LogicType logic;
@@ -171,6 +172,14 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Double double1 = getDouble(object1);
 		Double double2 = getDouble(object2);
 
+		//Percent
+		if (double1 == null) {
+			double1 = getPercent(object1);
+		}
+		if (double2 == null) {
+			double2 = getPercent(object2);
+		}
+
 		//Long / Integer
 		Long long1 = getLong(object1);
 		Long long2 = getLong(object2);
@@ -237,13 +246,33 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return null;
 		}
 	}
+	private static Double getPercent(final Object obj) {
+		if (obj instanceof Percent) {
+			Percent percent = (Percent) obj;
+			return percent.getPercent();
+		} else {
+			return createPercent(obj);
+		}
+	}
 	private static Double createNumber(final Object object) {
+		return parse(object, NUMBER_FORMAT);
+	}
+	private static Double createPercent(final Object object) {
+		Double d = parse(object, PERCENT_FORMAT);
+		if (d != null) {
+			return d * 100;
+		} else {
+			return d;
+		}
+		//return parse(object, PERCENT_FORMAT);
+	}
+	private static Double parse(final Object object, final NumberFormat numberFormat) {
 		if (object instanceof String) {
 			String filterValue = (String) object;
 			//Used to check if parsing was successful
 			ParsePosition position = new ParsePosition(0);
 			//Parse number using the Locale
-			Number n = NUMBER_FORMAT.parse(filterValue, position);
+			Number n = numberFormat.parse(filterValue, position);
 			if (n != null && position.getIndex() == filterValue.length()) { //Numeric
 				return n.doubleValue();
 			}
@@ -280,6 +309,12 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date = getDate(object);
 		if (date != null) {
 			return toLowerCase(Formater.columnDate(date), toLowerCase);
+		}
+
+		//Percent
+		Double percent = getPercent(object);
+		if (percent != null) {
+			return toLowerCase(Formater.compareFormat(percent), toLowerCase);
 		}
 
 		//String

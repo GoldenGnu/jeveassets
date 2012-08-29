@@ -164,6 +164,10 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		return false;
 	}
 	@Override
+	public boolean isShowDefault() {
+		return true;
+	}
+	@Override
 	public IndustryJob setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}

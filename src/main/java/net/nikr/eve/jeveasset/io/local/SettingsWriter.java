@@ -54,6 +54,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
 
+		writeAssetSettings(xmldoc, settings);
 		writeStockpiles(xmldoc, settings.getStockpiles());
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
@@ -67,8 +68,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTableColumns(xmldoc, settings.getTableColumns());
+		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
-		writeCsv(xmldoc, Settings.getCsvSettings());
+		writeExportSettings(xmldoc, Settings.getExportSettings());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -115,6 +117,23 @@ public class SettingsWriter extends AbstractXmlWriter {
 			}
 		}
 	}
+
+	private static void writeTableColumnsWidth(final Document xmldoc, final Map<String, Map<String, Integer>> tableColumnsWidth) {
+		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumnswidth");
+		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		for (Map.Entry<String, Map<String, Integer>> table : tableColumnsWidth.entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", table.getKey());
+			tablecolumnsNode.appendChild(nameNode);
+			for (Map.Entry<String, Integer> column : table.getValue().entrySet()) {
+				Element node = xmldoc.createElementNS(null, "column");
+				node.setAttributeNS(null, "column", String.valueOf(column.getKey()));
+				node.setAttributeNS(null, "width", String.valueOf(column.getValue()));
+				nameNode.appendChild(node);
+			}
+		}
+	}
+
 	private static void writeTablesResize(final Document xmldoc, final Map<String, ResizeMode> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tableresize");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
@@ -124,6 +143,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 			nameNode.setAttributeNS(null, "resize", entry.getValue().name());
 			tablecolumnsNode.appendChild(nameNode);
 		}
+	}
+
+	private static void writeAssetSettings(final Document xmldoc, final Settings settings) {
+		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		parentNode.setAttributeNS(null, "maximumpurchaseage", String.valueOf(settings.getMaximumPurchaseAge()));
 	}
 
 	private static void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {
@@ -141,9 +166,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
 			strockpileNode.setAttributeNS(null, "jobs", String.valueOf(strockpile.isJobs()));
 			for (StockpileItem item : strockpile.getItems()) {
-				if (item.getTypeID() > 0) { //Ignore Total
+				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");
-					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getTypeID()));
+					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);
 				}
@@ -218,6 +243,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private static void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
+		parentNode.setAttributeNS(null, "defaultreprocessedprice", Asset.getPriceReprocessedType().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
 		StringBuilder builder = new StringBuilder();
 		for (long location : priceDataSettings.getLocations()) {
@@ -275,14 +301,31 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeCsv(final Document xmldoc, final CsvSettings csvSettings) {
+	private static void writeExportSettings(final Document xmldoc, final ExportSettings exportSettings) {
 		Element node = xmldoc.createElementNS(null, "csvexport");
 		xmldoc.getDocumentElement().appendChild(node);
-		node.setAttributeNS(null, "decimal", csvSettings.getDecimalSeperator().name());
-		node.setAttributeNS(null, "field", csvSettings.getFieldDelimiter().name());
-		node.setAttributeNS(null, "line", csvSettings.getLineDelimiter().name());
-		node.setAttributeNS(null, "filename", csvSettings.getFilename());
-		for (Map.Entry<String, List<String>> entry : csvSettings.getTableExportColumns()) {
+		//CSV
+		node.setAttributeNS(null, "decimal", exportSettings.getDecimalSeperator().name());
+		node.setAttributeNS(null, "field", exportSettings.getFieldDelimiter().name());
+		node.setAttributeNS(null, "line", exportSettings.getLineDelimiter().name());
+		//SQL
+		node.setAttributeNS(null, "sqlcreatetable", String.valueOf(exportSettings.isCreateTable()));
+		node.setAttributeNS(null, "sqldroptable", String.valueOf(exportSettings.isDropTable()));
+		node.setAttributeNS(null, "sqlextendedinserts", String.valueOf(exportSettings.isExtendedInserts()));
+		for (Map.Entry<String, String> entry : exportSettings.getTableNames().entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "sqltablenames");
+			nameNode.setAttributeNS(null, "tool", entry.getKey());
+			nameNode.setAttributeNS(null, "tablename", entry.getValue());
+			node.appendChild(nameNode);
+		}
+		//Shared
+		for (Map.Entry<String, String> entry : exportSettings.getFilenames().entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "filenames");
+			nameNode.setAttributeNS(null, "tool", entry.getKey());
+			nameNode.setAttributeNS(null, "filename", entry.getValue());
+			node.appendChild(nameNode);
+		}
+		for (Map.Entry<String, List<String>> entry : exportSettings.getTableExportColumns()) {
 			Element nameNode = xmldoc.createElementNS(null, "table");
 			nameNode.setAttributeNS(null, "name", entry.getKey());
 			node.appendChild(nameNode);

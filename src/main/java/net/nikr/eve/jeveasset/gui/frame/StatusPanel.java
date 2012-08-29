@@ -31,6 +31,7 @@ import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
@@ -92,7 +93,7 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public void timerTicked(final boolean updatable) {
-		jEveTime.setText(GuiFrame.get().eveTime(Settings.getGmtNow()));
+		jEveTime.setText(Formater.eveTime(Settings.getNow()));
 		if (updatable) {
 			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());

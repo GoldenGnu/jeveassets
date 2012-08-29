@@ -145,8 +145,13 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 	public String getColumnName() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(final Object baseObject) {
+	@Override
+	public boolean isColumnEditable(final Object baseObject) {
 		return false;
+	}
+	@Override
+	public boolean isShowDefault() {
+		return true;
 	}
 	@Override public Human setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
@@ -186,7 +191,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 		public String toString() {
 			if (expirer == null) {
 				return "Never";
-			} else if (Settings.getGmtNow().after(expirer)) {
+			} else if (Settings.getNow().after(expirer)) {
 				return "Expired";
 			} else {
 				return Formater.dateOnly(expirer);

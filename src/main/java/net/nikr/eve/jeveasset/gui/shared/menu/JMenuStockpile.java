@@ -73,9 +73,9 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 		if (ACTION_ADD_TO_NEW.equals(e.getActionCommand())) {
 			Stockpile stockpile = program.getStockpileTool().showAddStockpile();
 			if (stockpile != null) {
-				for (int typeID : typeIDs) {
-					Item item = program.getSettings().getItems().get(typeID);
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), DEFAULT_ADD_COUNT);
+				for (int typeID : blueprintTypeIDs) {
+					Item item = program.getSettings().getItems().get(Math.abs(typeID));
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
 				program.getStockpileTool().updateData();
@@ -87,9 +87,9 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 			if (source instanceof JStockpileMenu) {
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
-				for (int typeID : typeIDs) {
-					Item item = program.getSettings().getItems().get(typeID);
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), DEFAULT_ADD_COUNT);
+				for (int typeID : blueprintTypeIDs) {
+					Item item = program.getSettings().getItems().get(Math.abs(typeID));
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
 				program.getStockpileTool().updateData();

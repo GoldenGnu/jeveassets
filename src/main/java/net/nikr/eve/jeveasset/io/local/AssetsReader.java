@@ -137,11 +137,11 @@ public class AssetsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "show")) {
 			showAssets = AttributeGetters.getBoolean(node, "show");
 		}
-		Date marketOrdersNextUpdate = Settings.getGmtNow();
+		Date marketOrdersNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
 			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
 		}
-		Date industryJobsNextUpdate = Settings.getGmtNow();
+		Date industryJobsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
 			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
 		}

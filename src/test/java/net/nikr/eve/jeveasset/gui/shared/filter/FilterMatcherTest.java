@@ -39,10 +39,13 @@ public class FilterMatcherTest {
 		INTEGER(true, false),
 		DOUBLE(true, false),
 		FLOAT(true, false),
+		PERCENT(true, false),
 		DATE(false, true),
 		COLUMN_TEXT(false, false),
 		COLUMN_NUMBER(true, false),
-		COLUMN_DATE(false, true);
+		COLUMN_PERCENT(true, false),
+		COLUMN_DATE(false, true)
+		;
 
 		private boolean number;
 		private boolean date;
@@ -63,6 +66,7 @@ public class FilterMatcherTest {
 	private String textColumn = null;
 	private Number numberColumn = null;
 	private Date dateColumn = null;
+	private Percent percentColumn = null;
 	private static final String TEXT = "Text";
 	private static final String TEXT_PART = "Tex";
 	private static final String TEXT_NOT = "Not";
@@ -77,6 +81,7 @@ public class FilterMatcherTest {
 	private static final float NUMBER_FLOAT = 222.0f;
 	private static final long NUMBER_LONG = 222L;
 	private static final int NUMBER_INTEGER = 222;
+	private static final Percent PERCENT = new Percent(2.22);
 
 	private final TestFilterControl filterControl = new TestFilterControl();
 	private final Item item = new Item();
@@ -111,30 +116,36 @@ public class FilterMatcherTest {
 		numberTest(TestEnum.INTEGER);
 	//Date
 		dateTest();
+	//Percent
+		percentTest();
 	//All
 		allTest();
 	}
 
 	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text) {
-		matches(expected, item, enumColumn, compare, text, null, null, null);
+		matches(expected, item, enumColumn, compare, text, null, null, null, null);
 	}
 
 	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn) {
-		matches(expected, item, enumColumn, compare, text, textColumn, null, null);
+		matches(expected, item, enumColumn, compare, text, textColumn, null, null, null);
 	}
 
 	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Number numberColumn) {
-		matches(expected, item, enumColumn, compare, text, null, numberColumn, null);
+		matches(expected, item, enumColumn, compare, text, null, numberColumn, null, null);
 	}
 	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Date dateColumn) {
-		matches(expected, item, enumColumn, compare, text, null, null, dateColumn);
+		matches(expected, item, enumColumn, compare, text, null, null, dateColumn, null);
+	}
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Percent percentColumn) {
+		matches(expected, item, enumColumn, compare, text, null, null, null, percentColumn);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn) {
+	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn, final Percent percentColumn) {
 		//Test matches
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
 		this.dateColumn = dateColumn;
+		this.percentColumn = percentColumn;
 		FilterMatcher<Item> filterMatcher;
 		filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
 		assertEquals(enumColumn.name(), expected, filterMatcher.matches(item));
@@ -316,6 +327,129 @@ public class FilterMatcherTest {
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221);
 	}
 
+	private void percentTest() {
+		//Equals
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222.0%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "223%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "223.1%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222.1%");
+		//Equals not
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "223%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "223.1%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222.1%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222.0%");
+		//Contains
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222.0%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "223%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "223.1%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222.1%");
+		//Contains not
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "223%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "223.1%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.1%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.0%");
+		//Great than
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222.0%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222.1%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "223%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221.0%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221.9%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221%");
+		//Less than
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222.0%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222.1%");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "223%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221.0%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221.9%");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221%");
+		//Equals
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222.0");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "223");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "223.1");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS, "222.1");
+		//Equals not
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "223");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "223.1");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222.1");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT, "222.0");
+		//Contains
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222.0");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "223");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "223.1");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS, "222.1");
+		//Contains not
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "223");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "223.1");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.1");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT, "222.0");
+		//Great than
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222.0");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "222.1");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "223");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221.0");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221.9");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN, "221");
+		//Less than
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222.0");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "222.1");
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "223");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221.0");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221.9");
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN, "221");
+		//Equals column
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		//Equals not column
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.EQUALS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		//Contains column
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		//Contains not column
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.231));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.CONTAINS_NOT_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		//Great than column
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.210));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.219));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.GREATER_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.21));
+		//Less than column
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.220));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.22));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.221));
+		matches(true,  item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.23));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.210));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.219));
+		matches(false, item, TestEnum.PERCENT, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_PERCENT.name(), new Percent(2.21));
+	}
+
 	private void allTest() {
 		long startTime = System.currentTimeMillis();
 	//Text
@@ -436,12 +570,16 @@ public class FilterMatcherTest {
 					return NUMBER_LONG;
 				} else if (format.equals(TestEnum.INTEGER)) {
 					return NUMBER_INTEGER;
+				} else if (format.equals(TestEnum.PERCENT)) {
+					return PERCENT;
 				} else if (format.equals(TestEnum.DATE)) {
 					return Formater.columnStringToDate(DATE);
 				} else if (format.equals(TestEnum.COLUMN_TEXT)) {
 					return textColumn;
 				} else if (format.equals(TestEnum.COLUMN_NUMBER)) {
 					return numberColumn;
+				} else if (format.equals(TestEnum.COLUMN_PERCENT)) {
+					return percentColumn;
 				} else if (format.equals(TestEnum.COLUMN_DATE)) {
 					return dateColumn;
 				}
@@ -451,6 +589,11 @@ public class FilterMatcherTest {
 
 		@Override
 		protected List<EnumTableColumn<Item>> getEnumColumns() {
+			return null; //Only used by the GUI
+		}
+
+		@Override
+		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
 			return null; //Only used by the GUI
 		}
 	}
