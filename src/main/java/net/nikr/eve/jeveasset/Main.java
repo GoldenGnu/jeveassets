@@ -112,7 +112,8 @@ public final class Main {
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
 
-		//fix IPv6 fail
+		//XXX Workaround for IPv6 fail (force IPv4)
+		//eveonline.com is not IPv6 ready...
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
 		javax.swing.SwingUtilities.invokeLater(
