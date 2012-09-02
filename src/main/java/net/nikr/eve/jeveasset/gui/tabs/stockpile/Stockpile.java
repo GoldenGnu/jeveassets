@@ -349,8 +349,10 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public void updateAsset(final Asset asset, final Long characterID, final Long regionID) {
 			if (asset != null && characterID != null && regionID != null //better safe then sorry
-					&& (typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
-						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //Copy
+					&& (
+						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
+						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
+						)
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
