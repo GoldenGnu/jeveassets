@@ -430,7 +430,8 @@ public class Settings {
 							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
 						}
 						//Unique Ids
-						if (!uniqueIds.contains(material.getTypeID())) {
+						boolean marketGroup = ApiIdConverter.marketGroup(material.getTypeID(), this.getItems());
+						if (marketGroup && !uniqueIds.contains(material.getTypeID())) {
 							uniqueIds.add(material.getTypeID());
 						}
 					}
