@@ -882,12 +882,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public static class TotalComparator implements Comparator<StockpileItem> {
 		@Override
 		public int compare(final StockpileItem o1, final StockpileItem o2) {
-			if (o1 instanceof StockpileTotal) {
-				return 1;
+			if ((o1 instanceof StockpileTotal) && (o2 instanceof StockpileTotal)) {
+				return 0;  //Equal (both StockpileTotal)
+			} else if (o1 instanceof StockpileTotal) {
+				return 1;  //After
 			} else if (o2 instanceof StockpileTotal) {
-				return -1;
+				return -1; //Before
 			} else {
-				return 0;
+				return 0;  //Equal (not StockpileTotal)
 			}
 		}
 	}
