@@ -457,4 +457,19 @@ public abstract class FakeSettings extends Settings {
 	public void setIncludeSellOrders(boolean includeSellOrders) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getMaximumPurchaseAge() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMaximumPurchaseAge(int maximumPurchaseAge) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
