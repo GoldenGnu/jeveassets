@@ -278,11 +278,11 @@
 	</reporting>
 	<repositories>
 		<repository>
-			<id>mvn.candle.me.uk</id>
-			<name>mvn.candle.me.uk</name>
+			<id>maven.nikr.net</id>
+			<name>maven.nikr.net</name>
 			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>false</enabled></snapshots>
-			<url>http://mvn.candle.me.uk/repository/</url>
+			<snapshots><enabled>true</enabled></snapshots>
+			<url>http://maven.nikr.net/</url>
 		</repository>
 	</repositories>
 	<dependencies>
