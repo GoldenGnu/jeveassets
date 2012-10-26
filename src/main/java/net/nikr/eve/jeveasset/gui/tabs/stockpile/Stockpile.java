@@ -568,13 +568,6 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		@Override
 		public int compareTo(final StockpileItem item) {
-			//Total should always be last...
-			if (item instanceof StockpileTotal) { //this is Before item
-				return -1;
-			}
-			if (this instanceof StockpileTotal) { //this is After item
-				return 1;
-			}
 			//Compare groups
 			int value = this.getGroup().compareTo(item.getGroup());
 			if (value != 0) { //Not same group
