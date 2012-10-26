@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Module.FlagType;
-import static org.junit.Assert.assertTrue;
 import org.junit.*;
+import static org.junit.Assert.assertTrue;
 
 public class ModuleTest {
 
