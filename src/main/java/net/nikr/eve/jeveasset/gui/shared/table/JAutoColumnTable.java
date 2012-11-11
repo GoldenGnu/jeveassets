@@ -30,7 +30,9 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
@@ -80,6 +82,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 
 		autoResizeColumns();
+
+		fixScrollPaneRedraw();
 	}
 
 	@Override
@@ -150,6 +154,60 @@ public class JAutoColumnTable extends JTable {
 			}
 		}
 		return null;
+	}
+
+	private JScrollPane getParentScrollPane() {
+		Container container = this.getParent();
+		if(container != null) {
+			container = container.getParent();
+		}
+
+		if (container instanceof JScrollPane) {
+			return (JScrollPane) container;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * This is a work-around for issue #254. The JScrollPane viewport gets
+	 * corrupted when it is moved to the right with the horizontal scrollbar.
+	 * The following AdjustmentListener cannot fix the issue but it forces
+	 * AWT to repaint the viewport content. Because the event firing frequency
+	 * is lower than the viewport scroll rate, it may still flicker during
+	 * the scrolling, but at least ensures that the viewport is drawn properly
+	 * when the scrolling is stopped.
+	 * This is bug somewhere between OpenJDK and certain graphics drivers
+	 * under Linux and can be fixed by disabling the driver's acceleration.
+	 * @author Jan
+	 */
+	private void fixScrollPaneRedraw() {
+		/* This component has not been added to the JScrollPanel at 
+		 * construction time. This one listens to an ANCESTOR_ADD 
+		 * event and registers the repaint method at the JScrollPanel 
+		 * parent as soon as this component has been added to it.
+		 */
+		this.addAncestorListener(new AncestorListener() {
+
+			@Override
+			public void ancestorAdded(AncestorEvent ae) {
+				JComponent jComponent = ae.getComponent();
+				if(jComponent instanceof JAutoColumnTable) {
+					JAutoColumnTable jTable = (JAutoColumnTable) jComponent;
+					JScrollPane jScrollPane = jTable.getParentScrollPane();
+					if(jScrollPane != null) {
+						jScrollPane.getHorizontalScrollBar().addAdjustmentListener(new JScrollPaneAdjustmentListener(jScrollPane));
+					}
+				}
+			}
+
+			@Override
+			public void ancestorMoved(AncestorEvent event) { }
+
+			@Override
+			public void ancestorRemoved(AncestorEvent event) { }
+
+		});
 	}
 
 	private JViewport getParentViewport() {
@@ -384,5 +442,33 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void mouseExited(final MouseEvent e) { }
+	}
+
+	/**
+	 * @see JAutoColumnTable#fixScrollPaneRedraw()
+	 */
+	private class JScrollPaneAdjustmentListener implements AdjustmentListener {
+		/**
+		 * Holds the JScrollPane we want to force repainting its content
+		 */
+		private JScrollPane jScrollPane;
+
+		/**
+		 * Holds the last scrollbar position for direction tracking
+		 */
+		private int lastValue;
+
+		public JScrollPaneAdjustmentListener(JScrollPane jScrollPane) {
+			this.jScrollPane = jScrollPane;
+		}
+
+		@Override
+		public void adjustmentValueChanged(AdjustmentEvent e) {
+			if(e.getValue() > lastValue) {
+				// scrollbar has been dragged to the right
+				jScrollPane.repaint();
+			}
+			lastValue = e.getValue();
+		}
 	}
 }
