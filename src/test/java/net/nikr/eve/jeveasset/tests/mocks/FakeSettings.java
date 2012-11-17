@@ -472,4 +472,10 @@ public abstract class FakeSettings extends Settings {
 	public void setMaximumPurchaseAge(int maximumPurchaseAge) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<Long, Date> getAssetAdded() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
 }

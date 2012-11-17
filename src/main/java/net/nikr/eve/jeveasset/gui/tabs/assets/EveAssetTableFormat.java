@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
@@ -319,6 +320,20 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		@Override
 		public Object getColumnValue(final Asset from) {
 			return from.getSingleton();
+		}
+	},
+	ADDED(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnAdded();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getAdded();
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
 		}
 	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {

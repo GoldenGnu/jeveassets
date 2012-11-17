@@ -95,6 +95,7 @@ public class Settings {
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
+	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 	private List<Asset> eventListAssets = null;
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
 	private List<Account> accounts;
@@ -375,6 +376,14 @@ public class Settings {
 	private void addAssets(final List<Asset> currentAssets, final boolean shouldShow) {
 		for (Asset eveAsset : currentAssets) {
 			if (shouldShow) {
+				//Data added
+				if (assetAdded.containsKey(eveAsset.getItemID())) {
+					eveAsset.setAdded(assetAdded.get(eveAsset.getItemID()));
+				} else {
+					Date date = new Date();
+					assetAdded.put(eveAsset.getItemID(), date);
+					eveAsset.setAdded(date);
+				}
 				//User price
 				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
 					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
@@ -704,6 +713,10 @@ public class Settings {
 			tableFilters.put(key, new HashMap<String, List<Filter>>());
 		}
 		return tableFilters.get(key);
+	}
+
+	public Map<Long, Date> getAssetAdded() {
+		return assetAdded;
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {

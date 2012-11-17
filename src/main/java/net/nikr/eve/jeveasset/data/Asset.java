@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -141,6 +142,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private int rawQuantity;
 	private boolean piMaterial;
 	private MarketPriceData marketPriceData;
+	private Date added;
 
 	/**
 	 * For mockups...
@@ -178,6 +180,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public void addEveAsset(final Asset eveAsset) {
 		assets.add(eveAsset);
+	}
+
+	public Date getAdded() {
+		return added;
 	}
 
 	public List<Asset> getAssets() {
@@ -481,6 +487,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public boolean isUserPrice() {
 		return (this.getUserPrice() != null);
+	}
+
+	public void setAdded(Date added) {
+		this.added = added;
 	}
 
 	public void setContainer(final String container) {

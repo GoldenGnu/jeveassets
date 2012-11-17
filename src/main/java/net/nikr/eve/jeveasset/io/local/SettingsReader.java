@@ -25,13 +25,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
-import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -49,8 +49,8 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -205,6 +205,13 @@ public class SettingsReader extends AbstractXmlReader {
 		if (tableResizeNodes.getLength() == 1) {
 			Element tableResizeElement = (Element) tableResizeNodes.item(0);
 			parseTableResize(tableResizeElement, settings);
+		}
+
+		//Asset added
+		NodeList assetaddedNodes = element.getElementsByTagName("assetadded");
+		if (assetaddedNodes.getLength() == 1) {
+			Element assetaddedElement = (Element) assetaddedNodes.item(0);
+			parseAssetAdded(assetaddedElement, settings);
 		}
 
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
@@ -701,6 +708,16 @@ public class SettingsReader extends AbstractXmlReader {
 				columns.add(name);
 			}
 			Settings.getExportSettings().putTableExportColumns(tableName, columns);
+		}
+	}
+
+	private static void parseAssetAdded(Element element, Settings settings) {
+		NodeList assetNodes = element.getElementsByTagName("asset");
+		for (int a = 0; a < assetNodes.getLength(); a++) {
+			Element currentNode = (Element) assetNodes.item(a);
+			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
+			Date date = AttributeGetters.getDate(currentNode, "date");
+			settings.getAssetAdded().put(itemID, date);
 		}
 	}
 }

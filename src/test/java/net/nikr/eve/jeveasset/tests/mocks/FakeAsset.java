@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.tests.mocks;
 
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
@@ -328,4 +329,15 @@ public class FakeAsset extends Asset {
 	public void setMarketPriceData(MarketPriceData marketPriceData) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Date getAdded() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setAdded(Date added) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
 }

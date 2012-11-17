@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
@@ -71,6 +72,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeExportSettings(xmldoc, Settings.getExportSettings());
+		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -334,6 +336,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 				columnNode.setAttributeNS(null, "name", column);
 				nameNode.appendChild(columnNode);
 			}
+		}
+	}
+
+	private static void writeAssetAdded(Document xmldoc, Map<Long, Date> assetAdded) {
+		Element assetaddedNode = xmldoc.createElementNS(null, "assetadded");
+		xmldoc.getDocumentElement().appendChild(assetaddedNode);
+		for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {
+			Element assetNode = xmldoc.createElementNS(null, "asset");
+			assetNode.setAttributeNS(null, "itemid", String.valueOf(entry.getKey()));
+			assetNode.setAttributeNS(null, "date", String.valueOf(entry.getValue().getTime()));
+			assetaddedNode.appendChild(assetNode);
 		}
 	}
 }
