@@ -77,6 +77,7 @@ public class ProgramUpdateChecker {
 	}
 
 	public void showMessages(final Window parent, final boolean requestedUpdate) {
+		//FIXME i18n
 		if (requestedUpdate) {
 			parseUpdateVersion();
 		}
