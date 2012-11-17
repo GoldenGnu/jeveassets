@@ -39,7 +39,14 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
 
+	private ConquerableStationsReader() { }
+
 	public static boolean load(final Settings settings) {
+		ConquerableStationsReader reader = new ConquerableStationsReader();
+		return reader.read(settings);
+	}
+
+	private boolean read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
 			Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
@@ -55,14 +62,14 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseConquerableStations(final Element element, final Map<Long, ApiStation> conquerableStations) throws XmlException {
+	private void parseConquerableStations(final Element element, final Map<Long, ApiStation> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private static void parseStations(final Element element, final Map<Long, ApiStation> conquerableStations) {
+	private void parseStations(final Element element, final Map<Long, ApiStation> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int a = 0; a < filterNodes.getLength(); a++) {
 			Element currentNode = (Element) filterNodes.item(a);
@@ -70,7 +77,8 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 			conquerableStations.put(station.getStationID(), station);
 		}
 	}
-	private static ApiStation parseStation(final Element element) {
+
+	private ApiStation parseStation(final Element element) {
 		ApiStation station = new ApiStation();
 		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));
@@ -79,6 +87,5 @@ public class ConquerableStationsReader extends AbstractXmlReader {
 		station.setStationName(AttributeGetters.getString(element, "stationname"));
 		station.setStationTypeID(AttributeGetters.getInt(element, "stationtypeid"));
 		return station;
-
 	}
 }

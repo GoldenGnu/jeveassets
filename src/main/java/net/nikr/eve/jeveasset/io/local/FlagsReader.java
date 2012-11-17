@@ -39,7 +39,14 @@ public class FlagsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
 
+	private FlagsReader() { }
+
 	public static boolean load(final Settings settings) {
+		FlagsReader reader = new FlagsReader();
+		return reader.read(settings);
+	}
+
+	private boolean read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathFlags());
 			parseFlags(element, settings.getItemFlags());
@@ -52,7 +59,7 @@ public class FlagsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) {
+	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) {
 		NodeList nodes = element.getElementsByTagName("row");
 		ItemFlag itemFlag;
 		for (int a = 0; a < nodes.getLength(); a++) {
@@ -62,7 +69,7 @@ public class FlagsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static ItemFlag parseFlag(final Node node) {
+	private ItemFlag parseFlag(final Node node) {
 		int flagID = AttributeGetters.getInt(node, "flagid");
 		String flagName = AttributeGetters.getString(node, "flagname");
 		String flagText = AttributeGetters.getString(node, "flagtext");

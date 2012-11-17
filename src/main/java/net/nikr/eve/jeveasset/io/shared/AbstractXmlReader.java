@@ -35,13 +35,14 @@ import org.xml.sax.SAXException;
 
 
 public abstract class AbstractXmlReader {
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
-	protected static Element getDocumentElement(final String filename) throws XmlException, IOException {
+	protected Element getDocumentElement(final String filename) throws XmlException, IOException {
 		return getDocumentElement(filename, false);
 	}
 
-	private static Element getDocumentElement(final String filename, final boolean usingBackupFile) throws XmlException, IOException {
+	private Element getDocumentElement(final String filename, final boolean usingBackupFile) throws XmlException, IOException {
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
 		Document doc;
@@ -69,7 +70,7 @@ public abstract class AbstractXmlReader {
 		}
 	}
 
-	private static boolean restoreBackupFile(final String filename) {
+	private boolean restoreBackupFile(final String filename) {
 		int end = filename.lastIndexOf(".");
 		String backup = filename.substring(0, end) + ".bac";
 		File backupFile = new File(backup);

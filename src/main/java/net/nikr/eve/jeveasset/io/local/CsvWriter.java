@@ -39,6 +39,11 @@ public final class CsvWriter {
 	private CsvWriter() { }
 
 	public static boolean save(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
+		CsvWriter writer = new CsvWriter();
+		return writer.write(filename, data, header, csvPreference);
+	}
+
+	private boolean write(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
 		ICsvMapWriter writer;
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);

@@ -39,11 +39,18 @@ public class EveFittingWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
 
+	private EveFittingWriter() { }
+
 	public static void save(final List<Asset> eveassets, final String filename) {
 		save(eveassets, filename, null, null);
 	}
 
 	public static void save(final List<Asset> eveassets, final String filename, String setupName, String description) {
+		EveFittingWriter writer = new EveFittingWriter();
+		writer.write(eveassets, filename, setupName, description);
+	}
+
+	private void write(final List<Asset> eveassets, final String filename, String setupName, String description) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("fittings");
@@ -70,7 +77,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private static void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
+	private void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);

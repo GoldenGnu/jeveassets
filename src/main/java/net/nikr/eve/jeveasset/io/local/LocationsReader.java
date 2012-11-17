@@ -39,7 +39,14 @@ public class LocationsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LocationsReader.class);
 
+	private LocationsReader() { }
+
 	public static void load(final Settings settings) {
+		LocationsReader reader = new LocationsReader();
+		reader.read(settings);
+	}
+
+	private void read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathLocations());
 			parseLocations(element, settings.getLocations());
@@ -51,13 +58,7 @@ public class LocationsReader extends AbstractXmlReader {
 		LOG.info("Locations loaded");
 	}
 
-	private static void parseLocations(final Element element, final Map<Long, Location> locations) {
-		/*
-		Map<Integer, Location> locations;
-		locations = new HashMap<Integer, Location>();
-		parseLocationNodes(element, locations);
-		settings.setLocations(locations);
-		 */
+	private void parseLocations(final Element element, final Map<Long, Location> locations) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Location location;
 		for (int a = 0; a < nodes.getLength(); a++) {
@@ -65,7 +66,8 @@ public class LocationsReader extends AbstractXmlReader {
 			locations.put(location.getLocationID(), location);
 		}
 	}
-	private static Location parseLocation(final Node node) {
+
+	private Location parseLocation(final Node node) {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		int region = AttributeGetters.getInt(node, "region");

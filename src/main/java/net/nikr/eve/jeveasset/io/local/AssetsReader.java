@@ -43,7 +43,14 @@ public class AssetsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsReader.class);
 
+	private AssetsReader() { }
+
 	public static boolean load(final Settings settings, final String filename) {
+		AssetsReader reader = new AssetsReader();
+		return reader.read(settings, filename);
+	}
+
+	private boolean read(final Settings settings, final String filename) {
 		try {
 			Element element = getDocumentElement(filename);
 			parseSettings(element, settings);
@@ -56,7 +63,8 @@ public class AssetsReader extends AbstractXmlReader {
 		LOG.info("Assets loaded");
 		return true;
 	}
-	private static void parseSettings(final Element element, final Settings settings) throws XmlException {
+
+	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -67,7 +75,8 @@ public class AssetsReader extends AbstractXmlReader {
 			parseAccounts(accountsElement, settings.getAccounts(), settings);
 		}
 	}
-	private static void parseAccounts(final Element element, final List<Account> accounts, final Settings settings) {
+
+	private void parseAccounts(final Element element, final List<Account> accounts, final Settings settings) {
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int a = 0; a < accountNodes.getLength(); a++) {
 			Element currentNode = (Element) accountNodes.item(a);
@@ -77,7 +86,7 @@ public class AssetsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Account parseAccount(final Node node) {
+	private Account parseAccount(final Node node) {
 		int keyID;
 		if (AttributeGetters.haveAttribute(node, "keyid")) {
 			keyID = AttributeGetters.getInt(node, "keyid");
@@ -113,7 +122,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
 	}
 
-	private static void parseHumans(final Element element, final Account account, final Settings settings) {
+	private void parseHumans(final Element element, final Account account, final Settings settings) {
 		NodeList humanNodes =  element.getElementsByTagName("human");
 		for (int a = 0; a < humanNodes.getLength(); a++) {
 			Element currentNode = (Element) humanNodes.item(a);
@@ -128,7 +137,8 @@ public class AssetsReader extends AbstractXmlReader {
 			parseIndustryJobs(currentNode, human);
 		}
 	}
-	private static Human parseHuman(final Node node, final Account account) {
+
+	private Human parseHuman(final Node node, final Account account) {
 		String name = AttributeGetters.getString(node, "name");
 		int characterID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
@@ -149,7 +159,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate);
 	}
 
-	private static void parseBalances(final Element element, final Human human) {
+	private void parseBalances(final Element element, final Human human) {
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
@@ -162,7 +172,8 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static EveAccountBalance parseBalance(final Element element) {
+
+	private EveAccountBalance parseBalance(final Element element) {
 		EveAccountBalance accountBalance = new EveAccountBalance();
 		int accountID = AttributeGetters.getInt(element, "accountid");
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
@@ -173,7 +184,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private static void parseMarkerOrders(final Element element, final Human human) {
+	private void parseMarkerOrders(final Element element, final Human human) {
 		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
 		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
 			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
@@ -185,7 +196,8 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static ApiMarketOrder parseMarkerOrder(final Element element) {
+
+	private ApiMarketOrder parseMarkerOrder(final Element element) {
 		ApiMarketOrder apiMarketOrder = new ApiMarketOrder();
 		long orderID = AttributeGetters.getLong(element, "orderid");
 		long charID = AttributeGetters.getLong(element, "charid");
@@ -220,7 +232,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private static void parseIndustryJobs(final Element element, final Human human) {
+	private void parseIndustryJobs(final Element element, final Human human) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
@@ -232,7 +244,8 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static ApiIndustryJob parseIndustryJobs(final Element element) {
+
+	private ApiIndustryJob parseIndustryJobs(final Element element) {
 		ApiIndustryJob apiIndustryJob = new ApiIndustryJob();
 
 		long jobID = AttributeGetters.getLong(element, "jobid");
@@ -306,7 +319,7 @@ public class AssetsReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private static void parseAssets(final Node node, final List<Asset> assets, final Asset parentEveAsset, final Settings settings) {
+	private void parseAssets(final Node node, final List<Asset> assets, final Asset parentEveAsset, final Settings settings) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int a = 0; a < assetsNodes.getLength(); a++) {
 			Node currentNode = assetsNodes.item(a);
@@ -321,7 +334,8 @@ public class AssetsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static Asset parseEveAsset(final Node node, final Asset parentEveAsset, final Settings settings) {
+
+	private Asset parseEveAsset(final Node node, final Asset parentEveAsset, final Settings settings) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");

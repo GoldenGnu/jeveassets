@@ -41,7 +41,14 @@ public class AssetsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsWriter.class);
 
+	private AssetsWriter() { }
+
 	public static void save(final Settings settings, final String filename) {
+		AssetsWriter writer = new AssetsWriter();
+		writer.write(settings, filename);
+	}
+
+	private void write(final Settings settings, final String filename) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("assets");
@@ -57,7 +64,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		LOG.info("Assets saved");
 	}
 
-	private static void writeAccounts(final Document xmldoc, final List<Account> accounts) {
+	private void writeAccounts(final Document xmldoc, final List<Account> accounts) {
 		Element parentNode = xmldoc.createElementNS(null, "accounts");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 
@@ -77,7 +84,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeHumans(final Document xmldoc, final Element parentNode, final List<Human> humans) {
+	private void writeHumans(final Document xmldoc, final Element parentNode, final List<Human> humans) {
 		for (int a = 0; a < humans.size(); a++) {
 			Human human = humans.get(a);
 			Element node = xmldoc.createElementNS(null, "human");
@@ -98,7 +105,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAssets(final Document xmldoc, final Element parentNode, final List<Asset> assets) {
+	private void writeAssets(final Document xmldoc, final Element parentNode, final List<Asset> assets) {
 		for (int a = 0; a < assets.size(); a++) {
 			Asset eveAsset = assets.get(a);
 			Element node = xmldoc.createElementNS(null, "asset");
@@ -116,7 +123,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<EveAccountBalance> accountBalances, final boolean bCorp) {
+	private void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<EveAccountBalance> accountBalances, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
@@ -133,7 +140,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<ApiMarketOrder> marketOrders, final boolean bCorp) {
+	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<ApiMarketOrder> marketOrders, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "markerorders");
 		if (!marketOrders.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
@@ -161,7 +168,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<ApiIndustryJob> industryJobs, final boolean bCorp) {
+	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<ApiIndustryJob> industryJobs, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "industryjobs");
 		if (!industryJobs.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));

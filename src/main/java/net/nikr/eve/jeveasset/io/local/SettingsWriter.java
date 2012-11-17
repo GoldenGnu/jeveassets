@@ -45,7 +45,14 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsWriter.class);
 
+	private SettingsWriter() { }
+
 	public static void save(final Settings settings) {
+		SettingsWriter writer = new SettingsWriter();
+		writer.write(settings);
+	}
+
+	private void write(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("settings");
@@ -81,7 +88,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		LOG.info("Settings saved");
 	}
 
-	private static void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
+	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {
 		Element tablefiltersNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(tablefiltersNode);
 		for (Map.Entry<String, Map<String, List<Filter>>> entry : tableFilters.entrySet()) {
@@ -104,7 +111,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeTableColumns(final Document xmldoc, final Map<String, List<SimpleColumn>> tableColumns) {
+	private void writeTableColumns(final Document xmldoc, final Map<String, List<SimpleColumn>> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumns");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
 		for (Map.Entry<String, List<SimpleColumn>> entry : tableColumns.entrySet()) {
@@ -120,7 +127,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeTableColumnsWidth(final Document xmldoc, final Map<String, Map<String, Integer>> tableColumnsWidth) {
+	private void writeTableColumnsWidth(final Document xmldoc, final Map<String, Map<String, Integer>> tableColumnsWidth) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumnswidth");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
 		for (Map.Entry<String, Map<String, Integer>> table : tableColumnsWidth.entrySet()) {
@@ -136,7 +143,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeTablesResize(final Document xmldoc, final Map<String, ResizeMode> tableColumns) {
+	private void writeTablesResize(final Document xmldoc, final Map<String, ResizeMode> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tableresize");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
 		for (Map.Entry<String, ResizeMode> entry : tableColumns.entrySet()) {
@@ -147,13 +154,13 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAssetSettings(final Document xmldoc, final Settings settings) {
+	private void writeAssetSettings(final Document xmldoc, final Settings settings) {
 		Element parentNode = xmldoc.createElementNS(null, "assetsettings");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		parentNode.setAttributeNS(null, "maximumpurchaseage", String.valueOf(settings.getMaximumPurchaseAge()));
 	}
 
-	private static void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {
+	private void writeStockpiles(final Document xmldoc, final List<Stockpile> stockpiles) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Stockpile strockpile : stockpiles) {
@@ -179,7 +186,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeOverviewGroups(final Document xmldoc, final Map<String, OverviewGroup> overviewGroups) {
+	private void writeOverviewGroups(final Document xmldoc, final Map<String, OverviewGroup> overviewGroups) {
 		Element parentNode = xmldoc.createElementNS(null, "overview");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Map.Entry<String, OverviewGroup> entry : overviewGroups.entrySet()) {
@@ -196,7 +203,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeUserItemNames(final Document xmldoc, final Map<Long, UserItem<Long, String>> userPrices) {
+	private void writeUserItemNames(final Document xmldoc, final Map<Long, UserItem<Long, String>> userPrices) {
 		Element parentNode = xmldoc.createElementNS(null, "itemmames");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Map.Entry<Long, UserItem<Long, String>> entry : userPrices.entrySet()) {
@@ -209,7 +216,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeReprocessSettings(final Document xmldoc, final ReprocessSettings reprocessSettings) {
+	private void writeReprocessSettings(final Document xmldoc, final ReprocessSettings reprocessSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "reprocessing");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		parentNode.setAttributeNS(null, "refining", String.valueOf(reprocessSettings.getRefiningLevel()));
@@ -218,7 +225,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "station", String.valueOf(reprocessSettings.getStation()));
 	}
 
-	private static void writeWindow(final Document xmldoc, final Settings settings) {
+	private void writeWindow(final Document xmldoc, final Settings settings) {
 		Element parentNode = xmldoc.createElementNS(null, "window");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		parentNode.setAttributeNS(null, "x", String.valueOf(settings.getWindowLocation().x));
@@ -230,7 +237,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.setAttributeNS(null, "alwaysontop", String.valueOf(settings.isWindowAlwaysOnTop()));
 	}
 
-	private static void writeUserPrices(final Document xmldoc, final Map<Integer, UserItem<Integer, Double>> userPrices) {
+	private void writeUserPrices(final Document xmldoc, final Map<Integer, UserItem<Integer, Double>> userPrices) {
 		Element parentNode = xmldoc.createElementNS(null, "userprices");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Map.Entry<Integer, UserItem<Integer, Double>> entry : userPrices.entrySet()) {
@@ -242,7 +249,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			parentNode.appendChild(node);
 		}
 	}
-	private static void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
+	private void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
 		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
 		parentNode.setAttributeNS(null, "defaultreprocessedprice", Asset.getPriceReprocessedType().name());
@@ -259,7 +266,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
-	private static void writeFlags(final Document xmldoc, final Map<String, Boolean> flags) {
+	private void writeFlags(final Document xmldoc, final Map<String, Boolean> flags) {
 		Element parentNode = xmldoc.createElementNS(null, "flags");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Map.Entry<String, Boolean> entry : flags.entrySet()) {
@@ -270,7 +277,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeUpdates(final Document xmldoc, final Settings settings) {
+	private void writeUpdates(final Document xmldoc, final Settings settings) {
 		Element parentNode = xmldoc.createElementNS(null, "updates");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 
@@ -282,7 +289,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.appendChild(node);
 	}
 
-	private static void writeApiProxy(final Document xmldoc, final String apiProxy) {
+	private void writeApiProxy(final Document xmldoc, final String apiProxy) {
 		if (apiProxy != null) {
 			Element node = xmldoc.createElementNS(null, "apiProxy");
 			node.setAttributeNS(null, "url", String.valueOf(apiProxy));
@@ -290,7 +297,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeProxy(final Document xmldoc, final Proxy proxy) {
+	private void writeProxy(final Document xmldoc, final Proxy proxy) {
 		if (proxy != null && !proxy.type().equals(Proxy.Type.DIRECT)) { // Only adds proxy tag if there is anything to save... (To prevent an error when the proxy tag doesn't have any attributes)
 			Element node = xmldoc.createElementNS(null, "proxy");
 			if (proxy.address() instanceof InetSocketAddress) {
@@ -303,7 +310,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeExportSettings(final Document xmldoc, final ExportSettings exportSettings) {
+	private void writeExportSettings(final Document xmldoc, final ExportSettings exportSettings) {
 		Element node = xmldoc.createElementNS(null, "csvexport");
 		xmldoc.getDocumentElement().appendChild(node);
 		//CSV
@@ -339,7 +346,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAssetAdded(Document xmldoc, Map<Long, Date> assetAdded) {
+	private void writeAssetAdded(Document xmldoc, Map<Long, Date> assetAdded) {
 		Element assetaddedNode = xmldoc.createElementNS(null, "assetadded");
 		xmldoc.getDocumentElement().appendChild(assetaddedNode);
 		for (Map.Entry<Long, Date> entry : assetAdded.entrySet()) {

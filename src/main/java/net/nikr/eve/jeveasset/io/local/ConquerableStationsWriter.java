@@ -36,7 +36,14 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
 
+	private ConquerableStationsWriter() { }
+
 	public static void save(final Settings settings) {
+		ConquerableStationsWriter writer = new ConquerableStationsWriter();
+		writer.write(settings);
+	}
+
+	private void write(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("stations");
@@ -53,7 +60,7 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("	Conquerable stations saved");
 	}
-	private static void writeConquerableStations(final Document xmldoc, final Map<Long, ApiStation> conquerableStations) {
+	private void writeConquerableStations(final Document xmldoc, final Map<Long, ApiStation> conquerableStations) {
 		Element parentNode = xmldoc.getDocumentElement();
 		for (Map.Entry<Long, ApiStation> entry : conquerableStations.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "station");

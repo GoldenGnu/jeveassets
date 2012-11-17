@@ -38,6 +38,11 @@ public final class HtmlWriter {
 	private HtmlWriter() { }
 
 	public static boolean save(final String filename, final List<Map<String, String>> data, final List<String> header) {
+		HtmlWriter writer = new HtmlWriter();
+		return writer.write(filename, data, header);
+	}
+
+	private boolean write(final String filename, final List<Map<String, String>> data, final List<String> header) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			writeComment(writer);
@@ -54,13 +59,13 @@ public final class HtmlWriter {
 		return true;
 	}
 
-	private static void writeComment(final BufferedWriter writer) throws IOException {
+	private void writeComment(final BufferedWriter writer) throws IOException {
 		writer.write("<!-- " + Program.PROGRAM_NAME + " Html Export -->\r\n");
 		writer.write("<!-- version " + Program.PROGRAM_VERSION + " -->\r\n");
 		writer.write("<!-- " + Program.PROGRAM_HOMEPAGE + " -->\r\n");
 	}
 
-	private static void writeHeader(final BufferedWriter writer, final List<String> header) throws IOException {
+	private void writeHeader(final BufferedWriter writer, final List<String> header) throws IOException {
 		writer.write("<tr>\r\n");
 		for (String column : header) {
 			writer.write("\t<th>");
@@ -70,7 +75,7 @@ public final class HtmlWriter {
 		writer.write("</tr>\r\n");
 	}
 
-	private static void writeRows(final BufferedWriter writer, final List<Map<String, String>> data, final List<String> header) throws IOException {
+	private void writeRows(final BufferedWriter writer, final List<Map<String, String>> data, final List<String> header) throws IOException {
 		for (Map<String, String> map : data) {
 			writer.write("<tr>\r\n");
 			for (String s : header) {

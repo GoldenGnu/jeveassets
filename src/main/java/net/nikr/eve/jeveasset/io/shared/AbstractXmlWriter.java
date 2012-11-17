@@ -38,7 +38,7 @@ public abstract class AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlWriter.class);
 
-	protected static Document getXmlDocument(final String rootname) throws XmlException {
+	protected Document getXmlDocument(final String rootname) throws XmlException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -48,11 +48,12 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		}
 	}
-	protected static void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
+
+	protected void writeXmlFile(final Document doc, final String filename, final boolean createBackup) throws XmlException {
 		writeXmlFile(doc, filename, "UTF-16", createBackup);
 	}
 
-	private static void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
+	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
 		DOMSource source = new DOMSource(doc);
 		try {
 			if (createBackup) {
@@ -84,7 +85,7 @@ public abstract class AbstractXmlWriter {
 		}
 	}
 
-	private static void backupFile(final String filename) {
+	private void backupFile(final String filename) {
 		File outputFile = new File(filename);
 		int end = filename.lastIndexOf(".");
 		String backup = filename.substring(0, end) + ".bac";

@@ -49,6 +49,11 @@ public final class SqlWriter {
 	private SqlWriter() { }
 
 	public static boolean save(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+		SqlWriter writer = new SqlWriter();
+		return writer.write(filename, rows, header, tableName, dropTable, createTable, extendedInserts);
+	}
+
+	private boolean write(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			writeComment(writer);
@@ -63,13 +68,13 @@ public final class SqlWriter {
 		return true;
 	}
 
-	private static void writeComment(final BufferedWriter writer) throws IOException {
+	private void writeComment(final BufferedWriter writer) throws IOException {
 		writer.write("-- " + Program.PROGRAM_NAME + " Sql Export\r\n");
 		writer.write("-- version " + Program.PROGRAM_VERSION + "\r\n");
 		writer.write("-- " + Program.PROGRAM_HOMEPAGE + "\r\n");
 	}
 
-	private static String getType(final Object object) {
+	private String getType(final Object object) {
 		if (object instanceof Short) {
 			return "smallint";
 		} else if (object instanceof Integer) {
@@ -86,7 +91,7 @@ public final class SqlWriter {
 			return "text";
 		}
 	}
-	private static void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
+	private void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
 		if (dropTable) {
 			writer.write("DROP TABLE IF EXISTS `" + tableName + "`;\r\n");
 		}
@@ -106,7 +111,7 @@ public final class SqlWriter {
 		}
 	}
 
-	private static void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean extendedInserts) throws IOException {
+	private void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean extendedInserts) throws IOException {
 		if (!rows.isEmpty()) {
 			//Create INSERT statement
 			String insert = "INSERT INTO `" + tableName + "` (";
@@ -168,7 +173,7 @@ public final class SqlWriter {
 		}
 	}
 
-	private static String format(final Object object) {
+	private String format(final Object object) {
 		if (object == null) {
 			return "''";
 		} else if (object instanceof Double) {

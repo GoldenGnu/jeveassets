@@ -69,7 +69,14 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
+	private SettingsReader() { }
+
 	public static boolean load(final Settings settings) {
+		SettingsReader reader = new SettingsReader();
+		return reader.read(settings);
+	}
+
+	private boolean read(final Settings settings) {
 		try {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
@@ -87,7 +94,7 @@ public class SettingsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseSettings(final Element element, final Settings settings) throws XmlException {
+	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -237,12 +244,12 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
+	private void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
 		int maximumPurchaseAge = AttributeGetters.getInt(stockpilesElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
-	private static void parseStockpiles(final Element stockpilesElement, final Settings settings) {
+	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
@@ -295,7 +302,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseOverview(final Element overviewElement, final Settings settings) {
+	private void parseOverview(final Element overviewElement, final Settings settings) {
 		NodeList groupNodes = overviewElement.getElementsByTagName("group");
 		for (int a = 0; a < groupNodes.getLength(); a++) {
 			Element groupNode = (Element) groupNodes.item(a);
@@ -312,7 +319,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseReprocessing(final Element windowElement, final Settings settings) {
+	private void parseReprocessing(final Element windowElement, final Settings settings) {
 		int refining = AttributeGetters.getInt(windowElement, "refining");
 		int efficiency = AttributeGetters.getInt(windowElement, "efficiency");
 		int processing = AttributeGetters.getInt(windowElement, "processing");
@@ -320,7 +327,7 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setReprocessSettings(new ReprocessSettings(station, refining, efficiency, processing));
 	}
 
-	private static void parseWindow(final Element windowElement, final Settings settings) {
+	private void parseWindow(final Element windowElement, final Settings settings) {
 		int x = AttributeGetters.getInt(windowElement, "x");
 		int y = AttributeGetters.getInt(windowElement, "y");
 		int height = AttributeGetters.getInt(windowElement, "height");
@@ -338,7 +345,7 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setWindowAlwaysOnTop(alwaysOnTop);
 	}
 
-	private static void parseProxy(final Element proxyElement, final Settings settings) {
+	private void parseProxy(final Element proxyElement, final Settings settings) {
 		String addrName = AttributeGetters.getString(proxyElement, "address");
 		String proxyType = AttributeGetters.getString(proxyElement, "type");
 		Integer port = AttributeGetters.getInt(proxyElement, "port");
@@ -356,7 +363,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseUserPrices(final Element element, final Settings settings) {
+	private void parseUserPrices(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
 		for (int a = 0; a < userPriceNodes.getLength(); a++) {
 			Element currentNode = (Element) userPriceNodes.item(a);
@@ -368,7 +375,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseUserItemNames(final Element element, final Settings settings) {
+	private void parseUserItemNames(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("itemname");
 		for (int a = 0; a < userPriceNodes.getLength(); a++) {
 			Element currentNode = (Element) userPriceNodes.item(a);
@@ -380,7 +387,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parsePriceDataSettings(final Element element, final Settings settings) {
+	private void parsePriceDataSettings(final Element element, final Settings settings) {
 		PriceMode priceType = Asset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")) {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
@@ -428,7 +435,7 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource));
 	}
 
-	private static void parseFlags(final Element element, final Settings settings) {
+	private void parseFlags(final Element element, final Settings settings) {
 		NodeList flagNodes = element.getElementsByTagName("flag");
 		for (int a = 0; a < flagNodes.getLength(); a++) {
 			Element currentNode = (Element) flagNodes.item(a);
@@ -438,14 +445,14 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseUpdates(final Element element, final Settings settings) {
+	private void parseUpdates(final Element element, final Settings settings) {
 		NodeList updateNodes = element.getElementsByTagName("update");
 		for (int a = 0; a < updateNodes.getLength(); a++) {
 			Element currentNode = (Element) updateNodes.item(a);
 			parseUpdate(currentNode, settings);
 		}
 	}
-	private static void parseUpdate(final Element element, final Settings settings) {
+	private void parseUpdate(final Element element, final Settings settings) {
 		String text = AttributeGetters.getString(element, "name");
 		Date nextUpdate = new Date(AttributeGetters.getLong(element, "nextupdate"));
 		if (text.equals("conquerable station")) {
@@ -453,7 +460,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableColumns(final Element element, final Settings settings) {
+	private void parseTableColumns(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
@@ -474,7 +481,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableColumnsWidth(final Element element, final Settings settings) {
+	private void parseTableColumnsWidth(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Map<String, Integer> columns = new HashMap<String, Integer>();
@@ -491,7 +498,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableResize(final Element element, final Settings settings) {
+	private void parseTableResize(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element tableNode = (Element) tableNodeList.item(a);
@@ -501,7 +508,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableFilters(final Element element, final Settings settings) {
+	private void parseTableFilters(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element tableNode = (Element) tableNodeList.item(a);
@@ -528,7 +535,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Enum getColumn(final String column, final String tableName) {
+	private Enum getColumn(final String column, final String tableName) {
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
@@ -579,7 +586,7 @@ public class SettingsReader extends AbstractXmlReader {
 		throw new RuntimeException("Fail to load filter column: " + column);
 	}
 
-	private static void parseAssetFilters(final Element filtersElement, final Settings settings) {
+	private void parseAssetFilters(final Element filtersElement, final Settings settings) {
 		NodeList filterNodeList = filtersElement.getElementsByTagName("filter");
 		for (int a = 0; a < filterNodeList.getLength(); a++) {
 			Element filterNode = (Element) filterNodeList.item(a);
@@ -606,7 +613,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static LogicType convertLogic(final boolean logic) {
+	private LogicType convertLogic(final boolean logic) {
 		if (logic) {
 			return LogicType.AND;
 		} else {
@@ -614,7 +621,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Enum convertColumn(final String column) {
+	private Enum convertColumn(final String column) {
 		if (column.equals("Name")) { return EveAssetTableFormat.NAME; }
 		if (column.equals("Group")) { return EveAssetTableFormat.GROUP; }
 		if (column.equals("Category")) { return EveAssetTableFormat.CATEGORY; }
@@ -642,7 +649,7 @@ public class SettingsReader extends AbstractXmlReader {
 		return Filter.ExtraColumns.ALL; //Fallback
 	}
 
-	private static CompareType convertMode(final String compareMixed) {
+	private CompareType convertMode(final String compareMixed) {
 		String compare = compareMixed.toUpperCase();
 		if (compare.equals("MODE_EQUALS")) { return CompareType.EQUALS; }
 		if (compare.equals("MODE_CONTAIN")) { return CompareType.CONTAINS; }
@@ -655,12 +662,12 @@ public class SettingsReader extends AbstractXmlReader {
 		return CompareType.CONTAINS;
 	}
 
-	private static void parseApiProxy(final Element apiProxyElement, final Settings settings) {
+	private void parseApiProxy(final Element apiProxyElement, final Settings settings) {
 		String proxyURL = AttributeGetters.getString(apiProxyElement, "url");
 		settings.setApiProxy(proxyURL);
 	}
 
-	private static void parseExportSettings(final Element element) {
+	private void parseExportSettings(final Element element) {
 		//CSV
 		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
@@ -711,7 +718,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseAssetAdded(Element element, Settings settings) {
+	private void parseAssetAdded(Element element, Settings settings) {
 		NodeList assetNodes = element.getElementsByTagName("asset");
 		for (int a = 0; a < assetNodes.getLength(); a++) {
 			Element currentNode = (Element) assetNodes.item(a);
