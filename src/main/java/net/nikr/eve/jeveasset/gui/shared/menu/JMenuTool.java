@@ -21,10 +21,11 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JMenu;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
@@ -36,14 +37,14 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 public abstract class JMenuTool<T> extends JMenu {
 	protected final Program program;
-	protected final List<Integer> typeIDs = new ArrayList<Integer>();
+	protected final Set<Integer> typeIDs = new HashSet<Integer>();
 	protected final Map<Integer, Double> prices = new HashMap<Integer, Double>();
-	protected final List<String> typeNames = new ArrayList<String>();
-	protected final List<String> stations = new ArrayList<String>();
-	protected final List<String> systems = new ArrayList<String>();
-	protected final List<String> regions = new ArrayList<String>();
-	protected final List<Integer> marketTypeIDs = new ArrayList<Integer>();
-	protected final List<Integer> blueprintTypeIDs = new ArrayList<Integer>();
+	protected final Set<String> typeNames = new HashSet<String>();
+	protected final Set<String> stations = new HashSet<String>();
+	protected final Set<String> systems = new HashSet<String>();
+	protected final Set<String> regions = new HashSet<String>();
+	protected final Set<Integer> marketTypeIDs = new HashSet<Integer>();
+	protected final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
 
 	protected JMenuTool(final String title, final Program program, final List<T> items) {
 		super(title);
@@ -161,40 +162,46 @@ public abstract class JMenuTool<T> extends JMenu {
 	}
 
 	private void init(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price, final boolean copy) {
-		if (typeID != null && marketGroup && !marketTypeIDs.contains(typeID)) {
-			marketTypeIDs.add(typeID);
-		}
-		if (typeName != null && !typeNames.contains(typeName)) {
+		//Type Name
+		if (typeName != null) {
 			typeNames.add(typeName);
 		}
-		
+
+		//TypeID
 		if (typeID != null) {
+			//TypeID
+			typeIDs.add(typeID);
+			//Market TypeID
+			if (marketGroup) {
+				marketTypeIDs.add(typeID);
+			}
+			//Blueprint TypeID
 			int blueprintTypeID;
 			if (copy){
 				blueprintTypeID = -typeID;
 			} else {
 				blueprintTypeID = typeID;
 			}
-			if (!blueprintTypeIDs.contains(blueprintTypeID)){
-				blueprintTypeIDs.add(blueprintTypeID);
-			}
+			blueprintTypeIDs.add(blueprintTypeID);
+			//Price TypeID
 			if (price != null) { //Not unique
 				prices.put(blueprintTypeID, price);
 			}
 		}
-		if (typeID != null && !typeIDs.contains(typeID)) {
-			typeIDs.add(typeID);
-		}
-		//station can be a system or a region
-		if (station != null && system != null && region != null
-				&& !station.equals(system) && !station.equals(region)
-				&& !stations.contains(station)) {
+		//Locations
+		//Station (can be a system or a region)
+		if (station != null && system != null && region != null 
+				&& !station.equals(system) //Not system
+				&& !station.equals(region) //Not region
+				) {
 			stations.add(station);
 		}
-		if (system != null && !systems.contains(system)) {
+		//System
+		if (system != null) {
 			systems.add(system);
 		}
-		if (region != null && !regions.contains(region)) {
+		//Region
+		if (region != null) {
 			regions.add(region);
 		}
 	}
