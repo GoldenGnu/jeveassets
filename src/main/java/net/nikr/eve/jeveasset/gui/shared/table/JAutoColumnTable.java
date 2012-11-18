@@ -56,6 +56,7 @@ public class JAutoColumnTable extends JTable {
 	private ResizeMode resizeMode = null;
 	private boolean loadingWidth = false;
 	private final Map<String, Integer> columnsWidth = new HashMap<String, Integer>();
+	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
@@ -271,7 +272,7 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	private int resizeColumn(final JTable jTable, final TableColumn column, final int columnIndex) {
-		//Header
+		//Header width
 		TableCellRenderer renderer = column.getHeaderRenderer();
 		if (renderer == null) {
 			renderer = jTable.getTableHeader().getDefaultRenderer();
@@ -279,17 +280,29 @@ public class JAutoColumnTable extends JTable {
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
 		int maxWidth = component.getPreferredSize().width;
 
-		//Rows
+		//Rows width
 		for (int a = 0; a < jTable.getRowCount(); a++) {
-			renderer = jTable.getCellRenderer(a, columnIndex);
-			if (renderer instanceof SeparatorTableCell) {
-				continue;
+			final Object rowValue = jTable.getValueAt(a, columnIndex); //Get cell value
+			final int key = rowValue.toString().hashCode(); //value hash
+			if (rowsWidth.containsKey(key)) { //Load row width
+				maxWidth = Math.max(maxWidth, rowsWidth.get(key));
+			} else { //Calculate the row width
+				renderer = jTable.getCellRenderer(a, columnIndex);
+				//Ignore SeparatorTableCell
+				if (renderer instanceof SeparatorTableCell) {
+					continue;
+				}
+				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
+				int width = component.getPreferredSize().width;
+				rowsWidth.put(key, width);
+				maxWidth = Math.max(maxWidth, width);
 			}
-			component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
-			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
 		}
-		column.setPreferredWidth(maxWidth + 4);
-		return maxWidth + 4;
+		//Add margin
+		maxWidth = maxWidth + 4;
+		//Set width
+		column.setPreferredWidth(maxWidth);
+		return maxWidth; //Return width
 	}
 
 	private void saveColumnsWidth() {
