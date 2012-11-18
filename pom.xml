@@ -71,7 +71,11 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<compilerArgument>-Xlint:all,-serial</compilerArgument>
+					<compilerArguments>
+						<Xmaxerrs>1000</Xmaxerrs>
+						<Xlint:all/>
+						<Xlint:-serial/>
+					</compilerArguments>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
 					<source>${project.build.sourceVersion}</source>
