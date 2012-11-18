@@ -187,7 +187,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 					}
 				}
 			}
-			//System.out.println("valueChanged => rows: "+selectedRows+" Row: "+selectedRows.get(selectedRows.size()-1));
 		}
 		if (!selectedRows.isEmpty()
 				&& selectedRows.get(selectedRows.size() - 1) < getEventTableModel().getRowCount()
@@ -208,19 +207,23 @@ public class JSeparatorTable extends JAutoColumnTable {
 		final int key = rowValue.hashCode();
 		if (rowsHeight.containsKey(key)) { //Load row height
 			height = rowsHeight.get(key);
-		} else if (rowValue instanceof SeparatorList.Separator) { //Calculate the Separator row height
-			TableCellRenderer renderer = this.getCellRenderer(row, 0);
-			Component component = super.prepareRenderer(renderer, row, 0);
-			height = component.getPreferredSize().height;
-		} else { //Calculate the row height
-			for (int i = 0; i < this.getColumnCount(); i++) {
-				TableCellRenderer renderer = this.getCellRenderer(row, i);
-				Component component = super.prepareRenderer(renderer, row, i);
-				height = Math.max(height, component.getPreferredSize().height);
-			}
+		} else if (rowValue instanceof SeparatorList.Separator) {
+				//Calculate the Separator row height
+				//This is done every time, because Separator can never be identified 100%
+				//Because elements is changed by filters and sorting
+				//If saved: the list keep growing with useless hash keys
+				TableCellRenderer renderer = this.getCellRenderer(row, 0);
+				Component component = super.prepareRenderer(renderer, row, 0);
+				height = component.getPreferredSize().height;
+			} else { //Calculate the row height
+				for (int i = 0; i < this.getColumnCount(); i++) {
+					TableCellRenderer renderer = this.getCellRenderer(row, i);
+					Component component = super.prepareRenderer(renderer, row, i);
+					height = Math.max(height, component.getPreferredSize().height);
+				}
+				//Save row height so we don't have to calculate it all the time
+				rowsHeight.put(key, height);
 		}
-		//Save row height so we don't have to calculate it all the time
-		rowsHeight.put(key, height);
 
 		//Set row height, if needed (is expensive because repaint is needed)
 		if (this.getRowHeight(row) != height) {
