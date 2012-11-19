@@ -154,7 +154,9 @@ public class ItemsTab extends JMainTab {
 	}
 
 	@Override
-	public void updateData() { }
+	public void updateData() {
+		updateTableMenu(program.getMainWindow().getMenu().getTableMenu());
+	}
 
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
