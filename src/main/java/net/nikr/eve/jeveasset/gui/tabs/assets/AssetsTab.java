@@ -223,14 +223,16 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Asset> data = new MenuData<Asset>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Asset>(program, data));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Asset>(program, data));
 	//EDIT
-		jComponent.add(new JMenuPrice<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Asset>(program, data));
 		jComponent.add(new JMenuName(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));

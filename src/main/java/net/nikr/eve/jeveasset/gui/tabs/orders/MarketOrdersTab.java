@@ -165,14 +165,16 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<MarketOrder> data = new MenuData<MarketOrder>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, data));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<MarketOrder>(program, data));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<MarketOrder>(program, data));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO

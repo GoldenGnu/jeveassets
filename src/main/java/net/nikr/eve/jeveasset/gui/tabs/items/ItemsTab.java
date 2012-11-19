@@ -139,16 +139,18 @@ public class ItemsTab extends JMainTab {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Item> data = new MenuData<Item>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Item>(program, data));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Item>(program, data));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Item>(program, data));
 	//EDIT
-		jComponent.add(new JMenuPrice<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Item>(program, data));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	}

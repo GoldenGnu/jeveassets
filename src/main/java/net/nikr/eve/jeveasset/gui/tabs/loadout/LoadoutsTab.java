@@ -258,14 +258,16 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Module> data = new MenuData<Module>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Module>(program, data));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Module>(program, data));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Module>(program, data));
 	//EDIT
-		jComponent.add(new JMenuPrice<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Module>(program, data));
 	//INFO
 		JMenuInfo.module(jComponent, selectionModel.getSelected());
 	}

@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
@@ -34,21 +35,26 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
+public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 
 	private static final String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
 	private static final String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
 	private static final int DEFAULT_ADD_COUNT = 1;
+	private Program program;
+	private MenuData<T> menuData;
 
-	public JMenuStockpile(final Program program, final List<T> items) {
-		super(GuiShared.get().stockpile(), program, items); //
+	public JMenuStockpile(final Program program, final MenuData<T> menuData) {
+		super(GuiShared.get().stockpile());
+		this.program = program;
+		this.menuData = menuData;
+		
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		JMenuItem jMenuItem;
 
 		jMenuItem = new JMenuItem(GuiShared.get().newStockpile());
 		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setEnabled(!typeIDs.isEmpty());
+		jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_TO_NEW);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
@@ -61,7 +67,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 		for (Stockpile stockpile : stockpiles) {
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setEnabled(!typeIDs.isEmpty());
+			jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
@@ -73,7 +79,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 		if (ACTION_ADD_TO_NEW.equals(e.getActionCommand())) {
 			Stockpile stockpile = program.getStockpileTool().showAddStockpile();
 			if (stockpile != null) {
-				for (int typeID : blueprintTypeIDs) {
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
 					Item item = program.getSettings().getItems().get(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
@@ -87,7 +93,7 @@ public class JMenuStockpile<T>  extends JMenuTool<T> implements ActionListener {
 			if (source instanceof JStockpileMenu) {
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
-				for (int typeID : blueprintTypeIDs) {
+				for (int typeID : menuData.getBlueprintTypeIDs()) {
 					Item item = program.getSettings().getItems().get(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);

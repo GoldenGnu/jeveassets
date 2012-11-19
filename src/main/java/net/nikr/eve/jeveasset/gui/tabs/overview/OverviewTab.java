@@ -46,6 +46,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
@@ -315,9 +316,10 @@ public class OverviewTab extends JMainTab {
 		}
 
 		addSeparator(jComponent);
-
+	//DATA
+		MenuData<Overview> data = new MenuData<Overview>(selectionModel.getSelected());
 	//ASSET FILTER
-		jSubMenuItem = new JMenuAssetFilter<Overview>(program, selectionModel.getSelected());
+		jSubMenuItem = new JMenuAssetFilter<Overview>(program, data);
 		if (getSelectedView().equals(TabsOverview.get().groups())) {
 			jMenuItem = new JMenuItem(TabsOverview.get().locations());
 			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
@@ -328,7 +330,7 @@ public class OverviewTab extends JMainTab {
 		}
 		jComponent.add(jSubMenuItem);
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Overview>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Overview>(program, data));
 	//INFO
 		JMenuInfo.overview(jComponent, selectionModel.getSelected());
 	}

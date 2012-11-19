@@ -346,10 +346,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<StockpileItem> data = new MenuData<StockpileItem>(selected);
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selected));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<StockpileItem>(program, selected));
+		jComponent.add(new JMenuAssetFilter<StockpileItem>(program, data));
 	//STOCKPILE
 		JMenuItem jMenuItem;
 
@@ -388,9 +390,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jMenuItem.setEnabled(!selected.isEmpty());
 		jMenu.add(jMenuItem);
 	//LOOKUP
-		jComponent.add(new JMenuLookup<StockpileItem>(program, selected));
+		jComponent.add(new JMenuLookup<StockpileItem>(program, data));
 	//EDIT
-		jComponent.add(new JMenuPrice<StockpileItem>(program, selected));
+		jComponent.add(new JMenuPrice<StockpileItem>(program, data));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO

@@ -176,14 +176,16 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Material> data = new MenuData<Material>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Material>(program, data));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Material>(program, data));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Material>(program, data));
 	//EDIT
-		jComponent.add(new JMenuPrice<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Material>(program, data));
 	//INFO
 		JMenuInfo.material(jComponent, selectionModel.getSelected(), materialEventList);
 	}

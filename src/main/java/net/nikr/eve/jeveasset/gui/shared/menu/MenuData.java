@@ -26,8 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.JMenu;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
@@ -35,24 +33,18 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 
-public abstract class JMenuTool<T> extends JMenu {
-	protected final Program program;
-	protected final Set<Integer> typeIDs = new HashSet<Integer>();
-	protected final Map<Integer, Double> prices = new HashMap<Integer, Double>();
-	protected final Set<String> typeNames = new HashSet<String>();
-	protected final Set<String> stations = new HashSet<String>();
-	protected final Set<String> systems = new HashSet<String>();
-	protected final Set<String> regions = new HashSet<String>();
-	protected final Set<Integer> marketTypeIDs = new HashSet<Integer>();
-	protected final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+public class MenuData<T> {
 
-	protected JMenuTool(final String title, final Program program, final List<T> items) {
-		super(title);
-		this.program = program;
-		init(items);
-	}
+	private final Set<Integer> typeIDs = new HashSet<Integer>();
+	private final Map<Integer, Double> prices = new HashMap<Integer, Double>();
+	private final Set<String> typeNames = new HashSet<String>();
+	private final Set<String> stations = new HashSet<String>();
+	private final Set<String> systems = new HashSet<String>();
+	private final Set<String> regions = new HashSet<String>();
+	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
+	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
 
-	private void init(final List<T> items) {
+	public MenuData(final List<T> items) {
 		if (items == null) { //Skip null
 			return;
 		}
@@ -64,7 +56,7 @@ public abstract class JMenuTool<T> extends JMenu {
 
 			if (t instanceof Material) {
 				Material material = (Material) t;
-				init(material.isMarketGroup(),
+				add(material.isMarketGroup(),
 						material.getTypeName(),
 						material.getTypeID(),
 						material.getStation(),
@@ -76,7 +68,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof Module) {
 				Module module = (Module) t;
-				init(module.isMarketGroup(),
+				add(module.isMarketGroup(),
 						module.getTypeName(),
 						module.getTypeID(),
 						module.getLocation(),
@@ -88,7 +80,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof MarketOrder) {
 				MarketOrder marketOrder = (MarketOrder) t;
-				init(true,
+				add(true,
 						marketOrder.getName(),
 						marketOrder.getTypeID(),
 						marketOrder.getLocation(),
@@ -100,7 +92,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof IndustryJob) {
 				IndustryJob industryJob = (IndustryJob) t;
-				init(true,
+				add(true,
 						industryJob.getName(),
 						industryJob.getInstalledItemTypeID(),
 						industryJob.getLocation(),
@@ -112,7 +104,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof Asset) {
 				Asset eveAsset = (Asset) t;
-				init(eveAsset.isMarketGroup(),
+				add(eveAsset.isMarketGroup(),
 						eveAsset.getTypeName(),
 						eveAsset.getTypeID(),
 						eveAsset.getLocation(),
@@ -124,7 +116,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof Overview) {
 				Overview overview = (Overview) t;
-				init(false,
+				add(false,
 						null,
 						null,
 						overview.isStation() && !overview.isGroup() ? overview.getName() : null,
@@ -136,7 +128,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof Item) {
 				Item item = (Item) t;
-				init(item.isMarketGroup(),
+				add(item.isMarketGroup(),
 						item.getName(),
 						item.getTypeID(),
 						null,
@@ -148,7 +140,7 @@ public abstract class JMenuTool<T> extends JMenu {
 			}
 			if (t instanceof StockpileItem) { //
 				StockpileItem item = (StockpileItem) t;
-				init(item.isMarketGroup(),
+				add(item.isMarketGroup(),
 						(t instanceof StockpileTotal) ? null : item.getTypeName(),
 						(t instanceof StockpileTotal) ? null : item.getTypeID(),
 						item.getStockpile().getLocation(),
@@ -161,7 +153,7 @@ public abstract class JMenuTool<T> extends JMenu {
 		}
 	}
 
-	private void init(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price, final boolean copy) {
+	private void add(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price, final boolean copy) {
 		//Type Name
 		if (typeName != null) {
 			typeNames.add(typeName);
@@ -204,5 +196,37 @@ public abstract class JMenuTool<T> extends JMenu {
 		if (region != null) {
 			regions.add(region);
 		}
+	}
+
+	public Set<Integer> getTypeIDs() {
+		return typeIDs;
+	}
+
+	public Map<Integer, Double> getPrices() {
+		return prices;
+	}
+
+	public Set<String> getTypeNames() {
+		return typeNames;
+	}
+
+	public Set<String> getStations() {
+		return stations;
+	}
+
+	public Set<String> getSystems() {
+		return systems;
+	}
+
+	public Set<String> getRegions() {
+		return regions;
+	}
+
+	public Set<Integer> getMarketTypeIDs() {
+		return marketTypeIDs;
+	}
+
+	public Set<Integer> getBlueprintTypeIDs() {
+		return blueprintTypeIDs;
 	}
 }

@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
@@ -35,31 +36,31 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuPrice<T> extends JMenuTool<T> implements ActionListener {
+public class JMenuPrice<T> extends JMenu implements ActionListener {
 
 	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public static final String ACTION_USER_PRICE_DELETE = "ACTION_USER_PRICE_DELETE";
+	private Program program;
+	private MenuData<T> menuData;
 
-	private List<UserItem<Integer, Double>> itemPrices;
-
-	public JMenuPrice(final Program program, final List<T> items) {
-		super(GuiShared.get().itemPriceTitle(), program, items); //
+	public JMenuPrice(final Program program, final MenuData<T> menuData) {
+		super(GuiShared.get().itemPriceTitle()); //
 		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
-
-		createList();
+		this.program = program;
+		this.menuData = menuData;
 
 		JMenuItem jMenuItem;
 
 		jMenuItem = new JMenuItem(GuiShared.get().itemEdit());
 		jMenuItem.setIcon(Images.EDIT_EDIT.getIcon());
-		jMenuItem.setEnabled(!prices.isEmpty());
+		jMenuItem.setEnabled(!menuData.getPrices().isEmpty());
 		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
 		jMenuItem = new JMenuItem(GuiShared.get().itemDelete());
 		jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
-		jMenuItem.setEnabled(!prices.isEmpty() && program.getUserPriceSettingsPanel().contains(itemPrices));
+		jMenuItem.setEnabled(!menuData.getPrices().isEmpty() && program.getUserPriceSettingsPanel().containsKey(menuData.getPrices().keySet()));
 		jMenuItem.setActionCommand(ACTION_USER_PRICE_DELETE);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
@@ -68,20 +69,20 @@ public class JMenuPrice<T> extends JMenuTool<T> implements ActionListener {
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
-			if (!blueprintTypeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty()) {
-				program.getUserPriceSettingsPanel().edit(itemPrices);
+			if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+				program.getUserPriceSettingsPanel().edit(createList());
 			}
 		}
 		if (ACTION_USER_PRICE_DELETE.equals(e.getActionCommand())) {
-			if (!blueprintTypeIDs.isEmpty() && !prices.isEmpty() && !typeNames.isEmpty()) {
-				program.getUserPriceSettingsPanel().delete(itemPrices);
+			if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+				program.getUserPriceSettingsPanel().delete(createList());
 			}
 		}
 	}
 
-	private void createList(){
-		itemPrices = new ArrayList<UserItem<Integer, Double>>();
-		for (Map.Entry<Integer, Double> entry : prices.entrySet()) {
+	private List<UserItem<Integer, Double>> createList(){
+		List<UserItem<Integer, Double>> itemPrices = new ArrayList<UserItem<Integer, Double>>();
+		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
 			Item item = program.getSettings().getItems().get(Math.abs(entry.getKey()));
 			String name = "";
 			if (item != null) {
@@ -101,5 +102,6 @@ public class JMenuPrice<T> extends JMenuTool<T> implements ActionListener {
 			}
 			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
 		}
+		return itemPrices;
 	}
 }

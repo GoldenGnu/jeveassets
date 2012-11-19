@@ -108,6 +108,16 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		return false;
 	}
 
+	public boolean containsKey(final Set<K> key) {
+		load();
+		for (K k : key) {
+			if (items.containsKey(k)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void edit(final UserItem<K, V> userItem) {
 		edit(Collections.singletonList(userItem), true, null);
 	}
