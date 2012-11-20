@@ -123,7 +123,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 			EventTableModel<?> tableModel = (EventTableModel<?>) model;
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
-				EnumTableFormatAdaptor adaptor = (EnumTableFormatAdaptor) tableFormat;
+				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
 				if (columnIndex >= 0
 						&& columnIndex < adaptor.getShownColumns().size()
 						&& items.size() == 1

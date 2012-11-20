@@ -322,7 +322,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	public void propertyChange(final PropertyChangeEvent evt) {
 		Object o = evt.getSource();
 		if (o instanceof SwingWorker) {
-			SwingWorker swingWorker = (SwingWorker) o;
+			SwingWorker<?, ?> swingWorker = (SwingWorker) o;
 			if (swingWorker.isDone()) {
 				updateProfiles();
 				jProfiles.updateUI();

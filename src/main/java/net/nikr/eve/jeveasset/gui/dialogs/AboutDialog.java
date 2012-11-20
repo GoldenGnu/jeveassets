@@ -229,7 +229,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	public void propertyChange(final PropertyChangeEvent evt) {
 		Object o = evt.getSource();
 		if (o instanceof SwingWorker) {
-			SwingWorker swingWorker = (SwingWorker) o;
+			SwingWorker<?, ?> swingWorker = (SwingWorker) o;
 			if (swingWorker.isDone()) {
 				setEnabledAll(true);
 				jWait.hideWaitDialog();
