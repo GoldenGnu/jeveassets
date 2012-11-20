@@ -260,7 +260,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			for (int i = 0; i < separatorList.size(); i++) {
 				Object object = separatorList.get(i);
 				if (object instanceof SeparatorList.Separator) {
-					SeparatorList.Separator separator = (SeparatorList.Separator) object;
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
 					if (separator.first().equals(item)) {
 						separatorList.getReadWriteLock().writeLock().lock();
 						try {
@@ -288,7 +288,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
 				StockpileItem item = (StockpileItem) separator.first();
 				item.getStockpile().setExpanded(separator.getLimit() != 0);
 			}
@@ -299,7 +299,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
 				StockpileItem item = (StockpileItem) separator.first();
 				separatorList.getReadWriteLock().writeLock().lock();
 				try {

@@ -222,7 +222,7 @@ class FilterGui<E> implements ActionListener {
 					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 		if (jShowFilters.isSelected()) {
-			for (FilterPanel filterPanel : filterPanels) {
+			for (FilterPanel<E> filterPanel : filterPanels) {
 				verticalGroup.addComponent(filterPanel.getPanel());
 				horizontalGroup.addComponent(filterPanel.getPanel());
 			}
