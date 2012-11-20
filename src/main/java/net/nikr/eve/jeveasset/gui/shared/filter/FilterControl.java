@@ -128,10 +128,13 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 						&& columnIndex < adaptor.getShownColumns().size()
 						&& items.size() == 1
 						) {
-					column = (Enum) adaptor.getShownColumns().get(columnIndex);
-					isNumeric = isNumeric(column);
-					isDate = isDate(column);
-					text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
+					Object object = adaptor.getShownColumns().get(columnIndex);
+					if (object instanceof Enum) {
+						column = (Enum) object;
+						isNumeric = isNumeric(column);
+						isDate = isDate(column);
+						text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
+					}
 				}
 			}
 		}

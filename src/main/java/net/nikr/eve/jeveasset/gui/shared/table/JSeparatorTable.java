@@ -31,7 +31,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	private TableCellEditor separatorEditor;
 	private final Map<Integer, Integer> rowsHeight = new HashMap<Integer, Integer>();
 
-	public JSeparatorTable(final Program program, final EventTableModel tableModel) {
+	public JSeparatorTable(final Program program, final EventTableModel<?> tableModel) {
 		super(program, tableModel);
 		setUI(new SpanTableUI());
 
@@ -41,7 +41,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	}
 
 	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
-		final EventSelectionModel selectModel = getEventSelectionModel();
+		final EventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
 			selectModel.setEnabled(false);
 		}
@@ -62,7 +62,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		}
 	}
 
-	private EventSelectionModel getEventSelectionModel() {
+	private EventSelectionModel<?> getEventSelectionModel() {
 		if (selectionModel instanceof EventSelectionModel<?>) {
 			return (EventSelectionModel) selectionModel;
 		} else {
@@ -76,7 +76,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	 *
 	 * @return the EventTableModel that backs this table
 	 */
-	private EventTableModel getEventTableModel() {
+	private EventTableModel<?> getEventTableModel() {
 		return (EventTableModel) getModel();
 	}
 
@@ -84,7 +84,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** {@inheritDoc} */
 	@Override
 	public Rectangle getCellRect(final int row, final int column, final boolean includeSpacing) {
-		final EventTableModel eventTableModel = getEventTableModel();
+		final EventTableModel<?> eventTableModel = getEventTableModel();
 
 		// sometimes JTable asks for a cellrect that doesn't exist anymore, due
 		// to an editor being installed before a bunch of rows were removed.

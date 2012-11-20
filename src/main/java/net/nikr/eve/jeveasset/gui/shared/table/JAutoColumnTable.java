@@ -109,7 +109,7 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	public final void autoResizeColumns() {
-		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();
 		}
@@ -138,7 +138,7 @@ public class JAutoColumnTable extends JTable {
 		return this;
 	}
 
-	private EventTableModel getEventTableModel() {
+	private EventTableModel<?> getEventTableModel() {
 		TableModel model = this.getModel();
 		if (model instanceof EventTableModel) {
 			return (EventTableModel) model;
@@ -147,9 +147,9 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 
-	private EnumTableFormatAdaptor getEnumTableFormatAdaptor() {
+	private EnumTableFormatAdaptor<?, ?> getEnumTableFormatAdaptor() {
 		if (getEventTableModel() != null) {
-			TableFormat tableFormat = getEventTableModel().getTableFormat();
+			TableFormat<?> tableFormat = getEventTableModel().getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				return (EnumTableFormatAdaptor) tableFormat;
 			}
@@ -257,7 +257,7 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	private void updateScroll() {
-		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			if (jViewport != null && size < jViewport.getSize().width) {
 				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -440,8 +440,8 @@ public class JAutoColumnTable extends JTable {
 		public void mouseReleased(final MouseEvent e) {
 			if (columnMoved) {
 				columnMoved = false;
-				EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
-				EventTableModel model = getEventTableModel();
+				EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+				EventTableModel<?> model = getEventTableModel();
 				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
