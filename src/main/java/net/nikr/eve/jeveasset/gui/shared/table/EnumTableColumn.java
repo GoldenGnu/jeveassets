@@ -28,8 +28,8 @@ import java.util.Comparator;
  * @author Candle
  */
 public interface EnumTableColumn<Q> {
-	Class getType();
-	Comparator getComparator();
+	Class<?> getType();
+	Comparator<?> getComparator();
 	String getColumnName();
 	Object getColumnValue(Q from);
 	boolean isColumnEditable(Object baseObject);

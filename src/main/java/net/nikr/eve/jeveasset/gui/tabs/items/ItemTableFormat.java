@@ -109,18 +109,18 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 			return from.getTypeID();
 		}
 	};
-	private Class type;
+	private Class<?> type;
 	private Comparator<?> comparator;
-	private ItemTableFormat(final Class type, final Comparator<?> comparator) {
+	private ItemTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 	@Override

@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class OverwriteTest {
 
-	private void test(Class c) {
+	private void test(Class<?> c) {
 		Method methods[] = c.getMethods();
 		for (Method method : methods) {
 			if (method.getDeclaringClass() != c

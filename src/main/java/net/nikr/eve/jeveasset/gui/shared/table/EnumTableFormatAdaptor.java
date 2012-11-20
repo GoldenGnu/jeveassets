@@ -257,11 +257,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		Collections.sort(shownColumns, columnComparator);
 	}
 
-	@Override public Class getColumnClass(final int i) {
+	@Override public Class<?> getColumnClass(final int i) {
 		return getColumn(i).getType();
 	}
 
-	@Override public Comparator getColumnComparator(final int i) {
+	@Override public Comparator<?> getColumnComparator(final int i) {
 		return getColumn(i).getComparator();
 	}
 

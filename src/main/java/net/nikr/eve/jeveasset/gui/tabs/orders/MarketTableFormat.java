@@ -165,18 +165,18 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 			return Double.valueOf(from.getQuantity().getQuantityRemaining() * from.getPrice());
 		}
 	};
-	private Class type;
+	private Class<?> type;
 	private Comparator<?> comparator;
-	private MarketTableFormat(final Class type, final Comparator<?> comparator) {
+	private MarketTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 	@Override
