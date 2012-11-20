@@ -73,6 +73,7 @@
 				<configuration>
 					<compilerArguments>
 						<Xmaxerrs>1000</Xmaxerrs>
+						<Xmaxwarns>1000</Xmaxwarns>
 						<Xlint:all/>
 						<Xlint:-serial/>
 					</compilerArguments>
