@@ -35,10 +35,10 @@ public class Percent implements Comparable<Percent> {
 		return round(percent * 100.0, 2);
 	}
 
-	private static double round(double Rval, int Rpl) {
-		double p = Math.pow(10,Rpl);
-		Rval = Rval * p;
-		double tmp = Math.round(Rval);
+	private static double round(final double value, int decimals) {
+		double p = Math.pow(10, decimals);
+		double tmp = value * p;
+		tmp = Math.round(tmp);
 		return tmp / p;
 	}
 

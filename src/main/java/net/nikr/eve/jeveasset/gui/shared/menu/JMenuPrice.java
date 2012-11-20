@@ -80,25 +80,25 @@ public class JMenuPrice<T> extends JMenu implements ActionListener {
 		}
 	}
 
-	private List<UserItem<Integer, Double>> createList(){
+	private List<UserItem<Integer, Double>> createList() {
 		List<UserItem<Integer, Double>> itemPrices = new ArrayList<UserItem<Integer, Double>>();
 		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
 			Item item = program.getSettings().getItems().get(Math.abs(entry.getKey()));
 			String name = "";
 			if (item != null) {
-				if (item.getName().toLowerCase().contains("blueprint")){
+				if (item.getName().toLowerCase().contains("blueprint")) {
 					//Blueprint
 					if (entry.getKey() < 0) {
 						//Copy
-						name = item.getName()+" (BPC)";
+						name = item.getName() + " (BPC)";
 					} else {
 						//Original
-						name = item.getName()+" (BPO)";
+						name = item.getName() + " (BPO)";
 					}
 				} else {
 					//Not blueprint
 					name = item.getName();
-				}					
+				}
 			}
 			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
 		}

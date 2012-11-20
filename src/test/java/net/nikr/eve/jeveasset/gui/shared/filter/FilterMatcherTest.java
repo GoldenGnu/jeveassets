@@ -102,6 +102,15 @@ public class FilterMatcherTest {
 	public void tearDown() {
 	}
 
+	@Test
+	public void testTime() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 100; i++) {
+			testMatches();
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Filter time:" + (endTime - startTime) + "ms");
+	}
 	/**
 	 * Test of matches method, of class FilterControl.
 	 */
@@ -451,7 +460,6 @@ public class FilterMatcherTest {
 	}
 
 	private void allTest() {
-		long startTime = System.currentTimeMillis();
 	//Text
 		//Equals
 		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT);
@@ -519,8 +527,6 @@ public class FilterMatcherTest {
 		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
 		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
 		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
-		long endTime = System.currentTimeMillis();
-		System.out.println("Filter time:" + (endTime - startTime));
 	}
 
 	public static class Item { }

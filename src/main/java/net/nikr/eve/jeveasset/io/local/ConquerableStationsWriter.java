@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class ConquerableStationsWriter extends AbstractXmlWriter {
+public final class ConquerableStationsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
 

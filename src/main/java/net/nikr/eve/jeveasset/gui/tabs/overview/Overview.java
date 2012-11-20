@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 

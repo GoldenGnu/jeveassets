@@ -37,7 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class AssetsWriter extends AbstractXmlWriter {
+public final class AssetsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsWriter.class);
 

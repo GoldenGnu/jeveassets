@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public class ConquerableStationsReader extends AbstractXmlReader {
+public final class ConquerableStationsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsReader.class);
 

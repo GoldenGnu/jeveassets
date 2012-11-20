@@ -49,7 +49,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 	//
 	private List<Stockpile> stockpiles;
 
-	public StockpileSelectionDialog(Program program) {
+	public StockpileSelectionDialog(final Program program) {
 		super(program, TabsStockpile.get().selectStockpiles());
 
 		jList = new JMultiSelectionList();
@@ -93,7 +93,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 		return jOK;
 	}
 
-	public List<Stockpile> show(){
+	public List<Stockpile> show() {
 		stockpiles = null;
 		this.setVisible(true);
 		return stockpiles;
@@ -101,7 +101,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 
 	@Override
 	protected void windowShown() {
-		jList.setModel( new DataListModel(program.getSettings().getStockpiles()));
+		jList.setModel(new DataListModel(program.getSettings().getStockpiles()));
 	}
 
 	@Override
@@ -116,16 +116,16 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 	}
 
 	@Override
-	public void valueChanged(ListSelectionEvent e) {
+	public void valueChanged(final ListSelectionEvent e) {
 		jOK.setEnabled(jList.getSelectedIndices().length > 0);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())){
+	public void actionPerformed(final ActionEvent e) {
+		if (ACTION_OK.equals(e.getActionCommand())) {
 			save();
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())){
+		if (ACTION_CANCEL.equals(e.getActionCommand())) {
 			this.setVisible(false);
 		}
 	}
@@ -134,7 +134,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 
 		private List<?> data;
 
-		public DataListModel(List<?> data) {
+		public DataListModel(final List<?> data) {
 			this.data = data;
 		}
 
@@ -144,7 +144,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 		}
 
 		@Override
-		public Object getElementAt(int index) {
+		public Object getElementAt(final int index) {
 			return data.get(index);
 		}
 	}

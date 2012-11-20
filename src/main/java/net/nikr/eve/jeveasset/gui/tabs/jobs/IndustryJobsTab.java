@@ -195,7 +195,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	}
 
 	@Override
-	public void listChanged(ListEvent<IndustryJob> listChanges) {
+	public void listChanged(final ListEvent<IndustryJob> listChanges) {
 		int count = 0;
 		double success = 0;
 		for (IndustryJob industryJob : filterList) {

@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class AssetsReader extends AbstractXmlReader {
+public final class AssetsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsReader.class);
 

@@ -33,7 +33,7 @@ public abstract class General extends Bundle {
 	public static General get() {
 		return Main.getBundleService().get(General.class);
 	}
-	public static General get(Locale locale) {
+	public static General get(final Locale locale) {
 		return Main.getBundleService().get(General.class, locale);
 	}
 	public General(final Locale locale) {

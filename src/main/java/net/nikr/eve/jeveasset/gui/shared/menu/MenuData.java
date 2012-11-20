@@ -169,7 +169,7 @@ public class MenuData<T> {
 			}
 			//Blueprint TypeID
 			int blueprintTypeID;
-			if (copy){
+			if (copy) {
 				blueprintTypeID = -typeID;
 			} else {
 				blueprintTypeID = typeID;
@@ -182,7 +182,7 @@ public class MenuData<T> {
 		}
 		//Locations
 		//Station (can be a system or a region)
-		if (station != null && system != null && region != null 
+		if (station != null && system != null && region != null
 				&& !station.equals(system) //Not system
 				&& !station.equals(region) //Not region
 				) {

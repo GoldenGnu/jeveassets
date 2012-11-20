@@ -156,7 +156,7 @@ public final class Main {
 
 	public static BundleService getBundleService() {
 		//XXX Workaround for default language
-		if (bundleService == null){
+		if (bundleService == null) {
 			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
 		}
 		return bundleService;

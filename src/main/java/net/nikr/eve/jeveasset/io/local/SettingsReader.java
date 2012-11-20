@@ -63,7 +63,7 @@ import org.w3c.dom.NodeList;
 import uk.me.candle.eve.pricing.options.LocationType;
 
 
-public class SettingsReader extends AbstractXmlReader {
+public final class SettingsReader extends AbstractXmlReader {
 
 	public static final int SETTINGS_VERSION = 2;
 
@@ -718,7 +718,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseAssetAdded(Element element, Settings settings) {
+	private void parseAssetAdded(final Element element, final Settings settings) {
 		NodeList assetNodes = element.getElementsByTagName("asset");
 		for (int a = 0; a < assetNodes.getLength(); a++) {
 			Element currentNode = (Element) assetNodes.item(a);

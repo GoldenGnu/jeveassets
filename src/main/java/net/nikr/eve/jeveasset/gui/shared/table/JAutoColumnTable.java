@@ -159,7 +159,7 @@ public class JAutoColumnTable extends JTable {
 
 	private JScrollPane getParentScrollPane() {
 		Container container = this.getParent();
-		if(container != null) {
+		if (container != null) {
 			container = container.getParent();
 		}
 
@@ -183,30 +183,30 @@ public class JAutoColumnTable extends JTable {
 	 * @author Jan
 	 */
 	private void fixScrollPaneRedraw() {
-		/* This component has not been added to the JScrollPanel at 
-		 * construction time. This one listens to an ANCESTOR_ADD 
-		 * event and registers the repaint method at the JScrollPanel 
+		/* This component has not been added to the JScrollPanel at
+		 * construction time. This one listens to an ANCESTOR_ADD
+		 * event and registers the repaint method at the JScrollPanel
 		 * parent as soon as this component has been added to it.
 		 */
 		this.addAncestorListener(new AncestorListener() {
 
 			@Override
-			public void ancestorAdded(AncestorEvent ae) {
+			public void ancestorAdded(final AncestorEvent ae) {
 				JComponent jComponent = ae.getComponent();
-				if(jComponent instanceof JAutoColumnTable) {
+				if (jComponent instanceof JAutoColumnTable) {
 					JAutoColumnTable jTable = (JAutoColumnTable) jComponent;
 					JScrollPane jScrollPane = jTable.getParentScrollPane();
-					if(jScrollPane != null) {
+					if (jScrollPane != null) {
 						jScrollPane.getHorizontalScrollBar().addAdjustmentListener(new JScrollPaneAdjustmentListener(jScrollPane));
 					}
 				}
 			}
 
 			@Override
-			public void ancestorMoved(AncestorEvent event) { }
+			public void ancestorMoved(final AncestorEvent event) { }
 
 			@Override
-			public void ancestorRemoved(AncestorEvent event) { }
+			public void ancestorRemoved(final AncestorEvent event) { }
 
 		});
 	}
@@ -462,22 +462,22 @@ public class JAutoColumnTable extends JTable {
 	 */
 	private class JScrollPaneAdjustmentListener implements AdjustmentListener {
 		/**
-		 * Holds the JScrollPane we want to force repainting its content
+		 * Holds the JScrollPane we want to force repainting its content.
 		 */
 		private JScrollPane jScrollPane;
 
 		/**
-		 * Holds the last scrollbar position for direction tracking
+		 * Holds the last scrollbar position for direction tracking.
 		 */
 		private int lastValue;
 
-		public JScrollPaneAdjustmentListener(JScrollPane jScrollPane) {
+		public JScrollPaneAdjustmentListener(final JScrollPane jScrollPane) {
 			this.jScrollPane = jScrollPane;
 		}
 
 		@Override
-		public void adjustmentValueChanged(AdjustmentEvent e) {
-			if(e.getValue() > lastValue) {
+		public void adjustmentValueChanged(final AdjustmentEvent e) {
+			if (e.getValue() > lastValue) {
 				// scrollbar has been dragged to the right
 				jScrollPane.repaint();
 			}

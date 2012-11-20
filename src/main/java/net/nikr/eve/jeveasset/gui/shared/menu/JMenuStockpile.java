@@ -47,7 +47,7 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 		super(GuiShared.get().stockpile());
 		this.program = program;
 		this.menuData = menuData;
-		
+
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		JMenuItem jMenuItem;

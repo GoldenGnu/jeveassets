@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class JumpsReader extends AbstractXmlReader {
+public final class JumpsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JumpsReader.class);
 

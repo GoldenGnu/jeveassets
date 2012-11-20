@@ -257,7 +257,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		}
 	}
 	private void toggleSelectedIndex(final int index) {
-		if (!isEnabled()) return; //Ingnore update when disabled
+		if (!isEnabled()) {
+			return;
+		} //Ingnore update when disabled
 		Integer indexObj = Integer.valueOf(index);
 
 		//is this selected? if so remove it.
@@ -282,7 +284,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		setSelectedIndices(arr);
 	}
 	private void toggleSelectAll() {
-		if (!isEnabled()) return; //Ingnore update when disabled
+		if (!isEnabled()) {
+			return;
+		} //Ingnore update when disabled
 		ListModel lm = this.getModel();
 		int size = selectedList.size();
 		selectedList.clear();

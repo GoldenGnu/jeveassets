@@ -35,7 +35,7 @@ public class MarketPriceData {
 
 	public MarketPriceData() { }
 
-	public void update(double price, Date date){
+	public void update(final double price, final Date date) {
 		//Max
 		if (price > maximum) {
 			this.maximum = price;
@@ -63,7 +63,7 @@ public class MarketPriceData {
 	}
 
 	public double getMinimum() {
-		if (minimum < 0){
+		if (minimum < 0) {
 			return 0;
 		} else {
 			return minimum;

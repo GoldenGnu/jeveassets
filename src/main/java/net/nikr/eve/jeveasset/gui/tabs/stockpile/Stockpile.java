@@ -435,29 +435,29 @@ public class Stockpile implements Comparable<Stockpile> {
 			return stockpile;
 		}
 
-		public boolean isBPC(){
+		public boolean isBPC() {
 			return (typeID < 0);
 		}
 
-		public boolean isBPO(){
+		public boolean isBPO() {
 			return isBlueprint() && !isBPC();
 		}
 
-		public boolean isBlueprint(){
+		public boolean isBlueprint() {
 			return name.toLowerCase().contains("blueprint");
 		}
 
 		public String getName() {
 			if (isBPC()) { //Blueprint copy
-				return name+" (BPC)";
+				return name + " (BPC)";
 			} else if (isBPO()) { //Blueprint original
-				return name+" (BPO)";
+				return name + " (BPO)";
 			} else { //Everything else
 				return name;
 			}
 		}
 
-		public String getTypeName(){
+		public String getTypeName() {
 			return name;
 		}
 

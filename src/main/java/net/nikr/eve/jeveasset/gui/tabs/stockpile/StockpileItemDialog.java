@@ -231,7 +231,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 			Item item = (Item) jItems.getSelectedItem();
 			boolean blueprint = item.getName().toLowerCase().contains("blueprint");
 			jCopy.setEnabled(blueprint);
-			if (!blueprint){
+			if (!blueprint) {
 				jCopy.setSelected(blueprint);
 			}
 		}

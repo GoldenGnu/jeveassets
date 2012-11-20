@@ -44,7 +44,7 @@ public class Update1To2 implements LocalUpdate {
 	private static final Logger LOG = LoggerFactory.getLogger(Update1To2.class);
 
 	@Override
-	public void performUpdate(String path) {
+	public void performUpdate(final String path) {
 		LOG.info("Performing update from v1 to v2");
 		LOG.info(" - modifies files:");
 		LOG.info("  - settings.xml");

@@ -35,7 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class FlagsReader extends AbstractXmlReader {
+public final class FlagsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FlagsReader.class);
 

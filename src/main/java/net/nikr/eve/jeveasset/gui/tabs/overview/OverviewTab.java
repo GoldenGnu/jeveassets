@@ -158,7 +158,7 @@ public class OverviewTab extends JMainTab {
 		installTableMenu(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		
+
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
@@ -334,7 +334,7 @@ public class OverviewTab extends JMainTab {
 	//INFO
 		JMenuInfo.overview(jComponent, selectionModel.getSelected());
 	}
-	
+
 	private void updateStatusbar() {
 		double averageValue = 0;
 		double totalValue = 0;
@@ -464,7 +464,7 @@ public class OverviewTab extends JMainTab {
 		return locations;
 	}
 
-	public final void updateFilters(){
+	public final void updateFilters() {
 		JMenuItem jMenuItem;
 
 		jLoadFilter.removeAll();
@@ -474,10 +474,10 @@ public class OverviewTab extends JMainTab {
 		jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 		jMenuItem.addActionListener(listenerClass);
 		jLoadFilter.add(jMenuItem);
-		
+
 		jLoadFilter.addSeparator();
 
-		for (Map.Entry<String, List<Filter>> entry : program.getSettings().getTableFilters(AssetsTab.NAME).entrySet()){
+		for (Map.Entry<String, List<Filter>> entry : program.getSettings().getTableFilters(AssetsTab.NAME).entrySet()) {
 			jMenuItem = new FilterMenuItem(entry.getKey(), entry.getValue());
 			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 			jMenuItem.addActionListener(listenerClass);
@@ -655,7 +655,6 @@ public class OverviewTab extends JMainTab {
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			
 			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
 				Object source = e.getSource();
 				if (source instanceof FilterMenuItem) {

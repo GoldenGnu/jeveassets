@@ -46,6 +46,8 @@ public class JMenuInfo {
 
 	private static Border border = null;
 
+	private JMenuInfo() {}
+
 	public static void asset(final JComponent jComponent, final List<Asset> list) {
 		infoItem(jComponent, new ArrayList<InfoItem>(list));
 	}
@@ -57,7 +59,6 @@ public class JMenuInfo {
 	private static void infoItem(final JComponent jComponent, final List<InfoItem> list) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
-			JMenuItem jMenuItem;
 
 			createDefault(jPopupMenu);
 

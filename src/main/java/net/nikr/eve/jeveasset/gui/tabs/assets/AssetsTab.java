@@ -164,7 +164,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void clearFilters() {
 		filterControl.clearCurrentFilters();
 	}
-	public String getCurrentFilterName(){
+	public String getCurrentFilterName() {
 		return filterControl.getCurrentFilterName();
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(final List<Filter> filters) {
@@ -319,7 +319,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null){
+			if (program != null && program.getOverviewTab() != null) {
 				program.getOverviewTab().updateFilters();
 			}
 		}

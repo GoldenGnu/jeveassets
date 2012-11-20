@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class EveFittingWriter extends AbstractXmlWriter {
+public final class EveFittingWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
 
@@ -45,7 +45,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		save(eveassets, filename, null, null);
 	}
 
-	public static void save(final List<Asset> eveassets, final String filename, String setupName, String description) {
+	public static void save(final List<Asset> eveassets, final String filename, final String setupName, final String description) {
 		EveFittingWriter writer = new EveFittingWriter();
 		writer.write(eveassets, filename, setupName, description);
 	}

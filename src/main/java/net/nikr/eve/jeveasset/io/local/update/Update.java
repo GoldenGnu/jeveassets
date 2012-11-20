@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -94,7 +93,7 @@ public class Update extends AbstractXmlReader {
 	 * in the correct order. - Candle 2010-09-19
 	 * @param requiredVersion
 	 */
-	public void performUpdates(final int requiredVersion, String path) {
+	public void performUpdates(final int requiredVersion, final String path) {
 		File xml = new File(path);
 		if (!xml.exists()) {
 			LOG.info("No settings.xml file found - nothing to update");

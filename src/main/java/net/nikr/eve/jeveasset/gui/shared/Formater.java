@@ -57,7 +57,7 @@ public final class Formater {
 
 	private Formater() { }
 
-	private static void initDate(){
+	private static void initDate() {
 		if (!initDate) {
 			initDate = true;
 
@@ -158,7 +158,7 @@ public final class Formater {
 		return timeOnly.format(date);
 	}
 
-	public static String eveTime(Date date) {
+	public static String eveTime(final Date date) {
 		initDate();
 		return timeOnly.format(date);
 	}

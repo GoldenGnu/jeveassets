@@ -298,7 +298,7 @@ public class Settings {
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
 			//Create Market Price Data
-			marketPriceData= new HashMap<Integer, MarketPriceData>();
+			marketPriceData = new HashMap<Integer, MarketPriceData>();
 			//Date - maximumPurchaseAge in days
 			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
 			for (Account account : accounts) {

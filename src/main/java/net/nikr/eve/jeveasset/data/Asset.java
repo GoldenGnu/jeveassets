@@ -489,7 +489,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return (this.getUserPrice() != null);
 	}
 
-	public void setAdded(Date added) {
+	public void setAdded(final Date added) {
 		this.added = added;
 	}
 
@@ -497,7 +497,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.container = container;
 	}
 
-	public void setMarketPriceData(MarketPriceData marketPriceData) {
+	public void setMarketPriceData(final MarketPriceData marketPriceData) {
 		this.marketPriceData = marketPriceData;
 	}
 
@@ -517,7 +517,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		Asset.priceType = priceSource;
 	}
 
-	public static void setPriceReprocessedType(PriceMode reprocessedPriceType) {
+	public static void setPriceReprocessedType(final PriceMode reprocessedPriceType) {
 		Asset.priceReprocessedType = reprocessedPriceType;
 	}
 
