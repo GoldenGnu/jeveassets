@@ -229,7 +229,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -239,7 +239,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -254,7 +254,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
 

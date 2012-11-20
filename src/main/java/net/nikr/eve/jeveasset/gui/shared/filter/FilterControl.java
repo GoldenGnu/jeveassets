@@ -114,7 +114,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
 		String text = null;
-		Enum column = null;
+		Enum<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
 		TableModel model = jTable.getModel();
@@ -174,18 +174,18 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return totalSize;
 	}
 
-	protected abstract Enum[] getColumns();
+	protected abstract Enum<?>[] getColumns();
 	protected abstract List<EnumTableColumn<E>> getEnumColumns();
 	protected abstract List<EnumTableColumn<E>> getEnumShownColumns();
-	protected abstract Enum valueOf(String column);
+	protected abstract Enum<?> valueOf(String column);
 	/**
 	 * Use isNumeric(Enum column) instead.
 	 */
-	protected abstract boolean isNumericColumn(Enum column);
+	protected abstract boolean isNumericColumn(Enum<?> column);
 	/**
 	 * Use isDate(Enum column) instead.
 	 */
-	protected abstract boolean isDateColumn(Enum column);
+	protected abstract boolean isDateColumn(Enum<?> column);
 	protected abstract Object getColumnValue(E item, String column);
 
 	/**
@@ -209,7 +209,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return columns;
 	}
 
-	boolean isNumeric(final Enum column) {
+	boolean isNumeric(final Enum<?> column) {
 		if (column instanceof ExtraColumns) {
 			return false;
 		} else {
@@ -217,14 +217,14 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		}
 	}
 
-	boolean isDate(final Enum column) {
+	boolean isDate(final Enum<?> column) {
 		if (column instanceof ExtraColumns) {
 			return false;
 		} else {
 			return isDateColumn(column);
 		}
 	}
-	boolean isAll(final Enum column) {
+	boolean isAll(final Enum<?> column) {
 		return (column instanceof ExtraColumns);
 	}
 

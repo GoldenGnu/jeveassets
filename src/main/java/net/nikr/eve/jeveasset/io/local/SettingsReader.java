@@ -524,7 +524,7 @@ public class SettingsReader extends AbstractXmlReader {
 					Element rowNode = (Element) rowNodes.item(c);
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
-					Enum column =  getColumn(columnString, tableName);
+					Enum<?> column =  getColumn(columnString, tableName);
 					String compare = AttributeGetters.getString(rowNode, "compare");
 					String logic = AttributeGetters.getString(rowNode, "logic");
 					filter.add(new Filter(logic, column, compare, text));
@@ -535,7 +535,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum getColumn(final String column, final String tableName) {
+	private Enum<?> getColumn(final String column, final String tableName) {
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
@@ -598,7 +598,7 @@ public class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
 				Element rowNode = (Element) rowNodeList.item(b);
 				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and"));
-				Enum column = convertColumn(AttributeGetters.getString(rowNode, "column"));
+				Enum<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
 				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
 				String text;
 				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")) {
@@ -621,7 +621,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum convertColumn(final String column) {
+	private Enum<?> convertColumn(final String column) {
 		if (column.equals("Name")) { return EveAssetTableFormat.NAME; }
 		if (column.equals("Group")) { return EveAssetTableFormat.GROUP; }
 		if (column.equals("Category")) { return EveAssetTableFormat.CATEGORY; }

@@ -422,7 +422,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 		List<Integer> selections = new ArrayList<Integer>();
 		for (String column : list) {
-			Enum e = matcherControl.valueOf(column);
+			Enum<?> e = matcherControl.valueOf(column);
 			if (e instanceof EnumTableColumn) {
 				EnumTableColumn enumColumn = (EnumTableColumn) e;
 				int index = columnNames.indexOf(enumColumn.getColumnName());

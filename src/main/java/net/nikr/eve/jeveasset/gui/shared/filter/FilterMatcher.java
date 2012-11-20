@@ -41,7 +41,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	private final FilterControl<E> filterControl;
 	private final Filter.LogicType logic;
-	private final Enum enumColumn;
+	private final Enum<?> enumColumn;
 	private final CompareType compare;
 	private final String text;
 	private final boolean enabled;
@@ -50,7 +50,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		this(filterControl, filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
 	}
 
-	FilterMatcher(final FilterControl<E> filterControl, final LogicType logic, final Enum enumColumn, final CompareType compare, final String text, final boolean enabled) {
+	FilterMatcher(final FilterControl<E> filterControl, final LogicType logic, final Enum<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
 		this.filterControl = filterControl;
 		this.logic = logic;
 		this.enumColumn = enumColumn;
@@ -119,7 +119,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
 		String haystack = "";
-		for (Enum testColumn : filterControl.getColumns()) {
+		for (Enum<?> testColumn : filterControl.getColumns()) {
 			Object columnValue = filterControl.getColumnValue(item, testColumn.name());
 			if (columnValue != null) {
 				haystack = haystack + "\n" + format(columnValue) + "\r";

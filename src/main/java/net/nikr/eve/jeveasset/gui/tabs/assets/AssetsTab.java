@@ -272,7 +272,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -288,7 +288,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -303,7 +303,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return EveAssetTableFormat.valueOf(column);
 		}
 

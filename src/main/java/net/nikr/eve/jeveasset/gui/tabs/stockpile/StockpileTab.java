@@ -788,7 +788,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		@Override
 		protected Object getColumnValue(final StockpileItem item, final String columnString) {
-			Enum column = valueOf(columnString);
+			Enum<?> column = valueOf(columnString);
 			if (column instanceof StockpileTableFormat) {
 				StockpileTableFormat format = (StockpileTableFormat) column;
 				return format.getColumnValue(item);
@@ -802,7 +802,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			if (column instanceof StockpileTableFormat) {
 				StockpileTableFormat format = (StockpileTableFormat) column;
 				if (Number.class.isAssignableFrom(format.getType())) {
@@ -815,7 +815,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			if (column instanceof StockpileTableFormat) {
 				StockpileTableFormat format = (StockpileTableFormat) column;
 				if (format.getType().getName().equals(Date.class.getName())) {
@@ -834,7 +834,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			try {
 				return StockpileTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -859,7 +859,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 
 		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum[] c = new Enum[a.length + b.length];
+			Enum<?>[] c = new Enum<?>[a.length + b.length];
 			System.arraycopy(a, 0, c, 0, a.length);
 			System.arraycopy(b, 0, c, a.length, b.length);
 			return c;
