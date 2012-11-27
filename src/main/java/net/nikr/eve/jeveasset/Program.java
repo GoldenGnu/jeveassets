@@ -278,14 +278,21 @@ public class Program implements ActionListener {
 
 	public final void updateEventList() {
 		LOG.info("Updating EventList");
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			jMainTab.beforeUpdateData();
+		}
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
 		eveAssetEventList.addAll(settings.getEventListAssets());
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
+		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
+		}
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			jMainTab.afterUpdateData();
 		}
 	}
 

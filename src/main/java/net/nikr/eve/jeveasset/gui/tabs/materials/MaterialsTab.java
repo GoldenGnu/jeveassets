@@ -61,10 +61,10 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	private JScrollPane jTableScroll;
 
 	//Table
-	private EventList<Material> materialEventList;
+	private EventList<Material> eventList;
 	private SeparatorList<Material> separatorList;
 	private EventSelectionModel<Material> selectionModel;
-	private EventTableModel<Material> materialTableModel;
+	private EventTableModel<Material> tableModel;
 
 	public MaterialsTab(final Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
@@ -88,11 +88,11 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jExpand.addActionListener(this);
 
 		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
-		materialEventList = new BasicEventList<Material>();
-		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
-		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
+		eventList = new BasicEventList<Material>();
+		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
+		tableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
 		//Tables
-		jTable = new JSeparatorTable(program, materialTableModel);
+		jTable = new JSeparatorTable(program, tableModel);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
@@ -103,6 +103,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Scroll Panels
 		jTableScroll = new JScrollPane(jTable);
 
@@ -187,7 +188,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	//EDIT
 		jComponent.add(new JMenuPrice<Material>(program, data));
 	//INFO
-		JMenuInfo.material(jComponent, selectionModel.getSelected(), materialEventList);
+		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
 	}
 
 
@@ -271,10 +272,10 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 				location = material.getLocation();
 			}
 		}
-		materialEventList.getReadWriteLock().writeLock().lock();
-		materialEventList.clear();
-		materialEventList.addAll(materials);
-		materialEventList.getReadWriteLock().writeLock().unlock();
+		eventList.getReadWriteLock().writeLock().lock();
+		eventList.clear();
+		eventList.addAll(materials);
+		eventList.getReadWriteLock().writeLock().unlock();
 		if (!materials.isEmpty()) {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);

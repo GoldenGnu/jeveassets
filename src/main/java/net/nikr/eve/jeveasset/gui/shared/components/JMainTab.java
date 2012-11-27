@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.swing.EventSelectionModel;
+import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ public abstract class JMainTab {
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
+	private EventSelectionModel<?> selectionModel;
+	private EventTableModel<?> tableModel;
+	private List<?> selected;
 
 	protected JMainTab(final boolean load) { }
 
@@ -77,6 +82,31 @@ public abstract class JMainTab {
 	 * Overwrite to update settings before saving...
 	 */
 	public void updateSettings() { }
+
+	protected void installSelectionModel(EventSelectionModel<?> selectionModel, EventTableModel<?> tableModel) {
+		this.selectionModel = selectionModel;
+		this.tableModel = tableModel;
+	}
+
+	public final void beforeUpdateData() {
+		if (selectionModel != null) {
+			selected = new ArrayList<Object>(selectionModel.getSelected());
+		}
+	}
+
+	public final void afterUpdateData() {
+		if (selectionModel != null && tableModel != null) {
+			selectionModel.setValueIsAdjusting(true);
+			for (int i = 0; i < tableModel.getRowCount(); i++) {
+				Object object = tableModel.getElementAt(i);
+				if (selected.contains(object)) {
+					selectionModel.addSelectionInterval(i, i);
+				}
+			}
+			selectionModel.setValueIsAdjusting(false);
+			selected = null;
+		}
+	}
 
 	public void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);

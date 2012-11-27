@@ -89,6 +89,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters

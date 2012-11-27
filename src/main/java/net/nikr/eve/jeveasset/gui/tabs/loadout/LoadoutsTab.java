@@ -32,8 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -72,11 +72,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Table
-	private EventList<Module> moduleEventList;
-	private FilterList<Module> moduleFilterList;
+	private EventList<Module> eventList;
+	private FilterList<Module> filterList;
 	private SeparatorList<Module> separatorList;
 	private EventSelectionModel<Module> selectionModel;
-	private EventTableModel<Module> moduleTableModel;
+	private EventTableModel<Module> tableModel;
 
 	//TODO - LoadoutsTab is not translated properly
 
@@ -127,12 +127,12 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.addActionListener(this);
 
 		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
-		moduleEventList = new BasicEventList<Module>();
-		moduleFilterList = new FilterList<Module>(moduleEventList);
-		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
-		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		eventList = new BasicEventList<Module>();
+		filterList = new FilterList<Module>(eventList);
+		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
 		//Tables
-		jTable = new JSeparatorTable(program, moduleTableModel);
+		jTable = new JSeparatorTable(program, tableModel);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
 		//Table Render
@@ -144,6 +144,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -315,10 +316,10 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				key = module.getKey();
 			}
 		}
-		moduleEventList.getReadWriteLock().writeLock().lock();
-		moduleEventList.clear();
-		moduleEventList.addAll(ship);
-		moduleEventList.getReadWriteLock().writeLock().unlock();
+		eventList.getReadWriteLock().writeLock().lock();
+		eventList.clear();
+		eventList.addAll(ship);
+		eventList.getReadWriteLock().writeLock().unlock();
 	}
 
 	@Override
@@ -397,7 +398,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())) {
 			String selectedShip = (String) jShips.getSelectedItem();
-			moduleFilterList.setMatcher(new Module.ModuleMatcher(selectedShip));
+			filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);

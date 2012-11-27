@@ -80,10 +80,10 @@ public class OverviewTab extends JMainTab {
 	private ListenerClass listenerClass = new ListenerClass();
 
 	//Table
-	private EventList<Overview> overviewEventList;
-	private EventTableModel<Overview> overviewTableModel;
-	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
-	private SortedList<Overview> overviewSortedList;
+	private EventList<Overview> eventList;
+	private EventTableModel<Overview> tableModel;
+	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
+	private SortedList<Overview> sortedList;
 	private EventSelectionModel<Overview> selectionModel;
 
 	//Data
@@ -139,26 +139,27 @@ public class OverviewTab extends JMainTab {
 		updateFilters();
 
 		//Table format
-		overviewTableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
 		//Backend
-		overviewEventList = new BasicEventList<Overview>();
+		eventList = new BasicEventList<Overview>();
 		//For soring the table
-		overviewSortedList = new SortedList<Overview>(overviewEventList);
+		sortedList = new SortedList<Overview>(eventList);
 		//Table Model
-		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
+		tableModel = new EventTableModel<Overview>(sortedList, tableFormat);
 		//Tables
-		jTable = new JOverviewTable(program, overviewTableModel);
+		jTable = new JOverviewTable(program, tableModel);
 		//Sorters
-		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Table Selection
-		selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
+		selectionModel = new EventSelectionModel<Overview>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-
+		
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
@@ -228,7 +229,7 @@ public class OverviewTab extends JMainTab {
 
 		Overview overview = null;
 		if (isSingleRow) {
-			overview = overviewTableModel.getElementAt(selectedRows[0]);
+			overview = tableModel.getElementAt(selectedRows[0]);
 		}
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu) {
@@ -341,7 +342,7 @@ public class OverviewTab extends JMainTab {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (InfoItem infoItem : overviewEventList) {
+		for (InfoItem infoItem : eventList) {
 			totalValue = totalValue + infoItem.getValue();
 			totalCount = totalCount + infoItem.getCount();
 			totalVolume = totalVolume + infoItem.getVolumeTotal();
@@ -493,35 +494,35 @@ public class OverviewTab extends JMainTab {
 		String owner = (String) jOwner.getSelectedItem();
 		String view = getSelectedView();
 		if (view.equals(TabsOverview.get().regions())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.REGION);
+			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().systems())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.showColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
+			tableFormat.showColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().stations())) {
-			overviewTableFormat.showColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.showColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
+			tableFormat.showColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().groups())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.REGION);
+			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		try {
-			overviewEventList.getReadWriteLock().writeLock().lock();
-			overviewEventList.clear();
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
 		} finally {
-			overviewEventList.getReadWriteLock().writeLock().unlock();
+			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		updateStatusbar();
 		program.overviewGroupsChanged();
@@ -537,7 +538,7 @@ public class OverviewTab extends JMainTab {
 	private List<OverviewLocation> getSelectedLocations() {
 		List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
 		for (int row : jTable.getSelectedRows()) {
-			Overview overview = overviewTableModel.getElementAt(row);
+			Overview overview = tableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
 			if (getSelectedView().equals(TabsOverview.get().stations())) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_STATION);
@@ -560,7 +561,7 @@ public class OverviewTab extends JMainTab {
 		if (index < 0) {
 			return null;
 		}
-		Overview overview = overviewTableModel.getElementAt(index);
+		Overview overview = tableModel.getElementAt(index);
 		if (overview == null) {
 			return null;
 		}
@@ -602,7 +603,7 @@ public class OverviewTab extends JMainTab {
 						|| e.getSource().equals(jGroups)
 						) {
 					//XXX - set default comparator or we can get IndexOutOfBoundsException
-					overviewSortedList.setComparator(GlazedLists.comparableComparator());
+					sortedList.setComparator(GlazedLists.comparableComparator());
 				}
 				updateTable();
 			}
@@ -637,7 +638,7 @@ public class OverviewTab extends JMainTab {
 			//Filter
 			if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
-				Overview overview = overviewTableModel.getElementAt(index);
+				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {

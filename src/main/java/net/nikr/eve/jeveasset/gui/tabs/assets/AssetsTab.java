@@ -102,6 +102,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll

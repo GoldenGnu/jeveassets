@@ -181,8 +181,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Listeners
-		installTableMenu(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll Panels
@@ -191,8 +189,10 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		selectionModel = new EventSelectionModel<StockpileItem>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		//Listeners
+		installTableMenu(jTable);
+		installSelectionModel(selectionModel, tableModel);
 		//Filter GUI
-
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
