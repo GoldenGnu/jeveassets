@@ -58,7 +58,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if (CompareType.isColumnCompare(compare)) {
 			this.text = text;
 		} else {
-			this.text = format(text);
+			this.text = format(text, true);
 		}
 		this.enabled = enabled;
 	}
@@ -174,10 +174,10 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 		//Percent
 		if (double1 == null) {
-			double1 = getPercent(object1);
+			double1 = getPercent(object1, false);
 		}
 		if (double2 == null) {
-			double2 = getPercent(object2);
+			double2 = getPercent(object2, false);
 		}
 
 		//Long / Integer
@@ -203,8 +203,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	private boolean before(final Object object1, final Object object2) {
 		//Date
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
+		Date date1 = getDate(object1, false);
+		Date date2 = getDate(object2, true);
 		if (date1 != null && date2 != null) {
 			return date1.before(date2);
 		}
@@ -212,20 +212,22 @@ public class FilterMatcher<E> implements Matcher<E> {
 	}
 
 	private boolean after(final Object object1, final Object object2) {
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
+		Date date1 = getDate(object1, false);
+		Date date2 = getDate(object2, true);
 		if (date1 != null && date2 != null) {
 			return date1.after(date2);
 		}
 		return false;
 	}
 
-	private static Number getNumber(final Object obj) {
+	private static Number getNumber(final Object obj, final boolean userInput) {
 		if ((obj instanceof Long) || (obj instanceof Integer)
 				|| (obj instanceof Double) || (obj instanceof Float)) {
 			return (Number) obj;
-		} else {
+		} else if (userInput) {
 			return createNumber(obj);
+		} else {
+			return null;
 		}
 	}
 	private Double getDouble(final Object obj) {
@@ -246,12 +248,14 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return null;
 		}
 	}
-	private static Double getPercent(final Object obj) {
+	private static Double getPercent(final Object obj, final boolean userInput) {
 		if (obj instanceof Percent) {
 			Percent percent = (Percent) obj;
 			return percent.getPercent();
-		} else {
+		} else if (userInput){
 			return createPercent(obj);
+		} else {
+			return null;
 		}
 	}
 	private static Double createNumber(final Object object) {
@@ -280,39 +284,43 @@ public class FilterMatcher<E> implements Matcher<E> {
 		return null;
 	}
 
-	private static Date getDate(final Object obj) {
+	private static Date getDate(final Object obj, final boolean userInput) {
 		if (obj instanceof Date) {
 			return (Date) obj;
-		} else if (obj instanceof String) {
+		} else if (userInput && (obj instanceof String)) {
 			return Formater.columnStringToDate((String) obj);
 		} else {
 			return null;
 		}
 	}
 
-	static String format(final Object object) {
-		return format(object, true);
+	private static String format(final Object object) {
+		return format(object, false, true);
 	}
 
-	static String format(final Object object, final boolean toLowerCase) {
+	private static String format(final Object object, final boolean userInput) {
+		return format(object, userInput, true);
+	}
+
+	static String format(final Object object, final boolean userInput, final boolean toLowerCase) {
 		if (object == null) {
 			return null;
 		}
 
 		//Number
-		Number number = getNumber(object);
+		Number number = getNumber(object, userInput);
 		if (number != null) {
 			return toLowerCase(Formater.compareFormat(number), toLowerCase);
 		}
 
 		//Date
-		Date date = getDate(object);
+		Date date = getDate(object, userInput);
 		if (date != null) {
 			return toLowerCase(Formater.columnDate(date), toLowerCase);
 		}
 
 		//Percent
-		Double percent = getPercent(object);
+		Double percent = getPercent(object, userInput);
 		if (percent != null) {
 			return toLowerCase(Formater.compareFormat(percent), toLowerCase);
 		}

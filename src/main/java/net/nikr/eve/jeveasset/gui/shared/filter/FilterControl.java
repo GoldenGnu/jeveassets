@@ -133,7 +133,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 						column = (Enum) object;
 						isNumeric = isNumeric(column);
 						isDate = isDate(column);
-						text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false);
+						text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
 					}
 				}
 			}
