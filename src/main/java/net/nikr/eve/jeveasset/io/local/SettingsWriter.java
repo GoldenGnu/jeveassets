@@ -33,6 +33,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -80,12 +82,35 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTablesResize(xmldoc, settings.getTableResize());
 		writeExportSettings(xmldoc, Settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
+		writeTrackerData(xmldoc, settings.getTrackerData());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
 		}
 		LOG.info("Settings saved");
+	}
+
+	private void writeTrackerData(final Document xmldoc, final Map<TrackerOwner, List<TrackerData>> trackerData) {
+		Element trackerDataNode = xmldoc.createElementNS(null, "trackerdata");
+		xmldoc.getDocumentElement().appendChild(trackerDataNode);
+		for (Map.Entry<TrackerOwner, List<TrackerData>> entry : trackerData.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "owner");
+			ownerNode.setAttributeNS(null, "name", entry.getKey().getOwner());
+			ownerNode.setAttributeNS(null, "id", String.valueOf(entry.getKey().getOwnerID()));
+			trackerDataNode.appendChild(ownerNode);
+			for (TrackerData data : entry.getValue()) {
+				Element dataNode = xmldoc.createElementNS(null, "data");
+				dataNode.setAttributeNS(null, "date", String.valueOf(data.getDate().getTime()));
+				dataNode.setAttributeNS(null, "assets", String.valueOf(data.getAssets()));
+				dataNode.setAttributeNS(null, "escrows", String.valueOf(data.getEscrows()));
+				dataNode.setAttributeNS(null, "escrowstocover", String.valueOf(data.getEscrowsToCover()));
+				dataNode.setAttributeNS(null, "sellorders", String.valueOf(data.getSellOrders()));
+				dataNode.setAttributeNS(null, "total", String.valueOf(data.getTotal()));
+				dataNode.setAttributeNS(null, "walletbalance", String.valueOf(data.getWalletBalance()));
+				ownerNode.appendChild(dataNode);
+			}
+		}
 	}
 
 	private void writeTableFilters(final Document xmldoc, final Map<String, Map<String, List<Filter>>> tableFilters) {

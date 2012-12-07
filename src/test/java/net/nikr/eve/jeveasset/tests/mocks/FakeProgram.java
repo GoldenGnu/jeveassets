@@ -146,4 +146,9 @@ public abstract class FakeProgram extends Program {
 	public OverviewTab getOverviewTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void createTrackerDataPoint() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

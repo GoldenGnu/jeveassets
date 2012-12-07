@@ -36,6 +36,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -478,4 +480,8 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

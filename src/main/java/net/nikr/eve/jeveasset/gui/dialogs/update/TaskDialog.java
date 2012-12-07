@@ -161,6 +161,8 @@ public class TaskDialog {
 			updateTask.execute();
 		} else {
 			program.updateEventList();
+			//Create value tracker point
+			program.createTrackerDataPoint();
 			//Save settings after updating (if we crash later)
 			program.saveSettings();
 			jOK.setEnabled(true);

@@ -43,6 +43,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.local.*;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -120,6 +122,7 @@ public class Settings {
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
+	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
 
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
@@ -480,6 +483,10 @@ public class Settings {
 			//Add sub-assets
 			addAssets(eveAsset.getAssets(), shouldShow);
 		}
+	}
+
+	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+		return trackerData;
 	}
 
 	public double getPrice(final int typeID, final boolean isBlueprintCopy) {

@@ -51,6 +51,8 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -97,6 +99,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Tracker Data
+		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
+		if (trackerDataNodes.getLength() == 1) {
+			Element trackerDataElement = (Element) trackerDataNodes.item(0);
+			parseTrackerData(trackerDataElement, settings);
 		}
 
 		//Asset Settings
@@ -244,8 +253,37 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
-		int maximumPurchaseAge = AttributeGetters.getInt(stockpilesElement, "maximumpurchaseage");
+	private void parseTrackerData(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("owner");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			//Read Owner
+			Element ownerNode = (Element) tableNodeList.item(a);
+			String ownerName = AttributeGetters.getString(ownerNode, "name");
+			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			//Add new Owner
+			TrackerOwner owner = new TrackerOwner(ownerID, ownerName);
+			settings.getTrackerData().put(owner, new ArrayList<TrackerData>());
+			//Data
+			NodeList dataNodeList = ownerNode.getElementsByTagName("data");
+			for (int b = 0; b < dataNodeList.getLength(); b++) {
+				//Read data
+				Element dataNode = (Element) dataNodeList.item(b);
+				Date date = AttributeGetters.getDate(dataNode, "date");
+				double assets = AttributeGetters.getDouble(dataNode, "assets");
+				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
+				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
+				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
+				double total = AttributeGetters.getDouble(dataNode, "total");
+				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				//Add data
+				TrackerData data = new TrackerData(date, total, walletbalance, assets, sellorders, escrows, escrowstocover);
+				settings.getTrackerData().get(owner).add(data);
+			}
+		}
+	}
+
+	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) {
+		int maximumPurchaseAge = AttributeGetters.getInt(assetSettingsElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
