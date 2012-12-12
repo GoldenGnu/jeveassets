@@ -58,6 +58,7 @@ public class JAutoColumnTable extends JTable {
 	private final Map<String, Integer> columnsWidth = new HashMap<String, Integer>();
 	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
+	private boolean autoResizeLock = false;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
@@ -108,7 +109,22 @@ public class JAutoColumnTable extends JTable {
 		return component;
 	}
 
+	public void lock() {
+		autoResizeLock = true;
+	}
+
+	public void unlock() {
+		autoResizeLock = false;
+	}
+
+	public boolean isLocked() {
+		return autoResizeLock;
+	}
+
 	public final void autoResizeColumns() {
+		if (isLocked()) {
+			return;
+		}
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();

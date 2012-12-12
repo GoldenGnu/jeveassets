@@ -41,6 +41,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	}
 
 	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
+		lock();
 		final EventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
 			selectModel.setEnabled(false);
@@ -49,8 +50,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-				separatorList.getReadWriteLock().writeLock().lock();
 				try {
+					separatorList.getReadWriteLock().writeLock().lock();
 					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
 				} finally {
 					separatorList.getReadWriteLock().writeLock().unlock();
@@ -60,6 +61,9 @@ public class JSeparatorTable extends JAutoColumnTable {
 		if (selectModel != null) {
 			selectModel.setEnabled(true);
 		}
+		unlock();
+		autoResizeColumns();
+		autoResizeRows();
 	}
 
 	private EventSelectionModel<?> getEventSelectionModel() {
@@ -198,7 +202,16 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.valueChanged(e);
 	}
 
-	private void fixRowHeight(final int row) {
+	private void autoResizeRows() {
+		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
+			autoResizeRow(row);
+		}
+	}
+
+	private void autoResizeRow(final int row) {
+		if (isLocked()) {
+			return;
+		}
 		if (row < 0 || row > getEventTableModel().getRowCount()) {
 			return;
 		}
@@ -244,9 +257,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.tableChanged(e);
 
 		//set row heigh
-		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
-			fixRowHeight(row);
-		}
+		autoResizeRows();
 	}
 }
 /**
