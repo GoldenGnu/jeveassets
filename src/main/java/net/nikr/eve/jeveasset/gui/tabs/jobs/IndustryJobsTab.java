@@ -88,8 +88,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
@@ -180,15 +179,15 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<IndustryJob> data = new MenuData<IndustryJob>(selectionModel.getSelected());
+		MenuData<IndustryJob> menuData = new MenuData<IndustryJob>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<IndustryJob>(program, data));
+		jComponent.add(new JMenuAssetFilter<IndustryJob>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<IndustryJob>(program, data));
+		jComponent.add(new JMenuStockpile<IndustryJob>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<IndustryJob>(program, data));
+		jComponent.add(new JMenuLookup<IndustryJob>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO

@@ -155,8 +155,7 @@ public class OverviewTab extends JMainTab {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
@@ -318,9 +317,9 @@ public class OverviewTab extends JMainTab {
 
 		addSeparator(jComponent);
 	//DATA
-		MenuData<Overview> data = new MenuData<Overview>(selectionModel.getSelected());
+		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected());
 	//ASSET FILTER
-		jSubMenuItem = new JMenuAssetFilter<Overview>(program, data);
+		jSubMenuItem = new JMenuAssetFilter<Overview>(program, menuData);
 		if (getSelectedView().equals(TabsOverview.get().groups())) {
 			jMenuItem = new JMenuItem(TabsOverview.get().locations());
 			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
@@ -331,7 +330,7 @@ public class OverviewTab extends JMainTab {
 		}
 		jComponent.add(jSubMenuItem);
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Overview>(program, data));
+		jComponent.add(new JMenuLookup<Overview>(program, menuData));
 	//INFO
 		JMenuInfo.overview(jComponent, selectionModel.getSelected());
 	}
@@ -487,6 +486,7 @@ public class OverviewTab extends JMainTab {
 	}
 
 	public void updateTable() {
+		beforeUpdateData();
 		//Only need to update when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) {
 			return;
@@ -528,6 +528,7 @@ public class OverviewTab extends JMainTab {
 		program.overviewGroupsChanged();
 
 		jShowing.setText(TabsOverview.get().filterShowing(rowCount, program.getEveAssetEventList().size(), program.getAssetsTab().getCurrentFilterName()));
+		afterUpdateData();
 	}
 
 	public void resetViews() {

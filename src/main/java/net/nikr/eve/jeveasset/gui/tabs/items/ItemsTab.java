@@ -83,8 +83,7 @@ public class ItemsTab extends JMainTab {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
@@ -141,17 +140,17 @@ public class ItemsTab extends JMainTab {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Item> data = new MenuData<Item>(selectionModel.getSelected());
+		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Item>(program, data));
+		jComponent.add(new JMenuAssetFilter<Item>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Item>(program, data));
+		jComponent.add(new JMenuStockpile<Item>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Item>(program, data));
+		jComponent.add(new JMenuLookup<Item>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Item>(program, data));
+		jComponent.add(new JMenuPrice<Item>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	}

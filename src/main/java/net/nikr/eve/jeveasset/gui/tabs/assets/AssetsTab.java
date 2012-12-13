@@ -101,8 +101,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll
@@ -225,15 +224,15 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Asset> data = new MenuData<Asset>(selectionModel.getSelected());
+		MenuData<Asset> menuData = new MenuData<Asset>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Asset>(program, data));
+		jComponent.add(new JMenuStockpile<Asset>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Asset>(program, data));
+		jComponent.add(new JMenuLookup<Asset>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Asset>(program, data));
+		jComponent.add(new JMenuPrice<Asset>(program, menuData));
 		jComponent.add(new JMenuName(program, selectionModel.getSelected()));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));

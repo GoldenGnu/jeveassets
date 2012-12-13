@@ -143,8 +143,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -260,15 +259,15 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Module> data = new MenuData<Module>(selectionModel.getSelected());
+		MenuData<Module> menuData = new MenuData<Module>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Module>(program, data));
+		jComponent.add(new JMenuAssetFilter<Module>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Module>(program, data));
+		jComponent.add(new JMenuStockpile<Module>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Module>(program, data));
+		jComponent.add(new JMenuLookup<Module>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Module>(program, data));
+		jComponent.add(new JMenuPrice<Module>(program, menuData));
 	//INFO
 		JMenuInfo.module(jComponent, selectionModel.getSelected());
 	}

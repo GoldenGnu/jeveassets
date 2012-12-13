@@ -102,8 +102,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Scroll Panels
 		jTableScroll = new JScrollPane(jTable);
 
@@ -178,21 +177,22 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Material> data = new MenuData<Material>(selectionModel.getSelected());
+		MenuData<Material> menuData = new MenuData<Material>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Material>(program, data));
+		jComponent.add(new JMenuAssetFilter<Material>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Material>(program, data));
+		jComponent.add(new JMenuStockpile<Material>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Material>(program, data));
+		jComponent.add(new JMenuLookup<Material>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Material>(program, data));
+		jComponent.add(new JMenuPrice<Material>(program, menuData));
 	//INFO
 		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
 	}
 
 
 	private void updateTable() {
+		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
 		List<Material> materials = new ArrayList<Material>();
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
@@ -284,6 +284,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jCollapse.setEnabled(false);
 		}
 		jTableScroll.getViewport().setViewPosition(new Point(0, 0));
+		afterUpdateData();
 	}
 
 	@Override

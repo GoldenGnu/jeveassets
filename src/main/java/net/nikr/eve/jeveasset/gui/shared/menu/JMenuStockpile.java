@@ -84,8 +84,7 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
-				program.getStockpileTool().updateData();
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab(), true);
 			}
 		}
 		if (ACTION_ADD_TO_EXISTING.equals(e.getActionCommand())) {
@@ -98,8 +97,7 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
-				program.getStockpileTool().updateData();
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab(), true);
 			}
 		}
 	}

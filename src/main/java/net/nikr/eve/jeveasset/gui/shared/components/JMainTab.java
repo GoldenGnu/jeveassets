@@ -30,7 +30,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public abstract class JMainTab {
@@ -42,8 +44,9 @@ public abstract class JMainTab {
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
-	private EventSelectionModel<?> selectionModel;
-	private EventTableModel<?> tableModel;
+	private JAutoColumnTable jTable;
+	private EventSelectionModel<?> eventSelectionModel;
+	private EventTableModel<?> eventTableModel;
 	private List<?> selected;
 
 	protected JMainTab(final boolean load) { }
@@ -83,31 +86,6 @@ public abstract class JMainTab {
 	 */
 	public void updateSettings() { }
 
-	protected void installSelectionModel(EventSelectionModel<?> selectionModel, EventTableModel<?> tableModel) {
-		this.selectionModel = selectionModel;
-		this.tableModel = tableModel;
-	}
-
-	public final void beforeUpdateData() {
-		if (selectionModel != null) {
-			selected = new ArrayList<Object>(selectionModel.getSelected());
-		}
-	}
-
-	public final void afterUpdateData() {
-		if (selectionModel != null && tableModel != null) {
-			selectionModel.setValueIsAdjusting(true);
-			for (int i = 0; i < tableModel.getRowCount(); i++) {
-				Object object = tableModel.getElementAt(i);
-				if (selected.contains(object)) {
-					selectionModel.addSelectionInterval(i, i);
-				}
-			}
-			selectionModel.setValueIsAdjusting(false);
-			selected = null;
-		}
-	}
-
 	public void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
 	}
@@ -116,7 +94,39 @@ public abstract class JMainTab {
 		return statusbarLabels;
 	}
 
+	public final void beforeUpdateData() {
+		if (eventSelectionModel != null) {
+			selected = new ArrayList<Object>(eventSelectionModel.getSelected());
+		}
+		if (jTable != null) {
+			jTable.lock();
+		}
+	}
+
+	public final void afterUpdateData() {
+		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
+			eventSelectionModel.setValueIsAdjusting(true);
+			for (int i = 0; i < eventTableModel.getRowCount(); i++) {
+				Object object = eventTableModel.getElementAt(i);
+				if (selected.contains(object)) {
+					eventSelectionModel.addSelectionInterval(i, i);
+				}
+			}
+			eventSelectionModel.setValueIsAdjusting(false);
+			selected = null;
+		}
+		if (jTable != null) {
+			jTable.unlock();
+		}
+	}
+
 	public abstract void updateData();
+
+	public void updateDataTableLock() {
+		beforeUpdateData();
+		updateData();
+		afterUpdateData();
+	}
 
 	public Icon getIcon() {
 		return icon;
@@ -149,11 +159,25 @@ public abstract class JMainTab {
 		}
 	}
 
-	protected void installTableMenu(final JTable jTable) {
+	protected void installTable(final JAutoColumnTable jTable) {
+		//Table Menu
 		TableMenuListener listener = new TableMenuListener(jTable);
 		jTable.addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+
+		//Table Selection
+		ListSelectionModel selectionModel = jTable.getSelectionModel();
+		if (selectionModel instanceof  EventSelectionModel) {
+			this.eventSelectionModel = (EventSelectionModel<?>) selectionModel;
+		}
+		TableModel tableModel = jTable.getModel();
+		if (tableModel instanceof EventTableModel) {
+			this.eventTableModel = (EventTableModel<?>) tableModel;
+		}
+
+		//Table lock
+		this.jTable = jTable;
 	}
 
 	protected void selectClickedCell(final MouseEvent e) {

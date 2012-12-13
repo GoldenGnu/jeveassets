@@ -62,8 +62,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 			selectModel.setEnabled(true);
 		}
 		unlock();
-		autoResizeColumns();
-		autoResizeRows();
 	}
 
 	private EventSelectionModel<?> getEventSelectionModel() {
@@ -202,16 +200,23 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.valueChanged(e);
 	}
 
+	@Override
+	public void unlock() {
+		super.unlock();
+		//Update when unlocked
+		autoResizeRows();
+	}
+
 	private void autoResizeRows() {
+		if (isLocked()) {
+			return;
+		}
 		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
 			autoResizeRow(row);
 		}
 	}
 
 	private void autoResizeRow(final int row) {
-		if (isLocked()) {
-			return;
-		}
 		if (row < 0 || row > getEventTableModel().getRowCount()) {
 			return;
 		}

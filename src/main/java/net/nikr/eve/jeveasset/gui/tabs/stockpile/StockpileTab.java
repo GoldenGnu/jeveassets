@@ -190,8 +190,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Filter GUI
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),
@@ -245,7 +244,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public Stockpile showAddStockpile() {
 		Stockpile stockpile = stockpileDialog.showAdd();
 		if (stockpile != null) {
-			updateData();
+			updateDataTableLock();
 			if (program.getSettings().isStockpileFocusTab()) {
 				scrollToSctockpile(stockpile);
 			}
@@ -347,11 +346,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<StockpileItem> data = new MenuData<StockpileItem>(selected);
+		MenuData<StockpileItem> menuData = new MenuData<StockpileItem>(selected);
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selected));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<StockpileItem>(program, data));
+		jComponent.add(new JMenuAssetFilter<StockpileItem>(program, menuData));
 	//STOCKPILE
 		JMenuItem jMenuItem;
 
@@ -390,9 +389,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jMenuItem.setEnabled(!selected.isEmpty());
 		jMenu.add(jMenuItem);
 	//LOOKUP
-		jComponent.add(new JMenuLookup<StockpileItem>(program, data));
+		jComponent.add(new JMenuLookup<StockpileItem>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<StockpileItem>(program, data));
+		jComponent.add(new JMenuPrice<StockpileItem>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
@@ -536,7 +535,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			Stockpile stockpile = stockpileDialog.showAdd();
 			if (stockpile != null) {
-				updateData();
+				updateDataTableLock();
 			}
 		}
 		if (ACTION_SHOPPING_LIST.equals(e.getActionCommand())) {
@@ -616,7 +615,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			}
 
 			//Update stockpile data
-			updateData();
+			updateDataTableLock();
 			scrollToSctockpile(stockpile);
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
@@ -634,7 +633,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				boolean updated = stockpileDialog.showEdit(stockpile);
 				if (updated) {
-					updateData();
+					updateDataTableLock();
 				}
 			}
 		}
@@ -647,7 +646,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				boolean updated = stockpileDialog.showClone(stockpile);
 				if (updated) {
-					updateData();
+					updateDataTableLock();
 				}
 			}
 		}
@@ -661,7 +660,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
 					program.getSettings().getStockpiles().remove(stockpile);
-					updateData();
+					updateDataTableLock();
 				}
 			}
 		}
@@ -683,7 +682,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				boolean updated = stockpileItemDialog.showAdd(stockpile);
 				if (updated) {
-					updateData();
+					updateDataTableLock();
 				}
 			}
 		}
@@ -702,7 +701,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						//Add new - ignore existing
 						stockpile.add(item);
 					}
-					updateData();
+					updateDataTableLock();
 				}
 			}
 		}
@@ -714,7 +713,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				if (items.size() == 1) {
 					boolean updated = stockpileItemDialog.showEdit(items.get(0));
 					if (updated) {
-						updateData();
+						updateDataTableLock();
 					}
 				}
 			}
@@ -735,7 +734,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						for (StockpileItem item : items) {
 							item.getStockpile().remove(item);
 						}
-						updateData();
+						updateDataTableLock();
 					}
 				}
 			}

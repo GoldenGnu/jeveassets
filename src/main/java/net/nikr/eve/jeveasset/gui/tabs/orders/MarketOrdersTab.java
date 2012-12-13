@@ -92,8 +92,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		installSelectionModel(selectionModel, tableModel);
+		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Sorters
@@ -167,15 +166,15 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<MarketOrder> data = new MenuData<MarketOrder>(selectionModel.getSelected());
+		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, data));
+		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<MarketOrder>(program, data));
+		jComponent.add(new JMenuStockpile<MarketOrder>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<MarketOrder>(program, data));
+		jComponent.add(new JMenuLookup<MarketOrder>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
