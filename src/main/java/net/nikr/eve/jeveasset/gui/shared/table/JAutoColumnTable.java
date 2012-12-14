@@ -114,9 +114,10 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	public void unlock() {
-		autoResizeLock = false;
-		//Update when unlocked
-		autoResizeColumns();
+		if (isLocked()) { //only if locked
+			autoResizeLock = false; //unlock
+			autoResizeColumns(); //Update after unlock
+		}
 	}
 
 	public boolean isLocked() {

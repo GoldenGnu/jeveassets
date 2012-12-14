@@ -202,9 +202,10 @@ public class JSeparatorTable extends JAutoColumnTable {
 
 	@Override
 	public void unlock() {
-		super.unlock();
-		//Update when unlocked
-		autoResizeRows();
+		if (isLocked()) { //only if locked
+			super.unlock(); //Unlock JAutoColumnTable
+			autoResizeRows(); //Update after unlock
+		}
 	}
 
 	private void autoResizeRows() {
