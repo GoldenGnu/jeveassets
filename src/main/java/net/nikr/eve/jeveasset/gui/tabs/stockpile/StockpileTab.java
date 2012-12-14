@@ -394,6 +394,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jComponent.add(new JMenuPrice<StockpileItem>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<StockpileItem>(program, menuData));
 	//INFO
 		JMenuInfo.stockpileItem(jComponent, selected);
 	}

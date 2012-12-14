@@ -153,6 +153,8 @@ public class ItemsTab extends JMainTab {
 		jComponent.add(new JMenuPrice<Item>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Item>(program, menuData));
 	}
 
 	@Override

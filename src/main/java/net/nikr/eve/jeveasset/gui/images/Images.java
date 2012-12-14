@@ -57,6 +57,7 @@ public enum Images {
 	EDIT_RENAME ("edit_rename.png"),
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
+	EDIT_SET ("edit_set.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
@@ -133,6 +134,7 @@ public enum Images {
 	TOOL_STOCKPILE ("tool_stockpile.png"),
 	TOOL_ITEMS ("tool_items.png"),
 	TOOL_TRACKER ("tool_tracker.png"),
+	TOOL_REPROCESSED ("tool_reprocessed.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

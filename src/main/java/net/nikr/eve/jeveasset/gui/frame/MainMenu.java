@@ -53,6 +53,7 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
 	public static final String ACTION_OPEN_TRACKER = "ACTION_OPEN_TRACKER";
+	public static final String ACTION_OPEN_REPROCESSED = "ACTION_OPEN_REPROCESSED";
 	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
 	private JMenuItem jUpdatable;
@@ -100,6 +101,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_MATERIALS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().reprocessed());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_REPROCESSED.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_REPROCESSED);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

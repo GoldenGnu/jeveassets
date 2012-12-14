@@ -268,6 +268,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuLookup<Module>(program, menuData));
 	//EDIT
 		jComponent.add(new JMenuPrice<Module>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Module>(program, menuData));
 	//INFO
 		JMenuInfo.module(jComponent, selectionModel.getSelected());
 	}

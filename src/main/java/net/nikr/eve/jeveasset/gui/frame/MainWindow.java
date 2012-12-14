@@ -131,6 +131,10 @@ public class MainWindow implements WindowListener, ChangeListener {
 		}
 	}
 
+	public boolean isOpen(final JMainTab jMainTab){
+		return tabs.contains(jMainTab);
+	}
+
 	public JMainTab getSelectedTab() {
 		return tabs.get(jTabbedPane.getSelectedIndex());
 	}

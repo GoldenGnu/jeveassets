@@ -186,6 +186,8 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuLookup<Material>(program, menuData));
 	//EDIT
 		jComponent.add(new JMenuPrice<Material>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Material>(program, menuData));
 	//INFO
 		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
 	}

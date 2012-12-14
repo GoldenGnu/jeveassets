@@ -63,7 +63,7 @@ public class ReprocessSettings {
 	}
 
 	public int getLeft(final int start) {
-		return (int) Math.floor(((double) start / 100.0) * getPercent());
+		return (int) Math.round(((double) start / 100.0) * getPercent());
 	}
 
 	private double getPercent() {

@@ -29,6 +29,7 @@ import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
@@ -148,6 +149,18 @@ public class MenuData<T> {
 						item.getStockpile().getRegion(),
 						item.getPrice(),
 						item.isBPC()
+						);
+			}
+			if (t instanceof ReprocessedInterface) { //
+				ReprocessedInterface item = (ReprocessedInterface) t;
+				add(item.isMarketGroup(),
+						item.getName(),
+						item.getTypeID(),
+						null,
+						null,
+						null,
+						item.getPrice(),
+						false
 						);
 			}
 		}

@@ -161,4 +161,9 @@ public class TestI18N {
 		TabsTracker g = Main.getBundleService().get(TabsTracker.class);
 		assertNotNull(g.all());
 	}
+
+	@Test public void testTabsReprocessedBundle_en() throws Exception {
+		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
+		assertNotNull(g.batch());
+	}
 }
