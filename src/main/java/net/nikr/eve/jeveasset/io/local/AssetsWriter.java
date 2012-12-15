@@ -76,7 +76,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "name", account.getName());
 			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getAccountNextUpdate().getTime()));
 			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
-			node.setAttributeNS(null, "type", account.getType());
+			node.setAttributeNS(null, "type", account.getType().name());
 			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
 			parentNode.appendChild(node);
 			writeHumans(xmldoc, node, account.getHumans());

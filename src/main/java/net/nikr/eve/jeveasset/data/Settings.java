@@ -90,7 +90,8 @@ public class Settings {
 	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
 	private Map<Long, Location> locations = new HashMap<Long, Location>(); //LocationID : long
 	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
-	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>(); //LocationID : long
+	//XXX - Integer locationID
+	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>(); //LocationID : long
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
@@ -684,11 +685,11 @@ public class Settings {
 		EveApi.setConnector(connector);
 	}
 
-	public Map<Long, ApiStation> getConquerableStations() {
+	public Map<Integer, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
 
-	public void setConquerableStations(final Map<Long, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
 		this.conquerableStations = conquerableStations;
 		for (ApiStation station : conquerableStations.values()) {
 			ApiIdConverter.addLocation(station, getLocations());

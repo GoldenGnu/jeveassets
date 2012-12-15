@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.core.ApiError;
-import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.core.ApiResponse;
+import com.beimin.eveapi.exception.ApiException;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -200,7 +200,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return false;
 	}
 
-	private int getAccessMask() {
+	private long getAccessMask() {
 		if (account != null) {
 			return account.getAccessMask();
 		} else if (human != null) {

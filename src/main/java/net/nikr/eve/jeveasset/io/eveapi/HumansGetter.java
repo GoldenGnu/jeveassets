@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
 import com.beimin.eveapi.account.characters.EveCharacter;
-import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.exception.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

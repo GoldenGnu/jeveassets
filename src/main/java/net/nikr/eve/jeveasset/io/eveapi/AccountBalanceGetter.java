@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 
-import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import java.util.ArrayList;

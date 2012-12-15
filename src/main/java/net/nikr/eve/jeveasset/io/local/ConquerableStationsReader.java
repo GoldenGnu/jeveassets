@@ -49,7 +49,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 	private boolean read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
-			Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
+			Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
 			parseConquerableStations(element, conquerableStations);
 			settings.setConquerableStations(conquerableStations);
 		} catch (IOException ex) {
@@ -62,14 +62,14 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private void parseConquerableStations(final Element element, final Map<Long, ApiStation> conquerableStations) throws XmlException {
+	private void parseConquerableStations(final Element element, final Map<Integer, ApiStation> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private void parseStations(final Element element, final Map<Long, ApiStation> conquerableStations) {
+	private void parseStations(final Element element, final Map<Integer, ApiStation> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int a = 0; a < filterNodes.getLength(); a++) {
 			Element currentNode = (Element) filterNodes.item(a);

@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 public class MockSettings extends FakeSettings {
 	private Map<Long, Location> locations = new HashMap<Long, Location>();
-	private Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
+	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
 
 	public MockSettings() {
 		LocationsReader.load(this);
@@ -45,12 +45,12 @@ public class MockSettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<Long, ApiStation> getConquerableStations() {
+	public Map<Integer, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
 
 	@Override
-	public void setConquerableStations(final Map<Long, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
 		this.conquerableStations = conquerableStations;
 		for (ApiStation station : conquerableStations.values()) {
 			ApiIdConverter.addLocation(station, getLocations());

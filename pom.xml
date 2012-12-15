@@ -296,7 +296,7 @@
 		<dependency>
 			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>
-			<version>4.0.0</version>
+			<version>5.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.glazedlists</groupId>

@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import com.beimin.eveapi.shared.assetlist.EveAsset;
 import java.util.ArrayList;

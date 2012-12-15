@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
+import com.beimin.eveapi.exception.ApiException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;

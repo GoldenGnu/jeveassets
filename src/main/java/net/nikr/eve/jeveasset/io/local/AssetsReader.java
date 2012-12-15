@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import com.beimin.eveapi.shared.KeyType;
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
@@ -108,9 +109,13 @@ public final class AssetsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "accessmask")) {
 			accessMask = AttributeGetters.getInt(node, "accessmask");
 		}
-		String type = "";
+		KeyType type = null;
 		if (AttributeGetters.haveAttribute(node, "type")) {
-			type = AttributeGetters.getString(node, "type");
+			try {
+				type = KeyType.valueOf(AttributeGetters.getString(node, "type"));
+			} catch (IllegalArgumentException ex) {
+				type = null;
+			}
 		}
 		Date expires = null;
 		if (AttributeGetters.haveAttribute(node, "expires")) {
@@ -262,10 +267,10 @@ public final class AssetsReader extends AbstractXmlReader {
 		int licensedProductionRuns = AttributeGetters.getInt(element, "licensedproductionruns");
 		long installedInSolarSystemID = AttributeGetters.getLong(element, "installedinsolarsystemid");
 		long containerLocationID = AttributeGetters.getLong(element, "containerlocationid");
-		int materialMultiplier = AttributeGetters.getInt(element, "materialmultiplier");
-		int charMaterialMultiplier = AttributeGetters.getInt(element, "charmaterialmultiplier");
-		int timeMultiplier = AttributeGetters.getInt(element, "timemultiplier");
-		int charTimeMultiplier = AttributeGetters.getInt(element, "chartimemultiplier");
+		double materialMultiplier = AttributeGetters.getDouble(element, "materialmultiplier");
+		double charMaterialMultiplier = AttributeGetters.getDouble(element, "charmaterialmultiplier");
+		double timeMultiplier = AttributeGetters.getDouble(element, "timemultiplier");
+		double charTimeMultiplier = AttributeGetters.getDouble(element, "chartimemultiplier");
 		int installedItemTypeID = AttributeGetters.getInt(element, "installeditemtypeid");
 		int outputTypeID = AttributeGetters.getInt(element, "outputtypeid");
 		int containerTypeID = AttributeGetters.getInt(element, "containertypeid");

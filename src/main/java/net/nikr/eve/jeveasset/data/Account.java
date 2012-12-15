@@ -21,19 +21,60 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse.AccessMask;
+import com.beimin.eveapi.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class Account {
+
+	public enum AccessMask {
+		ACCOUNT_BALANCE(1),
+		ASSET_LIST(2),
+		CALENDAR_EVENT_ATTENDEES(4),
+		CHARACTER_SHEET(8),
+		CONTACT_LIST(16),
+		CONTACT_NOTIFICATIONS(32),
+		FAC_WAR_STATS(64),
+		INDUSTRY_JOBS(128),
+		KILL_LOG(256),
+		MAIL_BODIES(512),
+		MAILING_LISTS(1024),
+		MAIL_MESSAGES(2048),
+		MARKET_ORDERS(4096),
+		MEDALS(8192),
+		NOTIFICATIONS(16384),
+		NOTIFICATION_TEXTS(32768),
+		RESEARCH(65536),
+		SKILL_IN_TRAINING(131072),
+		SKILL_QUEUE(262144),
+		STANDINGS(524288),
+		UPCOMING_CALENDAR_EVENTS(1048576),
+		WALLET_JOURNAL(2097152),
+		WALLET_TRANSACTIONS(4194304),
+		CHARACTER_INFO_PRIVATE(8388608),
+		CHARACTER_INFO_PUBLIC(16777216),
+		ACCOUNT_STATUS(33554432),
+		CONTRACTS(67108864);
+
+		private final int accessMask;
+
+		private AccessMask(int accessMask) {
+			this.accessMask = accessMask;
+		}
+
+		public int getAccessMask() {
+			return accessMask;
+		}
+	}
+
 	private int keyID;
 	private String vCode;
 	private String name;
 	private Date accountNextUpdate;
-	private int accessMask;
-	private String type;
+	private long accessMask;
+	private KeyType type;
 	private Date expires;
 
 	private List<Human> humans = new ArrayList<Human>();
@@ -52,10 +93,10 @@ public class Account {
 	}
 
 	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, "", null);
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final int accessMask, final String type, final Date expires) {
+	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -89,11 +130,11 @@ public class Account {
 		this.name = name;
 	}
 
-	public int getAccessMask() {
+	public long getAccessMask() {
 		return accessMask;
 	}
 
-	public void setAccessMask(final int accessMask) {
+	public void setAccessMask(final long accessMask) {
 		this.accessMask = accessMask;
 	}
 
@@ -113,11 +154,11 @@ public class Account {
 		this.expires = expires;
 	}
 
-	public String getType() {
+	public KeyType getType() {
 		return type;
 	}
 
-	public void setType(final String type) {
+	public void setType(final KeyType type) {
 		this.type = type;
 	}
 
@@ -126,13 +167,13 @@ public class Account {
 	 * @param accountType Account | Character | Corporation
 	 * @return true if equal (both corp or both not corp) - false if not equal (one corp other not corp)
 	 */
-	public boolean compareTypes(final String accountType) {
-		boolean corp = accountType.equals("Corporation");
+	public boolean compareTypes(final KeyType accountType) {
+		boolean corp = accountType == KeyType.Corporation; //Enum can be null
 		return (isCorporation() == corp);
 	}
 
 	public boolean isCorporation() {
-		return type.equals("Corporation");
+		return type == KeyType.Corporation; //Enum can be null
 	}
 
 	public boolean isCharacter() {
