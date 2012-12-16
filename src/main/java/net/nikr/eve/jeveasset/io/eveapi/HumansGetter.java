@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -38,7 +39,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 	private int fails = 0;
 
 	public HumansGetter() {
-		super("Accounts", 0, false, true);
+		super("Accounts", false, true);
 	}
 
 	@Override
@@ -117,6 +118,11 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	@Override
 	protected void updateFailed(final Human humanFrom, final Human humanTo) { }
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.OPEN.getAccessMask();
+	}
 
 	private String getName(final EveCharacter apiCharacter) {
 		if (getAccount().isCharacter()) {

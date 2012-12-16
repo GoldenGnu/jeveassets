@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -36,7 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
 	public IndustryJobsGetter() {
-		super("Industry Jobs", 128, true, false);
+		super("Industry Jobs", true, false);
 	}
 
 	@Override
@@ -77,5 +78,10 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setIndustryJobs(humanFrom.getIndustryJobs());
 		humanTo.setIndustryJobsNextUpdate(humanFrom.getIndustryJobsNextUpdate());
+	}
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.INDUSTRY_JOBS.getAccessMask();
 	}
 }

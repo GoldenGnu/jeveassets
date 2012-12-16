@@ -23,9 +23,15 @@ package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.shared.KeyType;
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
+import com.beimin.eveapi.shared.contract.ContractAvailability;
+import com.beimin.eveapi.shared.contract.ContractStatus;
+import com.beimin.eveapi.shared.contract.ContractType;
+import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.*;
@@ -137,6 +143,8 @@ public final class AssetsReader extends AbstractXmlReader {
 			if (assetNodes.getLength() == 1) {
 				parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
 			}
+			parseContractItems(currentNode, human);
+			parseContracts(currentNode, human);
 			parseBalances(currentNode, human);
 			parseMarkerOrders(currentNode, human);
 			parseIndustryJobs(currentNode, human);
@@ -161,7 +169,123 @@ public final class AssetsReader extends AbstractXmlReader {
 			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
 		}
 
-		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate);
+		Date contractsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
+			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
+		}
+
+		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+	}
+
+	private void parseContractItems(final Element element, final Human human) {
+		NodeList contractsNodes = element.getElementsByTagName("contractitems");
+		for (int a = 0; a < contractsNodes.getLength(); a++) {
+			Element currentContractsNode = (Element) contractsNodes.item(a);
+			NodeList contractNodes = currentContractsNode.getElementsByTagName("contractitem");
+			for (int b = 0; b < contractNodes.getLength(); b++) {
+				Element currentNode = (Element) contractNodes.item(b);
+				long contractID = AttributeGetters.getLong(currentNode, "contractid");
+				EveContractItem contractItem = parseContractItem(currentNode);
+				//New contractID
+				if (!human.getContractItems().containsKey(contractID)) {
+					human.getContractItems().put(contractID, new ArrayList<EveContractItem>());
+				}
+				//Add contract List
+				human.getContractItems().get(contractID).add(contractItem);
+			}
+		}
+	}
+
+	private EveContractItem parseContractItem(final Element element) {
+		EveContractItem contractItem = new EveContractItem();
+		boolean included = AttributeGetters.getBoolean(element, "included");
+		long quantity = AttributeGetters.getLong(element, "quantity");
+		long recordID = AttributeGetters.getLong(element, "recordid");
+		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
+		int typeID = AttributeGetters.getInt(element, "typeid");
+
+		contractItem.setIncluded(included);
+		contractItem.setQuantity(quantity);
+		contractItem.setRecordID(recordID);
+		contractItem.setSingleton(singleton);
+		contractItem.setTypeID(typeID);
+
+		return contractItem;
+	}
+
+	private void parseContracts(final Element element, final Human human) {
+		NodeList contractsNodes = element.getElementsByTagName("contracts");
+		for (int a = 0; a < contractsNodes.getLength(); a++) {
+			Element currentContractsNode = (Element) contractsNodes.item(a);
+			NodeList contractNodes = currentContractsNode.getElementsByTagName("contract");
+			for (int b = 0; b < contractNodes.getLength(); b++) {
+				Element currentNode = (Element) contractNodes.item(b);
+				EveContract contract = parseContract(currentNode);
+				human.getContracts().add(contract);
+			}
+		}
+	}
+
+	private EveContract parseContract(final Element element) {
+		EveContract contract = new EveContract();
+		long acceptorID = AttributeGetters.getLong(element, "acceptorid");
+		long assigneeID = AttributeGetters.getLong(element, "assigneeid");
+		ContractAvailability availability
+				= ContractAvailability.valueOf(AttributeGetters.getString(element, "availability"));
+		double buyout = AttributeGetters.getDouble(element, "buyout");
+		double collateral = AttributeGetters.getDouble(element, "collateral");
+		long contractID = AttributeGetters.getLong(element, "contractid");
+		Date dateAccepted;
+		if (AttributeGetters.haveAttribute(element, "dateaccepted")) {
+			dateAccepted = AttributeGetters.getDate(element, "dateaccepted");
+		} else {
+			dateAccepted = null;
+		}
+		Date dateCompleted;
+		if (AttributeGetters.haveAttribute(element, "dateaccepted")) {
+			dateCompleted = AttributeGetters.getDate(element, "datecompleted");
+		} else {
+			dateCompleted = null;
+		}
+		Date dateExpired = AttributeGetters.getDate(element, "dateexpired");
+		Date dateIssued = AttributeGetters.getDate(element, "dateissued");
+		int endStationID = AttributeGetters.getInt(element, "endstationid");
+		long issuerCorpID = AttributeGetters.getLong(element, "issuercorpid");
+		long issuerID = AttributeGetters.getLong(element, "issuerid");
+		int numDays = AttributeGetters.getInt(element, "numdays");
+		double price = AttributeGetters.getDouble(element, "price");
+		double reward = AttributeGetters.getDouble(element, "reward");
+		int startStationID = AttributeGetters.getInt(element, "startstationid");
+		ContractStatus status = ContractStatus.valueOf(AttributeGetters.getString(element, "status"));
+		String title = AttributeGetters.getString(element, "title");
+		ContractType type = ContractType.valueOf(AttributeGetters.getString(element, "type"));
+		double volume = AttributeGetters.getDouble(element, "volume");
+		boolean forCorp = AttributeGetters.getBoolean(element, "forcorp");
+
+		contract.setAcceptorID(acceptorID);
+		contract.setAssigneeID(assigneeID);
+		contract.setAvailability(availability);
+		contract.setBuyout(buyout);
+		contract.setCollateral(collateral);
+		contract.setContractID(contractID);
+		contract.setDateAccepted(dateAccepted);
+		contract.setDateCompleted(dateCompleted);
+		contract.setDateExpired(dateExpired);
+		contract.setDateIssued(dateIssued);
+		contract.setEndStationID(endStationID);
+		contract.setForCorp(forCorp);
+		contract.setIssuerCorpID(issuerCorpID);
+		contract.setIssuerID(issuerID);
+		contract.setNumDays(numDays);
+		contract.setPrice(price);
+		contract.setReward(reward);
+		contract.setStartStationID(startStationID);
+		contract.setStatus(status);
+		contract.setTitle(title);
+		contract.setType(type);
+		contract.setVolume(volume);
+
+		return contract;
 	}
 
 	private void parseBalances(final Element element, final Human human) {

@@ -48,18 +48,20 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private UpdateTask updateTask;
 	private Map<String, Human> owners;
 	private List<Human> failOwners;
-	private int requestMask;
 	private boolean error;
 
 	protected AbstractApiGetter(final String name) {
-		this(name, 0, false, false);
+		this(name, false, false);
 	}
 
-	protected AbstractApiGetter(final String taskName, final int requestMask, final boolean updateHuman, final boolean updateAccount) {
+	protected AbstractApiGetter(final String taskName, final boolean updateHuman, final boolean updateAccount) {
 		this.taskName = taskName;
 		this.updateHuman = updateHuman;
 		this.updateAccount = updateAccount;
-		this.requestMask = requestMask;
+	}
+
+	protected void setTaskName(String taskName) {
+		this.taskName = taskName;
 	}
 
 	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final String characterName) {
@@ -80,6 +82,14 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
+		//Calc size
+		int humanSize = 0;
+		int humanCount = 0;
+		if (updateTask != null) { //Only relevant when tracking progress
+			for (Account countAccount : accounts) {
+				humanSize = humanSize + countAccount.getHumans().size();
+			}
+		}
 		for (int a = 0; a < accounts.size(); a++) {
 			account = accounts.get(a);
 			if (updateAccount) {
@@ -89,7 +99,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 					} else {
 						loadAccount();
 					}
-					updateTask.setTaskProgress(accounts.size(), (a + 1), 0, 100);
+					updateTask.setTaskProgress(accounts.size(), a + 1, 0, 100);
 				} else {
 					loadAccount();
 				}
@@ -104,7 +114,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 						} else {
 							loadHuman();
 						}
-						updateTask.setTaskProgress(accounts.size() * 3, (a * 3) + (b + 1), 0, 100);
+						humanCount++;
+						updateTask.setTaskProgress(humanSize, humanCount, 0, 100);
 					} else {
 						loadHuman();
 					}
@@ -160,7 +171,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	private boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
-		if ((getAccessMask() & requestMask) != requestMask) {
+		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
 			addError(updateName, "Not enough access privileges");
 			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 			return false;
@@ -247,6 +258,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected abstract void setNextUpdate(Date nextUpdate);
 	protected abstract void setData(T response);
 	protected abstract void updateFailed(Human humanFrom, Human humanTo);
+	protected abstract long requestMask(boolean bCorp);
 
 	private boolean isUpdatable(final Date date) {
 		return ((Settings.getNow().after(date)

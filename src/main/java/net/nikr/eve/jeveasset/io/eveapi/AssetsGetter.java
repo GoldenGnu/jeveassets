@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.assetlist.EveAsset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -40,7 +41,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	private Settings settings;
 
 	public AssetsGetter() {
-		super("Assets", 2, true, false);
+		super("Assets", true, false);
 	}
 
 	public void load(final UpdateTask updateTask, final Settings loadSettings) {
@@ -82,5 +83,10 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setAssets(humanFrom.getAssets());
 		humanTo.setAssetNextUpdate(humanFrom.getAssetNextUpdate());
+	}
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.ASSET_LIST.getAccessMask();
 	}
 }

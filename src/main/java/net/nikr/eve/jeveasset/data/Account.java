@@ -30,41 +30,22 @@ import java.util.List;
 public class Account {
 
 	public enum AccessMask {
+		OPEN(0),
 		ACCOUNT_BALANCE(1),
 		ASSET_LIST(2),
-		CALENDAR_EVENT_ATTENDEES(4),
-		CHARACTER_SHEET(8),
-		CONTACT_LIST(16),
-		CONTACT_NOTIFICATIONS(32),
-		FAC_WAR_STATS(64),
 		INDUSTRY_JOBS(128),
-		KILL_LOG(256),
-		MAIL_BODIES(512),
-		MAILING_LISTS(1024),
-		MAIL_MESSAGES(2048),
 		MARKET_ORDERS(4096),
-		MEDALS(8192),
-		NOTIFICATIONS(16384),
-		NOTIFICATION_TEXTS(32768),
-		RESEARCH(65536),
-		SKILL_IN_TRAINING(131072),
-		SKILL_QUEUE(262144),
-		STANDINGS(524288),
-		UPCOMING_CALENDAR_EVENTS(1048576),
-		WALLET_JOURNAL(2097152),
-		WALLET_TRANSACTIONS(4194304),
-		CHARACTER_INFO_PRIVATE(8388608),
-		CHARACTER_INFO_PUBLIC(16777216),
 		ACCOUNT_STATUS(33554432),
-		CONTRACTS(67108864);
+		CONTRACTS_CORP(8388608),
+		CONTRACTS_CHAR(67108864);
 
-		private final int accessMask;
+		private final long accessMask;
 
-		private AccessMask(int accessMask) {
+		private AccessMask(long accessMask) {
 			this.accessMask = accessMask;
 		}
 
-		public int getAccessMask() {
+		public long getAccessMask() {
 			return accessMask;
 		}
 	}

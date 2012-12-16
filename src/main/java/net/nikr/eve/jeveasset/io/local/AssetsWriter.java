@@ -22,9 +22,12 @@
 package net.nikr.eve.jeveasset.io.local;
 
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
+import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
@@ -95,10 +98,13 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(human.getMarketOrdersNextUpdate().getTime()));
 			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(human.getIndustryJobsNextUpdate().getTime()));
+			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(human.getContractsNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
 			writeAssets(xmldoc, childNode, human.getAssets());
+			writeContractItems(xmldoc, node, human.getContractItems());
+			writeContracts(xmldoc, node, human.getContracts());
 			writeAccountBalances(xmldoc, node, human.getAccountBalances(), human.isCorporation());
 			writeMarketOrders(xmldoc, node, human.getMarketOrders(), human.isCorporation());
 			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), human.isCorporation());
@@ -120,6 +126,58 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "rawquantity", String.valueOf(eveAsset.getRawQuantity()));
 			parentNode.appendChild(node);
 			writeAssets(xmldoc, node, eveAsset.getAssets());
+		}
+	}
+
+	private void writeContracts(final Document xmldoc, final Element parentNode, final List<EveContract> contracts) {
+		Element node = xmldoc.createElementNS(null, "contracts");
+		parentNode.appendChild(node);
+		for (EveContract contract : contracts) {
+			Element childNode = xmldoc.createElementNS(null, "contract");
+			childNode.setAttributeNS(null, "acceptorid", String.valueOf(contract.getAcceptorID()));
+			childNode.setAttributeNS(null, "assigneeid", String.valueOf(contract.getAssigneeID()));
+			childNode.setAttributeNS(null, "availability", contract.getAvailability().name());
+			childNode.setAttributeNS(null, "buyout", String.valueOf(contract.getBuyout()));
+			childNode.setAttributeNS(null, "collateral", String.valueOf(contract.getCollateral()));
+			childNode.setAttributeNS(null, "contractid", String.valueOf(contract.getContractID()));
+			if (contract.getDateAccepted() != null) {
+				childNode.setAttributeNS(null, "dateaccepted", String.valueOf(contract.getDateAccepted().getTime()));
+			}
+			if (contract.getDateCompleted() != null) {
+				childNode.setAttributeNS(null, "datecompleted", String.valueOf(contract.getDateCompleted().getTime()));
+			}
+			childNode.setAttributeNS(null, "dateexpired", String.valueOf(contract.getDateExpired().getTime()));
+			childNode.setAttributeNS(null, "dateissued", String.valueOf(contract.getDateIssued().getTime()));
+			childNode.setAttributeNS(null, "endstationid", String.valueOf(contract.getEndStationID()));
+			childNode.setAttributeNS(null, "issuercorpid", String.valueOf(contract.getIssuerCorpID()));
+			childNode.setAttributeNS(null, "issuerid", String.valueOf(contract.getIssuerID()));
+			childNode.setAttributeNS(null, "numdays", String.valueOf(contract.getNumDays()));
+			childNode.setAttributeNS(null, "price", String.valueOf(contract.getPrice()));
+			childNode.setAttributeNS(null, "reward", String.valueOf(contract.getReward()));
+			childNode.setAttributeNS(null, "startstationid", String.valueOf(contract.getStartStationID()));
+			childNode.setAttributeNS(null, "status", contract.getStatus().name());
+			childNode.setAttributeNS(null, "title", String.valueOf(contract.getTitle()));
+			childNode.setAttributeNS(null, "type", contract.getType().name());
+			childNode.setAttributeNS(null, "volume", String.valueOf(contract.getVolume()));
+			childNode.setAttributeNS(null, "forcorp", String.valueOf(contract.isForCorp()));
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeContractItems(Document xmldoc, Element parentNode, Map<Long, List<EveContractItem>> contractItems) {
+		Element node = xmldoc.createElementNS(null, "contractitems");
+		parentNode.appendChild(node);
+		for (Map.Entry<Long, List<EveContractItem>> entry : contractItems.entrySet()) {
+			for (EveContractItem contractItem : entry.getValue()) {
+				Element childNode = xmldoc.createElementNS(null, "contractitem");
+				childNode.setAttributeNS(null, "contractid", String.valueOf(entry.getKey()));
+				childNode.setAttributeNS(null, "included", String.valueOf(contractItem.isIncluded()));
+				childNode.setAttributeNS(null, "quantity", String.valueOf(contractItem.getQuantity()));
+				childNode.setAttributeNS(null, "recordid", String.valueOf(contractItem.getRecordID()));
+				childNode.setAttributeNS(null, "singleton", String.valueOf(contractItem.isSingleton()));
+				childNode.setAttributeNS(null, "typeid", String.valueOf(contractItem.getTypeID()));
+				node.appendChild(childNode);
+			}
 		}
 	}
 

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -37,12 +38,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
 	public AccountBalanceGetter() {
-		super("Account Balance", 1, true, false);
-	}
-
-	@Override
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Human human) {
-		super.load(updateTask, forceUpdate, human);
+		super("Account Balance", true, false);
 	}
 
 	@Override
@@ -85,5 +81,10 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setAccountBalances(humanFrom.getAccountBalances());
 		humanTo.setBalanceNextUpdate(humanFrom.getBalanceNextUpdate());
+	}
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.ACCOUNT_BALANCE.getAccessMask();
 	}
 }

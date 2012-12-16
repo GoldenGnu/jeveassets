@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -36,7 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
 
 	public MarketOrdersGetter() {
-		super("Market Orders", 4096, true, false);
+		super("Market Orders", true, false);
 	}
 
 	@Override
@@ -77,5 +78,10 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 	protected void updateFailed(final Human humanFrom, final Human humanTo) {
 		humanTo.setMarketOrders(humanFrom.getMarketOrders());
 		humanTo.setMarketOrdersNextUpdate(humanFrom.getMarketOrdersNextUpdate());
+	}
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.MARKET_ORDERS.getAccessMask();
 	}
 }
