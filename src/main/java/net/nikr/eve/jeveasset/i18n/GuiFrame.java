@@ -38,6 +38,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String accounts();
 	public abstract String change();
 	public abstract String close();
+	public abstract String contracts();
 	public abstract String credits();
 	public abstract String eve();
 	public abstract String exit();

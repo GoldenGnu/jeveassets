@@ -99,8 +99,8 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 	protected abstract void configure(final SeparatorList.Separator<?> separator);
 
 	protected void expandSeparator(final boolean expand) {
-		separatorList.getReadWriteLock().writeLock().lock();
 		try {
+			separatorList.getReadWriteLock().writeLock().lock();
 			currentSeparator.setLimit(expand ? Integer.MAX_VALUE : 0);
 		} finally {
 			separatorList.getReadWriteLock().writeLock().unlock();

@@ -143,7 +143,6 @@ public final class AssetsReader extends AbstractXmlReader {
 			if (assetNodes.getLength() == 1) {
 				parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
 			}
-			parseContractItems(currentNode, human);
 			parseContracts(currentNode, human);
 			parseBalances(currentNode, human);
 			parseMarkerOrders(currentNode, human);
@@ -177,52 +176,24 @@ public final class AssetsReader extends AbstractXmlReader {
 		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
-	private void parseContractItems(final Element element, final Human human) {
-		NodeList contractsNodes = element.getElementsByTagName("contractitems");
-		for (int a = 0; a < contractsNodes.getLength(); a++) {
-			Element currentContractsNode = (Element) contractsNodes.item(a);
-			NodeList contractNodes = currentContractsNode.getElementsByTagName("contractitem");
-			for (int b = 0; b < contractNodes.getLength(); b++) {
-				Element currentNode = (Element) contractNodes.item(b);
-				long contractID = AttributeGetters.getLong(currentNode, "contractid");
-				EveContractItem contractItem = parseContractItem(currentNode);
-				//New contractID
-				if (!human.getContractItems().containsKey(contractID)) {
-					human.getContractItems().put(contractID, new ArrayList<EveContractItem>());
-				}
-				//Add contract List
-				human.getContractItems().get(contractID).add(contractItem);
-			}
-		}
-	}
-
-	private EveContractItem parseContractItem(final Element element) {
-		EveContractItem contractItem = new EveContractItem();
-		boolean included = AttributeGetters.getBoolean(element, "included");
-		long quantity = AttributeGetters.getLong(element, "quantity");
-		long recordID = AttributeGetters.getLong(element, "recordid");
-		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
-		int typeID = AttributeGetters.getInt(element, "typeid");
-
-		contractItem.setIncluded(included);
-		contractItem.setQuantity(quantity);
-		contractItem.setRecordID(recordID);
-		contractItem.setSingleton(singleton);
-		contractItem.setTypeID(typeID);
-
-		return contractItem;
-	}
-
 	private void parseContracts(final Element element, final Human human) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
-			Element currentContractsNode = (Element) contractsNodes.item(a);
-			NodeList contractNodes = currentContractsNode.getElementsByTagName("contract");
+			Element contractsNode = (Element) contractsNodes.item(a);
+			NodeList contractNodes = contractsNode.getElementsByTagName("contract");
 			for (int b = 0; b < contractNodes.getLength(); b++) {
-				Element currentNode = (Element) contractNodes.item(b);
-				EveContract contract = parseContract(currentNode);
-				human.getContracts().add(contract);
+				Element contractNode = (Element) contractNodes.item(b);
+				EveContract contract = parseContract(contractNode);
+				NodeList itemNodes = contractNode.getElementsByTagName("contractitem");
+				List<EveContractItem> contractItems = new ArrayList<EveContractItem>();
+				for (int c = 0; c < itemNodes.getLength(); c++) {
+					Element currentNode = (Element) itemNodes.item(c);
+					EveContractItem contractItem = parseContractItem(currentNode);
+					contractItems.add(contractItem);
+				}
+				human.setContracts(contract, contractItems);
 			}
+			
 		}
 	}
 
@@ -286,6 +257,23 @@ public final class AssetsReader extends AbstractXmlReader {
 		contract.setVolume(volume);
 
 		return contract;
+	}
+
+	private EveContractItem parseContractItem(final Element element) {
+		EveContractItem contractItem = new EveContractItem();
+		boolean included = AttributeGetters.getBoolean(element, "included");
+		long quantity = AttributeGetters.getLong(element, "quantity");
+		long recordID = AttributeGetters.getLong(element, "recordid");
+		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
+		int typeID = AttributeGetters.getInt(element, "typeid");
+
+		contractItem.setIncluded(included);
+		contractItem.setQuantity(quantity);
+		contractItem.setRecordID(recordID);
+		contractItem.setSingleton(singleton);
+		contractItem.setTypeID(typeID);
+
+		return contractItem;
 	}
 
 	private void parseBalances(final Element element, final Human human) {

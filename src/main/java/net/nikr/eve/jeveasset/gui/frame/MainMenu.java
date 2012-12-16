@@ -54,6 +54,7 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
 	public static final String ACTION_OPEN_TRACKER = "ACTION_OPEN_TRACKER";
 	public static final String ACTION_OPEN_REPROCESSED = "ACTION_OPEN_REPROCESSED";
+	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
 	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
 	private JMenuItem jUpdatable;
@@ -129,6 +130,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_JOBS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().contracts());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_CONTRACTS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

@@ -47,8 +47,7 @@ public class Human implements Comparable<Human> {
 	private List<EveAccountBalance> accountBalances;
 	private List<ApiMarketOrder> marketOrders;
 	private List<ApiIndustryJob> industryJobs;
-	private List<EveContract> contracts;
-	private Map<Long, List<EveContractItem>> contractItems;
+	private Map<EveContract, List<EveContractItem>> contracts;
 	private List<Asset> assets;
 
 	public Human(final Account parentAccount, final Human human) {
@@ -66,7 +65,6 @@ public class Human implements Comparable<Human> {
 		industryJobs = human.getIndustryJobs();
 		assets = human.getAssets();
 		contracts = human.getContracts();
-		contractItems = human.getContractItems();
 	}
 
 	public Human(final Account parentAccount, final String name, final long ownerID) {
@@ -89,8 +87,7 @@ public class Human implements Comparable<Human> {
 		accountBalances = new  ArrayList<EveAccountBalance>();
 		marketOrders = new  ArrayList<ApiMarketOrder>();
 		industryJobs = new  ArrayList<ApiIndustryJob>();
-		contracts = new ArrayList<EveContract>();
-		contractItems = new HashMap<Long, List<EveContractItem>>();
+		contracts = new HashMap<EveContract, List<EveContractItem>>();
 	}
 
 	public void setAccountBalances(final List<EveAccountBalance> accountBalances) {
@@ -109,12 +106,8 @@ public class Human implements Comparable<Human> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setContractItems(long contractID, List<EveContractItem> contractItems) {
-		this.contractItems.put(contractID, contractItems);
-	}
-
-	public void setContracts(List<EveContract> contracts) {
-		this.contracts = contracts;
+	public void setContracts(EveContract contract, List<EveContractItem> contractItems) {
+		this.contracts.put(contract, contractItems);
 	}
 
 	public void setContractsNextUpdate(Date contractsNextUpdate) {
@@ -177,11 +170,7 @@ public class Human implements Comparable<Human> {
 		return balanceNextUpdate;
 	}
 
-	public Map<Long, List<EveContractItem>> getContractItems() {
-		return contractItems;
-	}
-
-	public List<EveContract> getContracts() {
+	public Map<EveContract, List<EveContractItem>> getContracts() {
 		return contracts;
 	}
 

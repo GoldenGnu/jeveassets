@@ -166,4 +166,9 @@ public class TestI18N {
 		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
 		assertNotNull(g.batch());
 	}
+
+	@Test public void testTabsContractsBundle_en() throws Exception {
+		TabsContracts g = Main.getBundleService().get(TabsContracts.class);
+		assertNotNull(g.title());
+	}
 }

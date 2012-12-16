@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.contract.ContractsResponse;
 import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,12 +68,13 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected void setData(ContractsResponse response) {
 		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
-		getHuman().setContracts(contracts);
+		for (EveContract contract : contracts) {
+			getHuman().getContracts().put(contract, new ArrayList<EveContractItem>());
+		}
 	}
 
 	@Override
 	protected void updateFailed(Human humanFrom, Human humanTo) {
-		humanTo.setContracts(humanFrom.getContracts());
 		humanTo.setContractsNextUpdate(humanFrom.getContractsNextUpdate());
 	}
 

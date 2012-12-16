@@ -22,11 +22,17 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.shared.assetlist.EveAsset;
+import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,6 +209,23 @@ public final class ApiConverter {
 		String region = ApiIdConverter.regionName(apiMarketOrder.getStationID(), null, settings.getLocations());
 		String owner = human.getName();
 		return new MarketOrder(apiMarketOrder, name, location, system, region, owner);
+	}
+	public static List<ContractItem> eveContractItemsToContractItems(final Human human, final Map<EveContract, List<EveContractItem>> contracts, final Settings settings) {
+		List<ContractItem> contractItem = new ArrayList<ContractItem>();
+		for (Entry<EveContract, List<EveContractItem>> entry : contracts.entrySet()) {
+			for (EveContractItem eveContractItem : entry.getValue()) {
+				contractItem.add(eveContractItemToContractItem(human, eveContractItem, entry.getKey(), settings));
+			}
+		}
+		return contractItem;
+	}
+	private static ContractItem eveContractItemToContractItem(final Human human, final EveContractItem eveContractItem, EveContract eveContract, final Settings settings) {
+		String name = ApiIdConverter.typeName(eveContractItem.getTypeID(), settings.getItems());
+		Contract contract = eveContractToContract(human, eveContract, settings);
+		return new ContractItem(eveContractItem, contract, name);
+	}
+	private static Contract eveContractToContract(final Human human, final EveContract eveContract, final Settings settings) {
+		return new Contract(eveContract);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final String owner, final Settings settings) {
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();

@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private long contractID;
+	private EveContract currentContract;
 
 	public ContractItemsGetter() {
 		super("Contract Items", false, false);
@@ -57,7 +57,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		int count = 0;
 		for (Account account : accounts) {
 			for (Human human : account.getHumans()) {
-				for (EveContract contract : human.getContracts()) {
+				for (EveContract contract : human.getContracts().keySet()) {
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
@@ -66,7 +66,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 						continue;
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
-					contractID = contract.getContractID();
+					currentContract = contract;
 					super.load(updateTask, forceUpdate, human);
 					if (updateTask != null) {
 						updateTask.setTaskProgress(size, count, progress, 100);
@@ -79,9 +79,9 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), contractID);
+			return com.beimin.eveapi.corporation.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), currentContract.getContractID());
 		} else {
-			return com.beimin.eveapi.character.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), contractID);
+			return com.beimin.eveapi.character.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), currentContract.getContractID());
 		}
 	}
 
@@ -98,7 +98,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected void setData(ContractItemsResponse response) {
 		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
-		getHuman().setContractItems(contractID, contractItems);
+		getHuman().setContracts(currentContract, contractItems);
 	}
 
 	@Override
