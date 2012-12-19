@@ -491,9 +491,9 @@ public class AccountImportDialog extends JDialogCentered {
 			}
 			humansGetter.load(null, true, account); //Update account
 			if (humansGetter.hasError() || humansGetter.getFails() > 0) { //Failed to add new account
-				if (humansGetter.getFails() > 0 && humansGetter.getFails() < 4) { //Not enough access
+				if (humansGetter.getFails() > 0 && humansGetter.getFails() < humansGetter.getMaxFail()) { //Not enough access
 					result = Result.OK_LIMITED_ACCESS;
-				} else if (humansGetter.getFails() >= 4) { //Offline
+				} else if (humansGetter.getFails() >= humansGetter.getMaxFail()) { //No access
 					result = Result.FAIL_NO_ACCESS;
 				} else if (!Online.isOnline(program.getSettings())) { //Offline
 					result = Result.FAIL_NO_INTERNET;

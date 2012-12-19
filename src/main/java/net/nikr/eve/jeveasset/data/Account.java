@@ -30,14 +30,14 @@ import java.util.List;
 public class Account {
 
 	public enum AccessMask {
-		OPEN(0),
-		ACCOUNT_BALANCE(1),
-		ASSET_LIST(2),
-		INDUSTRY_JOBS(128),
-		MARKET_ORDERS(4096),
-		ACCOUNT_STATUS(33554432),
-		CONTRACTS_CORP(8388608),
-		CONTRACTS_CHAR(67108864);
+		OPEN(0L),
+		ACCOUNT_BALANCE(1L),
+		ASSET_LIST(2L),
+		INDUSTRY_JOBS(128L),
+		MARKET_ORDERS(4096L),
+		ACCOUNT_STATUS(33554432L),
+		CONTRACTS_CORP(8388608L),
+		CONTRACTS_CHAR(67108864L);
 
 		private final long accessMask;
 
@@ -187,6 +187,14 @@ public class Account {
 
 	public boolean isIndustryJobs() {
 		return ((getAccessMask() & AccessMask.INDUSTRY_JOBS.getAccessMask()) == AccessMask.INDUSTRY_JOBS.getAccessMask());
+	}
+
+	public boolean isContracts() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.CONTRACTS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.CONTRACTS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
+		}
 	}
 
 	@Override

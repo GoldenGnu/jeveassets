@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -70,9 +70,9 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
-		JLabel jLabel  = (JLabel) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		jLabel.setBorder(BorderFactory.createCompoundBorder(jLabel.getBorder(), border));
-		return jLabel;
+		JComponent jComponent  = (JComponent) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		jComponent.setBorder(BorderFactory.createCompoundBorder(jComponent.getBorder(), border));
+		return jComponent;
 	}
 
 }

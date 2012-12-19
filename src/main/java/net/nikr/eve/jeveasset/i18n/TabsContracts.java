@@ -36,7 +36,20 @@ public abstract class TabsContracts extends Bundle {
 		super(locale);
 	}
 
+	public abstract String auction();
 	public abstract String collapse();
+	public abstract String columnIncluded();
+	public abstract String columnName();
+	public abstract String columnQuantity();
+	public abstract String columnSingleton();
+	public abstract String columnTypeID();
+	public abstract String courier();
 	public abstract String expand();
+	public abstract String itemExchange();
+	public abstract String loan();
+	public abstract String packaged();
 	public abstract String title();
+	public abstract String type();
+	public abstract String unknown();
+	public abstract String unpackaged();
 }

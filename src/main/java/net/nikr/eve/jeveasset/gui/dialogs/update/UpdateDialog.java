@@ -21,11 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
+import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -363,6 +366,21 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			if (jAssets.isSelected()) {
 				updateTasks.add(new AssetsTask());
 			}
+			if (jContracts.isSelected()) {
+				Set<Long> list = new HashSet<Long>();
+				for (Account account : program.getSettings().getAccounts()) {
+					for (Human human : account.getHumans()) {
+						list.add(human.getOwnerID()); //Just to be sure
+						for (EveContract contract : human.getContracts().keySet()) {
+							list.add(contract.getAcceptorID());
+							list.add(contract.getAssigneeID());
+							list.add(contract.getIssuerCorpID());
+							list.add(contract.getIssuerID());
+						}
+					}
+				}
+				updateTasks.add(new OwnerTask(list));
+			}
 			if (jPriceData.isSelected()
 					|| jMarketOrders.isSelected()
 					|| jIndustryJobs.isSelected()
@@ -492,6 +510,22 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		public void update() {
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+		}
+	}
+
+	public class OwnerTask extends UpdateTask {
+	
+		private Set<Long> list;
+
+		public OwnerTask(Set<Long> list) {
+			super(DialoguesUpdate.get().ownerIDs());
+			this.list = list;
+		}
+
+		@Override
+		public void update() {
+			NameGetter nameGetter = new NameGetter();
+			nameGetter.load(this, program.getSettings(), list);
 		}
 	}
 

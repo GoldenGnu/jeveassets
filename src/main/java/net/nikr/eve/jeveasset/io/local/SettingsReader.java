@@ -101,6 +101,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//Owners
+		NodeList ownersNodes = element.getElementsByTagName("owners");
+		if (ownersNodes.getLength() == 1) {
+			Element ownersElement = (Element) ownersNodes.item(0);
+			parseOwners(ownersElement, settings);
+		}
+
 		//Tracker Data
 		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
 		if (trackerDataNodes.getLength() == 1) {
@@ -253,6 +260,16 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
+	private void parseOwners(final Element element, final Settings settings) {
+		NodeList ownerNodeList = element.getElementsByTagName("owner");
+		for (int a = 0; a < ownerNodeList.getLength(); a++) {
+			//Read Owner
+			Element ownerNode = (Element) ownerNodeList.item(a);
+			String ownerName = AttributeGetters.getString(ownerNode, "name");
+			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			settings.getOwners().put(ownerID, ownerName);
+		}
+	}
 	private void parseTrackerData(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("owner");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {

@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	private int fails = 0;
+	private final int MAX_FAIL = 5;
 
 	public HumansGetter() {
 		super("Accounts", false, true);
@@ -93,8 +94,11 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 			if (!getAccount().isMarketOrders()) {
 				fails++;
 			}
+			if (!getAccount().isContracts()) {
+				fails++;
+			}
 			if (!getAccount().isAssetList()) { //Can not work without it...
-				fails = 4;
+				fails = 5;
 			}
 		}
 
@@ -141,5 +145,9 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	public int getFails() {
 		return fails;
+	}
+
+	public int getMaxFail() {
+		return MAX_FAIL;
 	}
 }

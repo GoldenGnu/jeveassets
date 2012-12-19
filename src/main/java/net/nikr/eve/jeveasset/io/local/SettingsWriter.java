@@ -83,12 +83,24 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeExportSettings(xmldoc, Settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
+		writeOwners(xmldoc, settings.getOwners());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
 		}
 		LOG.info("Settings saved");
+	}
+
+	private void writeOwners(final Document xmldoc, final Map<Long, String> owners) {
+		Element trackerDataNode = xmldoc.createElementNS(null, "owners");
+		xmldoc.getDocumentElement().appendChild(trackerDataNode);
+		for (Map.Entry<Long, String> entry : owners.entrySet()) {
+			Element ownerNode = xmldoc.createElementNS(null, "owner");
+			ownerNode.setAttributeNS(null, "name", entry.getValue());
+			ownerNode.setAttributeNS(null, "id", String.valueOf(entry.getKey()));
+			trackerDataNode.appendChild(ownerNode);
+		}
 	}
 
 	private void writeTrackerData(final Document xmldoc, final Map<TrackerOwner, List<TrackerData>> trackerData) {

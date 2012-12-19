@@ -137,13 +137,8 @@ public class ContractsTab extends JMainTab {
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Human human : account.getHumans()) {
 				List<ContractItem> contractItems
-						= ApiConverter.eveContractItemsToContractItems(human, human.getContracts(), program.getSettings());
+						= ApiConverter.eveContractItemsToContractItems(human.getContracts(), program.getSettings());
 				list.addAll(contractItems);
-				for (Map.Entry<EveContract, List<EveContractItem>> entry : human.getContracts().entrySet()) {
-					if (entry.getValue().isEmpty()) { //No items
-						list.add( new ContractItem(new Contract(entry.getKey())));
-					}
-				}
 			}
 		}
 		try {

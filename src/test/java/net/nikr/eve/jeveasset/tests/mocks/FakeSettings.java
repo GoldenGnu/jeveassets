@@ -484,4 +484,9 @@ public abstract class FakeSettings extends Settings {
 	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<Long, String> getOwners() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

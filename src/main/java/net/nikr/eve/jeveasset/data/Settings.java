@@ -124,6 +124,7 @@ public class Settings {
 	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+	private Map<Long, String> owners = new HashMap<Long, String>();
 
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
@@ -702,6 +703,10 @@ public class Settings {
 
 	public Map<Integer, Item> getItems() {
 		return items;
+	}
+
+	public Map<Long, String> getOwners() {
+		return owners;
 	}
 
 	public List<Jump> getJumps() {

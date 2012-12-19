@@ -302,6 +302,9 @@ public class JAutoColumnTable extends JTable {
 		//Rows width
 		for (int a = 0; a < jTable.getRowCount(); a++) {
 			final Object rowValue = jTable.getValueAt(a, columnIndex); //Get cell value
+			if (rowValue == null) { //Ignore null
+				continue;
+			}
 			final int key = rowValue.toString().hashCode(); //value hash
 			if (rowsWidth.containsKey(key)) { //Load row width
 				maxWidth = Math.max(maxWidth, rowsWidth.get(key));

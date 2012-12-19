@@ -23,14 +23,16 @@ package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
+import java.util.Date;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Name"; //FIXME i18n
+			return TabsContracts.get().columnName();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -40,31 +42,111 @@ enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	QUANTITY(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Quantity"; //FIXME i18n
+			return TabsContracts.get().columnQuantity();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
 			return from.getQuantity();
 		}
 	},
-	INCLUDED(String.class, GlazedLists.comparableComparator()) {
+	SINGLETON(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Included"; //FIXME i18n
+			return TabsContracts.get().columnSingleton();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
-			return from.isIncluded() ? "Get" : "Give";
+			return from.getSingleton();
 		}
 	},
 	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "TypeID"; //FIXME i18n
+			return TabsContracts.get().columnTypeID();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
 			return from.getTypeID();
+		}
+	},
+	ISSUER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Issuer"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getIssuer();
+		}
+	},
+	ISSUER_CORP(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "IssuerCorp"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getIssuerCorp();
+		}
+	},
+	ASSIGNEE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Assignee"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getAssignee();
+		}
+	},
+	ACCEPTOR(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Acceptor"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getAcceptor();
+		}
+	},
+	ISSUED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Issued"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getDateIssued();
+		}
+	},
+	EXPIRED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Expired"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getDateExpired();
+		}
+	},
+	ACCEPTED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Accepted"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getDateAccepted();
+		}
+	},
+	COMPLETED_DATE(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return "Completed"; //FIXME i18n
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getDateCompleted();
 		}
 	};
 

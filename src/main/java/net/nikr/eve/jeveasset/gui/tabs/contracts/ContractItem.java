@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
+import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 public class ContractItem extends EveContractItem implements Comparable<ContractItem> {
@@ -49,12 +50,20 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		this.setTypeID(contractItem.getTypeID());
 	}
 
+	public Contract getContract() {
+		return contract;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public Contract getContract() {
-		return contract;
+	public String getSingleton() {
+		if (isSingleton()) {
+			return TabsContracts.get().unpackaged();
+		} else {
+			return TabsContracts.get().packaged();
+		}
 	}
 
 	@Override

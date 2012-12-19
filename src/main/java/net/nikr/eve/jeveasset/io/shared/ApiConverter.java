@@ -210,22 +210,28 @@ public final class ApiConverter {
 		String owner = human.getName();
 		return new MarketOrder(apiMarketOrder, name, location, system, region, owner);
 	}
-	public static List<ContractItem> eveContractItemsToContractItems(final Human human, final Map<EveContract, List<EveContractItem>> contracts, final Settings settings) {
+	public static List<ContractItem> eveContractItemsToContractItems(final Map<EveContract, List<EveContractItem>> contracts, final Settings settings) {
 		List<ContractItem> contractItem = new ArrayList<ContractItem>();
 		for (Entry<EveContract, List<EveContractItem>> entry : contracts.entrySet()) {
 			for (EveContractItem eveContractItem : entry.getValue()) {
-				contractItem.add(eveContractItemToContractItem(human, eveContractItem, entry.getKey(), settings));
+				contractItem.add(eveContractItemToContractItem(eveContractItem, entry.getKey(), settings));
 			}
 		}
 		return contractItem;
 	}
-	private static ContractItem eveContractItemToContractItem(final Human human, final EveContractItem eveContractItem, EveContract eveContract, final Settings settings) {
+	private static ContractItem eveContractItemToContractItem(final EveContractItem eveContractItem, EveContract eveContract, final Settings settings) {
 		String name = ApiIdConverter.typeName(eveContractItem.getTypeID(), settings.getItems());
-		Contract contract = eveContractToContract(human, eveContract, settings);
+		Contract contract = eveContractToContract(eveContract, settings);
 		return new ContractItem(eveContractItem, contract, name);
 	}
-	private static Contract eveContractToContract(final Human human, final EveContract eveContract, final Settings settings) {
-		return new Contract(eveContract);
+	private static Contract eveContractToContract(final EveContract eveContract, final Settings settings) {
+		String acceptor = ApiIdConverter.ownerName(eveContract.getAcceptorID(), settings.getOwners());
+		String assignee = ApiIdConverter.ownerName(eveContract.getAssigneeID(), settings.getOwners());
+		String issuerCorp = ApiIdConverter.ownerName(eveContract.getIssuerCorpID(), settings.getOwners());
+		String issuer = ApiIdConverter.ownerName(eveContract.getIssuerID(), settings.getOwners());
+		String endStation = ApiIdConverter.locationName(eveContract.getEndStationID(), null, settings.getLocations());
+		String startStation = ApiIdConverter.locationName(eveContract.getStartStationID(), null, settings.getLocations());
+		return new Contract(eveContract, acceptor, assignee, issuerCorp, issuer, endStation, startStation);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final String owner, final Settings settings) {
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();

@@ -26,7 +26,20 @@ import com.beimin.eveapi.shared.contract.EveContract;
 
 public class Contract extends EveContract {
 
-	public Contract(EveContract contract) {
+	private String acceptor;
+	private String assignee;
+	private String issuerCorp;
+	private String issuer;
+	private String endStation;
+	private String startStation;
+
+	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, String endStation, String startStation) {
+		this.acceptor = acceptor;
+		this.assignee = assignee;
+		this.issuerCorp = issuerCorp;
+		this.issuer = issuer;
+		this.endStation = endStation;
+		this.startStation = startStation;
 		this.setAcceptorID(contract.getAcceptorID());
 		this.setAssigneeID(contract.getAssigneeID());
 		this.setAvailability(contract.getAvailability());
@@ -49,6 +62,38 @@ public class Contract extends EveContract {
 		this.setTitle(contract.getTitle());
 		this.setType(contract.getType());
 		this.setVolume(contract.getVolume());
+	}
+
+	public String getAcceptor() {
+		if (acceptor.isEmpty()) {
+			return "Not Accepted"; //FIXME i18n
+		} else {
+			return acceptor;
+		}
+	}
+
+	public String getAssignee() {
+		if (assignee.isEmpty()) {
+			return "Public"; //FIXME i18n
+		} else {
+			return assignee;
+		}
+	}
+
+	public String getIssuerCorp() {
+		return issuerCorp;
+	}
+
+	public String getIssuer() {
+		return issuer;
+	}
+
+	public String getEndStation() {
+		return endStation;
+	}
+
+	public String getStartStation() {
+		return startStation;
 	}
 
 	@Override

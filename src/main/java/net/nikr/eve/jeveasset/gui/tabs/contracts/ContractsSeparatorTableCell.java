@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
+import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem> {
@@ -45,19 +46,21 @@ public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem
 		Font font = jName.getFont();
 		jName.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 1));
 
-		JLabel jTypeLabel = new JLabel("Type"); //FIXME i18n
+		JLabel jTypeLabel = new JLabel(TabsContracts.get().type());
 		jTypeLabel.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
 		jType = new JLabel();
-		
+
 		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-				.addComponent(jExpand)
-				.addGap(10)
-				.addComponent(jName, 220, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGap(10)
-				.addComponent(jTypeLabel)
-				.addGap(5)
-				.addComponent(jType)
+			layout.createParallelGroup()
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jExpand)
+					.addGap(10)
+					.addComponent(jName, 220, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(jTypeLabel)
+					.addGap(4)
+					.addComponent(jType)
+				)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -79,13 +82,14 @@ public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem
 			return;
 		}
 		jName.setText(item.getContract().getTitle());
+
 		String type;
-		switch (item.getContract().getType()) { //FIXME i18n
-			case AUCTION: type = "Auction"; break;
-			case COURIER: type = "Courier"; break;
-			case ITEMEXCHANGE: type = "Item Exchange"; break;
-			case LOAN: type = "Loan"; break;
-			default: type = "unknown";
+		switch (item.getContract().getType()) {
+			case AUCTION: type = TabsContracts.get().auction(); break;
+			case COURIER: type = TabsContracts.get().courier(); break;
+			case ITEMEXCHANGE: type = TabsContracts.get().itemExchange(); break;
+			case LOAN: type = TabsContracts.get().loan(); break;
+			default: type = TabsContracts.get().unknown();
 		}
 		jType.setText(type);
 	}

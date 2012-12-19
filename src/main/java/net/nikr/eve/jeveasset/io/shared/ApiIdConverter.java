@@ -151,6 +151,17 @@ public final class ApiIdConverter {
 		return "!" + String.valueOf(typeID);
 	}
 
+	public static String ownerName(final long ownerID, final Map<Long, String> owners) {
+		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
+			return "";
+		}
+		String owner = owners.get(ownerID);
+		if (owner != null) {
+			return owner;
+		}
+		return "!" + String.valueOf(ownerID);
+	}
+
 	public static double priceBase(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
