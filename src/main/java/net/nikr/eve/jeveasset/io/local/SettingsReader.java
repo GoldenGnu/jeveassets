@@ -41,6 +41,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
@@ -591,6 +594,7 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private Enum<?> getColumn(final String column, final String tableName) {
+		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
@@ -598,6 +602,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Stockpile (Extra)
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileTableFormat.valueOf(column);
@@ -605,6 +610,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Industry Jobs
 		try {
 			if (tableName.equals(IndustryJobsTab.NAME)) {
 				return IndustryJobTableFormat.valueOf(column);
@@ -612,6 +618,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Market Orders
 		try {
 			if (tableName.equals(MarketOrdersTab.NAME)) {
 				return MarketTableFormat.valueOf(column);
@@ -619,6 +626,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Assets
 		try {
 			if (tableName.equals(AssetsTab.NAME)) {
 				return EveAssetTableFormat.valueOf(column);
@@ -626,6 +634,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Items
 		try {
 			if (tableName.equals(ItemsTab.NAME)) {
 				return ItemTableFormat.valueOf(column);
@@ -633,7 +642,24 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		try { //All
+		//Contracts
+		try {
+			if (tableName.equals(ContractsTab.NAME)) {
+				return ContractsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Contracts (Extra)
+		try {
+			if (tableName.equals(ContractsTab.NAME)) {
+				return ContractsExtendedTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//All
+		try {
 			return Filter.ExtraColumns.valueOf(column);
 		} catch (IllegalArgumentException exception) {
 

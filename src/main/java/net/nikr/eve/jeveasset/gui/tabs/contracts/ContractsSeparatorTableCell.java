@@ -82,15 +82,6 @@ public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem
 			return;
 		}
 		jName.setText(item.getContract().getTitle());
-
-		String type;
-		switch (item.getContract().getType()) {
-			case AUCTION: type = TabsContracts.get().auction(); break;
-			case COURIER: type = TabsContracts.get().courier(); break;
-			case ITEMEXCHANGE: type = TabsContracts.get().itemExchange(); break;
-			case LOAN: type = TabsContracts.get().loan(); break;
-			default: type = TabsContracts.get().unknown();
-		}
-		jType.setText(type);
+		jType.setText(item.getContract().getTypeName());
 	}
 }

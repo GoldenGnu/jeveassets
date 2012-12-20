@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import com.beimin.eveapi.shared.contract.EveContract;
+import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 public class Contract extends EveContract {
@@ -62,6 +63,16 @@ public class Contract extends EveContract {
 		this.setTitle(contract.getTitle());
 		this.setType(contract.getType());
 		this.setVolume(contract.getVolume());
+	}
+
+	public String getTypeName() {
+		switch (getType()) {
+			case AUCTION: return TabsContracts.get().auction();
+			case COURIER: return TabsContracts.get().courier();
+			case ITEMEXCHANGE: return TabsContracts.get().itemExchange();
+			case LOAN: return TabsContracts.get().loan();
+			default: return TabsContracts.get().unknown();
+		}
 	}
 
 	public String getAcceptor() {
