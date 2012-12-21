@@ -24,13 +24,14 @@ package net.nikr.eve.jeveasset.gui.tabs.contracts;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
 public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem> {
 	TITLE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Title]"; //FIXME i18n
+			return TabsContracts.get().columnTitle();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -40,7 +41,7 @@ public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem
 	TYPE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Type]"; //FIXME i18n
+			return TabsContracts.get().columnType();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {

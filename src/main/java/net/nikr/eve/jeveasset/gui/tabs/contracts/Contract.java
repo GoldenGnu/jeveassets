@@ -77,7 +77,7 @@ public class Contract extends EveContract {
 
 	public String getAcceptor() {
 		if (acceptor.isEmpty()) {
-			return "Not Accepted"; //FIXME i18n
+			return TabsContracts.get().notAccepted();
 		} else {
 			return acceptor;
 		}
@@ -85,7 +85,7 @@ public class Contract extends EveContract {
 
 	public String getAssignee() {
 		if (assignee.isEmpty()) {
-			return "Public"; //FIXME i18n
+			return TabsContracts.get().publicContract();
 		} else {
 			return assignee;
 		}

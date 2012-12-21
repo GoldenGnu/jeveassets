@@ -72,7 +72,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	ISSUER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Issuer"; //FIXME i18n
+			return TabsContracts.get().columnIssuer();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -82,7 +82,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	ISSUER_CORP(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "IssuerCorp"; //FIXME i18n
+			return TabsContracts.get().columnIssuerCorp();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -92,7 +92,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	ASSIGNEE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Assignee"; //FIXME i18n
+			return TabsContracts.get().columnAssignee();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -102,17 +102,37 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	ACCEPTOR(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Acceptor"; //FIXME i18n
+			return TabsContracts.get().columnAcceptor();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
 			return from.getContract().getAcceptor();
 		}
 	},
+	START_STATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnStartStation();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getStartStation();
+		}
+	},
+	END_STATION(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnEndStation();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getEndStation();
+		}
+	},
 	ISSUED_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Issued"; //FIXME i18n
+			return TabsContracts.get().columnIssued();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -122,7 +142,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	EXPIRED_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Expired"; //FIXME i18n
+			return TabsContracts.get().columnExpired();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -132,7 +152,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	ACCEPTED_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Accepted"; //FIXME i18n
+			return TabsContracts.get().columnAccepted();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
@@ -142,7 +162,7 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	COMPLETED_DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Completed"; //FIXME i18n
+			return TabsContracts.get().columnCompleted();
 		}
 		@Override
 		public Object getColumnValue(final ContractItem from) {
