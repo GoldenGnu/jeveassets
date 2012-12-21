@@ -234,8 +234,8 @@ public class FilterManager<E> extends JDialogCentered {
 		listModel.clear();
 		List<String> list = new ArrayList<String>(filters.keySet());
 		Collections.sort(list);
-		for (int a = 0; a < list.size(); a++) {
-			listModel.addElement(list.get(a));
+		for (String filter: list) {
+			listModel.addElement(filter);
 		}
 		if (!listModel.isEmpty()) {
 			if (getSelectedString() == null) {

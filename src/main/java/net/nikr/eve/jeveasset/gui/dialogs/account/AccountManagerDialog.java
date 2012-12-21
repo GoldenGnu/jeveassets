@@ -204,8 +204,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private void checkAssets(final boolean selected, final boolean check) {
 		if (selected) { //Set selected to check value
 			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++) {
-				Object o = tableModel.getElementAt(selectedRows[a]);
+			for (int i = 0; i < selectedRows.length; i++) {
+				Object o = tableModel.getElementAt(selectedRows[i]);
 				if (o instanceof Owner) {
 					Owner owner = (Owner) o;
 					owner.setShowAssets(check);

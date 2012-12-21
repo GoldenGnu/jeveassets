@@ -62,8 +62,8 @@ public final class ItemsReader extends AbstractXmlReader {
 	private void parseItems(final Element element, final Map<Integer, Item> items) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Item item;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			Element itemElement = (Element) nodes.item(a);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element itemElement = (Element) nodes.item(i);
 			item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
 			items.put(item.getTypeID(), item);
@@ -87,8 +87,8 @@ public final class ItemsReader extends AbstractXmlReader {
 
 	private void parseMaterials(final Element element, final Item item) {
 		NodeList nodes = element.getElementsByTagName("material");
-		for (int a = 0; a < nodes.getLength(); a++) {
-			parseMaterial(nodes.item(a), item);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			parseMaterial(nodes.item(i), item);
 		}
 	}
 

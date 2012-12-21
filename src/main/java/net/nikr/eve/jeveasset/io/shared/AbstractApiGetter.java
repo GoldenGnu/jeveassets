@@ -84,29 +84,31 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		LOG.info("{} updating:", taskName);
 		//Calc size
 		int ownerSize = 0;
-		int ownerCount = 0;
 		if (updateTask != null) { //Only relevant when tracking progress
 			for (Account countAccount : accounts) {
 				ownerSize = ownerSize + countAccount.getOwners().size();
 			}
 		}
-		for (int a = 0; a < accounts.size(); a++) {
-			account = accounts.get(a);
+		int ownerCount = 0;
+		int accountCount = 0;
+		for (Account accountLoop : accounts) {
+			this.account = accountLoop;
 			if (updateAccount) {
 				if (updateTask != null) {
 					if (updateTask.isCancelled()) {
-						addError(String.valueOf(account.getKeyID()), "Cancelled");
+						addError(String.valueOf(accountLoop.getKeyID()), "Cancelled");
 					} else {
 						loadAccount();
 					}
-					updateTask.setTaskProgress(accounts.size(), a + 1, 0, 100);
+					accountCount++;
+					updateTask.setTaskProgress(accounts.size(), accountCount, 0, 100);
 				} else {
 					loadAccount();
 				}
 			}
 			if (updateOwner) {
-				for (Owner currentOwner : account.getOwners()) {
-					this.owner = currentOwner;
+				for (Owner ownerLoop : accountLoop.getOwners()) {
+					this.owner = ownerLoop;
 					if (updateTask != null) {
 						if (updateTask.isCancelled()) {
 							addError(owner.getName(), "Cancelled");

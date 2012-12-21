@@ -217,13 +217,14 @@ public final class ApiIdConverter {
 	}
 
 	public static List<Asset> parents(final Asset parentEveAsset) {
-		List<Asset> parents = new ArrayList<Asset>();
+		List<Asset> parents;
 		if (parentEveAsset != null) {
-			for (int a = 0; a < parentEveAsset.getParents().size(); a++) {
-				parents.add(parentEveAsset.getParents().get(a));
-			}
+			parents = new ArrayList<Asset>(parentEveAsset.getParents());
 			parents.add(parentEveAsset);
+		} else {
+			parents = new ArrayList<Asset>();
 		}
+		
 		return parents;
 	}
 

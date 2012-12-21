@@ -76,8 +76,8 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	public void setSelectedIndices(final int[] indices) {
 		super.setSelectedIndices(indices);
 		selectedList.clear();
-		for (int a = 0; a < indices.length; a++) {
-			selectedList.add((Integer) indices[a]);
+		for (int i = 0; i < indices.length; i++) {
+			selectedList.add((Integer) indices[i]);
 		}
 	}
 
@@ -100,9 +100,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 			start = lead;
 			end = anchor;
 		}
-		for (int a = start; a <= end; a++) {
-			if (!selectedList.contains((Integer) a)) {
-				selectedList.add((Integer) a);
+		for (int i = start; i <= end; i++) {
+			if (!selectedList.contains((Integer) i)) {
+				selectedList.add((Integer) i);
 			}
 		}
 	}
@@ -119,9 +119,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 			start = index1;
 			end = index0;
 		}
-		for (int a = start; a <= end; a++) {
-			if (!selectedList.contains((Integer) a)) {
-				selectedList.add((Integer) a);
+		for (int i = start; i <= end; i++) {
+			if (!selectedList.contains((Integer) i)) {
+				selectedList.add((Integer) i);
 			}
 		}
 	}
@@ -231,8 +231,8 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	//Private Methods
 	private void updateList(final int index, final int fix) {
 		List<Integer> fixedIndices = new ArrayList<Integer>(selectedList.size());
-		for (int a = 0; a < selectedList.size(); a++) {
-			int item = selectedList.get(a).intValue();
+		for (int i = 0; i < selectedList.size(); i++) {
+			int item = selectedList.get(i).intValue();
 			if (item >= index) {
 				item = item + fix;
 				fixedIndices.add(item);
@@ -291,8 +291,8 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		int size = selectedList.size();
 		selectedList.clear();
 		if (size != lm.getSize()) {
-			for (Integer a = 0; a < lm.getSize(); a++) {
-				selectedList.add(a);
+			for (Integer i = 0; i < lm.getSize(); i++) {
+				selectedList.add(i);
 			}
 		}
 		updateSelections();
@@ -301,8 +301,8 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	public void selectAll() {
 		ListModel lm = this.getModel();
 		selectedList.clear();
-		for (Integer a = 0; a < lm.getSize(); a++) {
-			selectedList.add(a);
+		for (Integer i = 0; i < lm.getSize(); i++) {
+			selectedList.add(i);
 		}
 		updateSelections();
 		setAnchor(0);

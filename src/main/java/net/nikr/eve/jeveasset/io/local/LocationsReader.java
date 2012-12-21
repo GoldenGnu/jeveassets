@@ -61,8 +61,8 @@ public final class LocationsReader extends AbstractXmlReader {
 	private void parseLocations(final Element element, final Map<Long, Location> locations) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Location location;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			location = parseLocation(nodes.item(a));
+		for (int i = 0; i < nodes.getLength(); i++) {
+			location = parseLocation(nodes.item(i));
 			locations.put(location.getLocationID(), location);
 		}
 	}

@@ -44,14 +44,14 @@ public class JWorking extends JPanel {
 		this.setMaximumSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
 		this.setDoubleBuffered(true);
 		loadingImages = new BufferedImage[IMG_FRAMES];
-		for (int a = 0; a < IMG_FRAMES; a++) {
+		for (int i = 0; i < IMG_FRAMES; i++) {
 			String number;
-			if ((a + 1) < 10) {
-				number = "0" + (a + 1);
+			if ((i + 1) < 10) {
+				number = "0" + (i + 1);
 			} else {
-				number = "" + (a + 1);
+				number = "" + (i + 1);
 			}
-			loadingImages[a] = Images.getBufferedImage("working" + number + ".png");
+			loadingImages[i] = Images.getBufferedImage("working" + number + ".png");
 		}
 		Worker worker = new Worker(this);
 		worker.start();

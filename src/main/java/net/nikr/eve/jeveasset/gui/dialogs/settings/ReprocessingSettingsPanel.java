@@ -270,18 +270,18 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		validateStation();
 	}
 
-	private int getSelected(final JRadioButton[] jRadioButton) {
-		for (int a = 0; a < jRadioButton.length; a++) {
-			if (jRadioButton[a].isSelected()) {
-				return a;
+	private int getSelected(final JRadioButton[] jRadioButtons) {
+		for (int i = 0; i < jRadioButtons.length; i++) {
+			if (jRadioButtons[i].isSelected()) {
+				return i;
 			}
 		}
 		return 0;
 	}
 
-	private void setEnabled(final JRadioButton[] jRadioButton, final boolean enabled) {
-		for (int a = 0; a < jRadioButton.length; a++) {
-			jRadioButton[a].setEnabled(enabled);
+	private void setEnabled(final JRadioButton[] jRadioButtons, final boolean enabled) {
+		for (JRadioButton jRadioButton : jRadioButtons) {
+			jRadioButton.setEnabled(enabled);
 		}
 	}
 

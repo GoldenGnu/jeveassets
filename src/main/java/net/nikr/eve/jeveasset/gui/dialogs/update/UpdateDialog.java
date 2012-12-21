@@ -209,7 +209,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	}
 
 	public void update() {
-		List<Account> accounts = program.getSettings().getAccounts();
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
@@ -225,8 +224,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		boolean bAccountBalanceUpdateAll = true;
 
 		Date priceDataNextUpdate = program.getSettings().getPriceDataNextUpdate();
-		for (int a = 0; a < accounts.size(); a++) {
-			Account account = accounts.get(a);
+		for (Account account : program.getSettings().getAccounts()) {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);

@@ -48,8 +48,8 @@ public final class CsvWriter {
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);
 			writer.writeHeader(header);
-			for (int a = 0; a < data.size(); a++) {
-				writer.write(data.get(a), header);
+			for (Map<String, String> map : data) {
+				writer.write(map, header);
 			}
 			writer.close();
 		} catch (IOException ex) {

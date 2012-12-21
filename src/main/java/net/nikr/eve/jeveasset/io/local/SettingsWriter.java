@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
@@ -231,10 +232,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "group");
 			node.setAttributeNS(null, "name", overviewGroup.getName());
 			parentNode.appendChild(node);
-			for (int a = 0; a < overviewGroup.getLocations().size(); a++) {
+			for (OverviewLocation location : overviewGroup.getLocations()) {
 				Element nodeLocation = xmldoc.createElementNS(null, "location");
-				nodeLocation.setAttributeNS(null, "name", overviewGroup.getLocations().get(a).getName());
-				nodeLocation.setAttributeNS(null, "type", overviewGroup.getLocations().get(a).getType().name());
+				nodeLocation.setAttributeNS(null, "name", location.getName());
+				nodeLocation.setAttributeNS(null, "type", location.getType().name());
 				node.appendChild(nodeLocation);
 			}
 		}

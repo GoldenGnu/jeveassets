@@ -188,8 +188,8 @@ public abstract class JMainTab {
 			//Rows
 			boolean clickInRowsSelection = false;
 			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++) {
-				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				if (selectedRows[i] == jTable.rowAtPoint(e.getPoint())) {
 					clickInRowsSelection = true;
 					break;
 				}
@@ -198,8 +198,8 @@ public abstract class JMainTab {
 			//Column
 			boolean clickInColumnsSelection = false;
 			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedColumns.length; a++) {
-				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())) {
+			for (int i = 0; i < selectedColumns.length; i++) {
+				if (selectedColumns[i] == jTable.columnAtPoint(e.getPoint())) {
 					clickInColumnsSelection = true;
 					break;
 				}

@@ -143,8 +143,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		DefaultListModel listModel = new DefaultListModel();
 		List<Profile> profiles = program.getSettings().getProfiles();
 		Collections.sort(profiles);
-		for (int a = 0; a < profiles.size(); a++) {
-			listModel.addElement(profiles.get(a));
+		for (Profile profile : profiles) {
+			listModel.addElement(profile);
 		}
 		jProfiles.setModel(listModel);
 		if (!profiles.isEmpty()) {
@@ -171,9 +171,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 	private void loadProfile(final Profile profile) {
 		if (profile != null && !profile.isActiveProfile()) {
-			List<Profile> profiles = program.getSettings().getProfiles();
-			for (int a = 0; a < profiles.size(); a++) {
-				profiles.get(a).setActiveProfile(false);
+			for (Profile profileLoop : program.getSettings().getProfiles()) {
+				profileLoop.setActiveProfile(false);
 			}
 			program.getSettings().saveAssets();
 			program.getSettings().setAccounts(new ArrayList<Account>());
@@ -286,9 +285,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		if (ACTION_DEFAULT_PROFILE.equals(e.getActionCommand())) {
 			Profile profile = (Profile) jProfiles.getSelectedValue();
 			if (profile != null && !profile.isDefaultProfile()) {
-				List<Profile> profiles = program.getSettings().getProfiles();
-				for (int a = 0; a < profiles.size(); a++) {
-					profiles.get(a).setDefaultProfile(false);
+				for (Profile profileLoop : program.getSettings().getProfiles()) {
+					profileLoop.setDefaultProfile(false);
 				}
 				profile.setDefaultProfile(true);
 				jProfiles.updateUI();

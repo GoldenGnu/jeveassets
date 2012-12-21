@@ -656,8 +656,8 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	public void updateData() {
 		calcTotal();
 		jOwners.removeAllItems();
-		for (int a = 0; a < owners.size(); a++) {
-			jOwners.addItem(owners.get(a));
+		for (String owner : owners) {
+			jOwners.addItem(owner);
 		}
 		if (jOwners.getModel().getSize() > 0) {
 			jOwners.setEnabled(true);
@@ -668,8 +668,8 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		jOwners.setSelectedIndex(0);
 
 		jCorps.removeAllItems();
-		for (int a = 0; a < corps.size(); a++) {
-			jCorps.addItem(corps.get(a));
+		for (String corp : corps) {
+			jCorps.addItem(corp);
 		}
 		if (jCorps.getModel().getSize() > 0) {
 			jCorps.setEnabled(true);
@@ -772,10 +772,10 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			moduleOutput = moduleOutput + "<tr><td style=\"background: #ffffff; text-align: right;\">" + module + "</td></tr>";
 		}
 
-		public void addNone(final int i) {
+		public void addNone(final int count) {
 			if (moduleOutput.isEmpty()) {
 				String temp = "";
-				for (int a = 1; a < i; a++) {
+				for (int i = 1; i < count; i++) {
 					temp = temp + "<br/>";
 				}
 				addValue("<i>" + TabsValues.get().none() + "</i><br/>" + temp);

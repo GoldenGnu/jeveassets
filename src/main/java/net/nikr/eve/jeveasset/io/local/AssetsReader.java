@@ -85,8 +85,8 @@ public final class AssetsReader extends AbstractXmlReader {
 
 	private void parseAccounts(final Element element, final List<Account> accounts, final Settings settings) {
 		NodeList accountNodes = element.getElementsByTagName("account");
-		for (int a = 0; a < accountNodes.getLength(); a++) {
-			Element currentNode = (Element) accountNodes.item(a);
+		for (int i = 0; i < accountNodes.getLength(); i++) {
+			Element currentNode = (Element) accountNodes.item(i);
 			Account account = parseAccount(currentNode);
 			parseOwners(currentNode, account, settings);
 			accounts.add(account);
@@ -135,8 +135,8 @@ public final class AssetsReader extends AbstractXmlReader {
 
 	private void parseOwners(final Element element, final Account account, final Settings settings) {
 		NodeList ownerNodes =  element.getElementsByTagName("human");
-		for (int a = 0; a < ownerNodes.getLength(); a++) {
-			Element currentNode = (Element) ownerNodes.item(a);
+		for (int i = 0; i < ownerNodes.getLength(); i++) {
+			Element currentNode = (Element) ownerNodes.item(i);
 			Owner owner = parseOwner(currentNode, account);
 			account.getOwners().add(owner);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
@@ -281,7 +281,6 @@ public final class AssetsReader extends AbstractXmlReader {
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
 			NodeList balanceNodes = currentBalancesNode.getElementsByTagName("balance");
-
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
 				EveAccountBalance accountBalance = parseBalance(currentNode);
@@ -438,8 +437,8 @@ public final class AssetsReader extends AbstractXmlReader {
 
 	private void parseAssets(final Node node, final List<Asset> assets, final Asset parentEveAsset, final Settings settings) {
 		NodeList assetsNodes = node.getChildNodes();
-		for (int a = 0; a < assetsNodes.getLength(); a++) {
-			Node currentNode = assetsNodes.item(a);
+		for (int i = 0; i < assetsNodes.getLength(); i++) {
+			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
 				Asset eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
 				if (parentEveAsset == null) {

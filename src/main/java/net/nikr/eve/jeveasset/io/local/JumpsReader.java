@@ -63,8 +63,8 @@ public final class JumpsReader extends AbstractXmlReader {
 	private void parseJumps(final Element element, final Map<Long, Location> locations, final List<Jump> jumps) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			jump = parseEdge(nodes.item(a), locations);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			jump = parseEdge(nodes.item(i), locations);
 			jumps.add(jump);
 		}
 	}

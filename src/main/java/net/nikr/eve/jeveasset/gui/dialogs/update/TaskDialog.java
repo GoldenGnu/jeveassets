@@ -110,9 +110,9 @@ public class TaskDialog {
 
 		ParallelGroup horizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
 		horizontalGroup.addComponent(jUpdate, WIDTH, WIDTH, WIDTH);
-		for (int a = 0; a < updateTasks.size(); a++) {
-			horizontalGroup.addComponent(updateTasks.get(a).getTextLabel(), WIDTH, WIDTH, WIDTH);
-			updateTasks.get(a).getTextLabel().addMouseListener(new ErrorMouseListener(updateTasks.get(a)));
+		for (UpdateTask updateTaskLoop : updateTasks) {
+			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
+			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
 		}
 		horizontalGroup.addComponent(jProgressBar, WIDTH, WIDTH, WIDTH);
 		horizontalGroup.addGroup(layout.createSequentialGroup()
@@ -130,8 +130,8 @@ public class TaskDialog {
 
 		SequentialGroup verticalGroup = layout.createSequentialGroup();
 		verticalGroup.addComponent(jUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
-		for (int a = 0; a < updateTasks.size(); a++) {
-			verticalGroup.addComponent(updateTasks.get(a).getTextLabel(), Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
+		for (UpdateTask updateTaskLoop : updateTasks) {
+			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		}
 		verticalGroup.addComponent(jProgressBar, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		verticalGroup.addGroup(layout.createParallelGroup()
@@ -200,8 +200,8 @@ public class TaskDialog {
 		int cancelledIndex = index;
 		index = updateTasks.size();
 		updateTask.cancel(true);
-		for (int a = cancelledIndex; a < updateTasks.size(); a++) {
-			updateTasks.get(a).cancelled();
+		for (int i = cancelledIndex; i < updateTasks.size(); i++) {
+			updateTasks.get(i).cancelled();
 		}
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);

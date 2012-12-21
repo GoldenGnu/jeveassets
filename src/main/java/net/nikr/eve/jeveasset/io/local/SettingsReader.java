@@ -265,9 +265,9 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseOwners(final Element element, final Settings settings) {
 		NodeList ownerNodeList = element.getElementsByTagName("owner");
-		for (int a = 0; a < ownerNodeList.getLength(); a++) {
+		for (int i = 0; i < ownerNodeList.getLength(); i++) {
 			//Read Owner
-			Element ownerNode = (Element) ownerNodeList.item(a);
+			Element ownerNode = (Element) ownerNodeList.item(i);
 			String ownerName = AttributeGetters.getString(ownerNode, "name");
 			long ownerID = AttributeGetters.getLong(ownerNode, "id");
 			settings.getOwners().put(ownerID, ownerName);
@@ -423,8 +423,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseUserPrices(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
-		for (int a = 0; a < userPriceNodes.getLength(); a++) {
-			Element currentNode = (Element) userPriceNodes.item(a);
+		for (int i = 0; i < userPriceNodes.getLength(); i++) {
+			Element currentNode = (Element) userPriceNodes.item(i);
 			String name = AttributeGetters.getString(currentNode, "name");
 			double price = AttributeGetters.getDouble(currentNode, "price");
 			int typeID = AttributeGetters.getInt(currentNode, "typeid");
@@ -435,8 +435,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseUserItemNames(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("itemname");
-		for (int a = 0; a < userPriceNodes.getLength(); a++) {
-			Element currentNode = (Element) userPriceNodes.item(a);
+		for (int i = 0; i < userPriceNodes.getLength(); i++) {
+			Element currentNode = (Element) userPriceNodes.item(i);
 			String name = AttributeGetters.getString(currentNode, "name");
 			String typeName = AttributeGetters.getString(currentNode, "typename");
 			long itemId = AttributeGetters.getLong(currentNode, "itemid");
@@ -495,8 +495,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseFlags(final Element element, final Settings settings) {
 		NodeList flagNodes = element.getElementsByTagName("flag");
-		for (int a = 0; a < flagNodes.getLength(); a++) {
-			Element currentNode = (Element) flagNodes.item(a);
+		for (int i = 0; i < flagNodes.getLength(); i++) {
+			Element currentNode = (Element) flagNodes.item(i);
 			String key = AttributeGetters.getString(currentNode, "key");
 			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
 			settings.getFlags().put(key, enabled);
@@ -505,8 +505,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseUpdates(final Element element, final Settings settings) {
 		NodeList updateNodes = element.getElementsByTagName("update");
-		for (int a = 0; a < updateNodes.getLength(); a++) {
-			Element currentNode = (Element) updateNodes.item(a);
+		for (int i = 0; i < updateNodes.getLength(); i++) {
+			Element currentNode = (Element) updateNodes.item(i);
 			parseUpdate(currentNode, settings);
 		}
 	}
@@ -558,8 +558,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseTableResize(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
-		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Element tableNode = (Element) tableNodeList.item(a);
+		for (int i = 0; i < tableNodeList.getLength(); i++) {
+			Element tableNode = (Element) tableNodeList.item(i);
 			String tableName = AttributeGetters.getString(tableNode, "name");
 			ResizeMode resizeMode = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
 			settings.getTableResize().put(tableName, resizeMode);
@@ -801,8 +801,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseAssetAdded(final Element element, final Settings settings) {
 		NodeList assetNodes = element.getElementsByTagName("asset");
-		for (int a = 0; a < assetNodes.getLength(); a++) {
-			Element currentNode = (Element) assetNodes.item(a);
+		for (int i = 0; i < assetNodes.getLength(); i++) {
+			Element currentNode = (Element) assetNodes.item(i);
 			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
 			Date date = AttributeGetters.getDate(currentNode, "date");
 			settings.getAssetAdded().put(itemID, date);

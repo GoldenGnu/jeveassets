@@ -63,17 +63,17 @@ public final class Main {
 		boolean hasNoUpdate = false;
 		boolean hasUpdate = false;
 
-		for (int a = 0; a < args.length; a++) {
-			if (args[a].toLowerCase().equals("-debug")) {
+		for (String arg : args) {
+			if (arg.toLowerCase().equals("-debug")) {
 				isDebug = true;
 			}
-			if (args[a].toLowerCase().equals("-portable")) {
+			if (arg.toLowerCase().equals("-portable")) {
 				isPortable = true;
 			}
-			if (args[a].toLowerCase().equals("-noupdate")) {
+			if (arg.toLowerCase().equals("-noupdate")) {
 				hasNoUpdate = true;
 			}
-			if (args[a].toLowerCase().equals("-update")) {
+			if (arg.toLowerCase().equals("-update")) {
 				hasUpdate = true;
 			}
 		}

@@ -71,8 +71,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 		Element parentNode = xmldoc.createElementNS(null, "accounts");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 
-		for (int a = 0; a < accounts.size(); a++) {
-			Account account = accounts.get(a);
+		for (Account account : accounts) {
 			Element node = xmldoc.createElementNS(null, "account");
 			node.setAttributeNS(null, "keyid", String.valueOf(account.getKeyID()));
 			node.setAttributeNS(null, "vcode", account.getVCode());
@@ -110,20 +109,19 @@ public final class AssetsWriter extends AbstractXmlWriter {
 	}
 
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<Asset> assets) {
-		for (int a = 0; a < assets.size(); a++) {
-			Asset eveAsset = assets.get(a);
+		for (Asset asset : assets) {
 			Element node = xmldoc.createElementNS(null, "asset");
-			node.setAttributeNS(null, "owner", eveAsset.getOwner());
-			node.setAttributeNS(null, "count", String.valueOf(eveAsset.getCount()));
-			node.setAttributeNS(null, "flagid", String.valueOf(eveAsset.getFlagID()));
-			node.setAttributeNS(null, "id", String.valueOf(eveAsset.getItemID()));
-			node.setAttributeNS(null, "typeid", String.valueOf(eveAsset.getTypeID()));
-			node.setAttributeNS(null, "corporationasset", String.valueOf(eveAsset.isCorporation()));
-			node.setAttributeNS(null, "locationid", String.valueOf(eveAsset.getLocationID()));
-			node.setAttributeNS(null, "singleton", String.valueOf(eveAsset.isSingleton()));
-			node.setAttributeNS(null, "rawquantity", String.valueOf(eveAsset.getRawQuantity()));
+			node.setAttributeNS(null, "owner", asset.getOwner());
+			node.setAttributeNS(null, "count", String.valueOf(asset.getCount()));
+			node.setAttributeNS(null, "flagid", String.valueOf(asset.getFlagID()));
+			node.setAttributeNS(null, "id", String.valueOf(asset.getItemID()));
+			node.setAttributeNS(null, "typeid", String.valueOf(asset.getTypeID()));
+			node.setAttributeNS(null, "corporationasset", String.valueOf(asset.isCorporation()));
+			node.setAttributeNS(null, "locationid", String.valueOf(asset.getLocationID()));
+			node.setAttributeNS(null, "singleton", String.valueOf(asset.isSingleton()));
+			node.setAttributeNS(null, "rawquantity", String.valueOf(asset.getRawQuantity()));
 			parentNode.appendChild(node);
-			writeAssets(xmldoc, node, eveAsset.getAssets());
+			writeAssets(xmldoc, node, asset.getAssets());
 		}
 	}
 
@@ -179,9 +177,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (int a = 0; a < accountBalances.size(); a++) {
-			EveAccountBalance accountBalance = accountBalances.get(a);
-
+		for (EveAccountBalance accountBalance : accountBalances) {
 			Element childNode = xmldoc.createElementNS(null, "balance");
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));
 			childNode.setAttributeNS(null, "accountkey", String.valueOf(accountBalance.getAccountKey()));
@@ -196,8 +192,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (int a = 0; a < marketOrders.size(); a++) {
-			ApiMarketOrder apiMarketOrder = marketOrders.get(a);
+		for (ApiMarketOrder apiMarketOrder : marketOrders) {
 			Element childNode = xmldoc.createElementNS(null, "markerorder");
 			childNode.setAttributeNS(null, "orderid", String.valueOf(apiMarketOrder.getOrderID()));
 			childNode.setAttributeNS(null, "charid", String.valueOf(apiMarketOrder.getCharID()));
@@ -224,8 +219,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (int a = 0; a < industryJobs.size(); a++) {
-			ApiIndustryJob apiIndustryJob = industryJobs.get(a);
+		for (ApiIndustryJob apiIndustryJob : industryJobs) {
 			Element childNode = xmldoc.createElementNS(null, "industryjob");
 
 			childNode.setAttributeNS(null, "jobid", String.valueOf(apiIndustryJob.getJobID()));

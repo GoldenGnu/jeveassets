@@ -300,8 +300,8 @@ public class JAutoColumnTable extends JTable {
 		int maxWidth = component.getPreferredSize().width;
 
 		//Rows width
-		for (int a = 0; a < jTable.getRowCount(); a++) {
-			final Object rowValue = jTable.getValueAt(a, columnIndex); //Get cell value
+		for (int i = 0; i < jTable.getRowCount(); i++) {
+			final Object rowValue = jTable.getValueAt(i, columnIndex); //Get cell value
 			if (rowValue == null) { //Ignore null
 				continue;
 			}
@@ -309,12 +309,12 @@ public class JAutoColumnTable extends JTable {
 			if (rowsWidth.containsKey(key)) { //Load row width
 				maxWidth = Math.max(maxWidth, rowsWidth.get(key));
 			} else { //Calculate the row width
-				renderer = jTable.getCellRenderer(a, columnIndex);
+				renderer = jTable.getCellRenderer(i, columnIndex);
 				//Ignore SeparatorTableCell
 				if (renderer instanceof SeparatorTableCell) {
 					continue;
 				}
-				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
+				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(i, columnIndex), false, false, i, columnIndex);
 				int width = component.getPreferredSize().width;
 				rowsWidth.put(key, width);
 				maxWidth = Math.max(maxWidth, width);

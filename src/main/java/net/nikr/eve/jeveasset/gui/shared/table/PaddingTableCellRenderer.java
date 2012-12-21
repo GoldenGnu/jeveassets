@@ -46,8 +46,8 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 	}
 
 	public static void install(final JTable jTable, final int top, final int left, final int bottom, final int right) {
-		for (int a = 0; a < jTable.getColumnCount(); a++) {
-			Class<?> clazz = jTable.getColumnClass(a);
+		for (int i = 0; i < jTable.getColumnCount(); i++) {
+			Class<?> clazz = jTable.getColumnClass(i);
 			TableCellRenderer defaultRenderer = jTable.getDefaultRenderer(clazz);
 			if (defaultRenderer == null) {
 				defaultRenderer = new DefaultTableCellRenderer();

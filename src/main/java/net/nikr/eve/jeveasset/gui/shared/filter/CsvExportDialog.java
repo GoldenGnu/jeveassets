@@ -429,8 +429,8 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			}
 		}
 		int[] indices = new int[selections.size()];
-		for (int i = 0; i < selections.size(); i++) {
-			indices[i] = selections.get(i);
+		for (int i : selections) {
+			indices[i] = i;
 		}
 		jColumnSelection.setSelectedIndices(indices);
 	}

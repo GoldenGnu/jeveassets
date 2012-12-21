@@ -62,8 +62,8 @@ public final class FlagsReader extends AbstractXmlReader {
 	private void parseFlags(final Element element, final Map<Integer, ItemFlag> flags) {
 		NodeList nodes = element.getElementsByTagName("row");
 		ItemFlag itemFlag;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			Element itemElement = (Element) nodes.item(a);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element itemElement = (Element) nodes.item(i);
 			itemFlag = parseFlag(itemElement);
 			flags.put(itemFlag.getFlagID(), itemFlag);
 		}

@@ -294,8 +294,7 @@ public class OverviewTab extends JMainTab {
 					if (!overviewGroup.getLocations().isEmpty()) {
 						jSubMenu.addSeparator();
 					}
-					for (int a = 0; a < overviewGroup.getLocations().size(); a++) {
-						OverviewLocation location = overviewGroup.getLocations().get(a);
+					for (OverviewLocation location : overviewGroup.getLocations()) {
 						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
 						if (location.isStation()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
@@ -446,8 +445,7 @@ public class OverviewTab extends JMainTab {
 			} else { //Groups
 				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 					OverviewGroup overviewGroup = entry.getValue();
-					for (int c = 0; c < overviewGroup.getLocations().size(); c++) {
-						OverviewLocation overviewLocation = overviewGroup.getLocations().get(c);
+					for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
 						if (overviewLocation.equalsLocation(eveAsset)) { //Update existing overview (group)
 							Overview overview = locationsMap.get(overviewGroup.getName());
 							overview.addCount(count);

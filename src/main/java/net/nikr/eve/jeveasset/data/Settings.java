@@ -378,34 +378,34 @@ public class Settings {
 			}
 		}
 	}
-	private void addAssets(final List<Asset> currentAssets, final boolean shouldShow) {
-		for (Asset eveAsset : currentAssets) {
+	private void addAssets(final List<Asset> assets, final boolean shouldShow) {
+		for (Asset asset : assets) {
 			if (shouldShow) {
 				//Data added
-				if (assetAdded.containsKey(eveAsset.getItemID())) {
-					eveAsset.setAdded(assetAdded.get(eveAsset.getItemID()));
+				if (assetAdded.containsKey(asset.getItemID())) {
+					asset.setAdded(assetAdded.get(asset.getItemID()));
 				} else {
 					Date date = new Date();
-					assetAdded.put(eveAsset.getItemID(), date);
-					eveAsset.setAdded(date);
+					assetAdded.put(asset.getItemID(), date);
+					asset.setAdded(date);
 				}
 				//User price
-				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
-					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
+				if (asset.isBlueprint() && !asset.isBpo()) { //Blueprint Copy
+					asset.setUserPrice(userPrices.get(-asset.getTypeID()));
 				} else { //All other
-					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
+					asset.setUserPrice(userPrices.get(asset.getTypeID()));
 				}
 				//Market price
-				eveAsset.setMarketPriceData(marketPriceData.get(eveAsset.getTypeID()));
+				asset.setMarketPriceData(marketPriceData.get(asset.getTypeID()));
 				//User Item Names
-				if (userNames.containsKey(eveAsset.getItemID())) {
-					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
+				if (userNames.containsKey(asset.getItemID())) {
+					asset.setName(userNames.get(asset.getItemID()).getValue());
 				} else {
-					eveAsset.setName(eveAsset.getTypeName());
+					asset.setName(asset.getTypeName());
 				}
 				//Contaioner
 				String sContainer = "";
-				for (Asset parentEveAsset : eveAsset.getParents()) {
+				for (Asset parentEveAsset : asset.getParents()) {
 					if (!sContainer.isEmpty()) {
 						sContainer = sContainer + ">";
 					}
@@ -415,19 +415,19 @@ public class Settings {
 						sContainer = sContainer + parentEveAsset.getName();
 					}
 				}
-				eveAsset.setContainer(sContainer);
+				asset.setContainer(sContainer);
 
 				//Price data
-				if (eveAsset.isMarketGroup() && priceDatas.containsKey(eveAsset.getTypeID()) && !priceDatas.get(eveAsset.getTypeID()).isEmpty()) { //Market Price
-					eveAsset.setPriceData(priceDatas.get(eveAsset.getTypeID()));
+				if (asset.isMarketGroup() && priceDatas.containsKey(asset.getTypeID()) && !priceDatas.get(asset.getTypeID()).isEmpty()) { //Market Price
+					asset.setPriceData(priceDatas.get(asset.getTypeID()));
 				} else { //No Price :(
-					eveAsset.setPriceData(null);
+					asset.setPriceData(null);
 				}
 
 				//Reprocessed price
-				eveAsset.setPriceReprocessed(0);
-				if (getItems().containsKey(eveAsset.getTypeID())) {
-					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(eveAsset.getTypeID()).getReprocessedMaterial();
+				asset.setPriceReprocessed(0);
+				if (getItems().containsKey(asset.getTypeID())) {
+					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(asset.getTypeID()).getReprocessedMaterial();
 					double priceReprocessed = 0;
 					int portionSize = 0;
 					for (ReprocessedMaterial material : reprocessedMaterials) {
@@ -452,38 +452,38 @@ public class Settings {
 					if (priceReprocessed > 0 && portionSize > 0) {
 						priceReprocessed = priceReprocessed / portionSize;
 					}
-					eveAsset.setPriceReprocessed(priceReprocessed);
+					asset.setPriceReprocessed(priceReprocessed);
 				}
 
 				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())) {
-					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<Asset>());
+				if (!uniqueAssetsDuplicates.containsKey(asset.getTypeID())) {
+					uniqueAssetsDuplicates.put(asset.getTypeID(), new ArrayList<Asset>());
 				}
 				if (shouldShow) {
-					List<Asset> dup = uniqueAssetsDuplicates.get(eveAsset.getTypeID());
-					long newCount = eveAsset.getCount();
+					List<Asset> dup = uniqueAssetsDuplicates.get(asset.getTypeID());
+					long newCount = asset.getCount();
 					if (!dup.isEmpty()) {
 						newCount = newCount + dup.get(0).getTypeCount();
 					}
-					dup.add(eveAsset);
-					for (int b = 0; b < dup.size(); b++) {
-						dup.get(b).setTypeCount(newCount);
+					dup.add(asset);
+					for (Asset assetLoop : dup) {
+						assetLoop.setTypeCount(newCount);
 					}
 				}
 				//Packaged Volume
-				if (!eveAsset.isSingleton() && packagedVolume.containsKey(eveAsset.getGroup())) {
-					eveAsset.setVolume(packagedVolume.get(eveAsset.getGroup()));
+				if (!asset.isSingleton() && packagedVolume.containsKey(asset.getGroup())) {
+					asset.setVolume(packagedVolume.get(asset.getGroup()));
 				}
 
 				//Add asset
-				eventListAssets.add(eveAsset);
+				eventListAssets.add(asset);
 			}
 			//Unique Ids
-			if (eveAsset.isMarketGroup() && !uniqueIds.contains(eveAsset.getTypeID())) {
-				uniqueIds.add(eveAsset.getTypeID());
+			if (asset.isMarketGroup() && !uniqueIds.contains(asset.getTypeID())) {
+				uniqueIds.add(asset.getTypeID());
 			}
 			//Add sub-assets
-			addAssets(eveAsset.getAssets(), shouldShow);
+			addAssets(asset.getAssets(), shouldShow);
 		}
 	}
 

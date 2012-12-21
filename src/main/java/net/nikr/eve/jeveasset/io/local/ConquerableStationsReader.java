@@ -71,8 +71,8 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 
 	private void parseStations(final Element element, final Map<Integer, ApiStation> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
-		for (int a = 0; a < filterNodes.getLength(); a++) {
-			Element currentNode = (Element) filterNodes.item(a);
+		for (int i = 0; i < filterNodes.getLength(); i++) {
+			Element currentNode = (Element) filterNodes.item(i);
 			ApiStation station = parseStation(currentNode);
 			conquerableStations.put(station.getStationID(), station);
 		}
