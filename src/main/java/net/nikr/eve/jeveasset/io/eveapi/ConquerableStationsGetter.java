@@ -25,7 +25,7 @@ import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import com.beimin.eveapi.exception.ApiException;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsWriter;
@@ -68,7 +68,7 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) { }
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) { }
 
 	@Override
 	protected long requestMask(boolean bCorp) {

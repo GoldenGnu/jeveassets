@@ -58,7 +58,7 @@ public class Account {
 	private KeyType type;
 	private Date expires;
 
-	private List<Human> humans = new ArrayList<Human>();
+	private List<Owner> owners = new ArrayList<Owner>();
 
 	public Account(final Account account) {
 		this(account.getKeyID(),
@@ -68,8 +68,8 @@ public class Account {
 				account.getAccessMask(),
 				account.getType(),
 				account.getExpires());
-		for (Human human : account.getHumans()) {
-			humans.add(new Human(this, human));
+		for (Owner owner : account.getOwners()) {
+			owners.add(new Owner(this, owner));
 		}
 	}
 
@@ -161,16 +161,16 @@ public class Account {
 		return !isCorporation(); //type.equals("Character") || type.equals("Account");
 	}
 
-	public List<Human> getHumans() {
-		return humans;
+	public List<Owner> getOwners() {
+		return owners;
 	}
 
 	public void setvCode(final String vCode) {
 		this.vCode = vCode;
 	}
 
-	public void setHumans(final List<Human> humans) {
-		this.humans = humans;
+	public void setOwners(final List<Owner> owners) {
+		this.owners = owners;
 	}
 
 	public boolean isAccountBalance() {

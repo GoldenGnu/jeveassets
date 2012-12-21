@@ -35,7 +35,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
@@ -384,26 +384,22 @@ public class ValuesTab extends JMainTab implements ActionListener {
 				bestShip = eveAsset;
 			}
 		}
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (int a = 0; a < accounts.size(); a++) {
-			List<Human> humans = accounts.get(a).getHumans();
-			for (Human human : humans) {
-				if (human.isShowAssets()) {
-					if (human.isCharacter() && !owners.contains(human.getName())) {
-						owners.add(human.getName());
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
+					if (owner.isCharacter() && !owners.contains(owner.getName())) {
+						owners.add(owner.getName());
 
 						//Account Balance
-						List<EveAccountBalance> accountBalances = human.getAccountBalances();
 						double ownerTotalAccountBalance = 0;
-						for (int c = 0; c < accountBalances.size(); c++) {
-							EveAccountBalance accountBalance = accountBalances.get(c);
+						for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							ownerTotalAccountBalance = ownerTotalAccountBalance + accountBalance.getBalance();
 						}
-						ownersTotalAccountBalance.put(human.getName(), ownerTotalAccountBalance);
+						ownersTotalAccountBalance.put(owner.getName(), ownerTotalAccountBalance);
 
 						//Orders
-						List<ApiMarketOrder> marketOrders = human.getMarketOrders();
+						List<ApiMarketOrder> marketOrders = owner.getMarketOrders();
 						double ownerTotalSellOrders = 0;
 						double ownerTotalBuyOrders = 0;
 						double ownerTotalBuyOrdersNotPaid = 0;
@@ -418,32 +414,30 @@ public class ValuesTab extends JMainTab implements ActionListener {
 							}
 						}
 						if (ownerTotalSellOrders != 0) {
-							ownersTotalSellOrders.put(human.getName(), ownerTotalSellOrders);
+							ownersTotalSellOrders.put(owner.getName(), ownerTotalSellOrders);
 						}
 						if (ownerTotalBuyOrders != 0) {
-							ownersTotalBuyOrders.put(human.getName(), ownerTotalBuyOrders);
+							ownersTotalBuyOrders.put(owner.getName(), ownerTotalBuyOrders);
 						}
 						if (ownerTotalBuyOrdersNotPaid != 0) {
-							ownersTotalBuyOrdersNotPaid.put(human.getName(), ownerTotalBuyOrdersNotPaid);
+							ownersTotalBuyOrdersNotPaid.put(owner.getName(), ownerTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + ownerTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + ownerTotalBuyOrders;
 					}
-					if (human.isCorporation() && !corps.contains(human.getName())) {
-						corps.add(human.getName());
+					if (owner.isCorporation() && !corps.contains(owner.getName())) {
+						corps.add(owner.getName());
 
 						//Account Balance
-						List<EveAccountBalance> corpAccountBalances = human.getAccountBalances();
 						double corpTotalAccountBalance = 0;
-						for (int c = 0; c < corpAccountBalances.size(); c++) {
-							EveAccountBalance accountBalance = corpAccountBalances.get(c);
+						for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
 						}
-						corpsTotalAccountBalance.put(human.getName(), corpTotalAccountBalance);
+						corpsTotalAccountBalance.put(owner.getName(), corpTotalAccountBalance);
 
 						//Orders
-						List<ApiMarketOrder> marketOrders = human.getMarketOrders();
+						List<ApiMarketOrder> marketOrders = owner.getMarketOrders();
 						double corpTotalSellOrders = 0;
 						double corpTotalBuyOrders = 0;
 						double corpTotalBuyOrdersNotPaid = 0;
@@ -458,13 +452,13 @@ public class ValuesTab extends JMainTab implements ActionListener {
 							}
 						}
 						if (corpTotalSellOrders != 0) {
-							corpsTotalSellOrders.put(human.getName(), corpTotalSellOrders);
+							corpsTotalSellOrders.put(owner.getName(), corpTotalSellOrders);
 						}
 						if (corpTotalBuyOrders  != 0) {
-							corpsTotalBuyOrders.put(human.getName(), corpTotalBuyOrders);
+							corpsTotalBuyOrders.put(owner.getName(), corpTotalBuyOrders);
 						}
 						if (corpTotalBuyOrdersNotPaid  != 0) {
-							corpsTotalBuyOrdersNotPaid.put(human.getName(), corpTotalBuyOrdersNotPaid);
+							corpsTotalBuyOrdersNotPaid.put(owner.getName(), corpTotalBuyOrdersNotPaid);
 						}
 						totalSellOrders = totalSellOrders + corpTotalSellOrders;
 						totalBuyOrders = totalBuyOrders + corpTotalBuyOrders;

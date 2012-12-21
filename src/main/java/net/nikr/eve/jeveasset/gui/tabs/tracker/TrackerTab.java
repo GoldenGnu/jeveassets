@@ -54,7 +54,7 @@ import javax.swing.ToolTipManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -240,21 +240,21 @@ public class TrackerTab extends JMainTab {
 		double allEscrowsToCover = 0;
 		Date date = new Date();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (!human.isShowAssets()) { //Ignore hidden owners
+			for (Owner owner : account.getOwners()) {
+				if (!owner.isShowAssets()) { //Ignore hidden owners
 					continue;
 				}
-				TrackerOwner owner = new TrackerOwner(human.getOwnerID(), human.getName());
+				TrackerOwner trackerOwner = new TrackerOwner(owner.getOwnerID(), owner.getName());
 				//Add new owner:
-				if (!program.getSettings().getTrackerData().containsKey(owner)) {
-					program.getSettings().getTrackerData().put(owner, new ArrayList<TrackerData>());
+				if (!program.getSettings().getTrackerData().containsKey(trackerOwner)) {
+					program.getSettings().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
 				}
 				//Assets
-				double assetValue = deepAsset(human.getAssets());
+				double assetValue = deepAsset(owner.getAssets());
 				allAssets = allAssets + assetValue;
 				//Account Balance
 				double accountBalanceValue = 0;
-				for (EveAccountBalance accountBalance : human.getAccountBalances()) {
+				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
 					accountBalanceValue = accountBalanceValue + accountBalance.getBalance();
 					allWalletBalance = allWalletBalance + accountBalance.getBalance();
 				}
@@ -262,7 +262,7 @@ public class TrackerTab extends JMainTab {
 				double sellOrdersValue = 0;
 				double escrowsValue = 0;
 				double escrowsToCoverValue = 0;
-				for (ApiMarketOrder apiMarketOrder : human.getMarketOrders()) {
+				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
 					if (apiMarketOrder.getOrderState() == 0) {
 						if (apiMarketOrder.getBid() < 1) { //Sell Orders
 							sellOrdersValue = sellOrdersValue + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
@@ -280,7 +280,7 @@ public class TrackerTab extends JMainTab {
 				allTotal = allTotal + totalValue;
 				//Add data
 				TrackerData data = new TrackerData(date, totalValue, accountBalanceValue, assetValue, sellOrdersValue, escrowsValue, escrowsToCoverValue);
-				program.getSettings().getTrackerData().get(owner).add(data);
+				program.getSettings().getTrackerData().get(trackerOwner).add(data);
 			}
 		}
 		//Add all

@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -54,35 +54,35 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.assetlist.AssetListParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
 			return com.beimin.eveapi.character
 					.assetlist.AssetListParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getHuman().getAssetNextUpdate();
+		return getOwner().getAssetNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getHuman().setAssetNextUpdate(nextUpdate);
+		getOwner().setAssetNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected void setData(final AssetListResponse response) {
 		List<EveAsset<?>> apiAssets = new ArrayList<EveAsset<?>>(response.getAll());
-		List<Asset> assets = ApiConverter.apiAsset(getHuman(), apiAssets, settings);
-		getHuman().setAssets(assets);
+		List<Asset> assets = ApiConverter.apiAsset(getOwner(), apiAssets, settings);
+		getOwner().setAssets(assets);
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) {
-		humanTo.setAssets(humanFrom.getAssets());
-		humanTo.setAssetNextUpdate(humanFrom.getAssetNextUpdate());
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+		ownerTo.setAssets(ownerFrom.getAssets());
+		ownerTo.setAssetNextUpdate(ownerFrom.getAssetNextUpdate());
 	}
 
 	@Override

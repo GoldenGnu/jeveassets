@@ -70,7 +70,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private EventList<Location> locations = new BasicEventList<Location>();
 	private FilterList<Location> locationsFilter;
 	private List<String> myLocations;
-	private final Human humanAll = new Human(null, TabsStockpile.get().all(), -1);
+	private final Owner ownerAll = new Owner(null, TabsStockpile.get().all(), -1);
 	private final ItemFlag itemFlagAll = new ItemFlag(-1, TabsStockpile.get().all(), "");
 	public static final Location LOCATION_ALL = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
 	private Stockpile stockpile;
@@ -238,7 +238,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Name
 		String name = jName.getText();
 		//Owner
-		Human human = (Human) jOwner.getSelectedItem();
+		Owner owner = (Owner) jOwner.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
 		String station = null;
@@ -263,7 +263,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		String container = (String) jContainer.getSelectedItem();
 		//Add
 
-		return new Stockpile(name, human.getOwnerID(), human.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
+		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
 	}
 
 	private void autoValidate() {
@@ -303,15 +303,15 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jName.setText(stockpile.getName());
 
 		//Owners
-		Human humanSelected = humanAll;
+		Owner ownerSelected = ownerAll;
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.getOwnerID() == stockpile.getOwnerID()) {
-					humanSelected = human;
+			for (Owner owner : account.getOwners()) {
+				if (owner.getOwnerID() == stockpile.getOwnerID()) {
+					ownerSelected = owner;
 				}
 			}
 		}
-		jOwner.setSelectedItem(humanSelected);
+		jOwner.setSelectedItem(ownerSelected);
 
 		//Location
 		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
@@ -371,15 +371,15 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jJobs.setSelected(stockpile.isJobs());
 
 		//Owners
-		Human humanSelected = humanAll;
+		Owner ownerSelected = ownerAll;
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.getOwnerID() == stockpile.getOwnerID()) {
-					humanSelected = human;
+			for (Owner owner : account.getOwners()) {
+				if (owner.getOwnerID() == stockpile.getOwnerID()) {
+					ownerSelected = owner;
 				}
 			}
 		}
-		jOwner.setSelectedItem(humanSelected);
+		jOwner.setSelectedItem(ownerSelected);
 
 		//Location
 		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
@@ -445,19 +445,19 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jName.setText("");
 
 		//Owners
-		List<Human> owners = new ArrayList<Human>();
+		List<Owner> owners = new ArrayList<Owner>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				owners.add(human);
+			for (Owner owner : account.getOwners()) {
+				owners.add(owner);
 			}
 		}
 		if (owners.isEmpty()) {
-			owners.add(humanAll);
+			owners.add(ownerAll);
 			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwner.setEnabled(false);
 		} else {
 			Collections.sort(owners);
-			owners.add(0, humanAll);
+			owners.add(0, ownerAll);
 			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwner.setEnabled(true);
 		}
@@ -496,8 +496,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			}
 		}
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
+			for (Owner owner : account.getOwners()) {
+				List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(owner.getIndustryJobs(), owner.getName(), program.getSettings());
 				for (IndustryJob industryJob : industryJobs) {
 					if (!myLocations.contains(industryJob.getLocation())) {
 						myLocations.add(industryJob.getLocation());
@@ -509,7 +509,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						myLocations.add(industryJob.getRegion());
 					}
 				}
-				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
+				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
 				for (MarketOrder marketOrder : marketOrders) {
 					if (!myLocations.contains(marketOrder.getLocation())) {
 						myLocations.add(marketOrder.getLocation());
@@ -594,9 +594,9 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		autoValidate();
 	}
 
-	static class HumanFilterator implements TextFilterator<Human> {
+	static class OwnerFilterator implements TextFilterator<Owner> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final Human element) {
+		public void getFilterStrings(final List<String> baseList, final Owner element) {
 			baseList.add(element.getName());
 		}
 	}

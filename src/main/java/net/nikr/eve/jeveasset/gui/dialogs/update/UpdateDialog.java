@@ -36,7 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -230,20 +230,18 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++) {
-				Human human = humans.get(b);
-				if (human.isShowAssets()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, human.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, human.getMarketOrdersNextUpdate());
-					contractsNextUpdate = nextUpdate(contractsNextUpdate, human.getContractsNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, human.getAssetNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, human.getBalanceNextUpdate());
-					bIndustryJobsUpdateAll = updateAll(bIndustryJobsUpdateAll, human.getIndustryJobsNextUpdate());
-					bMarketOrdersUpdateAll = updateAll(bMarketOrdersUpdateAll, human.getMarketOrdersNextUpdate());
-					bContractsUpdateAll = updateAll(bContractsUpdateAll, human.getContractsNextUpdate());
-					bAssetsUpdateAll = updateAll(bAssetsUpdateAll, human.getAssetNextUpdate());
-					bAccountBalanceUpdateAll = updateAll(bAccountBalanceUpdateAll, human.getBalanceNextUpdate());
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
+					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
+					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
+					contractsNextUpdate = nextUpdate(contractsNextUpdate, owner.getContractsNextUpdate());
+					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
+					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
+					bIndustryJobsUpdateAll = updateAll(bIndustryJobsUpdateAll, owner.getIndustryJobsNextUpdate());
+					bMarketOrdersUpdateAll = updateAll(bMarketOrdersUpdateAll, owner.getMarketOrdersNextUpdate());
+					bContractsUpdateAll = updateAll(bContractsUpdateAll, owner.getContractsNextUpdate());
+					bAssetsUpdateAll = updateAll(bAssetsUpdateAll, owner.getAssetNextUpdate());
+					bAccountBalanceUpdateAll = updateAll(bAccountBalanceUpdateAll, owner.getBalanceNextUpdate());
 
 				}
 			}
@@ -369,9 +367,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			if (jContracts.isSelected()) {
 				Set<Long> list = new HashSet<Long>();
 				for (Account account : program.getSettings().getAccounts()) {
-					for (Human human : account.getHumans()) {
-						list.add(human.getOwnerID()); //Just to be sure
-						for (EveContract contract : human.getContracts().keySet()) {
+					for (Owner owner : account.getOwners()) {
+						list.add(owner.getOwnerID()); //Just to be sure
+						for (EveContract contract : owner.getContracts().keySet()) {
 							list.add(contract.getAcceptorID());
 							list.add(contract.getAssigneeID());
 							list.add(contract.getIssuerCorpID());
@@ -430,8 +428,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() {
-			HumansGetter humansGetter = new HumansGetter();
-			humansGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			AccountGetter accountGetter = new AccountGetter();
+			accountGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
 	}
 

@@ -24,21 +24,21 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
-enum HumanTableFormat implements EnumTableColumn<Human> {
+enum AccountTableFormat implements EnumTableColumn<Owner> {
 	SHOW_ASSETS(Boolean.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return "";
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return from.isShowAssets();
 		}
 		@Override
@@ -46,12 +46,12 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return true;
 		}
 		@Override
-		public Human setColumnValue(final Object baseObject, final Object editedValue) {
-			if ((editedValue instanceof Boolean) && (baseObject instanceof Human)) {
-				Human human = (Human) baseObject;
+		public Owner setColumnValue(final Object baseObject, final Object editedValue) {
+			if ((editedValue instanceof Boolean) && (baseObject instanceof Owner)) {
+				Owner owner = (Owner) baseObject;
 				boolean value = (Boolean) editedValue;
-				human.setShowAssets(value);
-				return human;
+				owner.setShowAssets(value);
+				return owner;
 			}
 			return null;
 		}
@@ -62,7 +62,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatName();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return from.getName();
 		}
 	},
@@ -72,7 +72,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatCorporation();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new YesNo(from.isCorporation());
 		}
 	},
@@ -82,7 +82,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatAssetList();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new YesNo(from.getParentAccount().isAssetList());
 		}
 	},
@@ -92,7 +92,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatAccountBalance();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new YesNo(from.getParentAccount().isAccountBalance());
 		}
 	},
@@ -102,7 +102,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatIndustryJobs();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new YesNo(from.getParentAccount().isIndustryJobs());
 		}
 	},
@@ -112,7 +112,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatMarketOrders();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new YesNo(from.getParentAccount().isMarketOrders());
 		}
 	},
@@ -122,14 +122,14 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 			return DialoguesAccount.get().tableFormatExpires();
 		}
 		@Override
-		public Object getColumnValue(final Human from) {
+		public Object getColumnValue(final Owner from) {
 			return new ExpirerDate(from.getParentAccount().getExpires());
 		}
 	};
 
 	private Class<?> type;
 	private Comparator<?> comparator;
-	private HumanTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private AccountTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -153,7 +153,7 @@ enum HumanTableFormat implements EnumTableColumn<Human> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public Human setColumnValue(final Object baseObject, final Object editedValue) {
+	@Override public Owner setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 

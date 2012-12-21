@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -50,34 +50,34 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.marketorders.MarketOrdersParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
 			return com.beimin.eveapi.character
 					.marketorders.MarketOrdersParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getHuman().getMarketOrdersNextUpdate();
+		return getOwner().getMarketOrdersNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getHuman().setMarketOrdersNextUpdate(nextUpdate);
+		getOwner().setMarketOrdersNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
 		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getAll());
-		getHuman().setMarketOrders(marketOrders);
+		getOwner().setMarketOrders(marketOrders);
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) {
-		humanTo.setMarketOrders(humanFrom.getMarketOrders());
-		humanTo.setMarketOrdersNextUpdate(humanFrom.getMarketOrdersNextUpdate());
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+		ownerTo.setMarketOrders(ownerFrom.getMarketOrders());
+		ownerTo.setMarketOrdersNextUpdate(ownerFrom.getMarketOrdersNextUpdate());
 	}
 
 	@Override

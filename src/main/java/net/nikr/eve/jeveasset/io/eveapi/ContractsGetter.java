@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -49,33 +49,33 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected ContractsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.contract.ContractsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.corporation.contract.ContractsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return com.beimin.eveapi.character.contract.ContractsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()));
+			return com.beimin.eveapi.character.contract.ContractsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getHuman().getContractsNextUpdate();
+		return getOwner().getContractsNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(Date nextUpdate) {
-		getHuman().setContractsNextUpdate(nextUpdate);
+		getOwner().setContractsNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected void setData(ContractsResponse response) {
 		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
 		for (EveContract contract : contracts) {
-			getHuman().getContracts().put(contract, new ArrayList<EveContractItem>());
+			getOwner().getContracts().put(contract, new ArrayList<EveContractItem>());
 		}
 	}
 
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo) {
-		humanTo.setContractsNextUpdate(humanFrom.getContractsNextUpdate());
+	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
+		ownerTo.setContractsNextUpdate(ownerFrom.getContractsNextUpdate());
 	}
 
 	@Override

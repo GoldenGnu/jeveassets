@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -50,34 +50,34 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.industryjobs.IndustryJobsParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
 			return com.beimin.eveapi.character
 					.industryjobs.IndustryJobsParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 			}
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getHuman().getIndustryJobsNextUpdate();
+		return getOwner().getIndustryJobsNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getHuman().setIndustryJobsNextUpdate(nextUpdate);
+		getOwner().setIndustryJobsNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected void setData(final IndustryJobsResponse response) {
 		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getAll());
-		getHuman().setIndustryJobs(industryJobs);
+		getOwner().setIndustryJobs(industryJobs);
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) {
-		humanTo.setIndustryJobs(humanFrom.getIndustryJobs());
-		humanTo.setIndustryJobsNextUpdate(humanFrom.getIndustryJobsNextUpdate());
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+		ownerTo.setIndustryJobs(ownerFrom.getIndustryJobs());
+		ownerTo.setIndustryJobsNextUpdate(ownerFrom.getIndustryJobsNextUpdate());
 	}
 
 	@Override

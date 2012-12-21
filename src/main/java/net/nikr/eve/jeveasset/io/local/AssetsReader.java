@@ -88,7 +88,7 @@ public final class AssetsReader extends AbstractXmlReader {
 		for (int a = 0; a < accountNodes.getLength(); a++) {
 			Element currentNode = (Element) accountNodes.item(a);
 			Account account = parseAccount(currentNode);
-			parseHumans(currentNode, account, settings);
+			parseOwners(currentNode, account, settings);
 			accounts.add(account);
 		}
 	}
@@ -133,24 +133,24 @@ public final class AssetsReader extends AbstractXmlReader {
 		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
 	}
 
-	private void parseHumans(final Element element, final Account account, final Settings settings) {
-		NodeList humanNodes =  element.getElementsByTagName("human");
-		for (int a = 0; a < humanNodes.getLength(); a++) {
-			Element currentNode = (Element) humanNodes.item(a);
-			Human human = parseHuman(currentNode, account);
-			account.getHumans().add(human);
+	private void parseOwners(final Element element, final Account account, final Settings settings) {
+		NodeList ownerNodes =  element.getElementsByTagName("human");
+		for (int a = 0; a < ownerNodes.getLength(); a++) {
+			Element currentNode = (Element) ownerNodes.item(a);
+			Owner owner = parseOwner(currentNode, account);
+			account.getOwners().add(owner);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
 			if (assetNodes.getLength() == 1) {
-				parseAssets(assetNodes.item(0), human.getAssets(), null, settings);
+				parseAssets(assetNodes.item(0), owner.getAssets(), null, settings);
 			}
-			parseContracts(currentNode, human);
-			parseBalances(currentNode, human);
-			parseMarkerOrders(currentNode, human);
-			parseIndustryJobs(currentNode, human);
+			parseContracts(currentNode, owner);
+			parseBalances(currentNode, owner);
+			parseMarkerOrders(currentNode, owner);
+			parseIndustryJobs(currentNode, owner);
 		}
 	}
 
-	private Human parseHuman(final Node node, final Account account) {
+	private Owner parseOwner(final Node node, final Account account) {
 		String name = AttributeGetters.getString(node, "name");
 		int characterID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
@@ -173,10 +173,10 @@ public final class AssetsReader extends AbstractXmlReader {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
 
-		return new Human(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
-	private void parseContracts(final Element element, final Human human) {
+	private void parseContracts(final Element element, final Owner owner) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
 			Element contractsNode = (Element) contractsNodes.item(a);
@@ -191,7 +191,7 @@ public final class AssetsReader extends AbstractXmlReader {
 					EveContractItem contractItem = parseContractItem(currentNode);
 					contractItems.add(contractItem);
 				}
-				human.setContracts(contract, contractItems);
+				owner.setContracts(contract, contractItems);
 			}
 			
 		}
@@ -276,7 +276,7 @@ public final class AssetsReader extends AbstractXmlReader {
 		return contractItem;
 	}
 
-	private void parseBalances(final Element element, final Human human) {
+	private void parseBalances(final Element element, final Owner owner) {
 		NodeList balancesNodes = element.getElementsByTagName("balances");
 		for (int a = 0; a < balancesNodes.getLength(); a++) {
 			Element currentBalancesNode = (Element) balancesNodes.item(a);
@@ -285,7 +285,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			for (int b = 0; b < balanceNodes.getLength(); b++) {
 				Element currentNode = (Element) balanceNodes.item(b);
 				EveAccountBalance accountBalance = parseBalance(currentNode);
-				human.getAccountBalances().add(accountBalance);
+				owner.getAccountBalances().add(accountBalance);
 			}
 		}
 	}
@@ -301,7 +301,7 @@ public final class AssetsReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarkerOrders(final Element element, final Human human) {
+	private void parseMarkerOrders(final Element element, final Owner owner) {
 		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
 		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
 			Element currentMarkerOrdersNode = (Element) markerOrdersNodes.item(a);
@@ -309,7 +309,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			for (int b = 0; b < markerOrderNodes.getLength(); b++) {
 				Element currentNode = (Element) markerOrderNodes.item(b);
 				ApiMarketOrder apiMarketOrder = parseMarkerOrder(currentNode);
-				human.getMarketOrders().add(apiMarketOrder);
+				owner.getMarketOrders().add(apiMarketOrder);
 			}
 		}
 	}
@@ -349,7 +349,7 @@ public final class AssetsReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private void parseIndustryJobs(final Element element, final Human human) {
+	private void parseIndustryJobs(final Element element, final Owner owner) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
 			Element currentIndustryJobsNode = (Element) industryJobsNodes.item(a);
@@ -357,7 +357,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			for (int b = 0; b < industryJobNodes.getLength(); b++) {
 				Element currentNode = (Element) industryJobNodes.item(b);
 				ApiIndustryJob apiIndustryJob = parseIndustryJobs(currentNode);
-				human.getIndustryJobs().add(apiIndustryJob);
+				owner.getIndustryJobs().add(apiIndustryJob);
 			}
 		}
 	}

@@ -307,8 +307,8 @@ public class Settings {
 			//Date - maximumPurchaseAge in days
 			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
 			for (Account account : accounts) {
-				for (Human human : account.getHumans()) {
-					for (ApiMarketOrder marketOrder : human.getMarketOrders()) {
+				for (Owner owner : account.getOwners()) {
+					for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
 						if (marketOrder.getBid() > 0 //Buy orders only
 								//at least one bought
 								&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
@@ -327,28 +327,28 @@ public class Settings {
 			}
 			//Add assets
 			for (Account account : accounts) {
-				for (Human human : account.getHumans()) {
+				for (Owner owner : account.getOwners()) {
 					//Market Orders
-					if (!human.getMarketOrders().isEmpty() && !ownersOrders.contains(human.getName())) {
-						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(human.getMarketOrders(), human, this);
-						addAssets(marketOrdersAssets, human.isShowAssets());
-						if (human.isShowAssets()) {
-							ownersOrders.add(human.getName());
+					if (!owner.getMarketOrders().isEmpty() && !ownersOrders.contains(owner.getName())) {
+						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(owner.getMarketOrders(), owner, this);
+						addAssets(marketOrdersAssets, owner.isShowAssets());
+						if (owner.isShowAssets()) {
+							ownersOrders.add(owner.getName());
 						}
 					}
 					//Industry Jobs
-					if (!human.getIndustryJobs().isEmpty() && !ownersJobs.contains(human.getName())) {
-						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(human.getIndustryJobs(), human, this);
-						addAssets(industryJobAssets, human.isShowAssets());
-						if (human.isShowAssets()) {
-							ownersJobs.add(human.getName());
+					if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
+						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(owner.getIndustryJobs(), owner, this);
+						addAssets(industryJobAssets, owner.isShowAssets());
+						if (owner.isShowAssets()) {
+							ownersJobs.add(owner.getName());
 						}
 					}
 					//Assets (Must be after Industry Jobs, for bpos to be marked)
-					if (!human.getAssets().isEmpty() && !ownersAssets.contains(human.getName())) {
-						addAssets(human.getAssets(), human.isShowAssets());
-						if (human.isShowAssets()) {
-							ownersAssets.add(human.getName());
+					if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
+						addAssets(owner.getAssets(), owner.isShowAssets());
+						if (owner.isShowAssets()) {
+							ownersAssets.add(owner.getName());
 						}
 					}
 					//Add StockpileItems to uniqueIds
@@ -361,14 +361,14 @@ public class Settings {
 						}
 					}
 					//Add MarketOrders to uniqueIds
-					for (ApiMarketOrder order : human.getMarketOrders()) {
+					for (ApiMarketOrder order : owner.getMarketOrders()) {
 						boolean marketGroup = ApiIdConverter.marketGroup(order.getTypeID(), this.getItems());
 						if (marketGroup && !uniqueIds.contains(order.getTypeID())) {
 							uniqueIds.add(order.getTypeID());
 						}
 					}
 					//Add IndustryJobs to uniqueIds
-					for (ApiIndustryJob job : human.getIndustryJobs()) {
+					for (ApiIndustryJob job : owner.getIndustryJobs()) {
 						boolean marketGroup = ApiIdConverter.marketGroup(job.getInstalledItemTypeID(), this.getItems());
 						if (marketGroup && !uniqueIds.contains(job.getInstalledItemTypeID())) {
 							uniqueIds.add(job.getInstalledItemTypeID());

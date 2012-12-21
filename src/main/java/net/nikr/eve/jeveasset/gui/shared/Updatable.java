@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 
 
@@ -38,25 +38,21 @@ public class Updatable {
 	}
 
 	public boolean isUpdatable() {
-		List<Account> accounts = settings.getAccounts();
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
 		Date priceDataNextUpdate = settings.getPriceDataNextUpdate();
-		for (int a = 0; a < accounts.size(); a++) {
-			Account account = accounts.get(a);
+		for (Account account : settings.getAccounts()) {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++) {
-				Human human = humans.get(b);
-				if (human.isShowAssets()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, human.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, human.getMarketOrdersNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, human.getAssetNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, human.getBalanceNextUpdate());
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
+					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
+					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
+					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
+					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
 				}
 			}
 		}

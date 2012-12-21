@@ -408,9 +408,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		Map<String, Long> ownersID = new HashMap<String, Long>();
 		Map<Long, String> ownersName = new HashMap<Long, String>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				ownersID.put(human.getName(), human.getOwnerID());
-				ownersName.put(human.getOwnerID(), human.getName());
+			for (Owner owner : account.getOwners()) {
+				ownersID.put(owner.getName(), owner.getOwnerID());
+				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
 		}
 		//Regions Look-Up
@@ -461,19 +461,19 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					//Orders & Jobs
 					if (stockpile.isBuyOrders() || stockpile.isSellOrders() || stockpile.isJobs()) {
 						for (Account account : program.getSettings().getAccounts()) {
-							for (Human human : account.getHumans()) {
-								if (human.isShowAssets()) {
+							for (Owner owner : account.getOwners()) {
+								if (owner.isShowAssets()) {
 									//Market Orders
-									for (ApiMarketOrder marketOrder : human.getMarketOrders()) {
+									for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
 										Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
-										item.updateMarketOrder(marketOrder, human.getOwnerID(), location);
+										item.updateMarketOrder(marketOrder, owner.getOwnerID(), location);
 									}
 									//Jobs
-									for (ApiIndustryJob industryJob : human.getIndustryJobs()) {
+									for (ApiIndustryJob industryJob : owner.getIndustryJobs()) {
 										Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
 										Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
 										ItemFlag itemFlag = program.getSettings().getItemFlags().get(industryJob.getOutputFlag());
-										item.updateIndustryJob(industryJob, itemFlag, human.getOwnerID(), location, itemType);
+										item.updateIndustryJob(industryJob, itemFlag, owner.getOwnerID(), location, itemType);
 									}
 								}
 							}

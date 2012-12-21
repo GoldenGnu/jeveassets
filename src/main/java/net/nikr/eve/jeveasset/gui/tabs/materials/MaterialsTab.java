@@ -35,7 +35,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -133,13 +133,13 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsMaterials.get().whitespace(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsMaterials.get().whitespace(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);

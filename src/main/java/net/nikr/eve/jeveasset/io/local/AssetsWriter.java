@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -82,31 +82,30 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "type", account.getType().name());
 			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
 			parentNode.appendChild(node);
-			writeHumans(xmldoc, node, account.getHumans());
+			writeOwners(xmldoc, node, account.getOwners());
 
 		}
 	}
 
-	private void writeHumans(final Document xmldoc, final Element parentNode, final List<Human> humans) {
-		for (int a = 0; a < humans.size(); a++) {
-			Human human = humans.get(a);
+	private void writeOwners(final Document xmldoc, final Element parentNode, final List<Owner> owners) {
+		for (Owner owner : owners) {
 			Element node = xmldoc.createElementNS(null, "human");
-			node.setAttributeNS(null, "id", String.valueOf(human.getOwnerID()));
-			node.setAttributeNS(null, "name", human.getName());
-			node.setAttributeNS(null, "show", String.valueOf(human.isShowAssets()));
-			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));
-			node.setAttributeNS(null, "balancenextupdate", String.valueOf(human.getBalanceNextUpdate().getTime()));
-			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(human.getMarketOrdersNextUpdate().getTime()));
-			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(human.getIndustryJobsNextUpdate().getTime()));
-			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(human.getContractsNextUpdate().getTime()));
+			node.setAttributeNS(null, "id", String.valueOf(owner.getOwnerID()));
+			node.setAttributeNS(null, "name", owner.getName());
+			node.setAttributeNS(null, "show", String.valueOf(owner.isShowAssets()));
+			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
+			node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
+			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));
+			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(owner.getIndustryJobsNextUpdate().getTime()));
+			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(owner.getContractsNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			Element childNode = xmldoc.createElementNS(null, "assets");
 			node.appendChild(childNode);
-			writeAssets(xmldoc, childNode, human.getAssets());
-			writeContractItems(xmldoc, node, human.getContracts());
-			writeAccountBalances(xmldoc, node, human.getAccountBalances(), human.isCorporation());
-			writeMarketOrders(xmldoc, node, human.getMarketOrders(), human.isCorporation());
-			writeIndustryJobs(xmldoc, node, human.getIndustryJobs(), human.isCorporation());
+			writeAssets(xmldoc, childNode, owner.getAssets());
+			writeContractItems(xmldoc, node, owner.getContracts());
+			writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
+			writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
+			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		}
 	}
 

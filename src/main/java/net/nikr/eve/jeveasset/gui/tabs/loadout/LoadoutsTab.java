@@ -328,13 +328,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsLoadout.get().whitespace9(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsLoadout.get().whitespace9(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);

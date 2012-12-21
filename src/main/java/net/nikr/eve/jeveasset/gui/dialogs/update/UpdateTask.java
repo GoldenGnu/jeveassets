@@ -71,8 +71,8 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return jText;
 	}
 
-	public void addError(final String human, final String error) {
-		errors.put(human, error);
+	public void addError(final String owner, final String error) {
+		errors.put(owner, error);
 	}
 
 	public boolean hasError() {

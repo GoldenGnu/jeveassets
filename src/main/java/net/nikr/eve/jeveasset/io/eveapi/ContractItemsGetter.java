@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -50,14 +50,14 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		int progress = updateTask.getProgress();
 		int size = 0;
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				size = size + human.getContracts().size();
+			for (Owner owner : account.getOwners()) {
+				size = size + owner.getContracts().size();
 			}
 		}
 		int count = 0;
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				for (EveContract contract : human.getContracts().keySet()) {
+			for (Owner owner : account.getOwners()) {
+				for (EveContract contract : owner.getContracts().keySet()) {
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
@@ -67,7 +67,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
 					currentContract = contract;
-					super.load(updateTask, forceUpdate, human);
+					super.load(updateTask, forceUpdate, owner);
 					if (updateTask != null) {
 						updateTask.setTaskProgress(size, count, progress, 100);
 					}
@@ -79,9 +79,9 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), currentContract.getContractID());
+			return com.beimin.eveapi.corporation.contract.ContractItemsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		} else {
-			return com.beimin.eveapi.character.contract.ContractItemsParser.getInstance().getResponse(Human.getApiAuthorization(getHuman()), currentContract.getContractID());
+			return com.beimin.eveapi.character.contract.ContractItemsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		}
 	}
 
@@ -98,11 +98,11 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected void setData(ContractItemsResponse response) {
 		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
-		getHuman().setContracts(currentContract, contractItems);
+		getOwner().setContracts(currentContract, contractItems);
 	}
 
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo) {
+	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
 		//FIXME ContractItemsGetter.updateFailed does nothing
 	}
 

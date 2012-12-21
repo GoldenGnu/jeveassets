@@ -32,7 +32,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -573,13 +573,13 @@ public class OverviewTab extends JMainTab {
 	public void updateData() {
 		List<String> owners = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsOverview.get().whitespace4(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsOverview.get().whitespace4(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);

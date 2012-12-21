@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Human implements Comparable<Human> {
+public class Owner implements Comparable<Owner> {
 	private String name;
 	private long ownerID;
 	private boolean showAssets;
@@ -50,28 +50,28 @@ public class Human implements Comparable<Human> {
 	private Map<EveContract, List<EveContractItem>> contracts;
 	private List<Asset> assets;
 
-	public Human(final Account parentAccount, final Human human) {
+	public Owner(final Account parentAccount, final Owner owner) {
 		this(parentAccount,
-				human.getName(),
-				human.getOwnerID(),
-				human.isShowAssets(),
-				human.getAssetNextUpdate(),
-				human.getBalanceNextUpdate(),
-				human.getMarketOrdersNextUpdate(),
-				human.getIndustryJobsNextUpdate(),
-				human.getContractsNextUpdate());
-		accountBalances = human.getAccountBalances();
-		marketOrders = human.getMarketOrders();
-		industryJobs = human.getIndustryJobs();
-		assets = human.getAssets();
-		contracts = human.getContracts();
+				owner.getName(),
+				owner.getOwnerID(),
+				owner.isShowAssets(),
+				owner.getAssetNextUpdate(),
+				owner.getBalanceNextUpdate(),
+				owner.getMarketOrdersNextUpdate(),
+				owner.getIndustryJobsNextUpdate(),
+				owner.getContractsNextUpdate());
+		accountBalances = owner.getAccountBalances();
+		marketOrders = owner.getMarketOrders();
+		industryJobs = owner.getIndustryJobs();
+		assets = owner.getAssets();
+		contracts = owner.getContracts();
 	}
 
-	public Human(final Account parentAccount, final String name, final long ownerID) {
+	public Owner(final Account parentAccount, final String name, final long ownerID) {
 		this(parentAccount, name, ownerID, true, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Human(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
+	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
@@ -214,7 +214,7 @@ public class Human implements Comparable<Human> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Human other = (Human) obj;
+		final Owner other = (Owner) obj;
 		if (this.ownerID != other.ownerID) {
 			return false;
 		}
@@ -233,7 +233,7 @@ public class Human implements Comparable<Human> {
 	}
 
 	@Override
-	public int compareTo(final Human o) {
+	public int compareTo(final Owner o) {
 		return this.getName().compareTo(o.getName());
 	}
 
@@ -245,8 +245,8 @@ public class Human implements Comparable<Human> {
 	public static ApiAuthorization getApiAuthorization(final Account account) {
 		return getApiAuthorization(account, 0);
 	}
-	public static ApiAuthorization getApiAuthorization(final Human human) {
-		return getApiAuthorization(human.getParentAccount(), human.getOwnerID());
+	public static ApiAuthorization getApiAuthorization(final Owner owner) {
+		return getApiAuthorization(owner.getParentAccount(), owner.getOwnerID());
 	}
 	private static ApiAuthorization getApiAuthorization(final Account account, final long characterID) {
 		return new ApiAuthorization(account.getKeyID(), characterID, account.getVCode());

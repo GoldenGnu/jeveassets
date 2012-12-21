@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -63,13 +63,13 @@ public class IndustryJobData {
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsJobs.get().whitespace(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsJobs.get().whitespace(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					//Only add names once
 					if (!owners.contains(name)) {
@@ -77,7 +77,7 @@ public class IndustryJobData {
 						jobs.put(name, new ArrayList<IndustryJob>()); //Make sure empty is not null
 					}
 					//Only add once and don't add empty jobs
-					List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
+					List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(owner.getIndustryJobs(), owner.getName(), program.getSettings());
 					if (!unique.contains(name) && !industryJobs.isEmpty()) {
 						jobs.put(name, industryJobs);
 						all.addAll(industryJobs);

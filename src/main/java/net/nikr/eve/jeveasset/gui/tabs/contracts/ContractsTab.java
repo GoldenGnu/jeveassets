@@ -46,7 +46,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -163,9 +163,9 @@ public class ContractsTab extends JMainTab {
 	public void updateData() {
 		Set<ContractItem> list = new HashSet<ContractItem>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
+			for (Owner owner : account.getOwners()) {
 				List<ContractItem> contractItems
-						= ApiConverter.eveContractItemsToContractItems(human.getContracts(), program.getSettings());
+						= ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
 				list.addAll(contractItems);
 			}
 		}

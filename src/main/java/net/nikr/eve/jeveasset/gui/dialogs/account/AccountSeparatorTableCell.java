@@ -15,7 +15,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
@@ -23,7 +23,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
+public class AccountSeparatorTableCell extends SeparatorTableCell<Owner>
 		implements FocusListener, ActionListener {
 
 	// TODO action enum - more string enum pattern, to be converted to an enum
@@ -36,7 +36,7 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 	private final JButton jEdit;
 	private final JButton jDelete;
 
-	public HumanSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Human> separatorList) {
+	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Owner> separatorList) {
 		super(jTable, separatorList);
 
 		jAccountName = new JTextField();
@@ -80,11 +80,11 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 
 	@Override
 	protected void configure(final Separator<?> separator) {
-		Human human = (Human) separator.first();
-		if (human == null) { // handle 'late' rendering calls after this separator is invalid
+		Owner owner = (Owner) separator.first();
+		if (owner == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
-		Account account = human.getParentAccount();
+		Account account = owner.getParentAccount();
 		if (account.getName().isEmpty()) {
 			jAccountName.setText(String.valueOf(account.getKeyID()));
 		} else {
@@ -94,8 +94,8 @@ public class HumanSeparatorTableCell extends SeparatorTableCell<Human>
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_ACCOUNT_NAME.equals(e.getActionCommand())) {
-			Human human = (Human) currentSeparator.first();
-			Account account = human.getParentAccount();
+			Owner owner = (Owner) currentSeparator.first();
+			Account account = owner.getParentAccount();
 			if (jAccountName.getText().isEmpty()) {
 				jAccountName.setText(String.valueOf(account.getKeyID()));
 			}

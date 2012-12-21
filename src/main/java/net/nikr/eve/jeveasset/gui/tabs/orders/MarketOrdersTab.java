@@ -31,7 +31,7 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -188,16 +188,16 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		List<String> unique = new ArrayList<String>();
 		List<MarketOrder> allMarketOrders = new ArrayList<MarketOrder>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsOrders.get().whitespace(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsOrders.get().whitespace(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					//Only add once and don't add empty orders
-					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
+					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
 					if (!unique.contains(name) && !marketOrders.isEmpty()) {
 						unique.add(name);
 						allMarketOrders.addAll(marketOrders);

@@ -27,7 +27,7 @@ import com.beimin.eveapi.exception.ApiException;
 import java.util.Date;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -53,6 +53,7 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 			for (Long l : ownerIDs[group]) {
 				System.out.println(l);
 			}
+			//FIXME update progress for UpdateTask
 			super.load(updateTask, true, "Request "+i+" of "+ownerIDs.length);
 		}
 	}
@@ -81,7 +82,7 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 	}
 
 	@Override
-	protected void updateFailed(Human humanFrom, Human humanTo) {
+	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
 		
 	}
 

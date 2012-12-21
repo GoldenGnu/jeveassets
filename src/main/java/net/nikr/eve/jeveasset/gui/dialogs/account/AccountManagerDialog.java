@@ -36,9 +36,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.ExpirerDate;
-import net.nikr.eve.jeveasset.gui.dialogs.account.HumanTableFormat.YesNo;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -68,12 +68,12 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jCollapse;
 	private JDropDownButton jAssets;
 	private JButton jClose;
-	private EventList<Human> eventList;
-	private EventTableModel<Human> tableModel;
-	private SeparatorList<Human> separatorList;
-	private EventSelectionModel<Human> selectionModel;
+	private EventList<Owner> eventList;
+	private EventTableModel<Owner> tableModel;
+	private SeparatorList<Owner> separatorList;
+	private EventSelectionModel<Owner> selectionModel;
 
-	private Map<Human, Boolean> shownAssets;
+	private Map<Owner, Boolean> shownAssets;
 	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(final Program program) {
@@ -81,21 +81,21 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		accountImportDialog = new AccountImportDialog(this, program);
 
-		eventList = new BasicEventList<Human>();
+		eventList = new BasicEventList<Owner>();
 
-		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
-		EnumTableFormatAdaptor<HumanTableFormat, Human> humanTableFormat = new EnumTableFormatAdaptor<HumanTableFormat, Human>(HumanTableFormat.class);
-		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
+		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
+		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
+		tableModel = new EventTableModel<Owner>(separatorList, tableFormat);
 		jTable = new JSeparatorTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
-		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
-		jTable.setSeparatorEditor(new HumanSeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorEditor(new AccountSeparatorTableCell(this, jTable, separatorList));
 		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		selectionModel = new EventSelectionModel<Human>(separatorList);
+		selectionModel = new EventSelectionModel<Owner>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
@@ -184,8 +184,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				eventList.add(human);
+			for (Owner owner : account.getOwners()) {
+				eventList.add(owner);
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
@@ -206,15 +206,15 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			int[] selectedRows = jTable.getSelectedRows();
 			for (int a = 0; a < selectedRows.length; a++) {
 				Object o = tableModel.getElementAt(selectedRows[a]);
-				if (o instanceof Human) {
-					Human human = (Human) o;
-					human.setShowAssets(check);
+				if (o instanceof Owner) {
+					Owner owner = (Owner) o;
+					owner.setShowAssets(check);
 				}
 			}
 		} else { //Set all the check value
 			for (Account account : program.getSettings().getAccounts()) {
-				for (Human human : account.getHumans()) {
-					human.setShowAssets(check);
+				for (Owner owner : account.getOwners()) {
+					owner.setShowAssets(check);
 				}
 			}
 		}
@@ -244,12 +244,12 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	protected void save() {
 		boolean changed = false;
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (!shownAssets.containsKey(human)) { //New account
-					if (human.isShowAssets()) { //if shown: Updated
+			for (Owner owner : account.getOwners()) {
+				if (!shownAssets.containsKey(owner)) { //New account
+					if (owner.isShowAssets()) { //if shown: Updated
 						changed = true;
 					}
-				} else if (human.isShowAssets() != shownAssets.get(human)) { //Old account changed: Update
+				} else if (owner.isShowAssets() != shownAssets.get(owner)) { //Old account changed: Update
 					changed = true;
 				}
 			}
@@ -265,10 +265,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (b) {
 			forceUpdate = false;
 			updateTable();
-			shownAssets = new HashMap<Human, Boolean>();
+			shownAssets = new HashMap<Owner, Boolean>();
 			for (Account account : program.getSettings().getAccounts()) {
-				for (Human human : account.getHumans()) {
-					shownAssets.put(human, human.isShowAssets());
+				for (Owner owner : account.getOwners()) {
+					shownAssets.put(owner, owner.isShowAssets());
 				}
 			}
 		}
@@ -289,17 +289,17 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (ACTION_CLOSE.equals(e.getActionCommand())) {
 			save();
 		}
-		if (HumanSeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
+		if (AccountSeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-				Human human = (Human) separator.first();
-				Account account = human.getParentAccount();
+				Owner owner = (Owner) separator.first();
+				Account account = owner.getParentAccount();
 				accountImportDialog.show(account);
 			}
 		}
-		if (HumanSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
+		if (AccountSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
 			if (o instanceof SeparatorList.Separator<?>) {
@@ -310,8 +310,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 						, JOptionPane.PLAIN_MESSAGE);
 				if (nReturn == JOptionPane.YES_OPTION) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-					Human human = (Human) separator.first();
-					Account account = human.getParentAccount();
+					Owner owner = (Owner) separator.first();
+					Account account = owner.getParentAccount();
 					program.getSettings().getAccounts().remove(account);
 					forceUpdate();
 					updateTable();
