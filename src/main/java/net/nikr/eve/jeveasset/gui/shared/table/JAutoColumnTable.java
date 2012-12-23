@@ -493,15 +493,23 @@ public class JAutoColumnTable extends JTable {
 		 */
 		private int lastValue;
 
+		private boolean repaint;
+
 		public JScrollPaneAdjustmentListener(final JScrollPane jScrollPane) {
 			this.jScrollPane = jScrollPane;
+			repaint = false;
 		}
 
 		@Override
 		public void adjustmentValueChanged(final AdjustmentEvent e) {
 			if (e.getValue() > lastValue) {
 				// scrollbar has been dragged to the right
+				repaint = true;
+			}
+			if (!e.getValueIsAdjusting() && repaint) {
+				//Done scrolling - repaint if needed
 				jScrollPane.repaint();
+				repaint = false;
 			}
 			lastValue = e.getValue();
 		}
