@@ -131,4 +131,5 @@
     <row flagid="152" flagname="DustCharacterDatabank" flagtext="Dust Character Databank"/>
     <row flagid="153" flagname="DustCharacterBattle" flagtext="Dust Character Battle"/>
     <row flagid="154" flagname="QuafeBay" flagtext="Quafe Bay"/>
+    <row flagid="155" flagname="FleetHangar" flagtext="Fleet Hangar"/>
 </rows>
