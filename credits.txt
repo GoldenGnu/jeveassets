@@ -23,6 +23,7 @@ Developers:
   Flaming Candle*
   Jochen Bedersdorfer
   TryfanMan*
+  Jan
 
 Testers:
   Varo Jan*
