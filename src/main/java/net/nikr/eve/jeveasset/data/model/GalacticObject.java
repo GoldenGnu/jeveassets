@@ -65,7 +65,7 @@ public abstract class GalacticObject implements Comparable<GalacticObject> {
 
 	@Override
 	public int compareTo(final GalacticObject go) {
-		return name.compareTo(go.name);
+		return name.compareToIgnoreCase(go.name);
 	}
 
 }

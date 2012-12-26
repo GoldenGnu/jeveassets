@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -474,9 +475,11 @@ public class OverviewTab extends JMainTab {
 		jLoadFilter.add(jMenuItem);
 
 		jLoadFilter.addSeparator();
-
-		for (Map.Entry<String, List<Filter>> entry : program.getSettings().getTableFilters(AssetsTab.NAME).entrySet()) {
-			jMenuItem = new FilterMenuItem(entry.getKey(), entry.getValue());
+		List<String> filters = new ArrayList<String>(program.getSettings().getTableFilters(AssetsTab.NAME).keySet());
+		Collections.sort(filters, new CaseInsensitiveComparator());
+		for (String filter : filters) {
+			List<Filter> filterList = program.getSettings().getTableFilters(AssetsTab.NAME).get(filter);
+			jMenuItem = new FilterMenuItem(filter, filterList);
 			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 			jMenuItem.addActionListener(listenerClass);
 			jLoadFilter.add(jMenuItem);
@@ -585,7 +588,7 @@ public class OverviewTab extends JMainTab {
 				}
 			}
 		}
-		Collections.sort(owners);
+		Collections.sort(owners, new CaseInsensitiveComparator());
 		owners.add(0, TabsOverview.get().all());
 		jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 		updateTable();

@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -468,7 +469,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				}
 				jSavedFilter.setEnabled(true);
 				List<String> filterNames = new ArrayList<String>(matcherControl.getAllFilters().keySet());
-				Collections.sort(filterNames);
+				Collections.sort(filterNames, new CaseInsensitiveComparator());
 				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
 			}
 			if (matcherControl.getCurrentFilters().isEmpty()) {

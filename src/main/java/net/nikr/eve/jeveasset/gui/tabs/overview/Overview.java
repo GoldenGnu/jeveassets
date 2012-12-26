@@ -122,7 +122,7 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
 
 	@Override
 	public int compareTo(final Overview o) {
-		return this.name.compareTo(o.getName());
+		return this.name.compareToIgnoreCase(o.getName());
 	}
 
 	@Override

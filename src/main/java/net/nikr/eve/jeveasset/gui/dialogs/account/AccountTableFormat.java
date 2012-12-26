@@ -176,7 +176,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 
 		@Override
 		public int compareTo(final YesNo o) {
-			return this.toString().compareTo(o.toString());
+			return this.toString().compareToIgnoreCase(o.toString());
 		}
 	}
 

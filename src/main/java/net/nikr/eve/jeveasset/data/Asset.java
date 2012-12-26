@@ -540,7 +540,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	@Override
 	public int compareTo(final Asset o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
 	@Override

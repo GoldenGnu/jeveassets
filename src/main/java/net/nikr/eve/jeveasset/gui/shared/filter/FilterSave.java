@@ -36,6 +36,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -93,7 +94,7 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 
 	String show(final List<String> filters, final List<String> defaultFilters) {
 		returnString = null;
-		Collections.sort(filters);
+		Collections.sort(filters, new CaseInsensitiveComparator());
 		this.filters.clear();
 		this.filters.addAll(filters);
 		this.defaultFilters.clear();

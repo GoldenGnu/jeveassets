@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -151,7 +152,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
-			Collections.sort(owners);
+			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsMaterials.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwners.setSelectedIndex(0);

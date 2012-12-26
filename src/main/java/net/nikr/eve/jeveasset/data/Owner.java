@@ -234,7 +234,7 @@ public class Owner implements Comparable<Owner> {
 
 	@Override
 	public int compareTo(final Owner o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
 	@Override

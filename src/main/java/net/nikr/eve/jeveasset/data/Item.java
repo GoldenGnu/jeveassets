@@ -113,7 +113,7 @@ public class Item implements Comparable<Item> {
 
 	@Override
 	public int compareTo(final Item o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
 	@Override

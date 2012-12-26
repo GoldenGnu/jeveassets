@@ -285,7 +285,7 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	@Override
 	public int compareTo(final Stockpile o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
 	public static class StockpileItem implements Comparable<StockpileItem> {
@@ -569,11 +569,11 @@ public class Stockpile implements Comparable<Stockpile> {
 		@Override
 		public int compareTo(final StockpileItem item) {
 			//Compare groups
-			int value = this.getGroup().compareTo(item.getGroup());
+			int value = this.getGroup().compareToIgnoreCase(item.getGroup());
 			if (value != 0) { //Not same group
 				return value;
 			} else { //Same group - compare names
-				return this.getName().compareTo(item.getName());
+				return this.getName().compareToIgnoreCase(item.getName());
 			}
 		}
 	}

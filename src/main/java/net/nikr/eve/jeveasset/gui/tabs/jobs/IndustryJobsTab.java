@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -152,7 +153,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 
 		if (!data.getOwners().isEmpty()) {
 			jTable.setEnabled(true);
-			Collections.sort(data.getOwners());
+			Collections.sort(data.getOwners(), new CaseInsensitiveComparator());
 			data.getOwners().add(0, TabsJobs.get().all());
 		} else {
 			jTable.setEnabled(false);

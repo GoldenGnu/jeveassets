@@ -87,7 +87,7 @@ public class TrackerOwner implements Comparable<TrackerOwner> {
 		} else if (o.owner.isEmpty()) {
 			return 1;
 		} else {
-			return owner.compareTo(o.getOwner());
+			return owner.compareToIgnoreCase(o.getOwner());
 		}
 	}
 }

@@ -139,7 +139,7 @@ public class RoutingTab extends JMainTab  {
 		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
 			@Override
 			public int compare(final SolarSystem o1, final SolarSystem o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getName().compareToIgnoreCase(o2.getName());
 			}
 		};
 
@@ -316,7 +316,7 @@ public class RoutingTab extends JMainTab  {
 			public int compare(final SolarSystem o1, final SolarSystem o2) {
 				String n1 = o1.getName();
 				String n2 = o2.getName();
-				return n1.compareTo(n2);
+				return n1.compareToIgnoreCase(n2);
 			}
 		});
 		List<Asset> assets;
@@ -653,7 +653,7 @@ public class RoutingTab extends JMainTab  {
 
 		@Override
 		public int compareTo(final SourceItem o) {
-			return this.getName().compareTo(o.getName());
+			return this.getName().compareToIgnoreCase(o.getName());
 		}
 	}
 }

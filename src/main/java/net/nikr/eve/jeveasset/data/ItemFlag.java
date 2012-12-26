@@ -52,6 +52,6 @@ public class ItemFlag implements Comparable<ItemFlag> {
 
 	@Override
 	public int compareTo(final ItemFlag o) {
-		return this.getFlagName().compareTo(o.getFlagName());
+		return this.getFlagName().compareToIgnoreCase(o.getFlagName());
 	}
 }

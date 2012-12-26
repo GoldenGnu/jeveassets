@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -344,7 +345,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (!owners.isEmpty()) {
 			jOwners.setEnabled(true);
-			Collections.sort(owners);
+			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsLoadout.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
 			jOwners.setSelectedIndex(0);
@@ -378,7 +379,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				charShips.add(key);
 			}
 			if (!charShips.isEmpty()) {
-				Collections.sort(charShips);
+				Collections.sort(charShips, new CaseInsensitiveComparator());
 				jExpand.setEnabled(true);
 				jCollapse.setEnabled(true);
 				jExport.setEnabled(true);

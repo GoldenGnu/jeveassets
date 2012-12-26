@@ -104,6 +104,6 @@ public class Location implements Comparable<Location> {
 
 	@Override
 	public int compareTo(final Location o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 }

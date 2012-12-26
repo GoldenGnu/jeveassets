@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -313,10 +314,10 @@ class FilterGui<E> implements ActionListener {
 		jLoadFilter.add(jMenuItem);
 
 		List<String> filters = new ArrayList<String>(matcherControl.getFilters().keySet());
-		Collections.sort(filters);
+		Collections.sort(filters, new CaseInsensitiveComparator());
 
 		List<String> defaultFilters = new ArrayList<String>(matcherControl.getDefaultFilters().keySet());
-		Collections.sort(defaultFilters);
+		Collections.sort(defaultFilters, new CaseInsensitiveComparator());
 
 		if (!filters.isEmpty() || !defaultFilters.isEmpty()) {
 			jLoadFilter.addSeparator();

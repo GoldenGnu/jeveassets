@@ -19,26 +19,16 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
+package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Comparator;
 
 
-public class ReprocessedSeparatorComparator implements Comparator<ReprocessedInterface> {
+public class CaseInsensitiveComparator implements Comparator<String> {
 
 	@Override
-	public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
-		String a = o1.getTotal().getTypeName();
-		String b = o2.getTotal().getTypeName();
-		if (o1.getTotal().isGrandTotal() && o2.getTotal().isGrandTotal()) {
-			return a.compareToIgnoreCase(b); //Both is grand total: compare name
-		} else if (o1.getTotal().isGrandTotal()) {
-			return -1; //First is grand total
-		} else if (o2.getTotal().isGrandTotal()) {
-			return 1;//Second is grand total
-		} else {
-			return a.compareToIgnoreCase(b); //Not grand total: compare name
-		}
+	public int compare(String o1, String o2) {
+		return o1.compareToIgnoreCase(o2);
 	}
 	
 }

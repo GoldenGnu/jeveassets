@@ -33,6 +33,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -233,7 +234,7 @@ public class FilterManager<E> extends JDialogCentered {
 	public final void updateFilters() {
 		listModel.clear();
 		List<String> list = new ArrayList<String>(filters.keySet());
-		Collections.sort(list);
+		Collections.sort(list, new CaseInsensitiveComparator());
 		for (String filter: list) {
 			listModel.addElement(filter);
 		}

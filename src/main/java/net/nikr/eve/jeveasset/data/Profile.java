@@ -150,6 +150,6 @@ public class Profile implements Comparable<Profile> {
 
 	@Override
 	public int compareTo(final Profile o) {
-		return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 }

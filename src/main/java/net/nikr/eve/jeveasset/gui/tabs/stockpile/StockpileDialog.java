@@ -38,6 +38,7 @@ import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -536,7 +537,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(false);
 		} else {
-			Collections.sort(containers);
+			Collections.sort(containers, new CaseInsensitiveComparator());
 			containers.add(0, TabsStockpile.get().all());
 			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(true);
