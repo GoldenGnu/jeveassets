@@ -142,7 +142,7 @@ public class FilterManager<E> extends JDialogCentered {
 			return;
 		}
 
-		String name = showNameDialog("", filterName, GuiShared.get().renameFilter());
+		String name = showNameDialog(filterName, filterName, GuiShared.get().renameFilter());
 		if (name == null) {
 			return;
 		}
