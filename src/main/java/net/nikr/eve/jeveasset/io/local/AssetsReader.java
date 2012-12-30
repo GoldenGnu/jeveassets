@@ -152,7 +152,7 @@ public final class AssetsReader extends AbstractXmlReader {
 
 	private Owner parseOwner(final Node node, final Account account) {
 		String name = AttributeGetters.getString(node, "name");
-		int characterID = AttributeGetters.getInt(node, "id");
+		int ownerID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
 		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
 		boolean showAssets = true;
@@ -173,7 +173,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
 
-		return new Owner(account, name, characterID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {

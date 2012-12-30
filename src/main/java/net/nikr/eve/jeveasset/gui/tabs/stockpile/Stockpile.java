@@ -347,13 +347,13 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.marketGroup = updateMarketGroup;
 		}
 
-		public void updateAsset(final Asset asset, final Long characterID, final Location location) {
-			if (asset != null && characterID != null && location != null //better safe then sorry
+		public void updateAsset(final Asset asset, final Long ownerID, final Location location) {
+			if (asset != null && ownerID != null && location != null //better safe then sorry
 					&& (
 						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
 						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
 						)
-					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
+					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
 					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
@@ -402,10 +402,10 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 		}
 
-		void updateIndustryJob(final ApiIndustryJob industryJob, final Long characterID, final Location location, final Item itemType) {
-			if (industryJob != null && characterID != null && location != null && itemType != null //better safe then sorry
+		void updateIndustryJob(final ApiIndustryJob industryJob, final Long ownerID, final Location location, final Item itemType) {
+			if (industryJob != null && ownerID != null && location != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
+					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
 					&& (stockpile.getFlagID() == industryJob.getOutputFlag() || stockpile.getFlagID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
