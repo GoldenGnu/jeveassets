@@ -413,13 +413,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
 		}
-		//Regions Look-Up
-		Map<String, Long> regions = new HashMap<String, Long>();
-		for (Location location : program.getSettings().getLocations().values()) {
-			if (location.isRegion()) {
-				regions.put(location.getName(), location.getLocationID());
-			}
-		}
 
 		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
 			stockpileItems.addAll(stockpile.getItems());
@@ -438,42 +431,54 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					if (item instanceof Stockpile.StockpileTotal) {
 						continue;
 					}
-					int typeID = item.getTypeID();
-					double price = program.getSettings().getPrice(typeID, item.isBPC());
-					float volume = program.getSettings().getVolume(typeID, true);
-					boolean marketGroup = ApiIdConverter.marketGroup(typeID, program.getSettings().getItems());
+					final int TYPE_ID = item.getTypeID();
+					double price = program.getSettings().getPrice(TYPE_ID, item.isBPC());
+					float volume = program.getSettings().getVolume(TYPE_ID, true);
+					boolean marketGroup = ApiIdConverter.marketGroup(TYPE_ID, program.getSettings().getItems());
 					item.updateValues(price, volume, marketGroup);
 					//Inventory AKA Assets
 					if (stockpile.isInventory()) {
 						for (Asset asset : program.getEveAssetEventList()) {
+							if (asset.getTypeID() != TYPE_ID) {
+								continue; //Ignore wrong typeID
+							}
 							//Skip market orders
-							//Ignore market sell orders
 							if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
-								continue;
+								continue; //Ignore market sell orders
 							}
-							//Ignore market buy orders
 							if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
-								continue;
+								continue; //Ignore market buy orders
 							}
-							item.updateAsset(asset, ownersID.get(asset.getOwner()), regions.get(asset.getRegion()));
+							Location location = program.getSettings().getLocations().get(asset.getLocationID());
+							item.updateAsset(asset, ownersID.get(asset.getOwner()), location);
 						}
 					}
 					//Orders & Jobs
 					if (stockpile.isBuyOrders() || stockpile.isSellOrders() || stockpile.isJobs()) {
 						for (Account account : program.getSettings().getAccounts()) {
 							for (Owner owner : account.getOwners()) {
-								if (owner.isShowAssets()) {
-									//Market Orders
+								if (!owner.isShowAssets()) {
+									continue; //Ignore hidden owners
+								}
+								//Market Orders
+								if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
 									for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
+										if (marketOrder.getTypeID() != TYPE_ID) {
+											continue; //Ignore wrong typeID
+										}
 										Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
 										item.updateMarketOrder(marketOrder, owner.getOwnerID(), location);
 									}
-									//Jobs
+								}
+								//Industry Job
+								if (stockpile.isJobs()) {
 									for (ApiIndustryJob industryJob : owner.getIndustryJobs()) {
+										if (industryJob.getOutputTypeID() != TYPE_ID) {
+											continue; //Ignore wrong typeID
+										}
 										Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
 										Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
-										ItemFlag itemFlag = program.getSettings().getItemFlags().get(industryJob.getOutputFlag());
-										item.updateIndustryJob(industryJob, itemFlag, owner.getOwnerID(), location, itemType);
+										item.updateIndustryJob(industryJob, owner.getOwnerID(), location, itemType);
 									}
 								}
 							}

@@ -347,8 +347,8 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.marketGroup = updateMarketGroup;
 		}
 
-		public void updateAsset(final Asset asset, final Long characterID, final Long regionID) {
-			if (asset != null && characterID != null && regionID != null //better safe then sorry
+		public void updateAsset(final Asset asset, final Long characterID, final Location location) {
+			if (asset != null && characterID != null && location != null //better safe then sorry
 					&& (
 						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
 						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
@@ -358,7 +358,7 @@ public class Stockpile implements Comparable<Stockpile> {
 					&& matchFlag(asset, stockpile.getFlagID())
 					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
-					|| stockpile.getLocationID() == regionID
+					|| stockpile.getLocationID() == location.getRegionID()
 					|| stockpile.getLocationID() < 0)
 					) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();
@@ -402,11 +402,11 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 		}
 
-		void updateIndustryJob(final ApiIndustryJob industryJob, final ItemFlag itemFlag, final Long characterID, final Location location, final Item itemType) {
-			if (industryJob != null && itemFlag != null && characterID != null && location != null && itemType != null //better safe then sorry
+		void updateIndustryJob(final ApiIndustryJob industryJob, final Long characterID, final Location location, final Item itemType) {
+			if (industryJob != null && characterID != null && location != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
 					&& (stockpile.getOwnerID() == characterID || stockpile.getOwnerID() < 0)
-					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
+					&& (stockpile.getFlagID() == industryJob.getOutputFlag() || stockpile.getFlagID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
 					|| stockpile.getLocationID() == location.getRegionID()
