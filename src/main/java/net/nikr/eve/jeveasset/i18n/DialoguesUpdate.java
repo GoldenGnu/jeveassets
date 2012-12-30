@@ -45,10 +45,8 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String errors(String mouseTask);
 
 	// used in UpdateDialog
-	public abstract String ownerIDs();
 	public abstract String update();
 	public abstract String all();
-	public abstract String contractItem();
 	public abstract String contracts();
 	public abstract String marketOrders();
 	public abstract String industryJobs();

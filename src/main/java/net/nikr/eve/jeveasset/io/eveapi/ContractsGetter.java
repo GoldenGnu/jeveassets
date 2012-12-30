@@ -28,6 +28,7 @@ import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -45,7 +46,17 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
-	
+
+	@Override
+	protected int getProgressStart() {
+		return 0;
+	}
+
+	@Override
+	protected int getProgressEnd() {
+		return 30;
+	}
+
 	@Override
 	protected ContractsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
@@ -69,7 +80,15 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	protected void setData(ContractsResponse response) {
 		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
 		for (EveContract contract : contracts) {
-			getOwner().getContracts().put(contract, new ArrayList<EveContractItem>());
+			//Find existing contract
+			List<EveContractItem> contractItems = new ArrayList<EveContractItem>();
+			for (Map.Entry<EveContract, List<EveContractItem>> entry : getOwner().getContracts().entrySet()) {
+				if (entry.getKey().getContractID() == contract.getContractID()) {
+					contractItems = entry.getValue();
+					break;
+				}
+			}
+			getOwner().getContracts().put(contract, contractItems);
 		}
 	}
 

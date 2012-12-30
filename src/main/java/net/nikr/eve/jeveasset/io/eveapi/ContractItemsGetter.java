@@ -29,6 +29,7 @@ import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -47,7 +48,6 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
 		//Calc size
-		int progress = updateTask.getProgress();
 		int size = 0;
 		for (Account account : accounts) {
 			for (Owner owner : account.getOwners()) {
@@ -57,23 +57,37 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		int count = 0;
 		for (Account account : accounts) {
 			for (Owner owner : account.getOwners()) {
-				for (EveContract contract : owner.getContracts().keySet()) {
+				for (Map.Entry<EveContract, List<EveContractItem>> entry : owner.getContracts().entrySet()) {
+					EveContract contract = entry.getKey();
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
 					count++; //Also count COURIER
 					if (contract.getType() == ContractType.COURIER) {
-						continue;
+						continue; //Ignore courier
+					}
+					if (!entry.getValue().isEmpty()) {
+						continue; //Ignore old
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
 					currentContract = contract;
 					super.load(updateTask, forceUpdate, owner);
 					if (updateTask != null) {
-						updateTask.setTaskProgress(size, count, progress, 100);
+						updateTask.setTaskProgress(size, count, getProgressStart(), getProgressEnd());
 					}
 				}
 			}
 		}
+	}
+
+	@Override
+	protected int getProgressStart() {
+		return 30;
+	}
+
+	@Override
+	protected int getProgressEnd() {
+		return 90;
 	}
 
 	@Override

@@ -45,22 +45,32 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 		super("OwnerID to Name", false, false);
 	}
 
+	@Override
+	protected int getProgressStart() {
+		return 90;
+	}
+
+	@Override
+	protected int getProgressEnd() {
+		return 100;
+	}
+
 	public void load(UpdateTask updateTask, Settings settings, Set<Long> list) {
 		this.settings = settings;
 		ownerIDs = convert(list);
 		for (int i = 0; i < ownerIDs.length; i++) {
 			group = i;
-			for (Long l : ownerIDs[group]) {
-				System.out.println(l);
+			if (updateTask != null) {
+				updateTask.setTaskProgress(ownerIDs.length, (i + 1), getProgressStart(), getProgressEnd());
 			}
-			//FIXME update progress for UpdateTask
-			super.load(updateTask, true, "Request "+i+" of "+ownerIDs.length);
+			super.load(updateTask, true, "Request " + (i + 1) + " of " + ownerIDs.length);
 		}
 	}
 
 	@Override
 	protected CharacterLookupResponse getResponse(boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.eve.character.CharacterLookupParser.getId2NameInstance().getResponse(ownerIDs[group]);
+		return com.beimin.eveapi.eve.character
+				.CharacterLookupParser.getId2NameInstance().getResponse(ownerIDs[group]);
 	}
 
 	@Override

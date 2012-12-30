@@ -357,25 +357,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			}
 			if (jContracts.isSelected()) {
 				updateTasks.add(new ContractsTask());
-				updateTasks.add(new ContractItemsTask());
 			}
 			if (jAssets.isSelected()) {
 				updateTasks.add(new AssetsTask());
-			}
-			if (jContracts.isSelected()) {
-				Set<Long> list = new HashSet<Long>();
-				for (Account account : program.getSettings().getAccounts()) {
-					for (Owner owner : account.getOwners()) {
-						list.add(owner.getOwnerID()); //Just to be sure
-						for (EveContract contract : owner.getContracts().keySet()) {
-							list.add(contract.getAcceptorID());
-							list.add(contract.getAssigneeID());
-							list.add(contract.getIssuerCorpID());
-							list.add(contract.getIssuerID());
-						}
-					}
-				}
-				updateTasks.add(new OwnerTask(list));
 			}
 			if (jPriceData.isSelected()
 					|| jMarketOrders.isSelected()
@@ -491,35 +475,25 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() {
+			//Get Contracts
 			ContractsGetter contractsGetter = new ContractsGetter();
 			contractsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
-		}
-	}
-
-	public class ContractItemsTask extends UpdateTask {
-
-		public ContractItemsTask() {
-			super(DialoguesUpdate.get().contractItem());
-		}
-
-		@Override
-		public void update() {
+			//Get Contract Items
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
-		}
-	}
-
-	public class OwnerTask extends UpdateTask {
-	
-		private Set<Long> list;
-
-		public OwnerTask(Set<Long> list) {
-			super(DialoguesUpdate.get().ownerIDs());
-			this.list = list;
-		}
-
-		@Override
-		public void update() {
+			Set<Long> list = new HashSet<Long>();
+			for (Account account : program.getSettings().getAccounts()) {
+				for (Owner owner : account.getOwners()) {
+					list.add(owner.getOwnerID()); //Just to be sure
+					for (EveContract contract : owner.getContracts().keySet()) {
+						list.add(contract.getAcceptorID());
+						list.add(contract.getAssigneeID());
+						list.add(contract.getIssuerCorpID());
+						list.add(contract.getIssuerID());
+					}
+				}
+			}
+			//Get Name
 			NameGetter nameGetter = new NameGetter();
 			nameGetter.load(this, program.getSettings(), list);
 		}

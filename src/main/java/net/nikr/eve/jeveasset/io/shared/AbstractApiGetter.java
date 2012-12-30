@@ -60,6 +60,14 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		this.updateAccount = updateAccount;
 	}
 
+	protected int getProgressStart() {
+		return 0;
+	}
+
+	protected int getProgressEnd() {
+		return 100;
+	}
+
 	protected void setTaskName(String taskName) {
 		this.taskName = taskName;
 	}
@@ -101,7 +109,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 						loadAccount();
 					}
 					accountCount++;
-					updateTask.setTaskProgress(accounts.size(), accountCount, 0, 100);
+					updateTask.setTaskProgress(accounts.size(), accountCount, getProgressStart(), getProgressEnd());
 				} else {
 					loadAccount();
 				}
@@ -116,7 +124,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 							loadOwner();
 						}
 						ownerCount++;
-						updateTask.setTaskProgress(ownerSize, ownerCount, 0, 100);
+						updateTask.setTaskProgress(ownerSize, ownerCount, getProgressStart(), getProgressEnd());
 					} else {
 						loadOwner();
 					}
