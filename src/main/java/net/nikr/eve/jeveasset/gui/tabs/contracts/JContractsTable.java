@@ -48,7 +48,9 @@ public class JContractsTable extends JSeparatorTable {
 		if (object instanceof ContractItem) {
 			ContractItem item = (ContractItem) object;
 			if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
-				if (item.isIncluded()) {
+				if (item.getContract().isCourier()) {
+					component.setBackground(new Color(255, 255, 160)); //Yellow
+				} else if (item.isIncluded()) {
 					component.setBackground(new Color(160, 255, 160)); //Green
 				} else {
 					component.setBackground(new Color(255, 160, 160)); //Red

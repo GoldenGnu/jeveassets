@@ -32,7 +32,7 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 
 	public ContractItem(Contract contract) {
 		this.contract = contract;
-		this.name = contract.getType().name();
+		this.name = contract.getTypeName();
 		this.setIncluded(true);
 		this.setQuantity(0);
 		this.setRecordID(0);
@@ -59,7 +59,9 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 	}
 
 	public String getSingleton() {
-		if (isSingleton()) {
+		if (getContract().isCourier()) {
+			return TabsContracts.get().courier();
+		} else if (isSingleton()) {
 			return TabsContracts.get().unpackaged();
 		} else {
 			return TabsContracts.get().packaged();

@@ -30,6 +30,8 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import com.beimin.eveapi.shared.contract.ContractType;
+import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -107,6 +109,8 @@ public class ContractsTab extends JMainTab {
 		jTable = new JContractsTable(program, tableModel);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
+		jTable.getTableHeader().setReorderingAllowed(true);
+		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
@@ -167,6 +171,11 @@ public class ContractsTab extends JMainTab {
 				List<ContractItem> contractItems
 						= ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
 				list.addAll(contractItems);
+				for (EveContract contract : owner.getContracts().keySet()) {
+					if (contract.getType() == ContractType.COURIER) {
+						list.add(new ContractItem(ApiConverter.eveContractToContract(contract, program.getSettings())));
+					}
+				}
 			}
 		}
 		try {

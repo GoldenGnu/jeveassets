@@ -224,7 +224,7 @@ public final class ApiConverter {
 		Contract contract = eveContractToContract(eveContract, settings);
 		return new ContractItem(eveContractItem, contract, name);
 	}
-	private static Contract eveContractToContract(final EveContract eveContract, final Settings settings) {
+	public static Contract eveContractToContract(final EveContract eveContract, final Settings settings) {
 		String acceptor = ApiIdConverter.ownerName(eveContract.getAcceptorID(), settings.getOwners());
 		String assignee = ApiIdConverter.ownerName(eveContract.getAssigneeID(), settings.getOwners());
 		String issuerCorp = ApiIdConverter.ownerName(eveContract.getIssuerCorpID(), settings.getOwners());

@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
+import com.beimin.eveapi.shared.contract.ContractType;
 import com.beimin.eveapi.shared.contract.EveContract;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
@@ -105,6 +106,10 @@ public class Contract extends EveContract {
 
 	public String getStartStation() {
 		return startStation;
+	}
+
+	public boolean isCourier() {
+		return (getType() == ContractType.COURIER);
 	}
 
 	@Override

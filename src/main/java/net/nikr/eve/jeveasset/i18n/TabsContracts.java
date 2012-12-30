@@ -41,6 +41,8 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnAccepted();
 	public abstract String columnAcceptor();
 	public abstract String columnAssignee();
+	public abstract String columnBuyout();
+	public abstract String columnCollateral();
 	public abstract String columnCompleted();
 	public abstract String columnEndStation();
 	public abstract String columnExpired();
@@ -49,12 +51,16 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnIssuer();
 	public abstract String columnIssuerCorp();
 	public abstract String columnName();
+	public abstract String columnNumDays();
+	public abstract String columnPrice();
 	public abstract String columnQuantity();
+	public abstract String columnReward();
 	public abstract String columnSingleton();
 	public abstract String columnStartStation();
 	public abstract String columnTitle();
 	public abstract String columnType();
 	public abstract String columnTypeID();
+	public abstract String columnVolume();
 	public abstract String courier();
 	public abstract String expand();
 	public abstract String itemExchange();

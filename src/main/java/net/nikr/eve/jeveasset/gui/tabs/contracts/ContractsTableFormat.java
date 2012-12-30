@@ -69,6 +69,66 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 			return from.getTypeID();
 		}
 	},
+	VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnVolume();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getVolume();
+		}
+	},
+	PRICE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnPrice();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getPrice();
+		}
+	},
+	BUYOUT(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnBuyout();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getBuyout();
+		}
+	},
+	COLLATERAL(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnCollateral();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getCollateral();
+		}
+	},
+	NUM_DAYS(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnNumDays();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getNumDays();
+		}
+	},
+	REWARD(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsContracts.get().columnReward();
+		}
+		@Override
+		public Object getColumnValue(final ContractItem from) {
+			return from.getContract().getReward();
+		}
+	},
 	ISSUER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
