@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -322,6 +321,14 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.group = group;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
+		}
+
+		void update(StockpileItem stockpileItem) {
+			this.stockpile = stockpileItem.stockpile;
+			this.name = stockpileItem.name;
+			this.group = stockpileItem.group;
+			this.typeID = stockpileItem.typeID;
+			this.countMinimum = stockpileItem.countMinimum;
 		}
 
 		public boolean isOK() {

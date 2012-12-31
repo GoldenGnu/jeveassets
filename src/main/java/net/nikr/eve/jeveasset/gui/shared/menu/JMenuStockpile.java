@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenu;
@@ -84,7 +85,11 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
 				}
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab(), true);
+				program.getStockpileTool().addStockpile(stockpile);
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+				if (program.getSettings().isStockpileFocusTab()) {
+					program.getStockpileTool().scrollToSctockpile(stockpile);
+				}
 			}
 		}
 		if (ACTION_ADD_TO_EXISTING.equals(e.getActionCommand())) {
@@ -92,12 +97,18 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 			if (source instanceof JStockpileMenu) {
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
+				List<StockpileItem> items = new ArrayList<StockpileItem>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
 					Item item = program.getSettings().getItems().get(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
 					stockpile.add(stockpileItem);
+					items.add(stockpileItem);
 				}
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab(), true);
+				program.getStockpileTool().addItems(items);
+				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+				if (program.getSettings().isStockpileFocusTab()) {
+					program.getStockpileTool().scrollToSctockpile(stockpile);
+				}
 			}
 		}
 	}

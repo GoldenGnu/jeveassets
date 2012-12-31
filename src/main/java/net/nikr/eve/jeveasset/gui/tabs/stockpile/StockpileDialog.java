@@ -359,9 +359,9 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		return stockpile;
 	}
 
-	boolean showClone(final Stockpile stockpile) {
+	Stockpile showClone(final Stockpile stockpile) {
 		updateData();
-		this.cloneStockpile = stockpile.clone();
+		cloneStockpile = stockpile.clone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
 
@@ -410,7 +410,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
-		return updated;
+		return cloneStockpile;
 	}
 
 	private void show() {

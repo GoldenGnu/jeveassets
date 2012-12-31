@@ -56,7 +56,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private EventList<Item> items = new BasicEventList<Item>();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
-	private boolean updated = false;
 
 	public StockpileItemDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
@@ -130,7 +129,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		);
 	}
 
-	boolean showEdit(final StockpileItem addStockpileItem) {
+	StockpileItem showEdit(final StockpileItem addStockpileItem) {
 		updateData();
 		this.stockpileItem = addStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
@@ -139,16 +138,16 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		jCopy.setSelected(addStockpileItem.isBPC());
 		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
 		show();
-		return updated;
+		return stockpileItem;
 	}
 
-	boolean showAdd(final Stockpile addStockpile) {
+	StockpileItem showAdd(final Stockpile addStockpile) {
 		updateData();
 		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
 		jCopy.setSelected(false);
 		show();
-		return updated;
+		return stockpileItem;
 	}
 
 	private void updateData() {
@@ -169,7 +168,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	private void show() {
-		updated = false;
 		autoValidate();
 		autoSet();
 		super.setVisible(true);
@@ -291,15 +289,13 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	@Override
 	protected void save() {
 		if (stockpileItem != null) { //EDIT
-			stockpile = getStockpile();
-			stockpile.remove(stockpileItem);
+			stockpileItem.update(getStockpileItem());
+		} else if (itemExist()) { //UPDATING (Adding an existing item)
+			getExistingItem().update(getStockpileItem());
+		} else { //ADD 
+			stockpileItem = getStockpileItem();
+			stockpile.add(stockpileItem);
 		}
-		if (itemExist()) { //UPDATING (Adding an existing item)
-			stockpile.remove(getExistingItem());
-		}
-		//ADD & EDIT & UPDATING
-		stockpile.add(getStockpileItem());
-		updated = true;
 		super.setVisible(false);
 	}
 
