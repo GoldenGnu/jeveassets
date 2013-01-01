@@ -23,19 +23,19 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.Dimension;
 import java.awt.Window;
+import java.lang.reflect.InvocationTargetException;
 import javax.swing.*;
 
 
-public class JWait {
+public class JLockWindow {
 
 	private JWindow jWindow;
 	private JLabel jLabel;
 	private Window parent;
 
-	public JWait(final Window parent) {
+	public JLockWindow(final Window parent) {
 		this.parent = parent;
 		jWindow = new JWindow(parent);
-		//jWindow.setUndecorated(true);
 
 		JPanel jPanel = new JPanel();
 		jPanel.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -45,24 +45,20 @@ public class JWait {
 		layout.setAutoCreateContainerGaps(true);
 		jWindow.add(jPanel);
 
-		JWorking jWorking = new JWorking();
-
 		jLabel = new JLabel();
 
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(jLabel)
-				.addComponent(jWorking)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jLabel)
-				.addComponent(jWorking)
 		);
 	}
 
-	public void showWaitDialog(final String text) {
+	public void show(final Runnable runnable, final String text) {
 		jLabel.setText(text);
 		jWindow.pack();
 		//Get the parent size
@@ -75,10 +71,37 @@ public class JWait {
 		//Set the new frame location
 		jWindow.setLocation(x, y);
 		jWindow.setLocationRelativeTo(parent);
+		parent.setEnabled(false);
 		jWindow.setVisible(true);
+		Thread thread = new Thread(new Wait(runnable));
+		thread.start();
 	}
 
-	public void hideWaitDialog() {
+	private void hide() {
+		parent.setEnabled(true);
 		jWindow.setVisible(false);
+	}
+
+	class Wait implements Runnable {
+
+		private Runnable runnable;
+
+		public Wait(Runnable runnable) {
+			this.runnable = runnable;
+		}
+
+		@Override
+		public void run() {
+			try {
+			//SwingUtilities.invokeLater(runnable);
+				SwingUtilities.invokeAndWait(runnable);
+			} catch (InterruptedException ex) {
+
+			} catch (InvocationTargetException ex) {
+
+			}
+			hide();
+		}
+		
 	}
 }

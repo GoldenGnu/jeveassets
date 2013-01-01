@@ -38,11 +38,11 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JWait;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
-public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener, PropertyChangeListener {
+public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener {
 
 	private static final String ACTION_NEW_PROFILE = "ACTION_NEW_PROFILE";
 	private static final String ACTION_LOAD_PROFILE = "ACTION_LOAD_PROFILE";
@@ -58,13 +58,13 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private JButton jDelete;
 	private JButton jDefault;
 	private JButton jClose;
-	private JWait jWait;
+	private JLockWindow jLockWindow;
 	private JValidatedInputDialog jValidatedInputDialog;
 
 	public ProfileDialog(final Program program) {
 		super(program, DialoguesProfiles.get().profiles(), Images.DIALOG_PROFILES.getImage());
 
-		jWait = new JWait(this.getDialog());
+		jLockWindow = new JLockWindow(this.getDialog());
 		jValidatedInputDialog = new JValidatedInputDialog(program, this);
 
 		jProfiles = new JList();
@@ -128,17 +128,6 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		);
 	}
 
-
-	private void setAllEnabled(final boolean b) {
-		jProfiles.setEnabled(b);
-		jNew.setEnabled(b);
-		jLoad.setEnabled(b);
-		jRename.setEnabled(b);
-		jDelete.setEnabled(b);
-		jDefault.setEnabled(b);
-		jClose.setEnabled(b);
-	}
-
 	private void updateProfiles() {
 		DefaultListModel listModel = new DefaultListModel();
 		List<Profile> profiles = program.getSettings().getProfiles();
@@ -161,26 +150,45 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 					DialoguesProfiles.get().loadProfile(),
 					JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			jWait.showWaitDialog(DialoguesProfiles.get().loadingProfile());
-			setAllEnabled(false);
-			LoadProfile loadProfile = new LoadProfile(profile);
-			loadProfile.addPropertyChangeListener(this);
-			loadProfile.execute();
+			jLockWindow.show(new LoadProfile(profile), DialoguesProfiles.get().loadingProfile());
 		}
 	}
 
 	private void loadProfile(final Profile profile) {
 		if (profile != null && !profile.isActiveProfile()) {
+			//Clear active profile flag (from all profiles)
 			for (Profile profileLoop : program.getSettings().getProfiles()) {
 				profileLoop.setActiveProfile(false);
 			}
+			//Save old profile
 			program.getSettings().saveAssets();
+			//Clear accounts
 			program.getSettings().setAccounts(new ArrayList<Account>());
+			//Clear data
 			program.updateEventList();
+			//Set active profile
 			program.getSettings().setActiveProfile(profile);
 			profile.setActiveProfile(true);
+			//Load new profile
 			program.getSettings().loadActiveProfile();
+			//Update data
 			program.updateEventList();
+			//Update GUI (this dialog)
+			updateProfiles();
+			jProfiles.updateUI();
+			//Update window title
+			program.getMainWindow().updateTitle();
+			//Ask to clear filters - if needed
+			if (!program.getAssetsTab().isFiltersEmpty()) {
+				int value = JOptionPane.showConfirmDialog(this.getDialog(),
+						DialoguesProfiles.get().clearFilter(),
+						DialoguesProfiles.get().profileLoadedMsg(),
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				if (value == JOptionPane.YES_OPTION) {
+					program.getAssetsTab().clearFilters();
+				}
+			}
 		}
 	}
 
@@ -217,11 +225,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 							DialoguesProfiles.get().newProfile(),
 							JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					jWait.showWaitDialog(DialoguesProfiles.get().creatingProfile());
-					setAllEnabled(false);
-					NewProfile newProfile = new NewProfile(s);
-					newProfile.addPropertyChangeListener(this);
-					newProfile.execute();
+					jLockWindow.show(new NewProfile(s), DialoguesProfiles.get().creatingProfile());
 				}
 			}
 		}
@@ -299,7 +303,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 	@Override
 	public void mouseClicked(final MouseEvent e) {
-		if (e.getClickCount() == 2 && jProfiles.isEnabled()) {
+		if (e.getClickCount() == 2 && this.getDialog().isEnabled()) {
 			startLoadProfile();
 		}
 	}
@@ -315,31 +319,6 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 	@Override
 	public void mouseExited(final MouseEvent e) { }
-
-	@Override
-	public void propertyChange(final PropertyChangeEvent evt) {
-		Object o = evt.getSource();
-		if (o instanceof SwingWorker) {
-			SwingWorker<?, ?> swingWorker = (SwingWorker) o;
-			if (swingWorker.isDone()) {
-				updateProfiles();
-				jProfiles.updateUI();
-				setAllEnabled(true);
-				program.getMainWindow().updateTitle();
-				jWait.hideWaitDialog();
-				if (!program.getAssetsTab().isFiltersEmpty()) {
-					int value = JOptionPane.showConfirmDialog(this.getDialog(),
-							DialoguesProfiles.get().clearFilter(),
-							DialoguesProfiles.get().profileLoadedMsg(),
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE);
-					if (value == JOptionPane.YES_OPTION) {
-						program.getAssetsTab().clearFilters();
-					}
-				}
-			}
-		}
-	}
 
 	public class JProfileListRenderer extends DefaultListCellRenderer {
 
@@ -359,7 +338,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 
 
-	private class NewProfile extends SwingWorker<Void, Void> {
+	private class NewProfile implements Runnable {
 
 		private String profileName;
 
@@ -368,15 +347,14 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		}
 
 		@Override
-		protected Void doInBackground() throws Exception {
+		public void run() {
 			Profile profile = new Profile(profileName, false, false);
 			program.getSettings().getProfiles().add(profile);
 			loadProfile(profile);
-			return null;
 		}
 	}
 
-	private class LoadProfile extends SwingWorker<Void, Void> {
+	private class LoadProfile implements Runnable {
 
 		private Profile profile;
 
@@ -385,9 +363,8 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		}
 
 		@Override
-		protected Void doInBackground() throws Exception {
+		public void run() {
 			loadProfile(profile);
-			return null;
 		}
 
 	}

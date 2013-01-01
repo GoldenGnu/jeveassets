@@ -23,35 +23,29 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JWait;
+import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
-public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener, PropertyChangeListener {
+public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
 
 	private static final String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private static final String ACTION_UPDATE = "ACTION_UPDATE";
 
 	private JButton jClose;
-	private JButton jCheckUpdates;
-	private JEditorPane jInfo;
-	private JEditorPane jExternal;
-	private JEditorPane jThanks;
-	private JWait jWait;
+	private JLockWindow jLockWindow;
 
 	public AboutDialog(final Program program) {
 		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
-		jWait = new JWait(this.getDialog());
+		jLockWindow = new JLockWindow(this.getDialog());
 
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon(Images.MISC_ASSETS_64.getIcon());
@@ -61,7 +55,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "Copyright &copy; 2009, 2010, 2011, 2012 Contributors<br>"
 				);
 
-		jInfo = createEditorPane(
+		JEditorPane jInfo = createEditorPane(
 				  "<b>Version</b><br>"
 				+ "&nbsp;" + Program.PROGRAM_VERSION + " (" + program.getProgramDataVersion() + ")<br>"
 				+ "<br>"
@@ -83,7 +77,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				+ "<br>"
 				);
 
-		jExternal = createEditorPane(
+		JEditorPane jExternal = createEditorPane(
 				  "<b>Content</b><br>"
 				+ "&nbsp;<a href=\"http://www.eveonline.com/\">EVE-Online</a> (api and toolkit)<br> "
 				+ "&nbsp;<a href=\"http://eve-central.com/\">EVE-Central.com</a> (price data api)<br>"
@@ -107,7 +101,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				//+ "<br>"
 				);
 
-		jThanks =  createEditorPane(
+		JEditorPane jThanks =  createEditorPane(
 				"<b>Special Thanks</b><br>"
 				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
 
@@ -115,7 +109,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
 		jClose.addActionListener(this);
 
-		jCheckUpdates = new JButton(DialoguesAbout.get().updates());
+		JButton jCheckUpdates = new JButton(DialoguesAbout.get().updates());
 		jCheckUpdates.setActionCommand(ACTION_UPDATE);
 		jCheckUpdates.addActionListener(this);
 
@@ -154,14 +148,6 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		);
 	}
 
-	private void setEnabledAll(final boolean b) {
-		jClose.setEnabled(b);
-		jCheckUpdates.setEnabled(b);
-		jInfo.setEnabled(b);
-		jExternal.setEnabled(b);
-		jThanks.setEnabled(b);
-	}
-
 	private JEditorPane createEditorPane(final String text) {
 		return createEditorPane(true, text);
 	}
@@ -194,9 +180,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	}
 
 	@Override
-	protected void windowShown() {
-		setEnabledAll(true);
-	}
+	protected void windowShown() {}
 
 	@Override
 	protected void save() { }
@@ -207,11 +191,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 			super.setVisible(false);
 		}
 		if (ACTION_UPDATE.equals(e.getActionCommand())) {
-			jWait.showWaitDialog(DialoguesAbout.get().updatesInProgress());
-			setEnabledAll(false);
-			CheckProgramUpdate checkProgramUpdate = new CheckProgramUpdate();
-			checkProgramUpdate.addPropertyChangeListener(this);
-			checkProgramUpdate.execute();
+			jLockWindow.show(new CheckProgramUpdate(), DialoguesAbout.get().updatesInProgress());
 		}
 	}
 
@@ -226,26 +206,11 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		}
 	}
 
-	@Override
-	public void propertyChange(final PropertyChangeEvent evt) {
-		Object o = evt.getSource();
-		if (o instanceof SwingWorker) {
-			SwingWorker<?, ?> swingWorker = (SwingWorker) o;
-			if (swingWorker.isDone()) {
-				setEnabledAll(true);
-				jWait.hideWaitDialog();
-			}
-		}
-
-	}
-
-	private class CheckProgramUpdate extends SwingWorker<Void, Void> {
+	private class CheckProgramUpdate implements Runnable {
 
 		@Override
-		protected Void doInBackground() throws Exception {
+		public void run() {
 			program.checkForProgramUpdates(getDialog());
-			return null;
 		}
-
 	}
 }
