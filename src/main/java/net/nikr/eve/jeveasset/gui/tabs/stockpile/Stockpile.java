@@ -434,6 +434,11 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.getStockpile().updateTotal();
 		}
 
+		public void addCountMinimum(final long countMinimum) {
+			this.countMinimum = this.countMinimum + countMinimum;
+			this.getStockpile().updateTotal();
+		}
+
 		public String getSeperator() {
 			return stockpile.getName();
 		}

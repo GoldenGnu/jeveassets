@@ -291,7 +291,8 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		if (stockpileItem != null) { //EDIT
 			stockpileItem.update(getStockpileItem());
 		} else if (itemExist()) { //UPDATING (Adding an existing item)
-			getExistingItem().update(getStockpileItem());
+			stockpileItem = getExistingItem();
+			stockpileItem.update(getStockpileItem());
 		} else { //ADD 
 			stockpileItem = getStockpileItem();
 			stockpile.add(stockpileItem);

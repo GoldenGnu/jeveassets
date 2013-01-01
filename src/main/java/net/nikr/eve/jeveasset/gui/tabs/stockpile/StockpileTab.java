@@ -63,7 +63,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class StockpileTab extends JMainTab implements ActionListener, ListEventListener<StockpileItem> {
 
 	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_SHOPPING_LIST = "ACTION_SHOPPING_LIST";
+	private static final String ACTION_SHOPPING_LIST_MULTI = "ACTION_SHOPPING_LIST_MULTI";
 	private static final String ACTION_IMPORT = "ACTION_IMPORT";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -125,7 +125,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jToolBarLeft.addSeparator();
 
 		jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jShoppingList.setActionCommand(ACTION_SHOPPING_LIST);
+		jShoppingList.setActionCommand(ACTION_SHOPPING_LIST_MULTI);
 		jShoppingList.addActionListener(this);
 		jShoppingList.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jShoppingList.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
@@ -249,6 +249,39 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		return stockpileDialog.showAdd();
 	}
 
+	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
+		if (stockpile == null) { //new stockpile
+			stockpile = stockpileDialog.showAdd();
+		}
+		if (stockpile != null) { //Add items
+			List<StockpileItem> newItems = new ArrayList<StockpileItem>();
+			for (StockpileItem fromItem : items) {
+				//Clone item
+				StockpileItem toItem = null;
+				//Search for existing
+				for (StockpileItem item : stockpile.getItems()) {
+					if (item.getTypeID() == fromItem.getTypeID()) {
+						toItem = item;
+						break;
+					}
+				}
+				if (toItem != null) { //Update existing (add counts)
+					toItem.addCountMinimum(fromItem.getCountMinimum());
+				} else { //Add new
+					StockpileItem item = new StockpileItem(stockpile, fromItem);
+					stockpile.add(item);
+					newItems.add(item);
+				}
+			}
+			if (newItems.isEmpty()) {
+				tableModel.fireTableDataChanged();
+			} else {
+				addItems(newItems);
+			}
+		}
+		return stockpile;
+	}
+
 	public void scrollToSctockpile(final Stockpile stockpile) {
 		StockpileItem item = stockpile.getItems().get(0);
 		int row = separatorList.indexOf(item) - 1;
@@ -281,25 +314,10 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	private void addItem(StockpileItem item) {
-		updateStockpile(item.getStockpile());
-		//Lock Table
-		beforeUpdateData();
-		//Save separator expanded/collapsed state
-		saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.add(item);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Restore separator expanded/collapsed state
-		loadExpandedState();
-		//Unlcok Table
-		afterUpdateData();
+		addItems(Collections.singletonList(item));
 	}
 
-	public void addItems(List<StockpileItem> items) {
+	private void addItems(List<StockpileItem> items) {
 		if (items.isEmpty()) {
 			return;
 		}
@@ -319,6 +337,10 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		loadExpandedState();
 		//Unlcok Table
 		afterUpdateData();
+	}
+
+	private void removeItem(StockpileItem item) {
+		removeItems(Collections.singletonList(item));
 	}
 
 	private void removeItems(List<StockpileItem> items) {
@@ -478,6 +500,81 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 			}
 		}
+	}
+
+	private void importEFT() {
+		//Get string from clipboard
+		String fit = getClipboardContents();
+
+		//Validate
+		fit = fit.trim();
+		if (fit.isEmpty()) { //Empty sting
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+
+		String[] split = fit.split("[\r\n]");
+		if (split.length < 1) { //Malformed
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		//Malformed
+		if (!split[0].startsWith("[") || !split[0].contains(",") || !split[0].endsWith("]")) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		//TODO do some more validation of EFT imports
+
+		//Format and split
+		fit = fit.replace("[", "").replace("]", "");
+		List<String> modules = new ArrayList<String>(Arrays.asList(fit.split("[\r\n,]")));
+
+		//Get name of fit
+		String name;
+		if (modules.size() > 1) {
+			name = modules.get(1).trim();
+			modules.remove(1);
+		} else {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+
+		//Create Stockpile
+		Stockpile stockpile = stockpileDialog.showAdd(name);
+		if (stockpile == null) { //Dialog cancelled
+			return;
+		}
+
+		//Add modules
+		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
+		for (String module : modules) {
+			module = module.trim().toLowerCase(); //Format line
+			if (module.isEmpty()) { //Skip empty lines
+				continue;
+			}
+			//Search for item name
+			for (Map.Entry<Integer, Item> entry : program.getSettings().getItems().entrySet()) {
+				Item item = entry.getValue();
+				if (item.getName().toLowerCase().equals(module)) { //Found item
+					int typeID = item.getTypeID();
+					if (!items.containsKey(typeID)) { //Add new item
+						StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+						stockpile.add(stockpileItem);
+						items.put(typeID, stockpileItem);
+					}
+					//Update item count
+					StockpileItem stockpileItem = items.get(typeID);
+					long count = stockpileItem.getCountMinimum();
+					count++;
+					stockpileItem.setCountMinimum(count);
+					break; //search done
+				}
+			}
+		}
+
+		//Update stockpile data
+		addStockpile(stockpile);
+		scrollToSctockpile(stockpile);
 	}
 
 	private String getClipboardContents() {
@@ -641,6 +738,36 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
+		//Shopping list single
+		if (StockpileSeparatorTableCell.ACTION_SHOPPING_LIST_SINGLE.equals(e.getActionCommand())) {
+			int index = jTable.getSelectedRow();
+			Object o = tableModel.getElementAt(index);
+			if (o instanceof SeparatorList.Separator<?>) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+				StockpileItem item = (StockpileItem) separator.first();
+				stockpileShoppingListDialog.show(item.getStockpile());
+			}
+		}
+		//Shopping list multi
+		if (ACTION_SHOPPING_LIST_MULTI.equals(e.getActionCommand())) {
+			List<Stockpile> stockpiles = stockpileSelectionDialog.show();
+			if (stockpiles != null) {
+				stockpileShoppingListDialog.show(stockpiles);
+			}
+		}
+		//Collapse all
+		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			jTable.expandSeparators(false, separatorList);
+		}
+		//Expand all
+		if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			jTable.expandSeparators(true, separatorList);
+		}
+		//Add stockpile (EFT Import)
+		if (ACTION_IMPORT.equals(e.getActionCommand())) {
+			importEFT();
+		}
+		//Add stockpile
 		if (ACTION_ADD.equals(e.getActionCommand())) {
 			Stockpile stockpile = stockpileDialog.showAdd();
 			if (stockpile != null) {
@@ -648,92 +775,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				scrollToSctockpile(stockpile);
 			}
 		}
-		if (ACTION_SHOPPING_LIST.equals(e.getActionCommand())) {
-			List<Stockpile> stockpiles = stockpileSelectionDialog.show();
-			if (stockpiles != null) {
-				stockpileShoppingListDialog.show(stockpiles);
-			}
-		}
-		if (ACTION_IMPORT.equals(e.getActionCommand())) {
-			//Get string from clipboard
-			String fit = getClipboardContents();
-
-			//Validate
-			fit = fit.trim();
-			if (fit.isEmpty()) { //Empty sting
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-
-			String[] split = fit.split("[\r\n]");
-			if (split.length < 1) { //Malformed
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			//Malformed
-			if (!split[0].startsWith("[") || !split[0].contains(",") || !split[0].endsWith("]")) {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-			//TODO do some more validation of EFT imports
-
-			//Format and split
-			fit = fit.replace("[", "").replace("]", "");
-			List<String> modules = new ArrayList<String>(Arrays.asList(fit.split("[\r\n,]")));
-
-			//Get name of fit
-			String name;
-			if (modules.size() > 1) {
-				name = modules.get(1).trim();
-				modules.remove(1);
-			} else {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
-
-			//Create Stockpile
-			Stockpile stockpile = stockpileDialog.showAdd(name);
-			if (stockpile == null) { //Dialog cancelled
-				return;
-			}
-
-			//Add modules
-			Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
-			for (String module : modules) {
-				module = module.trim().toLowerCase(); //Format line
-				if (module.isEmpty()) { //Skip empty lines
-					continue;
-				}
-				//Search for item name
-				for (Map.Entry<Integer, Item> entry : program.getSettings().getItems().entrySet()) {
-					Item item = entry.getValue();
-					if (item.getName().toLowerCase().equals(module)) { //Found item
-						int typeID = item.getTypeID();
-						if (!items.containsKey(typeID)) { //Add new item
-							StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
-							stockpile.add(stockpileItem);
-							items.put(typeID, stockpileItem);
-						}
-						//Update item count
-						StockpileItem stockpileItem = items.get(typeID);
-						long count = stockpileItem.getCountMinimum();
-						count++;
-						stockpileItem.setCountMinimum(count);
-						break; //search done
-					}
-				}
-			}
-
-			//Update stockpile data
-			addStockpile(stockpile);
-			scrollToSctockpile(stockpile);
-		}
-		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
-		}
-		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
-		}
+		//Edit stockpile
 		if (StockpileSeparatorTableCell.ACTION_EDIT_STOCKPILE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
@@ -743,11 +785,13 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				boolean updated = stockpileDialog.showEdit(stockpile);
 				if (updated) {
-					updateStockpile(stockpile);
-					tableModel.fireTableDataChanged();
+					//To tricker resort
+					removeStockpile(stockpile);
+					addStockpile(stockpile);
 				}
 			}
 		}
+		//Clone stockpile
 		if (StockpileSeparatorTableCell.ACTION_CLONE_STOCKPILE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
@@ -761,6 +805,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 			}
 		}
+		//Delete stockpile
 		if (StockpileSeparatorTableCell.ACTION_DELETE_STOCKPILE.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
@@ -775,15 +820,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 			}
 		}
-		if (StockpileSeparatorTableCell.ACTION_SHOPPING_LIST_STOCKPILE.equals(e.getActionCommand())) {
-			int index = jTable.getSelectedRow();
-			Object o = tableModel.getElementAt(index);
-			if (o instanceof SeparatorList.Separator<?>) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-				StockpileItem item = (StockpileItem) separator.first();
-				stockpileShoppingListDialog.show(item.getStockpile());
-			}
-		}
+		//Add item
 		if (StockpileSeparatorTableCell.ACTION_ADD_ITEM.equals(e.getActionCommand())) {
 			int index = jTable.getSelectedRow();
 			Object o = tableModel.getElementAt(index);
@@ -792,38 +829,21 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				StockpileItem item = (StockpileItem) separator.first();
 				Stockpile stockpile = item.getStockpile();
 				StockpileItem addItem = stockpileItemDialog.showAdd(stockpile);
-				if (addItem != null) {
+				if (addItem != null) { //Edit/Add/Update existing or cancel
+					removeItem(addItem); //Need to remove first (if it already exist)
 					addItem(addItem);
-				} else { //Update existing or cancel
-					updateStockpile(stockpile);
-					tableModel.fireTableDataChanged();
 				}
 			}
 		}
+		//Add item to
 		if (ACTION_ADD_TO.equals(e.getActionCommand())) {
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem) {
 				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				Stockpile stockpile = jMenuItem.getStockpile();
-				if (stockpile == null) { //new stockpile
-					stockpile = stockpileDialog.showAdd();
-					if (stockpile != null) {
-						updateStockpile(stockpile);
-					}
-				}
-				if (stockpile != null) { //Add items
-					List<StockpileItem> items = new ArrayList<StockpileItem>();
-					for (StockpileItem stockpileItem : jMenuItem.getItems()) {
-						//Clone item
-						StockpileItem item = new StockpileItem(stockpile, stockpileItem);
-						//Add new - ignore existing
-						stockpile.add(item);
-						items.add(item);
-					}
-					addItems(items);
-				}
+				addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems());
 			}
 		}
+		//Edit item
 		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())) {
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem) {
@@ -832,12 +852,13 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				if (items.size() == 1) {
 					StockpileItem editItem = stockpileItemDialog.showEdit(items.get(0));
 					if (editItem != null) {
-						updateStockpile(editItem.getStockpile());
-						tableModel.fireTableDataChanged();
+						removeItem(editItem);
+						addItem(editItem);
 					}
 				}
 			}
 		}
+		//Delete item
 		if (ACTION_DELETE_ITEM.equals(e.getActionCommand())) {
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem) {

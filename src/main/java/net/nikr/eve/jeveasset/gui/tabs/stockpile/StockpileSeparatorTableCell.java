@@ -27,7 +27,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public static final String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
 	public static final String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
 	public static final String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
-	public static final String ACTION_SHOPPING_LIST_STOCKPILE = "ACTION_SHOPPING_LIST_STOCKPILE";
+	public static final String ACTION_SHOPPING_LIST_SINGLE = "ACTION_SHOPPING_LIST_SINGLE";
 	public static final String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
 
 	private final JLabel jStartSpace;
@@ -116,7 +116,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jStockpile.addSeparator();
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_STOCKPILE);
+		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_SINGLE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 

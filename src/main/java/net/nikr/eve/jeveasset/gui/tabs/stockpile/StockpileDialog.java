@@ -410,7 +410,11 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Container
 		jContainer.setSelectedItem(stockpile.getContainer());
 		show();
-		return cloneStockpile;
+		if (updated) {
+			return cloneStockpile;
+		} else {
+			return null;
+		}
 	}
 
 	private void show() {

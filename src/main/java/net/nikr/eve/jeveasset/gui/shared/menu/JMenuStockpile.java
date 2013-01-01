@@ -38,8 +38,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 
-	private static final String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
-	private static final String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
+	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
 	private static final int DEFAULT_ADD_COUNT = 1;
 	private Program program;
 	private MenuData<T> menuData;
@@ -53,10 +52,10 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 
 		JMenuItem jMenuItem;
 
-		jMenuItem = new JMenuItem(GuiShared.get().newStockpile());
+		jMenuItem = new JStockpileMenu(GuiShared.get().newStockpile());
 		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 		jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
-		jMenuItem.setActionCommand(ACTION_ADD_TO_NEW);
+		jMenuItem.setActionCommand(ACTION_ADD_TO);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
@@ -69,7 +68,7 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
 			jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
-			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
+			jMenuItem.setActionCommand(ACTION_ADD_TO);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
 		}
@@ -77,22 +76,7 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ADD_TO_NEW.equals(e.getActionCommand())) {
-			Stockpile stockpile = program.getStockpileTool().showAddStockpile();
-			if (stockpile != null) {
-				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					Item item = program.getSettings().getItems().get(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
-					stockpile.add(stockpileItem);
-				}
-				program.getStockpileTool().addStockpile(stockpile);
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
-				if (program.getSettings().isStockpileFocusTab()) {
-					program.getStockpileTool().scrollToSctockpile(stockpile);
-				}
-			}
-		}
-		if (ACTION_ADD_TO_EXISTING.equals(e.getActionCommand())) {
+		if (ACTION_ADD_TO.equals(e.getActionCommand())) {
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenu) {
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
@@ -101,13 +85,14 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
 					Item item = program.getSettings().getItems().get(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
-					stockpile.add(stockpileItem);
 					items.add(stockpileItem);
 				}
-				program.getStockpileTool().addItems(items);
-				program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
-				if (program.getSettings().isStockpileFocusTab()) {
-					program.getStockpileTool().scrollToSctockpile(stockpile);
+				stockpile = program.getStockpileTool().addToStockpile(stockpile, items);
+				if (stockpile != null) {
+					program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
+					if (program.getSettings().isStockpileFocusTab()) {
+						program.getStockpileTool().scrollToSctockpile(stockpile);
+					}
 				}
 			}
 		}
@@ -117,8 +102,13 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 
 		private Stockpile stockpile;
 
+		public JStockpileMenu(final String text) {
+			super(text);
+			this.stockpile = null;
+		}
+
 		public JStockpileMenu(final Stockpile stockpile) {
-			super(stockpile.getName() + "...");
+			super(stockpile.getName());
 			this.stockpile = stockpile;
 		}
 
