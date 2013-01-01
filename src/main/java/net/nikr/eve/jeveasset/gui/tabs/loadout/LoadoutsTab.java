@@ -127,25 +127,28 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 
+		//Table Format
 		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
+		//Backend
 		eventList = new BasicEventList<Module>();
+		//Filter
 		filterList = new FilterList<Module>(eventList);
+		//Separator
 		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
 		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
-		//Tables
+		//Table
 		jTable = new JSeparatorTable(program, tableModel);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
-		//Table Render
 		PaddingTableCellRenderer.install(jTable, 3);
-
 		//Selection Model
 		selectionModel = new EventSelectionModel<Module>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
-		//Scroll Panels
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(

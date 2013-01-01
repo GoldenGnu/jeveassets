@@ -31,9 +31,9 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -71,35 +71,53 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	public MarketOrdersTab(final Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<MarketOrder>();
-		//Backend
+		//Filter
 		filterList = new FilterList<MarketOrder>(eventList);
 		filterList.addListEventListener(this);
-		//For soring the table
-		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(filterList);
+		//Sorting (per column)
+		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, tableFormat);
-		//Tables
+		tableModel = new EventTableModel<MarketOrder>(sortedList, tableFormat);
+		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		//Table Selection
-		selectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
+		selectionModel = new EventSelectionModel<MarketOrder>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Sorters
-		TableComparatorChooser.install(jTable, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
+		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		List<Filter> filter;
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
+		filterControl = new MarketOrdersFilterControl(
+				program.getMainWindow().getFrame(),
+				tableFormat,
+				eventList,
+				filterList,
+				program.getSettings().getTableFilters(NAME),
+				defaultFilters
+				);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -112,27 +130,6 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
 		this.addStatusbarLabel(jToCoverTotal);
-
-		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
-		List<Filter> filter;
-
-		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
-		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
-
-		filterControl = new MarketOrdersFilterControl(
-				program.getMainWindow().getFrame(),
-				tableFormat,
-				eventList,
-				filterList,
-				program.getSettings().getTableFilters(NAME),
-				defaultFilters
-				);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

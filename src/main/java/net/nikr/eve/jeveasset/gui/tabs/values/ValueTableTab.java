@@ -73,15 +73,17 @@ public class ValueTableTab extends JMainTab {
 
 	public ValueTableTab(final Program program) {
 		super(program, TabsValues.get().title(), Images.TOOL_VALUES.getIcon(), true);
-		eventList = new BasicEventList<Value>();
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
-		//For filtering the table
+		//Backend
+		eventList = new BasicEventList<Value>();
+		//Filter
 		filterList = new FilterList<Value>(eventList);
-		//Column sort
+		//Sorting (per column)
 		SortedList<Value> columnSortedList = new SortedList<Value>(filterList);
-		//Grand Total Sort
+		//Sorting Total
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
 		//Table Model
 		tableModel = new EventTableModel<Value>(totalSortedList, tableFormat);
@@ -93,9 +95,9 @@ public class ValueTableTab extends JMainTab {
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		PaddingTableCellRenderer.install(jTable, 3);
-		//install the sorting/filtering
+		//Sorting
 		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Table Selection
+		//Selection Model
 		selectionModel = new EventSelectionModel<Value>(totalSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);

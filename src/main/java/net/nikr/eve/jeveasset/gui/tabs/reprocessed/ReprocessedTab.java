@@ -102,15 +102,18 @@ public class ReprocessedTab extends JMainTab {
 
 		jInfo = new JLabel(TabsReprocessed.get().info());
 
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
 		eventList = new BasicEventList<ReprocessedInterface>();
 		//Sorting (per column)
 		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(eventList);
 		//Sorting Total (Ensure that total is always last)
 		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<ReprocessedInterface>(sortedListColumn, new TotalComparator());
+		//Separator
 		separatorList = new SeparatorList<ReprocessedInterface>(sortedListTotal, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
 		tableModel = new EventTableModel<ReprocessedInterface>(separatorList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JReprocessedTable(program, tableModel);
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
@@ -123,7 +126,7 @@ public class ReprocessedTab extends JMainTab {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
-		//Scroll Panels
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(

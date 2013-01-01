@@ -162,10 +162,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
-
+		//Backend
 		eventList = new BasicEventList<StockpileItem>();
 		//Filter
 		filterList = new FilterList<StockpileItem>(eventList);
@@ -174,7 +175,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		SortedList<StockpileItem> sortedListColumn = new SortedList<StockpileItem>(filterList);
 		//Sorting Total (Ensure that total is always last)
 		SortedList<StockpileItem> sortedListTotal = new SortedList<StockpileItem>(sortedListColumn, new TotalComparator());
+		//Separator
 		separatorList = new SeparatorList<StockpileItem>(sortedListTotal, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
 		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
 		//Table
 		jTable = new JStockpileTable(program, tableModel);
@@ -185,16 +188,16 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Scroll Panels
-		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Selection Model
 		selectionModel = new EventSelectionModel<StockpileItem>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		//Scroll
+		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Filter GUI
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),

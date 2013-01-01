@@ -139,25 +139,25 @@ public class OverviewTab extends JMainTab {
 
 		updateFilters();
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Overview>();
-		//For soring the table
+		//Sorting (per column)
 		sortedList = new SortedList<Overview>(eventList);
 		//Table Model
 		tableModel = new EventTableModel<Overview>(sortedList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JOverviewTable(program, tableModel);
-		//Sorters
+		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Table Selection
+		//Selection Model
 		selectionModel = new EventSelectionModel<Overview>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
-		//Scroll Panels
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());

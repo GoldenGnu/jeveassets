@@ -76,14 +76,16 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
-		eventList = program.getEveAssetEventList();
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
-		//For filtering the table
+		//Backend
+		eventList = program.getEveAssetEventList();
+		//Filter
 		filterList = new FilterList<Asset>(eventList);
 		filterList.addListEventListener(this);
-		//For soring the table
+		//Sorting (per column)
 		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<Asset>(sortedList, tableFormat);
@@ -94,9 +96,9 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		//install the sorting/filtering
+		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Table Selection
+		//Selection Model
 		selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
@@ -106,6 +108,15 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
+		filterControl = new AssetFilterControl(
+				program,
+				program.getMainWindow().getFrame(),
+				tableFormat,
+				eventList,
+				filterList,
+				program.getSettings().getTableFilters(NAME)
+				);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -121,15 +132,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
-
-		filterControl = new AssetFilterControl(
-				program,
-				program.getMainWindow().getFrame(),
-				tableFormat,
-				eventList,
-				filterList,
-				program.getSettings().getTableFilters(NAME)
-				);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()

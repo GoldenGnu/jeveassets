@@ -88,23 +88,26 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
+		//Table Format
 		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
+		//Backend
 		eventList = new BasicEventList<Material>();
+		//Separator
 		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
 		tableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
-		//Tables
+		//Table
 		jTable = new JSeparatorTable(program, tableModel);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
-
 		//Selection Model
 		selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
-		//Scroll Panels
+		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(

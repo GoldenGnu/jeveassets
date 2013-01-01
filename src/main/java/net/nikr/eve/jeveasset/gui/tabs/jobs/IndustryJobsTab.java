@@ -68,23 +68,25 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	public IndustryJobsTab(final Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<IndustryJob>();
-
+		//Filter
 		filterList = new FilterList<IndustryJob>(eventList);
 		filterList.addListEventListener(this);
-		//For soring the table
+		//Sorting (per column)
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<IndustryJob>(sortedList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		//Table Selection
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
 		selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
@@ -92,14 +94,11 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Sorters
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Scroll Panels
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-
+		//Filter
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
-
 		filter = new ArrayList<Filter>();
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_ACTIVE.toString()));
 		filter.add(new Filter(LogicType.OR, IndustryJobTableFormat.STATE, CompareType.EQUALS,  IndustryJobState.STATE_PENDING.toString()));
@@ -110,8 +109,6 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_PENDING.toString()));
 		filter.add(new Filter(LogicType.AND, IndustryJobTableFormat.STATE, CompareType.EQUALS_NOT,  IndustryJobState.STATE_READY.toString()));
 		defaultFilters.put(TabsJobs.get().completed(), filter);
-
-		//Filter
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,

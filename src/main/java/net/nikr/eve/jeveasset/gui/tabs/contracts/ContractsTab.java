@@ -96,16 +96,21 @@ public class ContractsTab extends JMainTab {
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(listener);
 
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
+		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
+		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
+		//Backend
 		eventList = new BasicEventList<ContractItem>();
 		//Filter
 		filterList = new FilterList<ContractItem>(eventList);
-		//filterList.addListEventListener(this);
 		//Sorting (per column)
 		SortedList<ContractItem> sortedList = new SortedList<ContractItem>(filterList);
+		//Separator
 		separatorList = new SeparatorList<ContractItem>(sortedList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
 		tableModel = new EventTableModel<ContractItem>(separatorList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JContractsTable(program, tableModel);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
@@ -120,7 +125,11 @@ public class ContractsTab extends JMainTab {
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable);
-		//Filter GUI
+		//Column Width
+		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		//Scroll
+		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
 		filterControl = new ContractsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
@@ -128,9 +137,6 @@ public class ContractsTab extends JMainTab {
 				filterList,
 				program.getSettings().getTableFilters(NAME)
 				);
-		//Scroll Panels
-		JScrollPane jTableScroll = new JScrollPane(jTable);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())

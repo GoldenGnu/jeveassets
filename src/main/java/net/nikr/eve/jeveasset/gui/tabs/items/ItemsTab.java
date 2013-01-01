@@ -63,22 +63,24 @@ public class ItemsTab extends JMainTab {
 	public ItemsTab(final Program program) {
 		super(program, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<Item>();
-		//Backend
+		//Filter
 		filterList = new FilterList<Item>(eventList);
-		//For soring the table
+		//Sorting (per column)
 		SortedList<Item> sortedList = new SortedList<Item>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<Item>(sortedList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		//Table Selection
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
 		selectionModel = new EventSelectionModel<Item>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
@@ -86,12 +88,9 @@ public class ItemsTab extends JMainTab {
 		installTable(jTable);
 		//Column Width
 		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Sorters
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Scroll Panels
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
