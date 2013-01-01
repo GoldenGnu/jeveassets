@@ -76,6 +76,7 @@ import org.jfree.data.time.TimePeriodValuesCollection;
 
 public class TrackerTab extends JMainTab {
 
+	private static final String ACTION_QUICK_DATE = "ACTION_QUICK_DATE";
 	private static final String ACTION_UPDATE_DATA = "ACTION_UPDATE_DATA";
 	private static final String ACTION_UPDATE_SHOWN = "ACTION_UPDATE_SHOWN";
 	private static final String ACTION_All = "ACTION_All";
@@ -84,6 +85,7 @@ public class TrackerTab extends JMainTab {
 	private JDateChooser jFrom;
 	private JDateChooser jTo;
 	private JComboBox jOwners;
+	private JComboBox jQuickDate;
 	private JCheckBox jAll;
 	private JCheckBox jTotal;
 	private JCheckBox jWalletBalance;
@@ -91,6 +93,62 @@ public class TrackerTab extends JMainTab {
 	private JCheckBox jSellOrders;
 	private JCheckBox jEscrows;
 	private JCheckBox jEscrowsToCover;
+
+	private enum QuickDate {
+		EMPTY(null, null, TabsTracker.get().quickDate())
+		,MONTH_ONE(Calendar.MONTH, -1, TabsTracker.get().month1())
+		,MONTH_THREE(Calendar.MONTH, -3, TabsTracker.get().months3())
+		,MONTH_SIX(Calendar.MONTH, -6, TabsTracker.get().months6())
+		,YEAR_ONE(Calendar.YEAR, -1, TabsTracker.get().year1())
+		,YEAR_TWO(Calendar.YEAR, -2, TabsTracker.get().years2());
+
+		private Integer field;
+		private Integer amount;
+		private String title;
+
+		private QuickDate(Integer field, Integer amount, String title) {
+			this.field = field;
+			this.amount = amount;
+			this.title = title;
+		}
+
+		public Date apply(Date to) {
+			if (field == null || amount == null) {
+				return null;
+			}
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(to);
+			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.add(field, amount);
+			return calendar.getTime();
+		}
+
+		public boolean isValid(Date from, Date to) {
+			if (to == null) {
+				to = new Date(); //now
+			}
+			if (from == null) {
+				return false;
+			}
+			to = apply(to);
+			return from.equals(to);
+		}
+
+		public QuickDate getSelected(Date from, Date to) {
+			for (QuickDate quickDate : QuickDate.values()) {
+				if (quickDate.isValid(from, to)) {
+					return quickDate;
+				}
+			}
+			return QuickDate.EMPTY;
+		}
+
+		@Override
+		public String toString() {
+			return title;
+		}
+	}
 
 	private Listener listener = new Listener();
 
@@ -105,12 +163,16 @@ public class TrackerTab extends JMainTab {
 	public TrackerTab(Program program) {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
-		jFrom = createDateChooser(TabsTracker.get().from());
-		jTo = createDateChooser(TabsTracker.get().to());
-
 		jOwners = new JComboBox();
 		jOwners.setActionCommand(ACTION_UPDATE_DATA);
 		jOwners.addActionListener(listener);
+
+		jQuickDate = new JComboBox(QuickDate.values());
+		jQuickDate.setActionCommand(ACTION_QUICK_DATE);
+		jQuickDate.addActionListener(listener);
+
+		jFrom = createDateChooser(TabsTracker.get().from());
+		jTo = createDateChooser(TabsTracker.get().to());
 
 		jAll = new JCheckBox(TabsTracker.get().all());
 		jAll.setSelected(true);
@@ -182,6 +244,7 @@ public class TrackerTab extends JMainTab {
 				.addComponent(jChartPanel)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOwners)
+					.addComponent(jQuickDate)
 					.addComponent(jFrom)
 					.addComponent(jTo)
 					.addComponent(jAll)
@@ -198,6 +261,7 @@ public class TrackerTab extends JMainTab {
 				.addComponent(jChartPanel)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jQuickDate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jFrom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jTo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -207,7 +271,6 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					//.addGap(0, 0, Integer.MAX_VALUE)
 				)
 		);
 	}
@@ -218,9 +281,9 @@ public class TrackerTab extends JMainTab {
 		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
 		jDate.setCalendar(null);
 		JCalendar jCalendar = jDate.getJCalendar();
-		jCalendar.setTodayButtonText("Today");
+		jCalendar.setTodayButtonText(TabsTracker.get().today());
 		jCalendar.setTodayButtonVisible(true);
-		jCalendar.setNullDateButtonText("Clear");
+		jCalendar.setNullDateButtonText(TabsTracker.get().clear());
 		jCalendar.setNullDateButtonVisible(true);
 		JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) jDate.getDateEditor().getUiComponent();
 		dateEditor.setEnabled(false);
@@ -335,6 +398,7 @@ public class TrackerTab extends JMainTab {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(from);
 			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
 			from = calendar.getTime();
 		}
 		Date to = jTo.getDate();
@@ -342,6 +406,7 @@ public class TrackerTab extends JMainTab {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(to);
 			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+			calendar.set(Calendar.MILLISECOND, 0);
 			to = calendar.getTime();
 		}
 		if (!owner.isEmpty()) { //No data set...
@@ -443,6 +508,18 @@ public class TrackerTab extends JMainTab {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (ACTION_QUICK_DATE.equals(e.getActionCommand())) {
+				System.out.println("ACTION_QUICK_DATE");
+				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
+				Date toDate = jTo.getDate();
+				if (toDate == null) {
+					toDate = new Date(); //now
+				}
+				Date fromDate = quickDate.apply(toDate);
+				if (fromDate != null) {
+					jFrom.setDate(fromDate);
+				}
+			}
 			if (ACTION_UPDATE_DATA.equals(e.getActionCommand())) {
 				createData();
 			}
@@ -470,6 +547,11 @@ public class TrackerTab extends JMainTab {
 		public void propertyChange(PropertyChangeEvent evt) {
 			Date from = jFrom.getDate();
 			Date to = jTo.getDate();
+			QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
+			if (!quickDate.isValid(from, to)) {
+				QuickDate selected = quickDate.getSelected(from, to);
+				jQuickDate.setSelectedItem(selected);
+			}
 			if (from != null && to != null && from.after(to)) {
 				jTo.setDate(from);
 			}

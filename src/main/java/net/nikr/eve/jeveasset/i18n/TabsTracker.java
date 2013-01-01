@@ -38,6 +38,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String all();
 	public abstract String assets();
 	public abstract String autoZoom();
+	public abstract String clear();
 	public abstract String date();
 	public abstract String empty();
 	public abstract String escrows();
@@ -45,11 +46,18 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String from();
 	public abstract String grandTotal();
 	public abstract String isk();
+	public abstract String month1();
+	public abstract String months3();
+	public abstract String months6();
 	public abstract String noDataFound();
+	public abstract String quickDate();
 	public abstract String sellOrders();
 	public abstract String title();
 	public abstract String to();
+	public abstract String today();
 	public abstract String total();
 	public abstract String walletBalanc();
+	public abstract String year1();
+	public abstract String years2();
 	
 }
