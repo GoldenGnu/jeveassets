@@ -38,6 +38,7 @@ import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -105,6 +106,16 @@ public class JAutoColumnTable extends JTable {
 		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()) {
 			component.setBackground(new Color(220, 240, 255));
 			return component;
+		}
+		return component;
+	}
+
+	@Override
+	public Component prepareEditor(TableCellEditor editor, int row, int column) {
+		Component component = super.prepareEditor(editor, row, column);
+		if (component instanceof JTextComponent) {
+			JTextComponent jTextComponent = (JTextComponent) component;
+			jTextComponent.selectAll();
 		}
 		return component;
 	}
