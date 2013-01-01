@@ -795,6 +795,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				if (addItem != null) {
 					addItem(addItem);
 				} else { //Update existing or cancel
+					updateStockpile(stockpile);
 					tableModel.fireTableDataChanged();
 				}
 			}
