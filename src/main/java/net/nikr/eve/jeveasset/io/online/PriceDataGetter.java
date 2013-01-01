@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -54,7 +55,7 @@ public class PriceDataGetter implements PricingListener {
 	private final int attemptCount = 5;
 	private boolean update;
 	private boolean failed;
-	private List<Integer> ids;
+	private Set<Integer> ids;
 
 	public PriceDataGetter(final Settings settings) {
 		this.settings = settings;

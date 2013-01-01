@@ -69,29 +69,10 @@ public final class ApiConverter {
 			flag = General.get().marketOrderBuyFlag();
 		}
 		int flagID = 0;
-		boolean corporation = owner.isCorporation();
 		boolean singleton  = true;
 		int rawQuantity = 0;
 
-		//Calculated:
-		String name = ApiIdConverter.typeName(typeID, settings.getItems());
-		String group = ApiIdConverter.group(typeID, settings.getItems());
-		String category = ApiIdConverter.category(typeID, settings.getItems());
-		double basePrice = ApiIdConverter.priceBase(typeID, settings.getItems());
-		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		int meta = ApiIdConverter.meta(typeID, settings.getItems());
-		String tech = ApiIdConverter.tech(typeID, settings.getItems());
-		String ownerName = owner.getName();
-		String location = ApiIdConverter.locationName(locationID, null, settings.getLocations());
-		String region = ApiIdConverter.regionName(locationID, null, settings.getLocations());
-		String security = ApiIdConverter.security(locationID, null, settings.getLocations());
-		String solarSystem = ApiIdConverter.systemName(locationID, null, settings.getLocations());
-		long solarSystemId  = ApiIdConverter.systemID(locationID, null, settings.getLocations());
-		List<Asset> parents = new ArrayList<Asset>();
-		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
-
-		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return createAsset(settings, null, owner.isCorporation(), owner.getName(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static List<Asset> apiIndustryJob(final List<ApiIndustryJob> industryJobs, final Owner owner, final Settings settings) {
@@ -111,7 +92,6 @@ public final class ApiConverter {
 		long count = apiIndustryJob.getInstalledItemQuantity();
 		long id = apiIndustryJob.getInstalledItemID();
 		int flagID = apiIndustryJob.getInstalledItemFlag();
-		boolean corporation = owner.isCorporation();
 		boolean singleton  = false;
 		int rawQuantity;
 		if (apiIndustryJob.getInstalledItemCopy() == 0) {
@@ -120,26 +100,7 @@ public final class ApiConverter {
 			rawQuantity = -2; //-2 = BPC
 		}
 
-		//Calculated:
-		String name = ApiIdConverter.typeName(typeID, settings.getItems());
-		String group = ApiIdConverter.group(typeID, settings.getItems());
-		String category = ApiIdConverter.category(typeID, settings.getItems());
-		double basePrice = ApiIdConverter.priceBase(typeID, settings.getItems());
-		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		int meta = ApiIdConverter.meta(typeID, settings.getItems());
-		String tech = ApiIdConverter.tech(typeID, settings.getItems());
-		String ownerName = owner.getName();
-		String location = ApiIdConverter.locationName(locationID, null, settings.getLocations());
-		String region = ApiIdConverter.regionName(locationID, null, settings.getLocations());
-		String security = ApiIdConverter.security(locationID, null, settings.getLocations());
-		String solarSystem = ApiIdConverter.systemName(locationID, null, settings.getLocations());
-		long solarSystemId  = ApiIdConverter.systemID(locationID, null, settings.getLocations());
-		List<Asset> parents = new ArrayList<Asset>();
-		String flag = ApiIdConverter.flag(flagID, null, settings.getItemFlags());
-		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
-
-		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return createAsset(settings, null, owner.isCorporation(), owner.getName(), count, flagID, id, typeID, locationID, singleton, rawQuantity, null);
 	}
 
 	public static List<Asset> apiAsset(final Owner owner, final List<EveAsset<?>> assets, final Settings settings) {
@@ -158,6 +119,7 @@ public final class ApiConverter {
 			apiAsset(owner, new ArrayList<EveAsset<?>>(asset.getAssets()), eveAssets, eveAsset, settings);
 		}
 	}
+
 	private static Asset apiAssetsToEveAsset(final Owner owner, final EveAsset<?> apiAsset, final Asset parentEveAsset, final Settings settings) {
 		long count = apiAsset.getQuantity();
 		int flagID = apiAsset.getFlag();
@@ -172,28 +134,10 @@ public final class ApiConverter {
 			locationID = 0;
 		}
 		boolean singleton  = apiAsset.getSingleton();
-		boolean corporation = owner.isCorporation();
-		String ownerName = owner.getName();
 		int rawQuantity = apiAsset.getRawQuantity();
-		//Calculated:
-		String name = ApiIdConverter.typeName(apiAsset.getTypeID(), settings.getItems());
-		String group = ApiIdConverter.group(apiAsset.getTypeID(), settings.getItems());
-		String category = ApiIdConverter.category(apiAsset.getTypeID(), settings.getItems());
-		double basePrice = ApiIdConverter.priceBase(apiAsset.getTypeID(), settings.getItems());
-		int meta = ApiIdConverter.meta(typeID, settings.getItems());
-		String tech = ApiIdConverter.tech(typeID, settings.getItems());
-		boolean marketGroup = ApiIdConverter.marketGroup(apiAsset.getTypeID(), settings.getItems());
-		float volume = ApiIdConverter.volume(apiAsset.getTypeID(), settings.getItems());
-		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
-		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getLocations());
-		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
-		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
-		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
-		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
-		String flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
-		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return createAsset(settings, parentEveAsset, owner.isCorporation(), owner.getName(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(final Owner owner, final List<ApiMarketOrder> apiMarketOrders, final Settings settings) {
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
@@ -223,6 +167,42 @@ public final class ApiConverter {
 		String name = ApiIdConverter.typeName(eveContractItem.getTypeID(), settings.getItems());
 		Contract contract = eveContractToContract(eveContract, settings);
 		return new ContractItem(eveContractItem, contract, name);
+	}
+
+	public static List<Asset> eveContracts(Map<EveContract, List<EveContractItem>> contracts, Settings settings) {
+		List<Asset> list = new ArrayList<Asset>();
+		List<Long> contractIDs = new ArrayList<Long>();
+		for (Map.Entry<EveContract, List<EveContractItem>> entry : contracts.entrySet()) {
+			EveContract contract = entry.getKey();
+			long contractID = contract.getContractID();
+			if (!contractIDs.contains(contractID)) { //Only add each contract once!
+				contractIDs.add(contractID);
+				for (EveContractItem contractItem : entry.getValue()) {
+					Asset asset = eveContract(contract, contractItem, settings);
+					list.add(asset);
+				}
+			}
+		}
+		return list;
+	}
+	private static Asset eveContract(EveContract contract, EveContractItem contractItem, Settings settings) {
+		long count = contractItem.getQuantity();
+		int flagID = 0;
+		String flag;
+		if (contractItem.isIncluded()) { //Sell
+			flag = General.get().contractIncluded();
+		} else { //Buy
+			flag = General.get().contractExcluded();
+		}
+		long itemId = 0;
+		int typeID = contractItem.getTypeID();
+		long locationID = contract.getStartStationID();
+		boolean singleton  = contractItem.isSingleton();
+		int rawQuantity = 0;
+		long ownerID = contract.getIssuerID();
+		String ownerName = settings.getOwners().get(ownerID);
+
+		return createAsset(settings, null, false, ownerName, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
 	}
 	public static Contract eveContractToContract(final EveContract eveContract, final Settings settings) {
 		String acceptor = ApiIdConverter.ownerName(eveContract.getAcceptorID(), settings.getOwners());
@@ -261,5 +241,31 @@ public final class ApiConverter {
 		}
 		LOG.error("Failed to find locationID for IndustryJob. InstalledItemLocationID: " + apiIndustryJob.getInstalledItemLocationID() + " - ContainerLocationID: " + apiIndustryJob.getContainerLocationID());
 		return -1;
+	}
+
+	private static Asset createAsset(final Settings settings, final Asset parentEveAsset,
+			boolean corporation, String ownerName, long count, int flagID, long itemId,
+			int typeID, long locationID, boolean singleton, int rawQuantity, String flag) {
+		//Calculated:
+		String name = ApiIdConverter.typeName(typeID, settings.getItems());
+		String group = ApiIdConverter.group(typeID, settings.getItems());
+		String category = ApiIdConverter.category(typeID, settings.getItems());
+		double basePrice = ApiIdConverter.priceBase(typeID, settings.getItems());
+		int meta = ApiIdConverter.meta(typeID, settings.getItems());
+		String tech = ApiIdConverter.tech(typeID, settings.getItems());
+		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
+		float volume = ApiIdConverter.volume(typeID, settings.getItems());
+		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
+		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getLocations());
+		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
+		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
+		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
+		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
+		if (flag == null) {
+			flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
+		}
+		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
+
+		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
 	}
 }

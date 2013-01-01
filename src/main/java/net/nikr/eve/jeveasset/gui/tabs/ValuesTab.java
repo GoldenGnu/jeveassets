@@ -222,6 +222,14 @@ public class ValuesTab extends JMainTab implements ActionListener {
 			if (eveAsset.getFlag().equals(General.get().marketOrderBuyFlag())) {
 				continue;
 			}
+			//Ignore contracts included
+			if (eveAsset.getFlag().equals(General.get().contractIncluded())) {
+				continue;
+			}
+			//Ignore contracts excluded
+			if (eveAsset.getFlag().equals(General.get().contractExcluded())) {
+				continue;
+			}
 
 			if (eveAsset.isCorporation()) { //Corp Asset
 				//Corp Total Value

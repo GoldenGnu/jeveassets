@@ -435,6 +435,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
 							continue; //Ignore market buy orders
 						}
+						//Ignore contracts included
+						if (asset.getFlag().equals(General.get().contractIncluded())) {
+							continue;
+						}
+						//Ignore contracts excluded
+						if (asset.getFlag().equals(General.get().contractExcluded())) {
+							continue;
+						}
 						Location location = program.getSettings().getLocations().get(asset.getLocationID());
 						item.updateAsset(asset, ownersID.get(asset.getOwner()), location);
 					}

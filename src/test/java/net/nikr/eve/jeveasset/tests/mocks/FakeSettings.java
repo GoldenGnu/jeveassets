@@ -29,6 +29,7 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -111,7 +112,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Integer> getUniqueIds() {
+	public Set<Integer> getUniqueIds() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -489,4 +490,16 @@ public abstract class FakeSettings extends Settings {
 	public Map<Long, String> getOwners() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public boolean isIncludeContracts() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	
 }
