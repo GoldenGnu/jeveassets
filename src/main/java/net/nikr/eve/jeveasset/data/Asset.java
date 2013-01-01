@@ -475,9 +475,9 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 	public String getSingleton() {
 		if (singleton) {
-			return "Unpackaged"; //FIXME i18n
+			return DataModelEveAsset.get().unpackaged();
 		} else {
-			return "Packaged"; //FIXME i18n
+			return DataModelEveAsset.get().packaged();
 		}
 	}
 
