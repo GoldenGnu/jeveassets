@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs;
+package net.nikr.eve.jeveasset.gui.tabs.values;
 
 import ca.odell.glazedlists.EventList;
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
@@ -44,19 +44,19 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class ValuesTab extends JMainTab implements ActionListener {
+public class ValueRetroTab extends JMainTab implements ActionListener {
 
 	public static final String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
 	public static final String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
 
-	private static final String NAME_TOTAL = TabsValues.get().total();
-	private static final String NAME_WALLET_BALANCE = TabsValues.get().wallet();
-	private static final String NAME_ASSETS_VALUE = TabsValues.get().assets();
-	private static final String NAME_ASSETS_SELL_ORDERS = TabsValues.get().sell();
-	private static final String NAME_ASSETS_ESCROWS = TabsValues.get().escrows();
-	private static final String NAME_BEST_ASSET = TabsValues.get().best();
-	private static final String NAME_BEST_SHIP = TabsValues.get().best1();
-	private static final String NAME_BEST_MODULE = TabsValues.get().best2();
+	private static final String NAME_TOTAL = TabsValues.get().columnTotal();
+	private static final String NAME_WALLET_BALANCE = TabsValues.get().columnWalletBalance();
+	private static final String NAME_ASSETS_VALUE = TabsValues.get().columnAssets();
+	private static final String NAME_ASSETS_SELL_ORDERS = TabsValues.get().columnSellOrders();
+	private static final String NAME_ASSETS_ESCROWS = TabsValues.get().columnEscrows();
+	private static final String NAME_BEST_ASSET = TabsValues.get().columnBestAsset();
+	private static final String NAME_BEST_SHIP = TabsValues.get().columnBestShip();
+	private static final String NAME_BEST_MODULE = TabsValues.get().columnBestModule();
 
 	//GUI
 	private JComboBox jOwners;
@@ -97,12 +97,11 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private Asset bestModule = null;
 	private Asset bestShip = null;
 
-
 	private String backgroundHexColor;
 	private String gridHexColor;
 
-	public ValuesTab(final Program program) {
-		super(program, TabsValues.get().values(), Images.TOOL_VALUES.getIcon(), true);
+	public ValueRetroTab(final Program program) {
+		super(program, TabsValues.get().oldTitle(), Images.TOOL_VALUES.getIcon(), true);
 
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
@@ -481,12 +480,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
 			String s = (String) jOwners.getSelectedItem();
-			if (s == null || s.equals(TabsValues.get().select())) {
+			if (s == null || s.equals(TabsValues.get().oldSelect())) {
 				jOwner.setText("<html>");
 				return;
 			}
 
-			Output output = new Output(TabsValues.get().character());
+			Output output = new Output(TabsValues.get().oldCharacter());
 
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
@@ -568,11 +567,11 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (ACTION_CORP_SELECTED.equals(e.getActionCommand())) {
 			//String output = "";
 			String s = (String) jCorps.getSelectedItem();
-			if (s == null || s.equals(TabsValues.get().select())) {
+			if (s == null || s.equals(TabsValues.get().oldSelect())) {
 				jCorp.setText("<html><div style=\"font-family: Arial, Helvetica, sans-serif; font-size: 11px;\"></div>");
 				return;
 			}
-			Output output = new Output(TabsValues.get().corporation());
+			Output output = new Output(TabsValues.get().oldCorporation());
 
 			output.addHeading(NAME_TOTAL);
 			double total = 0;
@@ -670,7 +669,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (jOwners.getModel().getSize() > 0) {
 			jOwners.setEnabled(true);
 		} else {
-			jOwners.addItem(TabsValues.get().no());
+			jOwners.addItem(TabsValues.get().oldNoCharacter());
 			jOwners.setEnabled(false);
 		}
 		jOwners.setSelectedIndex(0);
@@ -682,12 +681,12 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		if (jCorps.getModel().getSize() > 0) {
 			jCorps.setEnabled(true);
 		} else {
-			jCorps.addItem(TabsValues.get().no1());
+			jCorps.addItem(TabsValues.get().oldNoCorporation());
 			jCorps.setEnabled(false);
 		}
 		jCorps.setSelectedIndex(0);
 
-		Output output = new Output(TabsValues.get().grand());
+		Output output = new Output(TabsValues.get().grandTotal());
 		output.addHeading(NAME_TOTAL);
 		if (totalAccountBalance != 0
 				|| totalItemsValue != 0

@@ -56,6 +56,8 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -654,6 +656,14 @@ public final class SettingsReader extends AbstractXmlReader {
 		try {
 			if (tableName.equals(ContractsTab.NAME)) {
 				return ContractsExtendedTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Values (Extra)
+		try {
+			if (tableName.equals(ValueTableTab.NAME)) {
+				return ValueTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

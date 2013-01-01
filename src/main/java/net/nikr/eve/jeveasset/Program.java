@@ -45,7 +45,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -93,7 +94,8 @@ public class Program implements ActionListener {
 	private UpdateDialog updateDialog;
 
 	//Tabs
-	private ValuesTab valuesTab;
+	private ValueRetroTab valueRetroTab;
+	private ValueTableTab valueTableTab;
 	private MaterialsTab materialsTab;
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
@@ -180,7 +182,8 @@ public class Program implements ActionListener {
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
 		LOG.info("Loading: Values Tab");
-		valuesTab = new ValuesTab(this);
+		valueRetroTab = new ValueRetroTab(this);
+		valueTableTab = new ValueTableTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
@@ -442,7 +445,8 @@ public class Program implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
-			mainWindow.addTab(valuesTab);
+			mainWindow.addTab(valueRetroTab);
+			mainWindow.addTab(valueTableTab);
 		}
 		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);

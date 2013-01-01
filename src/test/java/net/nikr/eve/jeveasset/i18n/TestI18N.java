@@ -154,7 +154,7 @@ public class TestI18N {
 
 	@Test public void testTabsValuesBundle_en() throws Exception {
 		TabsValues g = Main.getBundleService().get(TabsValues.class);
-		assertNotNull(g.assets());
+		assertNotNull(g.columnAssets());
 	}
 
 	@Test public void testTabsTrackerBundle_en() throws Exception {
