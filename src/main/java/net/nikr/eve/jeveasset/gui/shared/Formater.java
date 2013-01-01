@@ -35,15 +35,18 @@ public final class Formater {
 	//Must not be changed! please see: FilterControl
 	public static final String COLUMN_FORMAT = "dd-MM-yyyy";
 
-	private static DecimalFormat iskFormat  = new DecimalFormat("#,##0.00 isk");
-	private static DecimalFormat itemsFormat  = new DecimalFormat("#,##0 items");
-	private static DecimalFormat percentFormat  = new DecimalFormat("##0%");
-	private static DecimalFormat timesFormat  = new DecimalFormat("##0x");
-	private static DecimalFormat longFormat  = new DecimalFormat("#,##0");
-	private static DecimalFormat integerFormat  = new DecimalFormat("0");
-	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
-	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
-	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
+	private static final DecimalFormat ISK_FORMAT  = new DecimalFormat("#,##0.00 isk");
+	private static final DecimalFormat ITEMS_FORMAT  = new DecimalFormat("#,##0 items");
+	private static final DecimalFormat PERCENT_FORMAT  = new DecimalFormat("##0%");
+	private static final DecimalFormat TIMES_FORMAT  = new DecimalFormat("##0x");
+	public static final DecimalFormat LONG_FORMAT  = new DecimalFormat("#,##0");
+	private static final DecimalFormat INTEGER_FORMAT  = new DecimalFormat("0");
+	private static final DecimalFormat DECIMAL_FORMAT  = new DecimalFormat("#,##0.00");
+	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
+	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
+	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
+	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
+	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
 
 	private static DateFormat columnDate = null;
 	private static DateFormat todaysDate = null;
@@ -87,22 +90,22 @@ public final class Formater {
 	}
 
 	public static String iskFormat(final Double number) {
-		return iskFormat.format(number);
+		return ISK_FORMAT.format(number);
 	}
 	public static String percentFormat(final Double number) {
-		return percentFormat.format(number);
+		return PERCENT_FORMAT.format(number);
 	}
 	public static String timesFormat(final Double number) {
-		return timesFormat.format(number);
+		return TIMES_FORMAT.format(number);
 	}
 	public static String itemsFormat(final Long number) {
-		return itemsFormat.format(number);
+		return ITEMS_FORMAT.format(number);
 	}
 	public static String doubleFormat(final Object obj) {
-		return decimalFormat.format(obj);
+		return DECIMAL_FORMAT.format(obj);
 	}
 	public static String compareFormat(final Object obj) {
-		return compareFormat.format(obj);
+		return COMPARE_FORMAT.format(obj);
 	}
 	/**
 	 * WARNING: This is not an good format for columns
@@ -112,13 +115,13 @@ public final class Formater {
 	 * @return formated value
 	 */
 	public static String floatFormat(final Object obj) {
-		return floatFormat.format(obj);
+		return FLOAT_FORMAT.format(obj);
 	}
 	public static String integerFormat(final Object obj) {
-		return integerFormat.format(obj);
+		return INTEGER_FORMAT.format(obj);
 	}
 	public static String longFormat(final Object obj) {
-		return longFormat.format(obj);
+		return LONG_FORMAT.format(obj);
 	}
 
 	public static double round(final double number, final int decimalPlaces) {
@@ -182,5 +185,78 @@ public final class Formater {
 
 	public static DateFormat getDefaultDate() {
 		return columnDate;
+	}
+
+	public static class AutoFormat extends NumberFormat {
+
+		private NumberFormat format;
+
+		public AutoFormat() {
+			format = new DecimalFormat("#,##0.#");
+		}
+
+		@Override
+		public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+			if(number <= 0) {
+				toAppendTo.append("0");
+				return toAppendTo;
+			} else {
+				final String[] units = new String[] { "", "K", "M", "B", "T" };
+				int digitGroups = (int) (Math.log10(number)/Math.log10(1000));
+				toAppendTo.append(format.format(number/Math.pow(1000, digitGroups)));
+				toAppendTo.append(" ");
+				toAppendTo.append(units[digitGroups]);
+				return toAppendTo;
+			}
+		}
+
+		@Override
+		public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+			if(number <= 0) {
+				toAppendTo.append("0");
+				return toAppendTo;
+			} else {
+				final String[] units = new String[] { "", "K", "M", "B", "T" };
+				int digitGroups = (int) (Math.log10(number)/Math.log10(1000));
+				toAppendTo.append(format.format(number/Math.pow(1000, digitGroups)));
+				toAppendTo.append(" ");
+				toAppendTo.append(units[digitGroups]);
+				return toAppendTo;
+			}
+		}
+
+		@Override
+		public Number parse(String source, ParsePosition parsePosition) {
+			return format.parse(source, parsePosition);
+		}
+	}
+
+	public static class FixedFormat extends NumberFormat {
+
+		private NumberFormat format;
+		private double fix;
+
+		public FixedFormat(final double fix, final String name) {
+			this.fix = fix;
+			format = new DecimalFormat("#,##0.0 "+name);
+		}
+
+		@Override
+		public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
+			toAppendTo.append(format.format(number/fix));
+			return toAppendTo;
+		}
+
+		@Override
+		public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
+			toAppendTo.append(format.format(number/fix));
+			return toAppendTo;
+		}
+
+		@Override
+		public Number parse(String source, ParsePosition parsePosition) {
+			return format.parse(source, parsePosition);
+		}
+
 	}
 }

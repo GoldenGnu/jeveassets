@@ -64,11 +64,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
@@ -154,7 +154,7 @@ public class TrackerTab extends JMainTab {
 		domainAxis.setAutoTickUnitSelection(true);
 		domainAxis.setAutoRange(true);
 
-		ValueAxis rangeAxis = new NumberAxis(TabsTracker.get().isk());
+		NumberAxis rangeAxis = new NumberAxis(TabsTracker.get().isk());
 		rangeAxis.setAutoRange(true);
 		rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 
@@ -399,6 +399,19 @@ public class TrackerTab extends JMainTab {
 		}
 		jNextChart.getXYPlot().getRangeAxis().setAutoRange(true);
 		jNextChart.getXYPlot().getDomainAxis().setAutoRange(true);
+		Number maxNumber = DatasetUtilities.findMaximumRangeValue(dataset);
+		NumberAxis rangeAxis = (NumberAxis) jNextChart.getXYPlot().getRangeAxis();
+		rangeAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
+		if (maxNumber != null && (maxNumber instanceof Double)) {
+			double max = (Double) maxNumber;
+			if (max > 1000000000000.0) {     //Higher than 2 Trillions  
+				rangeAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
+			} else if (max > 1000000000.0) { //Higher than 2 Billions
+				rangeAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
+			} else if (max > 1000000.0) {    //Higher than 2 Millions
+				rangeAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
+			}
+		}
 	}
 
 	private void updateRender(int index, Color color) {
