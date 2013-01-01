@@ -117,7 +117,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 
 	@Override
 	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
-		//FIXME ContractItemsGetter.updateFailed does nothing
+		//FIXME - ContractItemsGetter.updateFailed does nothing
 	}
 
 	@Override

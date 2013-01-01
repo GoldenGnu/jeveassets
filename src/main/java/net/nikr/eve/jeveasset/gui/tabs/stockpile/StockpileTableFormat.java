@@ -229,6 +229,6 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final StockpileItem from);
-	//XXX - TableFormat.getColumnName(...) Workaround
+	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

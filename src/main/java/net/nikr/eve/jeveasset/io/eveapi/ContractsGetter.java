@@ -95,6 +95,9 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
 		ownerTo.setContractsNextUpdate(ownerFrom.getContractsNextUpdate());
+		for (Map.Entry<EveContract, List<EveContractItem>> entry : ownerFrom.getContracts().entrySet()) {
+			ownerTo.setContracts(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override

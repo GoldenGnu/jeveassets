@@ -63,25 +63,26 @@ public final class Formater {
 	private static void initDate() {
 		if (!initDate) {
 			initDate = true;
+			//TODO - consider using local time in GUI
+			TimeZone timeZone = TimeZone.getTimeZone("GMT");
 
-			//FIXME - consider using local time in GUI
 			columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
-			columnDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+			columnDate.setTimeZone(timeZone);
 
 			todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
-			todaysDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+			todaysDate.setTimeZone(timeZone);
 
 			timeOnly = new SimpleDateFormat("HH:mm z", new Locale("en"));
-			timeOnly.setTimeZone(TimeZone.getTimeZone("GMT"));
+			timeOnly.setTimeZone(timeZone);
 
 			weekdayAndTime = new SimpleDateFormat("EEEEE HH:mm", new Locale("en"));
-			weekdayAndTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+			weekdayAndTime.setTimeZone(timeZone);
 
 			simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
-			simpleDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+			simpleDate.setTimeZone(timeZone);
 
 			dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
-			dateOnly.setTimeZone(TimeZone.getTimeZone("GMT"));
+			dateOnly.setTimeZone(timeZone);
 
 			//Always GMT
 			eveTime = new SimpleDateFormat("HH:mm z", new Locale("en"));

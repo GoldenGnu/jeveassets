@@ -79,8 +79,6 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private EventSelectionModel<Module> selectionModel;
 	private EventTableModel<Module> tableModel;
 
-	//TODO - LoadoutsTab is not translated properly
-
 	public LoadoutsTab(final Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
@@ -209,7 +207,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		} else { //Others: use program directory is there is only Win & Mac clients
 			jXmlFileChooser.setCurrentDirectory(new File(Settings.getUserDirectory()));
 		}
-		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame()); //.showDialog(this, "OK"); //.showOpenDialog(this);
+		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();

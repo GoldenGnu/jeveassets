@@ -470,7 +470,7 @@ public class RoutingTab extends JMainTab  {
 		jCancel.setEnabled(!b);
 	}
 
-	//TODO cancel processing in the routing tool doesn't work very well
+	//FIXME - cancel processing in the routing tool doesn't work very well
 	private void cancelProcessing() {
 		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}

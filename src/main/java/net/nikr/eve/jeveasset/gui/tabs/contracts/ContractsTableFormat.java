@@ -261,6 +261,6 @@ public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final ContractItem from);
-	//XXX - TableFormat.getColumnName(...) Workaround
+	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

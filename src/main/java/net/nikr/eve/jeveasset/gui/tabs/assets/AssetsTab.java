@@ -78,6 +78,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
+		//FIXME - setting Columns/ResizeMode/ColumnsWidth should be done via JMainTab adding it to all tools is too error prone 
 		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend

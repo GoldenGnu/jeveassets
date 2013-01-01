@@ -26,8 +26,8 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
-import static org.junit.Assert.assertEquals;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 public class PriceDataSettingsTest {
@@ -63,7 +63,10 @@ public class PriceDataSettingsTest {
 				}
 				assertEquals(location.getName(), locationName);
 			} else { //Multiple locations
-				//FIXME write test for multiple location
+				for (Long regionID : regionType.getRegions()) {
+					Location location = settings.getLocations().get(regionID);
+					assertNotNull(location);
+				}
 			}
 		}
 	}

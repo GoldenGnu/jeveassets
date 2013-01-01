@@ -533,7 +533,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-		//TODO do some more validation of EFT imports
 
 		//Format and split
 		fit = fit.replace("[", "").replace("]", "");

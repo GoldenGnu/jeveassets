@@ -141,6 +141,4 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final Item from);
-	//XXX - TableFormat.getColumnName(...) Workaround
-	//@Override abstract public String getColumnName();
 }
