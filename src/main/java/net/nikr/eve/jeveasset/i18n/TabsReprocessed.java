@@ -37,7 +37,7 @@ public abstract class TabsReprocessed extends Bundle {
 
 	public abstract String add();
 	public abstract String batch();
-	public abstract String clear();
+	public abstract String removeAll();
 	public abstract String collapse();
 	public abstract String columnName();
 	public abstract String columnPrice();

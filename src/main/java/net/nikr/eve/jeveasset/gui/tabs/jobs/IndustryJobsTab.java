@@ -175,10 +175,10 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		jComponent.add(new JMenuStockpile<IndustryJob>(program, menuData));
 	//LOOKUP
 		jComponent.add(new JMenuLookup<IndustryJob>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//REPROCESSED
 		jComponent.add(new JMenuReprocessed<IndustryJob>(program, menuData));
+	//COLUMNS
+		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
 		JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
 	}

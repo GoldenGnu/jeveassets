@@ -24,94 +24,53 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
-public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterface> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+public enum ReprocessedExtendedTableFormat implements EnumTableColumn<ReprocessedInterface> {
+	TOTAL_NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsReprocessed.get().columnName();
+			return "[Name]"; //FIXME i18n
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getName();
+			return from.getTotal().getTypeName();
 		}
 	},
-	QUANTITY_MAX(Long.class, GlazedLists.comparableComparator()) {
+	TOTAL_PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsReprocessed.get().columnQuantityMax();
+			return "[Price]"; //FIXME i18n
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getQuantityMax();
+			return from.getTotal().getSellPrice();
 		}
 	},
-	QUANTITY_SKILL(Long.class, GlazedLists.comparableComparator()) {
+	TOTAL_VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsReprocessed.get().columnQuantitySkill();
+			return "[Value]"; //FIXME i18n
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getQuantitySkill();
+			return from.getTotal().getValue();
 		}
 	},
-	PRICE(Double.class, GlazedLists.comparableComparator()) {
+	TOTAL_BATCH(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsReprocessed.get().columnPrice();
+			return "[Batch]"; //FIXME i18n
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getPrice();
-		}
-	},
-	VALUE_MAX(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsReprocessed.get().columnValueMax();
-		}
-		@Override
-		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getValueMax();
-		}
-	},
-	VALUE_SKILL(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsReprocessed.get().columnValueSkill();
-		}
-		@Override
-		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getValueSkill();
-		}
-	},
-	VALUE_DIFFERENCE(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsReprocessed.get().columnValueDifference();
-		}
-		@Override
-		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getValueDifference();
-		}
-	},
-	TYPE_ID(Integer.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsReprocessed.get().columnTypeID();
-		}
-		@Override
-		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getTypeID();
+			return from.getTotal().getPortionSize();
 		}
 	};
 
 	private Class<?> type;
 	private Comparator<?> comparator;
-	private ReprocessedTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private ReprocessedExtendedTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}

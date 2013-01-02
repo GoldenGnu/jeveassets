@@ -155,7 +155,7 @@ public class ContractsTab extends JMainTab {
 
 	@Override
 	public void updateTableMenu(JComponent jComponent) {
-		
+		//FIXME Add table menu to contracts tool
 	}
 
 	@Override
