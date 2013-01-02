@@ -227,9 +227,21 @@ License:
   http://www.toedter.com/en/jcalendar/license.html
 
 ________________________________________________________________________________
+_JFREECHART_____________________________________________________________________
+
+jEveAssets use JFreeChart to make charts (used in the Tracker Tool)
+
+Link:
+  http://www.jfree.org/jfreechart/
+
+License:
+  GNU Lesser General Public Licence 
+  http://www.gnu.org/licenses/lgpl.html
+
+________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009, 2010, 2011, 2012 Contributors (see above)
+Copyright 2009-2013 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
