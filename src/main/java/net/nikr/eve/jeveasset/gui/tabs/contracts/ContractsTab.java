@@ -32,6 +32,7 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import com.beimin.eveapi.shared.contract.ContractType;
 import com.beimin.eveapi.shared.contract.EveContract;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -42,10 +43,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -68,8 +72,6 @@ public class ContractsTab extends JMainTab {
 
 	//GUI
 	private JSeparatorTable jTable;
-	private JButton jExpand;
-	private JButton jCollapse;
 
 	//Table
 	private EventList<ContractItem> eventList;
@@ -88,13 +90,25 @@ public class ContractsTab extends JMainTab {
 	public ContractsTab(Program program) {
 		super(program, TabsContracts.get().title(), Images.TOOL_CONTRACTS.getIcon(), true);
 
-		jCollapse = new JButton(TabsContracts.get().collapse());
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+
+		JButton jCollapse = new JButton(TabsContracts.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(listener);
+		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
+		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
+		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBarRight.add(jCollapse);
 
-		jExpand = new JButton(TabsContracts.get().expand());
+		JButton jExpand = new JButton(TabsContracts.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(listener);
+		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
+		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
+		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBarRight.add(jExpand);
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
@@ -134,20 +148,20 @@ public class ContractsTab extends JMainTab {
 				program.getSettings().getTableFilters(NAME)
 				);
 		layout.setHorizontalGroup(
-			layout.createParallelGroup()
+			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+		int toolbatHeight = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarRight, toolbatHeight, toolbatHeight, toolbatHeight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
