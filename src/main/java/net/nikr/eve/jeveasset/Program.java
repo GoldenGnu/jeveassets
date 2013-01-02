@@ -314,7 +314,7 @@ public class Program implements ActionListener {
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
-			jMainTab.updateSettings();
+			jMainTab.saveSettings();
 		}
 		settings.saveSettings();
 	}

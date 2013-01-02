@@ -164,8 +164,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<StockpileItem>();
 		//Filter
@@ -193,9 +191,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Filter GUI
@@ -239,13 +235,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValueNeeded);
-	}
-
-	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public Stockpile showAddStockpile() {

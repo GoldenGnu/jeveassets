@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.MouseEvent;
@@ -32,6 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -48,6 +50,7 @@ public abstract class JMainTab {
 	private EventSelectionModel<?> eventSelectionModel;
 	private EventTableModel<?> eventTableModel;
 	private List<?> selected;
+	private String toolName;
 
 	protected JMainTab(final boolean load) { }
 
@@ -81,10 +84,19 @@ public abstract class JMainTab {
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	/**
-	 * Overwrite to update settings before saving...
-	 */
-	public void updateSettings() { }
+	public final void saveSettings() {
+		//Save Settings
+		if (eventTableModel != null && jTable != null && toolName != null) {
+			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
+			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
+				program.getSettings().getTableColumns().put(toolName, formatAdaptor.getColumns());
+				program.getSettings().getTableResize().put(toolName, formatAdaptor.getResizeMode());
+				program.getSettings().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
+			}
+		}
+		
+	}
 
 	public void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
@@ -159,12 +171,8 @@ public abstract class JMainTab {
 		}
 	}
 
-	protected void installTable(final JAutoColumnTable jTable) {
-		//Table Menu
-		TableMenuListener listener = new TableMenuListener(jTable);
-		jTable.addMouseListener(listener);
-		jTable.getSelectionModel().addListSelectionListener(listener);
-		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
+	protected void installTable(final JAutoColumnTable jTable, String toolName) {
+		this.toolName = toolName;
 
 		//Table Selection
 		ListSelectionModel selectionModel = jTable.getSelectionModel();
@@ -178,6 +186,24 @@ public abstract class JMainTab {
 
 		//Table lock
 		this.jTable = jTable;
+
+		//Load Settings
+		if (eventTableModel != null && jTable != null && toolName != null) {
+			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
+			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
+				formatAdaptor.setColumns(program.getSettings().getTableColumns().get(toolName));
+				formatAdaptor.setResizeMode(program.getSettings().getTableResize().get(toolName));
+				jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(toolName));
+				eventTableModel.fireTableStructureChanged();
+			}
+		}
+
+		//Table Menu
+		TableMenuListener listener = new TableMenuListener(jTable);
+		jTable.addMouseListener(listener);
+		jTable.getSelectionModel().addListSelectionListener(listener);
+		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
 	}
 
 	protected void selectClickedCell(final MouseEvent e) {

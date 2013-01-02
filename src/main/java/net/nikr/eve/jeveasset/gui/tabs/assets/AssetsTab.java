@@ -78,9 +78,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
-		//FIXME - setting Columns/ResizeMode/ColumnsWidth should be done via JMainTab adding it to all tools is too error prone 
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = program.getEveAssetEventList();
 		//Filter
@@ -104,9 +101,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -144,12 +139,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public boolean isFiltersEmpty() {

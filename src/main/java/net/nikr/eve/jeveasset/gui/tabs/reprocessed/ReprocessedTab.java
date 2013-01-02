@@ -85,6 +85,8 @@ public class ReprocessedTab extends JMainTab {
 	//Data
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
 
+	public static final String NAME = "reprocessed"; //Not to be changed!
+
 	public ReprocessedTab(final Program program) {
 		super(program, TabsReprocessed.get().title(), Images.TOOL_REPROCESSED.getIcon(), true);
 
@@ -125,7 +127,7 @@ public class ReprocessedTab extends JMainTab {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 

@@ -145,7 +145,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
+		installTable(jTable, null);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 

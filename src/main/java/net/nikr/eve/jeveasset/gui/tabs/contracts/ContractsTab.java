@@ -98,8 +98,6 @@ public class ContractsTab extends JMainTab {
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<ContractItem>();
 		//Filter
@@ -124,9 +122,7 @@ public class ContractsTab extends JMainTab {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -155,13 +151,6 @@ public class ContractsTab extends JMainTab {
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-
-	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	@Override

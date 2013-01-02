@@ -73,8 +73,6 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<MarketOrder>();
 		//Filter
@@ -94,9 +92,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		installTable(jTable, NAME);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -141,13 +137,6 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-
-	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	@Override
