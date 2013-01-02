@@ -43,6 +43,10 @@ public abstract class TabsReprocessed extends Bundle {
 	public abstract String columnPrice();
 	public abstract String columnQuantityMax();
 	public abstract String columnQuantitySkill();
+	public abstract String columnTotalBatch();
+	public abstract String columnTotalName();
+	public abstract String columnTotalPrice();
+	public abstract String columnTotalValue();
 	public abstract String columnTypeID();
 	public abstract String columnValueDifference();
 	public abstract String columnValueMax();

@@ -69,7 +69,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
 public class ReprocessedTab extends JMainTab {

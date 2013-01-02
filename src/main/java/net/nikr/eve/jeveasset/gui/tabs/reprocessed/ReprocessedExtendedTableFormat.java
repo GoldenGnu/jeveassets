@@ -24,13 +24,14 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public enum ReprocessedExtendedTableFormat implements EnumTableColumn<ReprocessedInterface> {
 	TOTAL_NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Name]"; //FIXME i18n
+			return TabsReprocessed.get().columnTotalName();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
@@ -40,7 +41,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 	TOTAL_PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Price]"; //FIXME i18n
+			return TabsReprocessed.get().columnTotalPrice();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
@@ -50,7 +51,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 	TOTAL_VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Value]"; //FIXME i18n
+			return TabsReprocessed.get().columnTotalValue();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
@@ -60,7 +61,7 @@ public enum ReprocessedExtendedTableFormat implements EnumTableColumn<Reprocesse
 	TOTAL_BATCH(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "[Batch]"; //FIXME i18n
+			return TabsReprocessed.get().columnTotalBatch();
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
