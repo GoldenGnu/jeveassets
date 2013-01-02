@@ -235,11 +235,12 @@ public class ReprocessedTab extends JMainTab {
 		jComponent.add(new JMenuLookup<ReprocessedInterface>(program, menuData));
 	//EDIT
 		jComponent.add(new JMenuPrice<ReprocessedInterface>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//REPROCESSED
 		//jComponent.add(new JMenuReprocessed<ReprocessedItem>(program, menuData));
+	//COLUMNS
+		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
+		//FIXME - make info menu for Reprocessed Tool
 		//JMenuInfo.reprocessed(jComponent, selected, eventList);
 	}
 

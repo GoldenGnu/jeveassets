@@ -34,14 +34,18 @@ public class Contract extends EveContract {
 	private String issuer;
 	private String endStation;
 	private String startStation;
+	private String system;
+	private String region;
 
-	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, String endStation, String startStation) {
+	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, String endStation, String startStation, String system, String region) {
 		this.acceptor = acceptor;
 		this.assignee = assignee;
 		this.issuerCorp = issuerCorp;
 		this.issuer = issuer;
 		this.endStation = endStation;
 		this.startStation = startStation;
+		this.system = system;
+		this.region = region;
 		this.setAcceptorID(contract.getAcceptorID());
 		this.setAssigneeID(contract.getAssigneeID());
 		this.setAvailability(contract.getAvailability());
@@ -106,6 +110,14 @@ public class Contract extends EveContract {
 
 	public String getStartStation() {
 		return startStation;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
+	public String getRegion() {
+		return region;
 	}
 
 	public boolean isCourier() {

@@ -165,8 +165,9 @@ public final class ApiConverter {
 	}
 	private static ContractItem eveContractItemToContractItem(final EveContractItem eveContractItem, EveContract eveContract, final Settings settings) {
 		String name = ApiIdConverter.typeName(eveContractItem.getTypeID(), settings.getItems());
+		boolean marketGroup = ApiIdConverter.marketGroup(eveContractItem.getTypeID(), settings.getItems());
 		Contract contract = eveContractToContract(eveContract, settings);
-		return new ContractItem(eveContractItem, contract, name);
+		return new ContractItem(eveContractItem, contract, name, marketGroup);
 	}
 
 	public static List<Asset> eveContracts(Map<EveContract, List<EveContractItem>> contracts, Settings settings) {
@@ -211,7 +212,9 @@ public final class ApiConverter {
 		String issuer = ApiIdConverter.ownerName(eveContract.getIssuerID(), settings.getOwners());
 		String endStation = ApiIdConverter.locationName(eveContract.getEndStationID(), null, settings.getLocations());
 		String startStation = ApiIdConverter.locationName(eveContract.getStartStationID(), null, settings.getLocations());
-		return new Contract(eveContract, acceptor, assignee, issuerCorp, issuer, endStation, startStation);
+		String system = ApiIdConverter.systemName(eveContract.getStartStationID(), null, settings.getLocations());
+		String region = ApiIdConverter.regionName(eveContract.getStartStationID(), null, settings.getLocations());
+		return new Contract(eveContract, acceptor, assignee, issuerCorp, issuer, endStation, startStation, system, region);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final String owner, final Settings settings) {
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();

@@ -135,6 +135,7 @@ public class ValueTableTab extends JMainTab {
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
+		//FIXME - make info menu for Values Table Tool
 		//JMenuInfo.asset(jComponent, selectionModel.getSelected());
 	}
 

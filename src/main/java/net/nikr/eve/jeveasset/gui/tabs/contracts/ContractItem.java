@@ -29,10 +29,12 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 
 	private Contract contract;
 	private String name;
+	private boolean marketGroup;
 
 	public ContractItem(Contract contract) {
 		this.contract = contract;
 		this.name = contract.getTypeName();
+		this.marketGroup = false;
 		this.setIncluded(true);
 		this.setQuantity(0);
 		this.setRecordID(0);
@@ -40,9 +42,10 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		this.setTypeID(0);
 	}
 
-	public ContractItem(EveContractItem contractItem, Contract contract, String name) {
+	public ContractItem(EveContractItem contractItem, Contract contract, String name, boolean marketGroup) {
 		this.contract = contract;
 		this.name = name;
+		this.marketGroup = marketGroup;
 		this.setIncluded(contractItem.isIncluded());
 		this.setQuantity(contractItem.getQuantity());
 		this.setRecordID(contractItem.getRecordID());
@@ -66,6 +69,10 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		} else {
 			return TabsContracts.get().packaged();
 		}
+	}
+
+	public boolean isMarketGroup() {
+		return marketGroup;
 	}
 
 	@Override
