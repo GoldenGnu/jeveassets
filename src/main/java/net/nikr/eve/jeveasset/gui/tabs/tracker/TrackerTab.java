@@ -509,7 +509,6 @@ public class TrackerTab extends JMainTab {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_QUICK_DATE.equals(e.getActionCommand())) {
-				System.out.println("ACTION_QUICK_DATE");
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				Date toDate = jTo.getDate();
 				if (toDate == null) {
