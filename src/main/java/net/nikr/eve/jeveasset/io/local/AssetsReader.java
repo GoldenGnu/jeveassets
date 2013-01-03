@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -479,23 +480,6 @@ public final class AssetsReader extends AbstractXmlReader {
 				}
 			}
 		}
-		//Calculated:
-		String name = ApiIdConverter.typeName(typeID, settings.getItems());
-		String group = ApiIdConverter.group(typeID, settings.getItems());
-		String category = ApiIdConverter.category(typeID, settings.getItems());
-		double priceBase = ApiIdConverter.priceBase(typeID, settings.getItems());
-		int meta = ApiIdConverter.meta(typeID, settings.getItems());
-		String tech = ApiIdConverter.tech(typeID, settings.getItems());
-		boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-		float volume = ApiIdConverter.volume(typeID, settings.getItems());
-		String security = ApiIdConverter.security(locationID, parentEveAsset, settings.getLocations());
-		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
-		String region = ApiIdConverter.regionName(locationID, parentEveAsset, settings.getLocations());
-		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
-		String flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
-		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
-		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
-		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
-		return new Asset(name, group, category, owner, count, location, parents, flag, flagID, priceBase, meta, tech, itemId, typeID, marketGroup, corporationAsset, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return ApiConverter.createAsset(settings, parentEveAsset, corporationAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 	}
 }

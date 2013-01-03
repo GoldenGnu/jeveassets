@@ -354,8 +354,8 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.marketGroup = updateMarketGroup;
 		}
 
-		public void updateAsset(final Asset asset, final Long ownerID, final Location location) {
-			if (asset != null && ownerID != null && location != null //better safe then sorry
+		public void updateAsset(final Asset asset, final Long ownerID) {
+			if (asset != null && ownerID != null //better safe then sorry
 					&& (
 						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
 						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
@@ -365,7 +365,7 @@ public class Stockpile implements Comparable<Stockpile> {
 					&& matchFlag(asset, stockpile.getFlagID())
 					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
-					|| stockpile.getLocationID() == location.getRegionID()
+					|| stockpile.getLocationID() == asset.getRegionID()
 					|| stockpile.getLocationID() < 0)
 					) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();

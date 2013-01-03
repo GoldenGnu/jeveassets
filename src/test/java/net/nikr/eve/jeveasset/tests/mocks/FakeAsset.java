@@ -340,4 +340,8 @@ public class FakeAsset extends Asset {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public long getRegionID() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

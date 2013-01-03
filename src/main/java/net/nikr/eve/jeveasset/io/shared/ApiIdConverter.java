@@ -135,6 +135,17 @@ public final class ApiIdConverter {
 		return -locationID;
 	}
 
+	public static long regionID(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
+		if (location != null) {
+			return location.getRegionID();
+		}
+		if (parentAsset != null) {
+			return parentAsset.getRegionID();
+		}
+		return -locationID;
+	}
+
 	public static float volume(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {

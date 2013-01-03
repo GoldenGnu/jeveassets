@@ -246,7 +246,7 @@ public final class ApiConverter {
 		return -1;
 	}
 
-	private static Asset createAsset(final Settings settings, final Asset parentEveAsset,
+	public static Asset createAsset(final Settings settings, final Asset parentEveAsset,
 			boolean corporation, String ownerName, long count, int flagID, long itemId,
 			int typeID, long locationID, boolean singleton, int rawQuantity, String flag) {
 		//Calculated:
@@ -263,12 +263,13 @@ public final class ApiConverter {
 		String location = ApiIdConverter.locationName(locationID, parentEveAsset, settings.getLocations());
 		String solarSystem = ApiIdConverter.systemName(locationID, parentEveAsset, settings.getLocations());
 		long solarSystemId  = ApiIdConverter.systemID(locationID, parentEveAsset, settings.getLocations());
+		long regionID = ApiIdConverter.regionID(locationID, parentEveAsset, settings.getLocations());
 		List<Asset> parents = ApiIdConverter.parents(parentEveAsset);
 		if (flag == null) {
 			flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
 		}
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial);
+		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial, regionID);
 	}
 }

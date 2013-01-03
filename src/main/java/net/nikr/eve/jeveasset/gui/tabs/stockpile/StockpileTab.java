@@ -237,16 +237,13 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		this.addStatusbarLabel(jValueNeeded);
 	}
 
-	public Stockpile showAddStockpile() {
-		return stockpileDialog.showAdd();
-	}
-
 	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
+		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
 		}
 		if (stockpile != null) { //Add items
-			List<StockpileItem> newItems = new ArrayList<StockpileItem>();
+			removeStockpile(stockpile);
 			for (StockpileItem fromItem : items) {
 				//Clone item
 				StockpileItem toItem = null;
@@ -262,14 +259,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				} else { //Add new
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
-					newItems.add(item);
 				}
 			}
-			if (newItems.isEmpty()) {
-				tableModel.fireTableDataChanged();
-			} else {
-				addItems(newItems);
-			}
+			addStockpile(stockpile);
 		}
 		return stockpile;
 	}
@@ -306,14 +298,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	private void addItem(StockpileItem item) {
-		addItems(Collections.singletonList(item));
-	}
-
-	private void addItems(List<StockpileItem> items) {
-		if (items.isEmpty()) {
-			return;
-		}
-		updateStockpile(items.get(0).getStockpile());
+		updateStockpile(item.getStockpile());
 		//Lock Table
 		beforeUpdateData();
 		//Save separator expanded/collapsed state
@@ -321,7 +306,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
-			eventList.addAll(items);
+			eventList.remove(item);
+			eventList.add(item);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
@@ -331,11 +317,10 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		afterUpdateData();
 	}
 
-	private void removeItem(StockpileItem item) {
-		removeItems(Collections.singletonList(item));
-	}
-
 	private void removeItems(List<StockpileItem> items) {
+		for (StockpileItem item : items) {
+			item.getStockpile().updateTotal();
+		}
 		//Lock Table
 		beforeUpdateData();
 		//Save separator expanded/collapsed state
@@ -434,8 +419,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (asset.getFlag().equals(General.get().contractExcluded())) {
 							continue; //Ignore contracts excluded
 						}
-						Location location = program.getSettings().getLocations().get(asset.getLocationID());
-						item.updateAsset(asset, ownersID.get(asset.getOwner()), location);
+						Long ownerID = ownersID.get(asset.getOwner());
+						item.updateAsset(asset, ownerID);
 					}
 				}
 				//Orders & Jobs
@@ -575,6 +560,18 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		scrollToSctockpile(stockpile);
 	}
 
+	private void updateOwners() {
+		//Owners Look-Up
+		ownersID = new HashMap<String, Long>();
+		ownersName = new HashMap<Long, String>();
+		for (Account account : program.getSettings().getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				ownersID.put(owner.getName(), owner.getOwnerID());
+				ownersName.put(owner.getOwnerID(), owner.getName());
+			}
+		}
+	}
+
 	private String getClipboardContents() {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		//odd: the Object param of getContents is not currently used
@@ -671,15 +668,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public void updateData() {
 		//Items
 		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
-		//Owners Look-Up
-		ownersID = new HashMap<String, Long>();
-		ownersName = new HashMap<Long, String>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				ownersID.put(owner.getName(), owner.getOwnerID());
-				ownersName.put(owner.getOwnerID(), owner.getName());
-			}
-		}
+
+		updateOwners();
 
 		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
 			stockpileItems.addAll(stockpile.getItems());
@@ -828,7 +818,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				StockpileItem addItem = stockpileItemDialog.showAdd(stockpile);
 				if (addItem != null) { //Edit/Add/Update existing or cancel
-					removeItem(addItem); //Need to remove first (if it already exist)
 					addItem(addItem);
 				}
 			}
@@ -850,7 +839,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				if (items.size() == 1) {
 					StockpileItem editItem = stockpileItemDialog.showEdit(items.get(0));
 					if (editItem != null) {
-						removeItem(editItem);
 						addItem(editItem);
 					}
 				}

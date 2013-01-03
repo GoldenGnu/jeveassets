@@ -113,6 +113,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private long locationID; //LocationID : long
 	private long itemID; //ItemID : long
 	private long solarSystemID; //LocationID : long
+	private long regionID; //LocationID : long
 	private int typeID; //TypeID : int
 	private int flagID; //FlagID : int
 	private String typeName;
@@ -149,7 +150,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	 */
 	protected Asset() { }
 
-	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial) {
+	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -176,6 +177,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.solarSystemID = solarSystemID;
 		this.rawQuantity = rawQuantity;
 		this.piMaterial = piMaterial;
+		this.regionID = regionID;
 	}
 
 	public void addEveAsset(final Asset eveAsset) {
@@ -388,6 +390,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public String getRegion() {
 		return region;
+	}
+
+	public long getRegionID() {
+		return regionID;
 	}
 
 	public String getSecurity() {
