@@ -50,9 +50,6 @@ public abstract class TabsValues extends Bundle {
 	public abstract String title();
 
 	public abstract String oldTitle();
-	public abstract String oldSelect();
-	public abstract String oldCharacter();
-	public abstract String oldCorporation();
 	public abstract String oldNoCharacter();
 	public abstract String oldNoCorporation();
 
