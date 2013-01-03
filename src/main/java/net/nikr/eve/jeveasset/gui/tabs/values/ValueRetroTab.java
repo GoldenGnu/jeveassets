@@ -241,7 +241,7 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		output.addValue(value.getSellOrders());
 		output.addNone();
 
-		output.addHeading(TabsValues.get().columnEscrows());
+		output.addHeading(TabsValues.get().columnEscrowsToCover());
 		output.addValue(value.getEscrows(), value.getEscrowsToCover());
 		output.addNone();
 
