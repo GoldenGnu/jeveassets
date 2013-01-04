@@ -446,6 +446,8 @@ public class Program implements ActionListener {
 	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
 			mainWindow.addTab(valueRetroTab);
+		}
+		if (MainMenu.ACTION_OPEN_VALUE_TABLE.equals(e.getActionCommand())) {
 			mainWindow.addTab(valueTableTab);
 		}
 		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {

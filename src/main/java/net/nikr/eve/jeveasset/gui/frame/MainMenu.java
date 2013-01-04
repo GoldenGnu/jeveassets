@@ -34,6 +34,7 @@ public class MainMenu extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 
 	public static final String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
+	public static final String ACTION_OPEN_VALUE_TABLE = "ACTION_OPEN_VALUE_TABLE";
 	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
 	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
@@ -81,6 +82,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_VALUES);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().valueTable());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_VALUE_TABLE);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

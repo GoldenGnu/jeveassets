@@ -72,7 +72,7 @@ public class ValueTableTab extends JMainTab {
 	public static final String NAME = "value"; //Not to be changed!
 
 	public ValueTableTab(final Program program) {
-		super(program, TabsValues.get().title(), Images.TOOL_VALUES.getIcon(), true);
+		super(program, TabsValues.get().title(), Images.TOOL_VALUE_TABLE.getIcon(), true);
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
 		//Backend
