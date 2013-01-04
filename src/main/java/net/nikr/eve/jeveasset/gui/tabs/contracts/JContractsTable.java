@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,8 +34,8 @@ public class JContractsTable extends JSeparatorTable {
 
 	private EventTableModel<ContractItem> tableModel;
 
-	public JContractsTable(final Program program, final EventTableModel<ContractItem> tableModel) {
-		super(program, tableModel);
+	public JContractsTable(final Program program, final EventTableModel<ContractItem> tableModel, SeparatorList<?> separatorList) {
+		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
 

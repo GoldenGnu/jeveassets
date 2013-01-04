@@ -153,7 +153,7 @@ public class ReprocessedTab extends JMainTab {
 		//Table Model
 		tableModel = new EventTableModel<ReprocessedInterface>(separatorList, tableFormat);
 		//Table
-		jTable = new JReprocessedTable(program, tableModel);
+		jTable = new JReprocessedTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -286,6 +286,9 @@ public class ReprocessedTab extends JMainTab {
 			list.add(grandTotal);
 			list.addAll(uniqueList);
 		}
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
@@ -293,6 +296,8 @@ public class ReprocessedTab extends JMainTab {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
 	}
 
 	public void set(final Set<Integer> newTypeIDs) {
@@ -305,6 +310,7 @@ public class ReprocessedTab extends JMainTab {
 	}
 
 	public void show() {
+		jTable.clearExpandedState();
 		if (program.getMainWindow().isOpen(this)) {
 			updateData(); //Also update data when already open
 		}
@@ -316,10 +322,10 @@ public class ReprocessedTab extends JMainTab {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-				jTable.expandSeparators(false, separatorList);
+				jTable.expandSeparators(false);
 			}
 			if (ACTION_EXPAND.equals(e.getActionCommand())) {
-				jTable.expandSeparators(true, separatorList);
+				jTable.expandSeparators(true);
 			}
 			if (ACTION_CLEAR.equals(e.getActionCommand())) {
 				typeIDs.clear();
@@ -355,7 +361,7 @@ public class ReprocessedTab extends JMainTab {
 		}
 	}
 
-	public static class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
+	public class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
 
 		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ReprocessedInterface>> columns = null;
@@ -452,6 +458,16 @@ public class ReprocessedTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<ReprocessedInterface>> getEnumShownColumns() {
 			return new ArrayList<EnumTableColumn<ReprocessedInterface>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void afterFilter() {
+			jTable.loadExpandedState();
+		}
+
+		@Override
+		protected void beforeFilter() {
+			jTable.saveExpandedState();
 		}
 
 		private Enum[] concat(final Enum[] a, final Enum[] b) {

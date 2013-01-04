@@ -48,7 +48,6 @@ public class Stockpile implements Comparable<Stockpile> {
 	private boolean jobs;
 	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
-	private boolean expanded = true;
 	private double percentFull;
 
 	private Stockpile(final Stockpile stockpile) {
@@ -212,14 +211,6 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	public List<StockpileItem> getItems() {
 		return items;
-	}
-
-	public boolean isExpanded() {
-		return expanded;
-	}
-
-	public void setExpanded(final boolean expanded) {
-		this.expanded = expanded;
 	}
 
 	public double getPercentFull() {

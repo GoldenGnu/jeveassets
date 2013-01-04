@@ -178,7 +178,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Table Model
 		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
 		//Table
-		jTable = new JStockpileTable(program, tableModel);
+		jTable = new JStockpileTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -301,8 +301,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		updateStockpile(item.getStockpile());
 		//Lock Table
 		beforeUpdateData();
-		//Save separator expanded/collapsed state
-		saveExpandedState();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
@@ -311,8 +309,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		//Restore separator expanded/collapsed state
-		loadExpandedState();
 		//Unlcok Table
 		afterUpdateData();
 	}
@@ -323,8 +319,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 		//Lock Table
 		beforeUpdateData();
-		//Save separator expanded/collapsed state
-		saveExpandedState();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
@@ -332,8 +326,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		//Restore separator expanded/collapsed state
-		loadExpandedState();
 		//Unlcok Table
 		afterUpdateData();
 	}
@@ -345,8 +337,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		updateStockpile(stockpile);
 		//Lock Table
 		beforeUpdateData();
-		//Save separator expanded/collapsed state
-		saveExpandedState();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
@@ -354,8 +344,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		//Restore separator expanded/collapsed state
-		loadExpandedState();
 		//Unlcok Table
 		afterUpdateData();
 	}
@@ -363,8 +351,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private void removeStockpile(Stockpile stockpile) {
 		//Lock Table
 		beforeUpdateData();
-		//Save separator expanded/collapsed state
-		saveExpandedState();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
@@ -372,8 +358,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
-		//Restore separator expanded/collapsed state
-		loadExpandedState();
 		//Unlcok Table
 		afterUpdateData();
 	}
@@ -457,33 +441,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			}
 		}
 		stockpile.updateTotal();
-	}
-
-	private void saveExpandedState() {
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-				StockpileItem item = (StockpileItem) separator.first();
-				item.getStockpile().setExpanded(separator.getLimit() != 0);
-			}
-		}
-	}
-
-	private void loadExpandedState() {
-		for (int i = 0; i < separatorList.size(); i++) {
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-				StockpileItem item = (StockpileItem) separator.first();
-				separatorList.getReadWriteLock().writeLock().lock();
-				try {
-					separator.setLimit(item.getStockpile().isExpanded() ? Integer.MAX_VALUE : 0);
-				} finally {
-					separatorList.getReadWriteLock().writeLock().unlock();
-				}
-			}
-		}
 	}
 
 	private void importEFT() {
@@ -677,7 +634,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 
 		//Save separator expanded/collapsed state
-		saveExpandedState();
+		jTable.saveExpandedState();
 		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
@@ -687,7 +644,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Restore separator expanded/collapsed state
-		loadExpandedState();
+		jTable.loadExpandedState();
 	}
 
 	@Override
@@ -745,11 +702,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 		//Collapse all
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		//Expand all
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 		//Add stockpile (EFT Import)
 		if (ACTION_IMPORT.equals(e.getActionCommand())) {
@@ -976,12 +933,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		@Override
 		protected void afterFilter() {
-			loadExpandedState();
+			jTable.loadExpandedState();
 		}
 
 		@Override
 		protected void beforeFilter() {
-			saveExpandedState();
+			jTable.saveExpandedState();
 		}
 
 		private Enum[] concat(final Enum[] a, final Enum[] b) {

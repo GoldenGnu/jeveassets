@@ -136,7 +136,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		//Table Model
 		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
 		//Table
-		jTable = new JSeparatorTable(program, tableModel);
+		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
@@ -319,10 +319,18 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				key = module.getKey();
 			}
 		}
-		eventList.getReadWriteLock().writeLock().lock();
-		eventList.clear();
-		eventList.addAll(ship);
-		eventList.getReadWriteLock().writeLock().unlock();
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(ship);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
 	}
 
 	@Override
@@ -346,10 +354,15 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (!owners.isEmpty()) {
 			jOwners.setEnabled(true);
+			String selectedItem = (String) jOwners.getSelectedItem();
 			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsLoadout.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwners.setSelectedIndex(0);
+			if (selectedItem != null && owners.contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
 		} else {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new DefaultComboBoxModel());
@@ -387,8 +400,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jExportAll.setEnabled(true);
 				jOwners.setEnabled(true);
 				jShips.setEnabled(true);
+				String selectedItem = (String) jShips.getSelectedItem();
 				jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
-				jShips.setSelectedIndex(0);
+				if (selectedItem != null && charShips.contains(selectedItem)) {
+					jShips.setSelectedItem(selectedItem);
+				} else {
+					jShips.setSelectedIndex(0);
+				}
 			} else {
 				jExpand.setEnabled(false);
 				jCollapse.setEnabled(false);
@@ -404,10 +422,10 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 		if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
 			loadoutsExportDialog.setVisible(true);

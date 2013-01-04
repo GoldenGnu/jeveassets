@@ -131,7 +131,7 @@ public class ContractsTab extends JMainTab {
 		//Table Model
 		tableModel = new EventTableModel<ContractItem>(separatorList, tableFormat);
 		//Table
-		jTable = new JContractsTable(program, tableModel);
+		jTable = new JContractsTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -188,15 +188,6 @@ public class ContractsTab extends JMainTab {
 				selected.remove(i);
 				i--;
 			}
-			/*
-			if ((object instanceof ContractItem)) {
-				ContractItem contractItem = (ContractItem) object;
-				if (contractItem.getContract().isCourier()) {
-					selected.remove(i);
-					i--;
-				}
-			}
-			*/
 		}
 
 	//COPY
@@ -240,6 +231,9 @@ public class ContractsTab extends JMainTab {
 				}
 			}
 		}
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
@@ -247,6 +241,8 @@ public class ContractsTab extends JMainTab {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
 	}
 
 	public class ListenerClass implements ActionListener {
@@ -254,10 +250,10 @@ public class ContractsTab extends JMainTab {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-				jTable.expandSeparators(false, separatorList);
+				jTable.expandSeparators(false);
 			}
 			if (ACTION_EXPAND.equals(e.getActionCommand())) {
-				jTable.expandSeparators(true, separatorList);
+				jTable.expandSeparators(true);
 			}
 		}
 	}
@@ -271,7 +267,7 @@ public class ContractsTab extends JMainTab {
 		}
 	}
 
-	public static class ContractsFilterControl extends FilterControl<ContractItem> {
+	public class ContractsFilterControl extends FilterControl<ContractItem> {
 
 		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ContractItem>> columns = null;
@@ -354,6 +350,16 @@ public class ContractsTab extends JMainTab {
 				return format.getColumnValue(item);
 			}
 			return null; //Fallback: show all...
+		}
+
+		@Override
+		protected void afterFilter() {
+			jTable.loadExpandedState();
+		}
+
+		@Override
+		protected void beforeFilter() {
+			jTable.saveExpandedState();
 		}
 
 		private Enum[] concat(final Enum[] a, final Enum[] b) {

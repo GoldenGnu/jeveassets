@@ -30,17 +30,23 @@ public class JSeparatorTable extends JAutoColumnTable {
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
 	private final Map<Integer, Integer> rowsHeight = new HashMap<Integer, Integer>();
+	private final SeparatorList<?> separatorList;
+	private final Map<Integer, Boolean> expandedSate = new HashMap<Integer, Boolean>();
+	private boolean defaultState = true;
 
-	public JSeparatorTable(final Program program, final EventTableModel<?> tableModel) {
+	public JSeparatorTable(final Program program, final EventTableModel<?> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel);
 		setUI(new SpanTableUI());
+		this.separatorList = separatorList;
 
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
 	}
 
-	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
+	public void expandSeparators(final boolean expand) {
+		clearExpandedState(); //Reset
+		defaultState = expand;
 		lock();
 		final EventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
@@ -62,6 +68,48 @@ public class JSeparatorTable extends JAutoColumnTable {
 			selectModel.setEnabled(true);
 		}
 		unlock();
+	}
+
+	public void clearExpandedState() {
+		expandedSate.clear();
+		defaultState = true;
+	}
+
+	public void saveExpandedState() {
+		for (int i = 0; i < separatorList.size(); i++) {
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+				for (Object item : separator.getGroup()) {
+					expandedSate.put(item.hashCode(), separator.getLimit() != 0);
+				}
+			}
+		}
+	}
+
+	public void loadExpandedState() {
+		for (int i = 0; i < separatorList.size(); i++) {
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+				Boolean expanded = null;
+				for (Object item : separator.getGroup()) {
+					expanded = expandedSate.get(item.hashCode());
+					if (expanded != null) {
+						break;
+					}
+				}
+				if (expanded == null) {
+					expanded = defaultState;
+				}
+				try {
+					separatorList.getReadWriteLock().writeLock().lock();
+					separator.setLimit(expanded ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
 	}
 
 	private EventSelectionModel<?> getEventSelectionModel() {

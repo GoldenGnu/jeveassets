@@ -86,7 +86,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
 		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
 		tableModel = new EventTableModel<Owner>(separatorList, tableFormat);
-		jTable = new JSeparatorTable(program, tableModel);
+		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, jTable, separatorList));
 		jTable.setSeparatorEditor(new AccountSeparatorTableCell(this, jTable, separatorList));
@@ -281,10 +281,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			accountImportDialog.show();
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 		if (ACTION_CLOSE.equals(e.getActionCommand())) {
 			save();

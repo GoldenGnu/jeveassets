@@ -97,7 +97,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		//Table Model
 		tableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
 		//Table
-		jTable = new JSeparatorTable(program, tableModel);
+		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
@@ -155,10 +155,15 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
+			String selectedItem = (String) jOwners.getSelectedItem();
 			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsMaterials.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwners.setSelectedIndex(0);
+			if (selectedItem != null && owners.contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
 		} else {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
@@ -278,10 +283,19 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 				location = material.getLocation();
 			}
 		}
-		eventList.getReadWriteLock().writeLock().lock();
-		eventList.clear();
-		eventList.addAll(materials);
-		eventList.getReadWriteLock().writeLock().unlock();
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(materials);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
+
 		if (!materials.isEmpty()) {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -299,10 +313,10 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			updateTable();
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 	}
 }
