@@ -219,10 +219,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	private void autoValidate() {
-		boolean b = true;
+		boolean valid = true;
 		boolean color = false;
 		if (jItems.getSelectedItem() == null) {
-			b = false;
+			valid = false;
 			jCopy.setEnabled(false);
 			jCopy.setSelected(false);
 		} else {
@@ -240,12 +240,12 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		try {
 			long l = Long.valueOf(jCountMinimum.getText());
 			if (l <= 0) {
-				b = false; //Negative and zero is not valid
+				valid = false; //Negative and zero is not valid
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
 		} catch (NumberFormatException ex) {
-			b = false; //Empty and NaN is not valid
+			valid = false; //Empty and NaN is not valid
 			if (!jCountMinimum.getText().isEmpty()) {
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
@@ -254,7 +254,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		if (!color) {
 			jCountMinimum.setBackground(Color.WHITE);
 		}
-		jOK.setEnabled(b);
+		jOK.setEnabled(valid);
 	}
 
 	private void autoSet() {
@@ -289,6 +289,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	@Override
 	protected void save() {
 		if (stockpileItem != null) { //EDIT
+			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
+				StockpileItem existingItem = getExistingItem();
+				existingItem.getStockpile().remove(existingItem);
+			}
 			stockpileItem.update(getStockpileItem());
 		} else if (itemExist()) { //UPDATING (Adding an existing item)
 			stockpileItem = getExistingItem();

@@ -238,6 +238,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
+		return addToStockpile(stockpile, items, false);
+	}
+
+	private Stockpile addToStockpile(Stockpile stockpile, StockpileItem item) {
+		return addToStockpile(stockpile, Collections.singletonList(item), false);
+	}
+
+	private Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items, boolean merge) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -255,7 +263,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					}
 				}
 				if (toItem != null) { //Update existing (add counts)
-					toItem.addCountMinimum(fromItem.getCountMinimum());
+					if (merge) {
+						toItem.addCountMinimum(fromItem.getCountMinimum());
+					}
 				} else { //Add new
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
@@ -295,22 +305,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			rect.setSize(jTable.getVisibleRect().getSize());
 			jTable.scrollRectToVisible(rect);
 		}
-	}
-
-	private void addItem(StockpileItem item) {
-		updateStockpile(item.getStockpile());
-		//Lock Table
-		beforeUpdateData();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.remove(item);
-			eventList.add(item);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Unlcok Table
-		afterUpdateData();
 	}
 
 	private void removeItems(List<StockpileItem> items) {
@@ -775,7 +769,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				StockpileItem addItem = stockpileItemDialog.showAdd(stockpile);
 				if (addItem != null) { //Edit/Add/Update existing or cancel
-					addItem(addItem);
+					addToStockpile(addItem.getStockpile(), addItem);
 				}
 			}
 		}
@@ -784,7 +778,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenuItem) {
 				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems());
+				addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
 			}
 		}
 		//Edit item
@@ -796,7 +790,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				if (items.size() == 1) {
 					StockpileItem editItem = stockpileItemDialog.showEdit(items.get(0));
 					if (editItem != null) {
-						addItem(editItem);
+						addToStockpile(editItem.getStockpile(), editItem);
 					}
 				}
 			}
