@@ -293,54 +293,9 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		this.stockpile = stockpile;
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileTitle());
-
-		//Include
-		jInventory.setSelected(stockpile.isInventory());
-		jSellOrders.setSelected(stockpile.isSellOrders());
-		jBuyOrders.setSelected(stockpile.isBuyOrders());
-		jJobs.setSelected(stockpile.isJobs());
-
-		//Name
-		jName.setText(stockpile.getName());
-
-		//Owners
-		Owner ownerSelected = ownerAll;
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.getOwnerID() == stockpile.getOwnerID()) {
-					ownerSelected = owner;
-				}
-			}
-		}
-		jOwner.setSelectedItem(ownerSelected);
-
-		//Location
-		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
-		if (location == null) {
-			location = LOCATION_ALL;
-		}
-		if (location.getLocationID() < 0) {
-			jUniverse.setSelected(true);
-		} else if (location.isRegion()) {
-			jRegions.setSelected(true);
-		} else if (location.isSystem()) {
-			jSystems.setSelected(true);
-		} else if (location.isStation()) {
-			jStations.setSelected(true);
-		}
-		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
-		refilter();
-		jLocations.setSelectedItem(location);
-
-		//Flag
-		ItemFlag itemFlag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
-		if (itemFlag == null) {
-			itemFlag = itemFlagAll;
-		}
-		jFlag.setSelectedItem(itemFlag);
-
-		//Container
-		jContainer.setSelectedItem(stockpile.getContainer());
+		//Load
+		loadStockpile(stockpile, stockpile.getName());
+		//Show
 		show();
 		return updated;
 	}
@@ -364,18 +319,32 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		cloneStockpile = stockpile.clone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
+		//Load
+		loadStockpile(cloneStockpile, "");
+		//Show
+		show();
+		if (updated) {
+			return cloneStockpile;
+		} else {
+			return null;
+		}
+	}
+
+	private void loadStockpile(Stockpile loadStockpile, String name) {
+		//Name
+		jName.setText(name);
 
 		//Include
-		jInventory.setSelected(stockpile.isInventory());
-		jSellOrders.setSelected(stockpile.isSellOrders());
-		jBuyOrders.setSelected(stockpile.isBuyOrders());
-		jJobs.setSelected(stockpile.isJobs());
+		jInventory.setSelected(loadStockpile.isInventory());
+		jSellOrders.setSelected(loadStockpile.isSellOrders());
+		jBuyOrders.setSelected(loadStockpile.isBuyOrders());
+		jJobs.setSelected(loadStockpile.isJobs());
 
 		//Owners
 		Owner ownerSelected = ownerAll;
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				if (owner.getOwnerID() == stockpile.getOwnerID()) {
+				if (owner.getOwnerID() == loadStockpile.getOwnerID()) {
 					ownerSelected = owner;
 				}
 			}
@@ -383,7 +352,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jOwner.setSelectedItem(ownerSelected);
 
 		//Location
-		Location location = program.getSettings().getLocations().get(stockpile.getLocationID());
+		Location location = program.getSettings().getLocations().get(loadStockpile.getLocationID());
 		if (location == null) {
 			location = LOCATION_ALL;
 		}
@@ -401,20 +370,14 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jLocations.setSelectedItem(location);
 
 		//Flag
-		ItemFlag itemFlag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
+		ItemFlag itemFlag = program.getSettings().getItemFlags().get(loadStockpile.getFlagID());
 		if (itemFlag == null) {
 			itemFlag = itemFlagAll;
 		}
 		jFlag.setSelectedItem(itemFlag);
 
 		//Container
-		jContainer.setSelectedItem(stockpile.getContainer());
-		show();
-		if (updated) {
-			return cloneStockpile;
-		} else {
-			return null;
-		}
+		jContainer.setSelectedItem(loadStockpile.getContainer());
 	}
 
 	private void show() {
