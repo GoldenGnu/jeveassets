@@ -249,7 +249,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				StockpileItem toItem = null;
 				//Search for existing
 				for (StockpileItem item : stockpile.getItems()) {
-					if (item.getTypeID() == fromItem.getTypeID()) {
+					if (item.getItemTypeID() == fromItem.getItemTypeID()) {
 						toItem = item;
 						break;
 					}
