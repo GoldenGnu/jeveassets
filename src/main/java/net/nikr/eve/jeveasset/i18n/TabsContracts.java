@@ -62,7 +62,9 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnTypeID();
 	public abstract String columnVolume();
 	public abstract String courier();
+	public abstract String excluded();
 	public abstract String expand();
+	public abstract String included();
 	public abstract String itemExchange();
 	public abstract String loan();
 	public abstract String notAccepted();

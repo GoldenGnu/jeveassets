@@ -57,6 +57,16 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		return contract;
 	}
 
+	public String getIncluded() {
+		if (getContract().isCourier()) {
+			return TabsContracts.get().courier();
+		} else if (isIncluded()) {
+			return TabsContracts.get().included();
+		} else {
+			return TabsContracts.get().excluded();
+		}
+	}
+
 	public String getName() {
 		return name;
 	}
