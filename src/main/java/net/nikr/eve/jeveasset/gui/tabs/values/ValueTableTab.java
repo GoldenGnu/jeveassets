@@ -35,8 +35,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -144,6 +146,7 @@ public class ValueTableTab extends JMainTab {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal());
 		values.put(total.getName(), total);
+		Set<String> uniqueOwners = new HashSet<String>();
 		for (Asset asset : program.getEveAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
@@ -170,7 +173,15 @@ public class ValueTableTab extends JMainTab {
 		}
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
+				if (!owner.isShowAssets()) { //Ignore hidden owners
+					continue;
+				}
 				String key = owner.getName();
+				if (uniqueOwners.contains(key)) {
+					continue;
+				} else {
+					uniqueOwners.add(key);
+				}
 				Value value = values.get(key);
 				if (value == null) {
 					value = new Value(key);

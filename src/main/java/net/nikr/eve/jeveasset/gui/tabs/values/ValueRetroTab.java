@@ -31,8 +31,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -175,6 +177,7 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = new Value(TabsValues.get().grandTotal());
+		Set<String> uniqueOwners = new HashSet<String>();
 		for (Asset asset : program.getEveAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
@@ -196,6 +199,15 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		}
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
+				if (!owner.isShowAssets()) { //Ignore hidden owners
+					continue;
+				}
+				String key = owner.getName();
+				if (uniqueOwners.contains(key)) {
+					continue;
+				} else {
+					uniqueOwners.add(key);
+				}
 				Value value = getValue(owner.getName(), owner.isCorporation());
 				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
 					value.addBalance(accountBalance.getBalance());

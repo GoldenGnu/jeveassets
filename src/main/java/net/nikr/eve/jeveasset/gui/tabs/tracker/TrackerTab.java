@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -59,6 +60,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -302,10 +304,16 @@ public class TrackerTab extends JMainTab {
 		double allEscrows = 0;
 		double allEscrowsToCover = 0;
 		Date date = new Date();
+		Set<String> uniqueOwners = new HashSet<String>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!owner.isShowAssets()) { //Ignore hidden owners
 					continue;
+				}
+				if (uniqueOwners.contains(owner.getName())) {
+					continue;
+				} else {
+					uniqueOwners.add(owner.getName());
 				}
 				TrackerOwner trackerOwner = new TrackerOwner(owner.getOwnerID(), owner.getName());
 				//Add new owner:
