@@ -31,17 +31,85 @@ import javax.swing.text.PlainDocument;
 
 public final class DocumentFactory {
 
-	public static IntegerPlainDocument getIntegerPlainDocument() {
-		return new IntegerPlainDocument();
+	public enum ValueFlag {
+		POSITIVE_AND_NOT_ZERO {
+			@Override
+			public boolean match(int i) {
+				return i > 0;
+			}
+			@Override
+			public boolean match(double i) {
+				return i > 0;
+			}
+		},
+		POSITIVE_AND_ZERO {
+			@Override
+			public boolean match(int i) {
+				return i >= 0;
+			}
+			@Override
+			public boolean match(double i) {
+				return i >= 0;
+			}
+		},
+		NEGATIVE_AND_NOT_ZERO {
+			@Override
+			public boolean match(int i) {
+				return i < 0;
+			}
+			@Override
+			public boolean match(double i) {
+				return i < 0;
+			}
+		},
+		NEGATIVE_AND_ZERO {
+			@Override
+			public boolean match(int i) {
+				return i <= 0;
+			}
+			@Override
+			public boolean match(double i) {
+				return i <= 0;
+			}
+		},
+		ANY_NUMBER {
+			@Override
+			public boolean match(int i) {
+				return true;
+			}
+			@Override
+			public boolean match(double i) {
+				return true;
+			}
+		},
+		NOT_ZERO {
+			@Override
+			public boolean match(int i) {
+				return i != 0;
+			}
+			@Override
+			public boolean match(double i) {
+				return i != 0;
+			}
+		};
+		public abstract boolean match(int i);
+		public abstract boolean match(double d);
 	}
-	public static IntegerPositivePlainDocument getIntegerPositivePlainDocument() {
-		return new IntegerPositivePlainDocument();
+
+	public static IntegerPlainDocument getIntegerPlainDocument() {
+		return new IntegerPlainDocument(ValueFlag.ANY_NUMBER);
+	}
+	public static IntegerPlainDocument getIntegerPlainDocument(ValueFlag flag) {
+		return new IntegerPlainDocument(flag);
 	}
 	public static WordPlainDocument getWordPlainDocument() {
 		return new WordPlainDocument();
 	}
 	public static DoublePlainDocument getDoublePlainDocument() {
-		return new DoublePlainDocument();
+		return new DoublePlainDocument(ValueFlag.ANY_NUMBER);
+	}
+	public static DoublePlainDocument getDoublePlainDocument(ValueFlag flag) {
+		return new DoublePlainDocument(flag);
 	}
 	public static MaxLengthPlainDocument getMaxLengthPlainDocument(final int maxLength) {
 		return new MaxLengthPlainDocument(maxLength);
@@ -52,8 +120,13 @@ public final class DocumentFactory {
 
 	private DocumentFactory() {	}
 
-
 	public static class IntegerPlainDocument extends PlainDocument {
+
+		ValueFlag flag;
+
+		public IntegerPlainDocument(ValueFlag flag) {
+			this.flag = flag;
+		}
 
 		@Override
 		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
@@ -71,35 +144,12 @@ public final class DocumentFactory {
 				newValue = currentBuffer.toString();
 			}
 			try {
-				Integer.parseInt(newValue);
-				super.insertString(offset, string, attributes);
+				if (flag.match(Integer.parseInt(newValue))) {
+					super.insertString(offset, string, attributes);
+				} else {
+					Toolkit.getDefaultToolkit().beep();
+				}
 			} catch (NumberFormatException exception) {
-				Toolkit.getDefaultToolkit().beep();
-			}
-		}
-	}
-
-	public static class IntegerPositivePlainDocument extends PlainDocument {
-
-		@Override
-		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
-			int length = getLength();
-			if (string == null) {
-				return;
-			}
-			String newValue;
-			if (length == 0) {
-				newValue = string;
-			} else {
-				String currentContent = getText(0, length);
-				StringBuilder currentBuffer = new StringBuilder(currentContent);
-				currentBuffer.insert(offset, string);
-				newValue = currentBuffer.toString();
-			}
-			boolean b = Pattern.matches("[\\d]*", newValue);
-			if (b && !newValue.isEmpty()) {
-				super.insertString(offset, string, attributes);
-			} else {
 				Toolkit.getDefaultToolkit().beep();
 			}
 		}
@@ -107,6 +157,12 @@ public final class DocumentFactory {
 
 	public static class DoublePlainDocument extends PlainDocument {
 
+		ValueFlag flag;
+
+		public DoublePlainDocument(ValueFlag flag) {
+			this.flag = flag;
+		}
+
 		@Override
 		public void insertString(final int offset, final String string, final AttributeSet attributes) throws BadLocationException {
 			int length = getLength();
@@ -123,8 +179,11 @@ public final class DocumentFactory {
 				newValue = currentBuffer.toString();
 			}
 			try {
-				Double.parseDouble(newValue);
-				super.insertString(offset, string, attributes);
+				if (flag.match(Double.parseDouble(newValue))) {
+					super.insertString(offset, string, attributes);
+				} else {
+					Toolkit.getDefaultToolkit().beep();
+				}
 			} catch (NumberFormatException exception) {
 				Toolkit.getDefaultToolkit().beep();
 			}

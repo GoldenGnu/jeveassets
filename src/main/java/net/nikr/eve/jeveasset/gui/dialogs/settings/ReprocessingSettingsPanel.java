@@ -27,7 +27,8 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -57,7 +58,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		jStation50.addActionListener(this);
 		jStationOther = new JRadioButton(DialoguesSettings.get().customPercent());
 		jStationOther.addActionListener(this);
-		jStation = new JNumberField();
+		jStation = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
 
 		ButtonGroup jStationButtonGroup = new ButtonGroup();

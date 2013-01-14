@@ -35,9 +35,10 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
@@ -338,7 +339,7 @@ public class AccountImportDialog extends JDialogCentered {
 			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().keyId());
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
-			jKeyID = new JNumberField("");
+			jKeyID = new JIntegerField("", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 			JCopyPopup.install(jKeyID);
 
 			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().vCode());

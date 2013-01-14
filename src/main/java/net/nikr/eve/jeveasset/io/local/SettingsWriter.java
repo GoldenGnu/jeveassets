@@ -212,6 +212,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
 			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
 			strockpileNode.setAttributeNS(null, "jobs", String.valueOf(strockpile.isJobs()));
+			strockpileNode.setAttributeNS(null, "multiplier", String.valueOf(strockpile.getMultiplier()));
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
 					Element itemNode = xmldoc.createElementNS(null, "item");

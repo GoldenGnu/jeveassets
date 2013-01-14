@@ -23,16 +23,25 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.awt.event.FocusListener;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 
 
-public class JNumberField extends JDefaultField implements FocusListener {
+public class JIntegerField extends JDefaultField {
 
-	public JNumberField() {
-		this("0");
+	public JIntegerField() {
+		this("0", ValueFlag.ANY_NUMBER);
 	}
 
-	public JNumberField(final String defaultValue) {
+	public JIntegerField(ValueFlag flag) {
+		this("0", flag);
+	}
+
+	public JIntegerField(final String defaultValue) {
+		this(defaultValue, ValueFlag.ANY_NUMBER);
+	}
+
+	public JIntegerField(final String defaultValue, ValueFlag flag) {
 		super(defaultValue);
-		this.setDocument(DocumentFactory.getIntegerPlainDocument());
+		this.setDocument(DocumentFactory.getIntegerPlainDocument(flag));
 	}
 }

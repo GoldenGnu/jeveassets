@@ -54,7 +54,7 @@ public class StockpileTest {
 
 	@Test
 	public void testSomeMethod() {
-		Stockpile stockpile = new Stockpile("Name", 0, "Owner", 0, "Location", "System", "Region", 0, "Flag", "Container", true, true, true, true);
+		Stockpile stockpile = new Stockpile("Name", 0, "Owner", 0, "Location", "System", "Region", 0, "Flag", "Container", true, true, true, true, 1);
 		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, "Name", "Group", 0, 0);
 		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, "Name", "Group", 0, 0);
 		StockpileTotal total1 = new StockpileTotal(stockpile);

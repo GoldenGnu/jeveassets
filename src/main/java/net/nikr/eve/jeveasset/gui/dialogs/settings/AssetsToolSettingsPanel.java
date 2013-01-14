@@ -29,7 +29,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -48,8 +48,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());
 		jBuyOrders = new JCheckBox(DialoguesSettings.get().includeBuyOrders());
 		jContracts = new JCheckBox(DialoguesSettings.get().includeContracts());
-		jMaxOrderAge = new JDefaultField("0");
-		jMaxOrderAge.setDocument(DocumentFactory.getIntegerPositivePlainDocument());
+		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().maximumPurchaseAge());
 		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
 

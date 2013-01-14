@@ -74,6 +74,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String items();
 	public abstract String jobs();
 	public abstract String locations();
+	public abstract String multiplier();
+	public abstract String multiplierSign();
 	public abstract String myLocations();
 	public abstract String name();
 	public abstract String needed();
@@ -109,6 +111,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountNowJobs();
 	public abstract String columnCountNeeded();
 	public abstract String columnCountMinimum();
+	public abstract String columnCountMinimumMultiplied();
 	public abstract String columnPercentNeeded();
 	public abstract String columnPrice();
 	public abstract String columnValueNow();

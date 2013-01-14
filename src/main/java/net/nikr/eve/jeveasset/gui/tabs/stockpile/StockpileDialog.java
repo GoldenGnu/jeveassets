@@ -39,7 +39,10 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -67,6 +70,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private JCheckBox jBuyOrders;
 	private JCheckBox jSellOrders;
 	private JCheckBox jJobs;
+	private JDoubleField jMultiplier;
 	private JButton jOK;
 	private EventList<Location> locations = new BasicEventList<Location>();
 	private FilterList<Location> locationsFilter;
@@ -130,6 +134,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 
 		jJobs = new JCheckBox(TabsStockpile.get().jobs());
 
+		JLabel jMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
+		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
+		jMultiplier.setAutoSelectAll(true);
+
 		JLabel jLocationsLabel = new JLabel(TabsStockpile.get().locations());
 		jLocations = new JComboBox();
 		jLocations.addItemListener(this);
@@ -161,6 +169,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						.addComponent(jOwnersLabel)
 						.addComponent(jLocationsLabel)
 						.addComponent(jIncludeLabel)
+						.addComponent(jMultiplierLabel)
 						.addComponent(jFlagLabel)
 						.addComponent(jContainerLabel)
 					)
@@ -180,6 +189,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						.addComponent(jName, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jMyLocations)
 						.addComponent(jLocations, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+						.addComponent(jMultiplier, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jFlag, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jContainer, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 						.addComponent(jOwner, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
@@ -208,6 +218,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jLocations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jMultiplierLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jMultiplier, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jIncludeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -262,9 +276,15 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
 		//Container
 		String container = (String) jContainer.getSelectedItem();
+		//Multiplier
+		double multiplier;
+		try {
+			multiplier = Double.valueOf(jMultiplier.getText());
+		} catch (NumberFormatException ex) {
+			multiplier = 1;
+		}
 		//Add
-
-		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
+		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected(), multiplier);
 	}
 
 	private void autoValidate() {
@@ -368,6 +388,9 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
 		refilter();
 		jLocations.setSelectedItem(location);
+
+		//Multiplier
+		jMultiplier.setText(Formater.compareFormat(loadStockpile.getMultiplier()));
 
 		//Flag
 		ItemFlag itemFlag = program.getSettings().getItemFlags().get(loadStockpile.getFlagID());

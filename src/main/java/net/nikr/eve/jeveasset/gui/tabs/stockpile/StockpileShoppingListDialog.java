@@ -38,7 +38,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -63,7 +63,7 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 		JLabel jPercentFullLabel = new JLabel(TabsStockpile.get().percentFull());
 		JLabel jPercentLabel = new JLabel(TabsStockpile.get().percent());
 
-		jPercent = new JNumberField("");
+		jPercent = new JIntegerField("");
 		jPercent.addCaretListener(this);
 
 		jClose = new JButton(TabsStockpile.get().close());
@@ -145,7 +145,7 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 			stockpileNames = stockpileNames + stockpile.getName();
 			for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()) {
 				if (stockpileItem.getItemTypeID() != 0) { //Ignore Total
-					final double minimumCount = (stockpileItem.getCountMinimum() * percent / 100.0);
+					final double minimumCount = (stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
 					double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
 					if (countNeeded > 0) {
 						volume = volume + (countNeeded * stockpileItem.getVolume());

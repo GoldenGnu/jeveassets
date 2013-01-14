@@ -319,7 +319,10 @@ public final class SettingsReader extends AbstractXmlReader {
 			String container = AttributeGetters.getString(stockpileNode, "container");
 			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
 			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
-
+			double multiplier = 1;
+			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
+				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
+			}
 			Location location = settings.getLocations().get(locationID);
 			String station = null;
 			String system = null;
@@ -345,7 +348,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 
-			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs);
+			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {

@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.SeparatorList.Separator;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
@@ -498,9 +499,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					}
 					//Update item count
 					StockpileItem stockpileItem = items.get(typeID);
-					long count = stockpileItem.getCountMinimum();
-					count++;
-					stockpileItem.setCountMinimum(count);
+					stockpileItem.addCountMinimum(1);
 					break; //search done
 				}
 			}
@@ -701,6 +700,29 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Expand all
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
 			jTable.expandSeparators(true);
+		}
+		//Multiplier
+		if (StockpileSeparatorTableCell.ACTION_UPDATE_MULTIPLIER.equals(e.getActionCommand())) {
+			Object source = e.getSource();
+			EventList<StockpileItem> selected = selectionModel.getSelected();
+			Object sep = null;
+			if (selected.size() == 1) {
+				sep = selected.get(0);
+			}
+			if (source instanceof JTextField && sep instanceof Separator) {
+				JTextField jMultiplier = (JTextField) source;
+				Separator separator = (Separator) sep;
+				double multiplier;
+				try {
+					multiplier = Double.valueOf(jMultiplier.getText());
+				} catch (NumberFormatException ex) {
+					multiplier = 1;
+				}
+				StockpileItem item = (StockpileItem) separator.first();
+				item.getStockpile().setMultiplier(multiplier);
+				item.getStockpile().updateTotal();
+				tableModel.fireTableDataChanged();
+			}
 		}
 		//Add stockpile (EFT Import)
 		if (ACTION_IMPORT.equals(e.getActionCommand())) {
