@@ -31,7 +31,9 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -436,12 +438,13 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jName.setText("");
 
 		//Owners
-		List<Owner> owners = new ArrayList<Owner>();
+		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				owners.add(owner);
+				ownersById.put(owner.getOwnerID(), owner);
 			}
 		}
+		List<Owner> owners = new ArrayList<Owner>(ownersById.values());
 		if (owners.isEmpty()) {
 			owners.add(ownerAll);
 			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
@@ -459,7 +462,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			locations.getReadWriteLock().writeLock().lock();
 			locations.clear();
 			locations.addAll(locationsList);
-
 		} finally {
 			locations.getReadWriteLock().writeLock().unlock();
 		}
