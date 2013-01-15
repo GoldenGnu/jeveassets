@@ -26,16 +26,14 @@ import java.util.Date;
 
 public class TrackerData {
 	private Date date;
-	private double total;
 	private double walletBalance;
 	private double assets;
 	private double sellOrders;
 	private double escrows;
 	private double escrowsToCover;
 
-	public TrackerData(Date date, double total, double walletBalance, double assets, double sellOrders, double escrows, double escrowsToCover) {
+	public TrackerData(Date date, double walletBalance, double assets, double sellOrders, double escrows, double escrowsToCover) {
 		this.date = date;
-		this.total = total;
 		this.walletBalance = walletBalance;
 		this.assets = assets;
 		this.sellOrders = sellOrders;
@@ -43,12 +41,41 @@ public class TrackerData {
 		this.escrowsToCover = escrowsToCover;
 	}
 
+	public TrackerData(Date date) {
+		this.date = date;
+		this.walletBalance = 0.0;
+		this.assets = 0.0;
+		this.sellOrders = 0.0;
+		this.escrows = 0.0;
+		this.escrowsToCover = 0.0;
+	}
+
+	public void addWalletBalance(double walletBalance) {
+		this.walletBalance = this.walletBalance + walletBalance;
+	}
+
+	public void addAssets(double assets) {
+		this.assets = this.assets + assets;
+	}
+
+	public void addSellOrders(double sellOrders) {
+		this.sellOrders = this.sellOrders + sellOrders;
+	}
+
+	public void addEscrows(double escrows) {
+		this.escrows = this.escrows + escrows;
+	}
+
+	public void addEscrowsToCover(double escrowsToCover) {
+		this.escrowsToCover = this.escrowsToCover + escrowsToCover;
+	}
+
 	public Date getDate() {
 		return date;
 	}
 
 	public double getTotal() {
-		return total;
+		return getAssets() + getWalletBalance() + getSellOrders() + getEscrows();
 	}
 
 	public double getWalletBalance() {

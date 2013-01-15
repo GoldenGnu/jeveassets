@@ -72,7 +72,7 @@ public final class ApiConverter {
 		boolean singleton  = true;
 		int rawQuantity = 0;
 
-		return createAsset(settings, null, owner.isCorporation(), owner.getName(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(settings, null, owner.isCorporation(), owner.getName(), owner.getOwnerID(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static List<Asset> apiIndustryJob(final List<ApiIndustryJob> industryJobs, final Owner owner, final Settings settings) {
@@ -100,7 +100,7 @@ public final class ApiConverter {
 			rawQuantity = -2; //-2 = BPC
 		}
 
-		return createAsset(settings, null, owner.isCorporation(), owner.getName(), count, flagID, id, typeID, locationID, singleton, rawQuantity, null);
+		return createAsset(settings, null, owner.isCorporation(), owner.getName(), owner.getOwnerID(), count, flagID, id, typeID, locationID, singleton, rawQuantity, null);
 	}
 
 	public static List<Asset> apiAsset(final Owner owner, final List<EveAsset<?>> assets, final Settings settings) {
@@ -136,7 +136,7 @@ public final class ApiConverter {
 		boolean singleton  = apiAsset.getSingleton();
 		int rawQuantity = apiAsset.getRawQuantity();
 
-		return createAsset(settings, parentEveAsset, owner.isCorporation(), owner.getName(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return createAsset(settings, parentEveAsset, owner.isCorporation(), owner.getName(), owner.getOwnerID(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(final Owner owner, final List<ApiMarketOrder> apiMarketOrders, final Settings settings) {
@@ -203,7 +203,7 @@ public final class ApiConverter {
 		long ownerID = contract.getIssuerID();
 		String ownerName = settings.getOwners().get(ownerID);
 
-		return createAsset(settings, null, false, ownerName, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(settings, null, false, ownerName, ownerID, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
 	}
 	public static Contract eveContractToContract(final EveContract eveContract, final Settings settings) {
 		String acceptor = ApiIdConverter.ownerName(eveContract.getAcceptorID(), settings.getOwners());
@@ -247,7 +247,7 @@ public final class ApiConverter {
 	}
 
 	public static Asset createAsset(final Settings settings, final Asset parentEveAsset,
-			boolean corporation, String ownerName, long count, int flagID, long itemId,
+			boolean corporation, String ownerName, long ownerID, long count, int flagID, long itemId,
 			int typeID, long locationID, boolean singleton, int rawQuantity, String flag) {
 		//Calculated:
 		String name = ApiIdConverter.typeName(typeID, settings.getItems());
@@ -270,6 +270,6 @@ public final class ApiConverter {
 		}
 		boolean piMaterial = ApiIdConverter.piMaterial(typeID, settings.getItems());
 
-		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial, regionID);
+		return new Asset(name, group, category, ownerName, count, location, parents, flag, flagID, basePrice, meta, tech, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity, piMaterial, regionID, ownerID);
 	}
 }

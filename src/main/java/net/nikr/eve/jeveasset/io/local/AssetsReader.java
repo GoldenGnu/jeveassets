@@ -142,7 +142,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			account.getOwners().add(owner);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
 			if (assetNodes.getLength() == 1) {
-				parseAssets(assetNodes.item(0), owner.getAssets(), null, settings);
+				parseAssets(assetNodes.item(0), settings, owner, owner.getAssets(), null);
 			}
 			parseContracts(currentNode, owner);
 			parseBalances(currentNode, owner);
@@ -436,23 +436,23 @@ public final class AssetsReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final List<Asset> assets, final Asset parentEveAsset, final Settings settings) {
+	private void parseAssets(final Node node, final Settings settings, final Owner owner, final List<Asset> assets, final Asset parentEveAsset) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				Asset eveAsset = parseEveAsset(currentNode, parentEveAsset, settings);
+				Asset eveAsset = parseEveAsset(currentNode, settings, owner, parentEveAsset);
 				if (parentEveAsset == null) {
 					assets.add(eveAsset);
 				} else {
 					parentEveAsset.addEveAsset(eveAsset);
 				}
-				parseAssets(currentNode, assets, eveAsset, settings);
+				parseAssets(currentNode, settings, owner, assets, eveAsset);
 			}
 		}
 	}
 
-	private Asset parseEveAsset(final Node node, final Asset parentEveAsset, final Settings settings) {
+	private Asset parseEveAsset(final Node node, final Settings settings, final Owner owner, final Asset parentEveAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
@@ -462,8 +462,6 @@ public final class AssetsReader extends AbstractXmlReader {
 			locationID = parentEveAsset.getLocationID();
 		}
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
-		boolean corporationAsset = AttributeGetters.getBoolean(node, "corporationasset");
-		String owner = AttributeGetters.getString(node, "owner");
 		int rawQuantity = 0;
 		if (AttributeGetters.haveAttribute(node, "rawquantity")) {
 			rawQuantity = AttributeGetters.getInt(node, "rawquantity");
@@ -480,6 +478,6 @@ public final class AssetsReader extends AbstractXmlReader {
 				}
 			}
 		}
-		return ApiConverter.createAsset(settings, parentEveAsset, corporationAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return ApiConverter.createAsset(settings, parentEveAsset, owner.isCorporation(), owner.getName(), owner.getOwnerID(), count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 	}
 }

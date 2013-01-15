@@ -41,8 +41,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.BorderFactory;
@@ -296,15 +298,43 @@ public class TrackerTab extends JMainTab {
 		return jDate;
 	}
 
+	private TrackerData getTrackerData(final Map<TrackerOwner, TrackerData> data, final long ownerID, final String owner, final Date date) {
+		TrackerOwner trackerOwner = new TrackerOwner(ownerID, owner);
+		TrackerData trackerData = data.get(trackerOwner);
+		if (trackerData == null) {
+			trackerData = new TrackerData(date);
+			data.put(trackerOwner, trackerData);
+		}
+		return trackerData;
+	}
+
 	public void createTrackerDataPoint() {
-		double allTotal = 0;
-		double allWalletBalance = 0;
-		double allAssets = 0;
-		double allSellOrders = 0;
-		double allEscrows = 0;
-		double allEscrowsToCover = 0;
 		Date date = new Date();
 		Set<String> uniqueOwners = new HashSet<String>();
+		Map<TrackerOwner, TrackerData> data = new HashMap<TrackerOwner, TrackerData>();
+		//All
+		TrackerData allTracker = new TrackerData(date);
+		data.put(new TrackerOwner(), allTracker);
+		for (Asset asset : program.getEveAssetEventList()) {
+			//Skip market orders
+			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
+				continue; //Ignore market sell orders
+			}
+			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
+				continue; //Ignore market buy orders
+			}
+			//Skip contracts
+			if (asset.getFlag().equals(General.get().contractIncluded())) {
+				continue; //Ignore contracts included
+			}
+			if (asset.getFlag().equals(General.get().contractExcluded())) {
+				continue; //Ignore contracts excluded
+			}
+			//Assets
+			TrackerData trackerData = getTrackerData(data, asset.getOwnerID(), asset.getOwner(), date);
+			trackerData.addAssets(asset.getPrice() * asset.getCount());
+			allTracker.addAssets(asset.getPrice() * asset.getCount());
+		}
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!owner.isShowAssets()) { //Ignore hidden owners
@@ -315,52 +345,40 @@ public class TrackerTab extends JMainTab {
 				} else {
 					uniqueOwners.add(owner.getName());
 				}
-				TrackerOwner trackerOwner = new TrackerOwner(owner.getOwnerID(), owner.getName());
-				//Add new owner:
-				if (!program.getSettings().getTrackerData().containsKey(trackerOwner)) {
-					program.getSettings().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
-				}
-				//Assets
-				double assetValue = deepAsset(owner.getAssets());
-				allAssets = allAssets + assetValue;
+				//TrackerData
+				TrackerData trackerData = getTrackerData(data, owner.getOwnerID(), owner.getName(), date);
 				//Account Balance
-				double accountBalanceValue = 0;
 				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					accountBalanceValue = accountBalanceValue + accountBalance.getBalance();
-					allWalletBalance = allWalletBalance + accountBalance.getBalance();
+					trackerData.addWalletBalance(accountBalance.getBalance());
+					allTracker.addWalletBalance(accountBalance.getBalance());
 				}
 				//Market Orders
-				double sellOrdersValue = 0;
-				double escrowsValue = 0;
-				double escrowsToCoverValue = 0;
 				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
 					if (apiMarketOrder.getOrderState() == 0) {
 						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							sellOrdersValue = sellOrdersValue + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							allSellOrders = allSellOrders + (apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+							trackerData.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
+							allTracker.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
 						} else { //Buy Orders
-							escrowsValue = escrowsValue + apiMarketOrder.getEscrow();
-							allEscrows = allEscrows + apiMarketOrder.getEscrow();
-							escrowsToCoverValue = escrowsToCoverValue + ((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							allEscrowsToCover = allEscrowsToCover + ((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
+							trackerData.addEscrows(apiMarketOrder.getEscrow());
+							allTracker.addEscrows(apiMarketOrder.getEscrow());
+							trackerData.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
+							allTracker.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
 						}
 					}
 				}
-				//Total
-				double totalValue = assetValue + accountBalanceValue + sellOrdersValue + escrowsValue;
-				allTotal = allTotal + totalValue;
-				//Add data
-				TrackerData data = new TrackerData(date, totalValue, accountBalanceValue, assetValue, sellOrdersValue, escrowsValue, escrowsToCoverValue);
-				program.getSettings().getTrackerData().get(trackerOwner).add(data);
 			}
 		}
-		//Add all
-		TrackerOwner owner = new TrackerOwner();
-		if (!program.getSettings().getTrackerData().containsKey(owner)) {
-			program.getSettings().getTrackerData().put(owner, new ArrayList<TrackerData>());
+		//Add everything
+		for (Map.Entry<TrackerOwner, TrackerData> entry : data.entrySet()) {
+			TrackerOwner trackerOwner = entry.getKey();
+			TrackerData trackerData = entry.getValue();
+			//New TrackerOwner
+			if (!program.getSettings().getTrackerData().containsKey(trackerOwner)) {
+				program.getSettings().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
+			}
+			program.getSettings().getTrackerData().get(trackerOwner).add(trackerData);
+			
 		}
-		TrackerData data = new TrackerData(date, allTotal, allWalletBalance, allAssets, allSellOrders, allEscrows, allEscrowsToCover);
-		program.getSettings().getTrackerData().get(owner).add(data);
 		//Update data
 		updateData();
 	}
@@ -368,7 +386,7 @@ public class TrackerTab extends JMainTab {
 	private double deepAsset(List<Asset> assets) {
 		double assetValue = 0;
 		for (Asset asset : assets) {
-			assetValue = assetValue + (asset.getPrice() * asset.getCount());
+			
 			assetValue = assetValue + deepAsset(asset.getAssets());
 		}
 		return assetValue;
@@ -477,11 +495,11 @@ public class TrackerTab extends JMainTab {
 		rangeAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
 		if (maxNumber != null && (maxNumber instanceof Double)) {
 			double max = (Double) maxNumber;
-			if (max > 1000000000000.0) {     //Higher than 2 Trillions  
+			if (max > 1000000000000.0) {     //Higher than 1 Trillion
 				rangeAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
-			} else if (max > 1000000000.0) { //Higher than 2 Billions
+			} else if (max > 1000000000.0) { //Higher than 1 Billion
 				rangeAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
-			} else if (max > 1000000.0) {    //Higher than 2 Millions
+			} else if (max > 1000000.0) {    //Higher than 1 Million
 				rangeAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
 			}
 		}

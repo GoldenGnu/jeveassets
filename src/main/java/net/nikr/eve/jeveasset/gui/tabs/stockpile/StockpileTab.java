@@ -98,7 +98,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private StockpileFilterControl filterControl;
 
 	//Data
-	Map<String, Long> ownersID;
 	Map<Long, String> ownersName;
 
 	public static final String NAME = "stockpile"; //Not to be changed!
@@ -398,8 +397,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (asset.getFlag().equals(General.get().contractExcluded())) {
 							continue; //Ignore contracts excluded
 						}
-						Long ownerID = ownersID.get(asset.getOwner());
-						item.updateAsset(asset, ownerID);
+						item.updateAsset(asset);
 					}
 				}
 				//Orders & Jobs
@@ -512,11 +510,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	private void updateOwners() {
 		//Owners Look-Up
-		ownersID = new HashMap<String, Long>();
 		ownersName = new HashMap<Long, String>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				ownersID.put(owner.getName(), owner.getOwnerID());
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}
 		}

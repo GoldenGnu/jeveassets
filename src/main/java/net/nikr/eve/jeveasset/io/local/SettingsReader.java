@@ -295,10 +295,9 @@ public final class SettingsReader extends AbstractXmlReader {
 				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
 				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
 				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
-				double total = AttributeGetters.getDouble(dataNode, "total");
 				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
 				//Add data
-				TrackerData data = new TrackerData(date, total, walletbalance, assets, sellorders, escrows, escrowstocover);
+				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover);
 				settings.getTrackerData().get(owner).add(data);
 			}
 		}

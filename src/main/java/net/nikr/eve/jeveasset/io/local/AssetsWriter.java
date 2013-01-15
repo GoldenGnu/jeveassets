@@ -111,12 +111,10 @@ public final class AssetsWriter extends AbstractXmlWriter {
 	private void writeAssets(final Document xmldoc, final Element parentNode, final List<Asset> assets) {
 		for (Asset asset : assets) {
 			Element node = xmldoc.createElementNS(null, "asset");
-			node.setAttributeNS(null, "owner", asset.getOwner());
 			node.setAttributeNS(null, "count", String.valueOf(asset.getCount()));
 			node.setAttributeNS(null, "flagid", String.valueOf(asset.getFlagID()));
 			node.setAttributeNS(null, "id", String.valueOf(asset.getItemID()));
 			node.setAttributeNS(null, "typeid", String.valueOf(asset.getTypeID()));
-			node.setAttributeNS(null, "corporationasset", String.valueOf(asset.isCorporation()));
 			node.setAttributeNS(null, "locationid", String.valueOf(asset.getLocationID()));
 			node.setAttributeNS(null, "singleton", String.valueOf(asset.isSingleton()));
 			node.setAttributeNS(null, "rawquantity", String.valueOf(asset.getRawQuantity()));

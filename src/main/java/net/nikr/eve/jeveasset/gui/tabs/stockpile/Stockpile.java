@@ -356,13 +356,13 @@ public class Stockpile implements Comparable<Stockpile> {
 			this.marketGroup = updateMarketGroup;
 		}
 
-		public void updateAsset(final Asset asset, final Long ownerID) {
-			if (asset != null && ownerID != null //better safe then sorry
+		public void updateAsset(final Asset asset) {
+			if (asset != null //better safe then sorry
 					&& (
 						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
 						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
 						)
-					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
+					&& (stockpile.getOwnerID() == asset.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
 					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
