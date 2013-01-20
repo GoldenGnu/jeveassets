@@ -92,9 +92,10 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 29 * hash + (this.contract != null ? this.contract.hashCode() : 0);
-		hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
+		int hash = 7;
+		hash = 97 * hash + (this.contract != null ? this.contract.hashCode() : 0);
+		hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+		hash = 97 * hash + (this.isIncluded() ? 1 : 0);
 		return hash;
 	}
 
@@ -111,6 +112,9 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 			return false;
 		}
 		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+			return false;
+		}
+		if (this.isIncluded() != other.isIncluded()) {
 			return false;
 		}
 		return true;
