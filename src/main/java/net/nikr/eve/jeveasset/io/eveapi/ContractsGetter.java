@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
@@ -79,10 +80,14 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected void setData(ContractsResponse response) {
 		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
+		//Create backup of existin contracts
+		Map<EveContract, List<EveContractItem>> existingContract= new HashMap<EveContract, List<EveContractItem>>(getOwner().getContracts());
+		//Remove existin contracts
+		getOwner().getContracts().clear();
 		for (EveContract contract : contracts) {
 			//Find existing contract
 			List<EveContractItem> contractItems = new ArrayList<EveContractItem>();
-			for (Map.Entry<EveContract, List<EveContractItem>> entry : getOwner().getContracts().entrySet()) {
+			for (Map.Entry<EveContract, List<EveContractItem>> entry : existingContract.entrySet()) {
 				if (entry.getKey().getContractID() == contract.getContractID()) {
 					contractItems = entry.getValue();
 					break;
@@ -95,9 +100,10 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
 		ownerTo.setContractsNextUpdate(ownerFrom.getContractsNextUpdate());
-		for (Map.Entry<EveContract, List<EveContractItem>> entry : ownerFrom.getContracts().entrySet()) {
-			ownerTo.setContracts(entry.getKey(), entry.getValue());
-		}
+		//Clear existin
+		ownerTo.getContracts().clear();
+		//Set new
+		ownerTo.getContracts().putAll(ownerFrom.getContracts());
 	}
 
 	@Override

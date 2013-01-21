@@ -28,6 +28,7 @@ import com.beimin.eveapi.shared.contract.items.ContractItemsResponse;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
@@ -40,6 +41,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
 	private EveContract currentContract;
+	private Map<Long, List<EveContractItem>> savedItems = new HashMap<Long, List<EveContractItem>>();
 
 	public ContractItemsGetter() {
 		super("Contract Items", false, false);
@@ -68,6 +70,11 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 					}
 					if (!entry.getValue().isEmpty()) {
 						continue; //Ignore old
+					}
+					List<EveContractItem> items = savedItems.get(contract.getContractID());
+					if (items != null) { //Set already updated
+						owner.setContracts(contract, items);
+						continue; //Ignore already updated
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
 					currentContract = contract;
@@ -113,11 +120,12 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	protected void setData(ContractItemsResponse response) {
 		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
 		getOwner().setContracts(currentContract, contractItems);
+		savedItems.put(currentContract.getContractID(), contractItems);
 	}
 
 	@Override
 	protected void updateFailed(Owner ownerFrom, Owner ownerTo) {
-		//FIXME - ContractItemsGetter.updateFailed does nothing
+		//Never called
 	}
 
 	@Override

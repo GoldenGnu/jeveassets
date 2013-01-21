@@ -307,6 +307,7 @@ public class Settings {
 			List<String> ownersJobs = new ArrayList<String>();
 			List<String> ownersContracts = new ArrayList<String>();
 			List<String> ownersAssets = new ArrayList<String>();
+			List<Long> contractIDs = new ArrayList<Long>();
 			//Create Market Price Data
 			marketPriceData = new HashMap<Integer, MarketPriceData>();
 			//Date - maximumPurchaseAge in days
@@ -351,7 +352,7 @@ public class Settings {
 					}
 					//Contracts
 					if (!owner.getContracts().isEmpty() && !ownersContracts.contains(owner.getName()) && isIncludeContracts()) {
-						List<Asset> contractAssets = ApiConverter.eveContracts(owner.getContracts(), this);
+						List<Asset> contractAssets = ApiConverter.eveContracts(owner.getContracts(), this, contractIDs);
 						addAssets(contractAssets, owner.isShowAssets());
 						if (owner.isShowAssets()) {
 							ownersContracts.add(owner.getName());

@@ -170,9 +170,9 @@ public final class ApiConverter {
 		return new ContractItem(eveContractItem, contract, name, marketGroup);
 	}
 
-	public static List<Asset> eveContracts(Map<EveContract, List<EveContractItem>> contracts, Settings settings) {
+	
+	public static List<Asset> eveContracts(Map<EveContract, List<EveContractItem>> contracts, Settings settings, List<Long> contractIDs) {
 		List<Asset> list = new ArrayList<Asset>();
-		List<Long> contractIDs = new ArrayList<Long>();
 		for (Map.Entry<EveContract, List<EveContractItem>> entry : contracts.entrySet()) {
 			EveContract contract = entry.getKey();
 			long contractID = contract.getContractID();

@@ -158,7 +158,6 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			contractsNode.appendChild(contractNode);
 			for (EveContractItem contractItem : entry.getValue()) {
 				Element itemNode = xmldoc.createElementNS(null, "contractitem");
-				itemNode.setAttributeNS(null, "contractid", String.valueOf(entry.getKey()));
 				itemNode.setAttributeNS(null, "included", String.valueOf(contractItem.isIncluded()));
 				itemNode.setAttributeNS(null, "quantity", String.valueOf(contractItem.getQuantity()));
 				itemNode.setAttributeNS(null, "recordid", String.valueOf(contractItem.getRecordID()));
