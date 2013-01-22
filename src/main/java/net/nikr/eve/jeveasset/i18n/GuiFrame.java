@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,6 +38,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String accounts();
 	public abstract String change();
 	public abstract String close();
+	public abstract String contracts();
 	public abstract String credits();
 	public abstract String eve();
 	public abstract String exit();
@@ -55,14 +56,17 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String overview();
 	public abstract String profiles();
 	public abstract String readme();
+	public abstract String reprocessed();
 	public abstract String routing();
 	public abstract String ship();
 	public abstract String stockpile();
 	public abstract String table();
 	public abstract String tools();
+	public abstract String tracker();
 	public abstract String updatable();
 	public abstract String update();
 	public abstract String update1();
 	public abstract String values();
+	public abstract String valueTable();
 	public abstract String windowTitle(String programName, String programVersion, int portable, int profileCount, String activeProfileName);
 }

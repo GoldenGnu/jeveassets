@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -72,6 +72,16 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 				return item;
 			}
 			return null;
+		}
+	},
+	COUNT_MINIMUM_MULTIPLIED(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountMinimumMultiplied();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getCountMinimumMultiplied();
 		}
 	},
 	COUNT_NOW(Long.class, GlazedLists.comparableComparator()) {
@@ -195,19 +205,19 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 	};
 
-	private Class type;
+	private Class<?> type;
 	private Comparator<?> comparator;
 
-	private StockpileTableFormat(final Class type, final Comparator<?> comparator) {
+	private StockpileTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 
@@ -229,6 +239,6 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final StockpileItem from);
-	//XXX - TableFormat.getColumnName(...) Workaround
+	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

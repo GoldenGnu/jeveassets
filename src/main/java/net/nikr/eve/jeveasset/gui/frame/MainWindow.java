@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -104,22 +104,35 @@ public class MainWindow implements WindowListener, ChangeListener {
 	}
 
 	public void addTab(final JMainTab jMainTab) {
-		addTab(jMainTab, true);
+		addTab(jMainTab, true, false);
 	}
 
 	public void addTab(final JMainTab jMainTab, final boolean focus) {
+		addTab(jMainTab, focus, false) ;
+	}
+
+	public void addTab(final JMainTab jMainTab, final boolean focus, final boolean alwaysUpdate) {
 		if (!tabs.contains(jMainTab)) {
 			LOG.info("Opening tab: " + jMainTab.getTitle());
-			jMainTab.updateData();
+			jMainTab.updateDataTableLock();
 			tabs.add(jMainTab);
 			jTabbedPane.addTab(jMainTab.getTitle(), jMainTab.getIcon(), jMainTab.getPanel());
 			jTabbedPane.setTabComponentAt(jTabbedPane.getTabCount() - 1, new TabCloseButton(jMainTab));
 		} else {
-			LOG.info("Focusing tab: " + jMainTab.getTitle());
+			if (alwaysUpdate) {
+				LOG.info("Focusing and updating tab: " + jMainTab.getTitle());
+				jMainTab.updateDataTableLock();
+			} else {
+				LOG.info("Focusing tab: " + jMainTab.getTitle());
+			}
 		}
 		if (focus) {
 			jTabbedPane.setSelectedComponent(jMainTab.getPanel());
 		}
+	}
+
+	public boolean isOpen(final JMainTab jMainTab){
+		return tabs.contains(jMainTab);
 	}
 
 	public JMainTab getSelectedTab() {

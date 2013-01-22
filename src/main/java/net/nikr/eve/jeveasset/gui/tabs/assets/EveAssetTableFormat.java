@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
@@ -321,6 +322,20 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getSingleton();
 		}
 	},
+	ADDED(Date.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnAdded();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getAdded();
+		}
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
+	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -342,19 +357,19 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 	};
 
-	private Class type;
+	private Class<?> type;
 	private Comparator<?> comparator;
 
-	private EveAssetTableFormat(final Class type, final Comparator<?> comparator) {
+	private EveAssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,13 +22,13 @@
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 
 
-public class SeparatorListComparator implements Comparator<Human> {
+public class SeparatorListComparator implements Comparator<Owner> {
 
 	@Override
-	public int compare(final Human o1, final Human o2) {
+	public int compare(final Owner o1, final Owner o2) {
 		Integer keyid1 = o1.getParentAccount().getKeyID();
 		Integer keyid2 = o2.getParentAccount().getKeyID();
 		return keyid1.compareTo(keyid2);

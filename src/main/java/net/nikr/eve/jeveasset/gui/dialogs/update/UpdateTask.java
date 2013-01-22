@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -71,8 +71,8 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return jText;
 	}
 
-	public void addError(final String human, final String error) {
-		errors.put(human, error);
+	public void addError(final String owner, final String error) {
+		errors.put(owner, error);
 	}
 
 	public boolean hasError() {

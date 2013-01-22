@@ -13,6 +13,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -27,8 +30,9 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public static final String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
 	public static final String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
 	public static final String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
-	public static final String ACTION_SHOPPING_LIST_STOCKPILE = "ACTION_SHOPPING_LIST_STOCKPILE";
+	public static final String ACTION_SHOPPING_LIST_SINGLE = "ACTION_SHOPPING_LIST_SINGLE";
 	public static final String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
+	public static final String ACTION_UPDATE_MULTIPLIER = "ACTION_UPDATE_MULTIPLIER";
 
 	private final JLabel jStartSpace;
 	private final JLabel jGroup;
@@ -39,6 +43,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jOwner;
 	private final JLabel jLocation;
 	private final JLabel jLocationLabel;
+	private final JDoubleField jMultiplier;
 	private Program program;
 
 	public StockpileSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<StockpileItem> separatorList, final ActionListener actionListener) {
@@ -57,6 +62,16 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jColorDisabled.setOpaque(false);
 		jColorDisabled.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 		jColorDisabled.setVisible(false);
+
+		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
+		jMultiplier.setActionCommand(ACTION_UPDATE_MULTIPLIER);
+		jMultiplier.addActionListener(actionListener);
+		jMultiplier.setHorizontalAlignment(JTextField.RIGHT);
+		jMultiplier.setOpaque(false);
+		jMultiplier.setBorder(null);
+		jMultiplier.setAutoSelectAll(true);
+		
+		JLabel jMultiplierLabel = new JLabel(TabsStockpile.get().multiplierSign());
 
 		jGroup = new JLabel();
 		jGroup.setBorder(null);
@@ -116,7 +131,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jStockpile.addSeparator();
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_STOCKPILE);
+		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_SINGLE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
@@ -130,6 +145,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 					.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
 					.addGap(10)
 					.addComponent(jStockpile, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+					.addComponent(jMultiplier, 50, 50, 50)
+					.addComponent(jMultiplierLabel)
 					.addGap(10)
 					.addComponent(jGroup, 150, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
@@ -154,6 +171,8 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 						.addComponent(jColorDisabled, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6, Program.BUTTONS_HEIGHT - 6)
 					)
 					.addComponent(jStockpile, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jMultiplier, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jMultiplierLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jGroup, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGroup(layout.createSequentialGroup()
 						.addGap(4)
@@ -203,6 +222,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jOwner.setText(owner);
 		jOwner.setToolTipText(owner);
 		jOwnerLabel.setToolTipText(owner);
+		jMultiplier.setText(Formater.compareFormat(stockpileItem.getStockpile().getMultiplier()));
 	}
 
 	protected JViewport getParentViewport() {

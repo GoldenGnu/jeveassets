@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,22 +21,44 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse.AccessMask;
+import com.beimin.eveapi.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class Account {
+
+	public enum AccessMask {
+		OPEN(0L),
+		ACCOUNT_BALANCE(1L),
+		ASSET_LIST(2L),
+		INDUSTRY_JOBS(128L),
+		MARKET_ORDERS(4096L),
+		ACCOUNT_STATUS(33554432L),
+		CONTRACTS_CORP(8388608L),
+		CONTRACTS_CHAR(67108864L);
+
+		private final long accessMask;
+
+		private AccessMask(long accessMask) {
+			this.accessMask = accessMask;
+		}
+
+		public long getAccessMask() {
+			return accessMask;
+		}
+	}
+
 	private int keyID;
 	private String vCode;
 	private String name;
 	private Date accountNextUpdate;
-	private int accessMask;
-	private String type;
+	private long accessMask;
+	private KeyType type;
 	private Date expires;
 
-	private List<Human> humans = new ArrayList<Human>();
+	private List<Owner> owners = new ArrayList<Owner>();
 
 	public Account(final Account account) {
 		this(account.getKeyID(),
@@ -46,16 +68,16 @@ public class Account {
 				account.getAccessMask(),
 				account.getType(),
 				account.getExpires());
-		for (Human human : account.getHumans()) {
-			humans.add(new Human(this, human));
+		for (Owner owner : account.getOwners()) {
+			owners.add(new Owner(this, owner));
 		}
 	}
 
 	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, "", null);
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final int accessMask, final String type, final Date expires) {
+	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -89,11 +111,11 @@ public class Account {
 		this.name = name;
 	}
 
-	public int getAccessMask() {
+	public long getAccessMask() {
 		return accessMask;
 	}
 
-	public void setAccessMask(final int accessMask) {
+	public void setAccessMask(final long accessMask) {
 		this.accessMask = accessMask;
 	}
 
@@ -113,11 +135,11 @@ public class Account {
 		this.expires = expires;
 	}
 
-	public String getType() {
+	public KeyType getType() {
 		return type;
 	}
 
-	public void setType(final String type) {
+	public void setType(final KeyType type) {
 		this.type = type;
 	}
 
@@ -126,29 +148,29 @@ public class Account {
 	 * @param accountType Account | Character | Corporation
 	 * @return true if equal (both corp or both not corp) - false if not equal (one corp other not corp)
 	 */
-	public boolean compareTypes(final String accountType) {
-		boolean corp = accountType.equals("Corporation");
+	public boolean compareTypes(final KeyType accountType) {
+		boolean corp = accountType == KeyType.Corporation; //Enum can be null
 		return (isCorporation() == corp);
 	}
 
 	public boolean isCorporation() {
-		return type.equals("Corporation");
+		return type == KeyType.Corporation; //Enum can be null
 	}
 
 	public boolean isCharacter() {
 		return !isCorporation(); //type.equals("Character") || type.equals("Account");
 	}
 
-	public List<Human> getHumans() {
-		return humans;
+	public List<Owner> getOwners() {
+		return owners;
 	}
 
 	public void setvCode(final String vCode) {
 		this.vCode = vCode;
 	}
 
-	public void setHumans(final List<Human> humans) {
-		this.humans = humans;
+	public void setOwners(final List<Owner> owners) {
+		this.owners = owners;
 	}
 
 	public boolean isAccountBalance() {
@@ -165,6 +187,14 @@ public class Account {
 
 	public boolean isIndustryJobs() {
 		return ((getAccessMask() & AccessMask.INDUSTRY_JOBS.getAccessMask()) == AccessMask.INDUSTRY_JOBS.getAccessMask());
+	}
+
+	public boolean isContracts() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.CONTRACTS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.CONTRACTS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
+		}
 	}
 
 	@Override

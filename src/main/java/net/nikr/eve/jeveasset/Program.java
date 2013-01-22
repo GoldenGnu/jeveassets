@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -45,8 +45,8 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.ValuesTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
@@ -54,8 +54,12 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -65,7 +69,7 @@ public class Program implements ActionListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.4.0";
+	public static final String PROGRAM_VERSION = "2.5.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -90,7 +94,8 @@ public class Program implements ActionListener {
 	private UpdateDialog updateDialog;
 
 	//Tabs
-	private ValuesTab valuesTab;
+	private ValueRetroTab valueRetroTab;
+	private ValueTableTab valueTableTab;
 	private MaterialsTab materialsTab;
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
@@ -101,6 +106,9 @@ public class Program implements ActionListener {
 	private OverviewTab overviewTab;
 	private StockpileTab stockpileTab;
 	private ItemsTab itemsTab;
+	private TrackerTab trackerTab;
+	private ReprocessedTab reprocessedTab;
+	private ContractsTab contractsTab;
 
 	//Settings Panels
 	private GeneralSettingsPanel generalSettingsPanel;
@@ -174,7 +182,8 @@ public class Program implements ActionListener {
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
 		LOG.info("Loading: Values Tab");
-		valuesTab = new ValuesTab(this);
+		valueRetroTab = new ValueRetroTab(this);
+		valueTableTab = new ValueTableTab(this);
 		SplashUpdater.setProgress(68);
 		LOG.info("Loading: Routing Tab");
 		routingTab = new RoutingTab(this);
@@ -188,55 +197,60 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Items Tab");
 		itemsTab = new ItemsTab(this);
 		SplashUpdater.setProgress(76);
+		LOG.info("Loading: Tracker Tab");
+		trackerTab = new TrackerTab(this);
+		SplashUpdater.setProgress(78);
+		LOG.info("Loading: Reprocessed Tab");
+		reprocessedTab = new ReprocessedTab(this);
+		SplashUpdater.setProgress(80);
+		LOG.info("Loading: Contracts Tab");
+		contractsTab = new ContractsTab(this);
+		SplashUpdater.setProgress(82);
+		
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
-		SplashUpdater.setProgress(78);
+		SplashUpdater.setProgress(84);
 		LOG.info("Loading: About Dialog");
 		aboutDialog = new AboutDialog(this);
-		SplashUpdater.setProgress(80);
+		SplashUpdater.setProgress(86);
 		LOG.info("Loading: Profiles Dialog");
 		profileDialog = new ProfileDialog(this);
-		SplashUpdater.setProgress(82);
+		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
-		SplashUpdater.setProgress(84);
+		SplashUpdater.setProgress(90);
 	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(85);
+		SplashUpdater.setProgress(91);
 		LOG.info("Loading: General Settings Panel");
 		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(86);
 		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
 		LOG.info("Loading: Assets Tool Settings Panel");
 		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(87);
+		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Overview Tool Settings Panel");
 		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(88);
 		LOG.info("Loading: Stockpile Tool Settings Panel");
 		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(89);
+		SplashUpdater.setProgress(93);
 		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
 		LOG.info("Loading: Assets Price Settings Panel");
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(90);
 		LOG.info("Loading: Assets Name Settings Panel");
 		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(91);
+		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Reprocessing Settings Panel");
 		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(93);
+		SplashUpdater.setProgress(95);
 		LOG.info("Loading: Proxy Settings Panel");
 		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(94);
 		LOG.info("Loading: Window Settings Panel");
 		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(95);
+		SplashUpdater.setProgress(96);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
 		updateEventList();
@@ -278,14 +292,21 @@ public class Program implements ActionListener {
 
 	public final void updateEventList() {
 		LOG.info("Updating EventList");
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			jMainTab.beforeUpdateData();
+		}
 		settings.clearEveAssetList();
 		eveAssetEventList.getReadWriteLock().writeLock().lock();
 		eveAssetEventList.clear();
 		eveAssetEventList.addAll(settings.getEventListAssets());
 		eveAssetEventList.getReadWriteLock().writeLock().unlock();
 		System.gc(); //clean post-update mess :)
+		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.updateData();
+		}
+		for (JMainTab jMainTab : mainWindow.getTabs()) {
+			jMainTab.afterUpdateData();
 		}
 	}
 
@@ -293,7 +314,7 @@ public class Program implements ActionListener {
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
-			jMainTab.updateSettings();
+			jMainTab.saveSettings();
 		}
 		settings.saveSettings();
 	}
@@ -361,9 +382,14 @@ public class Program implements ActionListener {
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;
 	}
-
+	public ReprocessedTab getReprocessedTab() {
+		return reprocessedTab;
+	}
 	public EventList<Asset> getEveAssetEventList() {
 		return eveAssetEventList;
+	}
+	public void createTrackerDataPoint() {
+		trackerTab.createTrackerDataPoint();
 	}
 	public static boolean onMac() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
@@ -419,7 +445,10 @@ public class Program implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 	//Tools
 		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
-			mainWindow.addTab(valuesTab);
+			mainWindow.addTab(valueRetroTab);
+		}
+		if (MainMenu.ACTION_OPEN_VALUE_TABLE.equals(e.getActionCommand())) {
+			mainWindow.addTab(valueTableTab);
 		}
 		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
@@ -434,8 +463,7 @@ public class Program implements ActionListener {
 			mainWindow.addTab(industryJobsTab);
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_PLOT.equals(e.getActionCommand())) {
-			industryPlotTab.updateData();
-			mainWindow.addTab(industryPlotTab);
+			mainWindow.addTab(industryPlotTab, true, true);
 		}
 		if (MainMenu.ACTION_OPEN_OVERVIEW.equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
@@ -449,6 +477,15 @@ public class Program implements ActionListener {
 		}
 		if (MainMenu.ACTION_OPEN_ITEMS.equals(e.getActionCommand())) {
 			mainWindow.addTab(itemsTab);
+		}
+		if (MainMenu.ACTION_OPEN_TRACKER.equals(e.getActionCommand())) {
+			mainWindow.addTab(trackerTab);
+		}
+		if (MainMenu.ACTION_OPEN_REPROCESSED.equals(e.getActionCommand())) {
+			mainWindow.addTab(reprocessedTab);
+		}
+		if (MainMenu.ACTION_OPEN_CONTRACTS.equals(e.getActionCommand())) {
+			mainWindow.addTab(contractsTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {

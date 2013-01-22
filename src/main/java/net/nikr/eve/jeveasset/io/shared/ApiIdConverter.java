@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -135,6 +135,17 @@ public final class ApiIdConverter {
 		return -locationID;
 	}
 
+	public static long regionID(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
+		Location location = location(locationID, locations);
+		if (location != null) {
+			return location.getRegionID();
+		}
+		if (parentAsset != null) {
+			return parentAsset.getRegionID();
+		}
+		return -locationID;
+	}
+
 	public static float volume(final int typeID, final Map<Integer, Item> items) {
 		Item item = items.get(typeID);
 		if (item != null) {
@@ -149,6 +160,17 @@ public final class ApiIdConverter {
 			return item.getName();
 		}
 		return "!" + String.valueOf(typeID);
+	}
+
+	public static String ownerName(final long ownerID, final Map<Long, String> owners) {
+		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
+			return "";
+		}
+		String owner = owners.get(ownerID);
+		if (owner != null) {
+			return owner;
+		}
+		return "!" + String.valueOf(ownerID);
 	}
 
 	public static double priceBase(final int typeID, final Map<Integer, Item> items) {
@@ -206,13 +228,14 @@ public final class ApiIdConverter {
 	}
 
 	public static List<Asset> parents(final Asset parentEveAsset) {
-		List<Asset> parents = new ArrayList<Asset>();
+		List<Asset> parents;
 		if (parentEveAsset != null) {
-			for (int a = 0; a < parentEveAsset.getParents().size(); a++) {
-				parents.add(parentEveAsset.getParents().get(a));
-			}
+			parents = new ArrayList<Asset>(parentEveAsset.getParents());
 			parents.add(parentEveAsset);
+		} else {
+			parents = new ArrayList<Asset>();
 		}
+		
 		return parents;
 	}
 

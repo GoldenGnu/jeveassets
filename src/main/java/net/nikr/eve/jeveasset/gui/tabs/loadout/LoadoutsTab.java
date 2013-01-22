@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,9 +32,10 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -72,13 +73,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Table
-	private EventList<Module> moduleEventList;
-	private FilterList<Module> moduleFilterList;
+	private EventList<Module> eventList;
+	private FilterList<Module> filterList;
 	private SeparatorList<Module> separatorList;
 	private EventSelectionModel<Module> selectionModel;
-	private EventTableModel<Module> moduleTableModel;
-
-	//TODO - LoadoutsTab is not translated properly
+	private EventTableModel<Module> tableModel;
 
 	public LoadoutsTab(final Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
@@ -126,25 +125,28 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 
+		//Table Format
 		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
-		moduleEventList = new BasicEventList<Module>();
-		moduleFilterList = new FilterList<Module>(moduleEventList);
-		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
-		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
-		//Tables
-		jTable = new JSeparatorTable(program, moduleTableModel);
+		//Backend
+		eventList = new BasicEventList<Module>();
+		//Filter
+		filterList = new FilterList<Module>(eventList);
+		//Separator
+		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
+		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		//Table
+		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
-		//Table Render
 		PaddingTableCellRenderer.install(jTable, 3);
-
 		//Selection Model
 		selectionModel = new EventSelectionModel<Module>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Scroll Panels
+		installTable(jTable, null);
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
@@ -205,7 +207,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		} else { //Others: use program directory is there is only Win & Mac clients
 			jXmlFileChooser.setCurrentDirectory(new File(Settings.getUserDirectory()));
 		}
-		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame()); //.showDialog(this, "OK"); //.showOpenDialog(this);
+		int bFound = jXmlFileChooser.showSaveDialog(program.getMainWindow().getFrame());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
 			File file = jXmlFileChooser.getSelectedFile();
 			return file.getAbsolutePath();
@@ -258,14 +260,18 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Module> menuData = new MenuData<Module>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Module>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Module>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Module>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Module>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Module>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Module>(program, menuData));
 	//INFO
 		JMenuInfo.module(jComponent, selectionModel.getSelected());
 	}
@@ -313,10 +319,18 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				key = module.getKey();
 			}
 		}
-		moduleEventList.getReadWriteLock().writeLock().lock();
-		moduleEventList.clear();
-		moduleEventList.addAll(ship);
-		moduleEventList.getReadWriteLock().writeLock().unlock();
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(ship);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
 	}
 
 	@Override
@@ -324,13 +338,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsLoadout.get().whitespace9(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsLoadout.get().whitespace9(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);
@@ -340,10 +354,15 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (!owners.isEmpty()) {
 			jOwners.setEnabled(true);
-			Collections.sort(owners);
+			String selectedItem = (String) jOwners.getSelectedItem();
+			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsLoadout.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwners.setSelectedIndex(0);
+			if (selectedItem != null && owners.contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
 		} else {
 			jOwners.setEnabled(false);
 			jOwners.setModel(new DefaultComboBoxModel());
@@ -374,15 +393,20 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				charShips.add(key);
 			}
 			if (!charShips.isEmpty()) {
-				Collections.sort(charShips);
+				Collections.sort(charShips, new CaseInsensitiveComparator());
 				jExpand.setEnabled(true);
 				jCollapse.setEnabled(true);
 				jExport.setEnabled(true);
 				jExportAll.setEnabled(true);
 				jOwners.setEnabled(true);
 				jShips.setEnabled(true);
+				String selectedItem = (String) jShips.getSelectedItem();
 				jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
-				jShips.setSelectedIndex(0);
+				if (selectedItem != null && charShips.contains(selectedItem)) {
+					jShips.setSelectedItem(selectedItem);
+				} else {
+					jShips.setSelectedIndex(0);
+				}
 			} else {
 				jExpand.setEnabled(false);
 				jCollapse.setEnabled(false);
@@ -395,13 +419,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())) {
 			String selectedShip = (String) jShips.getSelectedItem();
-			moduleFilterList.setMatcher(new Module.ModuleMatcher(selectedShip));
+			filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 		if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
 			loadoutsExportDialog.setVisible(true);

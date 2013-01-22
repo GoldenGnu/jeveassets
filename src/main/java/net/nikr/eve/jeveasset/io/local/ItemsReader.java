@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,11 +36,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class ItemsReader extends AbstractXmlReader {
+public final class ItemsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ItemsReader.class);
 
+	private ItemsReader() { }
+
 	public static void load(final Settings settings) {
+		ItemsReader reader = new ItemsReader();
+		reader.read(settings);
+	}
+
+	private void read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathItems());
 			parseItems(element, settings.getItems());
@@ -52,17 +59,18 @@ public class ItemsReader extends AbstractXmlReader {
 		LOG.info("Items loaded");
 	}
 
-	private static void parseItems(final Element element, final Map<Integer, Item> items) {
+	private void parseItems(final Element element, final Map<Integer, Item> items) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Item item;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			Element itemElement = (Element) nodes.item(a);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element itemElement = (Element) nodes.item(i);
 			item = parseItem(itemElement);
 			parseMaterials(itemElement, item);
 			items.put(item.getTypeID(), item);
 		}
 	}
-	private static Item parseItem(final Node node) {
+
+	private Item parseItem(final Node node) {
 		int id = AttributeGetters.getInt(node, "id");
 		String name = AttributeGetters.getString(node, "name");
 		String group = AttributeGetters.getString(node, "group");
@@ -77,13 +85,14 @@ public class ItemsReader extends AbstractXmlReader {
 		return new Item(id, name, group, category, price, volume, meta, tech, marketGroup, piMaterial, portion);
 	}
 
-	private static void parseMaterials(final Element element, final Item item) {
+	private void parseMaterials(final Element element, final Item item) {
 		NodeList nodes = element.getElementsByTagName("material");
-		for (int a = 0; a < nodes.getLength(); a++) {
-			parseMaterial(nodes.item(a), item);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			parseMaterial(nodes.item(i), item);
 		}
 	}
-	private static void parseMaterial(final Node node, final Item item) {
+
+	private void parseMaterial(final Node node, final Item item) {
 		int id = AttributeGetters.getInt(node, "id");
 		int quantity = AttributeGetters.getInt(node, "quantity");
 		int portionSize = AttributeGetters.getInt(node, "portionsize");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -63,7 +63,7 @@ public class ReprocessSettings {
 	}
 
 	public int getLeft(final int start) {
-		return (int) Math.floor(((double) start / 100.0) * getPercent());
+		return (int) Math.round(((double) start / 100.0) * getPercent());
 	}
 
 	private double getPercent() {

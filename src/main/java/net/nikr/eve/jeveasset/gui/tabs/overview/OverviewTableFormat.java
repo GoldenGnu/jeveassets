@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -119,18 +119,18 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getValueReprocessed();
 		}
 	};
-	private Class type;
+	private Class<?> type;
 	private Comparator<?> comparator;
-	private OverviewTableFormat(final Class type, final Comparator<?> comparator) {
+	private OverviewTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 	@Override

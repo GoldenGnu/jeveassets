@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,9 +27,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.*;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
-import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 
@@ -110,9 +110,9 @@ public class TaskDialog {
 
 		ParallelGroup horizontalGroup = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
 		horizontalGroup.addComponent(jUpdate, WIDTH, WIDTH, WIDTH);
-		for (int a = 0; a < updateTasks.size(); a++) {
-			horizontalGroup.addComponent(updateTasks.get(a).getTextLabel(), WIDTH, WIDTH, WIDTH);
-			updateTasks.get(a).getTextLabel().addMouseListener(new ErrorMouseListener(updateTasks.get(a)));
+		for (UpdateTask updateTaskLoop : updateTasks) {
+			horizontalGroup.addComponent(updateTaskLoop.getTextLabel(), WIDTH, WIDTH, WIDTH);
+			updateTaskLoop.getTextLabel().addMouseListener(new ErrorMouseListener(updateTaskLoop));
 		}
 		horizontalGroup.addComponent(jProgressBar, WIDTH, WIDTH, WIDTH);
 		horizontalGroup.addGroup(layout.createSequentialGroup()
@@ -130,8 +130,8 @@ public class TaskDialog {
 
 		SequentialGroup verticalGroup = layout.createSequentialGroup();
 		verticalGroup.addComponent(jUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
-		for (int a = 0; a < updateTasks.size(); a++) {
-			verticalGroup.addComponent(updateTasks.get(a).getTextLabel(), Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
+		for (UpdateTask updateTaskLoop : updateTasks) {
+			verticalGroup.addComponent(updateTaskLoop.getTextLabel(), Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		}
 		verticalGroup.addComponent(jProgressBar, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		verticalGroup.addGroup(layout.createParallelGroup()
@@ -161,6 +161,8 @@ public class TaskDialog {
 			updateTask.execute();
 		} else {
 			program.updateEventList();
+			//Create value tracker point
+			program.createTrackerDataPoint();
 			//Save settings after updating (if we crash later)
 			program.saveSettings();
 			jOK.setEnabled(true);
@@ -198,8 +200,8 @@ public class TaskDialog {
 		int cancelledIndex = index;
 		index = updateTasks.size();
 		updateTask.cancel(true);
-		for (int a = cancelledIndex; a < updateTasks.size(); a++) {
-			updateTasks.get(a).cancelled();
+		for (int i = cancelledIndex; i < updateTasks.size(); i++) {
+			updateTasks.get(i).cancelled();
 		}
 		jProgressBar.setIndeterminate(false);
 		jProgressBar.setValue(0);

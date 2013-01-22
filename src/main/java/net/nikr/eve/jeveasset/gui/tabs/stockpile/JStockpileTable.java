@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
@@ -35,8 +36,8 @@ public class JStockpileTable extends JSeparatorTable {
 
 	private EventTableModel<StockpileItem> tableModel;
 
-	public JStockpileTable(final Program program, final EventTableModel<StockpileItem> tableModel) {
-		super(program, tableModel);
+	public JStockpileTable(final Program program, final EventTableModel<StockpileItem> tableModel, SeparatorList<?> separatorList) {
+		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
 

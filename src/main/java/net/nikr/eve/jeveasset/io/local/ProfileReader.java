@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -38,6 +38,11 @@ public final class ProfileReader {
 	private ProfileReader() { }
 
 	public static boolean load(final Settings settings) {
+		ProfileReader reader = new ProfileReader();
+		return reader.read(settings);
+	}
+
+	private boolean read(final Settings settings) {
 		backwardCompatibility();
 		List<Profile> profiles = new ArrayList<Profile>();
 		File profilesDirectory = new File(Settings.getPathProfilesDirectory());
@@ -81,7 +86,7 @@ public final class ProfileReader {
 		}
 	}
 
-	private static void backwardCompatibility() {
+	private void backwardCompatibility() {
 		//Create profiles directory
 		File dir = new File(Settings.getPathProfilesDirectory());
 		if (!dir.exists()) {
@@ -114,7 +119,7 @@ public final class ProfileReader {
 		}
 	}
 
-	private static String formatName(String name) {
+	private String formatName(String name) {
 		if (name.contains(".")) {
 			int end = name.lastIndexOf(".");
 			name = name.substring(0, end);
@@ -124,14 +129,14 @@ public final class ProfileReader {
 		return name;
 	}
 
-	private static boolean defaultProfile(final String name) {
+	private boolean defaultProfile(final String name) {
 		return name.startsWith("#");
 	}
-	private static boolean activeProfile(final String name) {
+	private boolean activeProfile(final String name) {
 		return name.startsWith("#");
 	}
 
-	private static class XmlFileFilter implements  FileFilter {
+	private class XmlFileFilter implements  FileFilter {
 		@Override
 		public boolean accept(final File file) {
 			return !file.isDirectory() && file.getName().endsWith(".xml");

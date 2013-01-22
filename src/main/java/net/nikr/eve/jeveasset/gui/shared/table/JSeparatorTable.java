@@ -30,18 +30,25 @@ public class JSeparatorTable extends JAutoColumnTable {
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
 	private final Map<Integer, Integer> rowsHeight = new HashMap<Integer, Integer>();
+	private final SeparatorList<?> separatorList;
+	private final Map<Integer, Boolean> expandedSate = new HashMap<Integer, Boolean>();
+	private boolean defaultState = true;
 
-	public JSeparatorTable(final Program program, final EventTableModel tableModel) {
+	public JSeparatorTable(final Program program, final EventTableModel<?> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel);
 		setUI(new SpanTableUI());
+		this.separatorList = separatorList;
 
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
 	}
 
-	public void expandSeparators(final boolean expand, final SeparatorList<?> separatorList) {
-		final EventSelectionModel selectModel = getEventSelectionModel();
+	public void expandSeparators(final boolean expand) {
+		clearExpandedState(); //Reset
+		defaultState = expand;
+		lock();
+		final EventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
 			selectModel.setEnabled(false);
 		}
@@ -49,8 +56,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
-				separatorList.getReadWriteLock().writeLock().lock();
 				try {
+					separatorList.getReadWriteLock().writeLock().lock();
 					separator.setLimit(expand ? Integer.MAX_VALUE : 0);
 				} finally {
 					separatorList.getReadWriteLock().writeLock().unlock();
@@ -60,9 +67,52 @@ public class JSeparatorTable extends JAutoColumnTable {
 		if (selectModel != null) {
 			selectModel.setEnabled(true);
 		}
+		unlock();
 	}
 
-	private EventSelectionModel getEventSelectionModel() {
+	public void clearExpandedState() {
+		expandedSate.clear();
+		defaultState = true;
+	}
+
+	public void saveExpandedState() {
+		for (int i = 0; i < separatorList.size(); i++) {
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+				for (Object item : separator.getGroup()) {
+					expandedSate.put(item.hashCode(), separator.getLimit() != 0);
+				}
+			}
+		}
+	}
+
+	public void loadExpandedState() {
+		for (int i = 0; i < separatorList.size(); i++) {
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+				Boolean expanded = null;
+				for (Object item : separator.getGroup()) {
+					expanded = expandedSate.get(item.hashCode());
+					if (expanded != null) {
+						break;
+					}
+				}
+				if (expanded == null) {
+					expanded = defaultState;
+				}
+				try {
+					separatorList.getReadWriteLock().writeLock().lock();
+					separator.setLimit(expanded ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
+	}
+
+	private EventSelectionModel<?> getEventSelectionModel() {
 		if (selectionModel instanceof EventSelectionModel<?>) {
 			return (EventSelectionModel) selectionModel;
 		} else {
@@ -76,7 +126,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	 *
 	 * @return the EventTableModel that backs this table
 	 */
-	private EventTableModel getEventTableModel() {
+	private EventTableModel<?> getEventTableModel() {
 		return (EventTableModel) getModel();
 	}
 
@@ -84,7 +134,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** {@inheritDoc} */
 	@Override
 	public Rectangle getCellRect(final int row, final int column, final boolean includeSpacing) {
-		final EventTableModel eventTableModel = getEventTableModel();
+		final EventTableModel<?> eventTableModel = getEventTableModel();
 
 		// sometimes JTable asks for a cellrect that doesn't exist anymore, due
 		// to an editor being installed before a bunch of rows were removed.
@@ -187,7 +237,6 @@ public class JSeparatorTable extends JAutoColumnTable {
 					}
 				}
 			}
-			//System.out.println("valueChanged => rows: "+selectedRows+" Row: "+selectedRows.get(selectedRows.size()-1));
 		}
 		if (!selectedRows.isEmpty()
 				&& selectedRows.get(selectedRows.size() - 1) < getEventTableModel().getRowCount()
@@ -199,7 +248,24 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.valueChanged(e);
 	}
 
-	private void fixRowHeight(final int row) {
+	@Override
+	public void unlock() {
+		if (isLocked()) { //only if locked
+			super.unlock(); //Unlock JAutoColumnTable
+			autoResizeRows(); //Update after unlock
+		}
+	}
+
+	private void autoResizeRows() {
+		if (isLocked()) {
+			return;
+		}
+		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
+			autoResizeRow(row);
+		}
+	}
+
+	private void autoResizeRow(final int row) {
 		if (row < 0 || row > getEventTableModel().getRowCount()) {
 			return;
 		}
@@ -208,19 +274,23 @@ public class JSeparatorTable extends JAutoColumnTable {
 		final int key = rowValue.hashCode();
 		if (rowsHeight.containsKey(key)) { //Load row height
 			height = rowsHeight.get(key);
-		} else if (rowValue instanceof SeparatorList.Separator) { //Calculate the Separator row height
-			TableCellRenderer renderer = this.getCellRenderer(row, 0);
-			Component component = super.prepareRenderer(renderer, row, 0);
-			height = component.getPreferredSize().height;
-		} else { //Calculate the row height
-			for (int i = 0; i < this.getColumnCount(); i++) {
-				TableCellRenderer renderer = this.getCellRenderer(row, i);
-				Component component = super.prepareRenderer(renderer, row, i);
-				height = Math.max(height, component.getPreferredSize().height);
-			}
+		} else if (rowValue instanceof SeparatorList.Separator) {
+				//Calculate the Separator row height
+				//This is done every time, because Separator can never be identified 100%
+				//Because elements is changed by filters and sorting
+				//If saved: the list keep growing with useless hash keys
+				TableCellRenderer renderer = this.getCellRenderer(row, 0);
+				Component component = super.prepareRenderer(renderer, row, 0);
+				height = component.getPreferredSize().height;
+			} else { //Calculate the row height
+				for (int i = 0; i < this.getColumnCount(); i++) {
+					TableCellRenderer renderer = this.getCellRenderer(row, i);
+					Component component = super.prepareRenderer(renderer, row, i);
+					height = Math.max(height, component.getPreferredSize().height);
+				}
+				//Save row height so we don't have to calculate it all the time
+				rowsHeight.put(key, height);
 		}
-		//Save row height so we don't have to calculate it all the time
-		rowsHeight.put(key, height);
 
 		//Set row height, if needed (is expensive because repaint is needed)
 		if (this.getRowHeight(row) != height) {
@@ -241,9 +311,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		super.tableChanged(e);
 
 		//set row heigh
-		for (int row = 0; row < getEventTableModel().getRowCount(); row++) {
-			fixRowHeight(row);
-		}
+		autoResizeRows();
 	}
 }
 /**

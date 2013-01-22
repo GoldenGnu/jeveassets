@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,7 +27,8 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -57,7 +58,7 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		jStation50.addActionListener(this);
 		jStationOther = new JRadioButton(DialoguesSettings.get().customPercent());
 		jStationOther.addActionListener(this);
-		jStation = new JNumberField();
+		jStation = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
 
 		ButtonGroup jStationButtonGroup = new ButtonGroup();
@@ -270,18 +271,18 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		validateStation();
 	}
 
-	private int getSelected(final JRadioButton[] jRadioButton) {
-		for (int a = 0; a < jRadioButton.length; a++) {
-			if (jRadioButton[a].isSelected()) {
-				return a;
+	private int getSelected(final JRadioButton[] jRadioButtons) {
+		for (int i = 0; i < jRadioButtons.length; i++) {
+			if (jRadioButtons[i].isSelected()) {
+				return i;
 			}
 		}
 		return 0;
 	}
 
-	private void setEnabled(final JRadioButton[] jRadioButton, final boolean enabled) {
-		for (int a = 0; a < jRadioButton.length; a++) {
-			jRadioButton[a].setEnabled(enabled);
+	private void setEnabled(final JRadioButton[] jRadioButtons, final boolean enabled) {
+		for (JRadioButton jRadioButton : jRadioButtons) {
+			jRadioButton.setEnabled(enabled);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -31,9 +31,9 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -71,35 +71,49 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	public MarketOrdersTab(final Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<MarketOrder>();
-		//Backend
+		//Filter
 		filterList = new FilterList<MarketOrder>(eventList);
 		filterList.addListEventListener(this);
-		//For soring the table
-		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(filterList);
+		//Sorting (per column)
+		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, tableFormat);
-		//Tables
+		tableModel = new EventTableModel<MarketOrder>(sortedList, tableFormat);
+		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		//Table Selection
-		selectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
+		selectionModel = new EventSelectionModel<MarketOrder>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Sorters
-		TableComparatorChooser.install(jTable, sellOrdersSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		installTable(jTable, NAME);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
+		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
+		List<Filter> filter;
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
+		filter = new ArrayList<Filter>();
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
+		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
+		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
+		filterControl = new MarketOrdersFilterControl(
+				program.getMainWindow().getFrame(),
+				tableFormat,
+				eventList,
+				filterList,
+				program.getSettings().getTableFilters(NAME),
+				defaultFilters
+				);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -112,27 +126,6 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 		jToCoverTotal = StatusPanel.createLabel(TabsOrders.get().totalToCover(), Images.ORDERS_TO_COVER.getIcon());
 		this.addStatusbarLabel(jToCoverTotal);
-
-		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
-		List<Filter> filter;
-
-		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().buy()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeBuyOrders(), filter);
-		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.ORDER_TYPE, CompareType.EQUALS,  TabsOrders.get().sell()));
-		filter.add(new Filter(LogicType.AND, MarketTableFormat.STATUS, CompareType.EQUALS,  TabsOrders.get().statusActive()));
-		defaultFilters.put(TabsOrders.get().activeSellOrders(), filter);
-
-		filterControl = new MarketOrdersFilterControl(
-				program.getMainWindow().getFrame(),
-				tableFormat,
-				eventList,
-				filterList,
-				program.getSettings().getTableFilters(NAME),
-				defaultFilters
-				);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -147,13 +140,6 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
-	}
-
-	@Override
 	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
@@ -165,14 +151,18 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<MarketOrder>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<MarketOrder>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<MarketOrder>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<MarketOrder>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
@@ -184,16 +174,16 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		List<String> unique = new ArrayList<String>();
 		List<MarketOrder> allMarketOrders = new ArrayList<MarketOrder>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsOrders.get().whitespace(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsOrders.get().whitespace(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					//Only add once and don't add empty orders
-					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human, human.getMarketOrders(), program.getSettings());
+					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
 					if (!unique.contains(name) && !marketOrders.isEmpty()) {
 						unique.add(name);
 						allMarketOrders.addAll(marketOrders);
@@ -257,7 +247,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			MarketTableFormat format = (MarketTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -269,7 +259,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			MarketTableFormat format = (MarketTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -285,7 +275,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return MarketTableFormat.valueOf(column);
 		}
 

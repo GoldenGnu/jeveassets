@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,7 +28,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -64,16 +65,16 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		jFixed.addActionListener(this);
 
 		JLabel jWidthLabel = new JLabel(DialoguesSettings.get().windowWidth());
-		jWidth = new JNumberField();
+		jWidth = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 
 		JLabel jHeightLabel = new JLabel(DialoguesSettings.get().windowHeight());
-		jHeight = new JNumberField();
+		jHeight = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 
 		JLabel jXLabel = new JLabel(DialoguesSettings.get().windowX());
-		jX = new JNumberField();
+		jX = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 
 		JLabel jYLabel = new JLabel(DialoguesSettings.get().windowY());
-		jY = new JNumberField();
+		jY = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 
 		jMaximized = new JCheckBox(DialoguesSettings.get().windowMaximised());
 

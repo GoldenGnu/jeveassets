@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -68,9 +68,9 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 
 	private FilterGui<E> gui;
 	private FilterControl<E> matcherControl;
-	private final List<Enum> allColumns;
-	private final List<Enum> numericColumns;
-	private final List<Enum> dateColumns;
+	private final List<Enum<?>> allColumns;
+	private final List<Enum<?>> numericColumns;
+	private final List<Enum<?>> dateColumns;
 
 	private boolean loading = false;
 
@@ -78,19 +78,19 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		this.gui = gui;
 		this.matcherControl = matcherControl;
 
-		allColumns = new ArrayList<Enum>();
+		allColumns = new ArrayList<Enum<?>>();
 		allColumns.add(ExtraColumns.ALL);
 		allColumns.addAll(Arrays.asList(matcherControl.getColumns()));
 
-		numericColumns = new ArrayList<Enum>();
-		for (Enum object : matcherControl.getColumns()) {
+		numericColumns = new ArrayList<Enum<?>>();
+		for (Enum<?> object : matcherControl.getColumns()) {
 			if (matcherControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
-		dateColumns = new ArrayList<Enum>();
-		for (Enum object : matcherControl.getColumns()) {
+		dateColumns = new ArrayList<Enum<?>>();
+		for (Enum<?> object : matcherControl.getColumns()) {
 			if (matcherControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -187,11 +187,11 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	FilterMatcher<E> getMatcher() {
 		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum column = (Enum) jColumn.getSelectedItem();
+		Enum<?> column = (Enum) jColumn.getSelectedItem();
 		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()) {
-			Enum compareColumn = (Enum) jCompareColumn.getSelectedItem();
+			Enum<?> compareColumn = (Enum) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();
@@ -203,11 +203,11 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 
 	Filter getFilter() {
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum column = (Enum) jColumn.getSelectedItem();
+		Enum<?> column = (Enum) jColumn.getSelectedItem();
 		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()) {
-			Enum compareColumn = (Enum) jCompareColumn.getSelectedItem();
+			Enum<?> compareColumn = (Enum) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();

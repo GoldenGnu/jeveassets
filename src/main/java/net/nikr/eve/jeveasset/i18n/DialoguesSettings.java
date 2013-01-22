@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -40,6 +40,7 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String showSellOrReprocessColours();
+	public abstract String includeContracts();
 	public abstract String includeSellOrders();
 	public abstract String includeBuyOrders();
 	public abstract String maximumPurchaseAge();

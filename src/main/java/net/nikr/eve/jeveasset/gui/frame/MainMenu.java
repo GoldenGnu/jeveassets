@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ public class MainMenu extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 
 	public static final String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
+	public static final String ACTION_OPEN_VALUE_TABLE = "ACTION_OPEN_VALUE_TABLE";
 	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
 	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
@@ -52,6 +53,9 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_STOCKPILE = "ACTION_OPEN_STOCKPILE";
 	public static final String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
+	public static final String ACTION_OPEN_TRACKER = "ACTION_OPEN_TRACKER";
+	public static final String ACTION_OPEN_REPROCESSED = "ACTION_OPEN_REPROCESSED";
+	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
 	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
 	private JMenuItem jUpdatable;
@@ -81,6 +85,20 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+		menuItem = new JMenuItem(GuiFrame.get().valueTable());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_VALUE_TABLE);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().tracker());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_TRACKER.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_TRACKER);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
 		menuItem = new JMenuItem(GuiFrame.get().items());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
@@ -92,6 +110,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_MATERIALS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().reprocessed());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_REPROCESSED.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_REPROCESSED);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
@@ -113,6 +138,13 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_JOBS);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().contracts());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_CONTRACTS);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

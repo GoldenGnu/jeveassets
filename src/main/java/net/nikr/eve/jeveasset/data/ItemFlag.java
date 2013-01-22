@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -52,6 +52,6 @@ public class ItemFlag implements Comparable<ItemFlag> {
 
 	@Override
 	public int compareTo(final ItemFlag o) {
-		return this.getFlagName().compareTo(o.getFlagName());
+		return this.getFlagName().compareToIgnoreCase(o.getFlagName());
 	}
 }

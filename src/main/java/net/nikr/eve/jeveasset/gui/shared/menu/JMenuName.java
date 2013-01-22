@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -34,15 +35,17 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuName extends JMenuTool<Asset> implements ActionListener {
+public class JMenuName extends JMenu implements ActionListener {
 
 	public static final String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public static final String ACTION_USER_NAME_DELETE = "ACTION_USER_NAME_DELETE";
 
 	private List<UserItem<Long, String>> itemNames;
+	private Program program;
 
 	public JMenuName(final Program program, final List<Asset> items) {
-		super(GuiShared.get().itemNameTitle(), program, items);
+		super(GuiShared.get().itemNameTitle());
+		this.program = program;
 		this.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 
 		JMenuItem jMenuItem;

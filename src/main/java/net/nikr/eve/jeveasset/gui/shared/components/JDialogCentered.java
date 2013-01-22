@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -143,8 +143,8 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 
 	//Find JTextComponent(s) and overwrite the default enter action
 	private void fixTextComponents(final JComponent jComponent) {
-		for (int a = 0; a < jComponent.getComponentCount(); a++) {
-			Component c = jComponent.getComponent(a);
+		for (int i = 0; i < jComponent.getComponentCount(); i++) {
+			Component c = jComponent.getComponent(i);
 			if (c instanceof JTextComponent) {
 				JTextComponent jTextComponent = (JTextComponent) c;
 				if (!jTextComponent.isEditable()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -76,14 +76,14 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
-		eventList = program.getEveAssetEventList();
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
-		//For filtering the table
+		//Backend
+		eventList = program.getEveAssetEventList();
+		//Filter
 		filterList = new FilterList<Asset>(eventList);
 		filterList.addListEventListener(this);
-		//For soring the table
+		//Sorting (per column)
 		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<Asset>(sortedList, tableFormat);
@@ -94,18 +94,25 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
-		//install the sorting/filtering
+		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Table Selection
+		//Selection Model
 		selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Table Filter
+		filterControl = new AssetFilterControl(
+				program,
+				program.getMainWindow().getFrame(),
+				tableFormat,
+				eventList,
+				filterList,
+				program.getSettings().getTableFilters(NAME)
+				);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -122,15 +129,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
-		filterControl = new AssetFilterControl(
-				program,
-				program.getMainWindow().getFrame(),
-				tableFormat,
-				eventList,
-				filterList,
-				program.getSettings().getTableFilters(NAME)
-				);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -141,12 +139,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-	}
-	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
 	}
 
 	public boolean isFiltersEmpty() {
@@ -164,7 +156,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	public void clearFilters() {
 		filterControl.clearCurrentFilters();
 	}
-	public String getCurrentFilterName(){
+	public String getCurrentFilterName() {
 		return filterControl.getCurrentFilterName();
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(final List<Filter> filters) {
@@ -223,15 +215,19 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Asset> menuData = new MenuData<Asset>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Asset>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Asset>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Asset>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Asset>(program, menuData));
 		jComponent.add(new JMenuName(program, selectionModel.getSelected()));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Asset>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	//INFO
@@ -270,7 +266,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -286,7 +282,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			EveAssetTableFormat format = (EveAssetTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -301,7 +297,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return EveAssetTableFormat.valueOf(column);
 		}
 
@@ -317,7 +313,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 
 		@Override
 		protected void updateFilters() {
-			if (program != null && program.getOverviewTab() != null){
+			if (program != null && program.getOverviewTab() != null) {
 				program.getOverviewTab().updateFilters();
 			}
 		}

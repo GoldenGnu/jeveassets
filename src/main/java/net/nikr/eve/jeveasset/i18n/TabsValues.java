@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,20 +34,23 @@ public abstract class TabsValues extends Bundle {
 		super(locale);
 	}
 
-	public abstract String assets();
-	public abstract String best();
-	public abstract String best1();
-	public abstract String best2();
-	public abstract String character();
-	public abstract String corporation();
-	public abstract String escrows();
-	public abstract String grand();
-	public abstract String no();
-	public abstract String no1();
+	public abstract String columnAssets();
+	public abstract String columnBestAsset();
+	public abstract String columnBestModule();
+	public abstract String columnBestShip();
+	public abstract String columnBestShipFitted();
+	public abstract String columnEscrows();
+	public abstract String columnEscrowsToCover();
+	public abstract String columnOwner();
+	public abstract String columnSellOrders();
+	public abstract String columnTotal();
+	public abstract String columnWalletBalance();
+	public abstract String grandTotal();
 	public abstract String none();
-	public abstract String select();
-	public abstract String sell();
-	public abstract String total();
-	public abstract String values();
-	public abstract String wallet();
+	public abstract String title();
+
+	public abstract String oldTitle();
+	public abstract String oldNoCharacter();
+	public abstract String oldNoCorporation();
+
 }

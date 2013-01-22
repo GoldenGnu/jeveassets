@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -25,13 +25,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
-import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -41,6 +41,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
@@ -49,8 +52,12 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -63,13 +70,20 @@ import org.w3c.dom.NodeList;
 import uk.me.candle.eve.pricing.options.LocationType;
 
 
-public class SettingsReader extends AbstractXmlReader {
+public final class SettingsReader extends AbstractXmlReader {
 
 	public static final int SETTINGS_VERSION = 2;
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsReader.class);
 
+	private SettingsReader() { }
+
 	public static boolean load(final Settings settings) {
+		SettingsReader reader = new SettingsReader();
+		return reader.read(settings);
+	}
+
+	private boolean read(final Settings settings) {
 		try {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
@@ -87,9 +101,23 @@ public class SettingsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private static void parseSettings(final Element element, final Settings settings) throws XmlException {
+	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Owners
+		NodeList ownersNodes = element.getElementsByTagName("owners");
+		if (ownersNodes.getLength() == 1) {
+			Element ownersElement = (Element) ownersNodes.item(0);
+			parseOwners(ownersElement, settings);
+		}
+
+		//Tracker Data
+		NodeList trackerDataNodes = element.getElementsByTagName("trackerdata");
+		if (trackerDataNodes.getLength() == 1) {
+			Element trackerDataElement = (Element) trackerDataNodes.item(0);
+			parseTrackerData(trackerDataElement, settings);
 		}
 
 		//Asset Settings
@@ -207,6 +235,13 @@ public class SettingsReader extends AbstractXmlReader {
 			parseTableResize(tableResizeElement, settings);
 		}
 
+		//Asset added
+		NodeList assetaddedNodes = element.getElementsByTagName("assetadded");
+		if (assetaddedNodes.getLength() == 1) {
+			Element assetaddedElement = (Element) assetaddedNodes.item(0);
+			parseAssetAdded(assetaddedElement, settings);
+		}
+
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
 		NodeList proxyNodes = element.getElementsByTagName("proxy");
 		if (proxyNodes.getLength() == 1) {
@@ -230,12 +265,50 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseAssetSettings(final Element stockpilesElement, final Settings settings) {
-		int maximumPurchaseAge = AttributeGetters.getInt(stockpilesElement, "maximumpurchaseage");
+	private void parseOwners(final Element element, final Settings settings) {
+		NodeList ownerNodeList = element.getElementsByTagName("owner");
+		for (int i = 0; i < ownerNodeList.getLength(); i++) {
+			//Read Owner
+			Element ownerNode = (Element) ownerNodeList.item(i);
+			String ownerName = AttributeGetters.getString(ownerNode, "name");
+			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			settings.getOwners().put(ownerID, ownerName);
+		}
+	}
+	private void parseTrackerData(final Element element, final Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("owner");
+		for (int a = 0; a < tableNodeList.getLength(); a++) {
+			//Read Owner
+			Element ownerNode = (Element) tableNodeList.item(a);
+			String ownerName = AttributeGetters.getString(ownerNode, "name");
+			long ownerID = AttributeGetters.getLong(ownerNode, "id");
+			//Add new Owner
+			TrackerOwner owner = new TrackerOwner(ownerID, ownerName);
+			settings.getTrackerData().put(owner, new ArrayList<TrackerData>());
+			//Data
+			NodeList dataNodeList = ownerNode.getElementsByTagName("data");
+			for (int b = 0; b < dataNodeList.getLength(); b++) {
+				//Read data
+				Element dataNode = (Element) dataNodeList.item(b);
+				Date date = AttributeGetters.getDate(dataNode, "date");
+				double assets = AttributeGetters.getDouble(dataNode, "assets");
+				double escrows = AttributeGetters.getDouble(dataNode, "escrows");
+				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
+				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
+				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				//Add data
+				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover);
+				settings.getTrackerData().get(owner).add(data);
+			}
+		}
+	}
+
+	private void parseAssetSettings(final Element assetSettingsElement, final Settings settings) {
+		int maximumPurchaseAge = AttributeGetters.getInt(assetSettingsElement, "maximumpurchaseage");
 		settings.setMaximumPurchaseAge(maximumPurchaseAge);
 	}
 
-	private static void parseStockpiles(final Element stockpilesElement, final Settings settings) {
+	private void parseStockpiles(final Element stockpilesElement, final Settings settings) {
 		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
 		for (int a = 0; a < stockpileNodes.getLength(); a++) {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
@@ -245,7 +318,10 @@ public class SettingsReader extends AbstractXmlReader {
 			String container = AttributeGetters.getString(stockpileNode, "container");
 			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
 			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
-
+			double multiplier = 1;
+			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
+				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
+			}
 			Location location = settings.getLocations().get(locationID);
 			String station = null;
 			String system = null;
@@ -271,7 +347,7 @@ public class SettingsReader extends AbstractXmlReader {
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 
-			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs);
+			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
@@ -288,7 +364,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseOverview(final Element overviewElement, final Settings settings) {
+	private void parseOverview(final Element overviewElement, final Settings settings) {
 		NodeList groupNodes = overviewElement.getElementsByTagName("group");
 		for (int a = 0; a < groupNodes.getLength(); a++) {
 			Element groupNode = (Element) groupNodes.item(a);
@@ -305,7 +381,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseReprocessing(final Element windowElement, final Settings settings) {
+	private void parseReprocessing(final Element windowElement, final Settings settings) {
 		int refining = AttributeGetters.getInt(windowElement, "refining");
 		int efficiency = AttributeGetters.getInt(windowElement, "efficiency");
 		int processing = AttributeGetters.getInt(windowElement, "processing");
@@ -313,7 +389,7 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setReprocessSettings(new ReprocessSettings(station, refining, efficiency, processing));
 	}
 
-	private static void parseWindow(final Element windowElement, final Settings settings) {
+	private void parseWindow(final Element windowElement, final Settings settings) {
 		int x = AttributeGetters.getInt(windowElement, "x");
 		int y = AttributeGetters.getInt(windowElement, "y");
 		int height = AttributeGetters.getInt(windowElement, "height");
@@ -331,7 +407,7 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setWindowAlwaysOnTop(alwaysOnTop);
 	}
 
-	private static void parseProxy(final Element proxyElement, final Settings settings) {
+	private void parseProxy(final Element proxyElement, final Settings settings) {
 		String addrName = AttributeGetters.getString(proxyElement, "address");
 		String proxyType = AttributeGetters.getString(proxyElement, "type");
 		Integer port = AttributeGetters.getInt(proxyElement, "port");
@@ -349,10 +425,10 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseUserPrices(final Element element, final Settings settings) {
+	private void parseUserPrices(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("userprice");
-		for (int a = 0; a < userPriceNodes.getLength(); a++) {
-			Element currentNode = (Element) userPriceNodes.item(a);
+		for (int i = 0; i < userPriceNodes.getLength(); i++) {
+			Element currentNode = (Element) userPriceNodes.item(i);
 			String name = AttributeGetters.getString(currentNode, "name");
 			double price = AttributeGetters.getDouble(currentNode, "price");
 			int typeID = AttributeGetters.getInt(currentNode, "typeid");
@@ -361,10 +437,10 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseUserItemNames(final Element element, final Settings settings) {
+	private void parseUserItemNames(final Element element, final Settings settings) {
 		NodeList userPriceNodes = element.getElementsByTagName("itemname");
-		for (int a = 0; a < userPriceNodes.getLength(); a++) {
-			Element currentNode = (Element) userPriceNodes.item(a);
+		for (int i = 0; i < userPriceNodes.getLength(); i++) {
+			Element currentNode = (Element) userPriceNodes.item(i);
 			String name = AttributeGetters.getString(currentNode, "name");
 			String typeName = AttributeGetters.getString(currentNode, "typename");
 			long itemId = AttributeGetters.getLong(currentNode, "itemid");
@@ -373,7 +449,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parsePriceDataSettings(final Element element, final Settings settings) {
+	private void parsePriceDataSettings(final Element element, final Settings settings) {
 		PriceMode priceType = Asset.getDefaultPriceType();
 		if (AttributeGetters.haveAttribute(element, "defaultprice")) {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
@@ -421,24 +497,24 @@ public class SettingsReader extends AbstractXmlReader {
 		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource));
 	}
 
-	private static void parseFlags(final Element element, final Settings settings) {
+	private void parseFlags(final Element element, final Settings settings) {
 		NodeList flagNodes = element.getElementsByTagName("flag");
-		for (int a = 0; a < flagNodes.getLength(); a++) {
-			Element currentNode = (Element) flagNodes.item(a);
+		for (int i = 0; i < flagNodes.getLength(); i++) {
+			Element currentNode = (Element) flagNodes.item(i);
 			String key = AttributeGetters.getString(currentNode, "key");
 			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
 			settings.getFlags().put(key, enabled);
 		}
 	}
 
-	private static void parseUpdates(final Element element, final Settings settings) {
+	private void parseUpdates(final Element element, final Settings settings) {
 		NodeList updateNodes = element.getElementsByTagName("update");
-		for (int a = 0; a < updateNodes.getLength(); a++) {
-			Element currentNode = (Element) updateNodes.item(a);
+		for (int i = 0; i < updateNodes.getLength(); i++) {
+			Element currentNode = (Element) updateNodes.item(i);
 			parseUpdate(currentNode, settings);
 		}
 	}
-	private static void parseUpdate(final Element element, final Settings settings) {
+	private void parseUpdate(final Element element, final Settings settings) {
 		String text = AttributeGetters.getString(element, "name");
 		Date nextUpdate = new Date(AttributeGetters.getLong(element, "nextupdate"));
 		if (text.equals("conquerable station")) {
@@ -446,7 +522,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableColumns(final Element element, final Settings settings) {
+	private void parseTableColumns(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
@@ -467,7 +543,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableColumnsWidth(final Element element, final Settings settings) {
+	private void parseTableColumnsWidth(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Map<String, Integer> columns = new HashMap<String, Integer>();
@@ -484,17 +560,17 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseTableResize(final Element element, final Settings settings) {
+	private void parseTableResize(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
-		for (int a = 0; a < tableNodeList.getLength(); a++) {
-			Element tableNode = (Element) tableNodeList.item(a);
+		for (int i = 0; i < tableNodeList.getLength(); i++) {
+			Element tableNode = (Element) tableNodeList.item(i);
 			String tableName = AttributeGetters.getString(tableNode, "name");
 			ResizeMode resizeMode = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
 			settings.getTableResize().put(tableName, resizeMode);
 		}
 	}
 
-	private static void parseTableFilters(final Element element, final Settings settings) {
+	private void parseTableFilters(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
 			Element tableNode = (Element) tableNodeList.item(a);
@@ -510,7 +586,7 @@ public class SettingsReader extends AbstractXmlReader {
 					Element rowNode = (Element) rowNodes.item(c);
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
-					Enum column =  getColumn(columnString, tableName);
+					Enum<?> column =  getColumn(columnString, tableName);
 					String compare = AttributeGetters.getString(rowNode, "compare");
 					String logic = AttributeGetters.getString(rowNode, "logic");
 					filter.add(new Filter(logic, column, compare, text));
@@ -521,7 +597,8 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Enum getColumn(final String column, final String tableName) {
+	private Enum<?> getColumn(final String column, final String tableName) {
+		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileExtendedTableFormat.valueOf(column);
@@ -529,6 +606,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Stockpile (Extra)
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
 				return StockpileTableFormat.valueOf(column);
@@ -536,6 +614,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Industry Jobs
 		try {
 			if (tableName.equals(IndustryJobsTab.NAME)) {
 				return IndustryJobTableFormat.valueOf(column);
@@ -543,6 +622,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Market Orders
 		try {
 			if (tableName.equals(MarketOrdersTab.NAME)) {
 				return MarketTableFormat.valueOf(column);
@@ -550,6 +630,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Assets
 		try {
 			if (tableName.equals(AssetsTab.NAME)) {
 				return EveAssetTableFormat.valueOf(column);
@@ -557,6 +638,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
+		//Items
 		try {
 			if (tableName.equals(ItemsTab.NAME)) {
 				return ItemTableFormat.valueOf(column);
@@ -564,7 +646,32 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		try { //All
+		//Contracts
+		try {
+			if (tableName.equals(ContractsTab.NAME)) {
+				return ContractsTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Contracts (Extra)
+		try {
+			if (tableName.equals(ContractsTab.NAME)) {
+				return ContractsExtendedTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Values (Extra)
+		try {
+			if (tableName.equals(ValueTableTab.NAME)) {
+				return ValueTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//All
+		try {
 			return Filter.ExtraColumns.valueOf(column);
 		} catch (IllegalArgumentException exception) {
 
@@ -572,7 +679,7 @@ public class SettingsReader extends AbstractXmlReader {
 		throw new RuntimeException("Fail to load filter column: " + column);
 	}
 
-	private static void parseAssetFilters(final Element filtersElement, final Settings settings) {
+	private void parseAssetFilters(final Element filtersElement, final Settings settings) {
 		NodeList filterNodeList = filtersElement.getElementsByTagName("filter");
 		for (int a = 0; a < filterNodeList.getLength(); a++) {
 			Element filterNode = (Element) filterNodeList.item(a);
@@ -584,7 +691,7 @@ public class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
 				Element rowNode = (Element) rowNodeList.item(b);
 				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and"));
-				Enum column = convertColumn(AttributeGetters.getString(rowNode, "column"));
+				Enum<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
 				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
 				String text;
 				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")) {
@@ -599,7 +706,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static LogicType convertLogic(final boolean logic) {
+	private LogicType convertLogic(final boolean logic) {
 		if (logic) {
 			return LogicType.AND;
 		} else {
@@ -607,7 +714,7 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static Enum convertColumn(final String column) {
+	private Enum<?> convertColumn(final String column) {
 		if (column.equals("Name")) { return EveAssetTableFormat.NAME; }
 		if (column.equals("Group")) { return EveAssetTableFormat.GROUP; }
 		if (column.equals("Category")) { return EveAssetTableFormat.CATEGORY; }
@@ -635,7 +742,7 @@ public class SettingsReader extends AbstractXmlReader {
 		return Filter.ExtraColumns.ALL; //Fallback
 	}
 
-	private static CompareType convertMode(final String compareMixed) {
+	private CompareType convertMode(final String compareMixed) {
 		String compare = compareMixed.toUpperCase();
 		if (compare.equals("MODE_EQUALS")) { return CompareType.EQUALS; }
 		if (compare.equals("MODE_CONTAIN")) { return CompareType.CONTAINS; }
@@ -648,12 +755,12 @@ public class SettingsReader extends AbstractXmlReader {
 		return CompareType.CONTAINS;
 	}
 
-	private static void parseApiProxy(final Element apiProxyElement, final Settings settings) {
+	private void parseApiProxy(final Element apiProxyElement, final Settings settings) {
 		String proxyURL = AttributeGetters.getString(apiProxyElement, "url");
 		settings.setApiProxy(proxyURL);
 	}
 
-	private static void parseExportSettings(final Element element) {
+	private void parseExportSettings(final Element element) {
 		//CSV
 		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
@@ -701,6 +808,16 @@ public class SettingsReader extends AbstractXmlReader {
 				columns.add(name);
 			}
 			Settings.getExportSettings().putTableExportColumns(tableName, columns);
+		}
+	}
+
+	private void parseAssetAdded(final Element element, final Settings settings) {
+		NodeList assetNodes = element.getElementsByTagName("asset");
+		for (int i = 0; i < assetNodes.getLength(); i++) {
+			Element currentNode = (Element) assetNodes.item(i);
+			Long itemID = AttributeGetters.getLong(currentNode, "itemid");
+			Date date = AttributeGetters.getDate(currentNode, "date");
+			settings.getAssetAdded().put(itemID, date);
 		}
 	}
 }

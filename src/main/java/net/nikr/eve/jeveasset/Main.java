@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -63,17 +63,17 @@ public final class Main {
 		boolean hasNoUpdate = false;
 		boolean hasUpdate = false;
 
-		for (int a = 0; a < args.length; a++) {
-			if (args[a].toLowerCase().equals("-debug")) {
+		for (String arg : args) {
+			if (arg.toLowerCase().equals("-debug")) {
 				isDebug = true;
 			}
-			if (args[a].toLowerCase().equals("-portable")) {
+			if (arg.toLowerCase().equals("-portable")) {
 				isPortable = true;
 			}
-			if (args[a].toLowerCase().equals("-noupdate")) {
+			if (arg.toLowerCase().equals("-noupdate")) {
 				hasNoUpdate = true;
 			}
-			if (args[a].toLowerCase().equals("-update")) {
+			if (arg.toLowerCase().equals("-update")) {
 				hasUpdate = true;
 			}
 		}
@@ -156,7 +156,7 @@ public final class Main {
 
 	public static BundleService getBundleService() {
 		//XXX Workaround for default language
-		if (bundleService == null){
+		if (bundleService == null) {
 			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
 		}
 		return bundleService;

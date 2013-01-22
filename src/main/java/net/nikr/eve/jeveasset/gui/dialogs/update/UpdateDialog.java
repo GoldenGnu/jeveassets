@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,11 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
+import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -33,7 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -59,6 +62,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private JLabel jAccountsUpdate;
 	private JCheckBox jAccountBalance;
 	private JLabel jAccountBalanceUpdate;
+	private JCheckBox jContracts;
+	private JLabel jContractsUpdate;
 	private JCheckBox jAssets;
 	private JLabel jAssetsUpdate;
 	private JCheckBox jPriceData;
@@ -78,6 +83,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
 		jAccounts = new JCheckBox(DialoguesUpdate.get().accounts());
 		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
+		jContracts = new JCheckBox(DialoguesUpdate.get().contracts());
 		jAssets = new JCheckBox(DialoguesUpdate.get().assets());
 		jPriceData = new JCheckBox(DialoguesUpdate.get().priceData());
 
@@ -85,6 +91,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jCheckBoxes.add(jIndustryJobs);
 		jCheckBoxes.add(jAccounts);
 		jCheckBoxes.add(jAccountBalance);
+		jCheckBoxes.add(jContracts);
 		jCheckBoxes.add(jAssets);
 		jCheckBoxes.add(jPriceData);
 		for (JCheckBox jCheckBox : jCheckBoxes) {
@@ -96,6 +103,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jIndustryJobsUpdate = new JLabel();
 		jAccountsUpdate = new JLabel();
 		jAccountBalanceUpdate = new JLabel();
+		jContractsUpdate = new JLabel();
 		jAssetsUpdate = new JLabel();
 		jPriceDataUpdate = new JLabel();
 
@@ -116,6 +124,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 						.addComponent(jIndustryJobs)
 						.addComponent(jAccounts)
 						.addComponent(jAccountBalance)
+						.addComponent(jContracts)
 						.addComponent(jAssets)
 						.addComponent(jPriceData)
 					)
@@ -125,6 +134,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 						.addComponent(jIndustryJobsUpdate)
 						.addComponent(jAccountsUpdate)
 						.addComponent(jAccountBalanceUpdate)
+						.addComponent(jContractsUpdate)
 						.addComponent(jAssetsUpdate)
 						.addComponent(jPriceDataUpdate)
 					)
@@ -156,6 +166,10 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAccountBalance, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAccountBalanceUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContractsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -195,37 +209,37 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	}
 
 	public void update() {
-		List<Account> accounts = program.getSettings().getAccounts();
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
+		Date contractsNextUpdate = null;
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
 
 		boolean bAccountsUpdateAll = true;
 		boolean bIndustryJobsUpdateAll = true;
 		boolean bMarketOrdersUpdateAll = true;
+		boolean bContractsUpdateAll = true;
 		boolean bAssetsUpdateAll = true;
 		boolean bAccountBalanceUpdateAll = true;
 
 		Date priceDataNextUpdate = program.getSettings().getPriceDataNextUpdate();
-		for (int a = 0; a < accounts.size(); a++) {
-			Account account = accounts.get(a);
+		for (Account account : program.getSettings().getAccounts()) {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);
-			List<Human> humans = account.getHumans();
-			for (int b = 0; b < humans.size(); b++) {
-				Human human = humans.get(b);
-				if (human.isShowAssets()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, human.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, human.getMarketOrdersNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, human.getAssetNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, human.getBalanceNextUpdate());
-					bIndustryJobsUpdateAll = updateAll(bIndustryJobsUpdateAll, human.getIndustryJobsNextUpdate());
-					bMarketOrdersUpdateAll = updateAll(bMarketOrdersUpdateAll, human.getMarketOrdersNextUpdate());
-					bAssetsUpdateAll = updateAll(bAssetsUpdateAll, human.getAssetNextUpdate());
-					bAccountBalanceUpdateAll = updateAll(bAccountBalanceUpdateAll, human.getBalanceNextUpdate());
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
+					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
+					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
+					contractsNextUpdate = nextUpdate(contractsNextUpdate, owner.getContractsNextUpdate());
+					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
+					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
+					bIndustryJobsUpdateAll = updateAll(bIndustryJobsUpdateAll, owner.getIndustryJobsNextUpdate());
+					bMarketOrdersUpdateAll = updateAll(bMarketOrdersUpdateAll, owner.getMarketOrdersNextUpdate());
+					bContractsUpdateAll = updateAll(bContractsUpdateAll, owner.getContractsNextUpdate());
+					bAssetsUpdateAll = updateAll(bAssetsUpdateAll, owner.getAssetNextUpdate());
+					bAccountBalanceUpdateAll = updateAll(bAccountBalanceUpdateAll, owner.getBalanceNextUpdate());
 
 				}
 			}
@@ -234,6 +248,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobs, industryJobsNextUpdate, bIndustryJobsUpdateAll);
 		setUpdateLabel(jAccountsUpdate, jAccounts, accountsNextUpdate, bAccountsUpdateAll);
 		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate, bAccountBalanceUpdateAll);
+		setUpdateLabel(jContractsUpdate, jContracts, contractsNextUpdate, bContractsUpdateAll);
 		setUpdateLabel(jAssetsUpdate, jAssets, assetsNextUpdate, bAssetsUpdateAll);
 		setUpdateLabel(jPriceDataUpdate, jPriceData, priceDataNextUpdate, true, false);
 		changed();
@@ -243,6 +258,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		setUpdatableButton(industryJobsNextUpdate);
 		setUpdatableButton(accountsNextUpdate);
 		setUpdatableButton(accountBalanceNextUpdate);
+		setUpdatableButton(contractsNextUpdate);
 		setUpdatableButton(assetsNextUpdate);
 		setUpdatableButton(priceDataNextUpdate, false);
 	}
@@ -323,7 +339,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		if (ACTION_UPDATE.equals(e.getActionCommand())) {
 			this.setVisible(false);
 			List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
-			if (jMarketOrders.isSelected() || jIndustryJobs.isSelected() || jAssets.isSelected()) {
+			if (jMarketOrders.isSelected() || jIndustryJobs.isSelected()
+					|| jAssets.isSelected() || jContracts.isSelected()) {
 				updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
 			}
 			if (jAccounts.isSelected()) {
@@ -337,6 +354,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			}
 			if (jAccountBalance.isSelected()) {
 				updateTasks.add(new BalanceTask());
+			}
+			if (jContracts.isSelected()) {
+				updateTasks.add(new ContractsTask());
 			}
 			if (jAssets.isSelected()) {
 				updateTasks.add(new AssetsTask());
@@ -390,8 +410,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() {
-			HumansGetter humansGetter = new HumansGetter();
-			humansGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			AccountGetter accountGetter = new AccountGetter();
+			accountGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
 		}
 	}
 
@@ -444,6 +464,38 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
 			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+		}
+	}
+
+	public class ContractsTask extends UpdateTask {
+
+		public ContractsTask() {
+			super(DialoguesUpdate.get().contracts());
+		}
+
+		@Override
+		public void update() {
+			//Get Contracts
+			ContractsGetter contractsGetter = new ContractsGetter();
+			contractsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			//Get Contract Items
+			ContractItemsGetter itemsGetter = new ContractItemsGetter();
+			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			Set<Long> list = new HashSet<Long>();
+			for (Account account : program.getSettings().getAccounts()) {
+				for (Owner owner : account.getOwners()) {
+					list.add(owner.getOwnerID()); //Just to be sure
+					for (EveContract contract : owner.getContracts().keySet()) {
+						list.add(contract.getAcceptorID());
+						list.add(contract.getAssigneeID());
+						list.add(contract.getIssuerCorpID());
+						list.add(contract.getIssuerID());
+					}
+				}
+			}
+			//Get Name
+			NameGetter nameGetter = new NameGetter();
+			nameGetter.load(this, program.getSettings(), list);
 		}
 	}
 

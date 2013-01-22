@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -19,20 +19,20 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.components;
-
-import java.awt.event.FocusListener;
-import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
+package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 
-public class JNumberField extends JDefaultField implements FocusListener {
-
-	public JNumberField() {
-		this("0");
-	}
-
-	public JNumberField(final String defaultValue) {
-		super(defaultValue);
-		this.setDocument(DocumentFactory.getIntegerPlainDocument());
-	}
+public interface ReprocessedInterface extends Comparable<ReprocessedInterface> {
+	public String getName();
+	public long getPortionSize();
+	public long getQuantityMax();
+	public long getQuantitySkill();
+	public double getPrice();
+	public double getValueMax();
+	public double getValueSkill();
+	public double getValueDifference();
+	public int getTypeID();
+	public boolean isMarketGroup();
+	public boolean isTotal();
+	public ReprocessedTotal getTotal();
 }

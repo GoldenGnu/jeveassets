@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,6 +33,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -141,7 +142,7 @@ public class FilterManager<E> extends JDialogCentered {
 			return;
 		}
 
-		String name = showNameDialog("", filterName, GuiShared.get().renameFilter());
+		String name = showNameDialog(filterName, filterName, GuiShared.get().renameFilter());
 		if (name == null) {
 			return;
 		}
@@ -233,9 +234,9 @@ public class FilterManager<E> extends JDialogCentered {
 	public final void updateFilters() {
 		listModel.clear();
 		List<String> list = new ArrayList<String>(filters.keySet());
-		Collections.sort(list);
-		for (int a = 0; a < list.size(); a++) {
-			listModel.addElement(list.get(a));
+		Collections.sort(list, new CaseInsensitiveComparator());
+		for (String filter: list) {
+			listModel.addElement(filter);
 		}
 		if (!listModel.isEmpty()) {
 			if (getSelectedString() == null) {

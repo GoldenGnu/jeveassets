@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,9 +32,10 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -46,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
@@ -79,10 +81,10 @@ public class OverviewTab extends JMainTab {
 	private ListenerClass listenerClass = new ListenerClass();
 
 	//Table
-	private EventList<Overview> overviewEventList;
-	private EventTableModel<Overview> overviewTableModel;
-	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
-	private SortedList<Overview> overviewSortedList;
+	private EventList<Overview> eventList;
+	private EventTableModel<Overview> tableModel;
+	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
+	private SortedList<Overview> sortedList;
 	private EventSelectionModel<Overview> selectionModel;
 
 	//Data
@@ -137,25 +139,25 @@ public class OverviewTab extends JMainTab {
 
 		updateFilters();
 
-		//Table format
-		overviewTableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
+		//Table Format
+		tableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
 		//Backend
-		overviewEventList = new BasicEventList<Overview>();
-		//For soring the table
-		overviewSortedList = new SortedList<Overview>(overviewEventList);
+		eventList = new BasicEventList<Overview>();
+		//Sorting (per column)
+		sortedList = new SortedList<Overview>(eventList);
 		//Table Model
-		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
-		//Tables
-		jTable = new JOverviewTable(program, overviewTableModel);
-		//Sorters
-		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
-		//Table Selection
-		selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
+		tableModel = new EventTableModel<Overview>(sortedList, tableFormat);
+		//Table
+		jTable = new JOverviewTable(program, tableModel);
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
+		selectionModel = new EventSelectionModel<Overview>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Scroll Panels
+		installTable(jTable, null);
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
@@ -227,7 +229,7 @@ public class OverviewTab extends JMainTab {
 
 		Overview overview = null;
 		if (isSingleRow) {
-			overview = overviewTableModel.getElementAt(selectedRows[0]);
+			overview = tableModel.getElementAt(selectedRows[0]);
 		}
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu) {
@@ -293,8 +295,7 @@ public class OverviewTab extends JMainTab {
 					if (!overviewGroup.getLocations().isEmpty()) {
 						jSubMenu.addSeparator();
 					}
-					for (int a = 0; a < overviewGroup.getLocations().size(); a++) {
-						OverviewLocation location = overviewGroup.getLocations().get(a);
+					for (OverviewLocation location : overviewGroup.getLocations()) {
 						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
 						if (location.isStation()) {
 							jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
@@ -315,9 +316,10 @@ public class OverviewTab extends JMainTab {
 		}
 
 		addSeparator(jComponent);
-
+	//DATA
+		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected());
 	//ASSET FILTER
-		jSubMenuItem = new JMenuAssetFilter<Overview>(program, selectionModel.getSelected());
+		jSubMenuItem = new JMenuAssetFilter<Overview>(program, menuData);
 		if (getSelectedView().equals(TabsOverview.get().groups())) {
 			jMenuItem = new JMenuItem(TabsOverview.get().locations());
 			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
@@ -328,18 +330,18 @@ public class OverviewTab extends JMainTab {
 		}
 		jComponent.add(jSubMenuItem);
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Overview>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Overview>(program, menuData));
 	//INFO
 		JMenuInfo.overview(jComponent, selectionModel.getSelected());
 	}
-	
+
 	private void updateStatusbar() {
 		double averageValue = 0;
 		double totalValue = 0;
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (InfoItem infoItem : overviewEventList) {
+		for (InfoItem infoItem : eventList) {
 			totalValue = totalValue + infoItem.getValue();
 			totalCount = totalCount + infoItem.getCount();
 			totalVolume = totalVolume + infoItem.getVolumeTotal();
@@ -444,8 +446,7 @@ public class OverviewTab extends JMainTab {
 			} else { //Groups
 				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 					OverviewGroup overviewGroup = entry.getValue();
-					for (int c = 0; c < overviewGroup.getLocations().size(); c++) {
-						OverviewLocation overviewLocation = overviewGroup.getLocations().get(c);
+					for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
 						if (overviewLocation.equalsLocation(eveAsset)) { //Update existing overview (group)
 							Overview overview = locationsMap.get(overviewGroup.getName());
 							overview.addCount(count);
@@ -462,7 +463,7 @@ public class OverviewTab extends JMainTab {
 		return locations;
 	}
 
-	public final void updateFilters(){
+	public final void updateFilters() {
 		JMenuItem jMenuItem;
 
 		jLoadFilter.removeAll();
@@ -472,11 +473,13 @@ public class OverviewTab extends JMainTab {
 		jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 		jMenuItem.addActionListener(listenerClass);
 		jLoadFilter.add(jMenuItem);
-		
-		jLoadFilter.addSeparator();
 
-		for (Map.Entry<String, List<Filter>> entry : program.getSettings().getTableFilters(AssetsTab.NAME).entrySet()){
-			jMenuItem = new FilterMenuItem(entry.getKey(), entry.getValue());
+		jLoadFilter.addSeparator();
+		List<String> filters = new ArrayList<String>(program.getSettings().getTableFilters(AssetsTab.NAME).keySet());
+		Collections.sort(filters, new CaseInsensitiveComparator());
+		for (String filter : filters) {
+			List<Filter> filterList = program.getSettings().getTableFilters(AssetsTab.NAME).get(filter);
+			jMenuItem = new FilterMenuItem(filter, filterList);
 			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 			jMenuItem.addActionListener(listenerClass);
 			jLoadFilter.add(jMenuItem);
@@ -484,6 +487,7 @@ public class OverviewTab extends JMainTab {
 	}
 
 	public void updateTable() {
+		beforeUpdateData();
 		//Only need to update when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) {
 			return;
@@ -491,40 +495,41 @@ public class OverviewTab extends JMainTab {
 		String owner = (String) jOwner.getSelectedItem();
 		String view = getSelectedView();
 		if (view.equals(TabsOverview.get().regions())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.REGION);
+			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().systems())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.showColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
+			tableFormat.showColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().stations())) {
-			overviewTableFormat.showColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.showColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.showColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.showColumn(OverviewTableFormat.REGION);
+			tableFormat.showColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		if (view.equals(TabsOverview.get().groups())) {
-			overviewTableFormat.hideColumn(OverviewTableFormat.SYSTEM);
-			overviewTableFormat.hideColumn(OverviewTableFormat.REGION);
-			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
-			overviewTableModel.fireTableStructureChanged();
+			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
+			tableFormat.hideColumn(OverviewTableFormat.REGION);
+			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
+			tableModel.fireTableStructureChanged();
 		}
 		try {
-			overviewEventList.getReadWriteLock().writeLock().lock();
-			overviewEventList.clear();
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), owner, view));
 		} finally {
-			overviewEventList.getReadWriteLock().writeLock().unlock();
+			eventList.getReadWriteLock().writeLock().unlock();
 		}
 		updateStatusbar();
 		program.overviewGroupsChanged();
 
 		jShowing.setText(TabsOverview.get().filterShowing(rowCount, program.getEveAssetEventList().size(), program.getAssetsTab().getCurrentFilterName()));
+		afterUpdateData();
 	}
 
 	public void resetViews() {
@@ -535,7 +540,7 @@ public class OverviewTab extends JMainTab {
 	private List<OverviewLocation> getSelectedLocations() {
 		List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
 		for (int row : jTable.getSelectedRows()) {
-			Overview overview = overviewTableModel.getElementAt(row);
+			Overview overview = tableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
 			if (getSelectedView().equals(TabsOverview.get().stations())) {
 				overviewLocation = new OverviewLocation(overview.getName(), OverviewLocation.LocationType.TYPE_STATION);
@@ -558,7 +563,7 @@ public class OverviewTab extends JMainTab {
 		if (index < 0) {
 			return null;
 		}
-		Overview overview = overviewTableModel.getElementAt(index);
+		Overview overview = tableModel.getElementAt(index);
 		if (overview == null) {
 			return null;
 		}
@@ -569,13 +574,13 @@ public class OverviewTab extends JMainTab {
 	public void updateData() {
 		List<String> owners = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsOverview.get().whitespace4(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsOverview.get().whitespace4(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);
@@ -583,7 +588,7 @@ public class OverviewTab extends JMainTab {
 				}
 			}
 		}
-		Collections.sort(owners);
+		Collections.sort(owners, new CaseInsensitiveComparator());
 		owners.add(0, TabsOverview.get().all());
 		jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
 		updateTable();
@@ -600,7 +605,7 @@ public class OverviewTab extends JMainTab {
 						|| e.getSource().equals(jGroups)
 						) {
 					//XXX - set default comparator or we can get IndexOutOfBoundsException
-					overviewSortedList.setComparator(GlazedLists.comparableComparator());
+					sortedList.setComparator(GlazedLists.comparableComparator());
 				}
 				updateTable();
 			}
@@ -635,7 +640,7 @@ public class OverviewTab extends JMainTab {
 			//Filter
 			if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
-				Overview overview = overviewTableModel.getElementAt(index);
+				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
@@ -653,7 +658,6 @@ public class OverviewTab extends JMainTab {
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			
 			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
 				Object source = e.getSource();
 				if (source instanceof FilterMenuItem) {

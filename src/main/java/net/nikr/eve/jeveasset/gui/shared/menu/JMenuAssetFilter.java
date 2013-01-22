@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -34,16 +34,19 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener {
+public class JMenuAssetFilter<T> extends JMenu implements ActionListener {
 
 	private static final String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
 	private static final String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
 	private static final String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
 	private static final String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
+	private Program program;
+	private MenuData<T> menuData;
 
-
-	public JMenuAssetFilter(final Program program, final List<T> items) {
-		super(GuiShared.get().add(), program, items);
+	public JMenuAssetFilter(final Program program, final MenuData<T> menuData) {
+		super(GuiShared.get().add());
+		this.program = program;
+		this.menuData = menuData;
 
 		this.setIcon(Images.TOOL_ASSETS.getIcon());
 
@@ -51,7 +54,7 @@ public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener 
 
 		jMenuItem = new JMenuItem(GuiShared.get().item());
 		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setEnabled(!typeIDs.isEmpty());
+		jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
@@ -60,21 +63,21 @@ public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener 
 
 		jMenuItem = new JMenuItem(GuiShared.get().station());
 		jMenuItem.setIcon(Images.LOC_STATION.getIcon());
-		jMenuItem.setEnabled(!stations.isEmpty());
+		jMenuItem.setEnabled(!menuData.getStations().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
 		jMenuItem = new JMenuItem(GuiShared.get().system());
 		jMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jMenuItem.setEnabled(!systems.isEmpty());
+		jMenuItem.setEnabled(!menuData.getSystems().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
 		jMenuItem = new JMenuItem(GuiShared.get().region());
 		jMenuItem.setIcon(Images.LOC_REGION.getIcon());
-		jMenuItem.setEnabled(!regions.isEmpty());
+		jMenuItem.setEnabled(!menuData.getRegions().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
@@ -83,28 +86,28 @@ public class JMenuAssetFilter<T> extends JMenuTool<T> implements ActionListener 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())) {
-			for (String station : stations) {
+			for (String station : menuData.getStations()) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.EQUALS, station);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())) {
-			for (String system : systems) {
+			for (String system : menuData.getSystems()) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, system);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())) {
-			for (String region : regions) {
+			for (String region : menuData.getRegions()) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.REGION, CompareType.EQUALS, region);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())) {
-			for (String typeName : typeNames) {
+			for (String typeName : menuData.getTypeNames()) {
 				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.NAME, CompareType.CONTAINS, typeName);
 				program.getAssetsTab().addFilter(filter);
 			}

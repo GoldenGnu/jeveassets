@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -108,6 +108,16 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		return false;
 	}
 
+	public boolean containsKey(final Set<K> key) {
+		load();
+		for (K k : key) {
+			if (items.containsKey(k)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void edit(final UserItem<K, V> userItem) {
 		edit(Collections.singletonList(userItem), true, null);
 	}
@@ -150,7 +160,6 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				for (UserItem<K, V> userItem : userItems) {
 					if (!items.containsKey(userItem.getKey())) { //Add if needed
 						items.put(userItem.getKey(), userItem);
-						listItems.add(userItem);
 					} else { //Get from items list
 						userItem = items.get(userItem.getKey());
 					}
@@ -186,10 +195,12 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		}
 		int count = 0;
 		String name = ""; //Never used
+		List<K> containedKeys = new ArrayList<K>();
 		for (UserItem<K, V> userItem : userItems) {
 			if (items.containsKey(userItem.getKey())) {
 				count++;
 				name = userItem.getName();
+				containedKeys.add(userItem.getKey());
 			}
 		}
 		if (count > 1) {
@@ -200,10 +211,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		}
 		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), name, DialoguesSettings.get().deleteTypeTitle(type), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (value == JOptionPane.OK_OPTION) {
-			for (UserItem<K, V> userItem : userItems) {
-				items.remove(userItem.getKey());
-				listItems.remove(userItem);
-			}
+			items.keySet().removeAll(containedKeys);
 			updateGUI();
 			if (save) {
 				boolean update = save();
@@ -219,9 +227,10 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			setEnabledAll(false);
 			jItems.setModel(new DefaultComboBoxModel());
 			jItems.getModel().setSelectedItem(DialoguesSettings.get().itemEmpty());
+			listItems = new ArrayList<UserItem<K, V>>(); //Clear list
 		} else {
 			setEnabledAll(true);
-			Collections.sort(listItems);
+			listItems = new ArrayList<UserItem<K, V>>(new TreeSet<UserItem<K, V>>(items.values()));
 			jItems.setModel(new DefaultComboBoxModel(listItems.toArray()));
 		}
 	}
@@ -246,11 +255,9 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	@Override
 	public void load() {
 		items = new HashMap<K, UserItem<K, V>>();
-		listItems = new ArrayList<UserItem<K, V>>();
 		for (Entry<K, UserItem<K, V>> entry : getItems().entrySet()) {
 			UserItem<K, V> userItem = newUserItem(entry.getValue());
 			items.put(entry.getKey(), userItem);
-			listItems.add(userItem);
 		}
 		updateGUI();
 	}

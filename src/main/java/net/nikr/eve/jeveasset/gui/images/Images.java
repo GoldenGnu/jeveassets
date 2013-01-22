@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -57,6 +57,7 @@ public enum Images {
 	EDIT_RENAME ("edit_rename.png"),
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
+	EDIT_SET ("edit_set.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
@@ -126,12 +127,16 @@ public enum Images {
 	TOOL_OVERVIEW ("tool_overview.png"),
 	TOOL_MARKET_ORDERS ("tool_market_orders.png"),
 	TOOL_VALUES ("tool_values.png"),
+	TOOL_VALUE_TABLE ("tool_value_table.png"),
 	TOOL_INDUSTRY_JOBS ("tool_industry_jobs.png"),
 	TOOL_ROUTING ("tool_routing.png"),
 	TOOL_MATERIALS ("tool_materials.png"),
 	TOOL_SHIP_LOADOUTS ("tool_ship_loadouts.png"),
 	TOOL_STOCKPILE ("tool_stockpile.png"),
 	TOOL_ITEMS ("tool_items.png"),
+	TOOL_TRACKER ("tool_tracker.png"),
+	TOOL_REPROCESSED ("tool_reprocessed.png"),
+	TOOL_CONTRACTS ("tool_contracts.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

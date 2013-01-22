@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,14 +22,15 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 
-import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
@@ -37,12 +38,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
 
 	public AccountBalanceGetter() {
-		super("Account Balance", 1, true, false);
-	}
-
-	@Override
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Human human) {
-		super.load(updateTask, forceUpdate, human);
+		super("Account Balance", true, false);
 	}
 
 	@Override
@@ -56,34 +52,39 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 			return com.beimin.eveapi.corporation
 					.accountbalance
 					.AccountBalanceParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
 			return com.beimin.eveapi.character
 					.accountbalance
 					.AccountBalanceParser.getInstance()
-					.getResponse(Human.getApiAuthorization(getHuman()));
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getHuman().setBalanceNextUpdate(nextUpdate);
+		getOwner().setBalanceNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected Date getNextUpdate() {
-		return getHuman().getBalanceNextUpdate();
+		return getOwner().getBalanceNextUpdate();
 	}
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
 		List<EveAccountBalance> accountBalances = new ArrayList<EveAccountBalance>(response.getAll());
-		getHuman().setAccountBalances(accountBalances);
+		getOwner().setAccountBalances(accountBalances);
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) {
-		humanTo.setAccountBalances(humanFrom.getAccountBalances());
-		humanTo.setBalanceNextUpdate(humanFrom.getBalanceNextUpdate());
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
+		ownerTo.setAccountBalances(ownerFrom.getAccountBalances());
+		ownerTo.setBalanceNextUpdate(ownerFrom.getBalanceNextUpdate());
+	}
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.ACCOUNT_BALANCE.getAccessMask();
 	}
 }

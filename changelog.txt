@@ -16,6 +16,52 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.5.0__________________________________________________________________________
+
+New Features:
+-New Tool: Tracker
+-New Tool: Reprocessed
+-New Tool: Contracts
+-New Tool: Isk
+-New Asset column: Added date
+-More resilient table selection and expand/collapse state
+-Stockpile: Add To now merge items instead of overwriting
+-Major optimization of Stockpile Add/Edit/Delete
+-A lot of other optimization!
+-Some minor bug fixes
+
+Note:
+You need to update your API Keys to include contracts
+
+________________________________________________________________________________
+_2.4.4__________________________________________________________________________
+
+Bug Fixes:
+-Fixed table corruption on OpenJDK (Thanks to Jan)
+-Items Tool got a new icon
+
+Changed:
+-Updated static data to Retribution 1.0.7.463858
+
+________________________________________________________________________________
+_2.4.3__________________________________________________________________________
+
+Bug Fixes:
+-Crash when sorting stockpile. (Thanks to Mysterion eXe)
+
+________________________________________________________________________________
+_2.4.2__________________________________________________________________________
+
+Bug Fixes:
+-Eve-Central: Can not update price data (Thanks Carten)
+
+________________________________________________________________________________
+_2.4.1__________________________________________________________________________
+
+Bug Fixes:
+-Stockpile ignored everything except typeID
+
+________________________________________________________________________________
 _2.4.0__________________________________________________________________________
 
 New Features:

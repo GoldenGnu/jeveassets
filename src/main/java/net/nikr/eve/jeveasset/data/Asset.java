@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -112,8 +113,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private long locationID; //LocationID : long
 	private long itemID; //ItemID : long
 	private long solarSystemID; //LocationID : long
+	private long regionID; //LocationID : long
 	private int typeID; //TypeID : int
 	private int flagID; //FlagID : int
+	private long ownerID;
 	private String typeName;
 	private String name;
 	private String group;
@@ -141,13 +144,14 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private int rawQuantity;
 	private boolean piMaterial;
 	private MarketPriceData marketPriceData;
+	private Date added;
 
 	/**
 	 * For mockups...
 	 */
 	protected Asset() { }
 
-	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial) {
+	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID, final long ownerID) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -174,10 +178,16 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.solarSystemID = solarSystemID;
 		this.rawQuantity = rawQuantity;
 		this.piMaterial = piMaterial;
+		this.regionID = regionID;
+		this.ownerID = ownerID;
 	}
 
 	public void addEveAsset(final Asset eveAsset) {
 		assets.add(eveAsset);
+	}
+
+	public Date getAdded() {
+		return added;
 	}
 
 	public List<Asset> getAssets() {
@@ -301,6 +311,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return owner;
 	}
 
+	public long getOwnerID() {
+		return ownerID;
+	}
+
 	public List<Asset> getParents() {
 		return parents;
 	}
@@ -382,6 +396,10 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public String getRegion() {
 		return region;
+	}
+
+	public long getRegionID() {
+		return regionID;
 	}
 
 	public String getSecurity() {
@@ -469,9 +487,9 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 	public String getSingleton() {
 		if (singleton) {
-			return "Unpackaged"; //FIXME i18n
+			return DataModelEveAsset.get().unpackaged();
 		} else {
-			return "Packaged"; //FIXME i18n
+			return DataModelEveAsset.get().packaged();
 		}
 	}
 
@@ -483,11 +501,15 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return (this.getUserPrice() != null);
 	}
 
+	public void setAdded(final Date added) {
+		this.added = added;
+	}
+
 	public void setContainer(final String container) {
 		this.container = container;
 	}
 
-	public void setMarketPriceData(MarketPriceData marketPriceData) {
+	public void setMarketPriceData(final MarketPriceData marketPriceData) {
 		this.marketPriceData = marketPriceData;
 	}
 
@@ -507,7 +529,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		Asset.priceType = priceSource;
 	}
 
-	public static void setPriceReprocessedType(PriceMode reprocessedPriceType) {
+	public static void setPriceReprocessedType(final PriceMode reprocessedPriceType) {
 		Asset.priceReprocessedType = reprocessedPriceType;
 	}
 
@@ -530,7 +552,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	@Override
 	public int compareTo(final Asset o) {
-		return this.getName().compareTo(o.getName());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,12 +35,13 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.shared.components.JNumberField;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
-import net.nikr.eve.jeveasset.io.eveapi.HumansGetter;
+import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
 import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -338,7 +339,7 @@ public class AccountImportDialog extends JDialogCentered {
 			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().keyId());
 			jUserIdLabel.setHorizontalAlignment(JLabel.RIGHT);
 
-			jKeyID = new JNumberField("");
+			jKeyID = new JIntegerField("", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 			JCopyPopup.install(jKeyID);
 
 			JLabel jApiKeyLabel = new JLabel(DialoguesAccount.get().vCode());
@@ -480,7 +481,7 @@ public class AccountImportDialog extends JDialogCentered {
 
 		private Result result = null;
 		private boolean done = false;
-		private HumansGetter humansGetter = new HumansGetter();
+		private AccountGetter accountGetter = new AccountGetter();
 
 		@Override
 		public Void doInBackground() {
@@ -489,11 +490,11 @@ public class AccountImportDialog extends JDialogCentered {
 				result = Result.FAIL_ALREADY_IMPORTED;
 				return null;
 			}
-			humansGetter.load(null, true, account); //Update account
-			if (humansGetter.hasError() || humansGetter.getFails() > 0) { //Failed to add new account
-				if (humansGetter.getFails() > 0 && humansGetter.getFails() < 4) { //Not enough access
+			accountGetter.load(null, true, account); //Update account
+			if (accountGetter.hasError() || accountGetter.getFails() > 0) { //Failed to add new account
+				if (accountGetter.getFails() > 0 && accountGetter.getFails() < accountGetter.getMaxFail()) { //Not enough access
 					result = Result.OK_LIMITED_ACCESS;
-				} else if (humansGetter.getFails() >= 4) { //Offline
+				} else if (accountGetter.getFails() >= accountGetter.getMaxFail()) { //No access
 					result = Result.FAIL_NO_ACCESS;
 				} else if (!Online.isOnline(program.getSettings())) { //Offline
 					result = Result.FAIL_NO_INTERNET;

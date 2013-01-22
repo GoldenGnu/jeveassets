@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -54,14 +54,14 @@ public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwn
 			String s = "";
 			int[] selectedRows = jTable.getSelectedRows();
 			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedRows.length; a++) {
+			for (int i = 0; i < selectedRows.length; i++) {
 				for (int b = 0; b < selectedColumns.length; b++) {
 					if (b != 0) {
 						s = s + "	";
 					}
-					s = s + jTable.getValueAt(selectedRows[a], selectedColumns[b]);
+					s = s + jTable.getValueAt(selectedRows[i], selectedColumns[b]);
 				}
-				if ((a + 1) < selectedRows.length) {
+				if ((i + 1) < selectedRows.length) {
 					s = s + "\r\n";
 				}
 			}

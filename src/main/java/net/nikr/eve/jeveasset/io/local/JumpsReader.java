@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -37,11 +37,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class JumpsReader extends AbstractXmlReader {
+public final class JumpsReader extends AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JumpsReader.class);
 
+	private JumpsReader() { }
+
 	public static void load(final Settings settings) {
+		JumpsReader reader = new JumpsReader();
+		reader.read(settings);
+	}
+
+	private void read(final Settings settings) {
 		try {
 			Element element = getDocumentElement(Settings.getPathJumps());
 			parseJumps(element, settings.getLocations(), settings.getJumps());
@@ -53,16 +60,16 @@ public class JumpsReader extends AbstractXmlReader {
 		LOG.info("Jumps loaded");
 	}
 
-	private static void parseJumps(final Element element, final Map<Long, Location> locations, final List<Jump> jumps) {
+	private void parseJumps(final Element element, final Map<Long, Location> locations, final List<Jump> jumps) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
-		for (int a = 0; a < nodes.getLength(); a++) {
-			jump = parseEdge(nodes.item(a), locations);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			jump = parseEdge(nodes.item(i), locations);
 			jumps.add(jump);
 		}
 	}
 
-	private static Jump parseEdge(final Node node, final Map<Long, Location> locations) {
+	private Jump parseEdge(final Node node, final Map<Long, Location> locations) {
 		long from = AttributeGetters.getLong(node, "from");
 		long to = AttributeGetters.getLong(node, "to");
 		Jump j = new Jump(locations.get(from), locations.get(to));

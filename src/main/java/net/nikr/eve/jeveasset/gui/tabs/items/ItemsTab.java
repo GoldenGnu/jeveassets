@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -63,35 +63,30 @@ public class ItemsTab extends JMainTab {
 	public ItemsTab(final Program program) {
 		super(program, TabsItems.get().items(), Images.TOOL_ITEMS.getIcon(), true);
 
-		//Table format
+		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
-		tableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
-		tableFormat.setResizeMode(program.getSettings().getTableResize().get(NAME));
 		//Backend
 		eventList = new BasicEventList<Item>();
-		//Backend
+		//Filter
 		filterList = new FilterList<Item>(eventList);
-		//For soring the table
+		//Sorting (per column)
 		SortedList<Item> sortedList = new SortedList<Item>(filterList);
 		//Table Model
 		tableModel = new EventTableModel<Item>(sortedList, tableFormat);
-		//Tables
+		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
-		//Table Selection
+		//Sorting
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		//Selection Model
 		selectionModel = new EventSelectionModel<Item>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Column Width
-		jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(NAME));
-		//Sorters
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
-		//Scroll Panels
+		installTable(jTable, NAME);
+		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
@@ -121,13 +116,6 @@ public class ItemsTab extends JMainTab {
 	}
 
 	@Override
-	public void updateSettings() {
-		program.getSettings().getTableColumns().put(NAME, tableFormat.getColumns());
-		program.getSettings().getTableResize().put(NAME, tableFormat.getResizeMode());
-		program.getSettings().getTableColumnsWidth().put(NAME, jTable.getColumnsWidth());
-	}
-
-	@Override
 	public void updateTableMenu(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
@@ -139,22 +127,28 @@ public class ItemsTab extends JMainTab {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Item>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Item>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Item>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Item>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Item>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Item>(program, menuData));
 	//COLUMNS
 		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
 	}
 
 	@Override
-	public void updateData() { }
+	public void updateData() {
+		updateTableMenu(program.getMainWindow().getMenu().getTableMenu());
+	}
 
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
@@ -173,7 +167,7 @@ public class ItemsTab extends JMainTab {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			ItemTableFormat format = (ItemTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -183,7 +177,7 @@ public class ItemsTab extends JMainTab {
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			ItemTableFormat format = (ItemTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
@@ -199,7 +193,7 @@ public class ItemsTab extends JMainTab {
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return ItemTableFormat.valueOf(column);
 		}
 

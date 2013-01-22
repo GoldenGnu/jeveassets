@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -90,7 +90,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 		@Override
 		public int compare(final UserItem<Integer, Double> o1, final UserItem<Integer, Double> o2) {
-			return o1.getName().compareTo(o2.getName());
+			return o1.getName().compareToIgnoreCase(o2.getName());
 		}
 	}
 }

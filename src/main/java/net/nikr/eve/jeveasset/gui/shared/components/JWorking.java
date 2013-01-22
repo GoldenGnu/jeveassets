@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -26,6 +26,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import net.nikr.eve.jeveasset.gui.images.Images;
 
 
@@ -37,6 +39,7 @@ public class JWorking extends JPanel {
 
 	private BufferedImage[] loadingImages;
 	private int currentLoadingImage = 0;
+	private Worker worker;
 
 	public JWorking() {
 		this.setMinimumSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
@@ -44,17 +47,38 @@ public class JWorking extends JPanel {
 		this.setMaximumSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
 		this.setDoubleBuffered(true);
 		loadingImages = new BufferedImage[IMG_FRAMES];
-		for (int a = 0; a < IMG_FRAMES; a++) {
+		for (int i = 0; i < IMG_FRAMES; i++) {
 			String number;
-			if ((a + 1) < 10) {
-				number = "0" + (a + 1);
+			if ((i + 1) < 10) {
+				number = "0" + (i + 1);
 			} else {
-				number = "" + (a + 1);
+				number = "" + (i + 1);
 			}
-			loadingImages[a] = Images.getBufferedImage("working" + number + ".png");
+			loadingImages[i] = Images.getBufferedImage("working" + number + ".png");
 		}
-		Worker worker = new Worker(this);
+		ListenerClass listenerClass = new ListenerClass();
+		addAncestorListener(listenerClass);
+	}
+
+	private void auto() {
+		if (isShowing()) {
+			start();
+		} else {
+			end();
+		}
+	}
+
+	private void start() {
+		end();
+		worker = new Worker(this);
 		worker.start();
+	}
+
+	private void end() {
+		if (worker != null) {
+			worker.interrupt();
+			worker = null;
+		}
 	}
 
 	@Override
@@ -66,13 +90,32 @@ public class JWorking extends JPanel {
 		}
 	}
 
+	public class ListenerClass implements AncestorListener {
+
+		@Override
+		public void ancestorAdded(AncestorEvent event) {
+			auto();
+		}
+
+		@Override
+		public void ancestorRemoved(AncestorEvent event) {
+			auto();
+		}
+
+		@Override
+		public void ancestorMoved(AncestorEvent event) {
+			auto();
+		}
+	}
+
 	public class Worker extends Thread {
 
 		private static final int UPDATE_DELAY = 100;
-		private JWorking working;
+		private JWorking jWorking;
 
-		public Worker(final JWorking working) {
-			this.working = working;
+		public Worker(final JWorking jWorking) {
+			this.jWorking = jWorking;
+			currentLoadingImage = 0;
 		}
 
 		@Override
@@ -82,7 +125,7 @@ public class JWorking extends JPanel {
 				if (currentLoadingImage >= IMG_FRAMES) {
 					currentLoadingImage = 0;
 				}
-				working.repaint();
+				jWorking.repaint();
 				try {
 					Thread.sleep(UPDATE_DELAY);
 				} catch (InterruptedException e) {

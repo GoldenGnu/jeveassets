@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -32,11 +32,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class ConquerableStationsWriter extends AbstractXmlWriter {
+public final class ConquerableStationsWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConquerableStationsWriter.class);
 
+	private ConquerableStationsWriter() { }
+
 	public static void save(final Settings settings) {
+		ConquerableStationsWriter writer = new ConquerableStationsWriter();
+		writer.write(settings);
+	}
+
+	private void write(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("stations");
@@ -53,9 +60,9 @@ public class ConquerableStationsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("	Conquerable stations saved");
 	}
-	private static void writeConquerableStations(final Document xmldoc, final Map<Long, ApiStation> conquerableStations) {
+	private void writeConquerableStations(final Document xmldoc, final Map<Integer, ApiStation> conquerableStations) {
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Long, ApiStation> entry : conquerableStations.entrySet()) {
+		for (Map.Entry<Integer, ApiStation> entry : conquerableStations.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "station");
 			ApiStation station = entry.getValue();
 			node.setAttributeNS(null, "corporationid", String.valueOf(station.getCorporationID()));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,8 +21,10 @@
 
 package net.nikr.eve.jeveasset.tests.mocks;
 
+import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.UserItem;
 
@@ -305,6 +307,46 @@ public class FakeAsset extends Asset {
 
 	@Override
 	public int getFlagID() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public MarketPriceData getMarketPriceData() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public double getPriceReprocessedDifference() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public double getPriceReprocessedPercent() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMarketPriceData(MarketPriceData marketPriceData) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Date getAdded() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setAdded(Date added) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public long getRegionID() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public long getOwnerID() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

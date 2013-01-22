@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -22,12 +22,12 @@
 package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.core.ApiError;
-import com.beimin.eveapi.core.ApiException;
 import com.beimin.eveapi.core.ApiResponse;
+import com.beimin.eveapi.exception.ApiException;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
@@ -40,26 +40,36 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	private String taskName;
 	private Account account;
-	private Human human;
+	private Owner owner;
 	private boolean forceUpdate;
 	private boolean updated;
-	private boolean updateHuman;
+	private boolean updateOwner;
 	private boolean updateAccount;
 	private UpdateTask updateTask;
-	private Map<String, Human> owners;
-	private List<Human> failOwners;
-	private int requestMask;
+	private Map<String, Owner> owners;
+	private List<Owner> failOwners;
 	private boolean error;
 
 	protected AbstractApiGetter(final String name) {
-		this(name, 0, false, false);
+		this(name, false, false);
 	}
 
-	protected AbstractApiGetter(final String taskName, final int requestMask, final boolean updateHuman, final boolean updateAccount) {
+	protected AbstractApiGetter(final String taskName, final boolean updateOwner, final boolean updateAccount) {
 		this.taskName = taskName;
-		this.updateHuman = updateHuman;
+		this.updateOwner = updateOwner;
 		this.updateAccount = updateAccount;
-		this.requestMask = requestMask;
+	}
+
+	protected int getProgressStart() {
+		return 0;
+	}
+
+	protected int getProgressEnd() {
+		return 100;
+	}
+
+	protected void setTaskName(String taskName) {
+		this.taskName = taskName;
 	}
 
 	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final String characterName) {
@@ -67,9 +77,9 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		load(getNextUpdate(), false, characterName);
 	}
 
-	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Human human) {
-		init(updateTask, forceUpdate, human, null);
-		loadHuman();
+	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner) {
+		init(updateTask, forceUpdate, owner, null);
+		loadOwner();
 	}
 
 	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
@@ -80,43 +90,53 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
-		for (int a = 0; a < accounts.size(); a++) {
-			account = accounts.get(a);
+		//Calc size
+		int ownerSize = 0;
+		if (updateTask != null) { //Only relevant when tracking progress
+			for (Account countAccount : accounts) {
+				ownerSize = ownerSize + countAccount.getOwners().size();
+			}
+		}
+		int ownerCount = 0;
+		int accountCount = 0;
+		for (Account accountLoop : accounts) {
+			this.account = accountLoop;
 			if (updateAccount) {
 				if (updateTask != null) {
 					if (updateTask.isCancelled()) {
-						addError(String.valueOf(account.getKeyID()), "Cancelled");
+						addError(String.valueOf(accountLoop.getKeyID()), "Cancelled");
 					} else {
 						loadAccount();
 					}
-					updateTask.setTaskProgress(accounts.size(), (a + 1), 0, 100);
+					accountCount++;
+					updateTask.setTaskProgress(accounts.size(), accountCount, getProgressStart(), getProgressEnd());
 				} else {
 					loadAccount();
 				}
 			}
-			if (updateHuman) {
-				List<Human> humans = account.getHumans();
-				for (int b = 0; b < humans.size(); b++) {
-					human = humans.get(b);
+			if (updateOwner) {
+				for (Owner ownerLoop : accountLoop.getOwners()) {
+					this.owner = ownerLoop;
 					if (updateTask != null) {
 						if (updateTask.isCancelled()) {
-							addError(human.getName(), "Cancelled");
+							addError(owner.getName(), "Cancelled");
 						} else {
-							loadHuman();
+							loadOwner();
 						}
-						updateTask.setTaskProgress(accounts.size() * 3, (a * 3) + (b + 1), 0, 100);
+						ownerCount++;
+						updateTask.setTaskProgress(ownerSize, ownerCount, getProgressStart(), getProgressEnd());
 					} else {
-						loadHuman();
+						loadOwner();
 					}
 				}
 			}
 		}
 		//Set data for duplicated/failed owners
-		if (updateHuman) {
-			for (Human failHuman : failOwners) {
-				Human okHuman = owners.get(failHuman.getName());
-				if (okHuman != null) {
-					updateFailed(okHuman, failHuman);
+		if (updateOwner) {
+			for (Owner failOwner : failOwners) {
+				Owner okOwner = owners.get(failOwner.getName());
+				if (okOwner != null) {
+					updateFailed(okOwner, failOwner);
 				}
 			}
 		}
@@ -129,28 +149,28 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Human human, final Account account) {
+	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final Account account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
-		this.human = human;
+		this.owner = owner;
 		this.account = account;
 		this.updated = false;
 		this.error = false;
-		this.owners = new HashMap<String, Human>();
-		this.failOwners = new ArrayList<Human>();
+		this.owners = new HashMap<String, Owner>();
+		this.failOwners = new ArrayList<Owner>();
 	}
 
-	private void loadHuman() {
+	private void loadOwner() {
 		boolean updatedOK = false;
-		String name = human.getName();
+		String name = owner.getName();
 		//Ignore hidden owners && don't update the same owner twice
-		if (human.isShowAssets() && !owners.containsKey(name)) {
-			updatedOK = load(getNextUpdate(), human.isCorporation(), name); //Update...
+		if (owner.isShowAssets() && !owners.containsKey(name)) {
+			updatedOK = load(getNextUpdate(), owner.isCorporation(), name); //Update...
 		}
 		if (updatedOK) {
-			owners.put(name, human); //If updated ok: don't update the same owner again...
+			owners.put(name, owner); //If updated ok: don't update the same owner again...
 		} else {
-			failOwners.add(human); //Save duplicated/failed owners
+			failOwners.add(owner); //Save duplicated/failed owners
 		}
 	}
 
@@ -160,7 +180,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	private boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
-		if ((getAccessMask() & requestMask) != requestMask) {
+		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
 			addError(updateName, "Not enough access privileges");
 			LOG.info("	{} failed to update for: {} (NOT ENOUGH ACCESS PRIVILEGES)", taskName, updateName);
 			return false;
@@ -200,11 +220,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return false;
 	}
 
-	private int getAccessMask() {
+	private long getAccessMask() {
 		if (account != null) {
 			return account.getAccessMask();
-		} else if (human != null) {
-			return human.getParentAccount().getAccessMask();
+		} else if (owner != null) {
+			return owner.getParentAccount().getAccessMask();
 		} else {
 			return 0;
 		}
@@ -212,8 +232,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private boolean isExpired() {
 		if (account != null) {
 			return account.isExpired();
-		} else if (human != null) {
-			return human.getParentAccount().isExpired();
+		} else if (owner != null) {
+			return owner.getParentAccount().isExpired();
 		} else {
 			return false;
 		}
@@ -223,8 +243,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return account;
 	}
 
-	protected Human getHuman() {
-		return human;
+	protected Owner getOwner() {
+		return owner;
 	}
 
 	protected boolean isForceUpdate() {
@@ -235,9 +255,9 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error;
 	}
 
-	protected void addError(final String human, final String errorText) {
+	protected void addError(final String owner, final String errorText) {
 		if (updateTask != null) {
-			updateTask.addError(human, errorText);
+			updateTask.addError(owner, errorText);
 		}
 		error = true;
 	}
@@ -246,7 +266,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected abstract Date getNextUpdate();
 	protected abstract void setNextUpdate(Date nextUpdate);
 	protected abstract void setData(T response);
-	protected abstract void updateFailed(Human humanFrom, Human humanTo);
+	protected abstract void updateFailed(Owner ownerFrom, Owner ownerTo);
+	protected abstract long requestMask(boolean bCorp);
 
 	private boolean isUpdatable(final Date date) {
 		return ((Settings.getNow().after(date)

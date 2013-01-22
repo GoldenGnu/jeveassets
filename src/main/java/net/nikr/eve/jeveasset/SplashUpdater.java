@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -44,11 +44,11 @@ public class SplashUpdater extends Thread {
 	public SplashUpdater() {
 		splash = SplashScreen.getSplashScreen();
 		loadingImages = new BufferedImage[8];
-		for (int a = 0; a < 8; a++) {
+		for (int i = 0; i < 8; i++) {
 			try {
-				loadingImages[a] = ImageIO.read(getClass().getResource("gui/images/loading0" + (a + 1) + ".png"));
+				loadingImages[i] = ImageIO.read(getClass().getResource("gui/images/loading0" + (i + 1) + ".png"));
 			} catch (IOException ex) {
-				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (a + 1));
+				LOG.warn("SplashScreen: loading0{}.png (NOT FOUND)", (i + 1));
 			}
 		}
 	}

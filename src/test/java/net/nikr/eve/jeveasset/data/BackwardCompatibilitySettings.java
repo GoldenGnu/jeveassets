@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -36,37 +36,116 @@ import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 public class BackwardCompatibilitySettings extends FakeSettings {
 
+	public enum Function {
+		GET_FLAGS,
+		GET_ITEMS,
+		GET_LOCATIONS,
+		GET_OVERVIEW_GROUPS,
+		GET_STOCKPILES,
+		GET_TABLE_COLUMNS,
+		GET_TABLE_COLUMNS_WIDTH,
+		GET_TABLE_FILTERS,
+		GET_TABLE_FILTERS_KEY,
+		GET_TABLE_RESIZE,
+		GET_USER_ITEM_NAMES,
+		GET_USER_PRICES,
+		SET_API_PROXY,
+		SET_CONQUERABLE_STATIONS_NEXT_UPDATE,
+		SET_MAXIMUM_PURCHASE_AGE,
+		SET_PRICE_DATA_SETTINGS,
+		SET_PROXY,
+		SET_REPROCESS_SETTINGS,
+		SET_WINDOW_ALWAYS_ON_TOP,
+		SET_WINDOW_AUTO_SAVE,
+		SET_WINDOW_LOCATION,
+		SET_WINDOW_MAXIMIZED,
+		SET_WINDOW_SIZE,
+	}
+
 	private String settingsPath;
 	private String name;
-	private Map<String, Boolean> ok = new HashMap<String, Boolean>();
+	private Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
+	private List<Function> tested = new ArrayList<Function>();
 
 	public BackwardCompatibilitySettings(final String name) throws URISyntaxException {
 		this.name = name;
-
-		ok.put("setPriceDataSettings", false);
-		ok.put("getFlags", false);
-		ok.put("setConquerableStationsNextUpdate", false);
-		ok.put("setWindowLocation", false);
-		ok.put("setWindowSize", false);
-		ok.put("setWindowMaximized", false);
-		ok.put("setWindowAutoSave", false);
-		ok.put("setWindowAlwaysOnTop", false);
-		ok.put("setReprocessSettings", false);
-		ok.put("getTableFilters", false);
-		ok.put("getTableColumns", false);
-		ok.put("getTableResize", false);
-		ok.put("getTableFilters", false);
-		ok.put("setProxy", false);
-		ok.put("setApiProxy", false);
-		ok.put("getUserPrices", false);
-		ok.put("getUserItemNames", false);
-		ok.put("getOverviewGroups", false);
-		ok.put("getLocations", false);
-		ok.put("getStockpiles", false);
-		ok.put("getItems", false);
-
+		for (Function function : Function.values()) {
+			ok.put(function, false);
+		}
 		URL resource = BackwardCompatibilitySettings.class.getResource("/" + name + "/settings.xml");
 		settingsPath = new File(resource.toURI()).getAbsolutePath();
+	}
+
+	public boolean test(Function function) {
+		if (tested.contains(function)) {
+			throw new UnsupportedOperationException("Double test of: "+function.name());
+		} else {
+			tested.add(function);
+		}
+		return ok.get(function);
+	}
+
+	public List<Function> test() {
+		List<Function> functions = new ArrayList<Function>();
+		for (Function key : Function.values()) {
+			boolean wasOk = ok.get(key);
+			boolean wasTested = tested.contains(key);
+			if (wasOk && !wasTested) {
+				functions.add(key);
+			}
+		}
+		return functions;
+	}
+
+	public String getName() {
+		return name.replace("data-", "").replace("-", ".");
+	}
+
+	public void print() {
+		System.out.println("---");
+		System.out.println("Tested: " + getName());
+		int count = 0;
+		String s = "";
+		for (Function key : Function.values()) {
+			if (ok.get(key)) {
+				count++;
+			} else {
+				if (s.isEmpty()) {
+					s = "Use Default Settings: "+key.name();
+				} else {
+					s = s + ", " + key.name();
+				}
+			}
+		}
+		if (ok.get(Function.GET_TABLE_FILTERS)) { //GET_TABLE_FILTERS_KEY is optinal
+			count++;
+		}
+		System.out.println(s);
+		System.out.println(count + "/" + Function.values().length);
+	}
+
+	@Override
+	public Map<String, Boolean> getFlags() {
+		ok.put(Function.GET_FLAGS, true);
+		return new HashMap<String, Boolean>();
+	}
+
+	@Override
+	public Map<Integer, Item> getItems() {
+		ok.put(Function.GET_ITEMS, true);
+		return new HashMap<Integer, Item>();
+	}
+
+	@Override
+	public Map<Long, Location> getLocations() {
+		ok.put(Function.GET_LOCATIONS, true);
+		return new HashMap<Long, Location>();
+	}
+
+	@Override
+	public Map<String, OverviewGroup> getOverviewGroups() {
+		ok.put(Function.GET_OVERVIEW_GROUPS, true);
+		return new HashMap<String, OverviewGroup>();
 	}
 
 	@Override
@@ -75,130 +154,105 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
-	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
-		ok.put("setPriceDataSettings", true);
-	}
-
-	@Override
-	public Map<String, Boolean> getFlags() {
-		ok.put("getFlags", true);
-		return new HashMap<String, Boolean>();
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		ok.put("getLocations", true);
-		return new HashMap<Long, Location>();
-	}
-
-	@Override
-	public Map<Integer, Item> getItems() {
-		ok.put("getItems", true);
-		return new HashMap<Integer, Item>();
-	}
-
-	@Override
-	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
-		ok.put("setConquerableStationsNextUpdate", true);
-	}
-
-	@Override
-	public void setWindowLocation(final Point windowLocation) {
-		ok.put("setWindowLocation", true);
-	}
-
-	@Override
-	public void setWindowSize(final Dimension windowSize) {
-		ok.put("setWindowSize", true);
-	}
-
-	@Override
-	public void setWindowMaximized(final boolean windowMaximized) {
-		ok.put("setWindowMaximized", true);
-	}
-
-	@Override
-	public void setWindowAutoSave(final boolean windowAutoSave) {
-		ok.put("setWindowAutoSave", true);
-	}
-
-	@Override
-	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
-		ok.put("setWindowAlwaysOnTop", true);
-	}
-
-	@Override
-	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
-		ok.put("setReprocessSettings", true);
-	}
-
-	@Override
-	public Map<String, Map<String, List<Filter>>> getTableFilters() {
-		ok.put("getTableFilters", true);
-		return new HashMap<String, Map<String, List<Filter>>>();
+	public List<Stockpile> getStockpiles() {
+		ok.put(Function.GET_STOCKPILES, true);
+		return new ArrayList<Stockpile>();
 	}
 
 	@Override
 	public Map<String, List<EnumTableFormatAdaptor.SimpleColumn>> getTableColumns() {
-		ok.put("getTableColumns", true);
+		ok.put(Function.GET_TABLE_COLUMNS, true);
 		return new HashMap<String, List<EnumTableFormatAdaptor.SimpleColumn>>();
 	}
 
 	@Override
-	public Map<String, EnumTableFormatAdaptor.ResizeMode> getTableResize() {
-		ok.put("getTableResize", true);
-		return new HashMap<String, EnumTableFormatAdaptor.ResizeMode>();
+	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
+		ok.put(Function.GET_TABLE_COLUMNS_WIDTH, true);
+		return new HashMap<String, Map<String, Integer>>();
+	}
+
+	@Override
+	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+		ok.put(Function.GET_TABLE_FILTERS, true);
+		return new HashMap<String, Map<String, List<Filter>>>();
 	}
 
 	@Override
 	public Map<String, List<Filter>> getTableFilters(final String key) {
-		ok.put("getTableFilters", true);
+		ok.put(Function.GET_TABLE_FILTERS_KEY, true);
 		return new HashMap<String, List<Filter>>();
 	}
 
 	@Override
-	public void setProxy(final String host, final int port, final String type) {
-		ok.put("setProxy", true);
-	}
-
-	@Override
-	public void setApiProxy(final String apiProxy) {
-		ok.put("setApiProxy", true);
-	}
-
-	@Override
-	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
-		ok.put("getUserPrices", true);
-		return new HashMap<Integer, UserItem<Integer, Double>>();
+	public Map<String, EnumTableFormatAdaptor.ResizeMode> getTableResize() {
+		ok.put(Function.GET_TABLE_RESIZE, true);
+		return new HashMap<String, EnumTableFormatAdaptor.ResizeMode>();
 	}
 
 	@Override
 	public Map<Long, UserItem<Long, String>> getUserItemNames() {
-		ok.put("getUserItemNames", true);
+		ok.put(Function.GET_USER_ITEM_NAMES, true);
 		return new HashMap<Long, UserItem<Long, String>>();
 	}
 
 	@Override
-	public Map<String, OverviewGroup> getOverviewGroups() {
-		ok.put("getOverviewGroups", true);
-		return new HashMap<String, OverviewGroup>();
+	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
+		ok.put(Function.GET_USER_PRICES, true);
+		return new HashMap<Integer, UserItem<Integer, Double>>();
 	}
 
 	@Override
-	public List<Stockpile> getStockpiles() {
-		ok.put("getStockpiles", true);
-		return new ArrayList<Stockpile>();
+	public void setApiProxy(final String apiProxy) {
+		ok.put(Function.SET_API_PROXY, true);
 	}
 
-	public void print() {
-		System.out.println("Tested: " + name);
-		TreeSet<String> keys = new TreeSet<String>(ok.keySet());
-		for (String key : keys) {
-			if (ok.get(key)) {
-				System.out.println(key + ": OK");
-			} else {
-				System.out.println(key + ": Default");
-			}
-		}
+	@Override
+	public void setConquerableStationsNextUpdate(final Date conquerableStationNextUpdate) {
+		ok.put(Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE, true);
+	}
+
+	@Override
+	public void setMaximumPurchaseAge(int maximumPurchaseAge) {
+		ok.put(Function.SET_MAXIMUM_PURCHASE_AGE, true);
+	}
+
+	@Override
+	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
+		ok.put(Function.SET_PRICE_DATA_SETTINGS, true);
+	}
+
+	@Override
+	public void setProxy(final String host, final int port, final String type) {
+		ok.put(Function.SET_PROXY, true);
+	}
+
+	@Override
+	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
+		ok.put(Function.SET_REPROCESS_SETTINGS, true);
+	}
+
+	@Override
+	public void setWindowAlwaysOnTop(final boolean windowAlwaysOnTop) {
+		ok.put(Function.SET_WINDOW_ALWAYS_ON_TOP, true);
+	}
+
+	@Override
+	public void setWindowAutoSave(final boolean windowAutoSave) {
+		ok.put(Function.SET_WINDOW_AUTO_SAVE, true);
+	}
+
+	@Override
+	public void setWindowLocation(final Point windowLocation) {
+		ok.put(Function.SET_WINDOW_LOCATION, true);
+	}
+
+	@Override
+	public void setWindowMaximized(final boolean windowMaximized) {
+		ok.put(Function.SET_WINDOW_MAXIMIZED, true);
+	}
+
+	@Override
+	public void setWindowSize(final Dimension windowSize) {
+		ok.put(Function.SET_WINDOW_SIZE, true);
 	}
 }

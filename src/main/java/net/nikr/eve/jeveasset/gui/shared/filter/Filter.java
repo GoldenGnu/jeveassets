@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -227,22 +227,22 @@ public class Filter {
 	}
 
 	private LogicType logic;
-	private Enum column;
+	private Enum<?> column;
 	private CompareType compare;
 	private String text;
 
-	public Filter(final String logic, final Enum column, final String compare, final String text) {
+	public Filter(final String logic, final Enum<?> column, final String compare, final String text) {
 		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text);
 	}
 
-	public Filter(final LogicType logic, final Enum column, final CompareType compare, final String text) {
+	public Filter(final LogicType logic, final Enum<?> column, final CompareType compare, final String text) {
 		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
 	}
 
-	public Enum getColumn() {
+	public Enum<?> getColumn() {
 		return column;
 	}
 

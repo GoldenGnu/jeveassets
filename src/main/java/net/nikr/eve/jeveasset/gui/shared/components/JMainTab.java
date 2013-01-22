@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,6 +21,9 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.EventSelectionModel;
+import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -28,7 +31,10 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public abstract class JMainTab {
@@ -40,6 +46,11 @@ public abstract class JMainTab {
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
+	private JAutoColumnTable jTable;
+	private EventSelectionModel<?> eventSelectionModel;
+	private EventTableModel<?> eventTableModel;
+	private List<?> selected;
+	private String toolName;
 
 	protected JMainTab(final boolean load) { }
 
@@ -73,10 +84,19 @@ public abstract class JMainTab {
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	/**
-	 * Overwrite to update settings before saving...
-	 */
-	public void updateSettings() { }
+	public final void saveSettings() {
+		//Save Settings
+		if (eventTableModel != null && jTable != null && toolName != null) {
+			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
+			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
+				program.getSettings().getTableColumns().put(toolName, formatAdaptor.getColumns());
+				program.getSettings().getTableResize().put(toolName, formatAdaptor.getResizeMode());
+				program.getSettings().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
+			}
+		}
+		
+	}
 
 	public void addStatusbarLabel(final JLabel jLabel) {
 		statusbarLabels.add(jLabel);
@@ -86,7 +106,39 @@ public abstract class JMainTab {
 		return statusbarLabels;
 	}
 
+	public final void beforeUpdateData() {
+		if (eventSelectionModel != null) {
+			selected = new ArrayList<Object>(eventSelectionModel.getSelected());
+		}
+		if (jTable != null) {
+			jTable.lock();
+		}
+	}
+
+	public final void afterUpdateData() {
+		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
+			eventSelectionModel.setValueIsAdjusting(true);
+			for (int i = 0; i < eventTableModel.getRowCount(); i++) {
+				Object object = eventTableModel.getElementAt(i);
+				if (selected.contains(object)) {
+					eventSelectionModel.addSelectionInterval(i, i);
+				}
+			}
+			eventSelectionModel.setValueIsAdjusting(false);
+			selected = null;
+		}
+		if (jTable != null) {
+			jTable.unlock();
+		}
+	}
+
 	public abstract void updateData();
+
+	public void updateDataTableLock() {
+		beforeUpdateData();
+		updateData();
+		afterUpdateData();
+	}
 
 	public Icon getIcon() {
 		return icon;
@@ -119,7 +171,35 @@ public abstract class JMainTab {
 		}
 	}
 
-	protected void installTableMenu(final JTable jTable) {
+	protected void installTable(final JAutoColumnTable jTable, String toolName) {
+		this.toolName = toolName;
+
+		//Table Selection
+		ListSelectionModel selectionModel = jTable.getSelectionModel();
+		if (selectionModel instanceof  EventSelectionModel) {
+			this.eventSelectionModel = (EventSelectionModel<?>) selectionModel;
+		}
+		TableModel tableModel = jTable.getModel();
+		if (tableModel instanceof EventTableModel) {
+			this.eventTableModel = (EventTableModel<?>) tableModel;
+		}
+
+		//Table lock
+		this.jTable = jTable;
+
+		//Load Settings
+		if (eventTableModel != null && jTable != null && toolName != null) {
+			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
+			if (tableFormat instanceof  EnumTableFormatAdaptor) {
+				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
+				formatAdaptor.setColumns(program.getSettings().getTableColumns().get(toolName));
+				formatAdaptor.setResizeMode(program.getSettings().getTableResize().get(toolName));
+				jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(toolName));
+				eventTableModel.fireTableStructureChanged();
+			}
+		}
+
+		//Table Menu
 		TableMenuListener listener = new TableMenuListener(jTable);
 		jTable.addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
@@ -134,8 +214,8 @@ public abstract class JMainTab {
 			//Rows
 			boolean clickInRowsSelection = false;
 			int[] selectedRows = jTable.getSelectedRows();
-			for (int a = 0; a < selectedRows.length; a++) {
-				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				if (selectedRows[i] == jTable.rowAtPoint(e.getPoint())) {
 					clickInRowsSelection = true;
 					break;
 				}
@@ -144,8 +224,8 @@ public abstract class JMainTab {
 			//Column
 			boolean clickInColumnsSelection = false;
 			int[] selectedColumns = jTable.getSelectedColumns();
-			for (int a = 0; a < selectedColumns.length; a++) {
-				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())) {
+			for (int i = 0; i < selectedColumns.length; i++) {
+				if (selectedColumns[i] == jTable.columnAtPoint(e.getPoint())) {
 					clickInColumnsSelection = true;
 					break;
 				}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -56,7 +56,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private EventList<Item> items = new BasicEventList<Item>();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
-	private boolean updated = false;
 
 	public StockpileItemDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
@@ -130,7 +129,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		);
 	}
 
-	boolean showEdit(final StockpileItem addStockpileItem) {
+	StockpileItem showEdit(final StockpileItem addStockpileItem) {
 		updateData();
 		this.stockpileItem = addStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
@@ -139,16 +138,16 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		jCopy.setSelected(addStockpileItem.isBPC());
 		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
 		show();
-		return updated;
+		return stockpileItem;
 	}
 
-	boolean showAdd(final Stockpile addStockpile) {
+	StockpileItem showAdd(final Stockpile addStockpile) {
 		updateData();
 		this.stockpile = addStockpile;
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
 		jCopy.setSelected(false);
 		show();
-		return updated;
+		return stockpileItem;
 	}
 
 	private void updateData() {
@@ -169,7 +168,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	private void show() {
-		updated = false;
 		autoValidate();
 		autoSet();
 		super.setVisible(true);
@@ -221,17 +219,17 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	}
 
 	private void autoValidate() {
-		boolean b = true;
+		boolean valid = true;
 		boolean color = false;
 		if (jItems.getSelectedItem() == null) {
-			b = false;
+			valid = false;
 			jCopy.setEnabled(false);
 			jCopy.setSelected(false);
 		} else {
 			Item item = (Item) jItems.getSelectedItem();
 			boolean blueprint = item.getName().toLowerCase().contains("blueprint");
 			jCopy.setEnabled(blueprint);
-			if (!blueprint){
+			if (!blueprint) {
 				jCopy.setSelected(blueprint);
 			}
 		}
@@ -242,12 +240,12 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		try {
 			long l = Long.valueOf(jCountMinimum.getText());
 			if (l <= 0) {
-				b = false; //Negative and zero is not valid
+				valid = false; //Negative and zero is not valid
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
 			}
 		} catch (NumberFormatException ex) {
-			b = false; //Empty and NaN is not valid
+			valid = false; //Empty and NaN is not valid
 			if (!jCountMinimum.getText().isEmpty()) {
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));
@@ -256,7 +254,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		if (!color) {
 			jCountMinimum.setBackground(Color.WHITE);
 		}
-		jOK.setEnabled(b);
+		jOK.setEnabled(valid);
 	}
 
 	private void autoSet() {
@@ -291,15 +289,18 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	@Override
 	protected void save() {
 		if (stockpileItem != null) { //EDIT
-			stockpile = getStockpile();
-			stockpile.remove(stockpileItem);
+			if (itemExist()) { //EDIT + UPDATING (Editing to an existing item)
+				StockpileItem existingItem = getExistingItem();
+				existingItem.getStockpile().remove(existingItem);
+			}
+			stockpileItem.update(getStockpileItem());
+		} else if (itemExist()) { //UPDATING (Adding an existing item)
+			stockpileItem = getExistingItem();
+			stockpileItem.update(getStockpileItem());
+		} else { //ADD 
+			stockpileItem = getStockpileItem();
+			stockpile.add(stockpileItem);
 		}
-		if (itemExist()) { //UPDATING (Adding an existing item)
-			stockpile.remove(getExistingItem());
-		}
-		//ADD & EDIT & UPDATING
-		stockpile.add(getStockpileItem());
-		updated = true;
 		super.setVisible(false);
 	}
 

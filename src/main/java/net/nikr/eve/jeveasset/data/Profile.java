@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -150,6 +150,6 @@ public class Profile implements Comparable<Profile> {
 
 	@Override
 	public int compareTo(final Profile o) {
-		return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 }

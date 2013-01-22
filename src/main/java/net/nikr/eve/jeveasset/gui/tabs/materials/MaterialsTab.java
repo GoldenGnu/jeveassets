@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,8 +35,9 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -61,10 +62,10 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	private JScrollPane jTableScroll;
 
 	//Table
-	private EventList<Material> materialEventList;
+	private EventList<Material> eventList;
 	private SeparatorList<Material> separatorList;
 	private EventSelectionModel<Material> selectionModel;
-	private EventTableModel<Material> materialTableModel;
+	private EventTableModel<Material> tableModel;
 
 	public MaterialsTab(final Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
@@ -87,23 +88,26 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
+		//Table Format
 		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
-		materialEventList = new BasicEventList<Material>();
-		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
-		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
-		//Tables
-		jTable = new JSeparatorTable(program, materialTableModel);
+		//Backend
+		eventList = new BasicEventList<Material>();
+		//Separator
+		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
+		//Table Model
+		tableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
+		//Table
+		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new MaterialsSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
-
 		//Selection Model
 		selectionModel = new EventSelectionModel<Material>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTableMenu(jTable);
-		//Scroll Panels
+		installTable(jTable, null);
+		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 
 		layout.setHorizontalGroup(
@@ -133,13 +137,13 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		List<String> owners = new ArrayList<String>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts) {
-			for (Human human : account.getHumans()) {
-				if (human.isShowAssets()) {
+			for (Owner owner : account.getOwners()) {
+				if (owner.isShowAssets()) {
 					String name;
-					if (human.isCorporation()) {
-						name = TabsMaterials.get().whitespace(human.getName());
+					if (owner.isCorporation()) {
+						name = TabsMaterials.get().whitespace(owner.getName());
 					} else {
-						name = human.getName();
+						name = owner.getName();
 					}
 					if (!owners.contains(name)) {
 						owners.add(name);
@@ -151,10 +155,15 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
-			Collections.sort(owners);
+			String selectedItem = (String) jOwners.getSelectedItem();
+			Collections.sort(owners, new CaseInsensitiveComparator());
 			owners.add(0, TabsMaterials.get().all());
 			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwners.setSelectedIndex(0);
+			if (selectedItem != null && owners.contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
 		} else {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
@@ -176,20 +185,25 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+	//DATA
+		MenuData<Material> menuData = new MenuData<Material>(selectionModel.getSelected());
 	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuAssetFilter<Material>(program, menuData));
 	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuStockpile<Material>(program, menuData));
 	//LOOKUP
-		jComponent.add(new JMenuLookup<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuLookup<Material>(program, menuData));
 	//EDIT
-		jComponent.add(new JMenuPrice<Material>(program, selectionModel.getSelected()));
+		jComponent.add(new JMenuPrice<Material>(program, menuData));
+	//REPROCESSED
+		jComponent.add(new JMenuReprocessed<Material>(program, menuData));
 	//INFO
-		JMenuInfo.material(jComponent, selectionModel.getSelected(), materialEventList);
+		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
 	}
 
 
 	private void updateTable() {
+		beforeUpdateData();
 		String owner = (String) jOwners.getSelectedItem();
 		List<Material> materials = new ArrayList<Material>();
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
@@ -269,10 +283,19 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 				location = material.getLocation();
 			}
 		}
-		materialEventList.getReadWriteLock().writeLock().lock();
-		materialEventList.clear();
-		materialEventList.addAll(materials);
-		materialEventList.getReadWriteLock().writeLock().unlock();
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(materials);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
+
 		if (!materials.isEmpty()) {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
@@ -281,6 +304,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jCollapse.setEnabled(false);
 		}
 		jTableScroll.getViewport().setViewPosition(new Point(0, 0));
+		afterUpdateData();
 	}
 
 	@Override
@@ -289,10 +313,10 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			updateTable();
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false, separatorList);
+			jTable.expandSeparators(false);
 		}
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true, separatorList);
+			jTable.expandSeparators(true);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -39,12 +39,17 @@ public final class CsvWriter {
 	private CsvWriter() { }
 
 	public static boolean save(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
+		CsvWriter writer = new CsvWriter();
+		return writer.write(filename, data, header, csvPreference);
+	}
+
+	private boolean write(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
 		ICsvMapWriter writer;
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);
 			writer.writeHeader(header);
-			for (int a = 0; a < data.size(); a++) {
-				writer.write(data.get(a), header);
+			for (Map<String, String> map : data) {
+				writer.write(map, header);
 			}
 			writer.close();
 		} catch (IOException ex) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -54,7 +55,7 @@ public class PriceDataGetter implements PricingListener {
 	private final int attemptCount = 5;
 	private boolean update;
 	private boolean failed;
-	private List<Integer> ids;
+	private Set<Integer> ids;
 
 	public PriceDataGetter(final Settings settings) {
 		this.settings = settings;
@@ -89,9 +90,9 @@ public class PriceDataGetter implements PricingListener {
 		this.update = processUpdate;
 
 		if (processUpdate) {
-			LOG.info("Price data update ("+settings.getPriceDataSettings().getSource()+"):");
+			LOG.info("Price data update (" + settings.getPriceDataSettings().getSource() + "):");
 		} else {
-			LOG.info("Price data loading ("+settings.getPriceDataSettings().getSource()+"):");
+			LOG.info("Price data loading (" + settings.getPriceDataSettings().getSource() + "):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();

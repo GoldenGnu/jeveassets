@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -154,6 +154,21 @@ public class TestI18N {
 
 	@Test public void testTabsValuesBundle_en() throws Exception {
 		TabsValues g = Main.getBundleService().get(TabsValues.class);
-		assertNotNull(g.assets());
+		assertNotNull(g.columnAssets());
+	}
+
+	@Test public void testTabsTrackerBundle_en() throws Exception {
+		TabsTracker g = Main.getBundleService().get(TabsTracker.class);
+		assertNotNull(g.all());
+	}
+
+	@Test public void testTabsReprocessedBundle_en() throws Exception {
+		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
+		assertNotNull(g.batch());
+	}
+
+	@Test public void testTabsContractsBundle_en() throws Exception {
+		TabsContracts g = Main.getBundleService().get(TabsContracts.class);
+		assertNotNull(g.title());
 	}
 }

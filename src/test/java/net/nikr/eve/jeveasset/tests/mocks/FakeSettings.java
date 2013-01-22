@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,6 +29,7 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -36,6 +37,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -109,7 +112,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Integer> getUniqueIds() {
+	public Set<Integer> getUniqueIds() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -319,7 +322,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Long, ApiStation> getConquerableStations() {
+	public Map<Integer, ApiStation> getConquerableStations() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -369,7 +372,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void setConquerableStations(final Map<Long, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -457,4 +460,46 @@ public abstract class FakeSettings extends Settings {
 	public void setIncludeSellOrders(boolean includeSellOrders) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Map<String, Map<String, Integer>> getTableColumnsWidth() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public int getMaximumPurchaseAge() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setMaximumPurchaseAge(int maximumPurchaseAge) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, Date> getAssetAdded() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, String> getOwners() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeContracts() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	
 }

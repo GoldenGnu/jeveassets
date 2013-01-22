@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -47,6 +47,7 @@ public abstract class DialoguesUpdate extends Bundle {
 	// used in UpdateDialog
 	public abstract String update();
 	public abstract String all();
+	public abstract String contracts();
 	public abstract String marketOrders();
 	public abstract String industryJobs();
 	public abstract String accounts();

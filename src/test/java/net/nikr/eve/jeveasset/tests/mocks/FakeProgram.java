@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 
 /**
@@ -144,6 +145,16 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public OverviewTab getOverviewTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void createTrackerDataPoint() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ReprocessedTab getReprocessedTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

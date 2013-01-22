@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +39,7 @@ import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -422,16 +422,16 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 		List<Integer> selections = new ArrayList<Integer>();
 		for (String column : list) {
-			Enum e = matcherControl.valueOf(column);
+			Enum<?> e = matcherControl.valueOf(column);
 			if (e instanceof EnumTableColumn) {
-				EnumTableColumn enumColumn = (EnumTableColumn) e;
+				EnumTableColumn<?> enumColumn = (EnumTableColumn) e;
 				int index = columnNames.indexOf(enumColumn.getColumnName());
 				selections.add(index);
 			}
 		}
 		int[] indices = new int[selections.size()];
-		for (int i = 0; i < selections.size(); i++) {
-			indices[i] = selections.get(i);
+		for (int i : selections) {
+			indices[i] = i;
 		}
 		jColumnSelection.setSelectedIndices(indices);
 	}
@@ -469,7 +469,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				}
 				jSavedFilter.setEnabled(true);
 				List<String> filterNames = new ArrayList<String>(matcherControl.getAllFilters().keySet());
-				Collections.sort(filterNames);
+				Collections.sort(filterNames, new CaseInsensitiveComparator());
 				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
 			}
 			if (matcherControl.getCurrentFilters().isEmpty()) {

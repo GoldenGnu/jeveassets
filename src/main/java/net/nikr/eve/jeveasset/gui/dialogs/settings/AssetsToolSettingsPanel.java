@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,7 +29,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
-import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
+import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -38,6 +38,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private JCheckBox jReprocessColors;
 	private JCheckBox jSellOrders;
 	private JCheckBox jBuyOrders;
+	private JCheckBox jContracts;
 	private JTextField jMaxOrderAge;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
@@ -46,8 +47,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());
 		jBuyOrders = new JCheckBox(DialoguesSettings.get().includeBuyOrders());
-		jMaxOrderAge = new JDefaultField("0");
-		jMaxOrderAge.setDocument(DocumentFactory.getIntegerPositivePlainDocument());
+		jContracts = new JCheckBox(DialoguesSettings.get().includeContracts());
+		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().maximumPurchaseAge());
 		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
 
@@ -56,6 +57,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jReprocessColors)
 				.addComponent(jSellOrders)
 				.addComponent(jBuyOrders)
+				.addComponent(jContracts)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jMaxOrderAgeLabel)
 					.addComponent(jMaxOrderAge, 75, 75, 75)
@@ -67,6 +69,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jReprocessColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jBuyOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGap(20)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMaxOrderAgeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -87,11 +90,13 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors()
 						|| jSellOrders.isSelected() != program.getSettings().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != program.getSettings().isIncludeBuyOrders()
+						|| jContracts.isSelected() != program.getSettings().isIncludeContracts()
 						|| maximumPurchaseAge != program.getSettings().getMaximumPurchaseAge()
 						;
 		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
 		program.getSettings().setIncludeSellOrders(jSellOrders.isSelected());
 		program.getSettings().setIncludeBuyOrders(jBuyOrders.isSelected());
+		program.getSettings().setIncludeContracts(jContracts.isSelected());
 		program.getSettings().setMaximumPurchaseAge(maximumPurchaseAge);
 		return update;
 	}
@@ -101,6 +106,7 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jReprocessColors.setSelected(program.getSettings().isReprocessColors());
 		jSellOrders.setSelected(program.getSettings().isIncludeSellOrders());
 		jBuyOrders.setSelected(program.getSettings().isIncludeBuyOrders());
+		jContracts.setSelected(program.getSettings().isIncludeContracts());
 		jMaxOrderAge.setText(String.valueOf(program.getSettings().getMaximumPurchaseAge()));
 	}
 }

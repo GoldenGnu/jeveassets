@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -35,15 +35,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class EveFittingWriter extends AbstractXmlWriter {
+public final class EveFittingWriter extends AbstractXmlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EveFittingWriter.class);
+
+	private EveFittingWriter() { }
 
 	public static void save(final List<Asset> eveassets, final String filename) {
 		save(eveassets, filename, null, null);
 	}
 
-	public static void save(final List<Asset> eveassets, final String filename, String setupName, String description) {
+	public static void save(final List<Asset> eveassets, final String filename, final String setupName, final String description) {
+		EveFittingWriter writer = new EveFittingWriter();
+		writer.write(eveassets, filename, setupName, description);
+	}
+
+	private void write(final List<Asset> assets, final String filename, String setupName, String description) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("fittings");
@@ -56,11 +63,11 @@ public class EveFittingWriter extends AbstractXmlWriter {
 			description = Program.PROGRAM_NAME + " export all";
 		}
 
-		for (int a = 0; a < eveassets.size(); a++) {
+		for (Asset asset : assets) {
 			if (noSetupName) {
-				setupName = eveassets.get(a).getName();
+				setupName = asset.getName();
 			}
-			writeFitting(xmldoc, eveassets.get(a), setupName, description);
+			writeFitting(xmldoc, asset, setupName, description);
 		}
 		try {
 			//writeXmlFile(xmldoc, filename, "UTF-8");
@@ -70,7 +77,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private static void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
+	private void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);
@@ -86,8 +93,7 @@ public class EveFittingWriter extends AbstractXmlWriter {
 
 		Map<String, List<Asset>> modules = new HashMap<String, List<Asset>>();
 			List<Asset> assets = eveAsset.getAssets();
-			for (int a = 0; a < assets.size(); a++) {
-				Asset module = assets.get(a);
+			for (Asset module : assets) {
 				String flag = module.getFlag();
 				if (flag.contains(" > ")) {
 					int start = flag.indexOf(" > ") + 3;
@@ -102,51 +108,50 @@ public class EveFittingWriter extends AbstractXmlWriter {
 				}
 			}
 			Element hardwareNode;
-			for (int a = 0; a < 8; a++) {
-				if (modules.containsKey("LoSlot" + a)) {
+			for (int i = 0; i < 8; i++) {
+				if (modules.containsKey("LoSlot" + i)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "low slot " + a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "low slot " + i);
+					hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + i).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++) {
-				if (modules.containsKey("MedSlot" + a)) {
+			for (int i = 0; i < 8; i++) {
+				if (modules.containsKey("MedSlot" + i)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "med slot " + a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "med slot " + i);
+					hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + i).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++) {
-				if (modules.containsKey("HiSlot" + a)) {
+			for (int i = 0; i < 8; i++) {
+				if (modules.containsKey("HiSlot" + i)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "hi slot " + a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "hi slot " + i);
+					hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + i).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 8; a++) {
-				if (modules.containsKey("RigSlot" + a)) {
+			for (int i = 0; i < 8; i++) {
+				if (modules.containsKey("RigSlot" + i)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "rig slot " + a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "rig slot " + i);
+					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + i).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
-			for (int a = 0; a < 5; a++) {
-				if (modules.containsKey("SubSystem" + a)) {
+			for (int i = 0; i < 5; i++) {
+				if (modules.containsKey("SubSystem" + i)) {
 					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + a);
-					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + a).get(0).getName());
+					hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + i);
+					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + i).get(0).getName());
 					fittingNode.appendChild(hardwareNode);
 				}
 			}
 			if (modules.containsKey("DroneBay")) {
 				Map<String, Long> moduleCount = new HashMap<String, Long>();
 				List<Asset> subModules = modules.get("DroneBay");
-				for (int a = 0; a < subModules.size(); a++) {
-					Asset subModule = subModules.get(a);
+				for (Asset subModule : subModules) {
 					if (moduleCount.containsKey(subModule.getName())) {
 						long count = moduleCount.get(subModule.getName());
 						moduleCount.remove(subModule.getName());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -41,7 +41,7 @@ public class TestMoveJList {
 		Comparator<Something> comp = new Comparator<Something>() {
 			@Override
 			public int compare(final Something o1, final Something o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getName().compareToIgnoreCase(o2.getName());
 			}
 		};
 		somethings = new Something[] {new Something("foo"), new Something("foobar"), new Something("zap") };

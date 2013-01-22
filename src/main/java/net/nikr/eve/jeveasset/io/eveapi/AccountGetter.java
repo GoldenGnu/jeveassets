@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -23,22 +23,24 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
 import com.beimin.eveapi.account.characters.EveCharacter;
-import com.beimin.eveapi.core.ApiException;
+import com.beimin.eveapi.exception.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
-public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
+public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	private int fails = 0;
+	private final int MAX_FAIL = 5;
 
-	public HumansGetter() {
-		super("Accounts", 0, false, true);
+	public AccountGetter() {
+		super("Accounts", false, true);
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 	protected ApiKeyInfoResponse getResponse(final boolean bCorp) throws ApiException {
 		return com.beimin.eveapi.account.apikeyinfo
 				.ApiKeyInfoParser.getInstance()
-				.getResponse(Human.getApiAuthorization(getAccount()));
+				.getResponse(Owner.getApiAuthorization(getAccount()));
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		getAccount().setType(response.getType());
 
 		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
-		List<Human> humans = new ArrayList<Human>();
+		List<Owner> owners = new ArrayList<Owner>();
 
 		fails = 0;
 		if (isForceUpdate()) {
@@ -92,31 +94,39 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 			if (!getAccount().isMarketOrders()) {
 				fails++;
 			}
+			if (!getAccount().isContracts()) {
+				fails++;
+			}
 			if (!getAccount().isAssetList()) { //Can not work without it...
-				fails = 4;
+				fails = 5;
 			}
 		}
 
 		for (EveCharacter apiCharacter : characters) {
 			boolean found = false;
-			for (Human human : getAccount().getHumans()) {
-				if ((human.getOwnerID() == apiCharacter.getCharacterID() || human.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
-					human.setName(getName(apiCharacter));
-					human.setOwnerID(getID(apiCharacter));
-					humans.add(human);
+			for (Owner owner : getAccount().getOwners()) {
+				if ((owner.getOwnerID() == apiCharacter.getCharacterID() || owner.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
+					owner.setName(getName(apiCharacter));
+					owner.setOwnerID(getID(apiCharacter));
+					owners.add(owner);
 					found = true;
 					break;
 				}
 			}
 			if (!found) { //Add New
-				humans.add(new Human(getAccount(), getName(apiCharacter), getID(apiCharacter)));
+				owners.add(new Owner(getAccount(), getName(apiCharacter), getID(apiCharacter)));
 			}
 		}
-		getAccount().setHumans(humans);
+		getAccount().setOwners(owners);
 	}
 
 	@Override
-	protected void updateFailed(final Human humanFrom, final Human humanTo) { }
+	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) { }
+
+	@Override
+	protected long requestMask(boolean bCorp) {
+		return AccessMask.OPEN.getAccessMask();
+	}
 
 	private String getName(final EveCharacter apiCharacter) {
 		if (getAccount().isCharacter()) {
@@ -135,5 +145,9 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	public int getFails() {
 		return fails;
+	}
+
+	public int getMaxFail() {
+		return MAX_FAIL;
 	}
 }

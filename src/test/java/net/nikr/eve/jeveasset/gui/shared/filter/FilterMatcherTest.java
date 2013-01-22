@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -102,6 +102,15 @@ public class FilterMatcherTest {
 	public void tearDown() {
 	}
 
+	@Test
+	public void testTime() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 100; i++) {
+			testMatches();
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("Filter time:" + (endTime - startTime) + "ms");
+	}
 	/**
 	 * Test of matches method, of class FilterControl.
 	 */
@@ -122,25 +131,25 @@ public class FilterMatcherTest {
 		allTest();
 	}
 
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text) {
 		matches(expected, item, enumColumn, compare, text, null, null, null, null);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final String textColumn) {
 		matches(expected, item, enumColumn, compare, text, textColumn, null, null, null);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Number numberColumn) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Number numberColumn) {
 		matches(expected, item, enumColumn, compare, text, null, numberColumn, null, null);
 	}
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Date dateColumn) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Date dateColumn) {
 		matches(expected, item, enumColumn, compare, text, null, null, dateColumn, null);
 	}
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final Percent percentColumn) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Percent percentColumn) {
 		matches(expected, item, enumColumn, compare, text, null, null, null, percentColumn);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn, final Percent percentColumn) {
+	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn, final Percent percentColumn) {
 		//Test matches
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
@@ -451,7 +460,6 @@ public class FilterMatcherTest {
 	}
 
 	private void allTest() {
-		long startTime = System.currentTimeMillis();
 	//Text
 		//Equals
 		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT);
@@ -519,8 +527,6 @@ public class FilterMatcherTest {
 		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
 		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
 		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
-		long endTime = System.currentTimeMillis();
-		System.out.println("Filter time:" + (endTime - startTime));
 	}
 
 	public static class Item { }
@@ -533,12 +539,12 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		protected Enum valueOf(final String column) {
+		protected Enum<?> valueOf(final String column) {
 			return TestEnum.valueOf(column);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum column) {
+		protected boolean isNumericColumn(final Enum<?> column) {
 			if (column instanceof TestEnum) {
 				TestEnum testEnum = (TestEnum) column;
 				return testEnum.isNumber();
@@ -547,7 +553,7 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		protected boolean isDateColumn(final Enum column) {
+		protected boolean isDateColumn(final Enum<?> column) {
 			if (column instanceof TestEnum) {
 				TestEnum testEnum = (TestEnum) column;
 				return testEnum.isDate();
@@ -557,7 +563,7 @@ public class FilterMatcherTest {
 
 		@Override
 		protected Object getColumnValue(final Item item, final String columnString) {
-			Enum column = valueOf(columnString);
+			Enum<?> column = valueOf(columnString);
 			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
 				if (format.equals(TestEnum.TEXT)) {

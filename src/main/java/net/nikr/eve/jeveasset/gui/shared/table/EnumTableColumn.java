@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -28,8 +28,8 @@ import java.util.Comparator;
  * @author Candle
  */
 public interface EnumTableColumn<Q> {
-	Class getType();
-	Comparator getComparator();
+	Class<?> getType();
+	Comparator<?> getComparator();
 	String getColumnName();
 	Object getColumnValue(Q from);
 	boolean isColumnEditable(Object baseObject);

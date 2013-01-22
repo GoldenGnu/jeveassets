@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 
@@ -123,7 +122,7 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
 
 	@Override
 	public int compareTo(final Overview o) {
-		return this.name.compareTo(o.getName());
+		return this.name.compareToIgnoreCase(o.getName());
 	}
 
 	@Override

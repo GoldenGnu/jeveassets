@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -29,14 +29,20 @@ import javax.swing.JTextField;
 public class JDefaultField extends JTextField implements FocusListener {
 
 	private String defaultValue;
+	private boolean autoSelectAll;
 
 	public JDefaultField(final String defaultValue) {
 		this.defaultValue = defaultValue;
+		autoSelectAll = false;
 		this.addFocusListener(this);
 	}
 
 	@Override
-	public void focusGained(final FocusEvent e) { }
+	public void focusGained(final FocusEvent e) {
+		if (autoSelectAll) {
+			selectAll();
+		}
+	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
@@ -60,5 +66,13 @@ public class JDefaultField extends JTextField implements FocusListener {
 		} else {
 			super.setText(t);
 		}
+	}
+
+	public boolean isAutoSelectAll() {
+		return autoSelectAll;
+	}
+
+	public void setAutoSelectAll(boolean autoSelectAll) {
+		this.autoSelectAll = autoSelectAll;
 	}
 }

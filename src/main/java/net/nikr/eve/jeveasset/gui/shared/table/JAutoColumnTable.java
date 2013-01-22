@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -30,12 +30,15 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -54,7 +57,9 @@ public class JAutoColumnTable extends JTable {
 	private ResizeMode resizeMode = null;
 	private boolean loadingWidth = false;
 	private final Map<String, Integer> columnsWidth = new HashMap<String, Integer>();
+	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
+	private boolean autoResizeLock = false;
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
@@ -80,6 +85,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 
 		autoResizeColumns();
+
+		fixScrollPaneRedraw();
 	}
 
 	@Override
@@ -103,8 +110,36 @@ public class JAutoColumnTable extends JTable {
 		return component;
 	}
 
+	@Override
+	public Component prepareEditor(TableCellEditor editor, int row, int column) {
+		Component component = super.prepareEditor(editor, row, column);
+		if (component instanceof JTextComponent) {
+			JTextComponent jTextComponent = (JTextComponent) component;
+			jTextComponent.selectAll();
+		}
+		return component;
+	}
+
+	public void lock() {
+		autoResizeLock = true;
+	}
+
+	public void unlock() {
+		if (isLocked()) { //only if locked
+			autoResizeLock = false; //unlock
+			autoResizeColumns(); //Update after unlock
+		}
+	}
+
+	public boolean isLocked() {
+		return autoResizeLock;
+	}
+
 	public final void autoResizeColumns() {
-		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		if (isLocked()) {
+			return;
+		}
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (resizeMode == null && tableFormat != null) {
 			resizeMode = tableFormat.getResizeMode();
 		}
@@ -133,7 +168,7 @@ public class JAutoColumnTable extends JTable {
 		return this;
 	}
 
-	private EventTableModel getEventTableModel() {
+	private EventTableModel<?> getEventTableModel() {
 		TableModel model = this.getModel();
 		if (model instanceof EventTableModel) {
 			return (EventTableModel) model;
@@ -142,14 +177,68 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 
-	private EnumTableFormatAdaptor getEnumTableFormatAdaptor() {
+	private EnumTableFormatAdaptor<?, ?> getEnumTableFormatAdaptor() {
 		if (getEventTableModel() != null) {
-			TableFormat tableFormat = getEventTableModel().getTableFormat();
+			TableFormat<?> tableFormat = getEventTableModel().getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				return (EnumTableFormatAdaptor) tableFormat;
 			}
 		}
 		return null;
+	}
+
+	private JScrollPane getParentScrollPane() {
+		Container container = this.getParent();
+		if (container != null) {
+			container = container.getParent();
+		}
+
+		if (container instanceof JScrollPane) {
+			return (JScrollPane) container;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * This is a work-around for issue #254. The JScrollPane viewport gets
+	 * corrupted when it is moved to the right with the horizontal scrollbar.
+	 * The following AdjustmentListener cannot fix the issue but it forces
+	 * AWT to repaint the viewport content. Because the event firing frequency
+	 * is lower than the viewport scroll rate, it may still flicker during
+	 * the scrolling, but at least ensures that the viewport is drawn properly
+	 * when the scrolling is stopped.
+	 * This is bug somewhere between OpenJDK and certain graphics drivers
+	 * under Linux and can be fixed by disabling the driver's acceleration.
+	 * @author Jan
+	 */
+	private void fixScrollPaneRedraw() {
+		/* This component has not been added to the JScrollPanel at
+		 * construction time. This one listens to an ANCESTOR_ADD
+		 * event and registers the repaint method at the JScrollPanel
+		 * parent as soon as this component has been added to it.
+		 */
+		this.addAncestorListener(new AncestorListener() {
+
+			@Override
+			public void ancestorAdded(final AncestorEvent ae) {
+				JComponent jComponent = ae.getComponent();
+				if (jComponent instanceof JAutoColumnTable) {
+					JAutoColumnTable jTable = (JAutoColumnTable) jComponent;
+					JScrollPane jScrollPane = jTable.getParentScrollPane();
+					if (jScrollPane != null) {
+						jScrollPane.getHorizontalScrollBar().addAdjustmentListener(new JScrollPaneAdjustmentListener(jScrollPane));
+					}
+				}
+			}
+
+			@Override
+			public void ancestorMoved(final AncestorEvent event) { }
+
+			@Override
+			public void ancestorRemoved(final AncestorEvent event) { }
+
+		});
 	}
 
 	private JViewport getParentViewport() {
@@ -198,7 +287,7 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	private void updateScroll() {
-		EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			if (jViewport != null && size < jViewport.getSize().width) {
 				this.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -213,7 +302,7 @@ public class JAutoColumnTable extends JTable {
 	}
 
 	private int resizeColumn(final JTable jTable, final TableColumn column, final int columnIndex) {
-		//Header
+		//Header width
 		TableCellRenderer renderer = column.getHeaderRenderer();
 		if (renderer == null) {
 			renderer = jTable.getTableHeader().getDefaultRenderer();
@@ -221,17 +310,32 @@ public class JAutoColumnTable extends JTable {
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
 		int maxWidth = component.getPreferredSize().width;
 
-		//Rows
-		for (int a = 0; a < jTable.getRowCount(); a++) {
-			renderer = jTable.getCellRenderer(a, columnIndex);
-			if (renderer instanceof SeparatorTableCell) {
+		//Rows width
+		for (int i = 0; i < jTable.getRowCount(); i++) {
+			final Object rowValue = jTable.getValueAt(i, columnIndex); //Get cell value
+			if (rowValue == null) { //Ignore null
 				continue;
 			}
-			component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(a, columnIndex), false, false, a, columnIndex);
-			maxWidth = Math.max(maxWidth, component.getPreferredSize().width);
+			final int key = rowValue.toString().hashCode(); //value hash
+			if (rowsWidth.containsKey(key)) { //Load row width
+				maxWidth = Math.max(maxWidth, rowsWidth.get(key));
+			} else { //Calculate the row width
+				renderer = jTable.getCellRenderer(i, columnIndex);
+				//Ignore SeparatorTableCell
+				if (renderer instanceof SeparatorTableCell) {
+					continue;
+				}
+				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(i, columnIndex), false, false, i, columnIndex);
+				int width = component.getPreferredSize().width;
+				rowsWidth.put(key, width);
+				maxWidth = Math.max(maxWidth, width);
+			}
 		}
-		column.setPreferredWidth(maxWidth + 4);
-		return maxWidth + 4;
+		//Add margin
+		maxWidth = maxWidth + 4;
+		//Set width
+		column.setPreferredWidth(maxWidth);
+		return maxWidth; //Return width
 	}
 
 	private void saveColumnsWidth() {
@@ -369,8 +473,8 @@ public class JAutoColumnTable extends JTable {
 		public void mouseReleased(final MouseEvent e) {
 			if (columnMoved) {
 				columnMoved = false;
-				EnumTableFormatAdaptor tableFormat = getEnumTableFormatAdaptor();
-				EventTableModel model = getEventTableModel();
+				EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+				EventTableModel<?> model = getEventTableModel();
 				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
@@ -384,5 +488,41 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void mouseExited(final MouseEvent e) { }
+	}
+
+	/**
+	 * @see JAutoColumnTable#fixScrollPaneRedraw()
+	 */
+	private class JScrollPaneAdjustmentListener implements AdjustmentListener {
+		/**
+		 * Holds the JScrollPane we want to force repainting its content.
+		 */
+		private JScrollPane jScrollPane;
+
+		/**
+		 * Holds the last scrollbar position for direction tracking.
+		 */
+		private int lastValue;
+
+		private boolean repaint;
+
+		public JScrollPaneAdjustmentListener(final JScrollPane jScrollPane) {
+			this.jScrollPane = jScrollPane;
+			repaint = false;
+		}
+
+		@Override
+		public void adjustmentValueChanged(final AdjustmentEvent e) {
+			if (e.getValue() > lastValue) {
+				// scrollbar has been dragged to the right
+				repaint = true;
+			}
+			if (!e.getValueIsAdjusting() && repaint) {
+				//Done scrolling - repaint if needed
+				jScrollPane.repaint();
+				repaint = false;
+			}
+			lastValue = e.getValue();
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -34,10 +34,10 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 class FilterMenu<E> extends JMenu implements ActionListener {
 
 	private FilterGui<E> gui;
-	private Enum column;
+	private Enum<?> column;
 	private String text;
 
-	FilterMenu(final FilterGui<E> gui, final Enum column, final String text, final boolean isNumeric, final boolean isDate) {
+	FilterMenu(final FilterGui<E> gui, final Enum<?> column, final String text, final boolean isNumeric, final boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
 		this.gui = gui;
 		this.setIcon(Images.FILTER_CONTAIN.getIcon());

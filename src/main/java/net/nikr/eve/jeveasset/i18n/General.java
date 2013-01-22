@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -33,7 +33,7 @@ public abstract class General extends Bundle {
 	public static General get() {
 		return Main.getBundleService().get(General.class);
 	}
-	public static General get(Locale locale) {
+	public static General get(final Locale locale) {
 		return Main.getBundleService().get(General.class, locale);
 	}
 	public General(final Locale locale) {
@@ -42,6 +42,8 @@ public abstract class General extends Bundle {
 
 	public abstract String uncaughtErrorMessage();
 	public abstract String error();
+	public abstract String contractIncluded();
+	public abstract String contractExcluded();
 	public abstract String marketOrderSellFlag();
 	public abstract String marketOrderBuyFlag();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
+ * Copyright 2009-2013 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -49,5 +49,7 @@ public abstract class DataModelEveAsset extends Bundle {
 	public abstract String priceBuyMedian();
 	public abstract String priceBuyPercentile();
 	public abstract String priceBuyMin();
+	public abstract String unpackaged();
+	public abstract String packaged();
 
 }
