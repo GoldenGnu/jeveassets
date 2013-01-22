@@ -16,6 +16,24 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.5.0__________________________________________________________________________
+
+New Features:
+-New Tool: Tracker
+-New Tool: Reprocessed
+-New Tool: Contracts
+-New Tool: Isk
+-New Asset column: Added date
+-More resilient table selection and expand/collapse state
+-Stockpile: Add To now merge items instead of overwriting
+-Major optimization of Stockpile Add/Edit/Delete
+-A lot of other optimization!
+-Some minor bug fixes
+
+Note:
+You need to update your API Keys to include contracts
+
+________________________________________________________________________________
 _2.4.4__________________________________________________________________________
 
 Bug Fixes:
