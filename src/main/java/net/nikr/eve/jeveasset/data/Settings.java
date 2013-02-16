@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.*;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -441,6 +442,9 @@ public class Settings {
 					} else {
 						sContainer = sContainer + parentEveAsset.getName();
 					}
+				}
+				if (sContainer.isEmpty()) {
+					sContainer = General.get().none();
 				}
 				asset.setContainer(sContainer);
 
