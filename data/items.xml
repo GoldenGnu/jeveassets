@@ -1273,9 +1273,9 @@
     <row category="Ship" group="Frigate" id="611" marketgroup="false" meta="0" name="Specter" pi="false" portion="1" price="0" tech="Tech I" volume="13400.0"/>
     <row category="Ship" group="Frigate" id="613" marketgroup="false" meta="0" name="Devourer" pi="false" portion="1" price="0" tech="Tech I" volume="19100.0"/>
     <row category="Ship" group="Frigate" id="614" marketgroup="false" meta="0" name="Fury" pi="false" portion="1" price="0" tech="Tech I" volume="26000.0"/>
-    <row category="Ship" group="Frigate" id="615" marketgroup="false" meta="0" name="Styx" pi="false" portion="1" price="0" tech="Tech I" volume="17400.0"/>
+    <row category="Ship" group="Rookie ship" id="615" marketgroup="true" meta="0" name="Immolator" pi="false" portion="1" price="0" tech="Tech I" volume="17400.0"/>
     <row category="Ship" group="Frigate" id="616" marketgroup="false" meta="0" name="Medusa" pi="false" portion="1" price="0" tech="Tech I" volume="17500.0"/>
-    <row category="Ship" group="Frigate" id="617" marketgroup="false" meta="0" name="Echo" pi="false" portion="1" price="0" tech="Tech I" volume="17660.0"/>
+    <row category="Ship" group="Rookie ship" id="617" marketgroup="true" meta="0" name="Echo" pi="false" portion="1" price="0" tech="Tech I" volume="17660.0"/>
     <row category="Ship" group="Frigate" id="618" marketgroup="false" meta="0" name="Lynx" pi="false" portion="1" price="0" tech="Tech I" volume="22500.0"/>
     <row category="Ship" group="Frigate" id="619" marketgroup="false" meta="0" name="Swordspine" pi="false" portion="1" price="0" tech="Tech I" volume="21120.0"/>
     <row category="Ship" group="Cruiser" id="620" marketgroup="true" meta="0" name="Osprey" pi="false" portion="1" price="2875000" tech="Tech I" volume="107000.0">
@@ -1705,7 +1705,7 @@
     <row category="Blueprint" group="Frigate Blueprint" id="958" marketgroup="false" meta="0" name="Specter Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Frigate Blueprint" id="960" marketgroup="false" meta="0" name="Devourer Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Frigate Blueprint" id="961" marketgroup="false" meta="0" name="Fury Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
-    <row category="Blueprint" group="Frigate Blueprint" id="962" marketgroup="false" meta="0" name="Styx Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="962" marketgroup="false" meta="0" name="Immolator Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Frigate Blueprint" id="963" marketgroup="false" meta="0" name="Medusa Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Frigate Blueprint" id="964" marketgroup="false" meta="0" name="Echo Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Blueprint" group="Frigate Blueprint" id="965" marketgroup="false" meta="0" name="Lynx Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
@@ -3856,7 +3856,7 @@
         <material id="40" portionsize="1" quantity="130"/>
     </row>
     <row category="Blueprint" group="Cruiser Blueprint" id="2837" marketgroup="false" meta="0" name="Adrestia Blueprint" pi="false" portion="1" price="74000000" tech="Tech I" volume="0.01"/>
-    <row category="Implant" group="Booster" id="2838" marketgroup="false" meta="0" name="Cerebral Accelerator" pi="false" portion="1" price="32768" tech="Tech I" volume="1.0"/>
+    <row category="Implant" group="Booster" id="2838" marketgroup="false" meta="0" name="Standard Cerebral Accelerator" pi="false" portion="1" price="32768" tech="Tech I" volume="1.0"/>
     <row category="Blueprint" group="Booster Blueprints" id="2839" marketgroup="false" meta="0" name="Cerebral Accelerator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Planetary Interaction" group="Extractor Control Units" id="2848" marketgroup="false" meta="0" name="Barren Extractor Control Unit" pi="false" portion="1" price="45000" tech="Tech I" volume="0.0"/>
     <row category="Commodity" group="Miscellaneous" id="2851" marketgroup="false" meta="0" name="Incriminating Evidence" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
@@ -5963,7 +5963,7 @@
     <row category="Ship" group="Frigate" id="3753" marketgroup="false" meta="0" name="SOCT 2" pi="false" portion="1" price="0" tech="Tech I" volume="17400.0"/>
     <row category="Blueprint" group="Frigate Blueprint" id="3754" marketgroup="false" meta="0" name="SOCT 2 Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
     <row category="Skill" group="Spaceship Command" id="3755" marketgroup="false" meta="0" name="Jove Frigate" pi="false" portion="1" price="120000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Cruiser" id="3756" marketgroup="false" meta="0" name="Gnosis" pi="false" portion="1" price="0" tech="Tech I" volume="101000.0"/>
+    <row category="Ship" group="Combat Battlecruiser" id="3756" marketgroup="true" meta="0" name="Gnosis" pi="false" portion="1" price="0" tech="Tech I" volume="101000.0"/>
     <row category="Skill" group="Spaceship Command" id="3758" marketgroup="false" meta="0" name="Jove Cruiser" pi="false" portion="1" price="1500000" tech="Tech I" volume="0.01"/>
     <row category="Ship" group="Titan" id="3764" marketgroup="true" meta="0" name="Leviathan" pi="false" portion="1" price="49237878400" tech="Tech I" volume="1.325E8">
         <material id="21009" portionsize="1" quantity="100"/>
@@ -6828,7 +6828,7 @@
     </row>
     <row category="Blueprint" group="Remote Hull Repairer Blueprint" id="4300" marketgroup="false" meta="0" name="Small Remote Hull Repair System II Blueprint" pi="false" portion="1" price="1000000" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Acceleration Gate Keys" id="4301" marketgroup="false" meta="0" name="Outgrowth Rogue Drone Hive Pass Key" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Ship" group="Battlecruiser" id="4302" marketgroup="true" meta="0" name="Oracle" pi="false" portion="1" price="57750068" tech="Tech I" volume="234000.0">
+    <row category="Ship" group="Attack Battlecruiser" id="4302" marketgroup="true" meta="0" name="Oracle" pi="false" portion="1" price="57750068" tech="Tech I" volume="234000.0">
         <material id="34" portionsize="1" quantity="5240754"/>
         <material id="35" portionsize="1" quantity="1120802"/>
         <material id="36" portionsize="1" quantity="281382"/>
@@ -6839,7 +6839,7 @@
     <row category="Commodity" group="Research Data" id="4303" marketgroup="false" meta="0" name="Research Abstract: Project Tesseract" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Research Data" id="4304" marketgroup="false" meta="0" name="Research Abstract: Project Theseus" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Blueprint" group="Battlecruiser Blueprint" id="4305" marketgroup="true" meta="0" name="Oracle Blueprint" pi="false" portion="1" price="625000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="4306" marketgroup="true" meta="0" name="Naga" pi="false" portion="1" price="57005200" tech="Tech I" volume="252000.0">
+    <row category="Ship" group="Attack Battlecruiser" id="4306" marketgroup="true" meta="0" name="Naga" pi="false" portion="1" price="57005200" tech="Tech I" volume="252000.0">
         <material id="34" portionsize="1" quantity="3666468"/>
         <material id="35" portionsize="1" quantity="918105"/>
         <material id="36" portionsize="1" quantity="252968"/>
@@ -6849,7 +6849,7 @@
         <material id="40" portionsize="1" quantity="1259"/>
     </row>
     <row category="Blueprint" group="Battlecruiser Blueprint" id="4307" marketgroup="true" meta="0" name="Naga Blueprint" pi="false" portion="1" price="615000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="4308" marketgroup="true" meta="0" name="Talos" pi="false" portion="1" price="60001280" tech="Tech I" volume="270000.0">
+    <row category="Ship" group="Attack Battlecruiser" id="4308" marketgroup="true" meta="0" name="Talos" pi="false" portion="1" price="60001280" tech="Tech I" volume="270000.0">
         <material id="34" portionsize="1" quantity="4327764"/>
         <material id="35" portionsize="1" quantity="963567"/>
         <material id="36" portionsize="1" quantity="323199"/>
@@ -6858,7 +6858,7 @@
         <material id="40" portionsize="1" quantity="1854"/>
     </row>
     <row category="Blueprint" group="Battlecruiser Blueprint" id="4309" marketgroup="true" meta="0" name="Talos Blueprint" pi="false" portion="1" price="650000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="4310" marketgroup="true" meta="0" name="Tornado" pi="false" portion="1" price="54750084" tech="Tech I" volume="216000.0">
+    <row category="Ship" group="Attack Battlecruiser" id="4310" marketgroup="true" meta="0" name="Tornado" pi="false" portion="1" price="54750084" tech="Tech I" volume="216000.0">
         <material id="34" portionsize="1" quantity="3945030"/>
         <material id="35" portionsize="1" quantity="984155"/>
         <material id="36" portionsize="1" quantity="237761"/>
@@ -7006,7 +7006,7 @@
         <material id="37" portionsize="1" quantity="433"/>
         <material id="38" portionsize="1" quantity="102"/>
     </row>
-    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="4392" marketgroup="false" meta="0" name="Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="4392" marketgroup="true" meta="0" name="Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Drone Damage Modules" id="4393" marketgroup="true" meta="0" name="Drone Damage Amplifier I" pi="false" portion="1" price="41982" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="1107"/>
         <material id="35" portionsize="1" quantity="211"/>
@@ -7040,7 +7040,7 @@
         <material id="25623" portionsize="1" quantity="8"/>
     </row>
     <row category="Blueprint" group="Rig Blueprint" id="4402" marketgroup="false" meta="0" name="Large Processor Overclocking Unit II Blueprint" pi="false" portion="1" price="1250000" tech="Tech I" volume="0.01"/>
-    <row category="Module" group="Armor Resistance Shift Hardener" id="4403" marketgroup="true" meta="1" name="Reactive Armor Hardener" pi="false" portion="1" price="200000" tech="Tech I" volume="5.0">
+    <row category="Module" group="Armor Resistance Shift Hardener" id="4403" marketgroup="true" meta="1" name="Reactive Armor Hardener" pi="false" portion="1" price="200000" tech="Tech I" volume="25.0">
         <material id="34" portionsize="1" quantity="23084"/>
         <material id="35" portionsize="1" quantity="18525"/>
         <material id="38" portionsize="1" quantity="3"/>
@@ -13833,7 +13833,7 @@
     <row category="Blueprint" group="Shield Booster Blueprint" id="12716" marketgroup="false" meta="0" name="Large Active Stealth System I Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Signature Scrambling" id="12717" marketgroup="false" meta="0" name="Huge Active Stealth System I" pi="false" portion="1" price="336" tech="Tech I" volume="80.0"/>
     <row category="Blueprint" group="Shield Booster Blueprint" id="12718" marketgroup="false" meta="0" name="Huge Active Stealth System I Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12729" marketgroup="true" meta="5" name="Crane" pi="false" portion="1" price="9698992" tech="Tech II" volume="195000.0">
+    <row category="Ship" group="Blockade Runner" id="12729" marketgroup="true" meta="5" name="Crane" pi="false" portion="1" price="9698992" tech="Tech II" volume="195000.0">
         <material id="34" portionsize="1" quantity="97844"/>
         <material id="35" portionsize="1" quantity="30001"/>
         <material id="36" portionsize="1" quantity="5491"/>
@@ -13851,7 +13851,7 @@
         <material id="11558" portionsize="1" quantity="100"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12730" marketgroup="true" meta="0" name="Crane Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12731" marketgroup="true" meta="5" name="Bustard" pi="false" portion="1" price="15247710" tech="Tech II" volume="290000.0">
+    <row category="Ship" group="Deep Space Transport" id="12731" marketgroup="true" meta="5" name="Bustard" pi="false" portion="1" price="15247710" tech="Tech II" volume="290000.0">
         <material id="34" portionsize="1" quantity="155311"/>
         <material id="35" portionsize="1" quantity="48897"/>
         <material id="36" portionsize="1" quantity="7684"/>
@@ -13869,7 +13869,7 @@
         <material id="11558" portionsize="1" quantity="250"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12732" marketgroup="true" meta="0" name="Bustard Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12733" marketgroup="true" meta="5" name="Prorator" pi="false" portion="1" price="9665728" tech="Tech II" volume="200000.0">
+    <row category="Ship" group="Blockade Runner" id="12733" marketgroup="true" meta="5" name="Prorator" pi="false" portion="1" price="9665728" tech="Tech II" volume="200000.0">
         <material id="34" portionsize="1" quantity="85516"/>
         <material id="35" portionsize="1" quantity="29417"/>
         <material id="36" portionsize="1" quantity="7148"/>
@@ -13887,7 +13887,7 @@
         <material id="11557" portionsize="1" quantity="100"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12734" marketgroup="true" meta="0" name="Prorator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12735" marketgroup="true" meta="5" name="Prowler" pi="false" portion="1" price="9662268" tech="Tech II" volume="180000.0">
+    <row category="Ship" group="Blockade Runner" id="12735" marketgroup="true" meta="5" name="Prowler" pi="false" portion="1" price="9662268" tech="Tech II" volume="180000.0">
         <material id="34" portionsize="1" quantity="100142"/>
         <material id="35" portionsize="1" quantity="27488"/>
         <material id="37" portionsize="1" quantity="1911"/>
@@ -13905,7 +13905,7 @@
         <material id="11555" portionsize="1" quantity="100"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12736" marketgroup="true" meta="0" name="Prowler Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12743" marketgroup="true" meta="5" name="Viator" pi="false" portion="1" price="9718782" tech="Tech II" volume="190000.0">
+    <row category="Ship" group="Blockade Runner" id="12743" marketgroup="true" meta="5" name="Viator" pi="false" portion="1" price="9718782" tech="Tech II" volume="190000.0">
         <material id="34" portionsize="1" quantity="92431"/>
         <material id="35" portionsize="1" quantity="33244"/>
         <material id="36" portionsize="1" quantity="8277"/>
@@ -13923,7 +13923,7 @@
         <material id="11556" portionsize="1" quantity="100"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12744" marketgroup="true" meta="0" name="Viator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12745" marketgroup="true" meta="5" name="Occator" pi="false" portion="1" price="15220246" tech="Tech II" volume="290000.0">
+    <row category="Ship" group="Deep Space Transport" id="12745" marketgroup="true" meta="5" name="Occator" pi="false" portion="1" price="15220246" tech="Tech II" volume="290000.0">
         <material id="34" portionsize="1" quantity="131279"/>
         <material id="35" portionsize="1" quantity="51516"/>
         <material id="36" portionsize="1" quantity="13449"/>
@@ -13941,7 +13941,7 @@
         <material id="11556" portionsize="1" quantity="250"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12746" marketgroup="true" meta="0" name="Occator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12747" marketgroup="true" meta="5" name="Mastodon" pi="false" portion="1" price="15221130" tech="Tech II" volume="285000.0">
+    <row category="Ship" group="Deep Space Transport" id="12747" marketgroup="true" meta="5" name="Mastodon" pi="false" portion="1" price="15221130" tech="Tech II" volume="285000.0">
         <material id="34" portionsize="1" quantity="148121"/>
         <material id="35" portionsize="1" quantity="37484"/>
         <material id="37" portionsize="1" quantity="4211"/>
@@ -13959,7 +13959,7 @@
         <material id="11555" portionsize="1" quantity="250"/>
     </row>
     <row category="Blueprint" group="Elite Industrial Blueprint" id="12748" marketgroup="true" meta="0" name="Mastodon Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Transport Ship" id="12753" marketgroup="true" meta="5" name="Impel" pi="false" portion="1" price="15225794" tech="Tech II" volume="300000.0">
+    <row category="Ship" group="Deep Space Transport" id="12753" marketgroup="true" meta="5" name="Impel" pi="false" portion="1" price="15225794" tech="Tech II" volume="300000.0">
         <material id="34" portionsize="1" quantity="124165"/>
         <material id="35" portionsize="1" quantity="45612"/>
         <material id="36" portionsize="1" quantity="10999"/>
@@ -19573,7 +19573,11 @@
     <row category="Module" group="Warp Scrambler" id="15431" marketgroup="false" meta="13" name="Makur's Modified Warp Disruptor" pi="false" portion="1" price="39424" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Warp Scrambler" id="15433" marketgroup="false" meta="13" name="Makur's Modified Warp Scrambler" pi="false" portion="1" price="39424" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Heat Sink" id="15435" marketgroup="false" meta="14" name="Makur's Modified Heat Sink" pi="false" portion="1" price="24960" tech="Storyline" volume="5.0"/>
-    <row category="Module" group="Capacitor Power Relay" id="15437" marketgroup="false" meta="11" name="Makur's Modified Capacitor Power Relay" pi="false" portion="1" price="9744" tech="Officer" volume="5.0"/>
+    <row category="Module" group="Capacitor Power Relay" id="15437" marketgroup="true" meta="11" name="Makur's Modified Capacitor Power Relay" pi="false" portion="1" price="9744" tech="Officer" volume="5.0">
+        <material id="34" portionsize="1" quantity="1004"/>
+        <material id="35" portionsize="1" quantity="775"/>
+        <material id="38" portionsize="1" quantity="3"/>
+    </row>
     <row category="Module" group="Power Diagnostic System" id="15439" marketgroup="false" meta="13" name="Makur's Modified Power Diagnostic System" pi="false" portion="1" price="9920" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Projectile Weapon" id="15443" marketgroup="false" meta="7" name="Shaqil's Modified 1200mm Artillery Cannon" pi="false" portion="1" price="1200000" tech="Tech I" volume="20.0"/>
     <row category="Module" group="Projectile Weapon" id="15445" marketgroup="false" meta="13" name="Shaqil's Modified 1400mm Howitzer Artillery" pi="false" portion="1" price="1500000" tech="Tech I" volume="20.0"/>
@@ -21235,7 +21239,7 @@
     <row category="Structure" group="Moon Mining" id="16221" marketgroup="true" meta="0" name="Moon Harvesting Array" pi="false" portion="1" price="5000000" tech="Tech I" volume="4000.0"/>
     <row category="Structure" group="Mobile Missile Sentry" id="16222" marketgroup="false" meta="0" name="Light Missile Battery" pi="false" portion="1" price="128" tech="Tech I" volume="1150.0"/>
     <row category="Structure" group="Mobile Shield Generator" id="16223" marketgroup="false" meta="0" name="Shield Generation Array" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
-    <row category="Ship" group="Battlecruiser" id="16227" marketgroup="true" meta="0" name="Ferox" pi="false" portion="1" price="24000000" tech="Tech I" volume="252000.0">
+    <row category="Ship" group="Combat Battlecruiser" id="16227" marketgroup="true" meta="0" name="Ferox" pi="false" portion="1" price="24000000" tech="Tech I" volume="252000.0">
         <material id="34" portionsize="1" quantity="1539680"/>
         <material id="35" portionsize="1" quantity="387080"/>
         <material id="36" portionsize="1" quantity="107188"/>
@@ -21244,8 +21248,8 @@
         <material id="39" portionsize="1" quantity="2254"/>
         <material id="40" portionsize="1" quantity="524"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="16228" marketgroup="true" meta="0" name="Ferox Blueprint" pi="false" portion="1" price="240000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="16229" marketgroup="true" meta="0" name="Brutix" pi="false" portion="1" price="27000000" tech="Tech I" volume="270000.0">
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="16228" marketgroup="true" meta="0" name="Ferox Blueprint" pi="false" portion="1" price="540000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="16229" marketgroup="true" meta="0" name="Brutix" pi="false" portion="1" price="27000000" tech="Tech I" volume="270000.0">
         <material id="34" portionsize="1" quantity="1904428"/>
         <material id="35" portionsize="1" quantity="421189"/>
         <material id="36" portionsize="1" quantity="151522"/>
@@ -21253,8 +21257,8 @@
         <material id="39" portionsize="1" quantity="1648"/>
         <material id="40" portionsize="1" quantity="857"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="16230" marketgroup="true" meta="0" name="Brutix Blueprint" pi="false" portion="1" price="270000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="16231" marketgroup="true" meta="0" name="Cyclone" pi="false" portion="1" price="22500000" tech="Tech I" volume="216000.0">
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="16230" marketgroup="true" meta="0" name="Brutix Blueprint" pi="false" portion="1" price="570000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="16231" marketgroup="true" meta="0" name="Cyclone" pi="false" portion="1" price="22500000" tech="Tech I" volume="216000.0">
         <material id="34" portionsize="1" quantity="1623468"/>
         <material id="35" portionsize="1" quantity="405001"/>
         <material id="36" portionsize="1" quantity="97844"/>
@@ -21262,8 +21266,8 @@
         <material id="39" portionsize="1" quantity="1743"/>
         <material id="40" portionsize="1" quantity="684"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="16232" marketgroup="true" meta="0" name="Cyclone Blueprint" pi="false" portion="1" price="225000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="16233" marketgroup="true" meta="0" name="Prophecy" pi="false" portion="1" price="25500000" tech="Tech I" volume="234000.0">
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="16232" marketgroup="true" meta="0" name="Cyclone Blueprint" pi="false" portion="1" price="525000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="16233" marketgroup="true" meta="0" name="Prophecy" pi="false" portion="1" price="25500000" tech="Tech I" volume="234000.0">
         <material id="34" portionsize="1" quantity="2280140"/>
         <material id="35" portionsize="1" quantity="489013"/>
         <material id="36" portionsize="1" quantity="125053"/>
@@ -21271,7 +21275,7 @@
         <material id="39" portionsize="1" quantity="1973"/>
         <material id="40" portionsize="1" quantity="784"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="16234" marketgroup="true" meta="0" name="Prophecy Blueprint" pi="false" portion="1" price="255000000" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="16234" marketgroup="true" meta="0" name="Prophecy Blueprint" pi="false" portion="1" price="555000000" tech="Tech I" volume="0.01"/>
     <row category="Ship" group="Destroyer" id="16236" marketgroup="true" meta="0" name="Coercer" pi="false" portion="1" price="863524" tech="Tech I" volume="47000.0">
         <material id="34" portionsize="1" quantity="50274"/>
         <material id="35" portionsize="1" quantity="18300"/>
@@ -33916,16 +33920,16 @@
         <material id="40" portionsize="1" quantity="2275"/>
     </row>
     <row category="Blueprint" group="Battleship Blueprint" id="24695" marketgroup="true" meta="0" name="Maelstrom Blueprint" pi="false" portion="1" price="1450000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="24696" marketgroup="true" meta="0" name="Harbinger" pi="false" portion="1" price="38500000" tech="Tech I" volume="234000.0">
+    <row category="Ship" group="Combat Battlecruiser" id="24696" marketgroup="true" meta="0" name="Harbinger" pi="false" portion="1" price="38359712" tech="Tech I" volume="234000.0">
         <material id="34" portionsize="1" quantity="3493836"/>
         <material id="35" portionsize="1" quantity="747201"/>
-        <material id="36" portionsize="1" quantity="187588"/>
-        <material id="37" portionsize="1" quantity="30449"/>
+        <material id="36" portionsize="1" quantity="185000"/>
+        <material id="37" portionsize="1" quantity="30000"/>
         <material id="39" portionsize="1" quantity="2954"/>
         <material id="40" portionsize="1" quantity="1170"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="24697" marketgroup="true" meta="0" name="Harbinger Blueprint" pi="false" portion="1" price="385000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="24698" marketgroup="true" meta="0" name="Drake" pi="false" portion="1" price="38000000" tech="Tech I" volume="252000.0">
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="24697" marketgroup="true" meta="0" name="Harbinger Blueprint" pi="false" portion="1" price="585000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="24698" marketgroup="true" meta="0" name="Drake" pi="false" portion="1" price="38000000" tech="Tech I" volume="252000.0">
         <material id="34" portionsize="1" quantity="2444312"/>
         <material id="35" portionsize="1" quantity="612070"/>
         <material id="36" portionsize="1" quantity="168645"/>
@@ -33934,17 +33938,17 @@
         <material id="39" portionsize="1" quantity="3603"/>
         <material id="40" portionsize="1" quantity="839"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="24699" marketgroup="true" meta="0" name="Drake Blueprint" pi="false" portion="1" price="380000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="24700" marketgroup="true" meta="0" name="Myrmidon" pi="false" portion="1" price="40000000" tech="Tech I" volume="270000.0">
-        <material id="34" portionsize="1" quantity="2885176"/>
-        <material id="35" portionsize="1" quantity="642378"/>
-        <material id="36" portionsize="1" quantity="215466"/>
-        <material id="38" portionsize="1" quantity="13483"/>
-        <material id="39" portionsize="1" quantity="2523"/>
-        <material id="40" portionsize="1" quantity="1236"/>
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="24699" marketgroup="true" meta="0" name="Drake Blueprint" pi="false" portion="1" price="580000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="24700" marketgroup="true" meta="0" name="Myrmidon" pi="false" portion="1" price="39146400" tech="Tech I" volume="270000.0">
+        <material id="34" portionsize="1" quantity="2850000"/>
+        <material id="35" portionsize="1" quantity="640000"/>
+        <material id="36" portionsize="1" quantity="210000"/>
+        <material id="38" portionsize="1" quantity="13000"/>
+        <material id="39" portionsize="1" quantity="2500"/>
+        <material id="40" portionsize="1" quantity="1200"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="24701" marketgroup="true" meta="0" name="Myrmidon Blueprint" pi="false" portion="1" price="400000000" tech="Tech I" volume="0.01"/>
-    <row category="Ship" group="Battlecruiser" id="24702" marketgroup="true" meta="0" name="Hurricane" pi="false" portion="1" price="36500000" tech="Tech I" volume="216000.0">
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="24701" marketgroup="true" meta="0" name="Myrmidon Blueprint" pi="false" portion="1" price="600000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Combat Battlecruiser" id="24702" marketgroup="true" meta="0" name="Hurricane" pi="false" portion="1" price="36500000" tech="Tech I" volume="216000.0">
         <material id="34" portionsize="1" quantity="2630020"/>
         <material id="35" portionsize="1" quantity="656103"/>
         <material id="36" portionsize="1" quantity="158507"/>
@@ -33952,7 +33956,7 @@
         <material id="39" portionsize="1" quantity="2848"/>
         <material id="40" portionsize="1" quantity="1108"/>
     </row>
-    <row category="Blueprint" group="Battlecruiser Blueprint" id="24703" marketgroup="true" meta="0" name="Hurricane Blueprint" pi="false" portion="1" price="365000000" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Battlecruiser Blueprint" id="24703" marketgroup="true" meta="0" name="Hurricane Blueprint" pi="false" portion="1" price="565000000" tech="Tech I" volume="0.01"/>
     <row category="Commodity" group="Commodities" id="24707" marketgroup="false" meta="0" name="Caldari Graduation Certificate" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Commodities" id="24708" marketgroup="false" meta="0" name="Caldari Graduation Certificate (signed)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Commodities" id="24714" marketgroup="false" meta="0" name="Important Surveillance Data" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
@@ -43213,19 +43217,19 @@
         <material id="36" portionsize="1" quantity="433"/>
         <material id="37" portionsize="1" quantity="102"/>
     </row>
-    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32773" marketgroup="false" meta="0" name="Medium Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32773" marketgroup="true" meta="0" name="Medium Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Fueled Shield Booster" id="32774" marketgroup="true" meta="1" name="Small Ancillary Shield Booster" pi="false" portion="1" price="9116" tech="Tech I" volume="5.0">
         <material id="34" portionsize="1" quantity="1194"/>
         <material id="35" portionsize="1" quantity="433"/>
         <material id="36" portionsize="1" quantity="102"/>
     </row>
-    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32775" marketgroup="false" meta="0" name="Small Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32775" marketgroup="true" meta="0" name="Small Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Fueled Shield Booster" id="32780" marketgroup="true" meta="1" name="X-Large Ancillary Shield Booster" pi="false" portion="1" price="585472" tech="Tech I" volume="50.0">
         <material id="37" portionsize="1" quantity="1194"/>
         <material id="38" portionsize="1" quantity="433"/>
         <material id="39" portionsize="1" quantity="103"/>
     </row>
-    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32781" marketgroup="false" meta="0" name="X-Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Fueled Shield Booster Blueprint" id="32781" marketgroup="true" meta="0" name="X-Large Ancillary Shield Booster Blueprint" pi="false" portion="1" price="1458560" tech="Tech I" volume="0.01"/>
     <row category="Charge" group="Light Defender Missile" id="32782" marketgroup="true" meta="0" name="Light Defender Missile I" pi="false" portion="100" price="308" tech="Tech I" volume="0.015">
         <material id="34" portionsize="100" quantity="58"/>
         <material id="36" portionsize="100" quantity="6"/>
@@ -43656,7 +43660,7 @@
         <material id="33016" portionsize="1" quantity="1"/>
     </row>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="33016" marketgroup="true" meta="0" name="A Handful of Tiny Stars" pi="false" portion="1" price="0" tech="Tech I" volume="10.0"/>
-    <row category="Special Edition Assets" group="Special Edition Commodities" id="33017" marketgroup="true" meta="0" name="Key Pass to Open the Door" pi="false" portion="1" price="321959" tech="Tech I" volume="0.01">
+    <row category="Special Edition Assets" group="Special Edition Commodities" id="33017" marketgroup="true" meta="0" name="Deactivated Station Key Pass" pi="false" portion="1" price="321959" tech="Tech I" volume="0.01">
         <material id="34" portionsize="1" quantity="25"/>
         <material id="35" portionsize="1" quantity="14"/>
         <material id="36" portionsize="1" quantity="18"/>
@@ -43726,10 +43730,62 @@
     <row category="Apparel" group="Footwear" id="33064" marketgroup="true" meta="0" name="Boots.ini" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="33065" marketgroup="true" meta="0" name="Donut Holder" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Special Edition Commodities" id="33066" marketgroup="true" meta="0" name="New Eden Soundbox" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Blueprint" group="Special Edition Commodity Blueprints" id="33067" marketgroup="true" meta="0" name="Key Pass to Open the Door Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Blueprint" group="Special Edition Commodity Blueprints" id="33067" marketgroup="true" meta="0" name="Deactivated Station Key Pass Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Implant" group="Cyberimplant" id="33068" marketgroup="false" meta="0" name="QA SpaceAnchor Implant" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Celestial" group="Orbital Target" id="33069" marketgroup="false" meta="0" name="Orbital Target" pi="false" portion="1" price="0" tech="Tech I" volume="0.0"/>
     <row category="Commodity" group="Miscellaneous" id="33070" marketgroup="false" meta="0" name="New Eden Open Gold Medal" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="33071" marketgroup="false" meta="0" name="New Eden Open Silver Medal" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="33072" marketgroup="false" meta="0" name="New Eden Open Bronze Medal" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="33073" marketgroup="false" meta="0" name="New Eden Open Fourth Place Medal" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Module" group="Fueled Armor Repairer" id="33076" marketgroup="true" meta="0" name="Small Ancillary Armor Repairer" pi="false" portion="1" price="20000" tech="Tech I" volume="5.0">
+        <material id="34" portionsize="1" quantity="772"/>
+        <material id="35" portionsize="1" quantity="259"/>
+        <material id="40" portionsize="1" quantity="2"/>
+    </row>
+    <row category="Blueprint" group="Fueled Armor Repairer Blueprint" id="33077" marketgroup="true" meta="0" name="Small Ancillary Armor Repairer Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Skill" group="Mechanics" id="33078" marketgroup="true" meta="0" name="Armor Honeycombing" pi="false" portion="1" price="1000000" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Rookie ship" id="33079" marketgroup="true" meta="0" name="Hematos" pi="false" portion="1" price="0" tech="Tech I" volume="28100.0"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="33080" marketgroup="false" meta="0" name="Hematos Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Rookie ship" id="33081" marketgroup="true" meta="0" name="Taipan" pi="false" portion="1" price="0" tech="Tech I" volume="15000.0"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="33082" marketgroup="false" meta="0" name="Taipan Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Rookie ship" id="33083" marketgroup="true" meta="0" name="Violator" pi="false" portion="1" price="0" tech="Tech I" volume="24500.0"/>
+    <row category="Blueprint" group="Frigate Blueprint" id="33084" marketgroup="false" meta="0" name="Violator Blueprint" pi="false" portion="1" price="9999999" tech="Tech I" volume="0.01"/>
+    <row category="Implant" group="Booster" id="33087" marketgroup="false" meta="0" name="Advanced Cerebral Accelerator" pi="false" portion="1" price="32768" tech="Tech I" volume="1.0"/>
+    <row category="Blueprint" group="Booster Blueprints" id="33088" marketgroup="false" meta="0" name="Advanced Cerebral Accelerator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Ship" group="Destroyer" id="33099" marketgroup="true" meta="0" name="Nefantar Thrasher" pi="false" portion="1" price="2" tech="Faction" volume="43000.0">
+        <material id="34" portionsize="1" quantity="1"/>
+    </row>
+    <row category="Module" group="Fueled Armor Repairer" id="33101" marketgroup="true" meta="0" name="Medium Ancillary Armor Repairer" pi="false" portion="1" price="40000" tech="Tech I" volume="10.0">
+        <material id="34" portionsize="1" quantity="2044"/>
+        <material id="35" portionsize="1" quantity="957"/>
+        <material id="36" portionsize="1" quantity="815"/>
+        <material id="37" portionsize="1" quantity="1"/>
+        <material id="38" portionsize="1" quantity="4"/>
+    </row>
+    <row category="Blueprint" group="Fueled Armor Repairer Blueprint" id="33102" marketgroup="true" meta="0" name="Medium Ancillary Armor Repairer Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Module" group="Fueled Armor Repairer" id="33103" marketgroup="true" meta="0" name="Large Ancillary Armor Repairer" pi="false" portion="1" price="80000" tech="Tech I" volume="50.0">
+        <material id="34" portionsize="1" quantity="4196"/>
+        <material id="35" portionsize="1" quantity="1671"/>
+        <material id="36" portionsize="1" quantity="924"/>
+        <material id="37" portionsize="1" quantity="40"/>
+        <material id="38" portionsize="1" quantity="46"/>
+    </row>
+    <row category="Blueprint" group="Fueled Armor Repairer Blueprint" id="33104" marketgroup="true" meta="0" name="Large Ancillary Armor Repairer Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Apparel" group="Tops" id="33107" marketgroup="false" meta="0" name="Men's 'Quafe' T-shirt YC115" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tops" id="33109" marketgroup="false" meta="0" name="Women's 'Quafe' T-shirt YC115" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Implant" group="Booster" id="33111" marketgroup="false" meta="0" name="Prototype Cerebral Accelerator" pi="false" portion="1" price="32768" tech="Tech I" volume="1.0"/>
+    <row category="Blueprint" group="Booster Blueprints" id="33112" marketgroup="false" meta="0" name="Prototype Cerebral Accelerator Blueprint" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Commodity" group="Miscellaneous" id="33117" marketgroup="false" meta="0" name="Bronze Order of the Mountain" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33118" marketgroup="false" meta="0" name="Iron Order of the Storm" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33119" marketgroup="false" meta="0" name="Steel Order of the Cold" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33120" marketgroup="false" meta="0" name="Badge of Prophet Kuria" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33121" marketgroup="false" meta="0" name="Star of the Sefrim" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33122" marketgroup="false" meta="0" name="Senatorial Silver Star" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Miscellaneous" id="33123" marketgroup="false" meta="0" name="Gold Medallion of Liberty" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Miscellaneous" id="33124" marketgroup="false" meta="0" name="Platinum Medallion of Freedom" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Miscellaneous" id="33125" marketgroup="false" meta="0" name="Dagger of Coricia" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33126" marketgroup="false" meta="0" name="Spear of Matar" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33127" marketgroup="false" meta="0" name="Sword of Pator" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33128" marketgroup="false" meta="0" name="Defense of Caldari Prime Ribbon" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="33129" marketgroup="false" meta="0" name="Assault on Caldari Prime Ribbon" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
 </rows>
