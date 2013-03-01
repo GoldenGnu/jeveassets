@@ -21,7 +21,6 @@ _2.5.2__________________________________________________________________________
 New Features:
 -Added "None" container label
 
-
 Bug Fixes:
 -Industry Jobs failed to update
 
