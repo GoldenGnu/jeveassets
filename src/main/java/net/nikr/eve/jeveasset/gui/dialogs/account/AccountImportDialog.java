@@ -297,6 +297,7 @@ public class AccountImportDialog extends JDialogCentered {
 							donePanel.setText(DialoguesAccount.get().accountNotValidText());
 							break;
 						case FAIL_NO_ACCESS:
+							jNext.setEnabled(false);
 							donePanel.setResult(DialoguesAccount.get().noAccess());
 							donePanel.setText(DialoguesAccount.get().noAccessText());
 							break;
@@ -492,7 +493,7 @@ public class AccountImportDialog extends JDialogCentered {
 			}
 			accountGetter.load(null, true, account); //Update account
 			if (accountGetter.hasError() || accountGetter.getFails() > 0) { //Failed to add new account
-				if (accountGetter.getFails() > 0 && accountGetter.getFails() < accountGetter.getMaxFail()) { //Not enough access
+				if (accountGetter.getFails() > 0 && accountGetter.getFails() < accountGetter.getMaxFail()) { //limited access
 					result = Result.OK_LIMITED_ACCESS;
 				} else if (accountGetter.getFails() >= accountGetter.getMaxFail()) { //No access
 					result = Result.FAIL_NO_ACCESS;
