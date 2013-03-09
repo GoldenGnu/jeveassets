@@ -36,7 +36,6 @@ public abstract class TabsRouting extends Bundle {
 
 	public abstract String a(Object arg0, Object arg1);
 	public abstract String add();
-	public abstract String all();
 	public abstract String algorithm();
 	public abstract String calculate();
 	public abstract String cancel();

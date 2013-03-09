@@ -35,6 +35,7 @@ import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 
 public abstract class JMainTab {
@@ -113,6 +114,10 @@ public abstract class JMainTab {
 		if (jTable != null) {
 			jTable.lock();
 		}
+		if (jTable instanceof JSeparatorTable) {
+			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
+			jSeparatorTable.saveExpandedState();
+		}
 	}
 
 	public final void afterUpdateData() {
@@ -129,6 +134,10 @@ public abstract class JMainTab {
 		}
 		if (jTable != null) {
 			jTable.unlock();
+		}
+		if (jTable instanceof JSeparatorTable) {
+			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
+			jSeparatorTable.loadExpandedState();
 		}
 	}
 

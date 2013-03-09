@@ -30,10 +30,8 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -47,7 +45,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder> {
@@ -74,7 +71,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<MarketOrder>();
+		eventList = program.getMarketOrdersEventList();
 		//Filter
 		filterList = new FilterList<MarketOrder>(eventList);
 		filterList.addListEventListener(this);
@@ -170,40 +167,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	public void updateData() {
-		List<String> unique = new ArrayList<String>();
-		List<MarketOrder> allMarketOrders = new ArrayList<MarketOrder>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsOrders.get().whitespace(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					//Only add once and don't add empty orders
-					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
-					if (!unique.contains(name) && !marketOrders.isEmpty()) {
-						unique.add(name);
-						allMarketOrders.addAll(marketOrders);
-					}
-				}
-			}
-		}
-		if (!unique.isEmpty()) {
-			jTable.setEnabled(true);
-		} else {
-			jTable.setEnabled(false);
-		}
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(allMarketOrders);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-	}
+	public void updateData() { }
 
 	@Override
 	public void listChanged(ListEvent<MarketOrder> listChanges) {

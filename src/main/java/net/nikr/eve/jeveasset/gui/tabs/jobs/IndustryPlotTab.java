@@ -66,8 +66,6 @@ import org.slf4j.LoggerFactory;
 public class IndustryPlotTab extends JMainTab {
 	private static final Logger LOG = LoggerFactory.getLogger(IndustryPlotTab.class);
 
-	private IndustryJobData data;
-
 	private JButton updateButton;
 	private JPanel panel;
 	private JPanel infoPanel;
@@ -128,10 +126,6 @@ public class IndustryPlotTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		if (data == null) {
-			data = new IndustryJobData(program);
-		}
-		data.updateData();
 		panel.removeAll();
 		panel.add(createPanel(), BorderLayout.CENTER);
 		panel.add(updateButton, BorderLayout.SOUTH);
@@ -246,7 +240,7 @@ public class IndustryPlotTab extends JMainTab {
 		// count how many we have added to each series.
 		Map<Integer, AtomicInteger> seriesCounters = new HashMap<Integer, AtomicInteger>();
 
-		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(data.getAll());
+		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(program.getIndustryJobsEventList());
 		Collections.sort(jobsSorted, new Comparator<IndustryJob>() {
 			@Override
 			public int compare(final IndustryJob o1, final IndustryJob o2) {

@@ -190,9 +190,9 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private String location = "";
 	private String system;
 	private String region;
-	private String owner = "";
+	private Owner owner;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final String name, final String location, final String system, final String region, final String owner) {
+	public IndustryJob(final ApiIndustryJob apiIndustryJob, final String name, final String location, final String system, final String region, final Owner owner) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -325,6 +325,10 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	}
 
 	public String getOwner() {
-		return owner;
+		return owner.getName();
+	}
+
+	public long getOwnerID() {
+		return owner.getOwnerID();
 	}
 }

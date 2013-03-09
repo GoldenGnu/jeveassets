@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
@@ -222,7 +223,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
 			Asset exportAsset = null;
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			EventList<Asset> eveAssetEventList = program.getAssetEventList();
 			for (Asset eveAsset : eveAssetEventList) {
 				String key = eveAsset.getName() + " #" + eveAsset.getItemID();
 				if (!selectedShip.equals(key)) {
@@ -278,8 +279,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	private void updateTable() {
 		List<Module> ship = new ArrayList<Module>();
-		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-		for (Asset eveAsset : eveAssetEventList) {
+		for (Asset eveAsset : program.getAssetEventList()) {
 			String key = eveAsset.getName() + " #" + eveAsset.getItemID();
 			if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
 				continue;
@@ -335,30 +335,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		List<String> owners = new ArrayList<String>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (Account account : accounts) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsLoadout.get().whitespace9(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					if (!owners.contains(name)) {
-						owners.add(name);
-					}
-				}
-			}
-		}
-		if (!owners.isEmpty()) {
+		if (!program.getOwners(false).isEmpty()) {
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			Collections.sort(owners, new CaseInsensitiveComparator());
-			owners.add(0, TabsLoadout.get().all());
-			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			if (selectedItem != null && owners.contains(selectedItem)) {
+			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
 				jOwners.setSelectedIndex(0);
@@ -378,16 +359,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (ACTION_OWNERS.equals(e.getActionCommand())) {
 			String owner = (String) jOwners.getSelectedItem();
 			List<String> charShips = new ArrayList<String>();
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			EventList<Asset> eveAssetEventList = program.getAssetEventList();
 			for (Asset eveAsset : eveAssetEventList) {
 				String key = eveAsset.getName() + " #" + eveAsset.getItemID();
 				if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
 					continue;
 				}
-				if (!owner.equals(eveAsset.getOwner())
-						&& !owner.equals(TabsLoadout.get().whitespace9(eveAsset.getOwner()))
-						&& !owner.equals(TabsLoadout.get().all())
-						) {
+				if (!owner.equals(eveAsset.getOwner()) && !owner.equals(General.get().all())) {
 					continue;
 				}
 				charShips.add(key);
@@ -433,7 +411,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
 			List<Asset> ships = new ArrayList<Asset>();
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
+			EventList<Asset> eveAssetEventList = program.getAssetEventList();
 			for (Asset eveAsset : eveAssetEventList) {
 				if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
 					continue;

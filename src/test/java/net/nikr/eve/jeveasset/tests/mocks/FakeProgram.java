@@ -24,8 +24,14 @@ package net.nikr.eve.jeveasset.tests.mocks;
 import ca.odell.glazedlists.EventList;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.IndustryJob;
+import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
@@ -33,9 +39,11 @@ import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
+import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
  * any method called will throw an exception. extend and override only the ones that are needed to perform the tests.
@@ -73,7 +81,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<Asset> getEveAssetEventList() {
+	public EventList<Asset> getAssetEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -157,4 +165,45 @@ public abstract class FakeProgram extends Program {
 	public ReprocessedTab getReprocessedTab() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public EventList<ContractItem> getContractItemEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public EventList<IndustryJob> getIndustryJobsEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public EventList<MarketOrder> getMarketOrdersEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public List<String> getOwners(boolean all) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public List<Account> getAccounts() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public ProfileManager getProfileManager() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public PriceDataGetter getPriceDataGetter() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public EventList<AccountBalance> getAccountBalanceEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
 }

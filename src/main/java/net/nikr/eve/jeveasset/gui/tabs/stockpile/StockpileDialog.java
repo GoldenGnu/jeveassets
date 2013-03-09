@@ -45,8 +45,8 @@ import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -77,8 +77,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private EventList<Location> locations = new BasicEventList<Location>();
 	private FilterList<Location> locationsFilter;
 	private List<String> myLocations;
-	private final Owner ownerAll = new Owner(null, TabsStockpile.get().all(), -1);
-	private final ItemFlag itemFlagAll = new ItemFlag(-1, TabsStockpile.get().all(), "");
+	private final Owner ownerAll = new Owner(null, General.get().all(), -1);
+	private final ItemFlag itemFlagAll = new ItemFlag(-1, General.get().all(), "");
 	public static final Location LOCATION_ALL = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
@@ -364,7 +364,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 
 		//Owners
 		Owner ownerSelected = ownerAll;
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.getOwnerID() == loadStockpile.getOwnerID()) {
 					ownerSelected = owner;
@@ -439,7 +439,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 
 		//Owners
 		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersById.put(owner.getOwnerID(), owner);
 			}
@@ -474,7 +474,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Containers & Locations Loop
 		List<String> containers = new ArrayList<String>();
 		myLocations = new ArrayList<String>();
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			if (!containers.contains(asset.getContainer()) && !asset.getContainer().isEmpty()) {
 				containers.add(asset.getContainer());
 			}
@@ -488,32 +488,26 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 				myLocations.add(asset.getRegion());
 			}
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(owner.getIndustryJobs(), owner.getName(), program.getSettings());
-				for (IndustryJob industryJob : industryJobs) {
-					if (!myLocations.contains(industryJob.getLocation())) {
-						myLocations.add(industryJob.getLocation());
-					}
-					if (!myLocations.contains(industryJob.getSystem())) {
-						myLocations.add(industryJob.getSystem());
-					}
-					if (!myLocations.contains(industryJob.getRegion())) {
-						myLocations.add(industryJob.getRegion());
-					}
-				}
-				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
-				for (MarketOrder marketOrder : marketOrders) {
-					if (!myLocations.contains(marketOrder.getLocation())) {
-						myLocations.add(marketOrder.getLocation());
-					}
-					if (!myLocations.contains(marketOrder.getSystem())) {
-						myLocations.add(marketOrder.getSystem());
-					}
-					if (!myLocations.contains(marketOrder.getRegion())) {
-						myLocations.add(marketOrder.getRegion());
-					}
-				}
+		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+			if (!myLocations.contains(industryJob.getLocation())) {
+				myLocations.add(industryJob.getLocation());
+			}
+			if (!myLocations.contains(industryJob.getSystem())) {
+				myLocations.add(industryJob.getSystem());
+			}
+			if (!myLocations.contains(industryJob.getRegion())) {
+				myLocations.add(industryJob.getRegion());
+			}
+		}
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			if (!myLocations.contains(marketOrder.getLocation())) {
+				myLocations.add(marketOrder.getLocation());
+			}
+			if (!myLocations.contains(marketOrder.getSystem())) {
+				myLocations.add(marketOrder.getSystem());
+			}
+			if (!myLocations.contains(marketOrder.getRegion())) {
+				myLocations.add(marketOrder.getRegion());
 			}
 		}
 		//FIXME - Consider making "All Locations" the default for the Add Stockpile Dialog
@@ -525,12 +519,12 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jLocations.setSelectedIndex(0);
 		//Containers
 		if (containers.isEmpty()) {
-			containers.add(0, TabsStockpile.get().all());
+			containers.add(0, General.get().all());
 			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(false);
 		} else {
 			Collections.sort(containers, new CaseInsensitiveComparator());
-			containers.add(0, TabsStockpile.get().all());
+			containers.add(0, General.get().all());
 			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
 			jContainer.setEnabled(true);
 		}

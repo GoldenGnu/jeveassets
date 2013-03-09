@@ -33,17 +33,15 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
@@ -134,32 +132,13 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		List<String> owners = new ArrayList<String>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (Account account : accounts) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsMaterials.get().whitespace(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					if (!owners.contains(name)) {
-						owners.add(name);
-					}
-				}
-			}
-		}
-		if (!owners.isEmpty()) {
+		if (!program.getOwners(false).isEmpty()) {
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
 			String selectedItem = (String) jOwners.getSelectedItem();
-			Collections.sort(owners, new CaseInsensitiveComparator());
-			owners.add(0, TabsMaterials.get().all());
-			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			if (selectedItem != null && owners.contains(selectedItem)) {
+			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
 				jOwners.setSelectedItem(selectedItem);
 			} else {
 				jOwners.setSelectedIndex(0);
@@ -211,16 +190,15 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		Map<String, Material> totalAllMaterials = new HashMap<String, Material>();
 		Map<String, Material> summary = new HashMap<String, Material>();
 		Map<String, Material> total = new HashMap<String, Material>();
-		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		//Summary Total All
-		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, TabsMaterials.get().all(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
-		for (Asset eveAsset : eveAssetEventList) {
+		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, General.get().all(), TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), null);
+		for (Asset eveAsset : program.getAssetEventList()) {
 			//Skip none-material + none Pi Material (if not enabled)
 			if (!eveAsset.getCategory().equals("Material") && (!eveAsset.isPiMaterial() || !jPiMaterial.isSelected())) {
 				continue;
 			}
 			//Skip not selected owners
-			if (!owner.equals(eveAsset.getOwner()) && !owner.equals(TabsMaterials.get().whitespace(eveAsset.getOwner())) && !owner.equals(TabsMaterials.get().all())) {
+			if (!owner.equals(eveAsset.getOwner()) && !owner.equals(General.get().all())) {
 				continue;
 			}
 
@@ -242,7 +220,7 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 
 			//Locations Total All
 			if (!totalAllMaterials.containsKey(eveAsset.getLocation())) { //New
-				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, TabsMaterials.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), eveAsset);
+				Material totalAllMaterial = new Material(MaterialType.LOCATIONS_ALL, General.get().all(), eveAsset.getLocation(), TabsMaterials.get().total(), eveAsset);
 				totalAllMaterials.put(eveAsset.getLocation(), totalAllMaterial);
 				materials.add(totalAllMaterial);
 			}

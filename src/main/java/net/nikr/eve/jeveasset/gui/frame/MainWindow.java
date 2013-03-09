@@ -98,8 +98,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 						Program.PROGRAM_NAME,
 						Program.PROGRAM_VERSION,
 						Settings.isPortable() ? 1 : 0,
-						program.getSettings().getProfiles().size(),
-						program.getSettings().getActiveProfile().getName()
+						program.getProfileManager().getProfiles().size(),
+						program.getProfileManager().getActiveProfile().getName()
 						));
 	}
 

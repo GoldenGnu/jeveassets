@@ -175,7 +175,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 			}
 		}
 		if (update) {
-			program.updateEventList();
+			program.updateEventLists();
 		}
 	}
 

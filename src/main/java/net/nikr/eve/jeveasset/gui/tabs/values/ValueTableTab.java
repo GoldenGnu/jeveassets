@@ -29,23 +29,19 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -141,13 +137,21 @@ public class ValueTableTab extends JMainTab {
 		//JMenuInfo.asset(jComponent, selectionModel.getSelected());
 	}
 
+	private Value getValue(Map<String, Value> values, String owner) {
+		Value value = values.get(owner);
+		if (value == null) {
+			value = new Value(owner);
+			values.put(owner, value);
+		}
+		return value;
+	}
+
 	@Override
 	public void updateData() {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal());
 		values.put(total.getName(), total);
-		Set<String> uniqueOwners = new HashSet<String>();
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -162,47 +166,28 @@ public class ValueTableTab extends JMainTab {
 			if (asset.getFlag().equals(General.get().contractExcluded())) {
 				continue; //Ignore contracts excluded
 			}
-			String key = asset.getOwner();
-			Value value = values.get(key);
-			if (value == null) {
-				value = new Value(key);
-				values.put(key, value);
-			}
+			Value value = getValue(values, asset.getOwner());
 			value.addAssets(asset);
 			total.addAssets(asset);
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowAssets()) { //Ignore hidden owners
-					continue;
-				}
-				String key = owner.getName();
-				if (uniqueOwners.contains(key)) {
-					continue;
-				} else {
-					uniqueOwners.add(key);
-				}
-				Value value = values.get(key);
-				if (value == null) {
-					value = new Value(key);
-					values.put(key, value);
-				}
-				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					value.addBalance(accountBalance.getBalance());
-					total.addBalance(accountBalance.getBalance());
-				}
-				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
-					if (apiMarketOrder.getOrderState() == 0) {
-						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							value.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							total.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-						} else { //Buy Orders
-							value.addEscrows(apiMarketOrder.getEscrow());
-							value.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							total.addEscrows(apiMarketOrder.getEscrow());
-							total.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-						}
-					}
+		//Account Balance
+		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+			Value value = getValue(values, accountBalance.getOwner());
+			value.addBalance(accountBalance.getBalance());
+			total.addBalance(accountBalance.getBalance());
+		}
+		//Market Orders
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			Value value = getValue(values, marketOrder.getOwner());
+			if (marketOrder.getOrderState() == 0) {
+				if (marketOrder.getBid() < 1) { //Sell Orders
+					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+				} else { //Buy Orders
+					value.addEscrows(marketOrder.getEscrow());
+					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					total.addEscrows(marketOrder.getEscrow());
+					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
 			}
 		}

@@ -116,12 +116,11 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private long regionID; //LocationID : long
 	private int typeID; //TypeID : int
 	private int flagID; //FlagID : int
-	private long ownerID;
 	private String typeName;
 	private String name;
 	private String group;
 	private String category;
-	private String owner;
+	private Owner owner;
 	private long count;
 	private String location;
 	private String container = "";
@@ -133,7 +132,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private boolean marketGroup;
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
-	private boolean corporation;
 	private float volume;
 	private String region;
 	private long typeCount = 0;
@@ -151,7 +149,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	 */
 	protected Asset() { }
 
-	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID, final long ownerID) {
+	public Asset(final String typeName, final String group, final String category, final Owner owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID) {
 		this.typeName = typeName;
 		this.name = getTypeName();
 		this.group = group;
@@ -168,7 +166,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.itemID = itemID;
 		this.typeID = typeID;
 		this.marketGroup = marketGroup;
-		this.corporation = corporation;
 		this.volume = volume;
 		this.region = region;
 		this.locationID = locationID;
@@ -179,7 +176,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.rawQuantity = rawQuantity;
 		this.piMaterial = piMaterial;
 		this.regionID = regionID;
-		this.ownerID = ownerID;
 	}
 
 	public void addEveAsset(final Asset eveAsset) {
@@ -308,11 +304,11 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public String getOwner() {
-		return owner;
+		return owner.getName();
 	}
 
 	public long getOwnerID() {
-		return ownerID;
+		return owner.getOwnerID();
 	}
 
 	public List<Asset> getParents() {
@@ -466,7 +462,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public boolean isCorporation() {
-		return corporation;
+		return owner.isCorporation();
 	}
 
 	public boolean isMarketGroup() {

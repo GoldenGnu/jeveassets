@@ -21,20 +21,16 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 
 public class ProfileTestSettings extends FakeSettings {
 
-	ArrayList<Account> accounts = new ArrayList<Account>();
-
 	@Override
-	public List<Account> getAccounts() {
-		return accounts;
+	public Map<Long, String> getOwners() {
+		return new HashMap<Long, String>();
 	}
 
 	@Override

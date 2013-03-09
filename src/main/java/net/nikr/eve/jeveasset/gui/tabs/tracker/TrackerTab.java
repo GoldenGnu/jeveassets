@@ -21,8 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
@@ -42,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,9 +52,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.ToolTipManager;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -178,7 +175,7 @@ public class TrackerTab extends JMainTab {
 		jFrom = createDateChooser(TabsTracker.get().from());
 		jTo = createDateChooser(TabsTracker.get().to());
 
-		jAll = new JCheckBox(TabsTracker.get().all());
+		jAll = new JCheckBox(General.get().all());
 		jAll.setSelected(true);
 		jAll.setActionCommand(ACTION_All);
 		jAll.addActionListener(listener);
@@ -310,12 +307,11 @@ public class TrackerTab extends JMainTab {
 
 	public void createTrackerDataPoint() {
 		Date date = new Date();
-		Set<String> uniqueOwners = new HashSet<String>();
 		Map<TrackerOwner, TrackerData> data = new HashMap<TrackerOwner, TrackerData>();
 		//All
 		TrackerData allTracker = new TrackerData(date);
 		data.put(new TrackerOwner(), allTracker);
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -335,36 +331,24 @@ public class TrackerTab extends JMainTab {
 			trackerData.addAssets(asset.getPrice() * asset.getCount());
 			allTracker.addAssets(asset.getPrice() * asset.getCount());
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowAssets()) { //Ignore hidden owners
-					continue;
-				}
-				if (uniqueOwners.contains(owner.getName())) {
-					continue;
-				} else {
-					uniqueOwners.add(owner.getName());
-				}
-				//TrackerData
-				TrackerData trackerData = getTrackerData(data, owner.getOwnerID(), owner.getName(), date);
-				//Account Balance
-				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					trackerData.addWalletBalance(accountBalance.getBalance());
-					allTracker.addWalletBalance(accountBalance.getBalance());
-				}
-				//Market Orders
-				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
-					if (apiMarketOrder.getOrderState() == 0) {
-						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							trackerData.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							allTracker.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-						} else { //Buy Orders
-							trackerData.addEscrows(apiMarketOrder.getEscrow());
-							allTracker.addEscrows(apiMarketOrder.getEscrow());
-							trackerData.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							allTracker.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-						}
-					}
+		//Account Balance
+		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+			TrackerData trackerData = getTrackerData(data, accountBalance.getOwnerID(), accountBalance.getOwner(), date);
+			trackerData.addWalletBalance(accountBalance.getBalance());
+			allTracker.addWalletBalance(accountBalance.getBalance());
+		}
+		//Market Orders
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			TrackerData trackerData = getTrackerData(data, marketOrder.getOwnerID(), marketOrder.getOwner(), date);
+			if (marketOrder.getOrderState() == 0) {
+				if (marketOrder.getBid() < 1) { //Sell Orders
+					trackerData.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					allTracker.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+				} else { //Buy Orders
+					trackerData.addEscrows(marketOrder.getEscrow());
+					allTracker.addEscrows(marketOrder.getEscrow());
+					trackerData.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					allTracker.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
 			}
 		}

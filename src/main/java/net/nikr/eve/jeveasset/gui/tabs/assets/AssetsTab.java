@@ -79,7 +79,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
 		//Backend
-		eventList = program.getEveAssetEventList();
+		eventList = program.getAssetEventList();
 		//Filter
 		filterList = new FilterList<Asset>(eventList);
 		filterList.addListEventListener(this);
@@ -172,11 +172,11 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (JMenuInfo.InfoItem infoItem : filterList) {
-			totalValue = totalValue + infoItem.getValue();
-			totalCount = totalCount + infoItem.getCount();
-			totalVolume = totalVolume + infoItem.getVolumeTotal();
-			totalReprocessed = totalReprocessed + infoItem.getValueReprocessed();
+		for (Asset asset : filterList) {
+			totalValue = totalValue + (asset.getPrice() * asset.getCount()) ;
+			totalCount = totalCount + asset.getCount();
+			totalVolume = totalVolume + asset.getVolumeTotal();
+			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
 		}
 		if (totalCount > 0 && totalValue > 0) {
 			averageValue = totalValue / totalCount;

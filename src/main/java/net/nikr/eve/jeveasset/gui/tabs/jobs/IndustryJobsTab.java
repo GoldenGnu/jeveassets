@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -59,7 +58,6 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	private FilterList<IndustryJob> filterList;
 	private EventTableModel<IndustryJob> tableModel;
 	private EventSelectionModel<IndustryJob> selectionModel;
-	private IndustryJobData data;
 	private IndustryJobsFilterControl filterControl;
 	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
@@ -71,7 +69,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<IndustryJob>();
+		eventList = program.getIndustryJobsEventList();
 		//Filter
 		filterList = new FilterList<IndustryJob>(eventList);
 		filterList.addListEventListener(this);
@@ -130,28 +128,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	}
 
 	@Override
-	public void updateData() {
-
-		if (data == null) {
-			data = new IndustryJobData(program);
-		}
-		data.updateData();
-
-		if (!data.getOwners().isEmpty()) {
-			jTable.setEnabled(true);
-			Collections.sort(data.getOwners(), new CaseInsensitiveComparator());
-			data.getOwners().add(0, TabsJobs.get().all());
-		} else {
-			jTable.setEnabled(false);
-		}
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(data.getAll());
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-	}
+	public void updateData() { }
 
 	@Override
 	public void updateTableMenu(final JComponent jComponent) {

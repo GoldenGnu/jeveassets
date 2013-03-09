@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.data;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import net.nikr.eve.jeveasset.io.local.AssetsReader;
+import net.nikr.eve.jeveasset.io.local.ProfileReader;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
@@ -59,13 +59,14 @@ public class ProfileTest {
 
 	private void test(String name, boolean supportContracts) throws URISyntaxException {
 		ProfileTestSettings settings = new ProfileTestSettings();
-		boolean load = AssetsReader.load(settings, getFilename(name));
+		ProfileManager profileManager = new ProfileManager(settings);
+		boolean load = ProfileReader.load(settings, profileManager, getFilename(name));
 		assertEquals(name+" fail to load", load, true);
-		assertEquals(name+" had no accounts", settings.getAccounts().isEmpty(), false);
+		assertEquals(name+" had no accounts", profileManager.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;
 		boolean industryJobs = false;
 		boolean contracts = false;
-		for (Account account : settings.getAccounts()) {
+		for (Account account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name: "+account.getName()+" is not safe");
 			}

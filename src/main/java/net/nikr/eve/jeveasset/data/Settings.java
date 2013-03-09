@@ -25,10 +25,6 @@ import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -44,13 +40,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
-import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.*;
-import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,20 +88,14 @@ public class Settings {
 	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
 	//XXX - Integer locationID
 	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>(); //LocationID : long
-	private Set<Integer> uniqueIds = null; //TypeID : int
-	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
-	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
-	private List<Asset> eventListAssets = null;
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	private List<Account> accounts;
 	private final Map<String, Float> packagedVolume = new HashMap<String, Float>();
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
-	private List<Profile> profiles;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	private Proxy proxy;
@@ -120,16 +106,13 @@ public class Settings {
 	private boolean windowAutoSave;
 	private boolean windowAlwaysOnTop;
 	private int maximumPurchaseAge = 0;
-	private Profile activeProfile;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
 	private Galaxy model;
-	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
 	private Map<Long, String> owners = new HashMap<Long, String>();
-
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
@@ -138,8 +121,6 @@ public class Settings {
 	public Settings() {
 		SplashUpdater.setProgress(5);
 		priceDatas = new HashMap<Integer, PriceData>();
-		accounts = new ArrayList<Account>();
-		profiles = new ArrayList<Profile>();
 
 		//Settings
 		userPrices = new HashMap<Integer, UserItem<Integer, Double>>();
@@ -199,9 +180,6 @@ public class Settings {
 
 		reprocessSettings = new ReprocessSettings();
 
-		activeProfile = new Profile("Default", true, true);
-		profiles.add(activeProfile);
-
 		conquerableStationsNextUpdate = Settings.getNow();
 
 		windowLocation = new Point(0, 0);
@@ -229,7 +207,6 @@ public class Settings {
 
 	public void saveSettings() {
 		SettingsWriter.save(this);
-		saveAssets();
 	}
 
 	private void loadSettings() {
@@ -246,31 +223,8 @@ public class Settings {
 		SplashUpdater.setProgress(30);
 	//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
-	//Find profiles
-		ProfileReader.load(this);
 		SplashUpdater.setProgress(35);
 		constructEveApiConnector();
-	}
-
-	public void loadActiveProfile() {
-	//Load Assets
-		LOG.info("Loading profile: {}", activeProfile.getName());
-		accounts = new ArrayList<Account>();
-		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
-		SplashUpdater.setProgress(40);
-	//Price data (update as needed)
-		clearEveAssetList(); //Must be cleared to update uniqueIds
-		priceDataGetter.load(); //Price Data - Must be loaded last
-		SplashUpdater.setProgress(45);
-		constructEveApiConnector();
-	}
-
-	public void saveAssets() {
-		AssetsWriter.save(this, activeProfile.getFilename());
-	}
-
-	public PriceDataGetter getPriceDataGetter() {
-		return priceDataGetter;
 	}
 
 	public static void setPortable(final boolean portable) {
@@ -279,243 +233,6 @@ public class Settings {
 
 	public static boolean isPortable() {
 		return portable;
-	}
-
-	public void clearEveAssetList() {
-		eventListAssets = null;
-		uniqueIds = null;
-		uniqueAssetsDuplicates = null;
-	}
-	public List<Asset> getEventListAssets() {
-		updateAssetLists();
-		return eventListAssets;
-	}
-	public Set<Integer> getUniqueIds() {
-		updateAssetLists();
-		return uniqueIds;
-	}
-
-	public boolean hasAssets() {
-		updateAssetLists();
-		return !uniqueIds.isEmpty();
-	}
-	private void updateAssetLists() {
-		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null) {
-			eventListAssets = new ArrayList<Asset>();
-			uniqueIds = new HashSet<Integer>();
-			uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
-			List<String> ownersOrders = new ArrayList<String>();
-			List<String> ownersJobs = new ArrayList<String>();
-			List<String> ownersContracts = new ArrayList<String>();
-			List<String> ownersAssets = new ArrayList<String>();
-			List<Long> contractIDs = new ArrayList<Long>();
-			//Create Market Price Data
-			marketPriceData = new HashMap<Integer, MarketPriceData>();
-			//Date - maximumPurchaseAge in days
-			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
-			for (Account account : accounts) {
-				for (Owner owner : account.getOwners()) {
-					for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
-						if (marketOrder.getBid() > 0 //Buy orders only
-								//at least one bought
-								&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
-								//Date in range or unlimited
-								&& (marketOrder.getIssued().after(maxAge) || maximumPurchaseAge == 0)
-								) {
-							int typeID = marketOrder.getTypeID();
-							if (!marketPriceData.containsKey(typeID)) {
-								marketPriceData.put(typeID, new MarketPriceData());
-							}
-							MarketPriceData data = marketPriceData.get(typeID);
-							data.update(marketOrder.getPrice(), marketOrder.getIssued());
-						}
-					}
-				}
-			}
-			//Add assets
-			for (Account account : accounts) {
-				for (Owner owner : account.getOwners()) {
-					//Market Orders
-					if (!owner.getMarketOrders().isEmpty() && !ownersOrders.contains(owner.getName())) {
-						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(owner.getMarketOrders(), owner, this);
-						addAssets(marketOrdersAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersOrders.add(owner.getName());
-						}
-					}
-					//Industry Jobs
-					if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
-						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(owner.getIndustryJobs(), owner, this);
-						addAssets(industryJobAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersJobs.add(owner.getName());
-						}
-					}
-					//Contracts
-					if (!owner.getContracts().isEmpty() && !ownersContracts.contains(owner.getName()) && isIncludeContracts()) {
-						List<Asset> contractAssets = ApiConverter.eveContracts(owner.getContracts(), this, contractIDs);
-						addAssets(contractAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersContracts.add(owner.getName());
-						}
-					}
-					//Assets (Must be after Industry Jobs, for bpos to be marked)
-					if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
-						addAssets(owner.getAssets(), owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersAssets.add(owner.getName());
-						}
-					}
-					//Add StockpileItems to uniqueIds
-					for (Stockpile stockpile : this.getStockpiles()) {
-						for (StockpileItem item : stockpile.getItems()) {
-							int typeID = item.getTypeID();
-							boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-							if (marketGroup) {
-								uniqueIds.add(typeID);
-							}
-						}
-					}
-					//Add MarketOrders to uniqueIds
-					for (ApiMarketOrder order : owner.getMarketOrders()) {
-						int typeID = order.getTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-						if (marketGroup) {
-							uniqueIds.add(typeID);
-						}
-					}
-					//Add IndustryJobs to uniqueIds
-					for (ApiIndustryJob job : owner.getIndustryJobs()) {
-						int typeID = job.getInstalledItemTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-						if (marketGroup) {
-							uniqueIds.add(typeID);
-						}
-					}
-					//Add Contracts to uniqueIds
-					for (Map.Entry<EveContract, List<EveContractItem>> entry : owner.getContracts().entrySet()) {
-						for (EveContractItem contractItem : entry.getValue()) {
-							int typeID = contractItem.getTypeID();
-							boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-							if (marketGroup) {
-								uniqueIds.add(typeID);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	private void addAssets(final List<Asset> assets, final boolean shouldShow) {
-		for (Asset asset : assets) {
-			if (shouldShow) {
-				//Data added
-				if (assetAdded.containsKey(asset.getItemID())) {
-					asset.setAdded(assetAdded.get(asset.getItemID()));
-				} else {
-					Date date = new Date();
-					assetAdded.put(asset.getItemID(), date);
-					asset.setAdded(date);
-				}
-				//User price
-				if (asset.isBlueprint() && !asset.isBpo()) { //Blueprint Copy
-					asset.setUserPrice(userPrices.get(-asset.getTypeID()));
-				} else { //All other
-					asset.setUserPrice(userPrices.get(asset.getTypeID()));
-				}
-				//Market price
-				asset.setMarketPriceData(marketPriceData.get(asset.getTypeID()));
-				//User Item Names
-				if (userNames.containsKey(asset.getItemID())) {
-					asset.setName(userNames.get(asset.getItemID()).getValue());
-				} else {
-					asset.setName(asset.getTypeName());
-				}
-				//Contaioner
-				String sContainer = "";
-				for (Asset parentEveAsset : asset.getParents()) {
-					if (!sContainer.isEmpty()) {
-						sContainer = sContainer + ">";
-					}
-					if (!parentEveAsset.isUserName()) {
-						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
-					} else {
-						sContainer = sContainer + parentEveAsset.getName();
-					}
-				}
-				if (sContainer.isEmpty()) {
-					sContainer = General.get().none();
-				}
-				asset.setContainer(sContainer);
-
-				//Price data
-				if (asset.isMarketGroup() && priceDatas.containsKey(asset.getTypeID()) && !priceDatas.get(asset.getTypeID()).isEmpty()) { //Market Price
-					asset.setPriceData(priceDatas.get(asset.getTypeID()));
-				} else { //No Price :(
-					asset.setPriceData(null);
-				}
-
-				//Reprocessed price
-				asset.setPriceReprocessed(0);
-				if (getItems().containsKey(asset.getTypeID())) {
-					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(asset.getTypeID()).getReprocessedMaterial();
-					double priceReprocessed = 0;
-					int portionSize = 0;
-					for (ReprocessedMaterial material : reprocessedMaterials) {
-						//Calculate reprocessed price
-						portionSize = material.getPortionSize();
-						if (priceDatas.containsKey(material.getTypeID())) {
-							PriceData priceData = priceDatas.get(material.getTypeID());
-							double price;
-							if (userPrices.containsKey(material.getTypeID())) {
-								price = userPrices.get(material.getTypeID()).getValue();
-							} else {
-								price = Asset.getDefaultPriceReprocessed(priceData);
-							}
-							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
-						}
-						//Unique Ids
-						boolean marketGroup = ApiIdConverter.marketGroup(material.getTypeID(), this.getItems());
-						if (marketGroup && !uniqueIds.contains(material.getTypeID())) {
-							uniqueIds.add(material.getTypeID());
-						}
-					}
-					if (priceReprocessed > 0 && portionSize > 0) {
-						priceReprocessed = priceReprocessed / portionSize;
-					}
-					asset.setPriceReprocessed(priceReprocessed);
-				}
-
-				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(asset.getTypeID())) {
-					uniqueAssetsDuplicates.put(asset.getTypeID(), new ArrayList<Asset>());
-				}
-				if (shouldShow) {
-					List<Asset> dup = uniqueAssetsDuplicates.get(asset.getTypeID());
-					long newCount = asset.getCount();
-					if (!dup.isEmpty()) {
-						newCount = newCount + dup.get(0).getTypeCount();
-					}
-					dup.add(asset);
-					for (Asset assetLoop : dup) {
-						assetLoop.setTypeCount(newCount);
-					}
-				}
-				//Packaged Volume
-				if (!asset.isSingleton() && packagedVolume.containsKey(asset.getGroup())) {
-					asset.setVolume(packagedVolume.get(asset.getGroup()));
-				}
-
-				//Add asset
-				eventListAssets.add(asset);
-			}
-			//Unique Ids
-			if (asset.isMarketGroup()) {
-				uniqueIds.add(asset.getTypeID());
-			}
-			//Add sub-assets
-			addAssets(asset.getAssets(), shouldShow);
-		}
 	}
 
 	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
@@ -558,6 +275,10 @@ public class Settings {
 		return 0;
 	}
 
+	public Map<String, Float> getPackagedVolume() {
+		return packagedVolume;
+	}
+
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}
@@ -569,9 +290,6 @@ public class Settings {
 	}
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
-	}
-	public Date getPriceDataNextUpdate() {
-		return priceDataGetter.getNextUpdate();
 	}
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		return userPrices;
@@ -585,36 +303,17 @@ public class Settings {
 	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
 		this.userNames = userItemNames;
 	}
-	public List<Account> getAccounts() {
-		return accounts;
-	}
-
-	public void setAccounts(final List<Account> accounts) {
-		this.accounts = accounts;
-	}
 
 	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
 	}
 
+	public Map<Integer, PriceData> getPriceData() {
+		return priceDatas;
+	}
+
 	public Map<String, Boolean> getFlags() {
 		return flags;
-	}
-
-	public List<Profile> getProfiles() {
-		return profiles;
-	}
-
-	public void setProfiles(final List<Profile> profiles) {
-		this.profiles = profiles;
-	}
-
-	public void setActiveProfile(final Profile activeProfile) {
-		this.activeProfile = activeProfile;
-	}
-
-	public Profile getActiveProfile() {
-		return activeProfile;
 	}
 
 	public ReprocessSettings getReprocessSettings() {

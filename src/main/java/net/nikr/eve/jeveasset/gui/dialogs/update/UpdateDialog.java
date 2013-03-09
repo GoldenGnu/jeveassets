@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
-import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -41,7 +40,9 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.eveapi.*;
 
 
@@ -75,7 +76,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public UpdateDialog(final Program program) {
 		super(program, DialoguesUpdate.get().update(), Images.DIALOG_UPDATE.getImage());
 
-		jCheckAll = new JCheckBox(DialoguesUpdate.get().all());
+		jCheckAll = new JCheckBox(General.get().all());
 		jCheckAll.setActionCommand(ACTION_CHECK_ALL);
 		jCheckAll.addActionListener(this);
 
@@ -223,8 +224,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		boolean bAssetsUpdateAll = true;
 		boolean bAccountBalanceUpdateAll = true;
 
-		Date priceDataNextUpdate = program.getSettings().getPriceDataNextUpdate();
-		for (Account account : program.getSettings().getAccounts()) {
+		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
+		for (Account account : program.getAccounts()) {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			bAccountsUpdateAll = updateAll(bAccountsUpdateAll, accountsNextUpdate);
@@ -411,7 +412,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			AccountGetter accountGetter = new AccountGetter();
-			accountGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			accountGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -424,7 +425,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			AssetsGetter assetsGetter = new AssetsGetter();
-			assetsGetter.load(this, program.getSettings());
+			assetsGetter.load(this, program.getAccounts(), program.getSettings());
 		}
 	}
 
@@ -437,7 +438,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			AccountBalanceGetter accountBalanceGetter = new AccountBalanceGetter();
-			accountBalanceGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			accountBalanceGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -450,7 +451,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-			industryJobsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			industryJobsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 		}
 	}
 
@@ -463,7 +464,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 		}
 	}
 
@@ -477,15 +478,15 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		public void update() {
 			//Get Contracts
 			ContractsGetter contractsGetter = new ContractsGetter();
-			contractsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			contractsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 			//Get Contract Items
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
-			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getSettings().getAccounts());
+			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 			Set<Long> list = new HashSet<Long>();
-			for (Account account : program.getSettings().getAccounts()) {
+			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					list.add(owner.getOwnerID()); //Just to be sure
-					for (EveContract contract : owner.getContracts().keySet()) {
+					for (Contract contract : owner.getContracts().keySet()) {
 						list.add(contract.getAcceptorID());
 						list.add(contract.getAssigneeID());
 						list.add(contract.getIssuerCorpID());
@@ -509,11 +510,11 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() {
-			program.getSettings().clearEveAssetList();
+			program.updateEventLists();
 			if (update) {
-				program.getSettings().getPriceDataGetter().update(this);
+				program.getPriceDataGetter().update(this);
 			} else {
-				program.getSettings().getPriceDataGetter().load(this);
+				program.getPriceDataGetter().load(this);
 			}
 		}
 	}

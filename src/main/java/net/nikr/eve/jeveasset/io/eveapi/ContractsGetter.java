@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.io.eveapi;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.contract.ContractsResponse;
 import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,18 +32,24 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
+
+	private Settings settings;
 
 	public ContractsGetter() {
 		super("Contracts", true, false);
 	}
 
-	@Override
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts, Settings settings) {
+		this.settings = settings;
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
@@ -81,19 +86,19 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	protected void setData(ContractsResponse response) {
 		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
 		//Create backup of existin contracts
-		Map<EveContract, List<EveContractItem>> existingContract= new HashMap<EveContract, List<EveContractItem>>(getOwner().getContracts());
+		Map<Contract, List<ContractItem>> existingContract= new HashMap<Contract, List<ContractItem>>(getOwner().getContracts());
 		//Remove existin contracts
 		getOwner().getContracts().clear();
 		for (EveContract contract : contracts) {
 			//Find existing contract
-			List<EveContractItem> contractItems = new ArrayList<EveContractItem>();
-			for (Map.Entry<EveContract, List<EveContractItem>> entry : existingContract.entrySet()) {
+			List<ContractItem> contractItems = new ArrayList<ContractItem>();
+			for (Map.Entry<Contract, List<ContractItem>> entry : existingContract.entrySet()) {
 				if (entry.getKey().getContractID() == contract.getContractID()) {
 					contractItems = entry.getValue();
 					break;
 				}
 			}
-			getOwner().getContracts().put(contract, contractItems);
+			getOwner().getContracts().put(ApiConverter.toContract(contract, settings), contractItems);
 		}
 	}
 

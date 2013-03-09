@@ -21,17 +21,17 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.IndustryJob;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.ProfileManager;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -40,31 +40,33 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public final class AssetsWriter extends AbstractXmlWriter {
+public final class ProfileWriter extends AbstractXmlWriter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AssetsWriter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProfileWriter.class);
 
-	private AssetsWriter() { }
+	private ProfileWriter() { }
 
-	public static void save(final Settings settings, final String filename) {
-		AssetsWriter writer = new AssetsWriter();
-		writer.write(settings, filename);
+	public static void save(final ProfileManager profileManager, final String filename) {
+		ProfileWriter writer = new ProfileWriter();
+		writer.write(profileManager, filename);
 	}
 
-	private void write(final Settings settings, final String filename) {
+	private void write(final ProfileManager profileManager, final String filename) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("assets");
 		} catch (XmlException ex) {
-			LOG.error("Assets not saved " + ex.getMessage(), ex);
+			LOG.error("Profile not saved " + ex.getMessage(), ex);
+			return;
 		}
-		writeAccounts(xmldoc, settings.getAccounts());
+		writeAccounts(xmldoc, profileManager.getAccounts());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
-			LOG.error("Assets not saved " + ex.getMessage(), ex);
+			LOG.error("Profile not saved " + ex.getMessage(), ex);
+			return;
 		}
-		LOG.info("Assets saved");
+		LOG.info("Profile saved");
 	}
 
 	private void writeAccounts(final Document xmldoc, final List<Account> accounts) {
@@ -123,11 +125,11 @@ public final class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeContractItems(Document xmldoc, Element parentNode, Map<EveContract, List<EveContractItem>> contractItems) {
+	private void writeContractItems(Document xmldoc, Element parentNode, Map<Contract, List<ContractItem>> contractItems) {
 		Element contractsNode = xmldoc.createElementNS(null, "contracts");
 		parentNode.appendChild(contractsNode);
-		for (Map.Entry<EveContract, List<EveContractItem>> entry : contractItems.entrySet()) {
-			EveContract contract = entry.getKey();
+		for (Map.Entry<Contract, List<ContractItem>> entry : contractItems.entrySet()) {
+			Contract contract = entry.getKey();
 			Element contractNode = xmldoc.createElementNS(null, "contract");
 			contractNode.setAttributeNS(null, "acceptorid", String.valueOf(contract.getAcceptorID()));
 			contractNode.setAttributeNS(null, "assigneeid", String.valueOf(contract.getAssigneeID()));
@@ -156,7 +158,7 @@ public final class AssetsWriter extends AbstractXmlWriter {
 			contractNode.setAttributeNS(null, "volume", String.valueOf(contract.getVolume()));
 			contractNode.setAttributeNS(null, "forcorp", String.valueOf(contract.isForCorp()));
 			contractsNode.appendChild(contractNode);
-			for (EveContractItem contractItem : entry.getValue()) {
+			for (ContractItem contractItem : entry.getValue()) {
 				Element itemNode = xmldoc.createElementNS(null, "contractitem");
 				itemNode.setAttributeNS(null, "included", String.valueOf(contractItem.isIncluded()));
 				itemNode.setAttributeNS(null, "quantity", String.valueOf(contractItem.getQuantity()));
@@ -168,13 +170,13 @@ public final class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<EveAccountBalance> accountBalances, final boolean bCorp) {
+	private void writeAccountBalances(final Document xmldoc, final Element parentNode, final List<AccountBalance> accountBalances, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (EveAccountBalance accountBalance : accountBalances) {
+		for (AccountBalance accountBalance : accountBalances) {
 			Element childNode = xmldoc.createElementNS(null, "balance");
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));
 			childNode.setAttributeNS(null, "accountkey", String.valueOf(accountBalance.getAccountKey()));
@@ -183,75 +185,75 @@ public final class AssetsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<ApiMarketOrder> marketOrders, final boolean bCorp) {
+	private void writeMarketOrders(final Document xmldoc, final Element parentNode, final List<MarketOrder> marketOrders, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "markerorders");
 		if (!marketOrders.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (ApiMarketOrder apiMarketOrder : marketOrders) {
+		for (MarketOrder marketOrder : marketOrders) {
 			Element childNode = xmldoc.createElementNS(null, "markerorder");
-			childNode.setAttributeNS(null, "orderid", String.valueOf(apiMarketOrder.getOrderID()));
-			childNode.setAttributeNS(null, "charid", String.valueOf(apiMarketOrder.getCharID()));
-			childNode.setAttributeNS(null, "stationid", String.valueOf(apiMarketOrder.getStationID()));
-			childNode.setAttributeNS(null, "volentered", String.valueOf(apiMarketOrder.getVolEntered()));
-			childNode.setAttributeNS(null, "volremaining", String.valueOf(apiMarketOrder.getVolRemaining()));
-			childNode.setAttributeNS(null, "minvolume", String.valueOf(apiMarketOrder.getMinVolume()));
-			childNode.setAttributeNS(null, "orderstate", String.valueOf(apiMarketOrder.getOrderState()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(apiMarketOrder.getTypeID()));
-			childNode.setAttributeNS(null, "range", String.valueOf(apiMarketOrder.getRange()));
-			childNode.setAttributeNS(null, "accountkey", String.valueOf(apiMarketOrder.getAccountKey()));
-			childNode.setAttributeNS(null, "duration", String.valueOf(apiMarketOrder.getDuration()));
-			childNode.setAttributeNS(null, "escrow", String.valueOf(apiMarketOrder.getEscrow()));
-			childNode.setAttributeNS(null, "price", String.valueOf(apiMarketOrder.getPrice()));
-			childNode.setAttributeNS(null, "bid", String.valueOf(apiMarketOrder.getBid()));
-			childNode.setAttributeNS(null, "issued", String.valueOf(apiMarketOrder.getIssued().getTime()));
+			childNode.setAttributeNS(null, "orderid", String.valueOf(marketOrder.getOrderID()));
+			childNode.setAttributeNS(null, "charid", String.valueOf(marketOrder.getCharID()));
+			childNode.setAttributeNS(null, "stationid", String.valueOf(marketOrder.getStationID()));
+			childNode.setAttributeNS(null, "volentered", String.valueOf(marketOrder.getVolEntered()));
+			childNode.setAttributeNS(null, "volremaining", String.valueOf(marketOrder.getVolRemaining()));
+			childNode.setAttributeNS(null, "minvolume", String.valueOf(marketOrder.getMinVolume()));
+			childNode.setAttributeNS(null, "orderstate", String.valueOf(marketOrder.getOrderState()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(marketOrder.getTypeID()));
+			childNode.setAttributeNS(null, "range", String.valueOf(marketOrder.getRange()));
+			childNode.setAttributeNS(null, "accountkey", String.valueOf(marketOrder.getAccountKey()));
+			childNode.setAttributeNS(null, "duration", String.valueOf(marketOrder.getDuration()));
+			childNode.setAttributeNS(null, "escrow", String.valueOf(marketOrder.getEscrow()));
+			childNode.setAttributeNS(null, "price", String.valueOf(marketOrder.getPrice()));
+			childNode.setAttributeNS(null, "bid", String.valueOf(marketOrder.getBid()));
+			childNode.setAttributeNS(null, "issued", String.valueOf(marketOrder.getIssued().getTime()));
 			node.appendChild(childNode);
 		}
 	}
 
-	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<ApiIndustryJob> industryJobs, final boolean bCorp) {
+	private void writeIndustryJobs(final Document xmldoc, final Element parentNode, final List<IndustryJob> industryJobs, final boolean bCorp) {
 		Element node = xmldoc.createElementNS(null, "industryjobs");
 		if (!industryJobs.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (ApiIndustryJob apiIndustryJob : industryJobs) {
+		for (IndustryJob industryJob : industryJobs) {
 			Element childNode = xmldoc.createElementNS(null, "industryjob");
 
-			childNode.setAttributeNS(null, "jobid", String.valueOf(apiIndustryJob.getJobID()));
-			childNode.setAttributeNS(null, "containerid", String.valueOf(apiIndustryJob.getContainerID()));
-			childNode.setAttributeNS(null, "installeditemid", String.valueOf(apiIndustryJob.getInstalledItemID()));
-			childNode.setAttributeNS(null, "installeditemlocationid", String.valueOf(apiIndustryJob.getInstalledItemLocationID()));
-			childNode.setAttributeNS(null, "installeditemquantity", String.valueOf(apiIndustryJob.getInstalledItemQuantity()));
-			childNode.setAttributeNS(null, "installeditemproductivitylevel", String.valueOf(apiIndustryJob.getInstalledItemProductivityLevel()));
-			childNode.setAttributeNS(null, "installeditemmateriallevel", String.valueOf(apiIndustryJob.getInstalledItemMaterialLevel()));
-			childNode.setAttributeNS(null, "installeditemlicensedproductionrunsremaining", String.valueOf(apiIndustryJob.getInstalledItemLicensedProductionRunsRemaining()));
-			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(apiIndustryJob.getOutputLocationID()));
-			childNode.setAttributeNS(null, "installerid", String.valueOf(apiIndustryJob.getInstallerID()));
-			childNode.setAttributeNS(null, "runs", String.valueOf(apiIndustryJob.getRuns()));
-			childNode.setAttributeNS(null, "licensedproductionruns", String.valueOf(apiIndustryJob.getLicensedProductionRuns()));
-			childNode.setAttributeNS(null, "installedinsolarsystemid", String.valueOf(apiIndustryJob.getInstalledInSolarSystemID()));
-			childNode.setAttributeNS(null, "containerlocationid", String.valueOf(apiIndustryJob.getContainerLocationID()));
-			childNode.setAttributeNS(null, "materialmultiplier", String.valueOf(apiIndustryJob.getMaterialMultiplier()));
-			childNode.setAttributeNS(null, "charmaterialmultiplier", String.valueOf(apiIndustryJob.getCharMaterialMultiplier()));
-			childNode.setAttributeNS(null, "timemultiplier", String.valueOf(apiIndustryJob.getTimeMultiplier()));
-			childNode.setAttributeNS(null, "chartimemultiplier", String.valueOf(apiIndustryJob.getCharTimeMultiplier()));
-			childNode.setAttributeNS(null, "installeditemtypeid", String.valueOf(apiIndustryJob.getInstalledItemTypeID()));
-			childNode.setAttributeNS(null, "outputtypeid", String.valueOf(apiIndustryJob.getOutputTypeID()));
-			childNode.setAttributeNS(null, "containertypeid", String.valueOf(apiIndustryJob.getContainerTypeID()));
-			childNode.setAttributeNS(null, "installeditemcopy", String.valueOf(apiIndustryJob.getInstalledItemCopy()));
-			childNode.setAttributeNS(null, "completed", String.valueOf(apiIndustryJob.isCompleted()));
-			childNode.setAttributeNS(null, "completedsuccessfully", String.valueOf(apiIndustryJob.isCompletedSuccessfully()));
-			childNode.setAttributeNS(null, "installeditemflag", String.valueOf(apiIndustryJob.getInstalledItemFlag()));
-			childNode.setAttributeNS(null, "outputflag", String.valueOf(apiIndustryJob.getOutputFlag()));
-			childNode.setAttributeNS(null, "activityid", String.valueOf(apiIndustryJob.getActivityID()));
-			childNode.setAttributeNS(null, "completedstatus", String.valueOf(apiIndustryJob.getCompletedStatus()));
-			childNode.setAttributeNS(null, "installtime", String.valueOf(apiIndustryJob.getInstallTime().getTime()));
-			childNode.setAttributeNS(null, "beginproductiontime", String.valueOf(apiIndustryJob.getBeginProductionTime().getTime()));
-			childNode.setAttributeNS(null, "endproductiontime", String.valueOf(apiIndustryJob.getEndProductionTime().getTime()));
-			childNode.setAttributeNS(null, "pauseproductiontime", String.valueOf(apiIndustryJob.getPauseProductionTime().getTime()));
-			childNode.setAttributeNS(null, "assemblylineid", String.valueOf(apiIndustryJob.getAssemblyLineID()));
+			childNode.setAttributeNS(null, "jobid", String.valueOf(industryJob.getJobID()));
+			childNode.setAttributeNS(null, "containerid", String.valueOf(industryJob.getContainerID()));
+			childNode.setAttributeNS(null, "installeditemid", String.valueOf(industryJob.getInstalledItemID()));
+			childNode.setAttributeNS(null, "installeditemlocationid", String.valueOf(industryJob.getInstalledItemLocationID()));
+			childNode.setAttributeNS(null, "installeditemquantity", String.valueOf(industryJob.getInstalledItemQuantity()));
+			childNode.setAttributeNS(null, "installeditemproductivitylevel", String.valueOf(industryJob.getInstalledItemProductivityLevel()));
+			childNode.setAttributeNS(null, "installeditemmateriallevel", String.valueOf(industryJob.getInstalledItemMaterialLevel()));
+			childNode.setAttributeNS(null, "installeditemlicensedproductionrunsremaining", String.valueOf(industryJob.getInstalledItemLicensedProductionRunsRemaining()));
+			childNode.setAttributeNS(null, "outputlocationid", String.valueOf(industryJob.getOutputLocationID()));
+			childNode.setAttributeNS(null, "installerid", String.valueOf(industryJob.getInstallerID()));
+			childNode.setAttributeNS(null, "runs", String.valueOf(industryJob.getRuns()));
+			childNode.setAttributeNS(null, "licensedproductionruns", String.valueOf(industryJob.getLicensedProductionRuns()));
+			childNode.setAttributeNS(null, "installedinsolarsystemid", String.valueOf(industryJob.getInstalledInSolarSystemID()));
+			childNode.setAttributeNS(null, "containerlocationid", String.valueOf(industryJob.getContainerLocationID()));
+			childNode.setAttributeNS(null, "materialmultiplier", String.valueOf(industryJob.getMaterialMultiplier()));
+			childNode.setAttributeNS(null, "charmaterialmultiplier", String.valueOf(industryJob.getCharMaterialMultiplier()));
+			childNode.setAttributeNS(null, "timemultiplier", String.valueOf(industryJob.getTimeMultiplier()));
+			childNode.setAttributeNS(null, "chartimemultiplier", String.valueOf(industryJob.getCharTimeMultiplier()));
+			childNode.setAttributeNS(null, "installeditemtypeid", String.valueOf(industryJob.getInstalledItemTypeID()));
+			childNode.setAttributeNS(null, "outputtypeid", String.valueOf(industryJob.getOutputTypeID()));
+			childNode.setAttributeNS(null, "containertypeid", String.valueOf(industryJob.getContainerTypeID()));
+			childNode.setAttributeNS(null, "installeditemcopy", String.valueOf(industryJob.getInstalledItemCopy()));
+			childNode.setAttributeNS(null, "completed", String.valueOf(industryJob.isCompleted()));
+			childNode.setAttributeNS(null, "completedsuccessfully", String.valueOf(industryJob.isCompletedSuccessfully()));
+			childNode.setAttributeNS(null, "installeditemflag", String.valueOf(industryJob.getInstalledItemFlag()));
+			childNode.setAttributeNS(null, "outputflag", String.valueOf(industryJob.getOutputFlag()));
+			childNode.setAttributeNS(null, "activityid", String.valueOf(industryJob.getActivityID()));
+			childNode.setAttributeNS(null, "completedstatus", String.valueOf(industryJob.getCompletedStatus()));
+			childNode.setAttributeNS(null, "installtime", String.valueOf(industryJob.getInstallTime().getTime()));
+			childNode.setAttributeNS(null, "beginproductiontime", String.valueOf(industryJob.getBeginProductionTime().getTime()));
+			childNode.setAttributeNS(null, "endproductiontime", String.valueOf(industryJob.getEndProductionTime().getTime()));
+			childNode.setAttributeNS(null, "pauseproductiontime", String.valueOf(industryJob.getPauseProductionTime().getTime()));
+			childNode.setAttributeNS(null, "assemblylineid", String.valueOf(industryJob.getAssemblyLineID()));
 			node.appendChild(childNode);
 		}
 	}

@@ -46,7 +46,6 @@ public abstract class DialoguesUpdate extends Bundle {
 
 	// used in UpdateDialog
 	public abstract String update();
-	public abstract String all();
 	public abstract String contracts();
 	public abstract String marketOrders();
 	public abstract String industryJobs();

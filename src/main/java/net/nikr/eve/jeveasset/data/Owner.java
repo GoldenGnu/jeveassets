@@ -22,16 +22,13 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.core.ApiAuthorization;
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 
 
 public class Owner implements Comparable<Owner> {
@@ -44,10 +41,10 @@ public class Owner implements Comparable<Owner> {
 	private Date industryJobsNextUpdate;
 	private Date contractsNextUpdate;
 	private Account parentAccount;
-	private List<EveAccountBalance> accountBalances;
-	private List<ApiMarketOrder> marketOrders;
-	private List<ApiIndustryJob> industryJobs;
-	private Map<EveContract, List<EveContractItem>> contracts;
+	private List<AccountBalance> accountBalances;
+	private List<MarketOrder> marketOrders;
+	private List<IndustryJob> industryJobs;
+	private Map<Contract, List<ContractItem>> contracts;
 	private List<Asset> assets;
 
 	public Owner(final Account parentAccount, final Owner owner) {
@@ -84,13 +81,13 @@ public class Owner implements Comparable<Owner> {
 		this.contractsNextUpdate = contractsNextUpdate;
 		//Default
 		assets = new ArrayList<Asset>();
-		accountBalances = new  ArrayList<EveAccountBalance>();
-		marketOrders = new  ArrayList<ApiMarketOrder>();
-		industryJobs = new  ArrayList<ApiIndustryJob>();
-		contracts = new HashMap<EveContract, List<EveContractItem>>();
+		accountBalances = new  ArrayList<AccountBalance>();
+		marketOrders = new  ArrayList<MarketOrder>();
+		industryJobs = new  ArrayList<IndustryJob>();
+		contracts = new HashMap<Contract, List<ContractItem>>();
 	}
 
-	public void setAccountBalances(final List<EveAccountBalance> accountBalances) {
+	public void setAccountBalances(final List<AccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
@@ -106,15 +103,15 @@ public class Owner implements Comparable<Owner> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setContracts(EveContract contract, List<EveContractItem> contractItems) {
-		this.contracts.put(contract, contractItems);
+	public void setContracts(Map<Contract, List<ContractItem>> contracts) {
+		this.contracts = contracts;
 	}
 
 	public void setContractsNextUpdate(Date contractsNextUpdate) {
 		this.contractsNextUpdate = contractsNextUpdate;
 	}
 
-	public void setIndustryJobs(final List<ApiIndustryJob> industryJobs) {
+	public void setIndustryJobs(final List<IndustryJob> industryJobs) {
 		this.industryJobs = industryJobs;
 	}
 
@@ -122,7 +119,7 @@ public class Owner implements Comparable<Owner> {
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 	}
 
-	public void setMarketOrders(final List<ApiMarketOrder> marketOrders) {
+	public void setMarketOrders(final List<MarketOrder> marketOrders) {
 		this.marketOrders = marketOrders;
 	}
 
@@ -154,7 +151,7 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount.isCharacter();
 	}
 
-	public List<EveAccountBalance> getAccountBalances() {
+	public List<AccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
 
@@ -170,7 +167,7 @@ public class Owner implements Comparable<Owner> {
 		return balanceNextUpdate;
 	}
 
-	public Map<EveContract, List<EveContractItem>> getContracts() {
+	public Map<Contract, List<ContractItem>> getContracts() {
 		return contracts;
 	}
 
@@ -178,7 +175,7 @@ public class Owner implements Comparable<Owner> {
 		return contractsNextUpdate;
 	}
 
-	public List<ApiIndustryJob> getIndustryJobs() {
+	public List<IndustryJob> getIndustryJobs() {
 		return industryJobs;
 	}
 
@@ -186,7 +183,7 @@ public class Owner implements Comparable<Owner> {
 		return industryJobsNextUpdate;
 	}
 
-	public List<ApiMarketOrder> getMarketOrders() {
+	public List<MarketOrder> getMarketOrders() {
 		return marketOrders;
 	}
 

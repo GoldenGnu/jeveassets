@@ -29,7 +29,6 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -39,7 +38,6 @@ import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
-import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
  *
@@ -49,16 +47,6 @@ public abstract class FakeSettings extends Settings {
 
 	public FakeSettings() {
 		super(false);
-	}
-
-	@Override
-	public void clearEveAssetList() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<Account> getAccounts() {
-		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
@@ -72,32 +60,12 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public List<Asset> getEventListAssets() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<String, Boolean> getFlags() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public PriceDataGetter getPriceDataGetter() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Date getPriceDataNextUpdate() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public PriceDataSettings getPriceDataSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<Profile> getProfiles() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -108,11 +76,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public ReprocessSettings getReprocessSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Set<Integer> getUniqueIds() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -133,11 +96,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Dimension getWindowSize() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean hasAssets() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -192,27 +150,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void loadActiveProfile() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void saveAssets() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void saveSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setAccounts(final List<Account> accounts) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setActiveProfile(final Profile activeProfile) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -248,11 +186,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setProfiles(final List<Profile> profiles) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -313,11 +246,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setWindowSize(final Dimension windowSize) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Profile getActiveProfile() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -501,5 +429,14 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	
+	@Override
+	public Map<String, Float> getPackagedVolume() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Integer, PriceData> getPriceData() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
 }

@@ -171,7 +171,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				if (save) { //Save (if not in setttings dialog)
 					boolean update = save();
 					if (update) {
-						program.updateEventList();
+						program.updateEventLists();
 					}
 				}
 			} else {
@@ -216,7 +216,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			if (save) {
 				boolean update = save();
 				if (update) {
-					program.updateEventList();
+					program.updateEventLists();
 				}
 			}
 		}

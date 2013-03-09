@@ -183,7 +183,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		//Update rows (Add all rows)
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				eventList.add(owner);
 			}
@@ -212,7 +212,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				}
 			}
 		} else { //Set all the check value
-			for (Account account : program.getSettings().getAccounts()) {
+			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					owner.setShowAssets(check);
 				}
@@ -235,7 +235,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected void windowShown() {
-		if (program.getSettings().getAccounts().isEmpty()) {
+		if (program.getAccounts().isEmpty()) {
 			accountImportDialog.show();
 		}
 	}
@@ -243,7 +243,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	@Override
 	protected void save() {
 		boolean changed = false;
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!shownAssets.containsKey(owner)) { //New account
 					if (owner.isShowAssets()) { //if shown: Updated
@@ -255,7 +255,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			}
 		}
 		if (changed || forceUpdate) {
-			program.updateEventList();
+			program.updateEventLists();
 		}
 		this.setVisible(false);
 	}
@@ -266,7 +266,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			forceUpdate = false;
 			updateTable();
 			shownAssets = new HashMap<Owner, Boolean>();
-			for (Account account : program.getSettings().getAccounts()) {
+			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					shownAssets.put(owner, owner.isShowAssets());
 				}
@@ -312,7 +312,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Owner owner = (Owner) separator.first();
 					Account account = owner.getParentAccount();
-					program.getSettings().getAccounts().remove(account);
+					program.getAccounts().remove(account);
 					forceUpdate();
 					updateTable();
 				}

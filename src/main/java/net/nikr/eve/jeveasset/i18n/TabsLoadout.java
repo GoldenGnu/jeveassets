@@ -34,7 +34,6 @@ public abstract class TabsLoadout extends Bundle {
 		super(locale);
 	}
 
-	public abstract String all();
 	public abstract String cancel();
 	public abstract String collapse();
 	public abstract String columnValue();
@@ -66,5 +65,4 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String totalModules();
 	public abstract String totalShip();
 	public abstract String whitespace10(Object arg0);
-	public abstract String whitespace9(Object arg0);
 }

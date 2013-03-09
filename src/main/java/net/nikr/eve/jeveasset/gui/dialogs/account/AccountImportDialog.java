@@ -229,10 +229,10 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private void done() {
 		if (editAccount != null) { //Edit
-			program.getSettings().getAccounts().remove(editAccount);
+			program.getAccounts().remove(editAccount);
 		}
 		apiManager.forceUpdate();
-		program.getSettings().getAccounts().add(account);
+		program.getAccounts().add(account);
 		apiManager.updateTable();
 		this.setVisible(false);
 	}
@@ -486,7 +486,7 @@ public class AccountImportDialog extends JDialogCentered {
 		@Override
 		public Void doInBackground() {
 			setProgress(0);
-			if (program.getSettings().getAccounts().contains(account)) { //account already exist
+			if (program.getAccounts().contains(account)) { //account already exist
 				result = Result.FAIL_ALREADY_IMPORTED;
 				return null;
 			}

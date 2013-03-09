@@ -30,9 +30,11 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceResponse> {
@@ -73,7 +75,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		List<EveAccountBalance> accountBalances = new ArrayList<EveAccountBalance>(response.getAll());
+		List<AccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<EveAccountBalance>(response.getAll()), getOwner());
 		getOwner().setAccountBalances(accountBalances);
 	}
 

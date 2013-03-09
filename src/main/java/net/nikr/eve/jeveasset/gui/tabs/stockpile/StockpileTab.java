@@ -28,8 +28,6 @@ import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -379,7 +377,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				item.updateValues(price, volume, marketGroup);
 				//Inventory AKA Assets
 				if (stockpile.isInventory()) {
-					for (Asset asset : program.getEveAssetEventList()) {
+					for (Asset asset : program.getAssetEventList()) {
 						if (asset.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -400,35 +398,25 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						item.updateAsset(asset);
 					}
 				}
-				//Orders & Jobs
-				if (stockpile.isBuyOrders() || stockpile.isSellOrders() || stockpile.isJobs()) {
-					for (Account account : program.getSettings().getAccounts()) {
-						for (Owner owner : account.getOwners()) {
-							if (!owner.isShowAssets()) {
-								continue; //Ignore hidden owners
-							}
-							//Market Orders
-							if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-								for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
-									if (marketOrder.getTypeID() != TYPE_ID) {
-										continue; //Ignore wrong typeID
-									}
-									Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
-									item.updateMarketOrder(marketOrder, owner.getOwnerID(), location);
-								}
-							}
-							//Industry Job
-							if (stockpile.isJobs()) {
-								for (ApiIndustryJob industryJob : owner.getIndustryJobs()) {
-									if (industryJob.getOutputTypeID() != TYPE_ID) {
-										continue; //Ignore wrong typeID
-									}
-									Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
-									Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
-									item.updateIndustryJob(industryJob, owner.getOwnerID(), location, itemType);
-								}
-							}
+				//Market Orders
+				if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
+					for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+						if (marketOrder.getTypeID() != TYPE_ID) {
+							continue; //Ignore wrong typeID
 						}
+						Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
+						item.updateMarketOrder(marketOrder, location);
+					}
+				}
+				//Industry Job
+				if (stockpile.isJobs()) {
+					for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+						if (industryJob.getOutputTypeID() != TYPE_ID) {
+							continue; //Ignore wrong typeID
+						}
+						Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
+						Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
+						item.updateIndustryJob(industryJob, location, itemType);
 					}
 				}
 			}
@@ -511,7 +499,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}

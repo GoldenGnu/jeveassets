@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 public class OverviewTab extends JMainTab {
@@ -411,7 +412,7 @@ public class OverviewTab extends JMainTab {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(name) && !owner.equals(TabsOverview.get().all())) {
+			if (!owner.equals(name) && !owner.equals(General.get().all())) {
 				continue;
 			}
 
@@ -528,7 +529,7 @@ public class OverviewTab extends JMainTab {
 		updateStatusbar();
 		program.overviewGroupsChanged();
 
-		jShowing.setText(TabsOverview.get().filterShowing(rowCount, program.getEveAssetEventList().size(), program.getAssetsTab().getCurrentFilterName()));
+		jShowing.setText(TabsOverview.get().filterShowing(rowCount, program.getAssetEventList().size(), program.getAssetsTab().getCurrentFilterName()));
 		afterUpdateData();
 	}
 
@@ -572,25 +573,7 @@ public class OverviewTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		List<String> owners = new ArrayList<String>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsOverview.get().whitespace4(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					if (!owners.contains(name)) {
-						owners.add(name);
-					}
-				}
-			}
-		}
-		Collections.sort(owners, new CaseInsensitiveComparator());
-		owners.add(0, TabsOverview.get().all());
-		jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
+		jOwner.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
 		updateTable();
 	}
 

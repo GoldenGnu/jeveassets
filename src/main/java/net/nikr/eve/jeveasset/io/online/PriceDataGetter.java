@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ public class PriceDataGetter implements PricingListener {
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
 	private Settings settings;
+	private ProfileData profileData;
 	private UpdateTask updateTask;
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
@@ -57,8 +59,9 @@ public class PriceDataGetter implements PricingListener {
 	private boolean failed;
 	private Set<Integer> ids;
 
-	public PriceDataGetter(final Settings settings) {
+	public PriceDataGetter(final Settings settings, final ProfileData profileData) {
 		this.settings = settings;
+		this.profileData = profileData;
 	}
 	/**
 	 * Load price data from cache and only update missing price data.
@@ -99,7 +102,7 @@ public class PriceDataGetter implements PricingListener {
 		failed = false;
 
 		//Get all price ids
-		ids = settings.getUniqueIds();
+		ids = profileData.getPriceTypeIDs();
 
 		PricingFactory.setPricingOptions(new EveAssetPricingOptions());
 		Pricing pricing = PricingFactory.getPricing();

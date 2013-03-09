@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,15 +322,15 @@ public class RoutingTab extends JMainTab  {
 		});
 		List<Asset> assets;
 		SourceItem source = (SourceItem) jSource.getSelectedItem();
-		if (source.getName().equals(TabsRouting.get().all())) { //ALL
-			 assets = new ArrayList<Asset>(program.getEveAssetEventList());
+		if (source.getName().equals(General.get().all())) { //ALL
+			 assets = new ArrayList<Asset>(program.getAssetEventList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
 			assets = new ArrayList<Asset>();
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
-				for (Asset eveAsset : program.getEveAssetEventList()) {
+				for (Asset eveAsset : program.getAssetEventList()) {
 					if ((location.getName().equals(eveAsset.getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getSystem()))
 						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getRegion()))
@@ -517,7 +518,7 @@ public class RoutingTab extends JMainTab  {
 		}
 		Collections.sort(sources);
 		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
-		sources.add(0, new SourceItem(TabsRouting.get().all()));
+		sources.add(0, new SourceItem(General.get().all()));
 		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
 		jAlgorithm.setSelectedIndex(0);
 		jLastResultArea.setText(TabsRouting.get().once());

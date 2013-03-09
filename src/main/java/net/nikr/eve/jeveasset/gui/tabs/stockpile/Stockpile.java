@@ -20,14 +20,15 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -170,7 +171,7 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	public final void setOwner(final String owner) {
 		if (owner == null) {
-			this.owner = TabsStockpile.get().all();
+			this.owner = General.get().all();
 		} else {
 			this.owner = owner;
 		}
@@ -178,7 +179,7 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	private void setLocation(final String location) {
 		if (location == null) {
-			this.location = TabsStockpile.get().all();
+			this.location = General.get().all();
 		} else {
 			this.location = location;
 		}
@@ -194,7 +195,7 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	public final void setFlag(final String flag) {
 		if (flag == null) {
-			this.flag = TabsStockpile.get().all();
+			this.flag = General.get().all();
 		} else {
 			this.flag = flag;
 		}
@@ -363,7 +364,7 @@ public class Stockpile implements Comparable<Stockpile> {
 						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
 						)
 					&& (stockpile.getOwnerID() == asset.getOwnerID() || stockpile.getOwnerID() < 0)
-					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
+					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(General.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
 					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
 					|| stockpile.getLocationID() == asset.getSolarSystemID()
@@ -389,10 +390,10 @@ public class Stockpile implements Comparable<Stockpile> {
 			return false; //No match
 		}
 
-		void updateMarketOrder(final ApiMarketOrder marketOrder, final Long ownerID, final Location location) {
-			if (marketOrder != null && ownerID != null && location != null //better safe then sorry
+		void updateMarketOrder(final MarketOrder marketOrder, final Location location) {
+			if (marketOrder != null && location != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
-					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
+					&& (stockpile.getOwnerID() == marketOrder.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& marketOrder.getOrderState() == 0 //Open/Active
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()
@@ -411,10 +412,10 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 		}
 
-		void updateIndustryJob(final ApiIndustryJob industryJob, final Long ownerID, final Location location, final Item itemType) {
-			if (industryJob != null && ownerID != null && location != null && itemType != null //better safe then sorry
+		void updateIndustryJob(final IndustryJob industryJob, final Location location, final Item itemType) {
+			if (industryJob != null && location != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& (stockpile.getOwnerID() == ownerID || stockpile.getOwnerID() < 0)
+					&& (stockpile.getOwnerID() == industryJob.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& (stockpile.getFlagID() == industryJob.getOutputFlag() || stockpile.getFlagID() < 0)
 					&& (stockpile.getLocationID() == location.getLocationID()
 					|| stockpile.getLocationID() == location.getSystemID()

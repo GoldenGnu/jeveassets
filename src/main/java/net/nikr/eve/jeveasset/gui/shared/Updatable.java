@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
-import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -31,10 +31,10 @@ import net.nikr.eve.jeveasset.data.Settings;
 public class Updatable {
 
 	private boolean updatable;
-	private Settings settings;
+	private Program program;
 
-	public Updatable(final Settings settings) {
-		this.settings = settings;
+	public Updatable(final Program program) {
+		this.program = program;
 	}
 
 	public boolean isUpdatable() {
@@ -43,8 +43,8 @@ public class Updatable {
 		Date marketOrdersNextUpdate = null;
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
-		Date priceDataNextUpdate = settings.getPriceDataNextUpdate();
-		for (Account account : settings.getAccounts()) {
+		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
+		for (Account account : program.getAccounts()) {
 			//Account
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			for (Owner owner : account.getOwners()) {
@@ -74,7 +74,7 @@ public class Updatable {
 		if (nextUpdate == null) {
 			nextUpdate = Settings.getNow();
 		}
-		if (settings.isUpdatable(nextUpdate, ignoreOnProxy)) {
+		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			updatable = true;
 		}
 	}

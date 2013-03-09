@@ -92,11 +92,11 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	private String region;
 	private String rangeFormated;
 	private OrderStatus status;
-	private String owner;
+	private Owner owner;
 	private Quantity quantity;
 
 
-	public MarketOrder(final ApiMarketOrder apiMarketOrder, final String name, final String location, final String system, final String region, final String owner) {
+	public MarketOrder(final ApiMarketOrder apiMarketOrder, final String name, final String location, final String system, final String region, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -197,7 +197,11 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	public String getOwner() {
-		return owner;
+		return owner.getName();
+	}
+
+	public long getOwnerID() {
+		return owner.getOwnerID();
 	}
 
 	public Quantity getQuantity() {
@@ -206,6 +210,10 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public OrderStatus getStatus() {
 		return status;
+	}
+
+	public boolean isCorporation() {
+		return owner.isCorporation();
 	}
 
 	public class Quantity implements Comparable<Quantity> {

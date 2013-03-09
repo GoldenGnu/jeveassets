@@ -47,5 +47,6 @@ public abstract class General extends Bundle {
 	public abstract String marketOrderSellFlag();
 	public abstract String marketOrderBuyFlag();
 	public abstract String none();
+	public abstract String all();
 
 }

@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
@@ -30,8 +29,6 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,10 +36,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -52,8 +47,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -70,7 +63,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class ContractsTab extends JMainTab {
@@ -121,7 +113,7 @@ public class ContractsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<ContractItem>();
+		eventList = program.getContractItemEventList();
 		//Filter
 		filterList = new FilterList<ContractItem>(eventList);
 		//Sorting (per column)
@@ -216,34 +208,10 @@ public class ContractsTab extends JMainTab {
 		//JMenuInfo.reprocessed(jComponent, selected, eventList);
 	}
 
+	
+
 	@Override
-	public void updateData() {
-		Set<ContractItem> list = new HashSet<ContractItem>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				List<ContractItem> contractItems
-						= ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
-				list.addAll(contractItems);
-				for (EveContract contract : owner.getContracts().keySet()) {
-					if (contract.getType() == ContractType.COURIER) {
-						list.add(new ContractItem(ApiConverter.eveContractToContract(contract, program.getSettings())));
-					}
-				}
-			}
-		}
-		//Save separator expanded/collapsed state
-		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(list);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Restore separator expanded/collapsed state
-		jTable.loadExpandedState();
-	}
+	public void updateData() { }
 
 	public class ListenerClass implements ActionListener {
 

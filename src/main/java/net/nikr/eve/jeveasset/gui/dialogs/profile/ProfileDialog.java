@@ -27,8 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -130,14 +128,14 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 	private void updateProfiles() {
 		DefaultListModel listModel = new DefaultListModel();
-		List<Profile> profiles = program.getSettings().getProfiles();
+		List<Profile> profiles = program.getProfileManager().getProfiles();
 		Collections.sort(profiles);
 		for (Profile profile : profiles) {
 			listModel.addElement(profile);
 		}
 		jProfiles.setModel(listModel);
 		if (!profiles.isEmpty()) {
-			jProfiles.setSelectedValue(program.getSettings().getActiveProfile(), true);
+			jProfiles.setSelectedValue(program.getProfileManager().getActiveProfile(), true);
 		}
 	}
 
@@ -157,22 +155,22 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private void loadProfile(final Profile profile) {
 		if (profile != null && !profile.isActiveProfile()) {
 			//Clear active profile flag (from all profiles)
-			for (Profile profileLoop : program.getSettings().getProfiles()) {
+			for (Profile profileLoop : program.getProfileManager().getProfiles()) {
 				profileLoop.setActiveProfile(false);
 			}
 			//Save old profile
-			program.getSettings().saveAssets();
+			program.getProfileManager().saveProfile();
 			//Clear accounts
-			program.getSettings().setAccounts(new ArrayList<Account>());
+			program.getProfileManager().setAccounts(new ArrayList<Account>());
 			//Clear data
-			program.updateEventList();
+			program.updateEventLists();
 			//Set active profile
-			program.getSettings().setActiveProfile(profile);
+			program.getProfileManager().setActiveProfile(profile);
 			profile.setActiveProfile(true);
 			//Load new profile
-			program.getSettings().loadActiveProfile();
+			program.getProfileManager().loadActiveProfile();
 			//Update data
-			program.updateEventList();
+			program.updateEventLists();
 			//Update GUI (this dialog)
 			updateProfiles();
 			jProfiles.updateUI();
@@ -219,7 +217,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 					"",
 					JDialogCentered.WORDS_ONLY);
 			if (s != null && !s.isEmpty()) {
-				if (program.getSettings().getProfiles().contains(new Profile(s, false, false))) {
+				if (program.getProfileManager().getProfiles().contains(new Profile(s, false, false))) {
 					JOptionPane.showMessageDialog(this.getDialog(),
 							DialoguesProfiles.get().nameAlreadyExists(),
 							DialoguesProfiles.get().newProfile(),
@@ -240,7 +238,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 						profile.getName(),
 						JDialogCentered.WORDS_ONLY);
 				if (s != null && !s.isEmpty()) {
-					if (program.getSettings().getProfiles().contains(new Profile(s, false, false))) {
+					if (program.getProfileManager().getProfiles().contains(new Profile(s, false, false))) {
 						JOptionPane.showMessageDialog(this.getDialog(),
 								DialoguesProfiles.get().nameAlreadyExists(),
 								DialoguesProfiles.get().renameProfile(),
@@ -277,7 +275,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 						JOptionPane.QUESTION_MESSAGE);
 				//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
 				if (value == JOptionPane.YES_OPTION) {
-					program.getSettings().getProfiles().remove(profile);
+					program.getProfileManager().getProfiles().remove(profile);
 					profile.getFile().delete();
 					profile.getBackupFile().delete();
 					updateProfiles();
@@ -289,7 +287,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		if (ACTION_DEFAULT_PROFILE.equals(e.getActionCommand())) {
 			Profile profile = (Profile) jProfiles.getSelectedValue();
 			if (profile != null && !profile.isDefaultProfile()) {
-				for (Profile profileLoop : program.getSettings().getProfiles()) {
+				for (Profile profileLoop : program.getProfileManager().getProfiles()) {
 					profileLoop.setDefaultProfile(false);
 				}
 				profile.setDefaultProfile(true);
@@ -349,7 +347,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		@Override
 		public void run() {
 			Profile profile = new Profile(profileName, false, false);
-			program.getSettings().getProfiles().add(profile);
+			program.getProfileManager().getProfiles().add(profile);
 			loadProfile(profile);
 		}
 	}
