@@ -561,6 +561,8 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 				}
 			}
 		}
+	//Save settings
+		saveSettings();
 	//Add data
 		for (E e : items) {
 			Map<String, String> line = new HashMap<String, String>();
@@ -572,8 +574,6 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			objectRows.add(row);
 			stringRows.add(line);
 		}
-	//Save settings
-		saveSettings();
 	//Save file
 		String extension = jFileChooser.getExtension();
 		boolean saved;
