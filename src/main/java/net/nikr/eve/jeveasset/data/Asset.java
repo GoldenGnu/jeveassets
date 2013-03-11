@@ -355,12 +355,12 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public double getPriceReprocessedDifference() {
-		return getPrice() - getPriceReprocessed();
+		return getPriceReprocessed() - getPrice();
 	}
 
 	public double getPriceReprocessedPercent() {
 		if (getPrice() > 0 && getPriceReprocessed() > 0) {
-			return (getPrice() / getPriceReprocessed());
+			return (getPriceReprocessed() / getPrice());
 		} else {
 			return 0;
 		}
