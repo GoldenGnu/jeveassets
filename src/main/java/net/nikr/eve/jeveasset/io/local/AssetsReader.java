@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -213,7 +214,7 @@ public final class AssetsReader extends AbstractXmlReader {
 			dateAccepted = null;
 		}
 		Date dateCompleted;
-		if (AttributeGetters.haveAttribute(element, "dateaccepted")) {
+		if (AttributeGetters.haveAttribute(element, "datecompleted")) {
 			dateCompleted = AttributeGetters.getDate(element, "datecompleted");
 		} else {
 			dateCompleted = null;

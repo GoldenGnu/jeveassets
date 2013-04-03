@@ -243,7 +243,7 @@ public class Owner implements Comparable<Owner> {
 	}
 
 	public static ApiAuthorization getApiAuthorization(final Account account) {
-		return getApiAuthorization(account, 0);
+		return new ApiAuthorization(account.getKeyID(), account.getVCode());
 	}
 	public static ApiAuthorization getApiAuthorization(final Owner owner) {
 		return getApiAuthorization(owner.getParentAccount(), owner.getOwnerID());

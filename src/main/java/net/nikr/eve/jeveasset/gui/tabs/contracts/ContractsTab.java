@@ -221,11 +221,17 @@ public class ContractsTab extends JMainTab {
 		Set<ContractItem> list = new HashSet<ContractItem>();
 		for (Account account : program.getSettings().getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				List<ContractItem> contractItems
-						= ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
+				List<ContractItem> contractItems = ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
 				list.addAll(contractItems);
 				for (EveContract contract : owner.getContracts().keySet()) {
-					if (contract.getType() == ContractType.COURIER) {
+					if (contract.getType() == ContractType.COURIER &&
+							( //XXX - Workaround for alien contracts
+								owner.getOwnerID() == contract.getAcceptorID()
+								|| owner.getOwnerID() == contract.getAssigneeID()
+								|| owner.getOwnerID() == contract.getIssuerID()
+								|| (owner.getOwnerID() == contract.getIssuerCorpID() && contract.isForCorp())
+							)
+							) {
 						list.add(new ContractItem(ApiConverter.eveContractToContract(contract, program.getSettings())));
 					}
 				}

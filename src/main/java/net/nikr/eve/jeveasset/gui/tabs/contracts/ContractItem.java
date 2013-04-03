@@ -90,10 +90,11 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		return 0;
 	}
 
-		@Override
+	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 67 * hash + (int) (this.getRecordID() ^ (this.getRecordID() >>> 32));
+		hash = 37 * hash + (this.contract != null ? this.contract.hashCode() : 0);
+		hash = 37 * hash + (int) (this.getRecordID() ^ (this.getRecordID() >>> 32));
 		return hash;
 	}
 
@@ -105,7 +106,10 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final EveContractItem other = (EveContractItem) obj;
+		final ContractItem other = (ContractItem) obj;
+		if (this.contract != other.contract && (this.contract == null || !this.contract.equals(other.contract))) {
+			return false;
+		}
 		if (this.getRecordID() != other.getRecordID()) {
 			return false;
 		}
