@@ -20,7 +20,7 @@ _2.5.3__________________________________________________________________________
 
 Bug Fixes:
 -API Bug: The contract API returns alien contracts (Temp ban fix)
--Export Bug: Changing the decimal seperator was ignored until next export
+-Export Bug: Changing the decimal separator was ignored until next export
 
 Changed:
 -Updated static data to Retribution 1.1.84566
