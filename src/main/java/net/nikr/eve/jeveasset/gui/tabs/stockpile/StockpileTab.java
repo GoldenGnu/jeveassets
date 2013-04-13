@@ -371,14 +371,13 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					continue;
 				}
 				final int TYPE_ID = item.getTypeID();
-				double price = program.getSettings().getPrice(TYPE_ID, item.isBPC());
-				float volume = program.getSettings().getVolume(TYPE_ID, true);
-				boolean marketGroup = ApiIdConverter.marketGroup(TYPE_ID, program.getSettings().getItems());
-				item.updateValues(price, volume, marketGroup);
+				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), program.getSettings().getUserPrices(), program.getSettings().getPriceData());
+				float volume = ApiIdConverter.getVolume(TYPE_ID, true, program.getSettings().getItems());
+				item.updateValues(price, volume);
 				//Inventory AKA Assets
 				if (stockpile.isInventory()) {
 					for (Asset asset : program.getAssetEventList()) {
-						if (asset.getTypeID() != TYPE_ID) {
+						if (asset.getItem().getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
 						//Skip market orders
@@ -404,8 +403,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (marketOrder.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
-						item.updateMarketOrder(marketOrder, location);
+						item.updateMarketOrder(marketOrder);
 					}
 				}
 				//Industry Job
@@ -414,9 +412,8 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (industryJob.getOutputTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
 						Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
-						item.updateIndustryJob(industryJob, location, itemType);
+						item.updateIndustryJob(industryJob, itemType);
 					}
 				}
 			}
@@ -474,12 +471,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				continue;
 			}
 			//Search for item name
-			for (Map.Entry<Integer, Item> entry : program.getSettings().getItems().entrySet()) {
-				Item item = entry.getValue();
-				if (item.getName().toLowerCase().equals(module)) { //Found item
+			for (Item item : program.getSettings().getItems().values()) {
+				if (item.getTypeName().toLowerCase().equals(module)) { //Found item
 					int typeID = item.getTypeID();
 					if (!items.containsKey(typeID)) { //Add new item
-						StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), item.getTypeID(), 0);
+						StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), 0);
 						stockpile.add(stockpileItem);
 						items.put(typeID, stockpileItem);
 					}
@@ -542,7 +538,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<StockpileItem> menuData = new MenuData<StockpileItem>(selected);
+		MenuData<StockpileItem> menuData = new MenuData<StockpileItem>(selected, program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selected));
 	//ASSET FILTER

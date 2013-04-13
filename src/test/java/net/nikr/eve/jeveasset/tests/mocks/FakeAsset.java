@@ -24,6 +24,8 @@ package net.nikr.eve.jeveasset.tests.mocks;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -56,11 +58,6 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public String getCategory() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public String getContainer() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -81,32 +78,7 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public String getGroup() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public long getItemID() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public String getLocation() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public long getLocationID() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getMeta() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public String getTech() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -131,12 +103,7 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public double getPrice() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public double getPriceBase() {
+	public Double getDynamicPrice() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -166,37 +133,12 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public String getRegion() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public String getSecurity() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public String getSingleton() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public long getSolarSystemID() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public String getSystem() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public long getTypeCount() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public int getTypeID() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -226,27 +168,12 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public boolean isBlueprint() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isBpo() {
+	public boolean isBPO() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
 	public boolean isCorporation() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isMarketGroup() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public boolean isPiMaterial() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -341,12 +268,23 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public long getRegionID() {
+	public long getOwnerID() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
 	@Override
-	public long getOwnerID() {
+	public Location getLocation() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public Item getItem() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isBPC() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
 }

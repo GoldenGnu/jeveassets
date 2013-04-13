@@ -93,7 +93,6 @@ public class Settings {
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	private final Map<String, Float> packagedVolume = new HashMap<String, Float>();
 	private Date conquerableStationsNextUpdate;
 	private Map<String, Boolean> flags;
 	private boolean settingsLoaded;
@@ -139,44 +138,6 @@ public class Settings {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
-
-		packagedVolume.put("Assault Ship", 2500f);
-		packagedVolume.put("Battlecruiser", 15000f);
-		packagedVolume.put("Battleship", 50000f);
-		packagedVolume.put("Black Ops", 50000f);
-		packagedVolume.put("Capital Industrial Ship", 1000000f);
-		packagedVolume.put("Capsule", 500f);
-		packagedVolume.put("Carrier", 1000000f);
-		packagedVolume.put("Combat Recon Ship", 10000f);
-		packagedVolume.put("Command Ship", 15000f);
-		packagedVolume.put("Covert Ops", 2500f);
-		packagedVolume.put("Cruiser", 10000f);
-		packagedVolume.put("Destroyer", 5000f);
-		packagedVolume.put("Dreadnought", 1000000f);
-		packagedVolume.put("Electronic Attack Ship", 2500f);
-		packagedVolume.put("Elite Battleship", 50000f);
-		packagedVolume.put("Exhumer", 3750f);
-		packagedVolume.put("Force Recon Ship", 10000f);
-		packagedVolume.put("Freighter", 1000000f);
-		packagedVolume.put("Frigate", 2500f);
-		packagedVolume.put("Heavy Assault Ship", 10000f);
-		packagedVolume.put("Heavy Interdictor", 10000f);
-		packagedVolume.put("Industrial", 20000f);
-		packagedVolume.put("Industrial Command Ship", 500000f);
-		packagedVolume.put("Interceptor", 2500f);
-		packagedVolume.put("Interdictor", 5000f);
-		packagedVolume.put("Jump Freighter", 1000000f);
-		packagedVolume.put("Logistics", 10000f);
-		packagedVolume.put("Marauder", 50000f);
-		packagedVolume.put("Mining Barge", 3750f);
-		packagedVolume.put("Prototype Exploration Ship", 500f);
-		packagedVolume.put("Rookie ship", 2500f);
-		packagedVolume.put("Shuttle", 500f);
-		packagedVolume.put("Stealth Bomber", 2500f);
-		packagedVolume.put("Strategic Cruiser", 5000f);
-		packagedVolume.put("Supercarrier", 1000000f);
-		packagedVolume.put("Titan", 10000000f);
-		packagedVolume.put("Transport Ship", 20000f);
 
 		reprocessSettings = new ReprocessSettings();
 
@@ -237,46 +198,6 @@ public class Settings {
 
 	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
 		return trackerData;
-	}
-
-	public double getPrice(final int typeID, final boolean isBlueprintCopy) {
-		UserItem<Integer, Double> userPrice;
-		if (isBlueprintCopy) { //Blueprint Copy
-			userPrice = userPrices.get(-typeID);
-		} else { //All other
-			userPrice = userPrices.get(typeID);
-		}
-		if (userPrice != null) {
-			return userPrice.getValue();
-		}
-
-		//Blueprint Copy (Default Zero)
-		if (isBlueprintCopy) {
-			return 0;
-		}
-
-		//Price data
-		PriceData priceData = null;
-		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price
-			priceData = priceDatas.get(typeID);
-		}
-		return Asset.getDefaultPrice(priceData);
-	}
-
-	public float getVolume(final int typeID, final boolean packaged) {
-		Item item = getItems().get(typeID);
-		if (item != null) {
-			if (packaged && packagedVolume.containsKey(item.getGroup())) {
-				return packagedVolume.get(item.getGroup());
-			} else {
-				return item.getVolume();
-			}
-		}
-		return 0;
-	}
-
-	public Map<String, Float> getPackagedVolume() {
-		return packagedVolume;
 	}
 
 	public Date getConquerableStationsNextUpdate() {

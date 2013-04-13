@@ -173,7 +173,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		double totalVolume = 0;
 		double totalReprocessed = 0;
 		for (Asset asset : filterList) {
-			totalValue = totalValue + (asset.getPrice() * asset.getCount()) ;
+			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount()) ;
 			totalCount = totalCount + asset.getCount();
 			totalVolume = totalVolume + asset.getVolumeTotal();
 			totalReprocessed = totalReprocessed + asset.getValueReprocessed();
@@ -216,7 +216,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Asset> menuData = new MenuData<Asset>(selectionModel.getSelected());
+		MenuData<Asset> menuData = new MenuData<Asset>(selectionModel.getSelected(), program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//STOCKPILE

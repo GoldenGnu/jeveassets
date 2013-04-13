@@ -305,11 +305,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public double getPrice(final int typeID, final boolean isBlueprintCopy) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<String, List<SimpleColumn>> getTableColumns() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -321,11 +316,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, List<Filter>> getTableFilters(final String key) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public float getVolume(final int typeID, final boolean packaged) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -426,11 +416,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setIncludeContracts(boolean includeBuyOrders) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<String, Float> getPackagedVolume() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

@@ -60,7 +60,7 @@ class JOverviewTable extends JAutoColumnTable {
 			}
 			return component;
 		}
-		if (groupedLocations.contains(overview.getSolarSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())) { //In group
+		if (groupedLocations.contains(overview.getLocation().getSystem()) && columnName.equals(OverviewTableFormat.SYSTEM.getColumnName())) { //In group
 			if (!isSelected) {
 				component.setBackground(new Color(200, 255, 200));
 			} else {
@@ -68,7 +68,7 @@ class JOverviewTable extends JAutoColumnTable {
 			}
 			return component;
 		}
-		if (groupedLocations.contains(overview.getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())) { //In group
+		if (groupedLocations.contains(overview.getLocation().getRegion()) && columnName.equals(OverviewTableFormat.REGION.getColumnName())) { //In group
 			if (!isSelected) {
 				component.setBackground(new Color(200, 255, 200));
 			} else {

@@ -90,7 +90,6 @@ public class ProfileTest {
 
 	@Test
 	public void backwardCompatibility() throws URISyntaxException {
-		//FIXME clear API info
 		test("data-1-1-0");
 		test("data-1-2-0");
 		test("data-1-2-1");

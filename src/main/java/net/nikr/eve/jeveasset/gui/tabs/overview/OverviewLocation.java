@@ -62,11 +62,11 @@ public class OverviewLocation {
 	}
 
 	public boolean equalsLocation(final Asset eveAsset) {
-		return (name.equals(eveAsset.getLocation()) || name.equals(eveAsset.getSystem()) || name.equals(eveAsset.getRegion()));
+		return (name.equals(eveAsset.getLocation().getLocation()) || name.equals(eveAsset.getLocation().getSystem()) || name.equals(eveAsset.getLocation().getRegion()));
 	}
 
 	public boolean equalsLocation(final Overview overview) {
-		return (name.equals(overview.getName()) || name.equals(overview.getSolarSystem()) || name.equals(overview.getRegion()));
+		return (name.equals(overview.getName()) || name.equals(overview.getLocation().getSystem()) || name.equals(overview.getLocation().getRegion()));
 	}
 
 	@Override

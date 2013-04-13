@@ -49,7 +49,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getGroup();
+			return from.getItem().getGroup();
 		}
 	},
 	CATEGORY(String.class, GlazedLists.comparableComparator()) {
@@ -59,7 +59,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getCategory();
+			return from.getItem().getCategory();
 		}
 	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
@@ -79,7 +79,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getLocation();
+			return from.getLocation().getLocation();
 		}
 	},
 	SECURITY(String.class, GlazedLists.comparableComparator()) {
@@ -89,7 +89,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getSecurity();
+			return from.getLocation().getSecurity();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -99,7 +99,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getRegion();
+			return from.getLocation().getRegion();
 		}
 	},
 	CONTAINER(String.class, GlazedLists.comparableComparator()) {
@@ -129,7 +129,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getPrice();
+			return from.getDynamicPrice();
 		}
 	},
 	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
@@ -209,7 +209,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getPriceBase();
+			return from.getItem().getPriceBase();
 		}
 	},
 	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
@@ -279,7 +279,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getMeta();
+			return from.getItem().getMeta();
 		}
 	},
 	TECH(String.class, GlazedLists.comparableComparator()) {
@@ -289,7 +289,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getTech();
+			return from.getItem().getTech();
 		}
 	},
 	VOLUME(Float.class, GlazedLists.comparableComparator()) {
@@ -353,7 +353,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getTypeID();
+			return from.getItem().getTypeID();
 		}
 	};
 

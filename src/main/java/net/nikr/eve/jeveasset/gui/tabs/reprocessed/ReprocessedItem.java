@@ -27,33 +27,26 @@ import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 
 public class ReprocessedItem implements ReprocessedInterface {
 	private final ReprocessedTotal total;
-	private final int typeID; //TypeID : int
 	private final long portionSize;
 	private final long quantityMax;
 	private final long quantitySkill;
 	private final double price;
-	private final boolean marketGroup;
+	private final Item item;
 	private final String name;
 
-	public ReprocessedItem(final ReprocessedTotal parent, final Item self, final ReprocessedMaterial material, final int quantitySkill, final double price) {
+	public ReprocessedItem(final ReprocessedTotal parent, final Item item, final ReprocessedMaterial material, final int quantitySkill, final double price) {
 		this.total = parent;
-		this.typeID = material.getTypeID();
+		this.item = item;
 		this.portionSize = material.getPortionSize();
 		this.quantityMax = material.getQuantity();
 		this.quantitySkill = quantitySkill;
 		this.price = price;
-		this.marketGroup = self.isMarketGroup();
-		this.name = self.getName();
+		this.name = item.getTypeName();
 	}
 
 	@Override
 	public ReprocessedTotal getTotal() {
 		return total;
-	}
-
-	@Override
-	public int getTypeID() {
-		return typeID;
 	}
 
 	@Override
@@ -72,13 +65,8 @@ public class ReprocessedItem implements ReprocessedInterface {
 	}
 
 	@Override
-	public double getPrice() {
+	public Double getDynamicPrice() {
 		return price;
-	}
-
-	@Override
-	public boolean isMarketGroup() {
-		return marketGroup;
 	}
 
 	@Override
@@ -88,12 +76,12 @@ public class ReprocessedItem implements ReprocessedInterface {
 
 	@Override
 	public double getValueMax() {
-		return getPrice() * getQuantityMax();
+		return getDynamicPrice() * getQuantityMax();
 	}
 
 	@Override
 	public double getValueSkill() {
-		return getPrice() * getQuantitySkill();
+		return getDynamicPrice() * getQuantitySkill();
 	}
 
 	@Override
@@ -112,10 +100,15 @@ public class ReprocessedItem implements ReprocessedInterface {
 	}
 
 	@Override
+	public Item getItem() {
+		return item;
+	}
+
+	@Override
 	public int hashCode() {
 		int hash = 5;
 		hash = 29 * hash + (this.total != null ? this.total.hashCode() : 0);
-		hash = 29 * hash + this.typeID;
+		hash = 29 * hash + getItem().getTypeID();
 		return hash;
 	}
 
@@ -131,7 +124,7 @@ public class ReprocessedItem implements ReprocessedInterface {
 		if (this.total != other.total && (this.total == null || !this.total.equals(other.total))) {
 			return false;
 		}
-		if (this.typeID != other.typeID) {
+		if (this.getItem().getTypeID() != other.getItem().getTypeID()) {
 			return false;
 		}
 		return true;

@@ -65,8 +65,8 @@ public class JAssetTable extends JAutoColumnTable {
 			return component;
 		}
 		//Blueprint Original
-		if (asset.isBpo()
-				&& asset.isBlueprint()
+		if (asset.isBPO()
+				&& asset.getItem().isBlueprint()
 				&& (columnName.equals(EveAssetTableFormat.PRICE.getColumnName())
 				|| columnName.equals(EveAssetTableFormat.PRICE_SELL_MIN.getColumnName())
 				|| columnName.equals(EveAssetTableFormat.PRICE_BUY_MAX.getColumnName())
@@ -82,11 +82,11 @@ public class JAssetTable extends JAutoColumnTable {
 		//Reproccessing Colors
 		if (program.getSettings().isReprocessColors() && !isSelected) {
 			//Zero price (White)
-			if (asset.getPriceReprocessed() == 0 || asset.getPrice() == 0) {
+			if (asset.getPriceReprocessed() == 0 || asset.getDynamicPrice() == 0) {
 				return component;
 			}
 			//Equal price (Yellow)
-			if (asset.getPriceReprocessed() == asset.getPrice()) {
+			if (asset.getPriceReprocessed() == asset.getDynamicPrice()) {
 				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 255, 160));
 				} else {
@@ -95,7 +95,7 @@ public class JAssetTable extends JAutoColumnTable {
 				return component;
 			}
 			//Reprocessed highest (Red)
-			if (asset.getPriceReprocessed() > asset.getPrice()) {
+			if (asset.getPriceReprocessed() > asset.getDynamicPrice()) {
 				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 160, 160));
 				} else {
@@ -104,7 +104,7 @@ public class JAssetTable extends JAutoColumnTable {
 				return component;
 			}
 			//Price highest (Green)
-			if (asset.getPriceReprocessed() < asset.getPrice()) {
+			if (asset.getPriceReprocessed() < asset.getDynamicPrice()) {
 				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
 					component.setBackground(new Color(160, 255, 160));
 				} else {
@@ -115,7 +115,7 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 
 		//Reproccessed is greater then price
-		if (asset.getPriceReprocessed() > asset.getPrice() && columnName.equals(EveAssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
+		if (asset.getPriceReprocessed() > asset.getDynamicPrice() && columnName.equals(EveAssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(255, 255, 200));
 			} else {

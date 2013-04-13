@@ -22,6 +22,7 @@ package net.nikr.eve.jeveasset.data;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import com.beimin.eveapi.shared.contract.ContractType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,7 +50,6 @@ public class ProfileData {
 	private final EventList<MarketOrder> marketOrdersEventList = new BasicEventList<MarketOrder>();
 	private final EventList<Asset> assetsEventList = new BasicEventList<Asset>();
 	private final EventList<AccountBalance> accountBalanceEventList = new BasicEventList<AccountBalance>();
-	private Set<Integer> priceTypeIDs = null; //TypeID : int
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private List<String> owners = new ArrayList<String>();
@@ -60,11 +60,7 @@ public class ProfileData {
 	}
 
 	public Set<Integer> getPriceTypeIDs() {
-		return priceTypeIDs;
-	}
-
-	public boolean hasAssets() {
-		return !priceTypeIDs.isEmpty();
+		return createPriceTypeIDs(); //always needs to be fresh :)
 	}
 
 	public EventList<AccountBalance> getAccountBalanceEventList() {
@@ -95,13 +91,74 @@ public class ProfileData {
 		return sortedOwners;
 	}
 
+	private Set<Integer> createPriceTypeIDs() {
+		Set<Integer> priceTypeIDs = new HashSet<Integer>();
+		for (Account account : profileManager.getAccounts()) {
+			for (Owner owner : account.getOwners()) {
+				//Add Assets to uniqueIds
+				deepAssets(owner.getAssets(), priceTypeIDs);
+				//Add Market Orders to uniqueIds
+				for (MarketOrder marketOrder : owner.getMarketOrders()) {
+					Item item = marketOrder.getItem();
+					if (item.isMarketGroup()) {
+						priceTypeIDs.add(item.getTypeID());
+					}
+				}
+				//Add Industry Job to uniqueIds
+				for (IndustryJob industryJob : owner.getIndustryJobs()) {
+					Item itemType = industryJob.getItem();
+					if (itemType.isMarketGroup()) {
+						priceTypeIDs.add(itemType.getTypeID());
+					}
+				}
+				//Add Contract to uniqueIds
+				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
+					for (ContractItem contractItem : entry.getValue()) {
+						Item item = contractItem.getItem();
+						if (item.isMarketGroup()) {
+							priceTypeIDs.add(item.getTypeID());
+						}
+					}
+				}
+				//Add StockpileItems to uniqueIds
+				for (Stockpile stockpile : settings.getStockpiles()) {
+					for (StockpileItem stockpileItem : stockpile.getItems()) {
+						Item item = stockpileItem.getItem();
+						if (item.isMarketGroup()) {
+							priceTypeIDs.add(item.getTypeID());
+						}
+					}
+				}
+				//Add reprocessed items to price queue
+				for (Item item : settings.getItems().values()) {
+					for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+						int typeID = reprocessedMaterial.getTypeID();
+						Item reprocessedItem = settings.getItems().get(typeID);
+						if (reprocessedItem != null && reprocessedItem.isMarketGroup()) {
+							priceTypeIDs.add(typeID);
+						}
+					}
+				}
+			}
+		}
+		return priceTypeIDs;
+	}
+
+	private void deepAssets(List<Asset> assets, Set<Integer> priceTypeIDs) {
+		for (Asset asset : assets) {
+			//Unique Ids
+			if (asset.getItem().isMarketGroup()) {
+				priceTypeIDs.add(asset.getItem().getTypeID());
+			}
+			deepAssets(asset.getAssets(), priceTypeIDs);
+		}
+	}
+
 	public void updateEventLists() {
-		priceTypeIDs = new HashSet<Integer>();
 		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 		owners = new ArrayList<String>();
 		List<String> ownersOrders = new ArrayList<String>();
 		List<String> ownersJobs = new ArrayList<String>();
-		List<String> ownersContracts = new ArrayList<String>();
 		List<String> ownersAssets = new ArrayList<String>();
 		List<String> ownersAccountBalance = new ArrayList<String>();
 		List<Long> contractIDs = new ArrayList<Long>();
@@ -117,94 +174,83 @@ public class ProfileData {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowAssets()) {
 					owners.add(owner.getName());
+				} else {
+					continue;
 				}
 				//Market Orders
 				if (!owner.getMarketOrders().isEmpty() && !ownersOrders.contains(owner.getName())) {
 					//Market Orders
-					if (owner.isShowAssets()) {
-						marketOrders.addAll(owner.getMarketOrders());
-					}
+					marketOrders.addAll(owner.getMarketOrders());
 					//Assets
-					List<Asset> marketOrdersAssets = ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings);
-					addAssets(marketOrdersAssets, assets, owner.isShowAssets());
-					if (owner.isShowAssets()) {
-						ownersOrders.add(owner.getName());
-					}
+					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
+					ownersOrders.add(owner.getName());
 				}
 				//Industry Jobs
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
 					//Industry Jobs
-					if (owner.isShowAssets()) {
-						industryJobs.addAll(owner.getIndustryJobs());
-					}
+					industryJobs.addAll(owner.getIndustryJobs());
 					//Assets
-					List<Asset> industryJobAssets = ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner, settings);
-					addAssets(industryJobAssets, assets, owner.isShowAssets());
-					if (owner.isShowAssets()) {
-						ownersJobs.add(owner.getName());
-					}
+					//FIXME make Asset Industry Jobs optional?
+					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner, settings), assets);
+					ownersJobs.add(owner.getName());
 				}
 				//Contracts
-				if (!owner.getContracts().isEmpty() && !ownersContracts.contains(owner.getName()) && settings.isIncludeContracts()) {
+				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
 					//Contracts
-					for (List<ContractItem> items : owner.getContracts().values()) {
-						contractItems.addAll(items);
+					Contract contract = entry.getKey();
+					if (contractIDs.contains(contract.getContractID())) {
+						continue;
+					}
+					if (entry.getValue().isEmpty() 
+						&& contract.getType() == ContractType.COURIER &&
+						( //XXX - Workaround for alien contracts
+							owner.getOwnerID() == contract.getAcceptorID()
+							|| owner.getOwnerID() == contract.getAssigneeID()
+							|| owner.getOwnerID() == contract.getIssuerID()
+							|| (owner.getOwnerID() == contract.getIssuerCorpID() && contract.isForCorp())
+						)
+						) {
+						contractIDs.add(contract.getContractID());
+						contractItems.add(new ContractItem(contract));
+					} else if (!entry.getValue().isEmpty()) {
+						contractIDs.add(contract.getContractID());
+						contractItems.addAll(entry.getValue());
 					}
 					//Assets
-					List<Asset> contractAssets = ApiConverter.assetContracts(owner.getContracts(), contractIDs, owner, settings);
-					addAssets(contractAssets, assets, owner.isShowAssets());
-					if (owner.isShowAssets()) {
-						ownersContracts.add(owner.getName());
-					}
+					List<Asset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner, settings);
+					addAssets(contractAssets, assets);
 				}
-				//Assets (Must be after Industry Jobs, for bpos to be marked)
+				//Assets
 				if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
-					addAssets(owner.getAssets(), assets, owner.isShowAssets());
-					if (owner.isShowAssets()) {
-						ownersAssets.add(owner.getName());
-					}
+					addAssets(owner.getAssets(), assets);
+					ownersAssets.add(owner.getName());
 				}
 				//Account Balance
 				if (!owner.getAccountBalances().isEmpty() && !ownersAccountBalance.contains(owner.getName())) {
-					if (owner.isShowAssets()) {
-						accountBalance.addAll(owner.getAccountBalances());
-						ownersAccountBalance.add(owner.getName());
-					}
+					accountBalance.addAll(owner.getAccountBalances());
+					ownersAccountBalance.add(owner.getName());
 				}
-				//Add StockpileItems to uniqueIds
-				for (Stockpile stockpile : settings.getStockpiles()) {
-					for (StockpileItem item : stockpile.getItems()) {
-						int typeID = item.getTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-						if (marketGroup) {
-							priceTypeIDs.add(typeID);
-						}
-					}
-				}
-				//Add MarketOrders to uniqueIds
+				//Update MarketOrders dynamic values
 				for (MarketOrder order : owner.getMarketOrders()) {
-					int typeID = order.getTypeID();
-					boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-					if (marketGroup) {
-						priceTypeIDs.add(typeID);
-					}
+					Item item = order.getItem();
+					//Price
+					double price = ApiIdConverter.getPrice(item.getTypeID(), false, settings.getUserPrices(), settings.getPriceData());
+					order.setDynamicPrice(price);
 				}
-				//Add IndustryJobs to uniqueIds
+				//Update IndustryJobs dynamic values
 				for (IndustryJob job : owner.getIndustryJobs()) {
-					int typeID = job.getInstalledItemTypeID();
-					boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-					if (marketGroup) {
-						priceTypeIDs.add(typeID);
-					}
+					Item itemType = job.getItem();
+					//Price
+					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC(), settings.getUserPrices(), settings.getPriceData());
+					job.setDynamicPrice(price);
 				}
-				//Add Contracts to uniqueIds
+				//Update Contracts dynamic values
 				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
 					for (ContractItem contractItem : entry.getValue()) {
-						int typeID = contractItem.getTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, settings.getItems());
-						if (marketGroup) {
-							priceTypeIDs.add(typeID);
-						}
+						Item item = contractItem.getItem();
+						//Price
+						double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC(), settings.getUserPrices(), settings.getPriceData());
+						contractItem.setDynamicPrice(price);
 					}
 				}
 			}
@@ -274,115 +320,98 @@ public class ProfileData {
 		}
 	}
 
-	private void addAssets(final List<Asset> assets, List<Asset> addTo, final boolean shouldShow) {
+	private void addAssets(final List<Asset> assets, List<Asset> addTo) {
 		for (Asset asset : assets) {
-			if (shouldShow) {
-				//Date added
-				if (settings.getAssetAdded().containsKey(asset.getItemID())) {
-					asset.setAdded(settings.getAssetAdded().get(asset.getItemID()));
+			//Date added
+			if (settings.getAssetAdded().containsKey(asset.getItemID())) {
+				asset.setAdded(settings.getAssetAdded().get(asset.getItemID()));
+			} else {
+				Date date = new Date();
+				settings.getAssetAdded().put(asset.getItemID(), date);
+				asset.setAdded(date);
+			}
+			//User price
+			if (asset.getItem().isBlueprint() && !asset.isBPO()) { //Blueprint Copy
+				asset.setUserPrice(settings.getUserPrices().get(-asset.getItem().getTypeID()));
+			} else { //All other
+				asset.setUserPrice(settings.getUserPrices().get(asset.getItem().getTypeID()));
+			}
+			//Market price
+			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
+			//User Item Names
+			if (settings.getUserItemNames().containsKey(asset.getItemID())) {
+				asset.setName(settings.getUserItemNames().get(asset.getItemID()).getValue());
+			} else {
+				asset.setName(asset.getTypeName());
+			}
+			//Contaioner
+			String sContainer = "";
+			for (Asset parentEveAsset : asset.getParents()) {
+				if (!sContainer.isEmpty()) {
+					sContainer = sContainer + ">";
+				}
+				if (!parentEveAsset.isUserName()) {
+					sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
 				} else {
-					Date date = new Date();
-					settings.getAssetAdded().put(asset.getItemID(), date);
-					asset.setAdded(date);
+					sContainer = sContainer + parentEveAsset.getName();
 				}
-				//User price
-				if (asset.isBlueprint() && !asset.isBpo()) { //Blueprint Copy
-					asset.setUserPrice(settings.getUserPrices().get(-asset.getTypeID()));
-				} else { //All other
-					asset.setUserPrice(settings.getUserPrices().get(asset.getTypeID()));
-				}
-				//Market price
-				asset.setMarketPriceData(marketPriceData.get(asset.getTypeID()));
-				//User Item Names
-				if (settings.getUserItemNames().containsKey(asset.getItemID())) {
-					asset.setName(settings.getUserItemNames().get(asset.getItemID()).getValue());
-				} else {
-					asset.setName(asset.getTypeName());
-				}
-				//Contaioner
-				String sContainer = "";
-				for (Asset parentEveAsset : asset.getParents()) {
-					if (!sContainer.isEmpty()) {
-						sContainer = sContainer + ">";
-					}
-					if (!parentEveAsset.isUserName()) {
-						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
+			}
+			if (sContainer.isEmpty()) {
+				sContainer = General.get().none();
+			}
+			asset.setContainer(sContainer);
+
+			//Price data
+			if (asset.getItem().isMarketGroup() && settings.getPriceData().containsKey(asset.getItem().getTypeID()) && !settings.getPriceData().get(asset.getItem().getTypeID()).isEmpty()) { //Market Price
+				asset.setPriceData(settings.getPriceData().get(asset.getItem().getTypeID()));
+			} else { //No Price :(
+				asset.setPriceData(null);
+			}
+
+			//Reprocessed price
+			asset.setPriceReprocessed(0);
+			double priceReprocessed = 0;
+			int portionSize = 0;
+			for (ReprocessedMaterial material : asset.getItem().getReprocessedMaterial()) {
+				//Calculate reprocessed price
+				portionSize = material.getPortionSize();
+				if (settings.getPriceData().containsKey(material.getTypeID())) {
+					PriceData priceData = settings.getPriceData().get(material.getTypeID());
+					double price;
+					if (settings.getUserPrices().containsKey(material.getTypeID())) {
+						price = settings.getUserPrices().get(material.getTypeID()).getValue();
 					} else {
-						sContainer = sContainer + parentEveAsset.getName();
+						price = Asset.getDefaultPriceReprocessed(priceData);
 					}
+					priceReprocessed = priceReprocessed + (price * settings.getReprocessSettings().getLeft(material.getQuantity()));
 				}
-				if (sContainer.isEmpty()) {
-					sContainer = General.get().none();
-				}
-				asset.setContainer(sContainer);
-
-				//Price data
-				if (asset.isMarketGroup() && settings.getPriceData().containsKey(asset.getTypeID()) && !settings.getPriceData().get(asset.getTypeID()).isEmpty()) { //Market Price
-					asset.setPriceData(settings.getPriceData().get(asset.getTypeID()));
-				} else { //No Price :(
-					asset.setPriceData(null);
-				}
-
-				//Reprocessed price
-				asset.setPriceReprocessed(0);
-				if (settings.getItems().containsKey(asset.getTypeID())) {
-					List<ReprocessedMaterial> reprocessedMaterials = settings.getItems().get(asset.getTypeID()).getReprocessedMaterial();
-					double priceReprocessed = 0;
-					int portionSize = 0;
-					for (ReprocessedMaterial material : reprocessedMaterials) {
-						//Calculate reprocessed price
-						portionSize = material.getPortionSize();
-						if (settings.getPriceData().containsKey(material.getTypeID())) {
-							PriceData priceData = settings.getPriceData().get(material.getTypeID());
-							double price;
-							if (settings.getUserPrices().containsKey(material.getTypeID())) {
-								price = settings.getUserPrices().get(material.getTypeID()).getValue();
-							} else {
-								price = Asset.getDefaultPriceReprocessed(priceData);
-							}
-							priceReprocessed = priceReprocessed + (price * settings.getReprocessSettings().getLeft(material.getQuantity()));
-						}
-						//Unique Ids
-						boolean marketGroup = ApiIdConverter.marketGroup(material.getTypeID(), settings.getItems());
-						if (marketGroup && !priceTypeIDs.contains(material.getTypeID())) {
-							priceTypeIDs.add(material.getTypeID());
-						}
-					}
-					if (priceReprocessed > 0 && portionSize > 0) {
-						priceReprocessed = priceReprocessed / portionSize;
-					}
-					asset.setPriceReprocessed(priceReprocessed);
-				}
-
-				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(asset.getTypeID())) {
-					uniqueAssetsDuplicates.put(asset.getTypeID(), new ArrayList<Asset>());
-				}
-				if (shouldShow) {
-					List<Asset> dup = uniqueAssetsDuplicates.get(asset.getTypeID());
-					long newCount = asset.getCount();
-					if (!dup.isEmpty()) {
-						newCount = newCount + dup.get(0).getTypeCount();
-					}
-					dup.add(asset);
-					for (Asset assetLoop : dup) {
-						assetLoop.setTypeCount(newCount);
-					}
-				}
-				//Packaged Volume
-				if (!asset.isSingleton() && settings.getPackagedVolume().containsKey(asset.getGroup())) {
-					asset.setVolume(settings.getPackagedVolume().get(asset.getGroup()));
-				}
-
-				//Add asset
-				addTo.add(asset);
 			}
-			//Unique Ids
-			if (asset.isMarketGroup()) {
-				priceTypeIDs.add(asset.getTypeID());
+			if (priceReprocessed > 0 && portionSize > 0) {
+				priceReprocessed = priceReprocessed / portionSize;
 			}
+			asset.setPriceReprocessed(priceReprocessed);
+
+			//Type Count
+			if (!uniqueAssetsDuplicates.containsKey(asset.getItem().getTypeID())) {
+				uniqueAssetsDuplicates.put(asset.getItem().getTypeID(), new ArrayList<Asset>());
+			}
+			List<Asset> dup = uniqueAssetsDuplicates.get(asset.getItem().getTypeID());
+			long newCount = asset.getCount();
+			if (!dup.isEmpty()) {
+				newCount = newCount + dup.get(0).getTypeCount();
+			}
+			dup.add(asset);
+			for (Asset assetLoop : dup) {
+				assetLoop.setTypeCount(newCount);
+			}
+			//Packaged Volume
+			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), asset.isSingleton(), settings.getItems());
+			asset.setVolume(volume);
+
+			//Add asset
+			addTo.add(asset);
 			//Add sub-assets
-			addAssets(asset.getAssets(), addTo, shouldShow);
+			addAssets(asset.getAssets(), addTo);
 		}
 	}
 }

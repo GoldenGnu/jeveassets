@@ -322,32 +322,16 @@ public final class SettingsReader extends AbstractXmlReader {
 			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
 				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
 			}
-			Location location = settings.getLocations().get(locationID);
-			String station = null;
-			String system = null;
-			String region = null;
-			if (location == null) {
+			Location location = ApiIdConverter.getLocation(locationID, settings.getLocations());
+			if (location == null || location.isEmpty()) {
 				location = StockpileDialog.LOCATION_ALL;
-			}
-			if (location.isRegion() || location.isSystem() || location.isStation()) {
-				region = ApiIdConverter.regionName(location.getLocationID(), null, settings.getLocations());
-			}
-			if (location.isSystem() || location.isStation()) {
-				system = ApiIdConverter.systemName(location.getLocationID(), null, settings.getLocations());
-			}
-			if (location.isStation()) {
-				station = ApiIdConverter.locationName(location.getLocationID(), null, settings.getLocations());
-			} else if (location.isSystem()) {
-				station = system;
-			} else if (location.isRegion()) {
-				station = region;
 			}
 			boolean inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
 			boolean sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 
-			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
+			Stockpile stockpile = new Stockpile(name, ownerID, "", location, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
@@ -355,10 +339,9 @@ public final class SettingsReader extends AbstractXmlReader {
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
-					String itemName = ApiIdConverter.typeName(Math.abs(typeID), settings.getItems());
-					String itemGroup = ApiIdConverter.group(Math.abs(typeID), settings.getItems());
-					StockpileItem item = new StockpileItem(stockpile, itemName, itemGroup, typeID, countMinimum);
-					stockpile.add(item);
+					Item item = ApiIdConverter.getItem(Math.abs(typeID), settings.getItems());
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
+					stockpile.add(stockpileItem);
 				}
 			}
 		}

@@ -206,7 +206,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getOwnerID()));
 			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
 			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
-			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocationID()));
+			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocation().getLocationID()));
 			strockpileNode.setAttributeNS(null, "inventory", String.valueOf(strockpile.isInventory()));
 			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
 			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));

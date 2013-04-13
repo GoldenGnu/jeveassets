@@ -22,35 +22,41 @@
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractItem extends EveContractItem implements Comparable<ContractItem> {
+public class ContractItem extends EveContractItem implements Comparable<ContractItem>, LocationType, ItemType, BlueprintType, PriceType {
 
 	private Contract contract;
-	private String name;
-	private boolean marketGroup;
+	private Item item;
+	private double price;
 
 	public ContractItem(Contract contract) {
 		this.contract = contract;
-		this.name = contract.getTypeName();
-		this.marketGroup = false;
+		this.item = new Item(0);
 		this.setIncluded(true);
 		this.setQuantity(0);
 		this.setRecordID(0);
 		this.setSingleton(false);
 		this.setTypeID(0);
+		this.setRawQuantity(0L);
 	}
 
-	public ContractItem(EveContractItem contractItem, Contract contract, String name, boolean marketGroup) {
+	public ContractItem(EveContractItem contractItem, Contract contract, Item item) {
 		this.contract = contract;
-		this.name = name;
-		this.marketGroup = marketGroup;
+		this.item = item;
 		this.setIncluded(contractItem.isIncluded());
 		this.setQuantity(contractItem.getQuantity());
 		this.setRecordID(contractItem.getRecordID());
 		this.setSingleton(contractItem.isSingleton());
 		this.setTypeID(contractItem.getTypeID());
+		this.setRawQuantity(contractItem.getRawQuantity());
 	}
 
 	public Contract getContract() {
@@ -67,10 +73,6 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		}
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public String getSingleton() {
 		if (getContract().isCourier()) {
 			return TabsContracts.get().courier();
@@ -81,8 +83,42 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		}
 	}
 
-	public boolean isMarketGroup() {
-		return marketGroup;
+	
+	public String getName() {
+		if (item.isEmpty()) {
+			return contract.getTypeName();
+		} else {
+			return item.getTypeName();
+		}
+	}
+
+	public void setDynamicPrice(double price) {
+		this.price = price;
+	}
+
+	@Override
+	public Double getDynamicPrice() {
+		return price;
+	}
+
+	@Override
+	public boolean isBPO() {
+		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() == -1);
+	}
+
+	@Override
+	public boolean isBPC() {
+		return (item.isBlueprint() && this.getRawQuantity() != null && this.getRawQuantity() == -2);
+	}
+
+	@Override
+	public Location getLocation() {
+		return getContract().getStartStation();
+	}
+
+	@Override
+	public Item getItem() {
+		return item;
 	}
 
 	@Override
@@ -93,7 +129,8 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 67 * hash + (int) (this.getRecordID() ^ (this.getRecordID() >>> 32));
+		hash = 37 * hash + (this.contract != null ? this.contract.hashCode() : 0);
+		hash = 37 * hash + (int) (this.getRecordID() ^ (this.getRecordID() >>> 32));
 		return hash;
 	}
 
@@ -105,7 +142,10 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final EveContractItem other = (EveContractItem) obj;
+		final ContractItem other = (ContractItem) obj;
+		if (this.contract != other.contract && (this.contract == null || !this.contract.equals(other.contract))) {
+			return false;
+		}
 		if (this.getRecordID() != other.getRecordID()) {
 			return false;
 		}

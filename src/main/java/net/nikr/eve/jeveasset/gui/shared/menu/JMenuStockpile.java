@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class JMenuStockpile<T>  extends JMenu implements ActionListener {
@@ -83,8 +84,8 @@ public class JMenuStockpile<T>  extends JMenu implements ActionListener {
 				Stockpile stockpile = jStockpileMenu.getStockpile();
 				List<StockpileItem> items = new ArrayList<StockpileItem>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					Item item = program.getSettings().getItems().get(Math.abs(typeID));
-					StockpileItem stockpileItem = new StockpileItem(stockpile, item.getName(), item.getGroup(), typeID, DEFAULT_ADD_COUNT);
+					Item item = ApiIdConverter.getItem(Math.abs(typeID), program.getSettings().getItems());
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT);
 					items.add(stockpileItem);
 				}
 				stockpile = program.getStockpileTool().addToStockpile(stockpile, items);

@@ -142,13 +142,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				formatedValue = userItems.get(0).getValueFormated();
 			}
 		} else {
-			int count = 0;
-			for (UserItem<K, V> userItem : userItems) {
-				if (items.containsKey(userItem.getKey())) {
-					count++;
-				}
-			}
-			name = DialoguesSettings.get().items(count);
+			name = DialoguesSettings.get().items(userItems.size());
 		}
 		if (formatedValue == null) {
 			formatedValue = "0";

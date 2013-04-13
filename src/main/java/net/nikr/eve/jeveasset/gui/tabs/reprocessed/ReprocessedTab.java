@@ -69,6 +69,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ReprocessedTab extends JMainTab {
@@ -223,7 +224,7 @@ public class ReprocessedTab extends JMainTab {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<ReprocessedInterface> menuData = new MenuData<ReprocessedInterface>(selected);
+		MenuData<ReprocessedInterface> menuData = new MenuData<ReprocessedInterface>(selected, program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selected));
 	//ASSET FILTER
@@ -254,13 +255,13 @@ public class ReprocessedTab extends JMainTab {
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
 				}
-				double sellPrice = program.getSettings().getPrice(i, false);
+				double sellPrice = ApiIdConverter.getPrice(i, false, program.getSettings().getUserPrices(), program.getSettings().getPriceData());
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 					Item materialItem = program.getSettings().getItems().get(material.getTypeID());
 					if (materialItem != null) {
-						double price = program.getSettings().getPrice(materialItem.getTypeID(), false);
+						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false, program.getSettings().getUserPrices(), program.getSettings().getPriceData());
 						int quantitySkill = program.getSettings().getReprocessSettings().getLeft(material.getQuantity());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
 						list.add(reprocessedItem);
@@ -269,7 +270,7 @@ public class ReprocessedTab extends JMainTab {
 						//Grand Total
 						grandTotal.add(reprocessedItem);
 						//Grand Item
-						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, grandTotal);
+						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, materialItem, grandTotal);
 						int index = uniqueList.indexOf(grandItem);
 						if (index >= 0) {
 							grandItem = uniqueList.get(index);
@@ -338,7 +339,7 @@ public class ReprocessedTab extends JMainTab {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					ReprocessedInterface item = (ReprocessedInterface) separator.first();
 					ReprocessedTotal total = item.getTotal();
-					typeIDs.remove(total.getTypeID());
+					typeIDs.remove(total.getItem().getTypeID());
 					updateData();
 				}
 			}

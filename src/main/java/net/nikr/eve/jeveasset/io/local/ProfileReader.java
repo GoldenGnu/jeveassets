@@ -217,7 +217,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			dateAccepted = null;
 		}
 		Date dateCompleted;
-		if (AttributeGetters.haveAttribute(element, "dateaccepted")) {
+		if (AttributeGetters.haveAttribute(element, "datecompleted")) {
 			dateCompleted = AttributeGetters.getDate(element, "datecompleted");
 		} else {
 			dateCompleted = null;
@@ -270,12 +270,16 @@ public final class ProfileReader extends AbstractXmlReader {
 		long recordID = AttributeGetters.getLong(element, "recordid");
 		boolean singleton = AttributeGetters.getBoolean(element, "singleton");
 		int typeID = AttributeGetters.getInt(element, "typeid");
-
+		Long rawQuantity = null;
+		if (AttributeGetters.haveAttribute(element, "rawquantity")) {
+			rawQuantity = AttributeGetters.getLong(element, "rawquantity");
+		}
 		contractItem.setIncluded(included);
 		contractItem.setQuantity(quantity);
 		contractItem.setRecordID(recordID);
 		contractItem.setSingleton(singleton);
 		contractItem.setTypeID(typeID);
+		contractItem.setRawQuantity(rawQuantity);
 
 		return contractItem;
 	}
@@ -466,7 +470,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		long locationID = AttributeGetters.getInt(node, "locationid");
 		if (locationID == 0 && parentEveAsset != null) {
-			locationID = parentEveAsset.getLocationID();
+			locationID = parentEveAsset.getLocation().getLocationID();
 		}
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		int rawQuantity = 0;

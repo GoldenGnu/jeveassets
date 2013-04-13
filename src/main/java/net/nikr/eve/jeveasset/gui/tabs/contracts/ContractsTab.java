@@ -188,7 +188,7 @@ public class ContractsTab extends JMainTab {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<ContractItem> menuData = new MenuData<ContractItem>(selected);
+		MenuData<ContractItem> menuData = new MenuData<ContractItem>(selected, program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selected));
 	//ASSET FILTER

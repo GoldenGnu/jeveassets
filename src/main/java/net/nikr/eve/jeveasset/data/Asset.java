@@ -23,11 +23,15 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
 
-public class Asset implements Comparable<Asset>, InfoItem {
+public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType {
 
 	public enum PriceMode {
 		PRICE_SELL_MAX() {
@@ -110,37 +114,23 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	private static PriceMode priceReprocessedType = PriceMode.PRICE_MIDPOINT;
 
 	private List<Asset> assets = new ArrayList<Asset>();
-	private long locationID; //LocationID : long
+	private Location location;
+	private Item item;
 	private long itemID; //ItemID : long
-	private long solarSystemID; //LocationID : long
-	private long regionID; //LocationID : long
-	private int typeID; //TypeID : int
 	private int flagID; //FlagID : int
-	private String typeName;
 	private String name;
-	private String group;
-	private String category;
 	private Owner owner;
 	private long count;
-	private String location;
 	private String container = "";
 	private List<Asset> parents;
 	private String flag;
-	private double priceBase;
-	private String tech;
-	private int meta;
-	private boolean marketGroup;
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
 	private float volume;
-	private String region;
 	private long typeCount = 0;
 	private boolean singleton;
-	private String security;
 	private double priceReprocessed;
-	private String system;
 	private int rawQuantity;
-	private boolean piMaterial;
 	private MarketPriceData marketPriceData;
 	private Date added;
 
@@ -149,33 +139,20 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	 */
 	protected Asset() { }
 
-	public Asset(final String typeName, final String group, final String category, final Owner owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID) {
-		this.typeName = typeName;
+	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
+		this.item = item;
+		this.location = location;
 		this.name = getTypeName();
-		this.group = group;
-		this.category = category;
 		this.owner = owner;
 		this.count = count;
 		this.location = location;
 		this.parents = parents;
 		this.flag = flag;
 		this.flagID = flagID;
-		this.priceBase = priceBase;
-		this.meta = meta;
-		this.tech = tech;
 		this.itemID = itemID;
-		this.typeID = typeID;
-		this.marketGroup = marketGroup;
-		this.volume = volume;
-		this.region = region;
-		this.locationID = locationID;
+		this.volume = item.getVolume();
 		this.singleton = singleton;
-		this.security = security;
-		this.system = system;
-		this.solarSystemID = solarSystemID;
 		this.rawQuantity = rawQuantity;
-		this.piMaterial = piMaterial;
-		this.regionID = regionID;
 	}
 
 	public void addEveAsset(final Asset eveAsset) {
@@ -188,10 +165,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public List<Asset> getAssets() {
 		return assets;
-	}
-
-	public String getCategory() {
-		return category;
 	}
 
 	public String getContainer() {
@@ -267,20 +240,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return flagID;
 	}
 
-	public String getGroup() {
-		return group;
-	}
-
 	public long getItemID() {
 		return itemID;
 	}
 
-	public String getLocation() {
-		return location;
+	@Override
+	public Item getItem() {
+		return item;
 	}
 
-	public long getLocationID() {
-		return locationID;
+	@Override
+	public Location getLocation() {
+		return location;
 	}
 
 	public MarketPriceData getMarketPriceData() {
@@ -289,14 +260,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		} else {
 			return new MarketPriceData();
 		}
-	}
-
-	public int getMeta() {
-		return meta;
-	}
-
-	public String getTech() {
-		return tech;
 	}
 
 	public String getName() {
@@ -315,27 +278,24 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return parents;
 	}
 
-	public double getPrice() {
+	@Override
+	public Double getDynamicPrice() {
 		//UserPrice
 		if (this.getUserPrice() != null) {
 			return this.getUserPrice().getValue();
 		}
 
 		//Blueprint Copy (Default Zero)
-		if (isBlueprint() && !isBpo()) {
-			return 0;
+		if (item.isBlueprint() && !isBPO()) {
+			return 0.0;
 		}
 
 		//PriceData
 		return getDefaultPrice();
 	}
 
-	public double getPriceBase() {
-		return priceBase;
-	}
-
 	public double getPriceBuyMax() {
-		if (isBlueprint() && !isBpo()) {
+		if (item.isBlueprint() && !isBPO()) {
 			return 0;
 		}
 
@@ -355,19 +315,19 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public double getPriceReprocessedDifference() {
-		return getPriceReprocessed() - getPrice();
+		return getPriceReprocessed() - getDynamicPrice();
 	}
 
 	public double getPriceReprocessedPercent() {
-		if (getPrice() > 0 && getPriceReprocessed() > 0) {
-			return (getPriceReprocessed() / getPrice());
+		if (getDynamicPrice() > 0 && getPriceReprocessed() > 0) {
+			return (getPriceReprocessed() / getDynamicPrice());
 		} else {
 			return 0;
 		}
 	}
 
 	public double getPriceSellMin() {
-		if (isBlueprint() && !isBpo()) {
+		if (item.isBlueprint() && !isBPO()) {
 			return 0;
 		}
 
@@ -390,43 +350,19 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return rawQuantity;
 	}
 
-	public String getRegion() {
-		return region;
-	}
-
-	public long getRegionID() {
-		return regionID;
-	}
-
-	public String getSecurity() {
-		return security;
-	}
-
-	public long getSolarSystemID() {
-		return solarSystemID;
-	}
-
-	public String getSystem() {
-		return system;
-	}
-
 	public long getTypeCount() {
 		return typeCount;
 	}
 
-	public int getTypeID() {
-		return typeID;
-	}
-
 	public final String getTypeName() {
-		if (isBlueprint()) {
-			if (isBpo()) {
-				return typeName + " (BPO)";
+		if (item.isBlueprint()) {
+			if (isBPO()) {
+				return item.getTypeName() + " (BPO)";
 			} else {
-				return typeName + " (BPC)";
+				return item.getTypeName() + " (BPC)";
 			}
 		} else {
-			return typeName;
+			return item.getTypeName();
 		}
 	}
 
@@ -436,7 +372,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	@Override
 	public double getValue() {
-		return Formater.round(this.getPrice() * this.getCount(), 2);
+		return Formater.round(this.getDynamicPrice() * this.getCount(), 2);
 	}
 
 	@Override
@@ -453,24 +389,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return volume * count;
 	}
 
-	public boolean isBlueprint() {
-		return (typeName.toLowerCase().contains("blueprint"));
+	@Override
+	public boolean isBPO() {
+		return (item.isBlueprint() && this.getRawQuantity() == -1);
 	}
 
-	public boolean isBpo() {
-		return rawQuantity != -2;
+	@Override
+	public boolean isBPC() {
+		return (item.isBlueprint() && this.getRawQuantity() == -2);
 	}
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
-	}
-
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	public boolean isPiMaterial() {
-		return piMaterial;
 	}
 
 	/**

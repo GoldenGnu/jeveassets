@@ -149,7 +149,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected());
+		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
@@ -158,6 +158,8 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		jComponent.add(new JMenuStockpile<MarketOrder>(program, menuData));
 	//LOOKUP
 		jComponent.add(new JMenuLookup<MarketOrder>(program, menuData));
+	//EDIT
+		jComponent.add(new JMenuPrice<MarketOrder>(program, menuData));
 	//REPROCESSED
 		jComponent.add(new JMenuReprocessed<MarketOrder>(program, menuData));
 	//COLUMNS

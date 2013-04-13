@@ -31,7 +31,7 @@ public class SolarSystem extends Node {
 	private Location location;
 
 	public SolarSystem(final Location location) {
-		super(location.getName());
+		super(location.getLocation());
 		this.location = location;
 	}
 

@@ -139,6 +139,7 @@ public class Owner implements Comparable<Owner> {
 		this.showAssets = showAssets;
 	}
 
+	//FIXME - isShowAssets is not a good name - should be isShowOwner
 	public boolean isShowAssets() {
 		return showAssets;
 	}
@@ -240,7 +241,7 @@ public class Owner implements Comparable<Owner> {
 	}
 
 	public static ApiAuthorization getApiAuthorization(final Account account) {
-		return getApiAuthorization(account, 0);
+		return new ApiAuthorization(account.getKeyID(), account.getVCode());
 	}
 	public static ApiAuthorization getApiAuthorization(final Owner owner) {
 		return getApiAuthorization(owner.getParentAccount(), owner.getOwnerID());

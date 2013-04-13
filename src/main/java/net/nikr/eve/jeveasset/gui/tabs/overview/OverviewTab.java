@@ -32,6 +32,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -318,7 +319,7 @@ public class OverviewTab extends JMainTab {
 
 		addSeparator(jComponent);
 	//DATA
-		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected());
+		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected(), program.getSettings());
 	//ASSET FILTER
 		jSubMenuItem = new JMenuAssetFilter<Overview>(program, menuData);
 		if (getSelectedView().equals(TabsOverview.get().groups())) {
@@ -383,7 +384,7 @@ public class OverviewTab extends JMainTab {
 			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
-					Overview overview = new Overview(overviewGroup.getName(), "", "", "", 0, 0, 0, 0);
+					Overview overview = new Overview(overviewGroup.getName(), new Location(0), 0, 0, 0, 0);
 					locationsMap.put(overviewGroup.getName(), overview);
 					locations.add(overview);
 				}
@@ -405,10 +406,10 @@ public class OverviewTab extends JMainTab {
 			} else {
 				name = eveAsset.getOwner();
 			}
-			if (eveAsset.getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) {
+			if (eveAsset.getItem().getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) {
 				continue;
 			}
-			if (eveAsset.getGroup().equals("Station Services")) {
+			if (eveAsset.getItem().getGroup().equals("Station Services")) {
 				continue;
 			}
 			//Filters
@@ -425,13 +426,13 @@ public class OverviewTab extends JMainTab {
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
 				String location = TabsOverview.get().whitespace();
 				if (view.equals(TabsOverview.get().regions())) {
-					location = eveAsset.getRegion();
+					location = eveAsset.getLocation().getRegion();
 				}
 				if (view.equals(TabsOverview.get().systems())) {
-					location = eveAsset.getSystem();
+					location = eveAsset.getLocation().getSystem();
 				}
 				if (view.equals(TabsOverview.get().stations())) {
-					location = eveAsset.getLocation();
+					location = eveAsset.getLocation().getLocation();
 				}
 				if (locationsMap.containsKey(location)) { //Update existing overview
 					Overview overview = locationsMap.get(location);
@@ -440,7 +441,7 @@ public class OverviewTab extends JMainTab {
 					overview.addVolume(volume);
 					overview.addReprocessedValue(reprocessedValue);
 				} else { //Create new overview
-					Overview overview = new Overview(location, eveAsset.getSystem(), eveAsset.getRegion(), eveAsset.getSecurity(), reprocessedValue, volume, count, value);
+					Overview overview = new Overview(location, eveAsset.getLocation(), reprocessedValue, volume, count, value);
 					locationsMap.put(location, overview);
 					locations.add(overview);
 				}

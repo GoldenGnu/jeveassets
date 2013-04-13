@@ -21,18 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 
-public interface ReprocessedInterface extends Comparable<ReprocessedInterface> {
+
+public interface ReprocessedInterface extends Comparable<ReprocessedInterface>, ItemType, PriceType {
 	public String getName();
 	public long getPortionSize();
 	public long getQuantityMax();
 	public long getQuantitySkill();
-	public double getPrice();
 	public double getValueMax();
 	public double getValueSkill();
 	public double getValueDifference();
-	public int getTypeID();
-	public boolean isMarketGroup();
 	public boolean isTotal();
 	public ReprocessedTotal getTotal();
 }

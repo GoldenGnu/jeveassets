@@ -98,7 +98,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 				fails++;
 			}
 			if (!getAccount().isAssetList()) { //Can not work without it...
-				fails = 5;
+				fails = MAX_FAIL;
 			}
 		}
 

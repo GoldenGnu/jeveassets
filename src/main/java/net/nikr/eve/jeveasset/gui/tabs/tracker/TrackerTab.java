@@ -328,8 +328,8 @@ public class TrackerTab extends JMainTab {
 			}
 			//Assets
 			TrackerData trackerData = getTrackerData(data, asset.getOwnerID(), asset.getOwner(), date);
-			trackerData.addAssets(asset.getPrice() * asset.getCount());
-			allTracker.addAssets(asset.getPrice() * asset.getCount());
+			trackerData.addAssets(asset.getDynamicPrice() * asset.getCount());
+			allTracker.addAssets(asset.getDynamicPrice() * asset.getCount());
 		}
 		//Account Balance
 		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {

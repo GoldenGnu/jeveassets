@@ -198,7 +198,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		} else {
 			typeID = item.getTypeID();
 		}
-		return new StockpileItem(getStockpile(), item.getName(), item.getGroup(), typeID, countMinimum);
+		return new StockpileItem(getStockpile(), item, typeID, countMinimum);
 	}
 
 	private boolean itemExist() {
@@ -227,7 +227,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 			jCopy.setSelected(false);
 		} else {
 			Item item = (Item) jItems.getSelectedItem();
-			boolean blueprint = item.getName().toLowerCase().contains("blueprint");
+			boolean blueprint = item.getTypeName().toLowerCase().contains("blueprint");
 			jCopy.setEnabled(blueprint);
 			if (!blueprint) {
 				jCopy.setSelected(blueprint);
@@ -332,7 +332,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	static class ItemFilterator implements TextFilterator<Item> {
 		@Override
 		public void getFilterStrings(final List<String> baseList, final Item element) {
-			baseList.add(element.getName());
+			baseList.add(element.getTypeName());
 		}
 	}
 }

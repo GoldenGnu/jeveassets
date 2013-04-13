@@ -61,7 +61,7 @@ public class PriceDataSettingsTest {
 				if (locationName.contains("(")) {
 					locationName = locationName.substring(0, locationName.indexOf("(")).trim();
 				}
-				assertEquals(location.getName(), locationName);
+				assertEquals(location.getLocation(), locationName);
 			} else { //Multiple locations
 				for (Long regionID : regionType.getRegions()) {
 					Location location = settings.getLocations().get(regionID);

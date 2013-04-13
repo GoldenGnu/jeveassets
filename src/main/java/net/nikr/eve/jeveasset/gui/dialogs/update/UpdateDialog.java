@@ -510,7 +510,6 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 		@Override
 		public void update() {
-			program.updateEventLists();
 			if (update) {
 				program.getPriceDataGetter().update(this);
 			} else {

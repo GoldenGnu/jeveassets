@@ -68,14 +68,13 @@ public final class LocationsReader extends AbstractXmlReader {
 	}
 
 	private Location parseLocation(final Node node) {
-		int id = AttributeGetters.getInt(node, "id");
-		String name = AttributeGetters.getString(node, "name");
-		int region = AttributeGetters.getInt(node, "region");
-		if (region == 0) {
-			region = id;
-		}
-		String security = AttributeGetters.getString(node, "security");
-		int system = AttributeGetters.getInt(node, "solarsystem");
-		return new Location(id, name, region, security, system);
+		long stationID = AttributeGetters.getLong(node, "si");
+		String station = AttributeGetters.getString(node, "s");
+		long systemID = AttributeGetters.getLong(node, "syi");
+		String system = AttributeGetters.getString(node, "sy");
+		long regionID = AttributeGetters.getLong(node, "ri");
+		String region = AttributeGetters.getString(node, "r");
+		String security = AttributeGetters.getString(node, "se");
+		return new Location(stationID, station, systemID, system, regionID, region, security);
 	}
 }

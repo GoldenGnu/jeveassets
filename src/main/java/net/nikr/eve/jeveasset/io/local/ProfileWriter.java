@@ -116,8 +116,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "count", String.valueOf(asset.getCount()));
 			node.setAttributeNS(null, "flagid", String.valueOf(asset.getFlagID()));
 			node.setAttributeNS(null, "id", String.valueOf(asset.getItemID()));
-			node.setAttributeNS(null, "typeid", String.valueOf(asset.getTypeID()));
-			node.setAttributeNS(null, "locationid", String.valueOf(asset.getLocationID()));
+			node.setAttributeNS(null, "typeid", String.valueOf(asset.getItem().getTypeID()));
+			node.setAttributeNS(null, "locationid", String.valueOf(asset.getLocation().getLocationID()));
 			node.setAttributeNS(null, "singleton", String.valueOf(asset.isSingleton()));
 			node.setAttributeNS(null, "rawquantity", String.valueOf(asset.getRawQuantity()));
 			parentNode.appendChild(node);
@@ -165,6 +165,9 @@ public final class ProfileWriter extends AbstractXmlWriter {
 				itemNode.setAttributeNS(null, "recordid", String.valueOf(contractItem.getRecordID()));
 				itemNode.setAttributeNS(null, "singleton", String.valueOf(contractItem.isSingleton()));
 				itemNode.setAttributeNS(null, "typeid", String.valueOf(contractItem.getTypeID()));
+				if (contractItem.getRawQuantity() != null) {
+					itemNode.setAttributeNS(null, "rawquantity", String.valueOf(contractItem.getRawQuantity()));
+				}
 				contractNode.appendChild(itemNode);
 			}
 		}

@@ -24,10 +24,13 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>  {
+public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>, LocationType, ItemType, PriceType  {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -86,17 +89,16 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		}
 	}
 
-	private String name;
-	private String location;
-	private String system;
-	private String region;
+	private Item item;
+	private Location location;
 	private String rangeFormated;
 	private OrderStatus status;
 	private Owner owner;
 	private Quantity quantity;
+	private double price;
 
 
-	public MarketOrder(final ApiMarketOrder apiMarketOrder, final String name, final String location, final String system, final String region, final Owner owner) {
+	public MarketOrder(final ApiMarketOrder apiMarketOrder, final Item item, final Location location, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -112,10 +114,8 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		this.setTypeID(apiMarketOrder.getTypeID());
 		this.setVolEntered(apiMarketOrder.getVolEntered());
 		this.setVolRemaining(apiMarketOrder.getVolRemaining());
-		this.name = name;
+		this.item = item;
 		this.location = location;
-		this.system = system;
-		this.region = region;
 		this.owner = owner;
 		quantity = new Quantity(getVolEntered(), getVolRemaining());
 		rangeFormated = "";
@@ -176,20 +176,24 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return new Date(expires);
 	}
 
-	public String getName() {
-		return name;
+	public void setDynamicPrice(double price) {
+		this.price = price;
 	}
 
-	public String getLocation() {
+	@Override
+	public Double getDynamicPrice() {
+		return price;
+	}
+
+
+	@Override
+	public Item getItem() {
+		return item;
+	}
+
+	@Override
+	public Location getLocation() {
 		return location;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public String getSystem() {
-		return system;
 	}
 
 	public String getRangeFormated() {

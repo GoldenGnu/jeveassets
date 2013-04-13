@@ -73,7 +73,22 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 						continue; //Ignore courier
 					}
 					if (!entry.getValue().isEmpty()) {
-						continue; //Ignore old
+							continue; //Ignore existing
+ 					}
+					///XXX - workaround for alien contracts
+					if ((owner.getOwnerID() != contract.getAcceptorID()
+							&& owner.getOwnerID() != contract.getAssigneeID()
+							&& owner.getOwnerID() != contract.getIssuerID())
+							&& owner.getOwnerID() != contract.getIssuerCorpID()
+							) {
+						continue; //Ignore not owned
+					}
+					if ((owner.getOwnerID() != contract.getAcceptorID()
+							&& owner.getOwnerID() != contract.getAssigneeID()
+							&& owner.getOwnerID() != contract.getIssuerID())
+							&& !contract.isForCorp()
+							) {
+						continue; //Only IssuerCorpID match and is not for corp
 					}
 					List<EveContractItem> items = savedItems.get(contract.getContractID());
 					if (items != null) { //Set already updated

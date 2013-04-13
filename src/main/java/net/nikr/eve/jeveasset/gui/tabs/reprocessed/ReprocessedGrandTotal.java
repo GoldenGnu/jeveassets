@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
@@ -32,7 +33,7 @@ public class ReprocessedGrandTotal extends ReprocessedTotal {
 	private boolean reprocess = false;
 
 	public ReprocessedGrandTotal() {
-		super(0, false, TabsReprocessed.get().grandTotal(), 0);
+		super(new Item(0), 0);
 	}
 
 	@Override
@@ -49,6 +50,11 @@ public class ReprocessedGrandTotal extends ReprocessedTotal {
 		if (item.isReprocess()) {
 			reprocess = true;
 		}
+	}
+
+	@Override
+	public String getTypeName() {
+		return TabsReprocessed.get().grandTotal();
 	}
 
 	@Override

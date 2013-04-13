@@ -36,7 +36,7 @@ public class Galaxy {
 		for (Location l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '1') { // a region
-				String name = l.getName();
+				String name = l.getLocation();
 				regions.add(new Region(id, name));
 			}
 		}
@@ -44,7 +44,7 @@ public class Galaxy {
 		for (Location l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '3') { // a solar system
-				String name = l.getName();
+				String name = l.getLocation();
 				String region = Long.toString(l.getRegionID());
 				String sec = l.getSecurity();
 				addSystemToRegion(id, name, sec, region);
@@ -54,7 +54,7 @@ public class Galaxy {
 		for (Location l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '6') { // a station
-				String name = l.getName();
+				String name = l.getLocation();
 				String region = Long.toString(l.getRegionID());
 				String system = Long.toString(l.getSystemID());
 				addStationToSystem(id, name, region, system);

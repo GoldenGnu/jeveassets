@@ -75,63 +75,63 @@ public class JMenuInfoTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		summaryAll = new Material(Material.MaterialType.SUMMARY_ALL, "", TabsMaterials.get().summary(), "", null);
+		summaryAll = new Material(Material.MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), "", "");
 		summaryAll.updateValue(1, 400);
 		ALL.add(summaryAll);
 
-		summaryTotal_group1 = new Material(Material.MaterialType.SUMMARY_TOTAL, GROUP_1, TabsMaterials.get().summary(), "", null);
+		summaryTotal_group1 = new Material(Material.MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), "", GROUP_1);
 		summaryTotal_group1.updateValue(1, 200);
 		ALL.add(summaryTotal_group1);
 
-		summaryTotal_group2 = new Material(Material.MaterialType.SUMMARY_TOTAL, GROUP_2, TabsMaterials.get().summary(), "", null);
+		summaryTotal_group2 = new Material(Material.MaterialType.SUMMARY_TOTAL, null, TabsMaterials.get().summary(), "", GROUP_2);
 		summaryTotal_group2.updateValue(1, 200);
 		ALL.add(summaryTotal_group2);
 
-		summary_group1 = new Material(Material.MaterialType.SUMMARY, NAME_1, TabsMaterials.get().summary(), GROUP_1, null);
+		summary_group1 = new Material(Material.MaterialType.SUMMARY, null, TabsMaterials.get().summary(), GROUP_1, NAME_1);
 		summary_group1.updateValue(1, 200);
 		ALL.add(summary_group1);
 
-		summary_group2 = new Material(Material.MaterialType.SUMMARY, NAME_2, TabsMaterials.get().summary(), GROUP_2, null);
+		summary_group2 = new Material(Material.MaterialType.SUMMARY, null, TabsMaterials.get().summary(), GROUP_2, NAME_2);
 		summary_group2.updateValue(1, 200);
 		ALL.add(summary_group2);
 
-		all_location1 = new Material(Material.MaterialType.LOCATIONS_ALL, "", LOCATION_1, "", null);
+		all_location1 = new Material(Material.MaterialType.LOCATIONS_ALL, null, LOCATION_1, "", "");
 		all_location1.updateValue(1, 200);
 		ALL.add(all_location1);
 
-		all_location2 = new Material(Material.MaterialType.LOCATIONS_ALL, "", LOCATION_2, "", null);
+		all_location2 = new Material(Material.MaterialType.LOCATIONS_ALL, null, LOCATION_2, "", "");
 		all_location2.updateValue(1, 200);
 		ALL.add(all_location2);
 
-		total_location1_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_1, LOCATION_1, "", null);
+		total_location1_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, null, LOCATION_1, "", GROUP_1);
 		total_location1_group1.updateValue(1, 100);
 		ALL.add(total_location1_group1);
 
-		total_location1_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_2, LOCATION_1, "", null);
+		total_location1_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, null, LOCATION_1, "", GROUP_2);
 		total_location1_group2.updateValue(1, 100);
 		ALL.add(total_location1_group2);
 
-		total_location2_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_1, LOCATION_2, "", null);
+		total_location2_group1 = new Material(Material.MaterialType.LOCATIONS_TOTAL, null, LOCATION_2, "", GROUP_1);
 		total_location2_group1.updateValue(1, 100);
 		ALL.add(total_location2_group1);
 
-		total_location2_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, GROUP_2, LOCATION_2, "", null);
+		total_location2_group2 = new Material(Material.MaterialType.LOCATIONS_TOTAL, null, LOCATION_2, "", GROUP_2);
 		total_location2_group2.updateValue(1, 100);
 		ALL.add(total_location2_group2);
 
-		name1_location1_group1 = new Material(Material.MaterialType.LOCATIONS, NAME_1, LOCATION_1, GROUP_1, null);
+		name1_location1_group1 = new Material(Material.MaterialType.LOCATIONS, null, LOCATION_1, GROUP_1, NAME_1);
 		name1_location1_group1.updateValue(1, 100);
 		ALL.add(name1_location1_group1);
 
-		name2_location1_group2 = new Material(Material.MaterialType.LOCATIONS, NAME_2, LOCATION_1, GROUP_2, null);
+		name2_location1_group2 = new Material(Material.MaterialType.LOCATIONS, null, LOCATION_1, GROUP_2, NAME_2);
 		name2_location1_group2.updateValue(1, 100);
 		ALL.add(name2_location1_group2);
 
-		name1_location2_group1 = new Material(Material.MaterialType.LOCATIONS, NAME_1, LOCATION_2, GROUP_1, null);
+		name1_location2_group1 = new Material(Material.MaterialType.LOCATIONS, null, LOCATION_2, GROUP_1, NAME_1);
 		name1_location2_group1.updateValue(1, 100);
 		ALL.add(name1_location2_group1);
 
-		name2_location2_group2 = new Material(Material.MaterialType.LOCATIONS, NAME_2, LOCATION_2, GROUP_2, null);
+		name2_location2_group2 = new Material(Material.MaterialType.LOCATIONS, null, LOCATION_2, GROUP_2, NAME_2);
 		name2_location2_group2.updateValue(1, 100);
 		ALL.add(name2_location2_group2);
 	}

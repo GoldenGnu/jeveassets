@@ -30,6 +30,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
@@ -143,7 +144,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<IndustryJob> menuData = new MenuData<IndustryJob>(selectionModel.getSelected());
+		MenuData<IndustryJob> menuData = new MenuData<IndustryJob>(selectionModel.getSelected(), program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER
@@ -152,6 +153,8 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		jComponent.add(new JMenuStockpile<IndustryJob>(program, menuData));
 	//LOOKUP
 		jComponent.add(new JMenuLookup<IndustryJob>(program, menuData));
+	//EDIT
+		jComponent.add(new JMenuPrice<IndustryJob>(program, menuData));
 	//REPROCESSED
 		jComponent.add(new JMenuReprocessed<IndustryJob>(program, menuData));
 	//COLUMNS

@@ -331,9 +331,9 @@ public class RoutingTab extends JMainTab  {
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
 				for (Asset eveAsset : program.getAssetEventList()) {
-					if ((location.getName().equals(eveAsset.getLocation()))
-						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getSystem()))
-						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getRegion()))
+					if ((location.getName().equals(eveAsset.getLocation().getLocation()))
+						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getLocation().getSystem()))
+						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getLocation().getRegion()))
 						) {
 						assets.add(eveAsset);
 					}
@@ -341,11 +341,11 @@ public class RoutingTab extends JMainTab  {
 			}
 		}
 		for (Asset ea : assets) {
-			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getSolarSystemID());
+			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getLocation().getSystemID());
 			if (loc != null) {
 				allLocs.add(loc);
 			} else {
-				LOG.debug("ignoring {}", ea.getLocation());
+				LOG.debug("ignoring {}", ea.getLocation().getLocation());
 			}
 		}
 

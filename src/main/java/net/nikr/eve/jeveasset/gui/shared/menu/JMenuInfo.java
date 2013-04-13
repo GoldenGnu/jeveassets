@@ -217,38 +217,33 @@ public class JMenuInfo {
 					}
 					//Equals group
 					if (selectedMaterial.getType() == MaterialType.SUMMARY_TOTAL
-							&& material.getGroup().equals(selectedMaterial.getName())
-							) {
+							&& material.getGroup().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals name
 					if (selectedMaterial.getType() == MaterialType.SUMMARY
-							&& material.getName().equals(selectedMaterial.getName())
-							) {
+							&& material.getName().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals location
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS_ALL
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())) {
 						add = true;
 						break;
 					}
 					//Equals location and group
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS_TOTAL
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							&& material.getGroup().equals(selectedMaterial.getName())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())
+							&& material.getGroup().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals location and name
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							&& material.getName().equals(selectedMaterial.getName())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())
+							&& material.getName().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}

@@ -20,17 +20,18 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
 public class ReprocessedGrandItem extends ReprocessedTotal {
 
-	private ReprocessedItem item;
+	private ReprocessedItem reprocessedItem;
 	private ReprocessedGrandTotal grandTotal;
 
-	public ReprocessedGrandItem(ReprocessedItem item, ReprocessedGrandTotal grandTotal) {
-		super(item.getTypeID(), item.isMarketGroup(), item.getName(), 0);
-		this.item = item;
+	public ReprocessedGrandItem(final ReprocessedItem reprocessedItem, final Item item, final ReprocessedGrandTotal grandTotal) {
+		super(item, 0);
+		this.reprocessedItem = reprocessedItem;
 		this.grandTotal = grandTotal;
 	}
 
@@ -46,7 +47,7 @@ public class ReprocessedGrandItem extends ReprocessedTotal {
 
 	@Override
 	public String getName() {
-		return item.getName();
+		return reprocessedItem.getName();
 	}
 
 	@Override

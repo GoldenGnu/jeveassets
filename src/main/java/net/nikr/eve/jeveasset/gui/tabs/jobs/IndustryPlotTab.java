@@ -392,8 +392,8 @@ public class IndustryPlotTab extends JMainTab {
 			setJob(job);
 			state.setText(job.getState().toString());
 			activity.setText(job.getActivity().toString());
-			name.setText(job.getName());
-			location.setText(job.getLocation());
+			name.setText(job.getItem().getTypeName());
+			location.setText(job.getLocation().getLocation());
 			owner.setText(job.getOwner());
 			installDate.setText(String.valueOf(job.getInstallTime()));
 			startDate.setText(String.valueOf(job.getBeginProductionTime()));

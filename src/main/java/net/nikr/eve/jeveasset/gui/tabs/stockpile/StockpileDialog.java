@@ -32,8 +32,10 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -47,7 +49,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class StockpileDialog extends JDialogCentered implements ActionListener, ItemListener, CaretListener {
@@ -76,10 +77,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private JButton jOK;
 	private EventList<Location> locations = new BasicEventList<Location>();
 	private FilterList<Location> locationsFilter;
-	private List<String> myLocations;
+	private Set<String> myLocations;
 	private final Owner ownerAll = new Owner(null, General.get().all(), -1);
 	private final ItemFlag itemFlagAll = new ItemFlag(-1, General.get().all(), "");
-	public static final Location LOCATION_ALL = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
+	public static final Location LOCATION_ALL = new Location(-1, General.get().all(), -1, "", -1, "", "");
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
 	private AutoCompleteSupport<Location> locationsAutoComplete;
@@ -258,21 +259,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		Owner owner = (Owner) jOwner.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
-		String station = null;
-		String system = null;
-		String region = null;
-		if (location.isRegion() || location.isSystem() || location.isStation()) {
-			region = ApiIdConverter.regionName(location.getLocationID(), null, program.getSettings().getLocations());
-		}
-		if (location.isSystem() || location.isStation()) {
-			system = ApiIdConverter.systemName(location.getLocationID(), null, program.getSettings().getLocations());
-		}
-		if (location.isStation()) {
-			station = ApiIdConverter.locationName(location.getLocationID(), null, program.getSettings().getLocations());
-		} else if (location.isSystem()) {
-			station = system;
-		} else if (location.isRegion()) {
-			station = region;
+		if (location == null) { //can not be null - better safe than sorry ;)
+			location = LOCATION_ALL;
 		}
 		//Flag
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
@@ -286,7 +274,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			multiplier = 1;
 		}
 		//Add
-		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected(), multiplier);
+		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected(), multiplier);
 	}
 
 	private void autoValidate() {
@@ -374,10 +362,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jOwner.setSelectedItem(ownerSelected);
 
 		//Location
-		Location location = program.getSettings().getLocations().get(loadStockpile.getLocationID());
-		if (location == null) {
-			location = LOCATION_ALL;
-		}
+		Location location = loadStockpile.getLocation();
 		if (location.getLocationID() < 0) {
 			jUniverse.setSelected(true);
 		} else if (location.isRegion()) {
@@ -387,7 +372,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		} else if (location.isStation()) {
 			jStations.setSelected(true);
 		}
-		jMyLocations.setSelected(myLocations.contains(location.getName()) || jUniverse.isSelected());
+		jMyLocations.setSelected(myLocations.contains(location.getLocation()) || jUniverse.isSelected());
 		refilter();
 		jLocations.setSelectedItem(location);
 
@@ -418,7 +403,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 
 		} else {
 			locationsAutoComplete.removeFirstItem();
-			locationsFilter.setMatcher(new LocationsMatcher(jRegions.isSelected(), jSystems.isSelected(), jStations.isSelected(), jMyLocations.isSelected() ? myLocations : new ArrayList<String>()));
+			locationsFilter.setMatcher(new LocationsMatcher(jRegions.isSelected(), jSystems.isSelected(), jStations.isSelected(), jMyLocations.isSelected() ? myLocations : new HashSet<String>()));
 			jLocations.setEnabled(true);
 		}
 		jLocations.setSelectedIndex(0);
@@ -472,43 +457,25 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jFlag.setModel(new DefaultComboBoxModel(itemFlags.toArray()));
 
 		//Containers & Locations Loop
-		List<String> containers = new ArrayList<String>();
-		myLocations = new ArrayList<String>();
+		Set<String> containers = new HashSet<String>();
+		myLocations = new HashSet<String>();
 		for (Asset asset : program.getAssetEventList()) {
-			if (!containers.contains(asset.getContainer()) && !asset.getContainer().isEmpty()) {
+			if (!asset.getContainer().isEmpty()) {
 				containers.add(asset.getContainer());
 			}
-			if (!myLocations.contains(asset.getLocation())) {
-				myLocations.add(asset.getLocation());
-			}
-			if (!myLocations.contains(asset.getSystem())) {
-				myLocations.add(asset.getSystem());
-			}
-			if (!myLocations.contains(asset.getRegion())) {
-				myLocations.add(asset.getRegion());
-			}
+			myLocations.add(asset.getLocation().getLocation());
+			myLocations.add(asset.getLocation().getSystem());
+			myLocations.add(asset.getLocation().getRegion());
 		}
 		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
-			if (!myLocations.contains(industryJob.getLocation())) {
-				myLocations.add(industryJob.getLocation());
-			}
-			if (!myLocations.contains(industryJob.getSystem())) {
-				myLocations.add(industryJob.getSystem());
-			}
-			if (!myLocations.contains(industryJob.getRegion())) {
-				myLocations.add(industryJob.getRegion());
-			}
+			myLocations.add(industryJob.getLocation().getLocation());
+			myLocations.add(industryJob.getLocation().getSystem());
+			myLocations.add(industryJob.getLocation().getRegion());
 		}
 		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
-			if (!myLocations.contains(marketOrder.getLocation())) {
-				myLocations.add(marketOrder.getLocation());
-			}
-			if (!myLocations.contains(marketOrder.getSystem())) {
-				myLocations.add(marketOrder.getSystem());
-			}
-			if (!myLocations.contains(marketOrder.getRegion())) {
-				myLocations.add(marketOrder.getRegion());
-			}
+			myLocations.add(marketOrder.getLocation().getLocation());
+			myLocations.add(marketOrder.getLocation().getSystem());
+			myLocations.add(marketOrder.getLocation().getRegion());
 		}
 		//FIXME - Consider making "All Locations" the default for the Add Stockpile Dialog
 		jMyLocations.setSelected(true);
@@ -518,14 +485,15 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jLocations.setEnabled(true);
 		jLocations.setSelectedIndex(0);
 		//Containers
-		if (containers.isEmpty()) {
-			containers.add(0, General.get().all());
-			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
+		List<String> containersList = new ArrayList<String>(containers);
+		if (containersList.isEmpty()) {
+			containersList.add(0, General.get().all());
+			jContainer.setModel(new DefaultComboBoxModel(containersList.toArray()));
 			jContainer.setEnabled(false);
 		} else {
-			Collections.sort(containers, new CaseInsensitiveComparator());
-			containers.add(0, General.get().all());
-			jContainer.setModel(new DefaultComboBoxModel(containers.toArray()));
+			Collections.sort(containersList, new CaseInsensitiveComparator());
+			containersList.add(0, General.get().all());
+			jContainer.setModel(new DefaultComboBoxModel(containersList.toArray()));
 			jContainer.setEnabled(true);
 		}
 	}
@@ -596,7 +564,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	static class LocationsFilterator implements TextFilterator<Location> {
 		@Override
 		public void getFilterStrings(final List<String> baseList, final Location element) {
-			baseList.add(element.getName());
+			baseList.add(element.getLocation());
 		}
 	}
 
@@ -605,13 +573,13 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		private boolean regions;
 		private boolean systems;
 		private boolean stations;
-		private List<String> myLocations;
+		private Set<String> myLocations;
 
-		public LocationsMatcher(final List<String> myLocations) {
+		public LocationsMatcher(final Set<String> myLocations) {
 			this(false, false, true, myLocations);
 		}
 
-		public LocationsMatcher(final boolean regions, final boolean systems, final boolean stations, final List<String> myLocations) {
+		public LocationsMatcher(final boolean regions, final boolean systems, final boolean stations, final Set<String> myLocations) {
 			this.regions = regions;
 			this.systems = systems;
 			this.stations = stations;
@@ -621,11 +589,11 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		@Override
 		public boolean matches(final Location item) {
 			if (item.isRegion()) {
-				return regions && (myLocations.contains(item.getName()) || myLocations.isEmpty());
+				return regions && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
 			} else if (item.isSystem()) {
-				return systems && (myLocations.contains(item.getName()) || myLocations.isEmpty());
+				return systems && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
 			} else if (item.isStation()) {
-				return stations && (myLocations.contains(item.getName()) || myLocations.isEmpty());
+				return stations && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
 			} else {
 				return false;
 			}

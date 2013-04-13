@@ -159,7 +159,7 @@ public class Program implements ActionListener {
 		profileManager.searchProfile();
 		profileManager.loadActiveProfile();
 		profileData = new ProfileData(settings, profileManager);
-		profileData.updateEventLists();
+		//Can not update profile data now - list needs to be empty doing creation...
 		priceDataGetter = new PriceDataGetter(settings, profileData);
 		priceDataGetter.load();
 		programUpdateChecker = new ProgramUpdateChecker(this);
@@ -267,7 +267,7 @@ public class Program implements ActionListener {
 		SplashUpdater.setProgress(96);
 		LOG.info("GUI loaded");
 		LOG.info("Updating data...");
-		updateEventLists();
+		updateEventLists(); //Update price
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");

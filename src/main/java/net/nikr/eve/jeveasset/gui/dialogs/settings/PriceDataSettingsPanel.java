@@ -77,14 +77,14 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		for (Location location : program.getSettings().getLocations().values()) {
 			if (location.isStation()) {
 				stationsEventList.add(location);
-				if (station.length() < location.getName().length()) {
-					station = location.getName();
+				if (station.length() < location.getLocation().length()) {
+					station = location.getLocation();
 				}
 			}
 			if (location.isSystem()) {
 				systemsEventList.add(location);
-				if (system.length() < location.getName().length()) {
-					system = location.getName();
+				if (system.length() < location.getLocation().length()) {
+					system = location.getLocation();
 				}
 			}
 		}
@@ -340,7 +340,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioSystems.setEnabled(false);
 			jSystems.setEnabled(false);
-			systemsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1));
+			systemsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
@@ -358,7 +358,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioStations.setEnabled(false);
 			jStations.setEnabled(false);
-			stationsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1));
+			stationsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
@@ -409,7 +409,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	static class LocationsFilterator implements TextFilterator<Location> {
 		@Override
 		public void getFilterStrings(final List<String> baseList, final Location element) {
-			baseList.add(element.getName());
+			baseList.add(element.getLocation());
 		}
 	}
 	static class RegionTypeFilterator implements TextFilterator<RegionType> {

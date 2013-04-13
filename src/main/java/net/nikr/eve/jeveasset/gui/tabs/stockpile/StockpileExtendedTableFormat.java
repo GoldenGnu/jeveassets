@@ -56,7 +56,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getStockpile().getLocation();
+			return from.getStockpile().getLocation().getLocation();
 		}
 	},
 	STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {

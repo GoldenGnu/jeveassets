@@ -46,7 +46,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getSolarSystem();
+			return from.getLocation().getSystem();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -56,7 +56,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getRegion();
+			return from.getLocation().getRegion();
 		}
 	},
 	SECURITY(String.class, GlazedLists.comparableComparator()) {
@@ -66,7 +66,7 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getSecurity();
+			return from.getLocation().getSecurity();
 		}
 	},
 	VOLUME(Double.class, GlazedLists.comparableComparator()) {

@@ -28,18 +28,19 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class Stockpile implements Comparable<Stockpile> {
+public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private String name;
 	private long ownerID;
 	private String owner;
-	private long locationID;
-	private String location;
-	private String system;
-	private String region;
+	private Location location;
 	private int flagID;
 	private String flag;
 	private String container;
@@ -62,14 +63,11 @@ public class Stockpile implements Comparable<Stockpile> {
 		items.add(totalItem);
 	}
 
-	public Stockpile(final String name, final long ownerID, final String owner, final long locationID, final String location, final String system, final String region, final int flagID, final String flag, final String container, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs, double multiplier) {
+	public Stockpile(final String name, final long ownerID, final String owner, final Location location, final int flagID, final String flag, final String container, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs, double multiplier) {
 		this.name = name;
 		this.ownerID = ownerID;
 		setOwner(owner);
-		this.locationID = locationID;
-		setLocation(location);
-		this.system = system;
-		this.region = region;
+		this.location = location;
 		this.flagID = flagID;
 		setFlag(flag);
 		this.container = container;
@@ -85,10 +83,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		this.name = stockpile.getName();
 		this.ownerID = stockpile.getOwnerID();
 		this.owner = stockpile.getOwner();
-		this.locationID = stockpile.getLocationID();
 		this.location = stockpile.getLocation();
-		this.system = stockpile.getSystem();
-		this.region = stockpile.getRegion();
 		this.flagID = stockpile.getFlagID();
 		this.flag = stockpile.getFlag();
 		this.container = stockpile.getContainer();
@@ -177,14 +172,6 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 	}
 
-	private void setLocation(final String location) {
-		if (location == null) {
-			this.location = General.get().all();
-		} else {
-			this.location = location;
-		}
-	}
-
 	public String getContainer() {
 		return container;
 	}
@@ -205,24 +192,14 @@ public class Stockpile implements Comparable<Stockpile> {
 		return flagID;
 	}
 
-	public long getLocationID() {
-		return locationID;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public String getSystem() {
-		return system;
-	}
-
 	public List<StockpileItem> getItems() {
 		return items;
+	}
+
+	
+	@Override
+	public Location getLocation() {
+		return location;
 	}
 
 	public double getPercentFull() {
@@ -290,11 +267,10 @@ public class Stockpile implements Comparable<Stockpile> {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem> {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationType, ItemType, BlueprintType, PriceType {
 		//Constructor
 		private Stockpile stockpile;
-		private String name;
-		private String group;
+		private Item item;
 		private int typeID;
 		private long countMinimum;
 
@@ -311,25 +287,22 @@ public class Stockpile implements Comparable<Stockpile> {
 
 		public StockpileItem(final Stockpile stockpile, final StockpileItem stockpileItem) {
 			this(stockpile,
-					stockpileItem.name,
-					stockpileItem.name,
+					stockpileItem.item,
 					stockpileItem.typeID,
 					stockpileItem.countMinimum
 					);
 		}
 
-		public StockpileItem(final Stockpile stockpile, final String name, final String group, final int typeID, final long countMinimum) {
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final long countMinimum) {
 			this.stockpile = stockpile;
-			this.name = name;
-			this.group = group;
+			this.item = item;
 			this.typeID = typeID;
 			this.countMinimum = countMinimum;
 		}
 
 		void update(StockpileItem stockpileItem) {
 			this.stockpile = stockpileItem.stockpile;
-			this.name = stockpileItem.name;
-			this.group = stockpileItem.group;
+			this.item = stockpileItem.item;
 			this.typeID = stockpileItem.typeID;
 			this.countMinimum = stockpileItem.countMinimum;
 		}
@@ -351,25 +324,37 @@ public class Stockpile implements Comparable<Stockpile> {
 			volume = 0.0f;
 			marketGroup = false;
 		}
-		public void updateValues(final double updatePrice, final float updateVolume, final boolean updateMarketGroup) {
+		public void updateValues(final double updatePrice, final float updateVolume) {
 			this.price = updatePrice;
 			this.volume = updateVolume;
-			this.marketGroup = updateMarketGroup;
+		}
+	
+		private boolean match(Location location) {
+			if (stockpile.getLocation().equals(StockpileDialog.LOCATION_ALL)) {
+				return true;
+			}
+			if (stockpile.getLocation().getLocation().equals(location.getStation())) {
+				return true;
+			}
+			if (stockpile.getLocation().getLocation().equals(location.getSystem())) {
+				return true;
+			}
+			if (stockpile.getLocation().getLocation().equals(location.getRegion())) {
+				return true;
+			}
+			return false;
 		}
 
-		public void updateAsset(final Asset asset) {
+		void updateAsset(final Asset asset) {
 			if (asset != null //better safe then sorry
 					&& (
-						(typeID == asset.getTypeID() && (!asset.isBlueprint() || asset.isBpo()))
-						|| (typeID == -asset.getTypeID() && asset.isBlueprint() && !asset.isBpo()) //BPC
+						(typeID == asset.getItem().getTypeID() && (!asset.getItem().isBlueprint() || asset.isBPO()))
+						|| (typeID == -asset.getItem().getTypeID() && asset.getItem().isBlueprint() && !asset.isBPO()) //BPC
 						)
 					&& (stockpile.getOwnerID() == asset.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(General.get().all()))
 					&& matchFlag(asset, stockpile.getFlagID())
-					&& (stockpile.getLocation().equals(asset.getLocation()) //LocationID can be an office...
-					|| stockpile.getLocationID() == asset.getSolarSystemID()
-					|| stockpile.getLocationID() == asset.getRegionID()
-					|| stockpile.getLocationID() < 0)
+					&& match(asset.getLocation())
 					) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();
 			}
@@ -390,15 +375,12 @@ public class Stockpile implements Comparable<Stockpile> {
 			return false; //No match
 		}
 
-		void updateMarketOrder(final MarketOrder marketOrder, final Location location) {
-			if (marketOrder != null && location != null //better safe then sorry
+		void updateMarketOrder(final MarketOrder marketOrder) {
+			if (marketOrder != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
 					&& (stockpile.getOwnerID() == marketOrder.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& marketOrder.getOrderState() == 0 //Open/Active
-					&& (stockpile.getLocationID() == location.getLocationID()
-					|| stockpile.getLocationID() == location.getSystemID()
-					|| stockpile.getLocationID() == location.getRegionID()
-					|| stockpile.getLocationID() < 0)
+					&& match(marketOrder.getLocation())
 					) {
 				if (marketOrder.getBid() < 1) { //Sell
 					if (stockpile.isSellOrders()) {
@@ -412,24 +394,17 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 		}
 
-		void updateIndustryJob(final IndustryJob industryJob, final Location location, final Item itemType) {
-			if (industryJob != null && location != null && itemType != null //better safe then sorry
+		void updateIndustryJob(final IndustryJob industryJob, final Item itemType) {
+			if (industryJob != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
 					&& (stockpile.getOwnerID() == industryJob.getOwnerID() || stockpile.getOwnerID() < 0)
 					&& (stockpile.getFlagID() == industryJob.getOutputFlag() || stockpile.getFlagID() < 0)
-					&& (stockpile.getLocationID() == location.getLocationID()
-					|| stockpile.getLocationID() == location.getSystemID()
-					|| stockpile.getLocationID() == location.getRegionID()
-					|| stockpile.getLocationID() < 0)
+					&& match(industryJob.getLocation())
 					&& industryJob.getActivityID() == 1 //Manufacturing
 					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					) {
 				jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
 			}
-		}
-
-		public String getGroup() {
-			return group;
 		}
 
 		public void setCountMinimum(final long countMinimum) {
@@ -450,30 +425,28 @@ public class Stockpile implements Comparable<Stockpile> {
 			return stockpile;
 		}
 
+		@Override
 		public boolean isBPC() {
 			return (typeID < 0);
 		}
 
+		@Override
 		public boolean isBPO() {
 			return isBlueprint() && !isBPC();
 		}
 
-		public boolean isBlueprint() {
-			return name.toLowerCase().contains("blueprint");
+		private boolean isBlueprint() {
+			return item.isBlueprint();
 		}
 
 		public String getName() {
 			if (isBPC()) { //Blueprint copy
-				return name + " (BPC)";
+				return item.getTypeName() + " (BPC)";
 			} else if (isBPO()) { //Blueprint original
-				return name + " (BPO)";
+				return item.getTypeName() + " (BPO)";
 			} else { //Everything else
-				return name;
+				return item.getTypeName();
 			}
-		}
-
-		public String getTypeName() {
-			return name;
 		}
 
 		public long getCountMinimum() {
@@ -518,7 +491,8 @@ public class Stockpile implements Comparable<Stockpile> {
 			return getCountNow() - getCountMinimumMultiplied();
 		}
 
-		public double getPrice() {
+		@Override
+		public Double getDynamicPrice() {
 			return price;
 		}
 
@@ -555,6 +529,16 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 
 		@Override
+		public Item getItem() {
+			return item;
+		}
+
+		@Override
+		public Location getLocation() {
+			return stockpile.getLocation();
+		}
+
+		@Override
 		public String toString() {
 			return getName();
 		}
@@ -588,7 +572,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		@Override
 		public int compareTo(final StockpileItem item) {
 			//Compare groups
-			int value = this.getGroup().compareToIgnoreCase(item.getGroup());
+			int value = getItem().getGroup().compareToIgnoreCase(item.getItem().getGroup());
 			if (value != 0) { //Not same group
 				return value;
 			} else { //Same group - compare names
@@ -616,7 +600,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		private double volumeNeeded = 0;
 
 		public StockpileTotal(final Stockpile stockpile) {
-			super(stockpile, TabsStockpile.get().totalStockpile(), "", 0, 0);
+			super(stockpile, new Item(0), 0, 0);
 		}
 
 		private void reset() {
@@ -654,7 +638,7 @@ public class Stockpile implements Comparable<Stockpile> {
 			}
 			countMinimum = countMinimum + item.getCountMinimum();
 			countMinimumMultiplied = countMinimumMultiplied + item.getCountMinimumMultiplied();
-			totalPrice = totalPrice + item.getPrice();
+			totalPrice = totalPrice + item.getDynamicPrice();
 			totalPriceCount++;
 			valueNow = valueNow + item.getValueNow();
 			//Only add if negative
@@ -667,6 +651,13 @@ public class Stockpile implements Comparable<Stockpile> {
 				volumeNeeded = volumeNeeded + item.getVolumeNeeded();
 			}
 		}
+
+		@Override
+		public String getName() {
+			return TabsStockpile.get().totalStockpile();
+		}
+
+		
 
 		@Override
 		public boolean isOK() {
@@ -719,9 +710,9 @@ public class Stockpile implements Comparable<Stockpile> {
 		}
 
 		@Override
-		public double getPrice() {
+		public Double getDynamicPrice() {
 			if (totalPriceCount <= 0 || totalPrice <= 0) {
-				return 0;
+				return 0.0;
 			} else {
 				return totalPrice / totalPriceCount;
 			}

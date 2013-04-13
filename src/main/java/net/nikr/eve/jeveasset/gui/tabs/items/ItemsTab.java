@@ -128,7 +128,7 @@ public class ItemsTab extends JMainTab {
 			addSeparator(jComponent);
 		}
 	//DATA
-		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected());
+		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected(), program.getSettings());
 	//FILTER
 		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
 	//ASSET FILTER

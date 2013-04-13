@@ -21,24 +21,22 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 
-public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
+public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem, LocationType {
 	private String name;
-	private String solarSystem;
-	private String region;
-	private String security;
+	private Location location;
 	private double valueReprocessed;
 	private double volume;
 	private long count;
 	private double value;
 
-	public Overview(final String name, final String solarSystem, final String region, final String security, final double valueReprocessed, final double volume, final long count, final double value) {
+	public Overview(final String name, final Location location, final double valueReprocessed, final double volume, final long count, final double value) {
 		this.name = name;
-		this.solarSystem = solarSystem;
-		this.region = region;
-		this.security = security;
+		this.location = location;
 		this.valueReprocessed = valueReprocessed;
 		this.volume = volume;
 		this.count = count;
@@ -58,25 +56,18 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
 		return count;
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public Location getLocation() {
+		return location;
 	}
 
-	public String getRegion() {
-		return region;
+	public String getName() {
+		return name;
 	}
 
 	@Override
 	public double getValueReprocessed() {
 		return valueReprocessed;
-	}
-
-	public String getSecurity() {
-		return security;
-	}
-
-	public String getSolarSystem() {
-		return solarSystem;
 	}
 
 	@Override
@@ -87,22 +78,6 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem {
 	@Override
 	public double getVolumeTotal() {
 		return volume;
-	}
-
-	public boolean isStation() {
-		return !isSystem() && !isRegion();
-	}
-
-	public boolean isSystem() {
-		return name.equals(solarSystem);
-	}
-
-	public boolean isRegion() {
-		return name.equals(region);
-	}
-
-	public boolean isGroup() {
-		return solarSystem.equals("") && region.equals("");
 	}
 
 	public void addCount(final long addCount) {
