@@ -52,7 +52,7 @@ public class ProfileData {
 	private final EventList<AccountBalance> accountBalanceEventList = new BasicEventList<AccountBalance>();
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
-	private List<String> owners = new ArrayList<String>();
+	private final List<String> owners = new ArrayList<String>();
 
 	public ProfileData(Settings settings, ProfileManager profileManager) {
 		this.settings = settings;
@@ -156,7 +156,7 @@ public class ProfileData {
 
 	public void updateEventLists() {
 		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
-		owners = new ArrayList<String>();
+		Set<String> uniqueOwners = new HashSet<String>();
 		List<String> ownersOrders = new ArrayList<String>();
 		List<String> ownersJobs = new ArrayList<String>();
 		List<String> ownersAssets = new ArrayList<String>();
@@ -173,7 +173,7 @@ public class ProfileData {
 		for (Account account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowAssets()) {
-					owners.add(owner.getName());
+					uniqueOwners.add(owner.getName());
 				} else {
 					continue;
 				}
@@ -291,6 +291,8 @@ public class ProfileData {
 			accountBalanceEventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Sort Owners
+		owners.clear();
+		owners.addAll(uniqueOwners);
 		Collections.sort(owners, new CaseInsensitiveComparator());
 	}
 
