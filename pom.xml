@@ -286,9 +286,17 @@
 		<repository>
 			<id>maven.nikr.net</id>
 			<name>maven.nikr.net</name>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 			<url>http://maven.nikr.net/</url>
+		</repository>
+		<repository>
+			<id>eveapi</id>
+			<url>https://eveapi.googlecode.com/svn/m2/releases</url>
 		</repository>
 	</repositories>
 
