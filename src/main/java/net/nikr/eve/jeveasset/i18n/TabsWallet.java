@@ -52,7 +52,5 @@ public abstract class TabsWallet extends Bundle {
 	public abstract String columnTransactionDate();
 	public abstract String columnOwner();
 	public abstract String columnLocation();
-	
-	public abstract String whitespace(Object arg0);
 
 }

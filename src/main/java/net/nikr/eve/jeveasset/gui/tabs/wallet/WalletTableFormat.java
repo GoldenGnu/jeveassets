@@ -40,7 +40,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 			return from.getTransactionDateTime();
 		}
 	},
-	ACCOUNT(String.class, GlazedLists.comparableComparator()) {
+	OWNER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsWallet.get().columnOwner();
@@ -50,7 +50,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 			return from.getOwnerName();
 		}
 	},
-	TX_TYPE(String.class, GlazedLists.comparableComparator()) {
+	TYPE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsWallet.get().columnTransactionType();
@@ -60,7 +60,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 			if (from.getTransactionType().equals("sell")) {
 				return TabsWallet.get().sell();
 			}
-			if (from.getTransactionType().equals("sell")) {
+			if (from.getTransactionType().equals("buy")) {
 				return TabsWallet.get().buy();
 			}
 			return from.getTransactionType();
@@ -126,7 +126,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 			return from.getLocation().getRegion();
 		}
 	},
-	PERSONAL(String.class, GlazedLists.comparableComparator()) {
+	TRANSACTION_FOR(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsWallet.get().columnTransactionFor();

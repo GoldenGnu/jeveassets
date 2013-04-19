@@ -51,8 +51,6 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
 	private JLabel jBuyOrdersTotal;
-	private JLabel jEscrowTotal;
-	private JLabel jToCoverTotal;
 
 	//Table
 	private WalletFilterControl filterControl;
@@ -95,10 +93,10 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, WalletTableFormat.TX_TYPE, CompareType.EQUALS,  TabsWallet.get().buy()));
+		filter.add(new Filter(LogicType.AND, WalletTableFormat.TYPE, CompareType.EQUALS,  TabsWallet.get().buy()));
 		defaultFilters.put(TabsWallet.get().buy(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, WalletTableFormat.TX_TYPE, CompareType.EQUALS,  TabsWallet.get().sell()));
+		filter.add(new Filter(LogicType.AND, WalletTableFormat.TYPE, CompareType.EQUALS,  TabsWallet.get().sell()));
 		defaultFilters.put(TabsWallet.get().sell(), filter);
 		filterControl = new WalletFilterControl(
 				program.getMainWindow().getFrame(),
@@ -154,8 +152,7 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 	public void listChanged(ListEvent<WalletTransaction> listChanges) {
 		double sellOrdersTotal = 0;
 		double buyOrdersTotal = 0;
-
-   	for (WalletTransaction transaction : filterList) {
+		for (WalletTransaction transaction : filterList) {
 			if (transaction.getTransactionType().equals("sell")) { //Sell
 				sellOrdersTotal += transaction.getPrice() * transaction.getQuantity();
 			} else { //Buy
