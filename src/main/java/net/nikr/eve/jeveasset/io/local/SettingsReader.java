@@ -58,6 +58,8 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.gui.tabs.wallet.WalletTab;
+import net.nikr.eve.jeveasset.gui.tabs.wallet.WalletTableFormat;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -609,6 +611,14 @@ public final class SettingsReader extends AbstractXmlReader {
 		try {
 			if (tableName.equals(MarketOrdersTab.NAME)) {
 				return MarketTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Wallet Transaction
+		try {
+			if (tableName.equals(WalletTab.NAME)) {
+				return WalletTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
