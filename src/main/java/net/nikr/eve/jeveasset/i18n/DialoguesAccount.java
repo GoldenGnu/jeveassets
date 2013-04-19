@@ -90,6 +90,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String tableFormatAccountBalance();
 	public abstract String tableFormatIndustryJobs();
 	public abstract String tableFormatMarketOrders();
+	public abstract String tableFormatWalletTransactions();
 	public abstract String tableFormatYes();
 	public abstract String tableFormatNo();
 	public abstract String tableFormatExpires();

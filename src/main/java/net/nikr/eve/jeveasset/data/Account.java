@@ -35,6 +35,8 @@ public class Account {
 		ASSET_LIST(2L),
 		INDUSTRY_JOBS(128L),
 		MARKET_ORDERS(4096L),
+		WALLET_TRANSACTIONS_CHAR(4194304L),
+		WALLET_TRANSACTIONS_CORP(2097152L),
 		CONTRACTS_CORP(8388608L),
 		CONTRACTS_CHAR(67108864L);
 
@@ -193,6 +195,14 @@ public class Account {
 			return ((getAccessMask() & AccessMask.CONTRACTS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
 		} else {
 			return ((getAccessMask() & AccessMask.CONTRACTS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
+		}
+	}
+
+	public boolean isWalletTransactions() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
 		}
 	}
 

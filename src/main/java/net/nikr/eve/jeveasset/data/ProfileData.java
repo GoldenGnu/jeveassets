@@ -48,6 +48,7 @@ public class ProfileData {
 	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
 	private final EventList<IndustryJob> industryJobsEventList = new BasicEventList<IndustryJob>();
 	private final EventList<MarketOrder> marketOrdersEventList = new BasicEventList<MarketOrder>();
+	private final EventList<WalletTransaction> walletTransactionsEventList = new BasicEventList<WalletTransaction>();
 	private final EventList<Asset> assetsEventList = new BasicEventList<Asset>();
 	private final EventList<AccountBalance> accountBalanceEventList = new BasicEventList<AccountBalance>();
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
@@ -79,6 +80,10 @@ public class ProfileData {
 		return marketOrdersEventList;
 	}
 
+	public EventList<WalletTransaction> getWalletTransactionsEventList() {
+		return walletTransactionsEventList;
+	}
+
 	public EventList<ContractItem> getContractItemEventList() {
 		return contractItemEventList;
 	}
@@ -100,6 +105,13 @@ public class ProfileData {
 				//Add Market Orders to uniqueIds
 				for (MarketOrder marketOrder : owner.getMarketOrders()) {
 					Item item = marketOrder.getItem();
+					if (item.isMarketGroup()) {
+						priceTypeIDs.add(item.getTypeID());
+					}
+				}
+				//Add Wallet Transaction to uniqueIds
+				for (WalletTransaction walletTransaction : owner.getWalletTransactions()) {
+					Item item = walletTransaction.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
 					}
@@ -158,6 +170,7 @@ public class ProfileData {
 		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 		Set<String> uniqueOwners = new HashSet<String>();
 		List<String> ownersOrders = new ArrayList<String>();
+		List<String> ownersWallet = new ArrayList<String>();
 		List<String> ownersJobs = new ArrayList<String>();
 		List<String> ownersAssets = new ArrayList<String>();
 		List<String> ownersAccountBalance = new ArrayList<String>();
@@ -165,6 +178,7 @@ public class ProfileData {
 		//Temp
 		List<Asset> assets = new ArrayList<Asset>();
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
+		List<WalletTransaction> walletTransactions = new ArrayList<WalletTransaction>();
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
 		List<ContractItem> contractItems = new ArrayList<ContractItem>();
 		List<AccountBalance> accountBalance = new ArrayList<AccountBalance>();
@@ -184,6 +198,15 @@ public class ProfileData {
 					//Assets
 					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
 					ownersOrders.add(owner.getName());
+				}
+				//Wallet Transactions
+				if (!owner.getWalletTransactions().isEmpty() && !ownersWallet.contains(owner.getName())) {
+					//Wallet Transactions
+					walletTransactions.addAll(owner.getWalletTransactions());
+					//Assets
+					//FIXME Wallet Transactions Assets
+					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
+					ownersWallet.add(owner.getName());
 				}
 				//Industry Jobs
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
@@ -268,6 +291,13 @@ public class ProfileData {
 			marketOrdersEventList.addAll(marketOrders);
 		} finally {
 			marketOrdersEventList.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			walletTransactionsEventList.getReadWriteLock().writeLock().lock();
+			walletTransactionsEventList.clear();
+			walletTransactionsEventList.addAll(walletTransactions);
+		} finally {
+			walletTransactionsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		try {
 			industryJobsEventList.getReadWriteLock().writeLock().lock();

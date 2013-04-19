@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
 	private int fails = 0;
-	private final int MAX_FAIL = 5;
+	private final int MAX_FAIL = 6;
 
 	public AccountGetter() {
 		super("Accounts", false, true);
@@ -92,6 +92,9 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 				fails++;
 			}
 			if (!getAccount().isMarketOrders()) {
+				fails++;
+			}
+			if (!getAccount().isWalletTransactions()) {
 				fails++;
 			}
 			if (!getAccount().isContracts()) {

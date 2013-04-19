@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -206,4 +207,8 @@ public abstract class FakeProgram extends Program {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
+	@Override
+	public EventList<WalletTransaction> getWalletTransactionsEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

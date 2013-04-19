@@ -57,6 +57,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private JCheckBox jCheckAll;
 	private JCheckBox jMarketOrders;
 	private JLabel jMarketOrdersUpdate;
+	private JCheckBox jWalletTransactions;
+	private JLabel jWalletTransactionsUpdate;
 	private JCheckBox jIndustryJobs;
 	private JLabel jIndustryJobsUpdate;
 	private JCheckBox jAccounts;
@@ -81,6 +83,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jCheckAll.addActionListener(this);
 
 		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
+		jWalletTransactions = new JCheckBox(DialoguesUpdate.get().walletTransactions());
 		jIndustryJobs = new JCheckBox(DialoguesUpdate.get().industryJobs());
 		jAccounts = new JCheckBox(DialoguesUpdate.get().accounts());
 		jAccountBalance = new JCheckBox(DialoguesUpdate.get().accountBlances());
@@ -89,6 +92,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jPriceData = new JCheckBox(DialoguesUpdate.get().priceData());
 
 		jCheckBoxes.add(jMarketOrders);
+		jCheckBoxes.add(jWalletTransactions);
 		jCheckBoxes.add(jIndustryJobs);
 		jCheckBoxes.add(jAccounts);
 		jCheckBoxes.add(jAccountBalance);
@@ -101,6 +105,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		}
 		JLabel jNextUpdateLabel = new JLabel(DialoguesUpdate.get().nextUpdate());
 		jMarketOrdersUpdate = new JLabel();
+		jWalletTransactionsUpdate = new JLabel();
 		jIndustryJobsUpdate = new JLabel();
 		jAccountsUpdate = new JLabel();
 		jAccountBalanceUpdate = new JLabel();
@@ -122,6 +127,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jCheckAll)
 						.addComponent(jMarketOrders)
+						.addComponent(jWalletTransactions)
 						.addComponent(jIndustryJobs)
 						.addComponent(jAccounts)
 						.addComponent(jAccountBalance)
@@ -132,6 +138,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jNextUpdateLabel, 110, 110, 110)
 						.addComponent(jMarketOrdersUpdate)
+						.addComponent(jWalletTransactionsUpdate)
 						.addComponent(jIndustryJobsUpdate)
 						.addComponent(jAccountsUpdate)
 						.addComponent(jAccountBalanceUpdate)
@@ -155,6 +162,10 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMarketOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jMarketOrdersUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jWalletTransactions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jWalletTransactionsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jIndustryJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -213,6 +224,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
+		Date walletTransactionsNextUpdate = null;
 		Date contractsNextUpdate = null;
 		Date assetsNextUpdate = null;
 		Date accountBalanceNextUpdate = null;
@@ -220,6 +232,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		boolean bAccountsUpdateAll = true;
 		boolean bIndustryJobsUpdateAll = true;
 		boolean bMarketOrdersUpdateAll = true;
+		boolean bWalletTransactionsUpdateAll = true;
 		boolean bContractsUpdateAll = true;
 		boolean bAssetsUpdateAll = true;
 		boolean bAccountBalanceUpdateAll = true;
@@ -233,6 +246,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 				if (owner.isShowAssets()) {
 					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
 					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
+					walletTransactionsNextUpdate = nextUpdate(walletTransactionsNextUpdate, owner.getWalletTransactionsNextUpdate());
 					contractsNextUpdate = nextUpdate(contractsNextUpdate, owner.getContractsNextUpdate());
 					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
 					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
@@ -246,6 +260,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			}
 		}
 		setUpdateLabel(jMarketOrdersUpdate, jMarketOrders, marketOrdersNextUpdate, bMarketOrdersUpdateAll);
+		setUpdateLabel(jWalletTransactionsUpdate, jWalletTransactions, walletTransactionsNextUpdate, bWalletTransactionsUpdateAll);
 		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobs, industryJobsNextUpdate, bIndustryJobsUpdateAll);
 		setUpdateLabel(jAccountsUpdate, jAccounts, accountsNextUpdate, bAccountsUpdateAll);
 		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate, bAccountBalanceUpdateAll);
@@ -256,6 +271,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jUpdate.setEnabled(false);
 		jCheckAll.setEnabled(false);
 		setUpdatableButton(marketOrdersNextUpdate);
+		setUpdatableButton(walletTransactionsNextUpdate);
 		setUpdatableButton(industryJobsNextUpdate);
 		setUpdatableButton(accountsNextUpdate);
 		setUpdatableButton(accountBalanceNextUpdate);
@@ -341,7 +357,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			this.setVisible(false);
 			List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
 			if (jMarketOrders.isSelected() || jIndustryJobs.isSelected()
-					|| jAssets.isSelected() || jContracts.isSelected()) {
+					|| jAssets.isSelected() || jContracts.isSelected()
+					|| jWalletTransactions.isSelected()) {
 				updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
 			}
 			if (jAccounts.isSelected()) {
@@ -349,6 +366,9 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			}
 			if (jMarketOrders.isSelected()) {
 				updateTasks.add(new MarketOrdersTask());
+			}
+			if (jWalletTransactions.isSelected()) {
+				updateTasks.add(new WalletTransactionsTask());
 			}
 			if (jIndustryJobs.isSelected()) {
 				updateTasks.add(new IndustryJobsTask());
@@ -465,6 +485,19 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
 			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
+		}
+	}
+
+	public class WalletTransactionsTask extends UpdateTask {
+
+		public WalletTransactionsTask() {
+			super(DialoguesUpdate.get().walletTransactions());
+		}
+
+		@Override
+		public void update() {
+			WalletTransactionsGetter walletTransactionsGetter = new WalletTransactionsGetter();
+			walletTransactionsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 		}
 	}
 

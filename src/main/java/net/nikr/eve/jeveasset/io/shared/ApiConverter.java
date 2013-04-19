@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,5 +276,19 @@ public final class ApiConverter {
 			flag = ApiIdConverter.flag(flagID, parentEveAsset, settings.getItemFlags());
 		}
 		return new Asset(item, location, owner, count, parents, flag, flagID, itemId, singleton, rawQuantity);
+	}
+
+	public static List<WalletTransaction> convertWalletTransactions(final List<ApiWalletTransaction> apiWalletTransactions, final Owner owner, final Settings settings) {
+		List<WalletTransaction> walletTransactions = new ArrayList<WalletTransaction>();
+		for (ApiWalletTransaction apiWalletTransaction : apiWalletTransactions) {
+			walletTransactions.add(toWalletTransaction(owner, apiWalletTransaction, settings));
+		}
+		return walletTransactions;
+	}
+
+	private static WalletTransaction toWalletTransaction(final Owner owner, final ApiWalletTransaction apiWalletTransaction, final Settings settings) {
+		Item item = ApiIdConverter.getItem(apiWalletTransaction.getTypeID(), settings.getItems());
+		Location location = ApiIdConverter.getLocation(apiWalletTransaction.getStationID(), null, settings.getLocations());
+		return new WalletTransaction(apiWalletTransaction, item, location, owner);
 	}
 }

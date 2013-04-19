@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
+import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
@@ -30,6 +31,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
+import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -52,7 +54,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 	}
 
 	private void write(final ProfileManager profileManager, final String filename) {
-		Document xmldoc = null;
+		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("assets");
 		} catch (XmlException ex) {
@@ -97,6 +99,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));
+			node.setAttributeNS(null, "wallettransactionsnextupdate", String.valueOf(owner.getWalletTransactionsNextUpdate().getTime()));
 			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(owner.getIndustryJobsNextUpdate().getTime()));
 			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(owner.getContractsNextUpdate().getTime()));
 			parentNode.appendChild(node);
@@ -106,6 +109,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			writeContractItems(xmldoc, node, owner.getContracts());
 			writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 			writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
+			writeWalletTransactions(xmldoc, node, owner.getWalletTransactions(), owner.isCorporation());
 			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		}
 	}
@@ -211,6 +215,32 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "price", String.valueOf(marketOrder.getPrice()));
 			childNode.setAttributeNS(null, "bid", String.valueOf(marketOrder.getBid()));
 			childNode.setAttributeNS(null, "issued", String.valueOf(marketOrder.getIssued().getTime()));
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeWalletTransactions(final Document xmldoc, final Element parentNode, final List<WalletTransaction> walletTransactions, final boolean bCorp) {
+		Element node = xmldoc.createElementNS(null, "wallettransactions");
+		if (!walletTransactions.isEmpty()) {
+			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			parentNode.appendChild(node);
+		}
+		for (ApiWalletTransaction apiWalletTransaction : walletTransactions) {
+			Element childNode = xmldoc.createElementNS(null, "wallettransaction");
+			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(apiWalletTransaction.getTransactionDateTime().getTime()));
+			childNode.setAttributeNS(null, "transactionid", String.valueOf(apiWalletTransaction.getTransactionID()));
+			childNode.setAttributeNS(null, "quantity", String.valueOf(apiWalletTransaction.getQuantity()));
+			childNode.setAttributeNS(null, "typename", String.valueOf(apiWalletTransaction.getTypeName()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(apiWalletTransaction.getTypeID()));
+			childNode.setAttributeNS(null, "price", String.valueOf(apiWalletTransaction.getPrice()));
+			childNode.setAttributeNS(null, "clientid", String.valueOf(apiWalletTransaction.getClientID()));
+			childNode.setAttributeNS(null, "clientname", String.valueOf(apiWalletTransaction.getClientName()));
+			childNode.setAttributeNS(null, "characterid", String.valueOf(apiWalletTransaction.getCharacterID()));
+			childNode.setAttributeNS(null, "charactername", String.valueOf(apiWalletTransaction.getCharacterName()));
+			childNode.setAttributeNS(null, "stationid", String.valueOf(apiWalletTransaction.getStationID()));
+			childNode.setAttributeNS(null, "stationname", String.valueOf(apiWalletTransaction.getStationName()));
+			childNode.setAttributeNS(null, "transactiontype", String.valueOf(apiWalletTransaction.getTransactionType()));
+			childNode.setAttributeNS(null, "transactionfor", String.valueOf(apiWalletTransaction.getTransactionFor()));
 			node.appendChild(childNode);
 		}
 	}

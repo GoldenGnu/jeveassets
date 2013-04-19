@@ -30,6 +30,7 @@ import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,6 +150,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			parseContracts(currentNode, owner, settings);
 			parseBalances(currentNode, owner);
 			parseMarkerOrders(currentNode, owner, settings);
+			parseWalletTransactions(currentNode, owner, settings);
 			parseIndustryJobs(currentNode, owner, settings);
 		}
 	}
@@ -166,17 +168,20 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "marketordersnextupdate")) {
 			marketOrdersNextUpdate = new Date(AttributeGetters.getLong(node, "marketordersnextupdate"));
 		}
+		Date walletTransactionsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "wallettransactionsnextupdate")) {
+			walletTransactionsNextUpdate = new Date(AttributeGetters.getLong(node, "wallettransactionsnextupdate"));
+		}
 		Date industryJobsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "industryjobsnextupdate")) {
 			industryJobsNextUpdate = new Date(AttributeGetters.getLong(node, "industryjobsnextupdate"));
 		}
-
 		Date contractsNextUpdate = Settings.getNow();
 		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, walletTransactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner, final Settings settings) {
@@ -356,6 +361,55 @@ public final class ProfileReader extends AbstractXmlReader {
 		apiMarketOrder.setBid(bid);
 		apiMarketOrder.setIssued(issued);
 		return apiMarketOrder;
+	}
+
+	private void parseWalletTransactions(final Element element, final Owner owner, final Settings settings) {
+		NodeList walletTransactionsNodes = element.getElementsByTagName("wallettransactions");
+		List<ApiWalletTransaction> walletTransactions = new ArrayList<ApiWalletTransaction>();
+		for (int a = 0; a < walletTransactionsNodes.getLength(); a++) {
+			Element currentWalletTransactionsNode = (Element) walletTransactionsNodes.item(a);
+			NodeList walletTransactionNodes = currentWalletTransactionsNode.getElementsByTagName("wallettransaction");
+			for (int b = 0; b < walletTransactionNodes.getLength(); b++) {
+				Element currentNode = (Element) walletTransactionNodes.item(b);
+				ApiWalletTransaction apiWalletTransaction = parseWalletTransaction(currentNode);
+				walletTransactions.add(apiWalletTransaction);
+			}
+		}
+		owner.setWalletTransactions(ApiConverter.convertWalletTransactions(walletTransactions, owner, settings));
+	}
+
+	private ApiWalletTransaction parseWalletTransaction(final Element element) {
+		ApiWalletTransaction apiWalletTransaction = new ApiWalletTransaction();
+		Date transactionDateTime = AttributeGetters.getDate(element, "transactiondatetime");
+		Long transactionID = AttributeGetters.getLong(element, "transactionid");
+		int quantity = AttributeGetters.getInt(element, "quantity");
+		String typeName = AttributeGetters.getString(element, "typename");
+		int typeID = AttributeGetters.getInt(element, "typeid");
+		Double price = AttributeGetters.getDouble(element, "price");
+		Long clientID = AttributeGetters.getLong(element, "clientid");
+		String clientName = AttributeGetters.getString(element, "clientname");
+		Long characterID = AttributeGetters.getLong(element, "characterid");
+		String characterName = AttributeGetters.getString(element, "charactername");
+		int stationID = AttributeGetters.getInt(element, "stationid");
+		String stationName = AttributeGetters.getString(element, "stationname");
+		String transactionType = AttributeGetters.getString(element, "transactiontype");
+		String transactionFor = AttributeGetters.getString(element, "transactionfor");
+		
+		apiWalletTransaction.setTransactionDateTime(transactionDateTime);
+		apiWalletTransaction.setTransactionID(transactionID);
+		apiWalletTransaction.setQuantity(quantity);
+		apiWalletTransaction.setTypeName(typeName);
+		apiWalletTransaction.setTypeID(typeID);
+		apiWalletTransaction.setPrice(price);
+		apiWalletTransaction.setClientID(clientID);
+		apiWalletTransaction.setClientName(clientName);
+		apiWalletTransaction.setCharacterID(characterID);
+		apiWalletTransaction.setCharacterName(characterName);
+		apiWalletTransaction.setStationID(stationID);
+		apiWalletTransaction.setStationName(stationName);
+		apiWalletTransaction.setTransactionType(transactionType);
+		apiWalletTransaction.setTransactionFor(transactionFor);
+		return apiWalletTransaction;
 	}
 
 	private void parseIndustryJobs(final Element element, final Owner owner, final Settings settings) {

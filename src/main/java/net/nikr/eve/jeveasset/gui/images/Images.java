@@ -137,6 +137,7 @@ public enum Images {
 	TOOL_TRACKER ("tool_tracker.png"),
 	TOOL_REPROCESSED ("tool_reprocessed.png"),
 	TOOL_CONTRACTS ("tool_contracts.png"),
+	TOOL_WALLET ("tool_wallet.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),
