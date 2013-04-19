@@ -37,7 +37,7 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_VALUE_TABLE = "ACTION_OPEN_VALUE_TABLE";
 	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
-	public static final String ACTION_OPEN_WALLET = "ACTION_OPEN_WALLET";
+	public static final String ACTION_OPEN_TRANSACTION = "ACTION_OPEN_TRANSACTION";
 	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
 	public static final String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
 	public static final String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
@@ -135,10 +135,10 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
- 		menuItem = new JMenuItem(GuiFrame.get().wallet());
+ 		menuItem = new JMenuItem(GuiFrame.get().transaction());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_WALLET.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_WALLET);
+		menuItem.setActionCommand(ACTION_OPEN_TRANSACTION);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

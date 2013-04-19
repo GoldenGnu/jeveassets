@@ -26,18 +26,20 @@ import java.util.Locale;
 import net.nikr.eve.jeveasset.Main;
 import uk.me.candle.translations.Bundle;
 
-public abstract class TabsWallet extends Bundle {
-	public static TabsWallet get() {
-		return Main.getBundleService().get(TabsWallet.class);
+public abstract class TabsTransaction extends Bundle {
+	public static TabsTransaction get() {
+		return Main.getBundleService().get(TabsTransaction.class);
 	}
 
-	public TabsWallet(final Locale locale) {
+	public TabsTransaction(final Locale locale) {
 		super(locale);
 	}
 
-	public abstract String wallet();
 	public abstract String buy();
+	public abstract String corporation();
+	public abstract String personal();
 	public abstract String sell();
+	public abstract String title();
 	public abstract String totalBuy();
 	public abstract String totalSell();
 	public abstract String columnTransactionType();

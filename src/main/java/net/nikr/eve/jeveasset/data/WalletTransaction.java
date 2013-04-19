@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 public class WalletTransaction extends ApiWalletTransaction implements LocationType, ItemType{
 
@@ -58,6 +59,27 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 		Long thisID = this.getTransactionID();
 		Long thatID = o.getTransactionID();
 		return thisID.compareTo(thatID);
+	}
+
+	public String getTransactionTypeFormatted() {
+		if (getTransactionType().equals("sell")) {
+			return TabsTransaction.get().sell();
+		}
+		if (getTransactionType().equals("buy")) {
+			return TabsTransaction.get().buy();
+		}
+		return getTransactionType();
+	}
+
+	
+	public String getTransactionForFormatted() {
+		if (getTransactionFor().equals("personal")) {
+			return TabsTransaction.get().personal();
+		}
+		if (getTransactionFor().equals("corporation")) {
+			return TabsTransaction.get().corporation();
+		}
+		return getTransactionFor();
 	}
 
 	@Override

@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.wallet;
+package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.event.ListEvent;
@@ -43,30 +43,30 @@ import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
-import net.nikr.eve.jeveasset.i18n.TabsWallet;
+import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public class WalletTab extends JMainTab implements ListEventListener<WalletTransaction> {
+public class TransactionTab extends JMainTab implements ListEventListener<WalletTransaction> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
 	private JLabel jBuyOrdersTotal;
 
 	//Table
-	private WalletFilterControl filterControl;
-	private EnumTableFormatAdaptor<WalletTableFormat, WalletTransaction> tableFormat;
+	private TransactionsFilterControl filterControl;
+	private EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat;
 	private EventTableModel<WalletTransaction> tableModel;
 	private FilterList<WalletTransaction> filterList;
 	private EventList<WalletTransaction> eventList;
 	private EventSelectionModel<WalletTransaction> selectionModel;
 
-	public static final String NAME = "wallet"; //Not to be changed!
+	public static final String NAME = "transaction"; //Not to be changed!
 
-	public WalletTab(final Program program) {
-		super(program, TabsWallet.get().wallet(), Images.TOOL_WALLET.getIcon(), true);
+	public TransactionTab(final Program program) {
+		super(program, TabsTransaction.get().title(), Images.TOOL_WALLET.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<WalletTableFormat, WalletTransaction>(WalletTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction>(TransactionTableFormat.class);
 		//Backend
 		eventList = program.getWalletTransactionsEventList();
 		//Filter
@@ -77,7 +77,7 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 		//Table Model
 		tableModel = new EventTableModel<WalletTransaction>(sortedList, tableFormat);
 		//Table
-		jTable = new JWalletTable(program, tableModel);
+		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
@@ -93,12 +93,12 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, WalletTableFormat.TYPE, CompareType.EQUALS,  TabsWallet.get().buy()));
-		defaultFilters.put(TabsWallet.get().buy(), filter);
+		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS,  TabsTransaction.get().buy()));
+		defaultFilters.put(TabsTransaction.get().buy(), filter);
 		filter = new ArrayList<Filter>();
-		filter.add(new Filter(LogicType.AND, WalletTableFormat.TYPE, CompareType.EQUALS,  TabsWallet.get().sell()));
-		defaultFilters.put(TabsWallet.get().sell(), filter);
-		filterControl = new WalletFilterControl(
+		filter.add(new Filter(LogicType.AND, TransactionTableFormat.TYPE, CompareType.EQUALS,  TabsTransaction.get().sell()));
+		defaultFilters.put(TabsTransaction.get().sell(), filter);
+		filterControl = new TransactionsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
 				eventList,
@@ -107,10 +107,10 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 				defaultFilters
 				);
 
-		jSellOrdersTotal = StatusPanel.createLabel(TabsWallet.get().totalSell(), Images.ORDERS_SELL.getIcon());
+		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalSell(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
 
-		jBuyOrdersTotal = StatusPanel.createLabel(TabsWallet.get().totalBuy(), Images.ORDERS_BUY.getIcon());
+		jBuyOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalBuy(), Images.ORDERS_BUY.getIcon());
 		this.addStatusbarLabel(jBuyOrdersTotal);
 
 		layout.setHorizontalGroup(
@@ -163,24 +163,24 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 		jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
 	}
 
-	public static class WalletFilterControl extends FilterControl<WalletTransaction> {
+	public static class TransactionsFilterControl extends FilterControl<WalletTransaction> {
 
-		private EnumTableFormatAdaptor<WalletTableFormat, WalletTransaction> tableFormat;
+		private EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat;
 
-		public WalletFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<WalletTableFormat, WalletTransaction> tableFormat, final EventList<WalletTransaction> eventList, final FilterList<WalletTransaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat, final EventList<WalletTransaction> eventList, final FilterList<WalletTransaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
 		protected Object getColumnValue(final WalletTransaction item, final String column) {
-			WalletTableFormat format = WalletTableFormat.valueOf(column);
+			TransactionTableFormat format = TransactionTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
 
 		@Override
 		protected boolean isNumericColumn(final Enum<?> column) {
-			WalletTableFormat format = (WalletTableFormat) column;
+			TransactionTableFormat format = (TransactionTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
 			} else {
@@ -190,7 +190,7 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 
 		@Override
 		protected boolean isDateColumn(final Enum<?> column) {
-			WalletTableFormat format = (WalletTableFormat) column;
+			TransactionTableFormat format = (TransactionTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
 			} else {
@@ -201,17 +201,17 @@ public class WalletTab extends JMainTab implements ListEventListener<WalletTrans
 
 		@Override
 		public Enum[] getColumns() {
-			return WalletTableFormat.values();
+			return TransactionTableFormat.values();
 		}
 
 		@Override
 		protected Enum<?> valueOf(final String column) {
-			return WalletTableFormat.valueOf(column);
+			return TransactionTableFormat.valueOf(column);
 		}
 
 		@Override
 		protected List<EnumTableColumn<WalletTransaction>> getEnumColumns() {
-			return columnsAsList(WalletTableFormat.values());
+			return columnsAsList(TransactionTableFormat.values());
 		}
 
 		@Override

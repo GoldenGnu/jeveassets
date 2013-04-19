@@ -19,21 +19,21 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.wallet;
+package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.i18n.TabsWallet;
+import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
+public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction> {
 	DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnTransactionDate();
+			return TabsTransaction.get().columnTransactionDate();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -43,7 +43,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	OWNER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnOwner();
+			return TabsTransaction.get().columnOwner();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -53,23 +53,17 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	TYPE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnTransactionType();
+			return TabsTransaction.get().columnTransactionType();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
-			if (from.getTransactionType().equals("sell")) {
-				return TabsWallet.get().sell();
-			}
-			if (from.getTransactionType().equals("buy")) {
-				return TabsWallet.get().buy();
-			}
-			return from.getTransactionType();
+			return from.getTransactionTypeFormatted();
 		}
 	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnName();
+			return TabsTransaction.get().columnName();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -79,7 +73,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	QUANTITY(Integer.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnQuantity();
+			return TabsTransaction.get().columnQuantity();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -89,7 +83,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnPrice();
+			return TabsTransaction.get().columnPrice();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -99,7 +93,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	CLIENT(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnClientName();
+			return TabsTransaction.get().columnClientName();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -109,7 +103,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnStationName();
+			return TabsTransaction.get().columnStationName();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -119,7 +113,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	REGION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnRegion();
+			return TabsTransaction.get().columnRegion();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -129,17 +123,17 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	TRANSACTION_FOR(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnTransactionFor();
+			return TabsTransaction.get().columnTransactionFor();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
-			return from.getTransactionFor();
+			return from.getTransactionForFormatted();
 		}
 	},
 	VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsWallet.get().columnValue();
+			return TabsTransaction.get().columnValue();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
@@ -148,7 +142,7 @@ public enum WalletTableFormat implements EnumTableColumn<WalletTransaction> {
 	};
 	private Class<?> type;
 	private Comparator<?> comparator;
-	private WalletTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private TransactionTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}

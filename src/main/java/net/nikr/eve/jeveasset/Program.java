@@ -67,7 +67,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
-import net.nikr.eve.jeveasset.gui.tabs.wallet.WalletTab;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -109,7 +109,7 @@ public class Program implements ActionListener {
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
-	private WalletTab walletTab;
+	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
 	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
@@ -192,8 +192,8 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
 		SplashUpdater.setProgress(62);
-		LOG.info("Loading: Wallet Tab");
-		walletTab = new WalletTab(this);
+		LOG.info("Loading: Transactions Tab");
+		transactionsTab = new TransactionTab(this);
 		SplashUpdater.setProgress(63);
 		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
@@ -504,8 +504,8 @@ public class Program implements ActionListener {
 		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);
 		}
-		if (MainMenu.ACTION_OPEN_WALLET.equals(e.getActionCommand())) {
-			mainWindow.addTab(walletTab);
+		if (MainMenu.ACTION_OPEN_TRANSACTION.equals(e.getActionCommand())) {
+			mainWindow.addTab(transactionsTab);
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
