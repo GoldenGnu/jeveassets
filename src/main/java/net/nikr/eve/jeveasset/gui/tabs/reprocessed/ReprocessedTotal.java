@@ -138,6 +138,17 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getTotal().getTypeName());
+		builder.append("\t");
+		builder.append(getTotal().getSellPrice());
+		builder.append("\t");
+		builder.append(getTotal().getValue());
+		return builder.toString();
+	}
+
+	@Override
 	public int compareTo(final ReprocessedInterface o) {
 		return 0;
 	}

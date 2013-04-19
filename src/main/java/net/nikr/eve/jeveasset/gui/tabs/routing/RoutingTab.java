@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
@@ -245,6 +246,43 @@ public class RoutingTab extends JMainTab  {
 			);
 		//Only need to build the graph once
 		buildGraph(program.getSettings());
+	}
+
+	@Override
+	protected MenuData<?> getMenuData() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	public void updateData() {
+		//Do everything the constructor does...
+		jAvailable.getEditableModel().clear();
+		jWaypoints.getEditableModel().clear();
+		List<SourceItem> sources = new ArrayList<SourceItem>();
+		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
+			sources.add(new SourceItem(entry.getKey(), true));
+		}
+		Collections.sort(sources);
+		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
+		sources.add(0, new SourceItem(General.get().all()));
+		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
+		jAlgorithm.setSelectedIndex(0);
+		jLastResultArea.setText(TabsRouting.get().once());
+		jLastResultArea.setCaretPosition(0);
+		jLastResultArea.setEnabled(false);
+		updateRemaining();
+		jCancel.setEnabled(false);
+		processFilteredAssets(program.getSettings());
 	}
 
 	private void changeAlgorithm() {
@@ -476,12 +514,6 @@ public class RoutingTab extends JMainTab  {
 		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}
 
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
-	}
-
 	private class ListenerClass implements ActionListener {
 
 		@Override
@@ -506,31 +538,6 @@ public class RoutingTab extends JMainTab  {
 
 		}
 	}
-
-	@Override
-	public void updateData() {
-		//Do everything the constructor does...
-		jAvailable.getEditableModel().clear();
-		jWaypoints.getEditableModel().clear();
-		List<SourceItem> sources = new ArrayList<SourceItem>();
-		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
-			sources.add(new SourceItem(entry.getKey(), true));
-		}
-		Collections.sort(sources);
-		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
-		sources.add(0, new SourceItem(General.get().all()));
-		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
-		jAlgorithm.setSelectedIndex(0);
-		jLastResultArea.setText(TabsRouting.get().once());
-		jLastResultArea.setCaretPosition(0);
-		jLastResultArea.setEnabled(false);
-		updateRemaining();
-		jCancel.setEnabled(false);
-		processFilteredAssets(program.getSettings());
-	}
-
-	@Override
-	protected void showTablePopupMenu(final MouseEvent e) { }
 
 	/**
 	 * A GUI compatible container for the routing algorithms.

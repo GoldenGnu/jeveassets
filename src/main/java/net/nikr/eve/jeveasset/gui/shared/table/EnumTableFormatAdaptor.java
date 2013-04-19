@@ -196,7 +196,7 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		updateColumns();
 	}
 
-	public JMenuItem getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable) {
+	public JMenu getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable) {
 		if (dialog == null) { //Create dialog (only once)
 			dialog = new EditColumnsDialog<T, Q>(program, this);
 		}

@@ -46,7 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -57,17 +57,11 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuPrice;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -203,43 +197,23 @@ public class ReprocessedTab extends JMainTab {
 		);
 	}
 
+		@Override
+	protected MenuData getMenuData() {
+		return new MenuData<ReprocessedInterface>(selectionModel.getSelected(), program.getSettings(), ReprocessedInterface.class);
+	}
+
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
 
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		List<ReprocessedInterface> selected = new ArrayList<ReprocessedInterface>(selectionModel.getSelected());
-		for (int i = 0; i < selected.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
-			Object object = selected.get(i);
-			if ((object instanceof SeparatorList.Separator) || (object instanceof Stockpile.StockpileTotal)) {
-				selected.remove(i);
-				i--;
-			}
-		}
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
 
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<ReprocessedInterface> menuData = new MenuData<ReprocessedInterface>(selected, program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selected));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<ReprocessedInterface>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<ReprocessedInterface>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<ReprocessedInterface>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<ReprocessedInterface>(program, menuData));
-	//REPROCESSED
-		//jComponent.add(new JMenuReprocessed<ReprocessedItem>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Reprocessed Tool
 		//JMenuInfo.reprocessed(jComponent, selected, eventList);
 	}

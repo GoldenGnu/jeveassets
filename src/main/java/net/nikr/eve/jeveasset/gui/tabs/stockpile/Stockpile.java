@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -267,7 +268,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
-	public static class StockpileItem implements Comparable<StockpileItem>, LocationType, ItemType, BlueprintType, PriceType {
+	public static class StockpileItem implements Comparable<StockpileItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
 		//Constructor
 		private Stockpile stockpile;
 		private Item item;
@@ -536,6 +537,17 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		@Override
 		public Location getLocation() {
 			return stockpile.getLocation();
+		}
+
+		@Override
+		public String getCopyString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append(getStockpile().getName());
+			builder.append("\t");
+			builder.append(getStockpile().getOwner());
+			builder.append("\t");
+			builder.append(getStockpile().getLocation());
+			return builder.toString();
 		}
 
 		@Override

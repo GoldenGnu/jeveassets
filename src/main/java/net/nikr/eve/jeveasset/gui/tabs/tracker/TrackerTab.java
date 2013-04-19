@@ -49,7 +49,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartPanel;
@@ -276,6 +277,34 @@ public class TrackerTab extends JMainTab {
 		);
 	}
 
+	@Override
+	protected MenuData<?> getMenuData() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	public void updateData() {
+		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(program.getSettings().getTrackerData().keySet());
+		if (owners.isEmpty()) {
+			jOwners.setEnabled(false);
+			jOwners.getModel().setSelectedItem(new TrackerOwner(-1, TabsTracker.get().noDataFound()));
+		} else {
+			jOwners.setEnabled(true);
+			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
+		}
+		createData();
+	}
+
 	private JDateChooser createDateChooser(String title) {
 		JDateChooser jDate = new JDateChooser(Settings.getNow());
 		jDate.setBorder(BorderFactory.createTitledBorder(title));
@@ -374,25 +403,6 @@ public class TrackerTab extends JMainTab {
 			assetValue = assetValue + deepAsset(asset.getAssets());
 		}
 		return assetValue;
-	}
-
-	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
-	}
-
-	@Override
-	public void updateData() {
-		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(program.getSettings().getTrackerData().keySet());
-		if (owners.isEmpty()) {
-			jOwners.setEnabled(false);
-			jOwners.getModel().setSelectedItem(new TrackerOwner(-1, TabsTracker.get().noDataFound()));
-		} else {
-			jOwners.setEnabled(true);
-			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-		}
-		createData();
 	}
 
 	private void createData() {

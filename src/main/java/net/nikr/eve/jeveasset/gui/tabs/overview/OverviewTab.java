@@ -30,10 +30,8 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -59,9 +57,6 @@ public class OverviewTab extends JMainTab {
 
 	private static final String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
 	private static final String ACTION_LOAD_FILTER = "ACTION_LOAD_FILTER";
-	private static final String ACTION_ADD_NEW_GROUP = "ACTION_ADD_NEW_GROUP";
-	private static final String ACTION_DELETE_GROUP = "ACTION_DELETE_GROUP";
-	private static final String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
 	private static final String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 
 	private JOverviewTable jTable;
@@ -77,9 +72,6 @@ public class OverviewTab extends JMainTab {
 	private JLabel jAverage;
 	private JLabel jVolume;
 	private JLabel jShowing;
-
-	private AddToGroup addToGroup = new AddToGroup();
-	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
 	private ListenerClass listenerClass = new ListenerClass();
 
 	//Table
@@ -215,7 +207,38 @@ public class OverviewTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
+	protected MenuData getMenuData() {
+		return new MenuData<Overview>(selectionModel.getSelected(), program.getSettings(), Overview.class);
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.overview(jComponent, selectionModel.getSelected());
+	}
+
+	@Override
+	protected void addToolMenu(JComponent jComponent) {
+		jComponent.add(new JOverviewMenu(program, selectionModel.getSelected()));
+		addSeparator(jComponent);
+	}
+
+	@Override
+	public void updateData() {
+		jOwner.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+		updateTable();
+	}
+
+	public void hmm(final JComponent jComponent) {
 		jComponent.removeAll();
 		jComponent.setEnabled(true);
 
@@ -239,87 +262,11 @@ public class OverviewTab extends JMainTab {
 			addSeparator(jComponent);
 		}
 	//GROUPS
-		//Station, System, Region views
-		jSubMenu = new JMenu(TabsOverview.get().groups());
-		jSubMenu.setIcon(Images.LOC_GROUPS.getIcon());
-		jComponent.add(jSubMenu);
-		if (!getSelectedView().equals(TabsOverview.get().groups())) {
-			jMenuItem = new JMenuItem(TabsOverview.get().add());
-			jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-			jMenuItem.setEnabled(isSelected);
-			jMenuItem.setActionCommand(ACTION_ADD_NEW_GROUP);
-			jMenuItem.addActionListener(listenerClass);
-			jSubMenu.add(jMenuItem);
-
-			if (!program.getSettings().getOverviewGroups().isEmpty()) {
-				jSubMenu.addSeparator();
-			}
-
-			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
-				OverviewGroup overviewGroup = entry.getValue();
-				boolean found = overviewGroup.getLocations().containsAll(getSelectedLocations());
-				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (getSelectedView().equals(TabsOverview.get().stations())) {
-					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
-				}
-				if (getSelectedView().equals(TabsOverview.get().systems())) {
-					jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
-				}
-				if (getSelectedView().equals(TabsOverview.get().regions())) {
-					jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
-				}
-				jCheckBoxMenuItem.setEnabled(isSelected);
-				jCheckBoxMenuItem.setActionCommand(overviewGroup.getName());
-				jCheckBoxMenuItem.addActionListener(addToGroup);
-				jCheckBoxMenuItem.setSelected(found);
-				jSubMenu.add(jCheckBoxMenuItem);
-			}
-		}
-		//Groups view
-		if (getSelectedView().equals(TabsOverview.get().groups())) {
-			jMenuItem = new JMenuItem(TabsOverview.get().renameGroup());
-			jMenuItem.setIcon(Images.EDIT_RENAME.getIcon());
-			jMenuItem.setEnabled(isSingleRow);
-			jMenuItem.setActionCommand(ACTION_RENAME_GROUP);
-			jMenuItem.addActionListener(listenerClass);
-			jSubMenu.add(jMenuItem);
-
-			jMenuItem = new JMenuItem(TabsOverview.get().deleteGroup());
-			jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
-			jMenuItem.setEnabled(isSingleRow);
-			jMenuItem.setActionCommand(ACTION_DELETE_GROUP);
-			jMenuItem.addActionListener(listenerClass);
-			jSubMenu.add(jMenuItem);
-
-			if (isSingleRow) { //Add the group locations
-				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
-				if (overviewGroup != null) {
-					if (!overviewGroup.getLocations().isEmpty()) {
-						jSubMenu.addSeparator();
-					}
-					for (OverviewLocation location : overviewGroup.getLocations()) {
-						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
-						if (location.isStation()) {
-							jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
-						}
-						if (location.isSystem()) {
-							jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
-						}
-						if (location.isRegion()) {
-							jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
-						}
-						jCheckBoxMenuItem.setActionCommand(location.getName());
-						jCheckBoxMenuItem.addActionListener(removeFromGroup);
-						jCheckBoxMenuItem.setSelected(true);
-						jSubMenu.add(jCheckBoxMenuItem);
-					}
-				}
-			}
-		}
+		
 
 		addSeparator(jComponent);
 	//DATA
-		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected(), program.getSettings());
+		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected(), program.getSettings(), Overview.class);
 	//ASSET FILTER
 		jSubMenuItem = new JMenuAssetFilter<Overview>(program, menuData);
 		if (getSelectedView().equals(TabsOverview.get().groups())) {
@@ -359,7 +306,7 @@ public class OverviewTab extends JMainTab {
 		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
-	private String getSelectedView() {
+	protected String getSelectedView() {
 		if (jStations.isSelected()) {
 			return TabsOverview.get().stations();
 		}
@@ -539,7 +486,7 @@ public class OverviewTab extends JMainTab {
 		jOwner.setSelectedIndex(0);
 	}
 
-	private List<OverviewLocation> getSelectedLocations() {
+	protected List<OverviewLocation> getSelectedLocations() {
 		List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
 		for (int row : jTable.getSelectedRows()) {
 			Overview overview = tableModel.getElementAt(row);
@@ -560,7 +507,7 @@ public class OverviewTab extends JMainTab {
 		return locations;
 	}
 
-	private OverviewGroup getSelectGroup() {
+	protected OverviewGroup getSelectGroup() {
 		int index = jTable.getSelectedRow();
 		if (index < 0) {
 			return null;
@@ -570,12 +517,6 @@ public class OverviewTab extends JMainTab {
 			return null;
 		}
 		return program.getSettings().getOverviewGroups().get(overview.getName());
-	}
-
-	@Override
-	public void updateData() {
-		jOwner.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
-		updateTable();
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -592,34 +533,6 @@ public class OverviewTab extends JMainTab {
 					sortedList.setComparator(GlazedLists.comparableComparator());
 				}
 				updateTable();
-			}
-			//Group
-			if (ACTION_ADD_NEW_GROUP.equals(e.getActionCommand())) {
-				String value = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().addGroup(), JOptionPane.PLAIN_MESSAGE);
-				if (value != null) {
-					OverviewGroup overviewGroup = new OverviewGroup(value);
-					program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
-					overviewGroup.addAll(getSelectedLocations());
-					updateTable();
-				}
-			}
-			if (ACTION_DELETE_GROUP.equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = getSelectGroup();
-				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsOverview.get().deleteTheGroup(overviewGroup.getName()), TabsOverview.get().deleteGroup(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (value == JOptionPane.OK_OPTION) {
-					program.getSettings().getOverviewGroups().remove(overviewGroup.getName());
-					updateTable();
-				}
-			}
-			if (ACTION_RENAME_GROUP.equals(e.getActionCommand())) {
-				OverviewGroup overviewGroup = getSelectGroup();
-				String value = (String) JOptionPane.showInputDialog(program.getMainWindow().getFrame(), TabsOverview.get().groupName(), TabsOverview.get().renameGroup(), JOptionPane.PLAIN_MESSAGE, null, null, overviewGroup.getName());
-				if (value != null) {
-					program.getSettings().getOverviewGroups().remove(overviewGroup.getName());
-					overviewGroup.setName(value);
-					program.getSettings().getOverviewGroups().put(overviewGroup.getName(), overviewGroup);
-					updateTable();
-				}
 			}
 			//Filter
 			if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())) {
@@ -652,34 +565,6 @@ public class OverviewTab extends JMainTab {
 					}
 				}
 			}
-		}
-	}
-
-	class AddToGroup implements ActionListener {
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(e.getActionCommand());
-			if (overviewGroup != null) {
-				List<OverviewLocation> locations = getSelectedLocations();
-				if (overviewGroup.getLocations().containsAll(locations)) {
-					overviewGroup.removeAll(locations);
-				} else { //Remove
-					overviewGroup.addAll(locations);
-				}
-				updateTable();
-			}
-		}
-	}
-
-	class RemoveFromGroup implements ActionListener {
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			OverviewGroup overviewGroup = getSelectGroup();
-			String location = e.getActionCommand();
-			overviewGroup.remove(new OverviewLocation(location));
-			updateTable();
 		}
 	}
 

@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import ca.odell.glazedlists.SeparatorList;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -152,7 +154,15 @@ public class JMenuInfo {
 			double valueNow = 0;
 			double valueNeeded = 0;
 
-			for (StockpileItem item : list) {
+			for (int i = 0; i < list.size(); i++) {
+				Object object = list.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					continue;
+				}
+				if (object instanceof StockpileTotal) {
+					continue;
+				}
+				StockpileItem item = (StockpileItem) object;
 				volumnNow = volumnNow + item.getVolumeNow();
 				if (item.getVolumeNeeded() < 0) { //Only add if negative
 					volumnNeeded = volumnNeeded + item.getVolumeNeeded();

@@ -28,10 +28,11 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractItem extends EveContractItem implements Comparable<ContractItem>, LocationType, ItemType, BlueprintType, PriceType {
+public class ContractItem extends EveContractItem implements Comparable<ContractItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
 
 	private Contract contract;
 	private Item item;
@@ -122,11 +123,20 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 	}
 
 	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getContract().getTitle());
+		builder.append("\t");
+		builder.append(getContract().getTypeName());
+		return builder.toString();
+	}
+
+	@Override
 	public int compareTo(ContractItem o) {
 		return 0;
 	}
 
-		@Override
+	@Override
 	public int hashCode() {
 		int hash = 3;
 		hash = 37 * hash + (this.contract != null ? this.contract.hashCode() : 0);

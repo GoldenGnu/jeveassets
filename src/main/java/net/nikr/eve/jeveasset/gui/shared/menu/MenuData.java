@@ -26,11 +26,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JComponent;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -44,11 +47,22 @@ public class MenuData<T> {
 	private final Set<String> regions = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+	private boolean priceSupported = false;
+	private boolean itemSupported = false;
+	private boolean locationSupported = false;
+	private boolean assets = false;
+	private boolean stockpile = false;
 
-	public MenuData(final List<T> items, final Settings settings) {
+	public MenuData(final List<T> items, final Settings settings, final Class<T> clazz) {
 		if (items == null) { //Skip null
 			return;
 		}
+
+		assets = Asset.class.isAssignableFrom(clazz);
+		stockpile = StockpileItem.class.isAssignableFrom(clazz);
+		locationSupported = LocationType.class.isAssignableFrom(clazz);
+		itemSupported = ItemType.class.isAssignableFrom(clazz);
+		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 
 		for (T t : items) {
 			if (t == null) { //Skip null
@@ -92,6 +106,45 @@ public class MenuData<T> {
 		}
 	}
 
+	public boolean addAssetFilter(Program program, JComponent jComponent) {
+		if (!assets && (itemSupported || locationSupported)) {
+			jComponent.add(new JMenuAssetFilter<T>(program, this));
+			return true;
+		}
+		return false;
+	}
+	public boolean addStockpile(Program program, JComponent jComponent) {
+		if (!stockpile && itemSupported) {
+			jComponent.add(new JMenuStockpile<T>(program, this));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addLookup(Program program, JComponent jComponent) {
+		if (itemSupported || locationSupported) {
+			jComponent.add(new JMenuLookup<T>(program, this));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addPrice(Program program, JComponent jComponent) {
+		if (priceSupported) {
+			jComponent.add(new JMenuPrice<T>(program, this));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addReprocessed(Program program, JComponent jComponent) {
+		if (itemSupported) {
+			jComponent.add(new JMenuReprocessed<T>(program, this));
+			return true;
+		}
+		return false;
+	}
+
 	private void add(final Item item, final Location location, final Double price, final BlueprintType blueprintType) {
 		if (item != null && !item.isEmpty()) {
 			//Type Name
@@ -122,10 +175,10 @@ public class MenuData<T> {
 			if (location.isStation()) {
 				stations.add(location.getStation());
 			}
-			if (location.isSystem()) {
+			if (location.isStation() || location.isSystem()) {
 				systems.add(location.getSystem());
 			}
-			if (location.isRegion()) {
+			if (location.isStation() || location.isSystem() || location.isRegion()) {
 				regions.add(location.getRegion());
 			}
 		}

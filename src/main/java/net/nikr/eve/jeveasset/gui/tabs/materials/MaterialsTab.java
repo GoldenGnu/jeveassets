@@ -131,6 +131,26 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
+	protected MenuData getMenuData() {
+		return new MenuData<Material>(selectionModel.getSelected(), program.getSettings(), Material.class);
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
+	}
+
+	@Override
 	public void updateData() {
 		if (!program.getOwners(false).isEmpty()) {
 			jExpand.setEnabled(true);
@@ -151,35 +171,6 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 			jOwners.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Material> menuData = new MenuData<Material>(selectionModel.getSelected(), program.getSettings());
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Material>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Material>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Material>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Material>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Material>(program, menuData));
-	//INFO
-		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
-	}
-
 
 	private void updateTable() {
 		beforeUpdateData();

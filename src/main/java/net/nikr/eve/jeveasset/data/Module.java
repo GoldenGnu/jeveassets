@@ -27,10 +27,11 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-public class Module implements Comparable<Module>, LocationType, ItemType, PriceType {
+public class Module implements Comparable<Module>, LocationType, ItemType, PriceType, CopySeparator {
 
 	public enum FlagType {
 		TOTAL_VALUE("Total Value", 1) {
@@ -214,6 +215,13 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 
 	protected String getCompare() {
 		return key + flag.getOrder() + convertName(name);
+	}
+
+	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getFlag());
+		return builder.toString();
 	}
 
 	@Override

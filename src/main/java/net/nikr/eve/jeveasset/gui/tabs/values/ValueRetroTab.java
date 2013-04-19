@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -152,6 +153,55 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 					.addComponent(jCorporationScroll, 0, 0, Short.MAX_VALUE)
 				)
 		);
+	}
+
+	@Override
+	protected MenuData getMenuData() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	public void updateData() {
+		calcTotal();
+		jCharacters.removeAllItems();
+		List<String> characterNames = new ArrayList<String>(characters.keySet());
+		Collections.sort(characterNames, new CaseInsensitiveComparator());
+		for (String owner : characterNames) {
+			jCharacters.addItem(owner);
+		}
+		if (jCharacters.getModel().getSize() > 0) {
+			jCharacters.setEnabled(true);
+		} else {
+			jCharacters.addItem(TabsValues.get().oldNoCharacter());
+			jCharacters.setEnabled(false);
+		}
+		jCharacters.setSelectedIndex(0);
+
+		jCorporations.removeAllItems();
+		List<String> corporationNames = new ArrayList<String>(corporations.keySet());
+		Collections.sort(corporationNames, new CaseInsensitiveComparator());
+		for (String corp : corporationNames) {
+			jCorporations.addItem(corp);
+		}
+		if (jCorporations.getModel().getSize() > 0) {
+			jCorporations.setEnabled(true);
+		} else {
+			jCorporations.addItem(TabsValues.get().oldNoCorporation());
+			jCorporations.setEnabled(false);
+		}
+		jCorporations.setSelectedIndex(0);
+
+		setData(jTotal, total);
 	}
 
 	private Value getValue(String key, boolean corporation) {
@@ -276,49 +326,6 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 			setData(jCorporation, corporations.get(s));
 		}
 	}
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
-	}
-
-	@Override
-	public void updateData() {
-		calcTotal();
-		jCharacters.removeAllItems();
-		List<String> characterNames = new ArrayList<String>(characters.keySet());
-		Collections.sort(characterNames, new CaseInsensitiveComparator());
-		for (String owner : characterNames) {
-			jCharacters.addItem(owner);
-		}
-		if (jCharacters.getModel().getSize() > 0) {
-			jCharacters.setEnabled(true);
-		} else {
-			jCharacters.addItem(TabsValues.get().oldNoCharacter());
-			jCharacters.setEnabled(false);
-		}
-		jCharacters.setSelectedIndex(0);
-
-		jCorporations.removeAllItems();
-		List<String> corporationNames = new ArrayList<String>(corporations.keySet());
-		Collections.sort(corporationNames, new CaseInsensitiveComparator());
-		for (String corp : corporationNames) {
-			jCorporations.addItem(corp);
-		}
-		if (jCorporations.getModel().getSize() > 0) {
-			jCorporations.setEnabled(true);
-		} else {
-			jCorporations.addItem(TabsValues.get().oldNoCorporation());
-			jCorporations.setEnabled(false);
-		}
-		jCorporations.setSelectedIndex(0);
-
-		setData(jTotal, total);
-	}
-
-	@Override
-	protected void showTablePopupMenu(final MouseEvent e) { }
 
 	private class Output {
 		private String output;

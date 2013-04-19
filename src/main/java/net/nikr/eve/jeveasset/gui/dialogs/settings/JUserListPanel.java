@@ -98,20 +98,20 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		jDelete.setEnabled(b);
 	}
 
+	//Work on live data AKA getItems() - no need to re-cache (never cancel) or update GUI (never shown)
 	public boolean contains(final List<UserItem<K, V>> userItems) {
-		load();
 		for (UserItem<K, V> userItem : userItems) {
-			if (items.containsKey(userItem.getKey())) {
+			if (getItems().containsKey(userItem.getKey())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	//Work on live data AKA getItems() - no need to re-cache (never cancel) or update GUI (never shown)
 	public boolean containsKey(final Set<K> key) {
-		load();
 		for (K k : key) {
-			if (items.containsKey(k)) {
+			if (getItems().containsKey(k)) {
 				return true;
 			}
 		}

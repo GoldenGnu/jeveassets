@@ -37,7 +37,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class JMenuStockpile<T>  extends JMenu implements ActionListener {
+public class JMenuStockpile<T> extends JMenu implements ActionListener {
 
 	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
 	private static final int DEFAULT_ADD_COUNT = 1;

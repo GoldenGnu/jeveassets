@@ -31,9 +31,11 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -116,40 +118,30 @@ public class ItemsTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	protected MenuData getMenuData() {
+		return new MenuData<Item>(selectionModel.getSelected(), program.getSettings(), Item.class);
+	}
 
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
 
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected(), program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Item>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Item>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Item>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Item>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Item>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		//FIXME - make info menu for Items Tool
+		//JMenuInfo.items(jComponent, selected, eventList);
 	}
 
 	@Override
 	public void updateData() {
 		updateTableMenu(program.getMainWindow().getMenu().getTableMenu());
 	}
-
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 

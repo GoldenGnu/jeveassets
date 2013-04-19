@@ -20,6 +20,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
@@ -42,6 +43,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
+
+		JMenuCopy.installCopyFormatter(this);
 	}
 
 	public void expandSeparators(final boolean expand) {

@@ -66,9 +66,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	private static final String ACTION_IMPORT = "ACTION_IMPORT";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
-	private static final String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
-	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
-	private static final String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 
 	private JButton jAdd;
 	private JButton jShoppingList;
@@ -235,15 +232,67 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		this.addStatusbarLabel(jValueNeeded);
 	}
 
+	@Override
+	protected MenuData getMenuData() {
+		return new MenuData<StockpileItem>(selectionModel.getSelected(), program.getSettings(), StockpileItem.class);
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.stockpileItem(jComponent, selectionModel.getSelected());
+	}
+
+	@Override
+	protected void addToolMenu(JComponent jComponent) {
+		jComponent.add(new JStockpileItemMenu(program, selectionModel.getSelected()));
+		addSeparator(jComponent);
+	}
+
+	@Override
+	public void updateData() {
+		//Items
+		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
+
+		updateOwners();
+
+		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
+			stockpileItems.addAll(stockpile.getItems());
+			updateStockpile(stockpile);
+		}
+
+		//Save separator expanded/collapsed state
+		jTable.saveExpandedState();
+		//Update list
+		try {
+			eventList.getReadWriteLock().writeLock().lock();
+			eventList.clear();
+			eventList.addAll(stockpileItems);
+		} finally {
+			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		//Restore separator expanded/collapsed state
+		jTable.loadExpandedState();
+	}
+
 	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
 		return addToStockpile(stockpile, items, false);
 	}
 
-	private Stockpile addToStockpile(Stockpile stockpile, StockpileItem item) {
+	protected Stockpile addToStockpile(Stockpile stockpile, StockpileItem item) {
 		return addToStockpile(stockpile, Collections.singletonList(item), false);
 	}
 
-	private Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items, boolean merge) {
+	protected Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items, boolean merge) {
 		updateOwners();
 		if (stockpile == null) { //new stockpile
 			stockpile = stockpileDialog.showAdd();
@@ -305,7 +354,14 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		}
 	}
 
-	private void removeItems(List<StockpileItem> items) {
+	protected void editItem(StockpileItem item) {
+		StockpileItem editItem = stockpileItemDialog.showEdit(item);
+		if (editItem != null) {
+			program.getStockpileTool().addToStockpile(editItem.getStockpile(), editItem);
+		}
+	}
+
+	protected void removeItems(List<StockpileItem> items) {
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
 		}
@@ -518,109 +574,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		List<StockpileItem> selected = new ArrayList<StockpileItem>(selectionModel.getSelected());
-		for (int i = 0; i < selected.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
-			Object object = selected.get(i);
-			if ((object instanceof SeparatorList.Separator) || (object instanceof StockpileTotal)) {
-				selected.remove(i);
-				i--;
-			}
-		}
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<StockpileItem> menuData = new MenuData<StockpileItem>(selected, program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selected));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<StockpileItem>(program, menuData));
-	//STOCKPILE
-		JMenuItem jMenuItem;
-
-		JMenu jMenu = new JMenu(TabsStockpile.get().stockpile());
-		jMenu.setIcon(Images.TOOL_STOCKPILE.getIcon());
-		jComponent.add(jMenu);
-
-		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
-		jSubMenu.setEnabled(!selected.isEmpty());
-		jMenu.add(jSubMenu);
-		if (!selected.isEmpty()) {
-			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), selected);
-			jMenuItem.setActionCommand(ACTION_ADD_TO);
-			jMenuItem.addActionListener(this);
-			jSubMenu.add(jMenuItem);
-
-			jSubMenu.addSeparator();
-			List<Stockpile> stockpiles = program.getSettings().getStockpiles();
-			Collections.sort(stockpiles);
-
-			for (Stockpile stockpile : stockpiles) {
-				jMenuItem = new JStockpileMenuItem(Images.TOOL_STOCKPILE.getIcon(), stockpile, selected);
-				jMenuItem.setActionCommand(ACTION_ADD_TO);
-				jMenuItem.addActionListener(this);
-				jSubMenu.add(jMenuItem);
-			}
-		}
-
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), selected);
-		jMenuItem.setActionCommand(ACTION_EDIT_ITEM);
-		jMenuItem.addActionListener(this);
-		jMenuItem.setEnabled(selected.size() == 1);
-		jMenu.add(jMenuItem);
-
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), selected);
-		jMenuItem.setActionCommand(ACTION_DELETE_ITEM);
-		jMenuItem.addActionListener(this);
-		jMenuItem.setEnabled(!selected.isEmpty());
-		jMenu.add(jMenuItem);
-	//LOOKUP
-		jComponent.add(new JMenuLookup<StockpileItem>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<StockpileItem>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<StockpileItem>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
-		JMenuInfo.stockpileItem(jComponent, selected);
-	}
-
-	@Override
-	public void updateData() {
-		//Items
-		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
-
-		updateOwners();
-
-		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
-			stockpileItems.addAll(stockpile.getItems());
-			updateStockpile(stockpile);
-		}
-
-		//Save separator expanded/collapsed state
-		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(stockpileItems);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Restore separator expanded/collapsed state
-		jTable.loadExpandedState();
-	}
-
-	@Override
 	public void listChanged(final ListEvent<StockpileItem> listChanges) {
 		List<StockpileItem> items = new ArrayList<StockpileItem>(filterList);
 		//Remove StockpileTotal and SeparatorList.Separator
@@ -775,82 +728,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 			}
 		}
-		//Add item to
-		if (ACTION_ADD_TO.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
-			}
-		}
-		//Edit item
-		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				List<StockpileItem> items = jMenuItem.getItems();
-				if (items.size() == 1) {
-					StockpileItem editItem = stockpileItemDialog.showEdit(items.get(0));
-					if (editItem != null) {
-						addToStockpile(editItem.getStockpile(), editItem);
-					}
-				}
-			}
-		}
-		//Delete item
-		if (ACTION_DELETE_ITEM.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				List<StockpileItem> items = jMenuItem.getItems();
-				if (!items.isEmpty()) {
-					int value;
-					if (items.size() == 1) {
-						value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), items.get(0).getName(), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-					} else {
-						value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-					}
-					if (value == JOptionPane.OK_OPTION) {
-						for (StockpileItem item : items) {
-							item.getStockpile().remove(item);
-						}
-						removeItems(items);
-					}
-				}
-			}
-		}
 	}
 
 	public static class StockpileSeparatorComparator implements Comparator<StockpileItem> {
 		@Override
 		public int compare(final StockpileItem o1, final StockpileItem o2) {
 			return o1.getSeperator().compareTo(o2.getSeperator());
-		}
-	}
-
-	public static class JStockpileMenuItem extends JMenuItem {
-
-		private final List<StockpileItem> items;
-		private final Stockpile stockpile;
-
-		public JStockpileMenuItem(final Icon icon, final Stockpile stockpile, final List<StockpileItem> items) {
-			super(stockpile.getName(), icon);
-			this.items = items;
-			this.stockpile = stockpile;
-		}
-
-		public JStockpileMenuItem(final String title, final Icon icon, final List<StockpileItem> items) {
-			super(title, icon);
-			this.items = items;
-			this.stockpile = null;
-		}
-
-		public List<StockpileItem> getItems() {
-			return items;
-		}
-
-		public Stockpile getStockpile() {
-			return stockpile;
 		}
 	}
 

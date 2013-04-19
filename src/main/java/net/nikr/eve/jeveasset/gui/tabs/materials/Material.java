@@ -29,9 +29,10 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 
 
-public class Material implements Comparable<Material>, LocationType, ItemType, PriceType {
+public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
 
 	public enum MaterialType {
 		LOCATIONS(2, 1, 1),
@@ -162,6 +163,15 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 
 	protected String getCompare() {
 		return type.getHeaderOrder() + header + type.getGoupeOrder() + group + type.getNameOrder() + name;
+	}
+
+	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getHeader());
+		builder.append("\t");
+		builder.append(getGroup());
+		return builder.toString();
 	}
 
 	@Override

@@ -141,6 +141,34 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		);
 	}
 
+	@Override
+	protected MenuData getMenuData() {
+		return new MenuData<Asset>(selectionModel.getSelected(), program.getSettings(), Asset.class);
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected JMenu getNameMenu() {
+		return new JMenuName(program, selectionModel.getSelected());
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.asset(jComponent, selectionModel.getSelected());
+	}
+
+	@Override
+	public void updateData() { }
+
 	public boolean isFiltersEmpty() {
 		return getFilters().isEmpty();
 	}
@@ -202,40 +230,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		eventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-	//Logic
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Asset> menuData = new MenuData<Asset>(selectionModel.getSelected(), program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Asset>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Asset>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Asset>(program, menuData));
-		jComponent.add(new JMenuName(program, selectionModel.getSelected()));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Asset>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
-		JMenuInfo.asset(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void updateData() { }
 
 	@Override
 	public void listChanged(final ListEvent<Asset> listChanges) {

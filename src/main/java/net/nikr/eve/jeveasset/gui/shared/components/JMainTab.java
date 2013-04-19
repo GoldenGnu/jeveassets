@@ -33,6 +33,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -71,18 +73,93 @@ public abstract class JMainTab {
 		layout.setAutoCreateContainerGaps(true);
 	}
 
-	public abstract void updateTableMenu(JComponent jComponent);
+	public final void updateTableMenu(JComponent jComponent) {
+		createMenu(jComponent);
+	}
 	/** Must be called after setting SelectionModel.
 	 * @param e mouse event
 	 */
-	protected void showTablePopupMenu(final MouseEvent e) {
+	private void showTablePopupMenu(final MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 
 		selectClickedCell(e);
 
-		updateTableMenu(jTablePopupMenu);
+		//updateTableMenu(jTablePopupMenu);
+		createMenu(jTablePopupMenu);
 
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
+	protected abstract MenuData<?> getMenuData();
+	protected abstract JMenu getFilterMenu();
+	protected abstract JMenu getColumnMenu();
+
+	protected JMenu getNameMenu() {
+		return null;
+	}
+	protected void addInfoMenu(JComponent jComponent) { }
+	protected void addToolMenu(JComponent jComponent) { }
+
+	private void createMenu(JComponent jComponent) {
+		jComponent.removeAll();
+		boolean notEmpty = false;
+	//Logic
+		boolean isSelected;
+		if (jTable != null) {
+			isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+		} else {
+			isSelected = false;
+		}
+	//DATA
+		MenuData<?> menuData = getMenuData();
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu) {
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+			notEmpty = true;
+		}
+	//TOOL MENU
+		addToolMenu(jComponent);
+	//FILTER
+		JMenu filterMenu = getFilterMenu();
+		if (filterMenu != null) {
+			jComponent.add(filterMenu);
+			notEmpty = true;
+		}
+	//ASSET FILTER
+		if (menuData != null) {
+			notEmpty = menuData.addAssetFilter(program, jComponent);
+		}
+	//STOCKPILE (Add To)
+		if (menuData != null) {
+			notEmpty = menuData.addStockpile(program, jComponent);
+		}
+	//LOOKUP
+		if (menuData != null) {
+			notEmpty = menuData.addLookup(program, jComponent);
+		}
+	//EDIT
+		if (menuData != null) {
+			notEmpty = menuData.addPrice(program, jComponent);
+		}
+		JMenu nameMenu = getNameMenu();
+		if (nameMenu != null) {
+			jComponent.add(nameMenu);
+			notEmpty = true;
+		}
+	//REPROCESSED
+		if (menuData != null) {
+			notEmpty = menuData.addReprocessed(program, jComponent);
+		}
+	//COLUMNS
+		JMenu columnMenu = getColumnMenu();
+		if (columnMenu != null) {
+			jComponent.add(columnMenu);
+			notEmpty = true;
+		}
+	//INFO
+		addInfoMenu(jComponent);
+		jComponent.setEnabled(notEmpty);
 	}
 
 	public final void saveSettings() {
@@ -121,6 +198,7 @@ public abstract class JMainTab {
 	}
 
 	public final void afterUpdateData() {
+		//FIXME JMainTab.afterUpdateData() is too slow
 		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
 			eventSelectionModel.setValueIsAdjusting(true);
 			for (int i = 0; i < eventTableModel.getRowCount(); i++) {
@@ -197,7 +275,7 @@ public abstract class JMainTab {
 		this.jTable = jTable;
 
 		//Load Settings
-		if (eventTableModel != null && jTable != null && toolName != null) {
+		if (eventTableModel != null && toolName != null) {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
 			if (tableFormat instanceof  EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;

@@ -23,9 +23,10 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 
 
-public interface ReprocessedInterface extends Comparable<ReprocessedInterface>, ItemType, PriceType {
+public interface ReprocessedInterface extends Comparable<ReprocessedInterface>, ItemType, PriceType, CopySeparator {
 	public String getName();
 	public long getPortionSize();
 	public long getQuantityMax();

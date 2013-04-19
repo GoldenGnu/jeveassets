@@ -137,34 +137,22 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	protected MenuData getMenuData() {
+		return new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings(), MarketOrder.class);
+	}
 
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
 
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<MarketOrder>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<MarketOrder>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<MarketOrder>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<MarketOrder>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
 	}
 

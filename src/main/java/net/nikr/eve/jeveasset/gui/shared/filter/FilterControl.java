@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.gui.TableFormat;
@@ -113,6 +114,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
+		//FIXME Add support for adding filters from more than one cell...
 		String text = null;
 		Enum<?> column = null;
 		boolean isNumeric = false;
@@ -124,12 +126,9 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0
-						&& columnIndex < adaptor.getShownColumns().size()
-						&& items.size() == 1
-						) {
+				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size() && items.size() == 1) {
 					Object object = adaptor.getShownColumns().get(columnIndex);
-					if (object instanceof Enum) {
+					if (object instanceof Enum && !(items.get(0) instanceof SeparatorList.Separator)) {
 						column = (Enum) object;
 						isNumeric = isNumeric(column);
 						isDate = isDate(column);

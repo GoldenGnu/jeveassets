@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -35,6 +34,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.DateAxis;
@@ -90,6 +90,30 @@ public class IndustryPlotTab extends JMainTab {
 		doLayout();
 	}
 
+	@Override
+	protected MenuData<?> getMenuData() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	public void updateData() {
+		panel.removeAll();
+		panel.add(createPanel(), BorderLayout.CENTER);
+		panel.add(updateButton, BorderLayout.SOUTH);
+		panel.add(infoPanel, BorderLayout.NORTH);
+		doLayout();
+	}
+
 	private void doLayout() {
 		updateButton = new JButton(new AbstractAction("Update") {
 			private static final long serialVersionUID = 1L;
@@ -115,22 +139,6 @@ public class IndustryPlotTab extends JMainTab {
 					.addContainerGap()
 				)
 		);
-	}
-
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) { }
-
-	@Override
-	protected void showTablePopupMenu(final MouseEvent e) { }
-
-	@Override
-	public void updateData() {
-		panel.removeAll();
-		panel.add(createPanel(), BorderLayout.CENTER);
-		panel.add(updateButton, BorderLayout.SOUTH);
-		panel.add(infoPanel, BorderLayout.NORTH);
-		doLayout();
 	}
 
 	private JFreeChart createChart(final IntervalXYDataset dataset) {

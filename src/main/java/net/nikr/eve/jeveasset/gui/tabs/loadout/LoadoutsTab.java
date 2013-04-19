@@ -184,6 +184,48 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		);
 	}
 
+	@Override
+	protected MenuData getMenuData() {
+		return new MenuData<Module>(selectionModel.getSelected(), program.getSettings(), Module.class);
+	}
+
+	@Override
+	protected JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.module(jComponent, selectionModel.getSelected());
+	}
+
+	
+	@Override
+	public void updateData() {
+		if (!program.getOwners(false).isEmpty()) {
+			jOwners.setEnabled(true);
+			String selectedItem = (String) jOwners.getSelectedItem();
+			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
+		} else {
+			jOwners.setEnabled(false);
+			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
+			jShips.setModel(new DefaultComboBoxModel());
+			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
+		}
+		updateTable();
+	}
+
 	private String browse() {
 		File windows = new File(javax.swing.filechooser.FileSystemView.getFileSystemView().getDefaultDirectory()
 							+ File.separator + "EVE"
@@ -249,34 +291,6 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 	}
 
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Module> menuData = new MenuData<Module>(selectionModel.getSelected(), program.getSettings());
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Module>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Module>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Module>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Module>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Module>(program, menuData));
-	//INFO
-		JMenuInfo.module(jComponent, selectionModel.getSelected());
-	}
-
 	private void updateTable() {
 		List<Module> ship = new ArrayList<Module>();
 		for (Asset eveAsset : program.getAssetEventList()) {
@@ -291,7 +305,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
 			for (Asset assetModule : eveAsset.getAssets()) {
-				Module module = new Module(eveAsset.getItem(), eveAsset.getLocation(), eveAsset.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
+				Module module = new Module(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
@@ -331,27 +345,6 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
-	}
-
-	@Override
-	public void updateData() {
-		if (!program.getOwners(false).isEmpty()) {
-			jOwners.setEnabled(true);
-			String selectedItem = (String) jOwners.getSelectedItem();
-			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
-			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
-				jOwners.setSelectedItem(selectedItem);
-			} else {
-				jOwners.setSelectedIndex(0);
-			}
-		} else {
-			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
-			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel(new DefaultComboBoxModel());
-			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
-		}
-		updateTable();
 	}
 
 	@Override

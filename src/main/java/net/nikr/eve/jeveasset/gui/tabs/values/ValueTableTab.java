@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
@@ -46,6 +47,9 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
@@ -123,18 +127,26 @@ public class ValueTableTab extends JMainTab {
 		);
 	}
 
+	
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	protected MenuData<?> getMenuData() {
+		return null;
+	}
 
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Values Table Tool
-		//JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		//JMenuInfo.values(jComponent, selected, eventList);
 	}
 
 	private Value getValue(Map<String, Value> values, String owner) {

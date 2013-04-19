@@ -42,7 +42,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -51,12 +51,6 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuPrice;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuReprocessed;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -168,47 +162,25 @@ public class ContractsTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		List<ContractItem> selected = new ArrayList<ContractItem>(selectionModel.getSelected());
-		for (int i = 0; i < selected.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
-			Object object = selected.get(i);
-			if ((object instanceof SeparatorList.Separator)) {
-				selected.remove(i);
-				i--;
-			}
-		}
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<ContractItem> menuData = new MenuData<ContractItem>(selected, program.getSettings());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selected));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<ContractItem>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<ContractItem>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<ContractItem>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<ContractItem>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<ContractItem>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
-		//FIXME - make info menu for Contracts Tool
-		//JMenuInfo.reprocessed(jComponent, selected, eventList);
+	protected MenuData getMenuData() {
+		return new MenuData<ContractItem>(selectionModel.getSelected(), program.getSettings(), ContractItem.class);
 	}
 
-	
+	@Override
+	protected JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	protected JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	protected void addInfoMenu(JComponent jComponent) {
+		//FIXME - make info menu for Contracts Tool
+		//JMenuInfo.contracts(jComponent, selected, eventList);
+	}
 
 	@Override
 	public void updateData() { }
