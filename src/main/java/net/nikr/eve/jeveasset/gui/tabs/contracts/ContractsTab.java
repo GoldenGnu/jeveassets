@@ -26,8 +26,8 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -54,6 +54,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
@@ -71,8 +72,8 @@ public class ContractsTab extends JMainTab {
 	private EventList<ContractItem> eventList;
 	private FilterList<ContractItem> filterList;
 	private SeparatorList<ContractItem> separatorList;
-	private EventSelectionModel<ContractItem> selectionModel;
-	private EventTableModel<ContractItem> tableModel;
+	private DefaultEventSelectionModel<ContractItem> selectionModel;
+	private DefaultEventTableModel<ContractItem> tableModel;
 	private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
 	private ContractsFilterControl filterControl;
 
@@ -115,7 +116,7 @@ public class ContractsTab extends JMainTab {
 		//Separator
 		separatorList = new SeparatorList<ContractItem>(sortedList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<ContractItem>(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JContractsTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
@@ -126,7 +127,7 @@ public class ContractsTab extends JMainTab {
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<ContractItem>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

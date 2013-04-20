@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
@@ -44,6 +44,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -56,8 +57,8 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	//Table
 	private EventList<IndustryJob> eventList;
 	private FilterList<IndustryJob> filterList;
-	private EventTableModel<IndustryJob> tableModel;
-	private EventSelectionModel<IndustryJob> selectionModel;
+	private DefaultEventTableModel<IndustryJob> tableModel;
+	private DefaultEventSelectionModel<IndustryJob> selectionModel;
 	private IndustryJobsFilterControl filterControl;
 	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
@@ -76,14 +77,14 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		//Sorting (per column)
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<IndustryJob>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

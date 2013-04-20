@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.gui.tabs.transaction;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
@@ -55,10 +56,10 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 	//Table
 	private TransactionsFilterControl filterControl;
 	private EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat;
-	private EventTableModel<WalletTransaction> tableModel;
+	private DefaultEventTableModel<WalletTransaction> tableModel;
 	private FilterList<WalletTransaction> filterList;
 	private EventList<WalletTransaction> eventList;
-	private EventSelectionModel<WalletTransaction> selectionModel;
+	private DefaultEventSelectionModel<WalletTransaction> selectionModel;
 
 	public static final String NAME = "transaction"; //Not to be changed!
 
@@ -75,14 +76,14 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 		//Sorting (per column)
 		SortedList<WalletTransaction> sortedList = new SortedList<WalletTransaction>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<WalletTransaction>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<WalletTransaction>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

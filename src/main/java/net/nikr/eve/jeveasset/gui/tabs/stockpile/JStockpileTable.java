@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.SeparatorList;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
@@ -34,9 +34,9 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 
 public class JStockpileTable extends JSeparatorTable {
 
-	private EventTableModel<StockpileItem> tableModel;
+	private DefaultEventTableModel<StockpileItem> tableModel;
 
-	public JStockpileTable(final Program program, final EventTableModel<StockpileItem> tableModel, SeparatorList<?> separatorList) {
+	public JStockpileTable(final Program program, final DefaultEventTableModel<StockpileItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}

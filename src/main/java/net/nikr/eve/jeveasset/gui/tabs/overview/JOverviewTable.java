@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -34,9 +34,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 class JOverviewTable extends JAutoColumnTable {
 
 	private List<String> groupedLocations = new ArrayList<String>();
-	private EventTableModel<Overview> tableModel;
+	private DefaultEventTableModel<Overview> tableModel;
 
-	public JOverviewTable(final Program program, final EventTableModel<Overview> tableModel) {
+	public JOverviewTable(final Program program, final DefaultEventTableModel<Overview> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}

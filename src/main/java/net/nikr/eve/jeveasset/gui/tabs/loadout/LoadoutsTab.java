@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.*;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -77,8 +78,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private EventList<Module> eventList;
 	private FilterList<Module> filterList;
 	private SeparatorList<Module> separatorList;
-	private EventSelectionModel<Module> selectionModel;
-	private EventTableModel<Module> tableModel;
+	private DefaultEventSelectionModel<Module> selectionModel;
+	private DefaultEventTableModel<Module> tableModel;
 
 	public LoadoutsTab(final Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
@@ -135,14 +136,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		//Separator
 		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		tableModel = EventModels.createTableModel(separatorList, materialTableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Module>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

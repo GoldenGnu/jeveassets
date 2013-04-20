@@ -27,8 +27,8 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
@@ -63,12 +64,12 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	private JLabel jVolume;
 
 	//Table
-	private EventTableModel<Asset> tableModel;
+	private DefaultEventTableModel<Asset> tableModel;
 	private EventList<Asset> eventList;
 	private FilterList<Asset> filterList;
 	private AssetFilterControl filterControl;
 	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
-	private EventSelectionModel<Asset> selectionModel;
+	private DefaultEventSelectionModel<Asset> selectionModel;
 
 	public static final String NAME = "assets"; //Not to be changed!
 
@@ -86,7 +87,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		//Sorting (per column)
 		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<Asset>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JAssetTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -97,7 +98,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Asset>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

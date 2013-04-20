@@ -26,8 +26,8 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,11 +47,10 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -65,11 +64,11 @@ public class ValueTableTab extends JMainTab {
 
 	//Table
 	private ValueFilterControl filterControl;
-	private EventTableModel<Value> tableModel;
+	private DefaultEventTableModel<Value> tableModel;
 	private EventList<Value> eventList;
 	private FilterList<Value> filterList;
 	private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
-	private EventSelectionModel<Value> selectionModel;
+	private DefaultEventSelectionModel<Value> selectionModel;
 
 	public static final String NAME = "value"; //Not to be changed!
 
@@ -86,7 +85,7 @@ public class ValueTableTab extends JMainTab {
 		//Sorting Total
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
 		//Table Model
-		tableModel = new EventTableModel<Value>(totalSortedList, tableFormat);
+		tableModel = EventModels.createTableModel(totalSortedList, tableFormat);
 		//Table
 		jTable = new JValueTable(program, tableModel);
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -98,7 +97,7 @@ public class ValueTableTab extends JMainTab {
 		//Sorting
 		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Value>(totalSortedList);
+		selectionModel = EventModels.createSelectionModel(totalSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

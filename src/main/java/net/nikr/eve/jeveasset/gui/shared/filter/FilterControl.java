@@ -27,7 +27,7 @@ import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -121,8 +121,8 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		boolean isDate = false;
 		TableModel model = jTable.getModel();
 		int columnIndex = jTable.getSelectedColumn();
-		if (model instanceof EventTableModel) {
-			EventTableModel<?> tableModel = (EventTableModel<?>) model;
+		if (model instanceof DefaultEventTableModel) {
+			DefaultEventTableModel<?> tableModel = (DefaultEventTableModel<?>) model;
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;

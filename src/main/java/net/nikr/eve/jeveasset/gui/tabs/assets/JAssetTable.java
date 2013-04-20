@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JAssetTable extends JAutoColumnTable {
 
-	private EventTableModel<Asset> tableModel;
+	private DefaultEventTableModel<Asset> tableModel;
 
-	public JAssetTable(final Program program, final EventTableModel<Asset> tableModel) {
+	public JAssetTable(final Program program, final DefaultEventTableModel<Asset> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}

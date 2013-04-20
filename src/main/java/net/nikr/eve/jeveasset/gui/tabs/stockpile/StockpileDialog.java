@@ -143,11 +143,11 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 
 		JLabel jLocationsLabel = new JLabel(TabsStockpile.get().locations());
 		jLocations = new JComboBox();
-		jLocations.addItemListener(this);
 		locationsFilter = new FilterList<Location>(locations);
 		locationsAutoComplete = AutoCompleteSupport.install(jLocations, locationsFilter, new LocationsFilterator());
 		locationsAutoComplete.setStrict(true);
 		locationsAutoComplete.setCorrectsCase(true);
+		jLocations.addItemListener(this); //Must be added after AutoCompleteSupport
 
 		JLabel jFlagLabel = new JLabel(TabsStockpile.get().flag());
 		jFlag = new JComboBox();

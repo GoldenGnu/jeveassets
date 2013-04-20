@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -168,10 +168,10 @@ public class JAutoColumnTable extends JTable {
 		return this;
 	}
 
-	private EventTableModel<?> getEventTableModel() {
+	private DefaultEventTableModel<?> getEventTableModel() {
 		TableModel model = this.getModel();
-		if (model instanceof EventTableModel) {
-			return (EventTableModel) model;
+		if (model instanceof DefaultEventTableModel) {
+			return (DefaultEventTableModel) model;
 		} else {
 			return null;
 		}
@@ -474,7 +474,7 @@ public class JAutoColumnTable extends JTable {
 			if (columnMoved) {
 				columnMoved = false;
 				EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
-				EventTableModel<?> model = getEventTableModel();
+				DefaultEventTableModel<?> model = getEventTableModel();
 				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();

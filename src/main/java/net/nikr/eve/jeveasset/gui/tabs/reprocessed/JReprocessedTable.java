@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 
 import ca.odell.glazedlists.SeparatorList;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 public class JReprocessedTable extends JSeparatorTable {
 
-	private EventTableModel<ReprocessedInterface> tableModel;
+	private DefaultEventTableModel<ReprocessedInterface> tableModel;
 
-	public JReprocessedTable(final Program program, final EventTableModel<ReprocessedInterface> tableModel, SeparatorList<?> separatorList) {
+	public JReprocessedTable(final Program program, final DefaultEventTableModel<ReprocessedInterface> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}

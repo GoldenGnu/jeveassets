@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
 import ca.odell.glazedlists.*;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -76,10 +77,10 @@ public class OverviewTab extends JMainTab {
 
 	//Table
 	private EventList<Overview> eventList;
-	private EventTableModel<Overview> tableModel;
+	private DefaultEventTableModel<Overview> tableModel;
 	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
 	private SortedList<Overview> sortedList;
-	private EventSelectionModel<Overview> selectionModel;
+	private DefaultEventSelectionModel<Overview> selectionModel;
 
 	//Data
 	private int rowCount;
@@ -140,13 +141,13 @@ public class OverviewTab extends JMainTab {
 		//Sorting (per column)
 		sortedList = new SortedList<Overview>(eventList);
 		//Table Model
-		tableModel = new EventTableModel<Overview>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JOverviewTable(program, tableModel);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Overview>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

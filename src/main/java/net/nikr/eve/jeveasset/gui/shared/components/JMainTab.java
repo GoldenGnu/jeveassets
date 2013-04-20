@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.gui.shared.components;
 
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ public abstract class JMainTab {
 	protected JPanel jPanel;
 	protected GroupLayout layout;
 	private JAutoColumnTable jTable;
-	private EventSelectionModel<?> eventSelectionModel;
-	private EventTableModel<?> eventTableModel;
+	private DefaultEventSelectionModel<?> eventSelectionModel;
+	private DefaultEventTableModel<?> eventTableModel;
 	private List<?> selected;
 	private String toolName;
 
@@ -263,12 +263,12 @@ public abstract class JMainTab {
 
 		//Table Selection
 		ListSelectionModel selectionModel = jTable.getSelectionModel();
-		if (selectionModel instanceof  EventSelectionModel) {
-			this.eventSelectionModel = (EventSelectionModel<?>) selectionModel;
+		if (selectionModel instanceof  DefaultEventSelectionModel) {
+			this.eventSelectionModel = (DefaultEventSelectionModel<?>) selectionModel;
 		}
 		TableModel tableModel = jTable.getModel();
-		if (tableModel instanceof EventTableModel) {
-			this.eventTableModel = (EventTableModel<?>) tableModel;
+		if (tableModel instanceof DefaultEventTableModel) {
+			this.eventTableModel = (DefaultEventTableModel<?>) tableModel;
 		}
 
 		//Table lock

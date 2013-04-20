@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -33,9 +33,9 @@ import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 public class JValueTable  extends JAutoColumnTable {
 
-	private EventTableModel<Value> tableModel;
+	private DefaultEventTableModel<Value> tableModel;
 
-	public JValueTable(final Program program, final EventTableModel<Value> tableModel) {
+	public JValueTable(final Program program, final DefaultEventTableModel<Value> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}

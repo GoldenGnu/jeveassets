@@ -25,8 +25,8 @@ import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.SeparatorList.Separator;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -50,6 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -85,11 +86,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	//Table
 	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
-	private EventTableModel<StockpileItem> tableModel;
+	private DefaultEventTableModel<StockpileItem> tableModel;
 	private EventList<StockpileItem> eventList;
 	private FilterList<StockpileItem> filterList;
 	private SeparatorList<StockpileItem> separatorList;
-	private EventSelectionModel<StockpileItem> selectionModel;
+	private DefaultEventSelectionModel<StockpileItem> selectionModel;
 	private StockpileFilterControl filterControl;
 
 	//Data
@@ -171,7 +172,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Separator
 		separatorList = new SeparatorList<StockpileItem>(sortedListTotal, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<StockpileItem>(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JStockpileTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
@@ -182,7 +183,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<StockpileItem>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

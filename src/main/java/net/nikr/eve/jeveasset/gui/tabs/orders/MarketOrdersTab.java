@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
@@ -58,10 +59,10 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	//Table
 	private MarketOrdersFilterControl filterControl;
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
-	private EventTableModel<MarketOrder> tableModel;
+	private DefaultEventTableModel<MarketOrder> tableModel;
 	private FilterList<MarketOrder> filterList;
 	private EventList<MarketOrder> eventList;
-	private EventSelectionModel<MarketOrder> selectionModel;
+	private DefaultEventSelectionModel<MarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
 
@@ -78,14 +79,14 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		//Sorting (per column)
 		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<MarketOrder>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<MarketOrder>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners

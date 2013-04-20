@@ -62,10 +62,10 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
 		jItems = new JComboBox();
-		jItems.addItemListener(this);
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, items, new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
+		jItems.addItemListener(this); //Must be added after AutoCompleteSupport
 
 		JLabel jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
 		jCountMinimum = new JTextField();
