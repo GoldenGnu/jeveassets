@@ -200,9 +200,9 @@ public class Account {
 
 	public boolean isWalletTransactions() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask()) == AccessMask.CONTRACTS_CORP.getAccessMask());
+			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask()) == AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.CONTRACTS_CHAR.getAccessMask());
+			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask());
 		}
 	}
 
