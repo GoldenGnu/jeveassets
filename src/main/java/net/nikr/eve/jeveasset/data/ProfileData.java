@@ -142,10 +142,10 @@ public class ProfileData {
 					}
 				}
 				//Add reprocessed items to price queue
-				for (Item item : settings.getItems().values()) {
+				for (Item item : StaticData.get().getItems().values()) {
 					for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
 						int typeID = reprocessedMaterial.getTypeID();
-						Item reprocessedItem = settings.getItems().get(typeID);
+						Item reprocessedItem = StaticData.get().getItems().get(typeID);
 						if (reprocessedItem != null && reprocessedItem.isMarketGroup()) {
 							priceTypeIDs.add(typeID);
 						}
@@ -215,7 +215,7 @@ public class ProfileData {
 					industryJobs.addAll(owner.getIndustryJobs());
 					//Assets
 					//FIXME make Asset Industry Jobs optional?
-					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner, settings), assets);
+					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets);
 					ownersJobs.add(owner.getName());
 				}
 				//Contracts
@@ -438,7 +438,7 @@ public class ProfileData {
 				assetLoop.setTypeCount(newCount);
 			}
 			//Packaged Volume
-			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), asset.isSingleton(), settings.getItems());
+			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), asset.isSingleton());
 			asset.setVolume(volume);
 
 			//Add asset

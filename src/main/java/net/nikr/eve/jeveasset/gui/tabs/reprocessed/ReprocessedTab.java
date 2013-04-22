@@ -53,6 +53,7 @@ import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -225,7 +226,7 @@ public class ReprocessedTab extends JMainTab {
 		List<ReprocessedGrandItem> uniqueList = new ArrayList<ReprocessedGrandItem>();
 		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
 		for (Integer i : typeIDs) {
-			Item item = program.getSettings().getItems().get(i);
+			Item item = StaticData.get().getItems().get(i);
 			if (item != null) {
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
@@ -234,7 +235,7 @@ public class ReprocessedTab extends JMainTab {
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = program.getSettings().getItems().get(material.getTypeID());
+					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
 					if (materialItem != null) {
 						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false, program.getSettings().getUserPrices(), program.getSettings().getPriceData());
 						int quantitySkill = program.getSettings().getReprocessSettings().getLeft(material.getQuantity());

@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -34,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -43,7 +41,6 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.local.*;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,14 +77,6 @@ public class Settings {
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
 	private static boolean portable = false;
-
-	//Data
-	private Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
-	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
-	private Map<Long, Location> locations = new HashMap<Long, Location>(); //LocationID : long
-	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
-	//XXX - Integer locationID
-	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>(); //LocationID : long
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
@@ -107,7 +96,6 @@ public class Settings {
 	private int maximumPurchaseAge = 0;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
-	private Galaxy model;
 	private static ExportSettings exportSettings = new ExportSettings();
 	private static boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
@@ -148,7 +136,6 @@ public class Settings {
 		windowMaximized = false;
 		windowAutoSave = true;
 		loadSettings();
-		model = new Galaxy(this.locations, this.jumps);
 		constructEveApiConnector();
 	}
 
@@ -162,26 +149,12 @@ public class Settings {
 	 */
 	protected Settings(final boolean load) { }
 
-	public Galaxy getGalaxyModel() {
-		return model;
-	}
 
 	public void saveSettings() {
 		SettingsWriter.save(this);
 	}
 
 	private void loadSettings() {
-	//Load static data
-		SplashUpdater.setProgress(10);
-		ItemsReader.load(this); //Items (Must be loaded before Assets)
-		SplashUpdater.setProgress(15);
-		LocationsReader.load(this); //Locations (Must be loaded before Assets)
-		SplashUpdater.setProgress(20);
-		JumpsReader.load(this); //Jumps
-		SplashUpdater.setProgress(25);
-		FlagsReader.load(this); //Item Flags (Must be loaded before Assets)
-		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
-		SplashUpdater.setProgress(30);
 	//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
@@ -337,35 +310,8 @@ public class Settings {
 		EveApi.setConnector(connector);
 	}
 
-	public Map<Integer, ApiStation> getConquerableStations() {
-		return conquerableStations;
-	}
-
-	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
-		this.conquerableStations = conquerableStations;
-		for (ApiStation station : conquerableStations.values()) {
-			ApiIdConverter.addLocation(station, getLocations());
-		}
-	}
-
-	public Map<Integer, ItemFlag> getItemFlags() {
-		return itemFlags;
-	}
-
-	public Map<Integer, Item> getItems() {
-		return items;
-	}
-
 	public Map<Long, String> getOwners() {
 		return owners;
-	}
-
-	public List<Jump> getJumps() {
-		return jumps;
-	}
-
-	public Map<Long, Location> getLocations() {
-		return locations;
 	}
 
 	public Map<String, Map<String, List<Filter>>> getTableFilters() {

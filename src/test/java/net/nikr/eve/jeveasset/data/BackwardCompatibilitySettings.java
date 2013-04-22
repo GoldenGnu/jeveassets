@@ -41,8 +41,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public enum Function {
 		GET_ASSET_ADDED,
 		GET_FLAGS,
-		GET_ITEMS,
-		GET_LOCATIONS,
 		GET_OVERVIEW_GROUPS,
 		GET_OWNERS,
 		GET_STOCKPILES,
@@ -141,18 +139,6 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<String, Boolean> getFlags() {
 		ok.put(Function.GET_FLAGS, true);
 		return new HashMap<String, Boolean>();
-	}
-
-	@Override
-	public Map<Integer, Item> getItems() {
-		ok.put(Function.GET_ITEMS, true);
-		return new HashMap<Integer, Item>();
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		ok.put(Function.GET_LOCATIONS, true);
-		return new HashMap<Long, Location>();
 	}
 
 	@Override

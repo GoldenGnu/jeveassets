@@ -380,7 +380,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jMultiplier.setText(Formater.compareFormat(loadStockpile.getMultiplier()));
 
 		//Flag
-		ItemFlag itemFlag = program.getSettings().getItemFlags().get(loadStockpile.getFlagID());
+		ItemFlag itemFlag = StaticData.get().getItemFlags().get(loadStockpile.getFlagID());
 		if (itemFlag == null) {
 			itemFlag = itemFlagAll;
 		}
@@ -441,7 +441,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			jOwner.setEnabled(true);
 		}
 		//Locations
-		List<Location> locationsList = new ArrayList<Location>(program.getSettings().getLocations().values());
+		List<Location> locationsList = new ArrayList<Location>(StaticData.get().getLocations().values());
 		Collections.sort(locationsList);
 		try {
 			locations.getReadWriteLock().writeLock().lock();
@@ -451,7 +451,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			locations.getReadWriteLock().writeLock().unlock();
 		}
 		//Flags
-		List<ItemFlag> itemFlags = new ArrayList<ItemFlag>(program.getSettings().getItemFlags().values());
+		List<ItemFlag> itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		itemFlags.add(0, itemFlagAll);
 		jFlag.setModel(new DefaultComboBoxModel(itemFlags.toArray()));

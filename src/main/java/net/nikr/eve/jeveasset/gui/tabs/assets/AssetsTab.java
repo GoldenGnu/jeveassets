@@ -90,8 +90,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JAssetTable(program, tableModel);
-		jTable.getTableHeader().setReorderingAllowed(true);
-		jTable.getTableHeader().setResizingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);

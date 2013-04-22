@@ -28,6 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.data.model.Region;
 import net.nikr.eve.jeveasset.data.model.SolarSystem;
@@ -41,8 +42,7 @@ public class AddSystemController {
 	private int leafCount;
 
 	public AddSystemController(final Program program) {
-
-		model = program.getSettings().getGalaxyModel();
+		model = new Galaxy(StaticData.get().getLocations(), StaticData.get().getJumps());
 		leafCount = 0;
 		view = new TreeSelectDialog(program, DialoguesAddSystem.get().addSystem());
 		view.getDialog().setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
@@ -74,7 +75,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		EventList<Location> stationsEventList = new BasicEventList<Location>();
 		String system = "";
 		String station = "";
-		for (Location location : program.getSettings().getLocations().values()) {
+		for (Location location : StaticData.get().getLocations().values()) {
 			if (location.isStation()) {
 				stationsEventList.add(location);
 				if (station.length() < location.getLocation().length()) {
@@ -344,7 +345,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
-				jSystems.setSelectedItem(program.getSettings().getLocations().get(locations.get(0)));
+				jSystems.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
 			}
 			jRadioSystems.setSelected(true);
 		} else {
@@ -362,7 +363,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
-				jStations.setSelectedItem(program.getSettings().getLocations().get(locations.get(0)));
+				jStations.setSelectedItem(StaticData.get().getLocations().get(locations.get(0)));
 			}
 			jRadioStations.setSelected(true);
 		} else {

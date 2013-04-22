@@ -35,6 +35,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -110,7 +111,7 @@ public class ItemsTab extends JMainTab {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(program.getSettings().getItems().values());
+			eventList.addAll(StaticData.get().getItems().values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}

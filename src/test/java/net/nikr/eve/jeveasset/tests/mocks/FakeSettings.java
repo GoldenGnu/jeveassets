@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.tests.mocks;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.net.Proxy;
@@ -30,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -250,31 +248,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, ApiStation> getConquerableStations() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Integer, ItemFlag> getItemFlags() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Integer, Item> getItems() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public List<Jump> getJumps() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -290,17 +263,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Galaxy getGalaxyModel() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public List<Stockpile> getStockpiles() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

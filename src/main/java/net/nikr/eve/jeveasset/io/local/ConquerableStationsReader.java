@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -41,17 +42,17 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 
 	private ConquerableStationsReader() { }
 
-	public static boolean load(final Settings settings) {
+	public static boolean load() {
 		ConquerableStationsReader reader = new ConquerableStationsReader();
-		return reader.read(settings);
+		return reader.read();
 	}
 
-	private boolean read(final Settings settings) {
+	private boolean read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations());
 			Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
 			parseConquerableStations(element, conquerableStations);
-			settings.setConquerableStations(conquerableStations);
+			StaticData.get().setConquerableStations(conquerableStations);
 		} catch (IOException ex) {
 			LOG.info("Conquerable stations not loaded");
 			return false;

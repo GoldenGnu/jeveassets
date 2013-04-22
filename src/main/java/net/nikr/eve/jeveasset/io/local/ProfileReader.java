@@ -145,13 +145,13 @@ public final class ProfileReader extends AbstractXmlReader {
 			account.getOwners().add(owner);
 			NodeList assetNodes = currentNode.getElementsByTagName("assets");
 			if (assetNodes.getLength() == 1) {
-				parseAssets(assetNodes.item(0), settings, owner, owner.getAssets(), null);
+				parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
 			}
 			parseContracts(currentNode, owner, settings);
 			parseBalances(currentNode, owner);
-			parseMarkerOrders(currentNode, owner, settings);
-			parseWalletTransactions(currentNode, owner, settings);
-			parseIndustryJobs(currentNode, owner, settings);
+			parseMarkerOrders(currentNode, owner);
+			parseWalletTransactions(currentNode, owner);
+			parseIndustryJobs(currentNode, owner);
 		}
 	}
 
@@ -313,7 +313,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return accountBalance;
 	}
 
-	private void parseMarkerOrders(final Element element, final Owner owner, final Settings settings) {
+	private void parseMarkerOrders(final Element element, final Owner owner) {
 		NodeList markerOrdersNodes = element.getElementsByTagName("markerorders");
 		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>();
 		for (int a = 0; a < markerOrdersNodes.getLength(); a++) {
@@ -325,7 +325,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				marketOrders.add(apiMarketOrder);
 			}
 		}
-		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner, settings));
+		owner.setMarketOrders(ApiConverter.convertMarketOrders(marketOrders, owner));
 	}
 
 	private ApiMarketOrder parseMarkerOrder(final Element element) {
@@ -363,7 +363,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiMarketOrder;
 	}
 
-	private void parseWalletTransactions(final Element element, final Owner owner, final Settings settings) {
+	private void parseWalletTransactions(final Element element, final Owner owner) {
 		NodeList walletTransactionsNodes = element.getElementsByTagName("wallettransactions");
 		List<ApiWalletTransaction> walletTransactions = new ArrayList<ApiWalletTransaction>();
 		for (int a = 0; a < walletTransactionsNodes.getLength(); a++) {
@@ -375,7 +375,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				walletTransactions.add(apiWalletTransaction);
 			}
 		}
-		owner.setWalletTransactions(ApiConverter.convertWalletTransactions(walletTransactions, owner, settings));
+		owner.setWalletTransactions(ApiConverter.convertWalletTransactions(walletTransactions, owner));
 	}
 
 	private ApiWalletTransaction parseWalletTransaction(final Element element) {
@@ -412,7 +412,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiWalletTransaction;
 	}
 
-	private void parseIndustryJobs(final Element element, final Owner owner, final Settings settings) {
+	private void parseIndustryJobs(final Element element, final Owner owner) {
 		NodeList industryJobsNodes = element.getElementsByTagName("industryjobs");
 		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>();
 		for (int a = 0; a < industryJobsNodes.getLength(); a++) {
@@ -424,7 +424,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				industryJobs.add(apiIndustryJob);
 			}
 		}
-		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner, settings));
+		owner.setIndustryJobs(ApiConverter.convertIndustryJobs(industryJobs, owner));
 	}
 
 	private ApiIndustryJob parseIndustryJobs(final Element element) {
@@ -501,23 +501,23 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final Settings settings, final Owner owner, final List<Asset> assets, final Asset parentEveAsset) {
+	private void parseAssets(final Node node, final Owner owner, final List<Asset> assets, final Asset parentEveAsset) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				Asset eveAsset = parseEveAsset(currentNode, settings, owner, parentEveAsset);
+				Asset eveAsset = parseEveAsset(currentNode, owner, parentEveAsset);
 				if (parentEveAsset == null) {
 					assets.add(eveAsset);
 				} else {
 					parentEveAsset.addEveAsset(eveAsset);
 				}
-				parseAssets(currentNode, settings, owner, assets, eveAsset);
+				parseAssets(currentNode, owner, assets, eveAsset);
 			}
 		}
 	}
 
-	private Asset parseEveAsset(final Node node, final Settings settings, final Owner owner, final Asset parentEveAsset) {
+	private Asset parseEveAsset(final Node node, final Owner owner, final Asset parentEveAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
@@ -536,13 +536,13 @@ public final class ProfileReader extends AbstractXmlReader {
 			flagID = AttributeGetters.getInt(node, "flagid");
 		} else { //Workaround for the old system
 			String flag = AttributeGetters.getString(node, "flag");
-			for (ItemFlag itemFlag : settings.getItemFlags().values()) {
+			for (ItemFlag itemFlag : StaticData.get().getItemFlags().values()) {
 				if (flag.equals(itemFlag.getFlagName())) {
 					flagID = itemFlag.getFlagID();
 					break;
 				}
 			}
 		}
-		return ApiConverter.createAsset(settings, parentEveAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return ApiConverter.createAsset(parentEveAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 	}
 }

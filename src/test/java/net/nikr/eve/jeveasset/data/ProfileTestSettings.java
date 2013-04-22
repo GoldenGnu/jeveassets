@@ -32,19 +32,4 @@ public class ProfileTestSettings extends FakeSettings {
 	public Map<Long, String> getOwners() {
 		return new HashMap<Long, String>();
 	}
-
-	@Override
-	public Map<Integer, ItemFlag> getItemFlags() {
-		return new HashMap<Integer, ItemFlag>();
-	}
-
-	@Override
-	public Map<Integer, Item> getItems() {
-		return new HashMap<Integer, Item>();
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		return new HashMap<Long, Location>();
-	}
 }

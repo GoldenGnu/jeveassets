@@ -445,7 +445,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			AssetsGetter assetsGetter = new AssetsGetter();
-			assetsGetter.load(this, program.getAccounts(), program.getSettings());
+			assetsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -471,7 +471,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			IndustryJobsGetter industryJobsGetter = new IndustryJobsGetter();
-			industryJobsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
+			industryJobsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -484,7 +484,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			MarketOrdersGetter marketOrdersGetter = new MarketOrdersGetter();
-			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
+			marketOrdersGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -497,7 +497,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		@Override
 		public void update() {
 			WalletTransactionsGetter walletTransactionsGetter = new WalletTransactionsGetter();
-			walletTransactionsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
+			walletTransactionsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 		}
 	}
 
@@ -514,7 +514,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			contractsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
 			//Get Contract Items
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
-			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts(), program.getSettings());
+			itemsGetter.load(this, program.getSettings().isForceUpdate(), program.getAccounts());
 			Set<Long> list = new HashSet<Long>();
 			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {

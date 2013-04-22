@@ -324,7 +324,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
 				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
 			}
-			Location location = ApiIdConverter.getLocation(locationID, settings.getLocations());
+			Location location = ApiIdConverter.getLocation(locationID);
 			if (location == null || location.isEmpty()) {
 				location = StockpileDialog.LOCATION_ALL;
 			}
@@ -341,7 +341,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
 				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
-					Item item = ApiIdConverter.getItem(Math.abs(typeID), settings.getItems());
+					Item item = ApiIdConverter.getItem(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
 					stockpile.add(stockpileItem);
 				}

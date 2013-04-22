@@ -31,7 +31,6 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -39,14 +38,12 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
 
-	private Settings settings;
-
 	public IndustryJobsGetter() {
 		super("Industry Jobs", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts, Settings settings) {
-		this.settings = settings;
+	@Override
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
@@ -75,7 +72,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(final IndustryJobsResponse response) {
-		List<IndustryJob> industryJobs = ApiConverter.convertIndustryJobs(new ArrayList<ApiIndustryJob>(response.getAll()), getOwner(), settings);
+		List<IndustryJob> industryJobs = ApiConverter.convertIndustryJobs(new ArrayList<ApiIndustryJob>(response.getAll()), getOwner());
 		getOwner().setIndustryJobs(industryJobs);
 	}
 

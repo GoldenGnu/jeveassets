@@ -30,6 +30,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -83,7 +84,7 @@ public class JMenuPrice<T> extends JMenu implements ActionListener {
 	private List<UserItem<Integer, Double>> createList() {
 		List<UserItem<Integer, Double>> itemPrices = new ArrayList<UserItem<Integer, Double>>();
 		for (Map.Entry<Integer, Double> entry : menuData.getPrices().entrySet()) {
-			Item item = program.getSettings().getItems().get(Math.abs(entry.getKey()));
+			Item item = StaticData.get().getItems().get(Math.abs(entry.getKey()));
 			String name = "";
 			if (item != null) {
 				if (item.getTypeName().toLowerCase().contains("blueprint")) {

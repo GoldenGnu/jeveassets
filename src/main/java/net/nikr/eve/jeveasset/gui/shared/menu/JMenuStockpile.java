@@ -84,7 +84,7 @@ public class JMenuStockpile<T> extends JMenu implements ActionListener {
 				Stockpile stockpile = jStockpileMenu.getStockpile();
 				List<StockpileItem> items = new ArrayList<StockpileItem>();
 				for (int typeID : menuData.getBlueprintTypeIDs()) {
-					Item item = ApiIdConverter.getItem(Math.abs(typeID), program.getSettings().getItems());
+					Item item = ApiIdConverter.getItem(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, DEFAULT_ADD_COUNT);
 					items.add(stockpileItem);
 				}

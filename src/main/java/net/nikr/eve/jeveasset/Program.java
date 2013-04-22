@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
@@ -140,10 +141,10 @@ public class Program implements ActionListener {
 	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
-	private Settings settings;
-	private ProfileData profileData;
-	private ProfileManager profileManager;
-	private PriceDataGetter priceDataGetter;
+	private final Settings settings;
+	private final ProfileData profileData;
+	private final ProfileManager profileManager;
+	private final PriceDataGetter priceDataGetter;
 
 	public Program() {
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
@@ -157,6 +158,7 @@ public class Program implements ActionListener {
 	//Data
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
+		StaticData.load();
 		settings = new Settings();
 		profileManager = new ProfileManager(settings);
 		profileManager.searchProfile();
@@ -296,7 +298,12 @@ public class Program implements ActionListener {
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected Program(final boolean load) { }
+	protected Program(final boolean load) {
+		settings = null;
+		profileData = null;
+		profileManager = null;
+		priceDataGetter = null;
+	}
 
 	public void addMainTab(final JMainTab jMainTab) {
 		jMainTabs.add(jMainTab);

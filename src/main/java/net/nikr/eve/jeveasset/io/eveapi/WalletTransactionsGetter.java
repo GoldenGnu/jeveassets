@@ -30,7 +30,6 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -39,14 +38,12 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class WalletTransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
 
-	private Settings settings;
-
 	public WalletTransactionsGetter() {
 		super("WalletTransaction", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts, final Settings settings) {
-		this.settings = settings;
+	@Override
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
@@ -75,7 +72,7 @@ public class WalletTransactionsGetter extends AbstractApiGetter<WalletTransactio
 
 	@Override
 	protected void setData(final WalletTransactionsResponse response) {
-		List<WalletTransaction> walletTransaction = ApiConverter.convertWalletTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner(), settings);
+		List<WalletTransaction> walletTransaction = ApiConverter.convertWalletTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner());
 		getOwner().setWalletTransactions(walletTransaction);
 	}
 

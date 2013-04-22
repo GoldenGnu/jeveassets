@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 
 
@@ -80,8 +81,8 @@ public final class ApiIdConverter {
 		packagedVolume.put("Transport Ship", 20000f);
 	}
 
-	public static String flag(final int flag, final Asset parentAsset, final Map<Integer, ItemFlag> flags) {
-		ItemFlag itemFlag = flags.get(flag);
+	public static String flag(final int flag, final Asset parentAsset) {
+		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
 		if (itemFlag != null) {
 			if (parentAsset != null && !parentAsset.getFlag().isEmpty()) {
 				return parentAsset.getFlag() + " > " + itemFlag.getFlagName();
@@ -116,8 +117,8 @@ public final class ApiIdConverter {
 		return Asset.getDefaultPrice(priceData);
 	}
 
-	public static float getVolume(final int typeID, final boolean packaged, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
+	public static float getVolume(final int typeID, final boolean packaged) {
+		Item item = StaticData.get().getItems().get(typeID);
 		if (item != null) {
 			if (packagedVolume.isEmpty()) {
 				buildVolume();
@@ -131,8 +132,12 @@ public final class ApiIdConverter {
 		return 0;
 	}
 
-	public static boolean isLocationOK(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = getLocation(locationID, parentAsset, locations);
+	public static boolean isLocationOK(final long locationID) {
+		return isLocationOK(locationID, null);
+	}
+
+	public static boolean isLocationOK(final long locationID, final Asset parentAsset) {
+		Location location = getLocation(locationID, parentAsset);
 		if (location != null && !location.isEmpty()) {
 			return true;
 		} else {
@@ -140,8 +145,8 @@ public final class ApiIdConverter {
 		}
 	}
 
-	public static Item getItem(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
+	public static Item getItem(final int typeID) {
+		Item item = StaticData.get().getItems().get(typeID);
 		if (item != null) {
 			return item;
 		} else {
@@ -172,11 +177,11 @@ public final class ApiIdConverter {
 		return parents;
 	}
 
-	public static Location getLocation(long locationID, final Map<Long, Location> locations) {
-		return getLocation(locationID, null, locations);
+	public static Location getLocation(long locationID) {
+		return getLocation(locationID, null);
 	}
 
-	public static Location getLocation(long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
+	public static Location getLocation(long locationID, final Asset parentAsset) {
 		//Offices
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
@@ -185,7 +190,7 @@ public final class ApiIdConverter {
 				locationID = locationID - 6000000;
 			}
 		}
-		Location location = locations.get(locationID);
+		Location location = StaticData.get().getLocations().get(locationID);
 		if (location != null) {
 			return location;
 		}
@@ -198,8 +203,8 @@ public final class ApiIdConverter {
 		return new Location(locationID);
 	}
 
-	public static void addLocation(final ApiStation station, final Map<Long, Location> locations) {
-		Location system = getLocation(station.getSolarSystemID(), locations);
+	public static void addLocation(final ApiStation station) {
+		Location system = getLocation(station.getSolarSystemID());
 		Location location = new Location(station.getStationID(),
 				station.getStationName(),
 				system.getSystemID(),
@@ -207,6 +212,6 @@ public final class ApiIdConverter {
 				system.getRegionID(),
 				system.getRegion(),
 				system.getSecurity());
-		locations.put(location.getLocationID(), location);
+		StaticData.get().getLocations().put(location.getLocationID(), location);
 	}
 }

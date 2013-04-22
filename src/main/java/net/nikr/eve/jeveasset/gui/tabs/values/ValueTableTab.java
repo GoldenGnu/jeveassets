@@ -88,8 +88,6 @@ public class ValueTableTab extends JMainTab {
 		tableModel = EventModels.createTableModel(totalSortedList, tableFormat);
 		//Table
 		jTable = new JValueTable(program, tableModel);
-		jTable.getTableHeader().setReorderingAllowed(true);
-		jTable.getTableHeader().setResizingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);

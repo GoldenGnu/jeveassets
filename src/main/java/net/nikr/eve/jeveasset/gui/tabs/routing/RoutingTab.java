@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -245,7 +246,7 @@ public class RoutingTab extends JMainTab  {
 				)
 			);
 		//Only need to build the graph once
-		buildGraph(program.getSettings());
+		buildGraph();
 	}
 
 	@Override
@@ -319,14 +320,14 @@ public class RoutingTab extends JMainTab  {
 		jAvailableRemaining.setText(TabsRouting.get().whitespace4(cur, tot));
 	}
 
-	protected final void buildGraph(final Settings settings) {
+	protected final void buildGraph() {
 		// build the graph.
 		// filter the solarsystems based on the settings.
 		filteredGraph = new Graph();
 		int count = 0;
-		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
+		for (Jump jump : StaticData.get().getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
-			SplashUpdater.setSubProgress((int) (count * 100.0 / settings.getJumps().size()));
+			SplashUpdater.setSubProgress((int) (count * 100.0 / StaticData.get().getJumps().size()));
 			SolarSystem f = null;
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {

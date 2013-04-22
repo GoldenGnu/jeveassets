@@ -29,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
@@ -48,7 +49,7 @@ public class JMenuReprocessed<T> extends JMenu implements ActionListener {
 		this.program = program;
 
 		for (int typeID : menuData.getTypeIDs()) {
-			Item item = program.getSettings().getItems().get(typeID);
+			Item item = StaticData.get().getItems().get(typeID);
 			if (item != null && !item.getReprocessedMaterial().isEmpty()) {
 				items.add(typeID);
 			}

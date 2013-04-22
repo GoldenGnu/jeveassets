@@ -21,9 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing.mocks;
 
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgram;
-import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 /**
  *
@@ -31,17 +29,6 @@ import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
  */
 public class RoutingMockProgram extends FakeProgram {
 
-	private FakeSettings fakeSettings;
 
-	public RoutingMockProgram(final RoutingMockSettings routingMockSettings) {
-		this.fakeSettings = routingMockSettings;
-	}
-
-	@Override
-	public Settings getSettings() {
-		if (fakeSettings == null) {
-			fakeSettings = new RoutingMockSettings();
-		}
-		return fakeSettings;
-	}
+	public RoutingMockProgram() { }
 }

@@ -33,7 +33,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
@@ -43,7 +42,6 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private Settings settings;
 	private Contract currentContract;
 	private Map<Long, List<EveContractItem>> savedItems = new HashMap<Long, List<EveContractItem>>();
 
@@ -51,8 +49,8 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		super("Contract Items", false, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts, Settings settings) {
-		this.settings = settings;
+	@Override
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
 		//Calc size
 		int size = 0;
 		for (Account account : accounts) {
@@ -92,7 +90,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 					}
 					List<EveContractItem> items = savedItems.get(contract.getContractID());
 					if (items != null) { //Set already updated
-						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract, settings));
+						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract));
 						continue; //Ignore already updated
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
@@ -138,7 +136,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected void setData(ContractItemsResponse response) {
 		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
-		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract, settings));
+		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
 		savedItems.put(currentContract.getContractID(), contractItems);
 	}
 

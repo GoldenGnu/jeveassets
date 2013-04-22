@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -41,15 +42,15 @@ public final class LocationsReader extends AbstractXmlReader {
 
 	private LocationsReader() { }
 
-	public static void load(final Settings settings) {
+	public static void load() {
 		LocationsReader reader = new LocationsReader();
-		reader.read(settings);
+		reader.read();
 	}
 
-	private void read(final Settings settings) {
+	private void read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathLocations());
-			parseLocations(element, settings.getLocations());
+			parseLocations(element, StaticData.get().getLocations());
 		} catch (IOException ex) {
 			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {

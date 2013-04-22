@@ -35,6 +35,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -133,7 +134,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		updateData();
 		this.stockpileItem = addStockpileItem;
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileItem());
-		Item item = program.getSettings().getItems().get(addStockpileItem.getTypeID());
+		Item item = StaticData.get().getItems().get(addStockpileItem.getTypeID());
 		jItems.setSelectedItem(item);
 		jCopy.setSelected(addStockpileItem.isBPC());
 		jCountMinimum.setText(String.valueOf(addStockpileItem.getCountMinimum()));
@@ -153,7 +154,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private void updateData() {
 		stockpile = null;
 		stockpileItem = null;
-		List<Item> itemsList = new ArrayList<Item>(program.getSettings().getItems().values());
+		List<Item> itemsList = new ArrayList<Item>(StaticData.get().getItems().values());
 		Collections.sort(itemsList);
 		try {
 			items.getReadWriteLock().writeLock().lock();

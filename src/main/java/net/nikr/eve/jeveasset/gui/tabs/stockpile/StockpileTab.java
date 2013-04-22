@@ -415,7 +415,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Update owner name
 		stockpile.setOwner(ownersName.get(stockpile.getOwnerID()));
 		//Update Item flag name
-		ItemFlag flag = program.getSettings().getItemFlags().get(stockpile.getFlagID());
+		ItemFlag flag = StaticData.get().getItemFlags().get(stockpile.getFlagID());
 		if (flag != null) {
 			stockpile.setFlag(flag.getFlagName());
 		} else {
@@ -429,7 +429,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				}
 				final int TYPE_ID = item.getTypeID();
 				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), program.getSettings().getUserPrices(), program.getSettings().getPriceData());
-				float volume = ApiIdConverter.getVolume(TYPE_ID, true, program.getSettings().getItems());
+				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
 				if (stockpile.isInventory()) {
@@ -469,7 +469,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 						if (industryJob.getOutputTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
+						Item itemType = StaticData.get().getItems().get(industryJob.getOutputTypeID());
 						item.updateIndustryJob(industryJob, itemType);
 					}
 				}
@@ -528,7 +528,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				continue;
 			}
 			//Search for item name
-			for (Item item : program.getSettings().getItems().values()) {
+			for (Item item : StaticData.get().getItems().values()) {
 				if (item.getTypeName().toLowerCase().equals(module)) { //Found item
 					int typeID = item.getTypeID();
 					if (!items.containsKey(typeID)) { //Add new item

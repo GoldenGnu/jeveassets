@@ -23,11 +23,12 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.FakeRoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.RoutingMockProgram;
-import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.RoutingMockSettings;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgress;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;
@@ -75,10 +76,8 @@ public class TestRouting {
 	}
 
 	private void testRoute(final List<String> waypointNames, final RoutingAlgorithm ra, final int exptectedDistance) {
-
-	  RoutingMockSettings rms = new RoutingMockSettings();
-		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(rms), null, ra);
-		frd.buildTestGraph(rms);
+		FakeRoutingTab frd = new FakeRoutingTab(new RoutingMockProgram(), null, ra);
+		frd.buildTestGraph();
 		List<Node> initial = frd.getNodesFromNames(waypointNames);
 		List<Node> routeBF = ra.execute(new FakeProgress(), frd.getGraph(), new ArrayList<Node>(initial));
 
