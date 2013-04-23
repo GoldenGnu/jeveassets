@@ -113,26 +113,35 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
 	private static PriceMode priceReprocessedType = PriceMode.PRICE_MIDPOINT;
 
+	//Static values (set by constructor)
 	private List<Asset> assets = new ArrayList<Asset>();
-	private Location location;
 	private Item item;
-	private long itemID; //ItemID : long
-	private int flagID; //FlagID : int
-	private String name;
+	private Location location;
 	private Owner owner;
 	private long count;
-	private String container = "";
 	private List<Asset> parents;
 	private String flag;
+	private int flagID; //FlagID : int
+	private long itemID; //ItemID : long
+	private boolean singleton;
+	private int rawQuantity;
+	//Static values cache
+	private String typeName;
+	private boolean bpo;
+	private boolean bpc;
+	//Dynamic values
+	private String name;
+	private String container = "";
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
 	private float volume;
 	private long typeCount = 0;
-	private boolean singleton;
 	private double priceReprocessed;
-	private int rawQuantity;
 	private MarketPriceData marketPriceData;
 	private Date added;
+	//Dynamic values cache
+	private boolean userNameSet = false;
+	private boolean userPriceSet = false;
 
 	/**
 	 * For mockups...
@@ -142,10 +151,8 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
 		this.item = item;
 		this.location = location;
-		this.name = getTypeName();
 		this.owner = owner;
 		this.count = count;
-		this.location = location;
 		this.parents = parents;
 		this.flag = flag;
 		this.flagID = flagID;
@@ -153,6 +160,22 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.volume = item.getVolume();
 		this.singleton = singleton;
 		this.rawQuantity = rawQuantity;
+		//The order matter!
+		//1st
+		this.bpo = (item.isBlueprint() && rawQuantity == -1);
+		this.bpc = (item.isBlueprint() && rawQuantity == -2);
+		//2nd
+		if (item.isBlueprint()) {
+			if (isBPO()) {
+				this.typeName = item.getTypeName() + " (BPO)";
+			} else {
+				this.typeName = item.getTypeName() + " (BPC)";
+			}
+		} else {
+			this.typeName = item.getTypeName();
+		}
+		//3rd
+		this.name = getTypeName();
 	}
 
 	public void addEveAsset(final Asset eveAsset) {
@@ -355,15 +378,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	public final String getTypeName() {
-		if (item.isBlueprint()) {
-			if (isBPO()) {
-				return item.getTypeName() + " (BPO)";
-			} else {
-				return item.getTypeName() + " (BPC)";
-			}
-		} else {
-			return item.getTypeName();
-		}
+		return typeName;
 	}
 
 	public UserItem<Integer, Double> getUserPrice() {
@@ -391,12 +406,12 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	@Override
 	public boolean isBPO() {
-		return (item.isBlueprint() && this.getRawQuantity() == -1);
+		return bpo;
 	}
 
 	@Override
 	public boolean isBPC() {
-		return (item.isBlueprint() && this.getRawQuantity() == -2);
+		return bpc;
 	}
 
 	public boolean isCorporation() {
@@ -420,11 +435,11 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	public boolean isUserName() {
-		return !getName().equals(getTypeName());
+		return userNameSet;
 	}
 
 	public boolean isUserPrice() {
-		return (this.getUserPrice() != null);
+		return userPriceSet;
 	}
 
 	public void setAdded(final Date added) {
@@ -441,6 +456,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	public void setName(final String name) {
 		this.name = name;
+		userNameSet = !getName().equals(getTypeName());
 	}
 
 	public void setPriceData(final PriceData priceData) {
@@ -465,6 +481,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	public void setUserPrice(final UserItem<Integer, Double> userPrice) {
 		this.userPrice = userPrice;
+		userPriceSet = (this.getUserPrice() != null);
 	}
 
 	public void setVolume(final float volume) {
