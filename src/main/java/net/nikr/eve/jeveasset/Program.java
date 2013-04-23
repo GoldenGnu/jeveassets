@@ -169,7 +169,7 @@ public class Program implements ActionListener {
 		priceDataGetter.load();
 		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
-		timer = new Timer(1000, this);
+		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ACTION_TIMER);
 	//Updatable
 		updatable = new Updatable(this);
@@ -313,8 +313,9 @@ public class Program implements ActionListener {
 		if (!timer.isRunning()) {
 			timer.start();
 		}
-		this.getStatusPanel().timerTicked(updatable.isUpdatable());
-		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
+		boolean isUpdatable = updatable.isUpdatable();
+		this.getStatusPanel().timerTicked(isUpdatable);
+		this.getMainWindow().getMenu().timerTicked(isUpdatable);
 	}
 
 	public final void updateEventLists() {
@@ -331,6 +332,7 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.afterUpdateData();
 		}
+		timerTicked();
 	}
 
 	public void saveSettings() {

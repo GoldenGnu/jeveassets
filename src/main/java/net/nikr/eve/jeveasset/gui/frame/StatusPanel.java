@@ -22,12 +22,15 @@
 package net.nikr.eve.jeveasset.gui.frame;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -36,12 +39,13 @@ import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
-public class StatusPanel extends JGroupLayoutPanel {
+public class StatusPanel extends JGroupLayoutPanel implements ActionListener {
 
 	//GUI
 	private JLabel jEveTime;
 	private JLabel jUpdatable;
 	private JToolBar jToolBar;
+	private Timer eveTimer;
 
 
 	private List<JLabel> programStatus = new ArrayList<JLabel>();
@@ -61,6 +65,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 
 		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
+
+		eveTimer = new Timer(1000, this);
+		eveTimer.start();
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -93,7 +100,6 @@ public class StatusPanel extends JGroupLayoutPanel {
 	}
 
 	public void timerTicked(final boolean updatable) {
-		jEveTime.setText(Formater.eveTime(Settings.getNow()));
 		if (updatable) {
 			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
 			jUpdatable.setToolTipText(GuiFrame.get().updatable());
@@ -128,5 +134,10 @@ public class StatusPanel extends JGroupLayoutPanel {
 		jSpace.setPreferredSize(new Dimension(width, 25));
 		jSpace.setMaximumSize(new Dimension(width, 25));
 		jToolBar.add(jSpace);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		jEveTime.setText(Formater.eveTime(Settings.getNow()));
 	}
 }

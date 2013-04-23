@@ -25,12 +25,10 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 
 
 public class Updatable {
 
-	private boolean updatable;
 	private Program program;
 
 	public Updatable(final Program program) {
@@ -38,54 +36,52 @@ public class Updatable {
 	}
 
 	public boolean isUpdatable() {
-		Date accountsNextUpdate = null;
-		Date industryJobsNextUpdate = null;
-		Date marketOrdersNextUpdate = null;
-		Date assetsNextUpdate = null;
-		Date accountBalanceNextUpdate = null;
-		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
+		if (isUpdatable(program.getPriceDataGetter().getNextUpdate(), false)) {
+			return true;
+		}
 		for (Account account : program.getAccounts()) {
 			//Account
-			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
+			if (isUpdatable(account.getAccountNextUpdate())) {
+				return true;
+			}
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowAssets()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
+					if (isUpdatable(owner.getIndustryJobsNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getMarketOrdersNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getAssetNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getBalanceNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getContractsNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getWalletTransactionsNextUpdate())){
+						return true;
+					}
 				}
 			}
 		}
-		updatable = false;
-		isUpdatable(marketOrdersNextUpdate);
-		isUpdatable(industryJobsNextUpdate);
-		isUpdatable(accountsNextUpdate);
-		isUpdatable(accountBalanceNextUpdate);
-		isUpdatable(assetsNextUpdate);
-		isUpdatable(priceDataNextUpdate, false);
-		return updatable;
+		return false;
 	}
 
-	private void isUpdatable(final Date nextUpdate) {
-		isUpdatable(nextUpdate, true);
+	private boolean isUpdatable(final Date nextUpdate) {
+		return isUpdatable(nextUpdate, true);
 	}
 
-	private void isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
+	private boolean isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getNow();
+			return false;
 		}
 		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
-			updatable = true;
+			return true;
+		} else {
+			return false;
 		}
-	}
-
-	private Date nextUpdate(Date nextUpdate, final Date thisUpdate) {
-		if (nextUpdate == null) {
-				nextUpdate = thisUpdate;
-		}
-		if (thisUpdate.before(nextUpdate)) {
-			nextUpdate = thisUpdate;
-		}
-		return nextUpdate;
 	}
 }
