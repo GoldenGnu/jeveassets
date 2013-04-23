@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared.components;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ public abstract class JMainTab {
 	private DefaultEventTableModel<?> eventTableModel;
 	private List<?> selected;
 	private String toolName;
-
 	protected JMainTab(final boolean load) { }
 
 	public JMainTab(final Program program, final String title, final Icon icon, final boolean closeable) {
@@ -79,6 +79,17 @@ public abstract class JMainTab {
 	/** Must be called after setting SelectionModel.
 	 * @param e mouse event
 	 */
+	private void showTableHeaderPopupMenu(final MouseEvent e) {
+		JPopupMenu jTableHeaderPopupMenu = new JPopupMenu();
+		JMenu columnMenu = getColumnMenu();
+		if (columnMenu != null) {
+			for (Component component : columnMenu.getMenuComponents()) { //Clone!
+				jTableHeaderPopupMenu.add(component);
+			}
+		}
+		jTableHeaderPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
 	private void showTablePopupMenu(final MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 
@@ -289,6 +300,7 @@ public abstract class JMainTab {
 		//Table Menu
 		TableMenuListener listener = new TableMenuListener(jTable);
 		jTable.addMouseListener(listener);
+		jTable.getTableHeader().addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
 	}
@@ -339,15 +351,25 @@ public abstract class JMainTab {
 
 		@Override
 		public void mousePressed(final MouseEvent e) {
-			if (e.getSource().equals(jTable) && e.isPopupTrigger()) {
-				showTablePopupMenu(e);
+			if (e.isPopupTrigger()) {
+				if (e.getSource().equals(jTable)) {
+					showTablePopupMenu(e);
+				}
+				if (jTable != null && e.getSource().equals(jTable.getTableHeader())) {
+					showTableHeaderPopupMenu(e);
+				}
 			}
 		}
 
 		@Override
 		public void mouseReleased(final MouseEvent e) {
-			if (e.getSource().equals(jTable) && e.isPopupTrigger()) {
-				showTablePopupMenu(e);
+			if (e.isPopupTrigger()) {
+				if (e.getSource().equals(jTable)) {
+					showTablePopupMenu(e);
+				}
+				if (jTable != null && e.getSource().equals(jTable.getTableHeader())) {
+					showTableHeaderPopupMenu(e);
+				}
 			}
 		}
 

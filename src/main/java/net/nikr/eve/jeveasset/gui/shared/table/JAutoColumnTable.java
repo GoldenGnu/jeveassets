@@ -92,20 +92,24 @@ public class JAutoColumnTable extends JTable {
 	@Override
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
-		boolean isSelected = isCellSelected(row, column);
 
 		if (component instanceof JPanel) { //Ignore Separator Panels
 			return component;
 		}
 
 		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
-
-		//Highlight selected row
-		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()) {
-			component.setBackground(new Color(220, 240, 255));
-			return component;
+		if (isCellSelected(row, column)) {
+			component.setForeground(this.getSelectionForeground());
+			component.setBackground(this.getSelectionBackground());
+		} else {
+			component.setForeground(this.getForeground());
+			//Highlight selected row
+			if (program.getSettings().isHighlightSelectedRows() && this.isRowSelected(row)) {
+				component.setBackground(new Color(220, 240, 255));
+				return component;
+			} else {
+				component.setBackground(this.getBackground());
+			}
 		}
 		return component;
 	}
@@ -140,9 +144,6 @@ public class JAutoColumnTable extends JTable {
 			return;
 		}
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
-		if (resizeMode == null && tableFormat != null) {
-			resizeMode = tableFormat.getResizeMode();
-		}
 		loadingWidth = true;
 		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			resizeColumnsText();
@@ -254,6 +255,7 @@ public class JAutoColumnTable extends JTable {
 		size = 0;
 		if (resizeMode != ResizeMode.TEXT) {
 			resizeMode = ResizeMode.TEXT;
+			this.getTableHeader().setResizingAllowed(false);
 		}
 		for (int i = 0; i < getColumnCount(); i++) {
 			size = size + resizeColumn(this, getColumnModel().getColumn(i), i);
@@ -264,6 +266,7 @@ public class JAutoColumnTable extends JTable {
 	public void resizeColumnsWindow() {
 		if (resizeMode != ResizeMode.WINDOW) { //Only do once
 			resizeMode = ResizeMode.WINDOW;
+			this.getTableHeader().setResizingAllowed(true);
 			for (int i = 0; i < getColumnCount(); i++) {
 				getColumnModel().getColumn(i).setPreferredWidth(75);
 			}
@@ -271,6 +274,10 @@ public class JAutoColumnTable extends JTable {
 		updateScroll();
 	}
 	public void resizeColumnsNone() {
+		if (resizeMode != ResizeMode.NONE) { //Only do once
+			resizeMode = ResizeMode.NONE;
+			this.getTableHeader().setResizingAllowed(true);
+		}
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		List<SimpleColumn> columns = tableFormat.getColumns();
 		int i = 0;
@@ -338,9 +345,9 @@ public class JAutoColumnTable extends JTable {
 		return maxWidth; //Return width
 	}
 
-	private void saveColumnsWidth() {
-		if (!loadingWidth) {
-			EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+	protected void saveColumnsWidth() {
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+		if (!loadingWidth && tableFormat != null && tableFormat.getResizeMode() == ResizeMode.NONE) {
 			List<SimpleColumn> columns = tableFormat.getColumns();
 			int i = 0;
 			for (SimpleColumn column : columns) {
@@ -357,6 +364,7 @@ public class JAutoColumnTable extends JTable {
 			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener {
 
 		private boolean columnMoved = false;
+		private boolean columnResized = false;
 		private int from = 0;
 		private int to = 0;
 		private int rowsLastTime = 0;
@@ -455,7 +463,7 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void columnMarginChanged(final ChangeEvent e) {
-			saveColumnsWidth();
+			columnResized = true;
 		}
 
 		@Override
@@ -467,6 +475,7 @@ public class JAutoColumnTable extends JTable {
 		@Override
 		public void mousePressed(final MouseEvent e) {
 			columnMoved = false;
+			columnResized = false;
 		}
 
 		@Override
@@ -480,6 +489,10 @@ public class JAutoColumnTable extends JTable {
 					model.fireTableStructureChanged();
 				}
 				autoResizeColumns();
+			}
+			if (columnResized) {
+				columnResized = false;
+				saveColumnsWidth();
 			}
 		}
 

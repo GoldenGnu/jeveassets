@@ -75,7 +75,6 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private List<T> orderColumns;
 	private ColumnComparator columnComparator;
 
-	private JMenu jMenu;
 	private EditColumnsDialog<T, Q> dialog;
 	private ResizeMode resizeMode;
 
@@ -201,50 +200,51 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 			dialog = new EditColumnsDialog<T, Q>(program, this);
 		}
 
-		if (jMenu == null) { //Create menu (only once)
-			jMenu = new JMenu(GuiShared.get().tableSettings());
-			jMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
- 			JMenuItem jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
-			jMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					dialog.setVisible(true);
-					tableModel.fireTableStructureChanged();
-					jTable.autoResizeColumns();
-				}
-			});
-			jMenu.add(jMenuItem);
+		JMenu jMenu;
+		jMenu = new JMenu(GuiShared.get().tableSettings());
+		jMenu.setIcon(Images.TABLE_COLUMN_SHOW.getIcon());
+		JMenuItem jMenuItem = new JMenuItem(GuiShared.get().tableColumns(), Images.DIALOG_SETTINGS.getIcon());
+		jMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				dialog.setVisible(true);
+				tableModel.fireTableStructureChanged();
+				jTable.autoResizeColumns();
+			}
+		});
+		jMenu.add(jMenuItem);
 
-			jMenu.addSeparator();
+		jMenu.addSeparator();
 
-			jMenuItem = new JMenuItem(GuiShared.get().tableColumnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
-			jMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(final ActionEvent e) {
-					reset();
-					tableModel.fireTableStructureChanged();
-					jTable.autoResizeColumns();
-				}
-			});
-			jMenu.add(jMenuItem);
+		jMenuItem = new JMenuItem(GuiShared.get().tableColumnsReset(), Images.TABLE_COLUMN_SHOW.getIcon());
+		jMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				reset();
+				tableModel.fireTableStructureChanged();
+				jTable.autoResizeColumns();
+			}
+		});
+		jMenu.add(jMenuItem);
 
-			jMenu.addSeparator();
+		jMenu.addSeparator();
 
-			ButtonGroup buttonGroup = new ButtonGroup();
-			JRadioButtonMenuItem jRadioButton;
-			for (final ResizeMode mode : ResizeMode.values()) {
-				jRadioButton = new JRadioButtonMenuItem(mode.toString(), Images.TABLE_COLUMN_RESIZE.getIcon());
-				jRadioButton.setSelected(resizeMode == mode);
+		ButtonGroup buttonGroup = new ButtonGroup();
+		JRadioButtonMenuItem jRadioButton;
+		for (final ResizeMode mode : ResizeMode.values()) {
+			jRadioButton = new JRadioButtonMenuItem(mode.toString(), Images.TABLE_COLUMN_RESIZE.getIcon());
+			jRadioButton.setSelected(resizeMode == mode);
 				jRadioButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(final ActionEvent e) {
 						setResizeMode(mode);
+						jTable.saveColumnsWidth();
 						jTable.autoResizeColumns();
+						program.updateTableMenu();
 					}
 				});
-				buttonGroup.add(jRadioButton);
-				jMenu.add(jRadioButton);
-			}
+			buttonGroup.add(jRadioButton);
+			jMenu.add(jRadioButton);
 		}
 		return jMenu;
 	}
