@@ -94,6 +94,7 @@ public class Settings {
 	private boolean windowAutoSave;
 	private boolean windowAlwaysOnTop;
 	private Boolean highlightSelectedRows = null;
+	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
@@ -386,11 +387,15 @@ public class Settings {
 	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
-	public boolean isReprocessColors() {
-		return flags.get(FLAG_REPROCESS_COLORS);
+	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
+		if (reprocessColors == null) {
+			reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
+		}
+		return reprocessColors;
 	}
 	public void setReprocessColors(final boolean reprocessColors) {
 		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
+		this.reprocessColors = reprocessColors;
 	}
 	public boolean isStockpileFocusTab() {
 		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
