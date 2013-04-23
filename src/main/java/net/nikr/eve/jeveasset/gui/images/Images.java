@@ -149,6 +149,7 @@ public enum Images {
 	private static final Logger LOG = LoggerFactory.getLogger(Images.class);
 	private final String filename;   // in kilograms
 	private BufferedImage image = null;
+	private Icon icon;
 
 	Images(final String filename) {
 		this.filename = filename;
@@ -156,7 +157,7 @@ public enum Images {
 
 	public Icon getIcon() {
 		load();
-		return new ImageIcon(image);
+		return icon;
 	}
 
 	public Image getImage() {
@@ -171,6 +172,7 @@ public enum Images {
 	private boolean load() {
 		if (image == null) {
 			image = getBufferedImage(filename);
+			icon = new ImageIcon(image);
 		}
 		return (image != null);
 	}
