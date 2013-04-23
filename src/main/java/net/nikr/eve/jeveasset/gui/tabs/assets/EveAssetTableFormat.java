@@ -392,10 +392,12 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	@Override public abstract Object getColumnValue(final Asset from);
 
 	public class LongInt implements Comparable<LongInt> {
-		private Long number;
+		private final Long number;
+		private final String formatted;
 
 		public LongInt(final Long number) {
 			this.number = number;
+			this.formatted = Formater.integerFormat(number);
 		}
 
 		public Long getNumber() {
@@ -404,7 +406,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 
 		@Override
 		public String toString() {
-			return Formater.integerFormat(number);
+			return formatted;
 		}
 
 		@Override
