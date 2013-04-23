@@ -39,6 +39,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private boolean marketGroup;
 	private boolean piMaterial;
 	private int portion;
+	private boolean blueprint;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 
 	public Item(int typeID) {
@@ -57,6 +58,7 @@ public class Item implements Comparable<Item>, ItemType {
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;
+		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
 
 	public void addReprocessedMaterial(final ReprocessedMaterial material) {
@@ -108,7 +110,7 @@ public class Item implements Comparable<Item>, ItemType {
 	}
 
 	public boolean isBlueprint() {
-		return (name.toLowerCase().contains("blueprint"));
+		return blueprint;
 	}
 
 	public int getPortion() {
