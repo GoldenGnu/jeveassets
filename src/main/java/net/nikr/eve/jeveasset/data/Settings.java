@@ -93,6 +93,7 @@ public class Settings {
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
 	private boolean windowAlwaysOnTop;
+	private Boolean highlightSelectedRows = null;
 	private int maximumPurchaseAge = 0;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
@@ -356,11 +357,15 @@ public class Settings {
 		Settings.filterOnEnter = filterOnEnter; //Static
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
-	public boolean isHighlightSelectedRows() {
-		return flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
+		if (highlightSelectedRows == null) {
+			highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+		}
+		return highlightSelectedRows;
 	}
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
+		this.highlightSelectedRows = highlightSelectedRows;
 	}
 
 	public boolean isAutoUpdate() {
