@@ -121,14 +121,18 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		boolean isDate = false;
 		TableModel model = jTable.getModel();
 		int columnIndex = jTable.getSelectedColumn();
-		if (model instanceof DefaultEventTableModel) {
+		if (jTable.getSelectedColumnCount() == 1
+				&& jTable.getSelectedRowCount() == 1
+				&& items.size() == 1
+				&& !(items.get(0) instanceof SeparatorList.Separator)
+				&& model instanceof DefaultEventTableModel) {
 			DefaultEventTableModel<?> tableModel = (DefaultEventTableModel<?>) model;
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size() && items.size() == 1) {
+				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()) {
 					Object object = adaptor.getShownColumns().get(columnIndex);
-					if (object instanceof Enum && !(items.get(0) instanceof SeparatorList.Separator)) {
+					if (object instanceof Enum) {
 						column = (Enum) object;
 						isNumeric = isNumeric(column);
 						isDate = isDate(column);
