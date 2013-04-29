@@ -235,8 +235,12 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "price", String.valueOf(apiWalletTransaction.getPrice()));
 			childNode.setAttributeNS(null, "clientid", String.valueOf(apiWalletTransaction.getClientID()));
 			childNode.setAttributeNS(null, "clientname", String.valueOf(apiWalletTransaction.getClientName()));
-			childNode.setAttributeNS(null, "characterid", String.valueOf(apiWalletTransaction.getCharacterID()));
-			childNode.setAttributeNS(null, "charactername", String.valueOf(apiWalletTransaction.getCharacterName()));
+			if (apiWalletTransaction.getCharacterID() != null) {
+				childNode.setAttributeNS(null, "characterid", String.valueOf(apiWalletTransaction.getCharacterID()));
+			}
+			if (apiWalletTransaction.getCharacterName() != null) {
+				childNode.setAttributeNS(null, "charactername", String.valueOf(apiWalletTransaction.getCharacterName()));
+			}
 			childNode.setAttributeNS(null, "stationid", String.valueOf(apiWalletTransaction.getStationID()));
 			childNode.setAttributeNS(null, "stationname", String.valueOf(apiWalletTransaction.getStationName()));
 			childNode.setAttributeNS(null, "transactiontype", String.valueOf(apiWalletTransaction.getTransactionType()));

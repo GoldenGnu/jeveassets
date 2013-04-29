@@ -388,8 +388,14 @@ public final class ProfileReader extends AbstractXmlReader {
 		Double price = AttributeGetters.getDouble(element, "price");
 		Long clientID = AttributeGetters.getLong(element, "clientid");
 		String clientName = AttributeGetters.getString(element, "clientname");
-		Long characterID = AttributeGetters.getLong(element, "characterid");
-		String characterName = AttributeGetters.getString(element, "charactername");
+		Long characterID = null;
+		if (AttributeGetters.haveAttribute(element, "characterid")) {
+			characterID = AttributeGetters.getLong(element, "characterid");
+		}
+		String characterName = null;
+		if (AttributeGetters.haveAttribute(element, "charactername")) {
+			characterName = AttributeGetters.getString(element, "charactername");
+		}
 		int stationID = AttributeGetters.getInt(element, "stationid");
 		String stationName = AttributeGetters.getString(element, "stationname");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
