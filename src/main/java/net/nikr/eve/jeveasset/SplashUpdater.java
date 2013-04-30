@@ -39,6 +39,7 @@ public class SplashUpdater extends Thread {
 	private static BufferedImage[] loadingImages;
 	private static SplashScreen splash;
 	private static final int UPDATE_DELAY = 200;
+	private static boolean repainting = false;
 
 	/** Creates a new instance of SplashUpdater. */
 	public SplashUpdater() {
@@ -82,7 +83,10 @@ public class SplashUpdater extends Thread {
 		if (number >= 100) {
 			number = 0;
 		}
-		nSubProgress = number;
+		if (nSubProgress != number) {
+			nSubProgress = number;
+			update();
+		}
 	}
 
 	/**
@@ -94,11 +98,15 @@ public class SplashUpdater extends Thread {
 		if (number > 100) {
 			number = 100;
 		}
-		nProgress = number;
+		if (nProgress != number) {
+			nProgress = number;
+			update();
+		}
 	}
 
 	private static void update() {
-		if (splash != null) {
+		if (splash != null && !repainting) {
+			repainting = true;
 			try {
 				Graphics2D g = splash.createGraphics();
 				//Clear Screen
@@ -107,7 +115,7 @@ public class SplashUpdater extends Thread {
 				g.fillRect(0, 0, size.width, size.height);
 				g.setPaintMode();
 				if (Program.isDebug()) {
-					g.setColor(Color.GRAY);
+					g.setColor(Color.DARK_GRAY);
 					g.drawString("DEBUG", 344, 232);
 					g.setColor(Color.WHITE);
 					g.drawString("DEBUG", 343, 231);
@@ -131,6 +139,7 @@ public class SplashUpdater extends Thread {
 			} catch (IllegalStateException ex) {
 				LOG.info("SplashScreen: Closed before painting ended (NO PROBLEM)");
 			}
+			repainting = false;
 		}
 	}
 }

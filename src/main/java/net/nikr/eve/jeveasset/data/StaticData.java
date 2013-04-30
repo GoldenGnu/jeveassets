@@ -60,16 +60,16 @@ public class StaticData {
 	}
 
 	private void loadData() {
-		SplashUpdater.setProgress(10);
+		SplashUpdater.setProgress(5);
 		ItemsReader.load(); //Items
-		SplashUpdater.setProgress(15);
+		SplashUpdater.setProgress(10);
 		LocationsReader.load(); //Locations
-		SplashUpdater.setProgress(20);
+		SplashUpdater.setProgress(15);
 		JumpsReader.load(); //Jumps
-		SplashUpdater.setProgress(25);
+		SplashUpdater.setProgress(20);
 		FlagsReader.load(); //Item Flags
 		ConquerableStationsReader.load(); //Conquerable Stations
-		SplashUpdater.setProgress(30);
+		SplashUpdater.setProgress(25);
 	}
 
 	public Map<Integer, ItemFlag> getItemFlags() {

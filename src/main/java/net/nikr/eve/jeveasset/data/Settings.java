@@ -108,7 +108,7 @@ public class Settings {
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 
 	public Settings() {
-		SplashUpdater.setProgress(5);
+		SplashUpdater.setProgress(30);
 		priceDatas = new HashMap<Integer, PriceData>();
 
 		//Settings
