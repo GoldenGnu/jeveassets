@@ -176,10 +176,6 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		updateNumeric(false);
 	}
 
-	void setEnabled(final boolean b) {
-		jRemove.setEnabled(b);
-	}
-
 	JPanel getPanel() {
 		return jPanel;
 	}
@@ -365,6 +361,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_REMOVE.equals(e.getActionCommand())) {
 			gui.remove(this);
+			gui.addEmpty();
 			refilter();
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())) {

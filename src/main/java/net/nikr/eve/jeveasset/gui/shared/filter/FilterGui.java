@@ -235,9 +235,6 @@ class FilterGui<E> implements ActionListener {
 
 	void remove(final FilterPanel<E> filterPanel) {
 		filterPanels.remove(filterPanel);
-		if (filterPanels.size() == 1) {
-			filterPanels.get(0).setEnabled(false);
-		}
 		update();
 	}
 
@@ -247,20 +244,26 @@ class FilterGui<E> implements ActionListener {
 
 	private void add(final FilterPanel<E> filterPanel) {
 		filterPanels.add(filterPanel);
-		if (filterPanels.size() > 1) { //Show remove buttons
-			filterPanels.get(0).setEnabled(true);
-		}
-		if (filterPanels.size() == 1) { //Hide remove button
-			filterPanels.get(0).setEnabled(false);
-		}
 		update();
+	}
+
+	void addEmpty() {
+		if (filterPanels.isEmpty()) {
+			add();
+		}
+	}
+
+	private void clearEmpty() {
+		if (filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty()) {
+			remove(filterPanels.get(0));
+		}
 	}
 
 	void clear() {
 		while (filterPanels.size() > 0) {
 			remove(filterPanels.get(0));
 		}
-		add();
+		addEmpty();
 		refilter();
 	}
 
@@ -290,16 +293,13 @@ class FilterGui<E> implements ActionListener {
 	}
 
 	void addFilters(final List<Filter> filters) {
-		//Remove single empty filter...
-		if (filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty()) {
-			remove(filterPanels.get(0));
-		}
+		clearEmpty(); //Remove single empty filter...
 		for (Filter filter : filters) {
 			FilterPanel<E> filterPanel = new FilterPanel<E>(this, matcherControl);
 			filterPanel.setFilter(filter);
 			add(filterPanel);
 		}
-		update();
+		addEmpty(); //Add single filter (if empty)
 		refilter();
 	}
 
