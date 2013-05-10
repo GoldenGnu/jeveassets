@@ -26,7 +26,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
@@ -34,37 +33,45 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuPrice<T> extends JMenu implements ActionListener {
+public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
 
 	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public static final String ACTION_USER_PRICE_DELETE = "ACTION_USER_PRICE_DELETE";
-	private Program program;
+
+	private final Program program;
+	private final JMenuItem jEdit;
+	private final JMenuItem jReset;
+
 	private MenuData<T> menuData;
 
-	public JMenuPrice(final Program program, final MenuData<T> menuData) {
+	public JMenuPrice(final Program program) {
 		super(GuiShared.get().itemPriceTitle()); //
 		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
 		this.program = program;
+
+		jEdit = new JMenuItem(GuiShared.get().itemEdit());
+		jEdit.setIcon(Images.EDIT_EDIT.getIcon());
+		jEdit.setActionCommand(ACTION_USER_PRICE_EDIT);
+		jEdit.addActionListener(this);
+		add(jEdit);
+
+		jReset = new JMenuItem(GuiShared.get().itemDelete());
+		jReset.setIcon(Images.EDIT_DELETE.getIcon());
+		jReset.setActionCommand(ACTION_USER_PRICE_DELETE);
+		jReset.addActionListener(this);
+		add(jReset);
+	}
+
+	
+	@Override
+	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
-
-		JMenuItem jMenuItem;
-
-		jMenuItem = new JMenuItem(GuiShared.get().itemEdit());
-		jMenuItem.setIcon(Images.EDIT_EDIT.getIcon());
-		jMenuItem.setEnabled(!menuData.getPrices().isEmpty());
-		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
-
-		jMenuItem = new JMenuItem(GuiShared.get().itemDelete());
-		jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
-		jMenuItem.setEnabled(!menuData.getPrices().isEmpty() && program.getUserPriceSettingsPanel().containsKey(menuData.getPrices().keySet()));
-		jMenuItem.setActionCommand(ACTION_USER_PRICE_DELETE);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
+		jEdit.setEnabled(!menuData.getPrices().isEmpty());
+		jReset.setEnabled(!menuData.getPrices().isEmpty() && program.getUserPriceSettingsPanel().containsKey(menuData.getPrices().keySet()));
 	}
 
 	@Override

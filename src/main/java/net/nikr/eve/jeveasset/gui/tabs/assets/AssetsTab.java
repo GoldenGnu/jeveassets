@@ -46,6 +46,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
 import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -53,7 +55,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
+public class AssetsTab extends JMainTab implements ListEventListener<Asset>, TableMenu<Asset> {
 
 	//GUI
 	private JAssetTable jTable;
@@ -113,6 +115,9 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 				program.getSettings().getTableFilters(NAME)
 				);
 
+		//Menu
+		installMenu(program, this, jTable, Asset.class);
+
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
@@ -141,29 +146,27 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset> {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<Asset>(selectionModel.getSelected(), program.getSettings(), Asset.class);
+	public MenuData<Asset> getMenuData() {
+		return new AssetMenuData(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected JMenu getNameMenu() {
-		return new JMenuName(program, selectionModel.getSelected());
+	public void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.asset(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.asset(jComponent, selectionModel.getSelected());
-	}
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }

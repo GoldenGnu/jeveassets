@@ -25,17 +25,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuName extends JMenu implements ActionListener {
+public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 
 	public static final String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
 	public static final String ACTION_USER_NAME_DELETE = "ACTION_USER_NAME_DELETE";
@@ -43,31 +44,35 @@ public class JMenuName extends JMenu implements ActionListener {
 	private List<UserItem<Long, String>> itemNames;
 	private Program program;
 
-	public JMenuName(final Program program, final List<Asset> items) {
+	JMenuItem jEdit;
+	JMenuItem jReset;
+
+	public JMenuName(final Program program) {
 		super(GuiShared.get().itemNameTitle());
 		this.program = program;
 		this.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 
-		JMenuItem jMenuItem;
+		jEdit = new JMenuItem(GuiShared.get().itemEdit());
+		jEdit.setIcon(Images.EDIT_EDIT.getIcon());
+		jEdit.setActionCommand(ACTION_USER_NAME_EDIT);
+		jEdit.addActionListener(this);
+		add(jEdit);
 
+		jReset = new JMenuItem(GuiShared.get().itemDelete());
+		jReset.setIcon(Images.EDIT_DELETE.getIcon());
+		jReset.setActionCommand(ACTION_USER_NAME_DELETE);
+		jReset.addActionListener(this);
+		add(jReset);
+	}
+
+	@Override
+	public void setMenuData(MenuData<T> menuData) {
 		itemNames = new ArrayList<UserItem<Long, String>>();
-		for (Asset asset : items) {
+		for (Asset asset : menuData.getAssets()) {
 			itemNames.add(new UserName(asset));
 		}
-
-		jMenuItem = new JMenuItem(GuiShared.get().itemEdit());
-		jMenuItem.setIcon(Images.EDIT_EDIT.getIcon());
-		jMenuItem.setEnabled(itemNames.size() == 1);
-		jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
-
-		jMenuItem = new JMenuItem(GuiShared.get().itemDelete());
-		jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
-		jMenuItem.setEnabled(program.getUserNameSettingsPanel() != null && program.getUserNameSettingsPanel().contains(itemNames));
-		jMenuItem.setActionCommand(ACTION_USER_NAME_DELETE);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
+		jEdit.setEnabled(itemNames.size() == 1);
+		jReset.setEnabled(program.getUserNameSettingsPanel() != null && program.getUserNameSettingsPanel().contains(itemNames));
 	}
 
 	@Override
@@ -77,6 +82,14 @@ public class JMenuName extends JMenu implements ActionListener {
 		}
 		if (ACTION_USER_NAME_DELETE.equals(e.getActionCommand())) {
 			program.getUserNameSettingsPanel().delete(itemNames);
+		}
+	}
+
+	public static class AssetMenuData extends MenuData<Asset> {
+
+		public AssetMenuData(List<Asset> items, Settings settings) {
+			super(items, settings);
+			setAssets(items);
 		}
 	}
 }

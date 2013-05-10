@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -47,7 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public class TransactionTab extends JMainTab implements ListEventListener<WalletTransaction> {
+public class TransactionTab extends JMainTab implements ListEventListener<WalletTransaction>, TableMenu<WalletTransaction> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -108,6 +109,9 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 				defaultFilters
 				);
 
+		//Menu
+		installMenu(program, this, jTable, WalletTransaction.class);
+
 		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalSell(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
 
@@ -127,24 +131,27 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 	}
 
 	@Override
-	protected MenuData<?> getMenuData() {
-		return new MenuData<WalletTransaction>(selectionModel.getSelected(), program.getSettings(), WalletTransaction.class);
-	}
-
-	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public MenuData<WalletTransaction> getMenuData() {
+		return new MenuData<WalletTransaction>(selectionModel.getSelected(), program.getSettings());
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.wallet(jComponent, selectionModel.getSelected());
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }

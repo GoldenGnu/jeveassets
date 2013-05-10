@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -50,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements ActionListener {
+public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<Module> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
@@ -150,6 +151,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		installTable(jTable, null);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Menu
+		installMenu(program, this, jTable, Module.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -186,26 +189,28 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<Module>(selectionModel.getSelected(), program.getSettings(), Module.class);
+	public MenuData<Module> getMenuData() {
+		return new MenuData<Module>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return null;
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return null;
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.module(jComponent, selectionModel.getSelected());
 	}
 
-	
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
+
 	@Override
 	public void updateData() {
 		if (!program.getOwners(false).isEmpty()) {

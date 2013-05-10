@@ -59,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -68,7 +69,7 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class ReprocessedTab extends JMainTab {
+public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInterface> {
 
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -175,6 +176,9 @@ public class ReprocessedTab extends JMainTab {
 				program.getSettings().getTableFilters(NAME)
 				);
 
+		//Menu
+		installMenu(program, this, jTable, ReprocessedInterface.class);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -199,26 +203,29 @@ public class ReprocessedTab extends JMainTab {
 		);
 	}
 
-		@Override
-	protected MenuData getMenuData() {
-		return new MenuData<ReprocessedInterface>(selectionModel.getSelected(), program.getSettings(), ReprocessedInterface.class);
+	@Override
+	public MenuData<ReprocessedInterface> getMenuData() {
+		return new MenuData<ReprocessedInterface>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Reprocessed Tool
-		//JMenuInfo.reprocessed(jComponent, selected, eventList);
+		//JMenuInfo.reprocessed(...);
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {

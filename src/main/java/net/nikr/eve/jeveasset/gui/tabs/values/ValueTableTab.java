@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -57,7 +58,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class ValueTableTab extends JMainTab {
+public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 
 	//GUI
 	private JAutoColumnTable jTable;
@@ -103,7 +104,6 @@ public class ValueTableTab extends JMainTab {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-
 		filterControl = new ValueFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
@@ -111,6 +111,9 @@ public class ValueTableTab extends JMainTab {
 				filterList,
 				program.getSettings().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -124,27 +127,29 @@ public class ValueTableTab extends JMainTab {
 		);
 	}
 
-	
 	@Override
-	protected MenuData<?> getMenuData() {
-		return null;
+	public MenuData<Value> getMenuData() {
+		return new MenuData<Value>();
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Values Table Tool
-		//JMenuInfo.values(jComponent, selected, eventList);
+		//JMenuInfo.values(...);
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	private Value getValue(Map<String, Value> values, String owner) {
 		Value value = values.get(owner);

@@ -48,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -60,7 +61,7 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class StockpileTab extends JMainTab implements ActionListener, ListEventListener<StockpileItem> {
+public class StockpileTab extends JMainTab implements ActionListener, ListEventListener<StockpileItem>, TableMenu<StockpileItem> {
 
 	private static final String ACTION_ADD = "ACTION_ADD";
 	private static final String ACTION_SHOPPING_LIST_MULTI = "ACTION_SHOPPING_LIST_MULTI";
@@ -199,6 +200,9 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				program.getSettings().getTableFilters(NAME)
 				);
 
+		//Menu
+		installMenu(program, this, jTable, StockpileItem.class);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -234,29 +238,29 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<StockpileItem>(selectionModel.getSelected(), program.getSettings(), StockpileItem.class);
+	public MenuData<StockpileItem> getMenuData() {
+		return new MenuData<StockpileItem>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.stockpileItem(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
-	protected void addToolMenu(JComponent jComponent) {
+	public void addToolMenu(JComponent jComponent) {
 		jComponent.add(new JStockpileItemMenu(program, selectionModel.getSelected()));
-		addSeparator(jComponent);
+		MenuManager.addSeparator(jComponent);
 	}
 
 	@Override
@@ -645,7 +649,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			}
 			if (source instanceof JTextField && sep instanceof Separator) {
 				JTextField jMultiplier = (JTextField) source;
-				Separator separator = (Separator) sep;
+				Separator<?> separator = (Separator) sep;
 				double multiplier;
 				try {
 					multiplier = Double.valueOf(jMultiplier.getText());

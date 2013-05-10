@@ -202,7 +202,7 @@ public class ProfileData {
 				//Wallet Transactions
 				if (!owner.getWalletTransactions().isEmpty() && !ownersWallet.contains(owner.getName())) {
 					//Wallet Transactions
-					//FIXME - Corporation transactions can be added twice (one from corp key and one for char key)
+					//FIXME - - > Corporation transactions can be added twice (one from corp key and one for char key)
 					walletTransactions.addAll(owner.getWalletTransactions());
 					//Assets
 					//FIXME Wallet Transactions Assets

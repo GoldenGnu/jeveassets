@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
@@ -46,7 +47,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener {
+public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<Material> {
 
 	private static final String ACTION_SELECTED = "ACTION_SELECTED";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -108,6 +109,8 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 		installTable(jTable, null);
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
+		//Menu
+		installMenu(program, this, jTable, Material.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -132,24 +135,27 @@ public class MaterialsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<Material>(selectionModel.getSelected(), program.getSettings(), Material.class);
+	public MenuData<Material> getMenuData() {
+		return new MenuData<Material>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return null;
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return null;
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {

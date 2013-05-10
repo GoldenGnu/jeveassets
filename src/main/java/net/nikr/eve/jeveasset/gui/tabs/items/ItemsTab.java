@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -48,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab {
+public class ItemsTab extends JMainTab implements TableMenu<Item> {
 
 	private JAutoColumnTable jTable;
 
@@ -97,6 +98,9 @@ public class ItemsTab extends JMainTab {
 				program.getSettings().getTableFilters(NAME)
 				);
 
+		//Menu
+		installMenu(program, this, jTable, Item.class);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -118,30 +122,31 @@ public class ItemsTab extends JMainTab {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<Item>(selectionModel.getSelected(), program.getSettings(), Item.class);
+	public MenuData<Item> getMenuData() {
+		return new MenuData<Item>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Items Tool
-		//JMenuInfo.items(jComponent, selected, eventList);
+		//JMenuInfo.items(...);
 	}
 
 	@Override
-	public void updateData() {
-		updateTableMenu(program.getMainWindow().getMenu().getTableMenu());
-	}
+	public void addToolMenu(JComponent jComponent) { }
+
+	@Override
+	public void updateData() { }
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 

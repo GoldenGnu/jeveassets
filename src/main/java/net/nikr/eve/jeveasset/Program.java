@@ -189,7 +189,8 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
-		industryPlotTab = new IndustryPlotTab(this);
+		//FIXME - - > IndustryPlotTab
+		//industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
@@ -333,6 +334,7 @@ public class Program implements ActionListener {
 			jMainTab.afterUpdateData();
 		}
 		timerTicked();
+		updateTableMenu();
 	}
 
 	public void saveSettings() {
@@ -484,7 +486,7 @@ public class Program implements ActionListener {
 	 * Called when the table menu needs update.
 	 */
 	public void updateTableMenu() {
-		this.getMainWindow().getSelectedTab().updateTableMenu(this.getMainWindow().getMenu().getTableMenu());
+		this.getMainWindow().getSelectedTab().updateTableMenu();
 	}
 
 	/**

@@ -21,19 +21,17 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.JComponent;
-import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -47,22 +45,14 @@ public class MenuData<T> {
 	private final Set<String> regions = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
-	private boolean priceSupported = false;
-	private boolean itemSupported = false;
-	private boolean locationSupported = false;
-	private boolean assets = false;
-	private boolean stockpile = false;
+	private final List<Asset> assets = new ArrayList<Asset>();
 
-	public MenuData(final List<T> items, final Settings settings, final Class<T> clazz) {
+	public MenuData() { }
+
+	public MenuData(final List<T> items, final Settings settings) {
 		if (items == null) { //Skip null
 			return;
 		}
-
-		assets = Asset.class.isAssignableFrom(clazz);
-		stockpile = StockpileItem.class.isAssignableFrom(clazz);
-		locationSupported = LocationType.class.isAssignableFrom(clazz);
-		itemSupported = ItemType.class.isAssignableFrom(clazz);
-		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 
 		for (T t : items) {
 			if (t == null) { //Skip null
@@ -104,45 +94,6 @@ public class MenuData<T> {
 
 			add(itemType, location, price, blueprint);
 		}
-	}
-
-	public boolean addAssetFilter(Program program, JComponent jComponent) {
-		if (!assets && (itemSupported || locationSupported)) {
-			jComponent.add(new JMenuAssetFilter<T>(program, this));
-			return true;
-		}
-		return false;
-	}
-	public boolean addStockpile(Program program, JComponent jComponent) {
-		if (!stockpile && itemSupported) {
-			jComponent.add(new JMenuStockpile<T>(program, this));
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addLookup(Program program, JComponent jComponent) {
-		if (itemSupported || locationSupported) {
-			jComponent.add(new JMenuLookup<T>(program, this));
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addPrice(Program program, JComponent jComponent) {
-		if (priceSupported) {
-			jComponent.add(new JMenuPrice<T>(program, this));
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addReprocessed(Program program, JComponent jComponent) {
-		if (itemSupported) {
-			jComponent.add(new JMenuReprocessed<T>(program, this));
-			return true;
-		}
-		return false;
 	}
 
 	private void add(final Item item, final Location location, final Double price, final BlueprintType blueprintType) {
@@ -214,5 +165,14 @@ public class MenuData<T> {
 
 	public Set<Integer> getBlueprintTypeIDs() {
 		return blueprintTypeIDs;
+	}
+
+	public void setAssets(List<Asset> assets) {
+		this.assets.clear();
+		this.assets.addAll(assets);
+	}
+
+	public List<Asset> getAssets() {
+		return assets;
 	}
 }

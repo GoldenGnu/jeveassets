@@ -51,7 +51,7 @@ public class JMenuCopy extends JMenuItem {
 			for (int b = 0; b < selectedColumns.length; b++) {
 				Object value = jTable.getValueAt(selectedRows[i], selectedColumns[b]);
 				if (value instanceof SeparatorList.Separator) { //Handle Separator's
-					SeparatorList.Separator separator = (SeparatorList.Separator) value;
+					SeparatorList.Separator<?> separator = (SeparatorList.Separator) value;
 					Object object = separator.first();
 					if (object instanceof CopySeparator) {
 						CopySeparator copySeperator = (CopySeparator) object;

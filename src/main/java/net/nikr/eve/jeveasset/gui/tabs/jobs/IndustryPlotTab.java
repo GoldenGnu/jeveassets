@@ -34,7 +34,6 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.DateAxis;
@@ -88,21 +87,6 @@ public class IndustryPlotTab extends JMainTab {
 		panel = new JPanel(new BorderLayout());
 		updateInformationTable(null);
 		doLayout();
-	}
-
-	@Override
-	protected MenuData<?> getMenuData() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getColumnMenu() {
-		return null;
 	}
 
 	@Override

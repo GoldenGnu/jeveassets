@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -60,7 +61,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractsTab extends JMainTab {
+public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -142,6 +143,10 @@ public class ContractsTab extends JMainTab {
 				filterList,
 				program.getSettings().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, ContractItem.class);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -163,25 +168,28 @@ public class ContractsTab extends JMainTab {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<ContractItem>(selectionModel.getSelected(), program.getSettings(), ContractItem.class);
+	public MenuData<ContractItem> getMenuData() {
+		return new MenuData<ContractItem>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Contracts Tool
-		//JMenuInfo.contracts(jComponent, selected, eventList);
+		//JMenuInfo.contracts(...);
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }

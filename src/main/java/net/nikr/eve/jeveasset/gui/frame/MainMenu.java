@@ -59,8 +59,8 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
 	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
-	private JMenuItem jUpdatable;
-	private JMenuItem jTable;
+	private JMenuItem jUpdateMenu;
+	private JMenu jTableMenu;
 
 	public MainMenu(final Program program) {
 		JMenu menu;
@@ -191,16 +191,16 @@ public class MainMenu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		jUpdatable = new JMenuItem(GuiFrame.get().update1());
-		jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
-		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
-		jUpdatable.addActionListener(program);
+		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
+		jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+		jUpdateMenu.setActionCommand(ACTION_OPEN_UPDATE);
+		jUpdateMenu.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menu.add(jUpdatable);
+		menu.add(jUpdateMenu);
 
-		jTable = new JMenu(GuiFrame.get().table());
+		jTableMenu = new JMenu(GuiFrame.get().table());
 		//menu.setActionCommand("Something");
-		this.add(jTable);
+		this.add(jTableMenu);
 
 		menu = new JMenu(GuiFrame.get().options());
 		//menu.setActionCommand("Something");
@@ -274,17 +274,17 @@ public class MainMenu extends JMenuBar {
 		menu.add(menuItem);
 	}
 
-	public JMenuItem getTableMenu() {
-		return jTable;
+	public JMenu getTableMenu() {
+		return jTableMenu;
 	}
 
 	public void timerTicked(final boolean updatable) {
 		if (updatable) {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().updatable());
+			jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+			jUpdateMenu.setToolTipText(GuiFrame.get().updatable());
 		} else {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().not());
+			jUpdateMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
+			jUpdateMenu.setToolTipText(GuiFrame.get().not());
 		}
 	}
 }

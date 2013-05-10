@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -48,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder> {
+public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder>, TableMenu<MarketOrder> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -113,6 +114,9 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 				defaultFilters
 				);
 
+		//Menu
+		installMenu(program, this, jTable, MarketOrder.class);
+
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
 
@@ -138,24 +142,27 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings(), MarketOrder.class);
+	public MenuData<MarketOrder> getMenuData() {
+		return new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }

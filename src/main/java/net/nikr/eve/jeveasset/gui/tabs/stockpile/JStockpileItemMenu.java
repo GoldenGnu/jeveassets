@@ -47,20 +47,19 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 	//private StockpileTab stockpileTab;
 	private Program program;
 
-	public JStockpileItemMenu(Program program, List<StockpileItem> items) {
+	public JStockpileItemMenu(final Program program, final List<StockpileItem> items) {
 		super(TabsStockpile.get().stockpile());
 		this.program = program;
 		
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 		
 		JMenuItem jMenuItem;
-		List<StockpileItem> selected = new ArrayList<StockpileItem>(items);
 
 		JMenu jSubMenu = new JMenu(TabsStockpile.get().addToStockpile());
-		jSubMenu.setEnabled(!selected.isEmpty());
+		jSubMenu.setEnabled(!items.isEmpty());
 		this.add(jSubMenu);
-		if (!selected.isEmpty()) {
-			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), selected);
+		if (!items.isEmpty()) {
+			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), items);
 			jMenuItem.setActionCommand(ACTION_ADD_TO);
 			jMenuItem.addActionListener(this);
 			jSubMenu.add(jMenuItem);
@@ -70,23 +69,23 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 			Collections.sort(stockpiles);
 
 			for (Stockpile stockpile : stockpiles) {
-				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), selected);
+				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
 				jMenuItem.setActionCommand(ACTION_ADD_TO);
 				jMenuItem.addActionListener(this);
 				jSubMenu.add(jMenuItem);
 			}
 		}
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), selected);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), items);
 		jMenuItem.setActionCommand(ACTION_EDIT_ITEM);
 		jMenuItem.addActionListener(this);
-		jMenuItem.setEnabled(selected.size() == 1);
+		jMenuItem.setEnabled(items.size() == 1);
 		this.add(jMenuItem);
 
-		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), selected);
+		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), items);
 		jMenuItem.setActionCommand(ACTION_DELETE_ITEM);
 		jMenuItem.addActionListener(this);
-		jMenuItem.setEnabled(!selected.isEmpty());
+		jMenuItem.setEnabled(!items.isEmpty());
 		this.add(jMenuItem);
 	}
 

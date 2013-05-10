@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
@@ -49,7 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab implements ListEventListener<IndustryJob> {
+public class IndustryJobsTab extends JMainTab implements ListEventListener<IndustryJob>, TableMenu<IndustryJob> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jInventionSuccess;
@@ -91,7 +92,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		//Filter
+		//Table Filter
 		Map<String, List<Filter>> defaultFilters = new HashMap<String, List<Filter>>();
 		List<Filter> filter;
 		filter = new ArrayList<Filter>();
@@ -113,6 +114,9 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 				defaultFilters
 				);
 
+		//Menu
+		installMenu(program, this, jTable, IndustryJob.class);
+
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
 
@@ -129,24 +133,27 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<IndustryJob>(selectionModel.getSelected(), program.getSettings(), IndustryJob.class);
+	public MenuData<IndustryJob> getMenuData() {
+		return new MenuData<IndustryJob>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
 	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }

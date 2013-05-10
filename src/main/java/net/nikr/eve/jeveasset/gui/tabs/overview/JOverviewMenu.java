@@ -44,7 +44,7 @@ public class JOverviewMenu extends JMenu implements ActionListener {
 	private AddToGroup addToGroup = new AddToGroup();
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
 
-	public JOverviewMenu(Program program, List<Overview> selected) {
+	public JOverviewMenu(Program program, OverviewTab overviewTab, List<Overview> selected) {
 		super(TabsOverview.get().groups());
 		this.program = program;
 		this.setIcon(Images.LOC_GROUPS.getIcon());
@@ -53,7 +53,7 @@ public class JOverviewMenu extends JMenu implements ActionListener {
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 
 		//Station, System, Region views
-		if (!program.getOverviewTab().getSelectedView().equals(TabsOverview.get().groups())) {
+		if (!overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
 			jMenuItem = new JMenuItem(TabsOverview.get().add());
 			jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 			jMenuItem.setEnabled(!selected.isEmpty());
@@ -67,15 +67,15 @@ public class JOverviewMenu extends JMenu implements ActionListener {
 
 			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
-				boolean found = overviewGroup.getLocations().containsAll(program.getOverviewTab().getSelectedLocations());
+				boolean found = overviewGroup.getLocations().containsAll(overviewTab.getSelectedLocations());
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (program.getOverviewTab().getSelectedView().equals(TabsOverview.get().stations())) {
+				if (overviewTab.getSelectedView().equals(TabsOverview.get().stations())) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
 				}
-				if (program.getOverviewTab().getSelectedView().equals(TabsOverview.get().systems())) {
+				if (overviewTab.getSelectedView().equals(TabsOverview.get().systems())) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
 				}
-				if (program.getOverviewTab().getSelectedView().equals(TabsOverview.get().regions())) {
+				if (overviewTab.getSelectedView().equals(TabsOverview.get().regions())) {
 					jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 				}
 				jCheckBoxMenuItem.setEnabled(!selected.isEmpty());
@@ -86,7 +86,7 @@ public class JOverviewMenu extends JMenu implements ActionListener {
 			}
 		}
 		//Groups view
-		if (program.getOverviewTab().getSelectedView().equals(TabsOverview.get().groups())) {
+		if (overviewTab.getSelectedView().equals(TabsOverview.get().groups())) {
 			jMenuItem = new JMenuItem(TabsOverview.get().renameGroup());
 			jMenuItem.setIcon(Images.EDIT_RENAME.getIcon());
 			jMenuItem.setEnabled(selected.size() == 1);

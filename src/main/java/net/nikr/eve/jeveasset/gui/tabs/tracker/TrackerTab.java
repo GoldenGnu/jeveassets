@@ -49,7 +49,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JMenu;
 import javax.swing.ToolTipManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
@@ -59,7 +58,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
 import org.jfree.chart.ChartPanel;
@@ -275,21 +273,6 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
-	}
-
-	@Override
-	protected MenuData<?> getMenuData() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getColumnMenu() {
-		return null;
 	}
 
 	@Override

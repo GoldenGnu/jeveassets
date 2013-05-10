@@ -41,24 +41,26 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class OverviewTab extends JMainTab {
+public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 	private static final String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
 	private static final String ACTION_LOAD_FILTER = "ACTION_LOAD_FILTER";
-	private static final String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
+	public static final String ACTION_GROUP_ASSET_FILTER = "ACTION_GROUP_ASSET_FILTER";
+	public static final String ACTION_GROUP_LOOKUP = "ACTION_GROUP_LOOKUP";
 
 	private JOverviewTable jTable;
 	private JToggleButton jStations;
@@ -154,7 +156,9 @@ public class OverviewTab extends JMainTab {
 		installTable(jTable, null);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		
+		//Menu
+		installMenu(program, this, jTable, Overview.class);
+
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
@@ -208,29 +212,29 @@ public class OverviewTab extends JMainTab {
 	}
 
 	@Override
-	protected MenuData getMenuData() {
-		return new MenuData<Overview>(selectionModel.getSelected(), program.getSettings(), Overview.class);
+	public MenuData<Overview> getMenuData() {
+		return new MenuData<Overview>(selectionModel.getSelected(), program.getSettings());
 	}
 
 	@Override
-	protected JMenu getFilterMenu() {
+	public JMenu getFilterMenu() {
 		return null;
 	}
 
 	@Override
-	protected JMenu getColumnMenu() {
+	public JMenu getColumnMenu() {
 		return tableFormat.getMenu(program, tableModel, jTable);
 	}
 
 	@Override
-	protected void addInfoMenu(JComponent jComponent) {
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.overview(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
-	protected void addToolMenu(JComponent jComponent) {
-		jComponent.add(new JOverviewMenu(program, selectionModel.getSelected()));
-		addSeparator(jComponent);
+	public void addToolMenu(JComponent jComponent) {
+		jComponent.add(new JOverviewMenu(program, this, selectionModel.getSelected()));
+		MenuManager.addSeparator(jComponent);
 	}
 
 	@Override
@@ -239,50 +243,22 @@ public class OverviewTab extends JMainTab {
 		updateTable();
 	}
 
-	public void hmm(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	public ActionListener getListenerClass() {
+		return listenerClass;
+	}
 
-		JMenuItem  jMenuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
-		JMenu jSubMenu;
-		JMenuItem jSubMenuItem;
+	public boolean isGroup() {
+		return getSelectedView().equals(TabsOverview.get().groups());
+	}
 
-		int[] selectedRows = jTable.getSelectedRows();
-
-		boolean isSingleRow = selectedRows.length == 1;
-		boolean isSelected = (selectedRows.length > 0 && jTable.getSelectedColumns().length > 0);
-
-		Overview overview = null;
-		if (isSingleRow) {
-			overview = tableModel.getElementAt(selectedRows[0]);
+	public boolean isGroupAndNotEmpty() {
+		int index = jTable.getSelectedRow();
+		if (index < 0) {
+			return false;
 		}
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//GROUPS
-		
-
-		addSeparator(jComponent);
-	//DATA
-		MenuData<Overview> menuData = new MenuData<Overview>(selectionModel.getSelected(), program.getSettings(), Overview.class);
-	//ASSET FILTER
-		jSubMenuItem = new JMenuAssetFilter<Overview>(program, menuData);
-		if (getSelectedView().equals(TabsOverview.get().groups())) {
-			jMenuItem = new JMenuItem(TabsOverview.get().locations());
-			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
-			jMenuItem.setEnabled(isSingleRow);
-			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
-			jMenuItem.addActionListener(listenerClass);
-			jSubMenuItem.add(jMenuItem);
-		}
-		jComponent.add(jSubMenuItem);
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Overview>(program, menuData));
-	//INFO
-		JMenuInfo.overview(jComponent, selectionModel.getSelected());
+		Overview overview = tableModel.getElementAt(index);
+		OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+		return isGroup() && !overviewGroup.getLocations().isEmpty();
 	}
 
 	private void updateStatusbar() {
@@ -372,25 +348,29 @@ public class OverviewTab extends JMainTab {
 			long count = eveAsset.getCount();
 			double volume = eveAsset.getVolumeTotal();
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
-				String location = TabsOverview.get().whitespace();
+				String locationName = TabsOverview.get().whitespace();
+				Location location = eveAsset.getLocation();
 				if (view.equals(TabsOverview.get().regions())) {
-					location = eveAsset.getLocation().getRegion();
+					locationName = eveAsset.getLocation().getRegion();
+					location = ApiIdConverter.getLocation(eveAsset.getLocation().getRegionID());
 				}
 				if (view.equals(TabsOverview.get().systems())) {
-					location = eveAsset.getLocation().getSystem();
+					locationName = eveAsset.getLocation().getSystem();
+					location = ApiIdConverter.getLocation(eveAsset.getLocation().getSystemID());
 				}
 				if (view.equals(TabsOverview.get().stations())) {
-					location = eveAsset.getLocation().getLocation();
+					locationName = eveAsset.getLocation().getLocation();
+					location = ApiIdConverter.getLocation(eveAsset.getLocation().getStationID());
 				}
-				if (locationsMap.containsKey(location)) { //Update existing overview
-					Overview overview = locationsMap.get(location);
+				if (locationsMap.containsKey(locationName)) { //Update existing overview
+					Overview overview = locationsMap.get(locationName);
 					overview.addCount(count);
 					overview.addValue(value);
 					overview.addVolume(volume);
 					overview.addReprocessedValue(reprocessedValue);
 				} else { //Create new overview
-					Overview overview = new Overview(location, eveAsset.getLocation(), reprocessedValue, volume, count, value);
-					locationsMap.put(location, overview);
+					Overview overview = new Overview(locationName, location, reprocessedValue, volume, count, value);
+					locationsMap.put(locationName, overview);
 					locations.add(overview);
 				}
 			} else { //Groups
@@ -536,25 +516,47 @@ public class OverviewTab extends JMainTab {
 				updateTable();
 			}
 			//Filter
-			if (ACTION_ADD_GROUP_FILTER.equals(e.getActionCommand())) {
+			if (ACTION_GROUP_ASSET_FILTER.equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+				List<Filter> filters = new ArrayList<Filter>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
 						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
-						program.getAssetsTab().addFilter(filter);
+						filters.add(filter);
 					}
 					if (location.isSystem()) {
 						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
-						program.getAssetsTab().addFilter(filter);
+						filters.add(filter);
 					}
 					if (location.isRegion()) {
 						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.REGION, CompareType.EQUALS, location.getName());
-						program.getAssetsTab().addFilter(filter);
+						filters.add(filter);
 					}
 				}
+				program.getAssetsTab().addFilters(filters);
 				program.getMainWindow().addTab(program.getAssetsTab());
+			}
+			if (ACTION_GROUP_LOOKUP.equals(e.getActionCommand())) {
+				int index = jTable.getSelectedRow();
+				Overview overview = tableModel.getElementAt(index);
+				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+				Set<String> stations = new HashSet<String>();
+				Set<String> systems = new HashSet<String>();
+				Set<String> regions = new HashSet<String>();
+				for (OverviewLocation location : overviewGroup.getLocations()) {
+					if (location.isStation()) {
+						stations.add(location.getName());
+					}
+					if (location.isSystem()) {
+						systems.add(location.getName());
+					}
+					if (location.isRegion()) {
+						regions.add(location.getName());
+					}
+				}
+				JMenuLookup.browseDotlan(program, stations, systems, regions);
 			}
 			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
 				Object source = e.getSource();

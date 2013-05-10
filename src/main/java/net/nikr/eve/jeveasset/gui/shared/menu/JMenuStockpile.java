@@ -26,28 +26,30 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class JMenuStockpile<T> extends JMenu implements ActionListener {
+public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 
 	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
 	private static final int DEFAULT_ADD_COUNT = 1;
-	private Program program;
+
+	private final Program program;
+	private final List<JMenuItem> jMenuItems = new ArrayList<JMenuItem>();
+
 	private MenuData<T> menuData;
 
-	public JMenuStockpile(final Program program, final MenuData<T> menuData) {
+	public JMenuStockpile(final Program program) {
 		super(GuiShared.get().stockpile());
 		this.program = program;
-		this.menuData = menuData;
 
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
@@ -55,10 +57,10 @@ public class JMenuStockpile<T> extends JMenu implements ActionListener {
 
 		jMenuItem = new JStockpileMenu(GuiShared.get().newStockpile());
 		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 		jMenuItem.setActionCommand(ACTION_ADD_TO);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
+		jMenuItems.add(jMenuItem);
 
 		if (!program.getSettings().getStockpiles().isEmpty()) {
 			this.addSeparator();
@@ -68,10 +70,18 @@ public class JMenuStockpile<T> extends JMenu implements ActionListener {
 		for (Stockpile stockpile : stockpiles) {
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 			jMenuItem.setActionCommand(ACTION_ADD_TO);
 			jMenuItem.addActionListener(this);
 			add(jMenuItem);
+			jMenuItems.add(jMenuItem);
+		}
+	}
+
+	@Override
+	public void setMenuData(MenuData<T> menuData) {
+		this.menuData = menuData;
+		for (JMenuItem jMenuItem : jMenuItems) {
+			jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
 		}
 	}
 
@@ -117,5 +127,4 @@ public class JMenuStockpile<T> extends JMenu implements ActionListener {
 			return stockpile;
 		}
 	}
-
 }

@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
@@ -247,21 +246,6 @@ public class RoutingTab extends JMainTab  {
 			);
 		//Only need to build the graph once
 		buildGraph();
-	}
-
-	@Override
-	protected MenuData<?> getMenuData() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getColumnMenu() {
-		return null;
 	}
 
 	@Override

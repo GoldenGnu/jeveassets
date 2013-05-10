@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -153,21 +151,6 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 					.addComponent(jCorporationScroll, 0, 0, Short.MAX_VALUE)
 				)
 		);
-	}
-
-	@Override
-	protected MenuData getMenuData() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	protected JMenu getColumnMenu() {
-		return null;
 	}
 
 	@Override
