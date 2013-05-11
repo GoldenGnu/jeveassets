@@ -38,7 +38,7 @@ public class FakeAsset extends Asset {
 	}
 
 	@Override
-	public void addEveAsset(final Asset eveAsset) {
+	public void addAsset(final Asset asset) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 

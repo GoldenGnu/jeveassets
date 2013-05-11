@@ -51,7 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -70,7 +70,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 	private EventList<Asset> eventList;
 	private FilterList<Asset> filterList;
 	private AssetFilterControl filterControl;
-	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
+	private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
 	private DefaultEventSelectionModel<Asset> selectionModel;
 
 	public static final String NAME = "assets"; //Not to be changed!
@@ -80,7 +80,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		layout.setAutoCreateGaps(true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, Asset>(AssetTableFormat.class);
 		//Backend
 		eventList = program.getAssetEventList();
 		//Filter
@@ -241,10 +241,10 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 	public static class AssetFilterControl extends FilterControl<Asset> {
 
-		private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat;
+		private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
 		private Program program;
 
-		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<EveAssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
 			this.program = program;
@@ -252,8 +252,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 		@Override
 		protected Object getColumnValue(final Asset item, final String column) {
-			EveAssetTableFormat format = EveAssetTableFormat.valueOf(column);
-			if (format == EveAssetTableFormat.ITEM_ID) {
+			AssetTableFormat format = AssetTableFormat.valueOf(column);
+			if (format == AssetTableFormat.ITEM_ID) {
 				LongInt longInt = (LongInt) format.getColumnValue(item);
 				return longInt.getNumber();
 			} else {
@@ -263,14 +263,14 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 		@Override
 		protected boolean isNumericColumn(final Enum<?> column) {
-			EveAssetTableFormat format = (EveAssetTableFormat) column;
+			AssetTableFormat format = (AssetTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
 			} else if (format.getType().getName().equals(Percent.class.getName())) {
 				return true;
-			} else if (format == EveAssetTableFormat.ITEM_ID) {
+			} else if (format == AssetTableFormat.ITEM_ID) {
 				return true;
-			} else if (format == EveAssetTableFormat.SECURITY) {
+			} else if (format == AssetTableFormat.SECURITY) {
 				return true;
 			} else {
 				return false;
@@ -279,7 +279,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 		@Override
 		protected boolean isDateColumn(final Enum<?> column) {
-			EveAssetTableFormat format = (EveAssetTableFormat) column;
+			AssetTableFormat format = (AssetTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
 			} else {
@@ -289,17 +289,17 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 		@Override
 		public Enum[] getColumns() {
-			return EveAssetTableFormat.values();
+			return AssetTableFormat.values();
 		}
 
 		@Override
 		protected Enum<?> valueOf(final String column) {
-			return EveAssetTableFormat.valueOf(column);
+			return AssetTableFormat.valueOf(column);
 		}
 
 		@Override
 		protected List<EnumTableColumn<Asset>> getEnumColumns() {
-			return columnsAsList(EveAssetTableFormat.values());
+			return columnsAsList(AssetTableFormat.values());
 		}
 
 		@Override

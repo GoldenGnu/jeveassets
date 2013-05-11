@@ -353,12 +353,12 @@ public class RoutingTab extends JMainTab  {
 			assets = new ArrayList<Asset>();
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
-				for (Asset eveAsset : program.getAssetEventList()) {
-					if ((location.getName().equals(eveAsset.getLocation().getLocation()))
-						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getLocation().getSystem()))
-						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getLocation().getRegion()))
+				for (Asset asset : program.getAssetEventList()) {
+					if ((location.getName().equals(asset.getLocation().getLocation()))
+						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(asset.getLocation().getSystem()))
+						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(asset.getLocation().getRegion()))
 						) {
-						assets.add(eveAsset);
+						assets.add(asset);
 					}
 				}
 			}

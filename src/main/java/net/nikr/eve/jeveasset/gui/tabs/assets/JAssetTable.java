@@ -47,7 +47,7 @@ public class JAssetTable extends JAutoColumnTable {
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		//User set price
-		if (asset.isUserPrice() && columnName.equals(EveAssetTableFormat.PRICE.getColumnName())) {
+		if (asset.isUserPrice() && columnName.equals(AssetTableFormat.PRICE.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {
@@ -56,7 +56,7 @@ public class JAssetTable extends JAutoColumnTable {
 			return component;
 		}
 		//User set name
-		if (asset.isUserName() && columnName.equals(EveAssetTableFormat.NAME.getColumnName())) {
+		if (asset.isUserName() && columnName.equals(AssetTableFormat.NAME.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {
@@ -67,10 +67,10 @@ public class JAssetTable extends JAutoColumnTable {
 		//Blueprint Original
 		if (asset.isBPO()
 				&& asset.getItem().isBlueprint()
-				&& (columnName.equals(EveAssetTableFormat.PRICE.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.PRICE_SELL_MIN.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.PRICE_BUY_MAX.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.NAME.getColumnName()))) {
+				&& (columnName.equals(AssetTableFormat.PRICE.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_SELL_MIN.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_BUY_MAX.getColumnName())
+				|| columnName.equals(AssetTableFormat.NAME.getColumnName()))) {
 			if (!isSelected) {
 				component.setBackground(new Color(255, 255, 200));
 			} else {
@@ -115,7 +115,7 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 
 		//Reproccessed is greater then price
-		if (asset.getPriceReprocessed() > asset.getDynamicPrice() && columnName.equals(EveAssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
+		if (asset.getPriceReprocessed() > asset.getDynamicPrice() && columnName.equals(AssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(255, 255, 200));
 			} else {

@@ -76,16 +76,16 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final Double price;
 	private final MaterialType type;
 
-	public Material(final MaterialType type, final Asset eveAsset, final String header, final String group, final String name) {
+	public Material(final MaterialType type, final Asset asset, final String header, final String group, final String name) {
 		this.type = type;
 		this.header = header;
 		this.group = group;
 		this.name = name;
-		if (eveAsset != null) {
+		if (asset != null) {
 			//Has item
 			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY) {
-				this.item = eveAsset.getItem();
-				this.price = eveAsset.getDynamicPrice();
+				this.item = asset.getItem();
+				this.price = asset.getDynamicPrice();
 			} else {
 				this.item = new Item(0);
 				this.price = null;
@@ -94,7 +94,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 			
 			//Has location
 			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
-				location = eveAsset.getLocation();
+				location = asset.getLocation();
 			} else {
 				location = new Location(0);
 			}

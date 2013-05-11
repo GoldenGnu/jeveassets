@@ -104,7 +104,7 @@ public class PriceDataGetter implements PricingListener {
 		//Get all price ids
 		ids = profileData.getPriceTypeIDs();
 
-		PricingFactory.setPricingOptions(new EveAssetPricingOptions());
+		PricingFactory.setPricingOptions(new DefaultPricingOptions());
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
 		pricing.resetAllAttemptCounters();
@@ -224,7 +224,7 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	private class EveAssetPricingOptions implements PricingOptions {
+	private class DefaultPricingOptions implements PricingOptions {
 
 		@Override
 		public long getPriceCacheTimer() {

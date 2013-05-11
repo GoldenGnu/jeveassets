@@ -50,7 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -323,17 +323,17 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				}
 			}
 		}
-		for (Asset eveAsset : input) {
+		for (Asset asset : input) {
 			String name;
-			if (eveAsset.isCorporation()) {
-				name = TabsOverview.get().whitespace4(eveAsset.getOwner());
+			if (asset.isCorporation()) {
+				name = TabsOverview.get().whitespace4(asset.getOwner());
 			} else {
-				name = eveAsset.getOwner();
+				name = asset.getOwner();
 			}
-			if (eveAsset.getItem().getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) {
+			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) {
 				continue;
 			}
-			if (eveAsset.getItem().getGroup().equals("Station Services")) {
+			if (asset.getItem().getGroup().equals("Station Services")) {
 				continue;
 			}
 			//Filters
@@ -343,24 +343,24 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 			rowCount++;
 
-			double reprocessedValue = eveAsset.getValueReprocessed();
-			double value = eveAsset.getValue();
-			long count = eveAsset.getCount();
-			double volume = eveAsset.getVolumeTotal();
+			double reprocessedValue = asset.getValueReprocessed();
+			double value = asset.getValue();
+			long count = asset.getCount();
+			double volume = asset.getVolumeTotal();
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
 				String locationName = TabsOverview.get().whitespace();
-				Location location = eveAsset.getLocation();
+				Location location = asset.getLocation();
 				if (view.equals(TabsOverview.get().regions())) {
-					locationName = eveAsset.getLocation().getRegion();
-					location = ApiIdConverter.getLocation(eveAsset.getLocation().getRegionID());
+					locationName = asset.getLocation().getRegion();
+					location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());
 				}
 				if (view.equals(TabsOverview.get().systems())) {
-					locationName = eveAsset.getLocation().getSystem();
-					location = ApiIdConverter.getLocation(eveAsset.getLocation().getSystemID());
+					locationName = asset.getLocation().getSystem();
+					location = ApiIdConverter.getLocation(asset.getLocation().getSystemID());
 				}
 				if (view.equals(TabsOverview.get().stations())) {
-					locationName = eveAsset.getLocation().getLocation();
-					location = ApiIdConverter.getLocation(eveAsset.getLocation().getStationID());
+					locationName = asset.getLocation().getLocation();
+					location = ApiIdConverter.getLocation(asset.getLocation().getStationID());
 				}
 				if (locationsMap.containsKey(locationName)) { //Update existing overview
 					Overview overview = locationsMap.get(locationName);
@@ -377,7 +377,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
 					OverviewGroup overviewGroup = entry.getValue();
 					for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
-						if (overviewLocation.equalsLocation(eveAsset)) { //Update existing overview (group)
+						if (overviewLocation.equalsLocation(asset)) { //Update existing overview (group)
 							Overview overview = locationsMap.get(overviewGroup.getName());
 							overview.addCount(count);
 							overview.addValue(value);
@@ -523,15 +523,15 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				List<Filter> filters = new ArrayList<Filter>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
-						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
 						filters.add(filter);
 					}
 					if (location.isSystem()) {
-						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
 						filters.add(filter);
 					}
 					if (location.isRegion()) {
-						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.REGION, CompareType.EQUALS, location.getName());
+						Filter filter = new Filter(LogicType.OR, AssetTableFormat.REGION, CompareType.EQUALS, location.getName());
 						filters.add(filter);
 					}
 				}

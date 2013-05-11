@@ -53,7 +53,7 @@ public class Update1To2 implements LocalUpdate {
 			// current changes are:
 			// 1. XPath: /settings/filters/filter/row[@mode]
 			// changed from (e.g.) "Contains" to the enum value name in AssetFilter.Mode
-			// 2. settings/marketstat[@defaultprice] --> another enum: EveAsset.PriceMode
+			// 2. settings/marketstat[@defaultprice] --> another enum: Asset.PriceMode
 			// 3. settings/columns/column --> settings/tables/table/column
 			// settings/flags/flag --> removed two flags (now in settings/tables/table)
 			SAXReader xmlReader = new SAXReader();

@@ -40,7 +40,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
@@ -626,7 +626,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		//Assets
 		try {
 			if (tableName.equals(AssetsTab.NAME)) {
-				return EveAssetTableFormat.valueOf(column);
+				return AssetTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 
@@ -708,30 +708,30 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private Enum<?> convertColumn(final String column) {
-		if (column.equals("Name")) { return EveAssetTableFormat.NAME; }
-		if (column.equals("Group")) { return EveAssetTableFormat.GROUP; }
-		if (column.equals("Category")) { return EveAssetTableFormat.CATEGORY; }
-		if (column.equals("Owner")) { return EveAssetTableFormat.OWNER; }
-		if (column.equals("Count")) { return EveAssetTableFormat.COUNT; }
-		if (column.equals("Location")) { return EveAssetTableFormat.LOCATION; }
-		if (column.equals("Container")) { return EveAssetTableFormat.CONTAINER; }
-		if (column.equals("Flag")) { return EveAssetTableFormat.FLAG; }
-		if (column.equals("Price")) { return EveAssetTableFormat.PRICE; }
-		if (column.equals("Sell Min")) { return EveAssetTableFormat.PRICE_SELL_MIN; }
-		if (column.equals("Buy Max")) { return EveAssetTableFormat.PRICE_BUY_MAX; }
-		if (column.equals("Base Price")) { return EveAssetTableFormat.PRICE_BASE; }
-		if (column.equals("Value")) { return EveAssetTableFormat.VALUE; }
-		if (column.equals("Meta")) { return EveAssetTableFormat.META; }
-		if (column.equals("ID")) { return EveAssetTableFormat.ITEM_ID; }
-		if (column.equals("Volume")) { return EveAssetTableFormat.VOLUME; }
-		if (column.equals("Type ID")) { return EveAssetTableFormat.TYPE_ID; }
-		if (column.equals("Region")) { return EveAssetTableFormat.REGION; }
-		if (column.equals("Type Count")) { return EveAssetTableFormat.COUNT_TYPE; }
-		if (column.equals("Security")) { return EveAssetTableFormat.SECURITY; }
-		if (column.equals("Reprocessed")) { return EveAssetTableFormat.PRICE_REPROCESSED; }
-		if (column.equals("Reprocessed Value")) { return EveAssetTableFormat.VALUE_REPROCESSED; }
-		if (column.equals("Singleton")) { return EveAssetTableFormat.SINGLETON; }
-		if (column.equals("Total Volume")) { return EveAssetTableFormat.VOLUME_TOTAL; }
+		if (column.equals("Name")) { return AssetTableFormat.NAME; }
+		if (column.equals("Group")) { return AssetTableFormat.GROUP; }
+		if (column.equals("Category")) { return AssetTableFormat.CATEGORY; }
+		if (column.equals("Owner")) { return AssetTableFormat.OWNER; }
+		if (column.equals("Count")) { return AssetTableFormat.COUNT; }
+		if (column.equals("Location")) { return AssetTableFormat.LOCATION; }
+		if (column.equals("Container")) { return AssetTableFormat.CONTAINER; }
+		if (column.equals("Flag")) { return AssetTableFormat.FLAG; }
+		if (column.equals("Price")) { return AssetTableFormat.PRICE; }
+		if (column.equals("Sell Min")) { return AssetTableFormat.PRICE_SELL_MIN; }
+		if (column.equals("Buy Max")) { return AssetTableFormat.PRICE_BUY_MAX; }
+		if (column.equals("Base Price")) { return AssetTableFormat.PRICE_BASE; }
+		if (column.equals("Value")) { return AssetTableFormat.VALUE; }
+		if (column.equals("Meta")) { return AssetTableFormat.META; }
+		if (column.equals("ID")) { return AssetTableFormat.ITEM_ID; }
+		if (column.equals("Volume")) { return AssetTableFormat.VOLUME; }
+		if (column.equals("Type ID")) { return AssetTableFormat.TYPE_ID; }
+		if (column.equals("Region")) { return AssetTableFormat.REGION; }
+		if (column.equals("Type Count")) { return AssetTableFormat.COUNT_TYPE; }
+		if (column.equals("Security")) { return AssetTableFormat.SECURITY; }
+		if (column.equals("Reprocessed")) { return AssetTableFormat.PRICE_REPROCESSED; }
+		if (column.equals("Reprocessed Value")) { return AssetTableFormat.VALUE_REPROCESSED; }
+		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
+		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
 		return Filter.ExtraColumns.ALL; //Fallback
 	}
 

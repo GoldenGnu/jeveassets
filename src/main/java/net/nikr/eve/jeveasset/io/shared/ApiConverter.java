@@ -55,14 +55,14 @@ public final class ApiConverter {
 	}
 
 	public static List<Asset> assetIndustryJob(final List<IndustryJob> industryJobs, final Owner owner) {
-		List<Asset> eveAssets = new ArrayList<Asset>();
+		List<Asset> assets = new ArrayList<Asset>();
 		for (IndustryJob industryJob : industryJobs) {
 			if (!industryJob.isCompleted()) {
-				Asset eveAsset = toAssetIndustryJob(industryJob, owner);
-				eveAssets.add(eveAsset);
+				Asset asset = toAssetIndustryJob(industryJob, owner);
+				assets.add(asset);
 			}
 		}
-		return eveAssets;
+		return assets;
 	}
 
 	private static Asset toAssetIndustryJob(final IndustryJob industryJob, final Owner owner) {
@@ -82,40 +82,40 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, id, typeID, locationID, singleton, rawQuantity, null);
 	}
 
-	public static List<Asset> convertAsset(final List<EveAsset<?>> assets, final Owner owner) {
-		List<Asset> eveAssets = new ArrayList<Asset>();
-		toDeepAsset(assets, eveAssets, null, owner);
-		return eveAssets;
+	public static List<Asset> convertAsset(final List<EveAsset<?>> eveAssets, final Owner owner) {
+		List<Asset> assets = new ArrayList<Asset>();
+		toDeepAsset(eveAssets, assets, null, owner);
+		return assets;
 	}
-	private static void toDeepAsset(final List<EveAsset<?>> eveAssets, final List<Asset> assets, final Asset parentEveAsset, final Owner owner) {
-		for (EveAsset<?> asset : eveAssets) {
-			Asset eveAsset = toAsset(owner, asset, parentEveAsset);
-			if (parentEveAsset == null) {
-				assets.add(eveAsset);
+	private static void toDeepAsset(final List<EveAsset<?>> eveAssets, final List<Asset> assets, final Asset parentAsset, final Owner owner) {
+		for (EveAsset<?> eveAsset : eveAssets) {
+			Asset asset = toAsset(owner, eveAsset, parentAsset);
+			if (parentAsset == null) {
+				assets.add(asset);
 			} else {
-				parentEveAsset.addEveAsset(eveAsset);
+				parentAsset.addAsset(asset);
 			}
-			toDeepAsset(new ArrayList<EveAsset<?>>(asset.getAssets()), assets, eveAsset, owner);
+			toDeepAsset(new ArrayList<EveAsset<?>>(eveAsset.getAssets()), assets, asset, owner);
 		}
 	}
 
-	private static Asset toAsset(final Owner owner, final EveAsset<?> apiAsset, final Asset parentEveAsset) {
-		long count = apiAsset.getQuantity();
-		int flagID = apiAsset.getFlag();
-		long itemId = apiAsset.getItemID();
-		int typeID = apiAsset.getTypeID();
+	private static Asset toAsset(final Owner owner, final EveAsset<?> eveAsset, final Asset parentAsset) {
+		long count = eveAsset.getQuantity();
+		int flagID = eveAsset.getFlag();
+		long itemId = eveAsset.getItemID();
+		int typeID = eveAsset.getTypeID();
 		long locationID;
-		if (apiAsset.getLocationID() != null) { //Top level
-			locationID = apiAsset.getLocationID();
-		} else if (parentEveAsset != null) { //Sub level
-			locationID = parentEveAsset.getLocation().getLocationID();
+		if (eveAsset.getLocationID() != null) { //Top level
+			locationID = eveAsset.getLocationID();
+		} else if (parentAsset != null) { //Sub level
+			locationID = parentAsset.getLocation().getLocationID();
 		} else { //Fail (fallback)
 			locationID = 0;
 		}
-		boolean singleton  = apiAsset.getSingleton();
-		int rawQuantity = apiAsset.getRawQuantity();
+		boolean singleton  = eveAsset.getSingleton();
+		int rawQuantity = eveAsset.getRawQuantity();
 
-		return createAsset(parentEveAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 
 	}
 	public static List<MarketOrder> convertMarketOrders(final List<ApiMarketOrder> apiMarketOrders, final Owner owner) {
@@ -133,17 +133,17 @@ public final class ApiConverter {
 	}
 
 	public static List<Asset> assetMarketOrder(final List<MarketOrder> marketOrders, final Owner owner, final Settings settings) {
-		List<Asset> eveAssets = new ArrayList<Asset>();
+		List<Asset> assets = new ArrayList<Asset>();
 		for (MarketOrder marketOrder : marketOrders) {
 			if (marketOrder.getOrderState() == 0 && marketOrder.getVolRemaining() > 0
 					&& ((marketOrder.getBid() < 1 && settings.isIncludeSellOrders())
 					|| (marketOrder.getBid() > 0 && settings.isIncludeBuyOrders()))
 					) {
-				Asset eveAsset = toAssetMarketOrder(marketOrder, owner);
-				eveAssets.add(eveAsset);
+				Asset asset = toAssetMarketOrder(marketOrder, owner);
+				assets.add(asset);
 			}
 		}
-		return eveAssets;
+		return assets;
 	}
 
 	private static Asset toAssetMarketOrder(final MarketOrder marketOrder, final Owner owner) {

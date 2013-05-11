@@ -29,12 +29,12 @@ import uk.me.candle.translations.Bundle;
  *
  * @author Candle
  */
-public abstract class DataModelEveAsset extends Bundle {
-	public static DataModelEveAsset get() {
-		return Main.getBundleService().get(DataModelEveAsset.class);
+public abstract class DataModelAsset extends Bundle {
+	public static DataModelAsset get() {
+		return Main.getBundleService().get(DataModelAsset.class);
 	}
 
-	public DataModelEveAsset(final Locale locale) {
+	public DataModelAsset(final Locale locale) {
 		super(locale);
 	}
 

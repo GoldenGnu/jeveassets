@@ -64,8 +64,8 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		public UserName(final UserItem<Long, String> userItem) {
 			super(userItem);
 		}
-		public UserName(final Asset eveAsset) {
-			super(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getItem().getTypeName());
+		public UserName(final Asset asset) {
+			super(asset.getName(), asset.getItemID(), asset.getItem().getTypeName());
 		}
 		public UserName(final String value, final Long key, final String name) {
 			super(value, key, name);

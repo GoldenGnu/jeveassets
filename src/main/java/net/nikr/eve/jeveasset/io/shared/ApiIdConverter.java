@@ -165,11 +165,11 @@ public final class ApiIdConverter {
 		return "!" + String.valueOf(ownerID);
 	}
 
-	public static List<Asset> getParents(final Asset parentEveAsset) {
+	public static List<Asset> getParents(final Asset parentAsset) {
 		List<Asset> parents;
-		if (parentEveAsset != null) {
-			parents = new ArrayList<Asset>(parentEveAsset.getParents());
-			parents.add(parentEveAsset);
+		if (parentAsset != null) {
+			parents = new ArrayList<Asset>(parentAsset.getParents());
+			parents.add(parentAsset);
 		} else {
 			parents = new ArrayList<Asset>();
 		}

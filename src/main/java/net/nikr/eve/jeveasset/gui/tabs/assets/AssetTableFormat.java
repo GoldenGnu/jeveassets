@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
+public enum AssetTableFormat implements EnumTableColumn<Asset> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -360,7 +360,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	private Class<?> type;
 	private Comparator<?> comparator;
 
-	private EveAssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private AssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}

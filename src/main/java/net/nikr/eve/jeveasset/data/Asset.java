@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
+import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
 public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType {
 
@@ -37,67 +37,67 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		PRICE_SELL_MAX() {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceSellMax();
+				return DataModelAsset.get().priceSellMax();
 			}
 		},
 		PRICE_SELL_AVG {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceSellAvg();
+				return DataModelAsset.get().priceSellAvg();
 			}
 		},
 		PRICE_SELL_MEDIAN {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceSellMedian();
+				return DataModelAsset.get().priceSellMedian();
 			}
 		},
 		PRICE_SELL_PERCENTILE {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceSellPercentile();
+				return DataModelAsset.get().priceSellPercentile();
 			}
 		},
 		PRICE_SELL_MIN {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceSellMin();
+				return DataModelAsset.get().priceSellMin();
 			}
 		},
 		PRICE_MIDPOINT {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceMidpoint();
+				return DataModelAsset.get().priceMidpoint();
 			}
 		},
 		PRICE_BUY_MAX {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMax();
+				return DataModelAsset.get().priceBuyMax();
 			}
 		},
 		PRICE_BUY_PERCENTILE {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyPercentile();
+				return DataModelAsset.get().priceBuyPercentile();
 			}
 		},
 		PRICE_BUY_AVG {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyAvg();
+				return DataModelAsset.get().priceBuyAvg();
 			}
 		},
 		PRICE_BUY_MEDIAN {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMedian();
+				return DataModelAsset.get().priceBuyMedian();
 			}
 		},
 		PRICE_BUY_MIN {
 			@Override
 			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMin();
+				return DataModelAsset.get().priceBuyMin();
 			}
 		};
 		abstract String getI18N();
@@ -178,8 +178,8 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.name = getTypeName();
 	}
 
-	public void addEveAsset(final Asset eveAsset) {
-		assets.add(eveAsset);
+	public void addAsset(final Asset asset) {
+		assets.add(asset);
 	}
 
 	public Date getAdded() {
@@ -428,9 +428,9 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 	public String getSingleton() {
 		if (singleton) {
-			return DataModelEveAsset.get().unpackaged();
+			return DataModelAsset.get().unpackaged();
 		} else {
-			return DataModelEveAsset.get().packaged();
+			return DataModelAsset.get().packaged();
 		}
 	}
 

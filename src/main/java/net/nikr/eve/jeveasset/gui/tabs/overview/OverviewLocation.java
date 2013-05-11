@@ -61,8 +61,8 @@ public class OverviewLocation {
 		return type.equals(LocationType.TYPE_REGION);
 	}
 
-	public boolean equalsLocation(final Asset eveAsset) {
-		return (name.equals(eveAsset.getLocation().getLocation()) || name.equals(eveAsset.getLocation().getSystem()) || name.equals(eveAsset.getLocation().getRegion()));
+	public boolean equalsLocation(final Asset asset) {
+		return (name.equals(asset.getLocation().getLocation()) || name.equals(asset.getLocation().getSystem()) || name.equals(asset.getLocation().getRegion()));
 	}
 
 	public boolean equalsLocation(final Overview overview) {

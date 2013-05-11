@@ -379,14 +379,14 @@ public class ProfileData {
 			}
 			//Contaioner
 			String sContainer = "";
-			for (Asset parentEveAsset : asset.getParents()) {
+			for (Asset parentAsset : asset.getParents()) {
 				if (!sContainer.isEmpty()) {
 					sContainer = sContainer + ">";
 				}
-				if (!parentEveAsset.isUserName()) {
-					sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
+				if (!parentAsset.isUserName()) {
+					sContainer = sContainer + parentAsset.getName() + " #" + parentAsset.getItemID();
 				} else {
-					sContainer = sContainer + parentEveAsset.getName();
+					sContainer = sContainer + parentAsset.getName();
 				}
 			}
 			if (sContainer.isEmpty()) {

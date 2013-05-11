@@ -507,30 +507,30 @@ public final class ProfileReader extends AbstractXmlReader {
 		return apiIndustryJob;
 	}
 
-	private void parseAssets(final Node node, final Owner owner, final List<Asset> assets, final Asset parentEveAsset) {
+	private void parseAssets(final Node node, final Owner owner, final List<Asset> assets, final Asset parentAsset) {
 		NodeList assetsNodes = node.getChildNodes();
 		for (int i = 0; i < assetsNodes.getLength(); i++) {
 			Node currentNode = assetsNodes.item(i);
 			if (currentNode.getNodeName().equals("asset")) {
-				Asset eveAsset = parseEveAsset(currentNode, owner, parentEveAsset);
-				if (parentEveAsset == null) {
-					assets.add(eveAsset);
+				Asset asset = parseEveAsset(currentNode, owner, parentAsset);
+				if (parentAsset == null) {
+					assets.add(asset);
 				} else {
-					parentEveAsset.addEveAsset(eveAsset);
+					parentAsset.addAsset(asset);
 				}
-				parseAssets(currentNode, owner, assets, eveAsset);
+				parseAssets(currentNode, owner, assets, asset);
 			}
 		}
 	}
 
-	private Asset parseEveAsset(final Node node, final Owner owner, final Asset parentEveAsset) {
+	private Asset parseEveAsset(final Node node, final Owner owner, final Asset parentAsset) {
 		long count = AttributeGetters.getLong(node, "count");
 
 		long itemId = AttributeGetters.getLong(node, "id");
 		int typeID = AttributeGetters.getInt(node, "typeid");
 		long locationID = AttributeGetters.getInt(node, "locationid");
-		if (locationID == 0 && parentEveAsset != null) {
-			locationID = parentEveAsset.getLocation().getLocationID();
+		if (locationID == 0 && parentAsset != null) {
+			locationID = parentAsset.getLocation().getLocationID();
 		}
 		boolean singleton = AttributeGetters.getBoolean(node, "singleton");
 		int rawQuantity = 0;
@@ -549,6 +549,6 @@ public final class ProfileReader extends AbstractXmlReader {
 				}
 			}
 		}
-		return ApiConverter.createAsset(parentEveAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return ApiConverter.createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
 	}
 }

@@ -34,7 +34,7 @@ public class TestI18N {
 
 	@Test
 	public void testDataModelAssetBundle_en() throws Exception {
-		DataModelEveAsset g = Main.getBundleService().get(DataModelEveAsset.class);
+		DataModelAsset g = Main.getBundleService().get(DataModelAsset.class);
 		assertNotNull(g.priceBuyAvg());
 	}
 

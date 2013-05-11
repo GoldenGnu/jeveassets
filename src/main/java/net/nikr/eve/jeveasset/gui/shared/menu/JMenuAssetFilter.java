@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
-import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -117,28 +117,28 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())) {
 			for (String station : menuData.getStations()) {
-				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.EQUALS, station);
+				Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, station);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())) {
 			for (String system : menuData.getSystems()) {
-				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, system);
+				Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())) {
 			for (String region : menuData.getRegions()) {
-				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.REGION, CompareType.EQUALS, region);
+				Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())) {
 			for (String typeName : menuData.getTypeNames()) {
-				Filter filter = new Filter(LogicType.AND, EveAssetTableFormat.NAME, CompareType.CONTAINS, typeName);
+				Filter filter = new Filter(LogicType.AND, AssetTableFormat.NAME, CompareType.CONTAINS, typeName);
 				program.getAssetsTab().addFilter(filter);
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
