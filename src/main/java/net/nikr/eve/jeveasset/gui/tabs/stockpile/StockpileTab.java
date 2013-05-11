@@ -738,7 +738,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 	public static class StockpileSeparatorComparator implements Comparator<StockpileItem> {
 		@Override
 		public int compare(final StockpileItem o1, final StockpileItem o2) {
-			return o1.getSeperator().compareTo(o2.getSeperator());
+			return o1.getSeparator().compareTo(o2.getSeparator());
 		}
 	}
 

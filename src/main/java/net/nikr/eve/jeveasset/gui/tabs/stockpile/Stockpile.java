@@ -418,7 +418,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.getStockpile().updateTotal();
 		}
 
-		public String getSeperator() {
+		public String getSeparator() {
 			return stockpile.getName();
 		}
 

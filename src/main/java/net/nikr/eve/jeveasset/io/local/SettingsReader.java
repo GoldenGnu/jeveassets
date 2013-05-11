@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.*;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.Asset.PriceMode;
-import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
@@ -755,10 +755,10 @@ public final class SettingsReader extends AbstractXmlReader {
 
 	private void parseExportSettings(final Element element) {
 		//CSV
-		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
+		DecimalSeparator decimal = DecimalSeparator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
-		Settings.getExportSettings().setDecimalSeperator(decimal);
+		Settings.getExportSettings().setDecimalSeparator(decimal);
 		Settings.getExportSettings().setFieldDelimiter(field);
 		Settings.getExportSettings().setLineDelimiter(line);
 		//SQL

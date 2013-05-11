@@ -54,8 +54,8 @@ public class JMenuCopy extends JMenuItem {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator) value;
 					Object object = separator.first();
 					if (object instanceof CopySeparator) {
-						CopySeparator copySeperator = (CopySeparator) object;
-						separatorText = copySeperator.getCopyString();
+						CopySeparator copySeparator = (CopySeparator) object;
+						separatorText = copySeparator.getCopyString();
 					}
 					break;
 				}

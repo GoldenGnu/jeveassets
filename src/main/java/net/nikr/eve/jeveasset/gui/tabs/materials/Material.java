@@ -157,7 +157,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 		return Formater.round(value, 2);
 	}
 
-	public String getSeperator() {
+	public String getSeparator() {
 		return type.getHeaderOrder() + header + type.getGoupeOrder() + group;
 	}
 

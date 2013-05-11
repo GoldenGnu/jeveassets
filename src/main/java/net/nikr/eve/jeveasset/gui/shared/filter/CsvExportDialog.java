@@ -34,7 +34,7 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ExportSettings;
-import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeperator;
+import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -173,8 +173,8 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
 		jLineDelimiter = new JComboBox(LineDelimiter.values());
 
-		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeperator());
-		jDecimalSeparator = new JComboBox(DecimalSeperator.values());
+		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
+		jDecimalSeparator = new JComboBox(DecimalSeparator.values());
 
 	//Sql
 		JLabel jSqlLable = new JLabel(DialoguesExport.get().sql());
@@ -368,12 +368,12 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		}
 	}
 
-	private String format(final Object object, final DecimalSeperator decimalSeperator) {
+	private String format(final Object object, final DecimalSeparator decimalSeparator) {
 		if (object == null) {
 			return "";
 		} else if (object instanceof Number) {
 			Number number = (Number) object;
-			if (decimalSeperator == DecimalSeperator.DOT) {
+			if (decimalSeparator == DecimalSeparator.DOT) {
 				return EN_NUMBER_FORMAT.format(number);
 			} else {
 				return EU_NUMBER_FORMAT.format(number);
@@ -389,7 +389,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		//CSV
 		Settings.getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
 		Settings.getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
-		Settings.getExportSettings().setDecimalSeperator((DecimalSeperator) jDecimalSeparator.getSelectedItem());
+		Settings.getExportSettings().setDecimalSeparator((DecimalSeparator) jDecimalSeparator.getSelectedItem());
 		//SQL
 		Settings.getExportSettings().putTableName(matcherControl.getName(), jTableName.getText());
 		Settings.getExportSettings().setDropTable(jDropTable.isSelected());
@@ -407,7 +407,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		//CSV
 		jFieldDelimiter.setSelectedItem(Settings.getExportSettings().getFieldDelimiter());
 		jLineDelimiter.setSelectedItem(Settings.getExportSettings().getLineDelimiter());
-		jDecimalSeparator.setSelectedItem(Settings.getExportSettings().getDecimalSeperator());
+		jDecimalSeparator.setSelectedItem(Settings.getExportSettings().getDecimalSeparator());
 		//SQL
 		jTableName.setText(Settings.getExportSettings().getTableName(matcherControl.getName()));
 		jDropTable.setSelected(Settings.getExportSettings().isDropTable());
@@ -440,7 +440,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		//CSV
 		Settings.getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
 		Settings.getExportSettings().setLineDelimiter(LineDelimiter.DOS);
-		Settings.getExportSettings().setDecimalSeperator(DecimalSeperator.DOT);
+		Settings.getExportSettings().setDecimalSeparator(DecimalSeparator.DOT);
 		//SQL
 		Settings.getExportSettings().putTableName(matcherControl.getName(), "");
 		Settings.getExportSettings().setDropTable(true);
@@ -568,7 +568,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			Map<String, String> line = new HashMap<String, String>();
 			Map<String, Object> row = new HashMap<String, Object>();
 			for (EnumTableColumn<E> column : selectedColumns) {
-				line.put(column.getColumnName(), format(column.getColumnValue(e), Settings.getExportSettings().getDecimalSeperator()));
+				line.put(column.getColumnName(), format(column.getColumnValue(e), Settings.getExportSettings().getDecimalSeparator()));
 				row.put(column.getColumnName(), column.getColumnValue(e));
 			}
 			objectRows.add(row);
@@ -580,7 +580,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		if (extension.equals(EXPORT_CSV)) {
 			//CSV
 			//Bad selection
-			if (Settings.getExportSettings().getDecimalSeperator() == DecimalSeperator.COMMA && Settings.getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
+			if (Settings.getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
 				int nReturn = JOptionPane.showConfirmDialog(
 						getDialog(),
 						DialoguesExport.get().confirmStupidDecision(),

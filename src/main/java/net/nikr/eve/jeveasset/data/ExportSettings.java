@@ -87,7 +87,7 @@ public class ExportSettings {
 		}
 		abstract String getI18N();
 	}
-	public  enum DecimalSeperator {
+	public  enum DecimalSeparator {
 		DOT() {
 			@Override
 			String getI18N() {
@@ -111,7 +111,7 @@ public class ExportSettings {
 	//CSV
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
-	private DecimalSeperator decimalSeperator;
+	private DecimalSeparator decimalSeparator;
 	//SQL
 	private final Map<String, String> tableNames = new HashMap<String, String>();
 	private boolean createTable;
@@ -125,19 +125,19 @@ public class ExportSettings {
 	public ExportSettings() {
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
-		decimalSeperator = DecimalSeperator.DOT;
+		decimalSeparator = DecimalSeparator.DOT;
 		//filename = FILENAME;
 		createTable = true;
 		dropTable = true;
 		extendedInserts = true;
 	}
 
-	public DecimalSeperator getDecimalSeperator() {
-		return decimalSeperator;
+	public DecimalSeparator getDecimalSeparator() {
+		return decimalSeparator;
 	}
 
-	public void setDecimalSeperator(final DecimalSeperator decimalSeperator) {
-		this.decimalSeperator = decimalSeperator;
+	public void setDecimalSeparator(final DecimalSeparator decimalSeparator) {
+		this.decimalSeparator = decimalSeparator;
 	}
 
 	public FieldDelimiter getFieldDelimiter() {

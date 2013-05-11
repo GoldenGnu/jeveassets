@@ -209,7 +209,7 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 		return key;
 	}
 
-	public String getSeperator() {
+	public String getSeparator() {
 		return String.valueOf(flag.getOrder());
 	}
 
