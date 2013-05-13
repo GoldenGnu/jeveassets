@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -209,7 +210,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jGroup.setText(stockpileItem.getStockpile().getName());
 		if (stockpileItem.getStockpile().isOK()) {
 			jColor.setBackground(new Color(200, 255, 200));
-		} else if (stockpileItem.getStockpile().isHalf() && program.getSettings().isStockpileHalfColors()) {
+		} else if (stockpileItem.getStockpile().isHalf() && Settings.get().isStockpileHalfColors()) {
 			jColor.setBackground(new Color(255, 255, 200));
 		} else {
 			jColor.setBackground(new Color(255, 200, 200));

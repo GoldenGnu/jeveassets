@@ -32,6 +32,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -213,7 +214,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 	@Override
 	public MenuData<Overview> getMenuData() {
-		return new MenuData<Overview>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<Overview>(selectionModel.getSelected());
 	}
 
 	@Override
@@ -257,7 +258,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			return false;
 		}
 		Overview overview = tableModel.getElementAt(index);
-		OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+		OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
 		return isGroup() && !overviewGroup.getLocations().isEmpty();
 	}
 
@@ -305,7 +306,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		List<String> groupedLocations = new ArrayList<String>();
 		rowCount = 0;
 		if (view.equals(TabsOverview.get().groups())) { //Add all groups
-			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
+			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
 					Overview overview = new Overview(overviewGroup.getName(), new Location(0), 0, 0, 0, 0);
@@ -314,7 +315,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				}
 			}
 		} else { //Add all grouped locations
-			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
+			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
 					if (!groupedLocations.contains(overviewLocation.getName())) {
@@ -330,7 +331,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			} else {
 				name = asset.getOwner();
 			}
-			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) {
+			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
 			if (asset.getItem().getGroup().equals("Station Services")) {
@@ -374,7 +375,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 					locations.add(overview);
 				}
 			} else { //Groups
-				for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
+				for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 					OverviewGroup overviewGroup = entry.getValue();
 					for (OverviewLocation overviewLocation : overviewGroup.getLocations()) {
 						if (overviewLocation.equalsLocation(asset)) { //Update existing overview (group)
@@ -405,10 +406,10 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		jLoadFilter.add(jMenuItem);
 
 		jLoadFilter.addSeparator();
-		List<String> filters = new ArrayList<String>(program.getSettings().getTableFilters(AssetsTab.NAME).keySet());
+		List<String> filters = new ArrayList<String>(Settings.get().getTableFilters(AssetsTab.NAME).keySet());
 		Collections.sort(filters, new CaseInsensitiveComparator());
 		for (String filter : filters) {
-			List<Filter> filterList = program.getSettings().getTableFilters(AssetsTab.NAME).get(filter);
+			List<Filter> filterList = Settings.get().getTableFilters(AssetsTab.NAME).get(filter);
 			jMenuItem = new FilterMenuItem(filter, filterList);
 			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
 			jMenuItem.addActionListener(listenerClass);
@@ -497,7 +498,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		if (overview == null) {
 			return null;
 		}
-		return program.getSettings().getOverviewGroups().get(overview.getName());
+		return Settings.get().getOverviewGroups().get(overview.getName());
 	}
 
 	private class ListenerClass implements ActionListener {
@@ -519,7 +520,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			if (ACTION_GROUP_ASSET_FILTER.equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
-				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
 				List<Filter> filters = new ArrayList<Filter>();
 				for (OverviewLocation location : overviewGroup.getLocations()) {
 					if (location.isStation()) {
@@ -541,7 +542,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			if (ACTION_GROUP_LOOKUP.equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
-				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
+				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
 				Set<String> stations = new HashSet<String>();
 				Set<String> systems = new HashSet<String>();
 				Set<String> regions = new HashSet<String>();

@@ -387,4 +387,13 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
+	@Override
+	public ExportSettings getExportSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isFilterOnEnter() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

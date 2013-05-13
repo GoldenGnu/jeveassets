@@ -30,10 +30,10 @@ public final class Online {
 
 	private Online() { }
 
-	public static boolean isOnline(final Settings settings) {
+	public static boolean isOnline() {
 		try {
 			URL ourURL = new URL("http://www.google.com"); //Coding Forums RSS Feed
-			HttpURLConnection huc = (HttpURLConnection) ourURL.openConnection(settings.getProxy());
+			HttpURLConnection huc = (HttpURLConnection) ourURL.openConnection(Settings.get().getProxy());
 			huc.setRequestMethod("GET");
 			huc.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; JVM)");
 			huc.setRequestProperty("Pragma", "no-cache");

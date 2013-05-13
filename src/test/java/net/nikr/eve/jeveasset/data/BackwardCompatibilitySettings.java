@@ -40,6 +40,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 
 	public enum Function {
 		GET_ASSET_ADDED,
+		GET_EXPORT_SETTINGS,
 		GET_FLAGS,
 		GET_OVERVIEW_GROUPS,
 		GET_OWNERS,
@@ -133,6 +134,12 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<Long, Date> getAssetAdded() {
 		ok.put(Function.GET_ASSET_ADDED, true);
 		return new HashMap<Long, Date>();
+	}
+
+	@Override
+	public ExportSettings getExportSettings() {
+		ok.put(Function.GET_EXPORT_SETTINGS, true);
+		return new ExportSettings();
 	}
 
 	@Override

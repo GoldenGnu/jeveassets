@@ -34,13 +34,11 @@ public class ProfileManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileManager.class);
 
-	private Settings settings;
 	private List<Account> accounts = new ArrayList<Account>();
 	private Profile activeProfile;
 	private List<Profile> profiles = new ArrayList<Profile>();
 
-	public ProfileManager(Settings settings) {
-		this.settings = settings;
+	public ProfileManager() {
 		activeProfile = new Profile("Default", true, true);
 		profiles.add(activeProfile);
 	}
@@ -82,7 +80,7 @@ public class ProfileManager {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
 		accounts = new ArrayList<Account>();
-		ProfileReader.load(settings, this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
+		ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)
 		SplashUpdater.setProgress(45);

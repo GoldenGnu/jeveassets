@@ -285,7 +285,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		if (jName.getText().isEmpty()) {
 			b = false;
 		}
-		if (program.getSettings().getStockpiles().contains(getStockpile())) {
+		if (Settings.get().getStockpiles().contains(getStockpile())) {
 			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())) {
 				jName.setBackground(Color.WHITE);
 			} else {
@@ -517,10 +517,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			stockpile.update(getStockpile());
 		} else if (cloneStockpile != null) { //Clone
 			cloneStockpile.update(getStockpile());
-			program.getSettings().getStockpiles().add(cloneStockpile);
+			Settings.get().getStockpiles().add(cloneStockpile);
 		} else { //Add
 			stockpile = getStockpile();
-			program.getSettings().getStockpiles().add(stockpile);
+			Settings.get().getStockpiles().add(stockpile);
 		}
 		updated = true;
 		this.setVisible(false);

@@ -49,7 +49,7 @@ public class MenuData<T> {
 
 	public MenuData() { }
 
-	public MenuData(final List<T> items, final Settings settings) {
+	public MenuData(final List<T> items) {
 		if (items == null) { //Skip null
 			return;
 		}
@@ -85,7 +85,7 @@ public class MenuData<T> {
 			if (t instanceof Item) {
 				Item item = (Item) t;
 				if (items.size() == 1) { //Always zero for multiple items
-					price = ApiIdConverter.getPrice(item.getTypeID(), false, settings.getUserPrices(), settings.getPriceData());
+					price = ApiIdConverter.getPrice(item.getTypeID(), false);
 				}
 				if (price == null || price == 0) {
 					price = (double) item.getPriceBase();

@@ -33,6 +33,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -110,7 +111,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME),
+				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
 
@@ -134,7 +135,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 
 	@Override
 	public MenuData<IndustryJob> getMenuData() {
-		return new MenuData<IndustryJob>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<IndustryJob>(selectionModel.getSelected());
 	}
 
 	@Override

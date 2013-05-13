@@ -441,6 +441,7 @@ public class SettingsTest {
 	public void backwardCompatibility180() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
@@ -463,6 +464,7 @@ public class SettingsTest {
 	public void backwardCompatibility181() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
@@ -485,6 +487,7 @@ public class SettingsTest {
 	public void backwardCompatibility190() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -508,6 +511,7 @@ public class SettingsTest {
 	public void backwardCompatibility191() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -531,6 +535,7 @@ public class SettingsTest {
 	public void backwardCompatibility192() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-2");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -554,6 +559,7 @@ public class SettingsTest {
 	public void backwardCompatibility200() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-0-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -578,6 +584,7 @@ public class SettingsTest {
 	public void backwardCompatibility210() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -602,6 +609,7 @@ public class SettingsTest {
 	public void backwardCompatibility211() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -626,6 +634,7 @@ public class SettingsTest {
 	public void backwardCompatibility212() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-2");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -650,6 +659,7 @@ public class SettingsTest {
 	public void backwardCompatibility220() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-2-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -675,6 +685,7 @@ public class SettingsTest {
 	public void backwardCompatibility230() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-3-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -700,6 +711,7 @@ public class SettingsTest {
 	public void backwardCompatibility240() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-4-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_STOCKPILES);
@@ -728,6 +740,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-5-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_ASSET_ADDED);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_OWNERS);

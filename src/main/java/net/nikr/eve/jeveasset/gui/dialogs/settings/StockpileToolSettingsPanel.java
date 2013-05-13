@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -117,16 +118,16 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		boolean updated = program.getSettings().isStockpileHalfColors() != jHalfColors.isSelected();
-		program.getSettings().setStockpileFocusTab(jSwitchTab.isSelected());
-		program.getSettings().setStockpileHalfColors(jHalfColors.isSelected());
+		boolean updated = Settings.get().isStockpileHalfColors() != jHalfColors.isSelected();
+		Settings.get().setStockpileFocusTab(jSwitchTab.isSelected());
+		Settings.get().setStockpileHalfColors(jHalfColors.isSelected());
 		return updated;
 	}
 
 	@Override
 	public void load() {
-		jSwitchTab.setSelected(program.getSettings().isStockpileFocusTab());
-		if (program.getSettings().isStockpileHalfColors()) {
+		jSwitchTab.setSelected(Settings.get().isStockpileFocusTab());
+		if (Settings.get().isStockpileHalfColors()) {
 			jHalfColors.setSelected(true);
 		} else {
 			jDefaultColors.setSelected(true);

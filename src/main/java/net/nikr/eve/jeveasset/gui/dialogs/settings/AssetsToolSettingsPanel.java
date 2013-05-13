@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -87,27 +88,27 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		} catch (NumberFormatException ex) {
 			maximumPurchaseAge = 0;
 		}
-		boolean update = jReprocessColors.isSelected() != program.getSettings().isReprocessColors()
-						|| jSellOrders.isSelected() != program.getSettings().isIncludeSellOrders()
-						|| jBuyOrders.isSelected() != program.getSettings().isIncludeBuyOrders()
-						|| jContracts.isSelected() != program.getSettings().isIncludeContracts()
-						|| maximumPurchaseAge != program.getSettings().getMaximumPurchaseAge()
+		boolean update = jReprocessColors.isSelected() != Settings.get().isReprocessColors()
+						|| jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
+						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
+						|| jContracts.isSelected() != Settings.get().isIncludeContracts()
+						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						;
-		program.getSettings().setReprocessColors(jReprocessColors.isSelected());
-		program.getSettings().setIncludeSellOrders(jSellOrders.isSelected());
-		program.getSettings().setIncludeBuyOrders(jBuyOrders.isSelected());
-		program.getSettings().setIncludeContracts(jContracts.isSelected());
-		program.getSettings().setMaximumPurchaseAge(maximumPurchaseAge);
+		Settings.get().setReprocessColors(jReprocessColors.isSelected());
+		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
+		Settings.get().setIncludeBuyOrders(jBuyOrders.isSelected());
+		Settings.get().setIncludeContracts(jContracts.isSelected());
+		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		return update;
 	}
 
 	@Override
 	public void load() {
-		jReprocessColors.setSelected(program.getSettings().isReprocessColors());
-		jSellOrders.setSelected(program.getSettings().isIncludeSellOrders());
-		jBuyOrders.setSelected(program.getSettings().isIncludeBuyOrders());
-		jContracts.setSelected(program.getSettings().isIncludeContracts());
-		jMaxOrderAge.setText(String.valueOf(program.getSettings().getMaximumPurchaseAge()));
+		jReprocessColors.setSelected(Settings.get().isReprocessColors());
+		jSellOrders.setSelected(Settings.get().isIncludeSellOrders());
+		jBuyOrders.setSelected(Settings.get().isIncludeBuyOrders());
+		jContracts.setSelected(Settings.get().isIncludeContracts());
+		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 	}
 }
 

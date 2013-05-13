@@ -254,7 +254,7 @@ public class RoutingTab extends JMainTab  {
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
 		List<SourceItem> sources = new ArrayList<SourceItem>();
-		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()) {
+		for (Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 			sources.add(new SourceItem(entry.getKey(), true));
 		}
 		Collections.sort(sources);
@@ -267,7 +267,7 @@ public class RoutingTab extends JMainTab  {
 		jLastResultArea.setEnabled(false);
 		updateRemaining();
 		jCancel.setEnabled(false);
-		processFilteredAssets(program.getSettings());
+		processFilteredAssets(Settings.get());
 	}
 
 	private void changeAlgorithm() {
@@ -351,7 +351,7 @@ public class RoutingTab extends JMainTab  {
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
 			assets = new ArrayList<Asset>();
-			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
+			OverviewGroup group = Settings.get().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
 				for (Asset asset : program.getAssetEventList()) {
 					if ((location.getName().equals(asset.getLocation().getLocation()))
@@ -515,7 +515,7 @@ public class RoutingTab extends JMainTab  {
 			} else if (ACTION_SOURCE.equals(e.getActionCommand())) {
 				jAvailable.getEditableModel().clear();
 				jWaypoints.getEditableModel().clear();
-				processFilteredAssets(program.getSettings());
+				processFilteredAssets(Settings.get());
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
 				//jAddSystem
 				AddSystemController system = new AddSystemController(program);

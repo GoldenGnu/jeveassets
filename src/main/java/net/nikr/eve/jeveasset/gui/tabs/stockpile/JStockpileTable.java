@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -57,7 +58,7 @@ public class JStockpileTable extends JSeparatorTable {
 					component.setBackground(this.getSelectionBackground().darker());
 				} else if (stockpileItem.isOK()) { //FULL
 					component.setBackground(new Color(200, 255, 200));
-				} else if (stockpileItem.isHalf() && program.getSettings().isStockpileHalfColors()) { //ABOVE HALF
+				} else if (stockpileItem.isHalf() && Settings.get().isStockpileHalfColors()) { //ABOVE HALF
 					component.setBackground(new Color(255, 255, 200));
 				} else {
 					component.setBackground(new Color(255, 200, 200)); //LESS THEN HALF/FULL

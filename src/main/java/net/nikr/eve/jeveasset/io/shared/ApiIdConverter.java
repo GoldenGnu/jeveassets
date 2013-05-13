@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
 
@@ -93,12 +94,12 @@ public final class ApiIdConverter {
 		return "!" + flag;
 	}
 
-	public static double getPrice(final int typeID, final boolean isBlueprintCopy, Map<Integer, UserItem<Integer, Double>> userPrices, Map<Integer, PriceData> priceDatas) {
+	public static double getPrice(final int typeID, final boolean isBlueprintCopy) {
 		UserItem<Integer, Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
-			userPrice = userPrices.get(-typeID);
+			userPrice = Settings.get().getUserPrices().get(-typeID);
 		} else { //All other
-			userPrice = userPrices.get(typeID);
+			userPrice = Settings.get().getUserPrices().get(typeID);
 		}
 		if (userPrice != null) {
 			return userPrice.getValue();
@@ -111,8 +112,8 @@ public final class ApiIdConverter {
 
 		//Price data
 		PriceData priceData = null;
-		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price
-			priceData = priceDatas.get(typeID);
+		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
+			priceData = Settings.get().getPriceData().get(typeID);
 		}
 		return Asset.getDefaultPrice(priceData);
 	}
@@ -154,11 +155,11 @@ public final class ApiIdConverter {
 		}
 	}
 
-	public static String getOwnerName(final long ownerID, final Map<Long, String> owners) {
+	public static String getOwnerName(final long ownerID) {
 		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
 			return "";
 		}
-		String owner = owners.get(ownerID);
+		String owner = Settings.get().getOwners().get(ownerID);
 		if (owner != null) {
 			return owner;
 		}

@@ -39,8 +39,6 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 	private long[][] ownerIDs;
 	private int group;
 
-	private Settings settings;
-
 	public NameGetter() {
 		super("OwnerID to Name", false, false);
 	}
@@ -55,8 +53,7 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 		return 100;
 	}
 
-	public void load(UpdateTask updateTask, Settings settings, Set<Long> list) {
-		this.settings = settings;
+	public void load(UpdateTask updateTask, Set<Long> list) {
 		ownerIDs = convert(list);
 		for (int i = 0; i < ownerIDs.length; i++) {
 			group = i;
@@ -87,7 +84,7 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 	protected void setData(CharacterLookupResponse response) {
 		Set<ApiCharacterLookup> lookups = response.getAll();
 		for (ApiCharacterLookup lookup : lookups) {
-			settings.getOwners().put(lookup.getCharacterID(), lookup.getName());
+			Settings.get().getOwners().put(lookup.getCharacterID(), lookup.getName());
 		}
 	}
 

@@ -30,6 +30,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -105,7 +106,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME),
+				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
 
@@ -142,7 +143,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 
 	@Override
 	public MenuData<WalletTransaction> getMenuData() {
-		return new MenuData<WalletTransaction>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<WalletTransaction>(selectionModel.getSelected());
 	}
 
 	@Override

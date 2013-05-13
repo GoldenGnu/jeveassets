@@ -53,6 +53,7 @@ import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -173,7 +174,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
@@ -205,7 +206,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 	@Override
 	public MenuData<ReprocessedInterface> getMenuData() {
-		return new MenuData<ReprocessedInterface>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
 	}
 
 	@Override
@@ -238,14 +239,14 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
 				}
-				double sellPrice = ApiIdConverter.getPrice(i, false, program.getSettings().getUserPrices(), program.getSettings().getPriceData());
+				double sellPrice = ApiIdConverter.getPrice(i, false);
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
 					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
 					if (materialItem != null) {
-						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false, program.getSettings().getUserPrices(), program.getSettings().getPriceData());
-						int quantitySkill = program.getSettings().getReprocessSettings().getLeft(material.getQuantity());
+						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false);
+						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
 						list.add(reprocessedItem);
 						//Total

@@ -32,7 +32,6 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
@@ -42,14 +41,12 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 
-	private Settings settings;
-
 	public ContractsGetter() {
 		super("Contracts", true, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts, Settings settings) {
-		this.settings = settings;
+	@Override
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
 		super.load(updateTask, forceUpdate, accounts);
 	}
 
@@ -98,7 +95,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 					break;
 				}
 			}
-			getOwner().getContracts().put(ApiConverter.toContract(contract, settings), contractItems);
+			getOwner().getContracts().put(ApiConverter.toContract(contract), contractItems);
 		}
 	}
 

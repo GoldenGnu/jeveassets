@@ -87,8 +87,8 @@ public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 
 	public static class AssetMenuData extends MenuData<Asset> {
 
-		public AssetMenuData(List<Asset> items, Settings settings) {
-			super(items, settings);
+		public AssetMenuData(List<Asset> items) {
+			super(items);
 			setAssets(items);
 		}
 	}

@@ -32,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -65,7 +66,7 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 			jSubMenu.add(jMenuItem);
 
 			jSubMenu.addSeparator();
-			List<Stockpile> stockpiles = program.getSettings().getStockpiles();
+			List<Stockpile> stockpiles = Settings.get().getStockpiles();
 			Collections.sort(stockpiles);
 
 			for (Stockpile stockpile : stockpiles) {

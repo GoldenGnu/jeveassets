@@ -190,7 +190,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 
 	@Override
 	public MenuData<Module> getMenuData() {
-		return new MenuData<Module>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<Module>(selectionModel.getSelected());
 	}
 
 	@Override

@@ -57,8 +57,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
-		setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
-		jFrame.setAlwaysOnTop(program.getSettings().isWindowAlwaysOnTop());
+		setSizeAndLocation(Settings.get().getWindowSize(),  Settings.get().getWindowLocation(), Settings.get().isWindowMaximized());
+		jFrame.setAlwaysOnTop(Settings.get().isWindowAlwaysOnTop());
 		List<Image> icons = new ArrayList<Image>();
 		icons.add(Images.TOOL_ASSETS.getImage());
 		icons.add(Images.MISC_ASSETS_32.getImage());
@@ -217,11 +217,11 @@ public class MainWindow implements WindowListener, ChangeListener {
 	}
 
 	public void updateSettings() {
-		if (program.getSettings().isWindowAutoSave()) {
-			program.getSettings().setWindowMaximized(jFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH);
+		if (Settings.get().isWindowAutoSave()) {
+			Settings.get().setWindowMaximized(jFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH);
 			if (jFrame.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
-				program.getSettings().setWindowSize(jFrame.getSize());
-				program.getSettings().setWindowLocation(jFrame.getLocation());
+				Settings.get().setWindowSize(jFrame.getSize());
+				Settings.get().setWindowLocation(jFrame.getLocation());
 			}
 		}
 	}

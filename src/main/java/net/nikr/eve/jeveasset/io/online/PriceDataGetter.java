@@ -48,7 +48,6 @@ public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
-	private Settings settings;
 	private ProfileData profileData;
 	private UpdateTask updateTask;
 	private long nextUpdate = 0;
@@ -59,8 +58,7 @@ public class PriceDataGetter implements PricingListener {
 	private boolean failed;
 	private Set<Integer> ids;
 
-	public PriceDataGetter(final Settings settings, final ProfileData profileData) {
-		this.settings = settings;
+	public PriceDataGetter(final ProfileData profileData) {
 		this.profileData = profileData;
 	}
 	/**
@@ -93,9 +91,9 @@ public class PriceDataGetter implements PricingListener {
 		this.update = processUpdate;
 
 		if (processUpdate) {
-			LOG.info("Price data update (" + settings.getPriceDataSettings().getSource() + "):");
+			LOG.info("Price data update (" + Settings.get().getPriceDataSettings().getSource() + "):");
 		} else {
-			LOG.info("Price data loading (" + settings.getPriceDataSettings().getSource() + "):");
+			LOG.info("Price data loading (" + Settings.get().getPriceDataSettings().getSource() + "):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
@@ -145,7 +143,7 @@ public class PriceDataGetter implements PricingListener {
 				LOG.info("	Price data loaded");
 			}
 			//We only set the price data if everthing worked (AKA all updated)
-			settings.setPriceData(priceDataList);
+			Settings.get().setPriceData(priceDataList);
 			try {
 				pricing.writeCache();
 				LOG.info("	Price data cached saved");
@@ -233,17 +231,17 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getPricingFetchImplementation() {
-			return settings.getPriceDataSettings().getSource().getName();
+			return Settings.get().getPriceDataSettings().getSource().getName();
 		}
 
 		@Override
 		public LocationType getLocationType() {
-			return settings.getPriceDataSettings().getLocationType();
+			return Settings.get().getPriceDataSettings().getLocationType();
 		}
 
 		@Override
 		public List<Long> getLocations() {
-			return settings.getPriceDataSettings().getLocations();
+			return Settings.get().getPriceDataSettings().getLocations();
 		}
 
 		@Override
@@ -277,7 +275,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public Proxy getProxy() {
-			return settings.getProxy();
+			return Settings.get().getProxy();
 		}
 
 		@Override

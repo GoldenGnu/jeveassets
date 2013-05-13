@@ -37,6 +37,7 @@ import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -112,7 +113,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
@@ -147,7 +148,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 	@Override
 	public MenuData<Asset> getMenuData() {
-		return new AssetMenuData(selectionModel.getSelected(), program.getSettings());
+		return new AssetMenuData(selectionModel.getSelected());
 	}
 
 	@Override

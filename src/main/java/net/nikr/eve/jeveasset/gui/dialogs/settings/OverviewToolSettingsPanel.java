@@ -25,6 +25,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -49,14 +50,14 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		boolean update = jIgnoreSecureContainers.isSelected() != program.getSettings().isIgnoreSecureContainers();
-		program.getSettings().setIgnoreSecureContainers(jIgnoreSecureContainers.isSelected());
+		boolean update = jIgnoreSecureContainers.isSelected() != Settings.get().isIgnoreSecureContainers();
+		Settings.get().setIgnoreSecureContainers(jIgnoreSecureContainers.isSelected());
 		return update;
 	}
 
 	@Override
 	public void load() {
-		jIgnoreSecureContainers.setSelected(program.getSettings().isIgnoreSecureContainers());
+		jIgnoreSecureContainers.setSelected(Settings.get().isIgnoreSecureContainers());
 	}
 
 }

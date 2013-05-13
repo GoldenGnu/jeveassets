@@ -58,9 +58,8 @@ public class ProfileTest {
 	}
 
 	private void test(String name, boolean supportContracts) throws URISyntaxException {
-		ProfileTestSettings settings = new ProfileTestSettings();
-		ProfileManager profileManager = new ProfileManager(settings);
-		boolean load = ProfileReader.load(settings, profileManager, getFilename(name));
+		ProfileManager profileManager = new ProfileManager();
+		boolean load = ProfileReader.load(profileManager, getFilename(name));
 		assertEquals(name+" fail to load", load, true);
 		assertEquals(name+" had no accounts", profileManager.getAccounts().isEmpty(), false);
 		boolean marketOrders = false;

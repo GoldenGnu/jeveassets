@@ -45,6 +45,6 @@ public class OverwriteTest {
 	public void testOverwrite() {
 		test(FakeProgram.class);
 		test(FakeSettings.class);
-		test(FakeAsset.class);
+		test(FakeProgress.class);
 	}
 }

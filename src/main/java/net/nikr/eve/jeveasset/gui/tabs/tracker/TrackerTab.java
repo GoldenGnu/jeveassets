@@ -277,7 +277,7 @@ public class TrackerTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(program.getSettings().getTrackerData().keySet());
+		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(Settings.get().getTrackerData().keySet());
 		if (owners.isEmpty()) {
 			jOwners.setEnabled(false);
 			jOwners.getModel().setSelectedItem(new TrackerOwner(-1, TabsTracker.get().noDataFound()));
@@ -369,10 +369,10 @@ public class TrackerTab extends JMainTab {
 			TrackerOwner trackerOwner = entry.getKey();
 			TrackerData trackerData = entry.getValue();
 			//New TrackerOwner
-			if (!program.getSettings().getTrackerData().containsKey(trackerOwner)) {
-				program.getSettings().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
+			if (!Settings.get().getTrackerData().containsKey(trackerOwner)) {
+				Settings.get().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
 			}
-			program.getSettings().getTrackerData().get(trackerOwner).add(trackerData);
+			Settings.get().getTrackerData().get(trackerOwner).add(trackerData);
 			
 		}
 		//Update data
@@ -413,7 +413,7 @@ public class TrackerTab extends JMainTab {
 			to = calendar.getTime();
 		}
 		if (!owner.isEmpty()) { //No data set...
-			for (TrackerData data : program.getSettings().getTrackerData().get(owner)) {
+			for (TrackerData data : Settings.get().getTrackerData().get(owner)) {
 				SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
 				if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
 					total.add(date, data.getTotal());

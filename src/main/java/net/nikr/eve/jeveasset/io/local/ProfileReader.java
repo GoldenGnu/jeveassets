@@ -55,15 +55,15 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private ProfileReader() { }
 
-	public static boolean load(final Settings settings, ProfileManager profileManager, final String filename) {
+	public static boolean load(ProfileManager profileManager, final String filename) {
 		ProfileReader reader = new ProfileReader();
-		return reader.read(settings, profileManager, filename);
+		return reader.read(profileManager, filename);
 	}
 
-	private boolean read(final Settings settings, ProfileManager profileManager, final String filename) {
+	private boolean read(ProfileManager profileManager, final String filename) {
 		try {
 			Element element = getDocumentElement(filename);
-			parseSettings(element, profileManager, settings);
+			parseSettings(element, profileManager);
 		} catch (IOException ex) {
 			LOG.info("Profile not loaded");
 			return false;
@@ -75,7 +75,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private void parseSettings(final Element element, ProfileManager profileManager, final Settings settings) throws XmlException {
+	private void parseSettings(final Element element, ProfileManager profileManager) throws XmlException {
 		if (!element.getNodeName().equals("assets")) {
 			throw new XmlException("Wrong root element name.");
 		}
@@ -83,16 +83,16 @@ public final class ProfileReader extends AbstractXmlReader {
 		NodeList accountNodes = element.getElementsByTagName("accounts");
 		if (accountNodes.getLength() == 1) {
 			Element accountsElement = (Element) accountNodes.item(0);
-			parseAccounts(accountsElement, profileManager.getAccounts(), settings);
+			parseAccounts(accountsElement, profileManager.getAccounts());
 		}
 	}
 
-	private void parseAccounts(final Element element, final List<Account> accounts, final Settings settings) {
+	private void parseAccounts(final Element element, final List<Account> accounts) {
 		NodeList accountNodes = element.getElementsByTagName("account");
 		for (int i = 0; i < accountNodes.getLength(); i++) {
 			Element currentNode = (Element) accountNodes.item(i);
 			Account account = parseAccount(currentNode);
-			parseOwners(currentNode, account, settings);
+			parseOwners(currentNode, account);
 			accounts.add(account);
 		}
 	}
@@ -137,7 +137,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
 	}
 
-	private void parseOwners(final Element element, final Account account, final Settings settings) {
+	private void parseOwners(final Element element, final Account account) {
 		NodeList ownerNodes =  element.getElementsByTagName("human");
 		for (int i = 0; i < ownerNodes.getLength(); i++) {
 			Element currentNode = (Element) ownerNodes.item(i);
@@ -147,7 +147,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			if (assetNodes.getLength() == 1) {
 				parseAssets(assetNodes.item(0), owner, owner.getAssets(), null);
 			}
-			parseContracts(currentNode, owner, settings);
+			parseContracts(currentNode, owner);
 			parseBalances(currentNode, owner);
 			parseMarkerOrders(currentNode, owner);
 			parseWalletTransactions(currentNode, owner);
@@ -184,7 +184,7 @@ public final class ProfileReader extends AbstractXmlReader {
 		return new Owner(account, name, ownerID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, walletTransactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
-	private void parseContracts(final Element element, final Owner owner, final Settings settings) {
+	private void parseContracts(final Element element, final Owner owner) {
 		NodeList contractsNodes = element.getElementsByTagName("contracts");
 		Map<EveContract, List<EveContractItem>> eveContracts = new HashMap<EveContract, List<EveContractItem>>();
 		for (int a = 0; a < contractsNodes.getLength(); a++) {
@@ -203,7 +203,7 @@ public final class ProfileReader extends AbstractXmlReader {
 				eveContracts.put(contract, contractItems);
 			}
 		}
-		owner.setContracts(ApiConverter.convertContracts(eveContracts, settings));
+		owner.setContracts(ApiConverter.convertContracts(eveContracts));
 	}
 
 	private EveContract parseContract(final Element element) {

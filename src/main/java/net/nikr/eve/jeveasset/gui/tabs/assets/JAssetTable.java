@@ -27,6 +27,7 @@ import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
@@ -80,14 +81,14 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 
 		//Reproccessing Colors
-		if (program.getSettings().isReprocessColors() && !isSelected) {
+		if (Settings.get().isReprocessColors() && !isSelected) {
 			//Zero price (White)
 			if (asset.getPriceReprocessed() == 0 || asset.getDynamicPrice() == 0) {
 				return component;
 			}
 			//Equal price (Yellow)
 			if (asset.getPriceReprocessed() == asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 255, 160));
 				} else {
 					component.setBackground(new Color(255, 255, 200));
@@ -96,7 +97,7 @@ public class JAssetTable extends JAutoColumnTable {
 			}
 			//Reprocessed highest (Red)
 			if (asset.getPriceReprocessed() > asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 160, 160));
 				} else {
 					component.setBackground(new Color(255, 200, 200));
@@ -105,7 +106,7 @@ public class JAssetTable extends JAutoColumnTable {
 			}
 			//Price highest (Green)
 			if (asset.getPriceReprocessed() < asset.getDynamicPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(160, 255, 160));
 				} else {
 					component.setBackground(new Color(200, 255, 200));

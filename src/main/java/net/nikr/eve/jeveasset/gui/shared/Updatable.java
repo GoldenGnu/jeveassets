@@ -25,6 +25,7 @@ import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 
 
 public class Updatable {
@@ -78,7 +79,7 @@ public class Updatable {
 		if (nextUpdate == null) {
 			return false;
 		}
-		if (program.getSettings().isUpdatable(nextUpdate, ignoreOnProxy)) {
+		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
 			return true;
 		} else {
 			return false;

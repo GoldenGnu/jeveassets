@@ -140,7 +140,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		NodeList exportNodes = element.getElementsByTagName("csvexport");
 		if (exportNodes.getLength() == 1) {
 			Element exportElement = (Element) exportNodes.item(0);
-			parseExportSettings(exportElement);
+			parseExportSettings(exportElement, settings);
 		}
 
 		//Overview
@@ -753,33 +753,33 @@ public final class SettingsReader extends AbstractXmlReader {
 		settings.setApiProxy(proxyURL);
 	}
 
-	private void parseExportSettings(final Element element) {
+	private void parseExportSettings(final Element element, final Settings settings) {
 		//CSV
 		DecimalSeparator decimal = DecimalSeparator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
-		Settings.getExportSettings().setDecimalSeparator(decimal);
-		Settings.getExportSettings().setFieldDelimiter(field);
-		Settings.getExportSettings().setLineDelimiter(line);
+		settings.getExportSettings().setDecimalSeparator(decimal);
+		settings.getExportSettings().setFieldDelimiter(field);
+		settings.getExportSettings().setLineDelimiter(line);
 		//SQL
 		if (AttributeGetters.haveAttribute(element, "sqlcreatetable")) {
 			boolean createTable = AttributeGetters.getBoolean(element, "sqlcreatetable");
-			Settings.getExportSettings().setCreateTable(createTable);
+			settings.getExportSettings().setCreateTable(createTable);
 		}
 		if (AttributeGetters.haveAttribute(element, "sqldroptable")) {
 			boolean dropTable = AttributeGetters.getBoolean(element, "sqldroptable");
-			Settings.getExportSettings().setDropTable(dropTable);
+			settings.getExportSettings().setDropTable(dropTable);
 		}
 		if (AttributeGetters.haveAttribute(element, "sqlextendedinserts")) {
 			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
-			Settings.getExportSettings().setExtendedInserts(extendedInserts);
+			settings.getExportSettings().setExtendedInserts(extendedInserts);
 		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) tableNamesNodeList.item(a);
 			String tool = AttributeGetters.getString(tableNameNode, "tool");
 			String tableName = AttributeGetters.getString(tableNameNode, "tablename");
-			Settings.getExportSettings().putTableName(tool, tableName);
+			settings.getExportSettings().putTableName(tool, tableName);
 		}
 		//Shared
 		NodeList fileNamesNodeList = element.getElementsByTagName("filenames");
@@ -787,7 +787,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element tableNameNode = (Element) fileNamesNodeList.item(a);
 			String tool = AttributeGetters.getString(tableNameNode, "tool");
 			String fileName = AttributeGetters.getString(tableNameNode, "filename");
-			Settings.getExportSettings().putFilename(tool, fileName);
+			settings.getExportSettings().putFilename(tool, fileName);
 		}
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -800,7 +800,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				String name = AttributeGetters.getString(columnNode, "name");
 				columns.add(name);
 			}
-			Settings.getExportSettings().putTableExportColumns(tableName, columns);
+			settings.getExportSettings().putTableExportColumns(tableName, columns);
 		}
 	}
 

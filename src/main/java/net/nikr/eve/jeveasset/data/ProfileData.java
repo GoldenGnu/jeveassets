@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ProfileData {
-	private Settings settings;
 	private ProfileManager profileManager;
 	
 	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
@@ -55,8 +54,7 @@ public class ProfileData {
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
 
-	public ProfileData(Settings settings, ProfileManager profileManager) {
-		this.settings = settings;
+	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
 	}
 
@@ -133,7 +131,7 @@ public class ProfileData {
 					}
 				}
 				//Add StockpileItems to uniqueIds
-				for (Stockpile stockpile : settings.getStockpiles()) {
+				for (Stockpile stockpile : Settings.get().getStockpiles()) {
 					for (StockpileItem stockpileItem : stockpile.getItems()) {
 						Item item = stockpileItem.getItem();
 						if (item.isMarketGroup()) {
@@ -196,7 +194,7 @@ public class ProfileData {
 					//Market Orders
 					marketOrders.addAll(owner.getMarketOrders());
 					//Assets
-					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
+					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner), assets);
 					ownersOrders.add(owner.getName());
 				}
 				//Wallet Transactions
@@ -241,7 +239,7 @@ public class ProfileData {
 						contractItems.addAll(entry.getValue());
 					}
 					//Assets
-					List<Asset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner, settings);
+					List<Asset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
 					addAssets(contractAssets, assets);
 				}
 				//Assets
@@ -258,14 +256,14 @@ public class ProfileData {
 				for (MarketOrder order : owner.getMarketOrders()) {
 					Item item = order.getItem();
 					//Price
-					double price = ApiIdConverter.getPrice(item.getTypeID(), false, settings.getUserPrices(), settings.getPriceData());
+					double price = ApiIdConverter.getPrice(item.getTypeID(), false);
 					order.setDynamicPrice(price);
 				}
 				//Update IndustryJobs dynamic values
 				for (IndustryJob job : owner.getIndustryJobs()) {
 					Item itemType = job.getItem();
 					//Price
-					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC(), settings.getUserPrices(), settings.getPriceData());
+					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC());
 					job.setDynamicPrice(price);
 				}
 				//Update Contracts dynamic values
@@ -273,7 +271,7 @@ public class ProfileData {
 					for (ContractItem contractItem : entry.getValue()) {
 						Item item = contractItem.getItem();
 						//Price
-						double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC(), settings.getUserPrices(), settings.getPriceData());
+						double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC());
 						contractItem.setDynamicPrice(price);
 					}
 				}
@@ -331,7 +329,7 @@ public class ProfileData {
 		//Create Market Price Data
 		marketPriceData = new HashMap<Integer, MarketPriceData>();
 		//Date - maximumPurchaseAge in days
-		Date maxAge = new Date(System.currentTimeMillis() - (settings.getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
+		Date maxAge = new Date(System.currentTimeMillis() - (Settings.get().getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
 		for (Account account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				for (MarketOrder marketOrder : owner.getMarketOrders()) {
@@ -339,7 +337,7 @@ public class ProfileData {
 							//at least one bought
 							&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
 							//Date in range or unlimited
-							&& (marketOrder.getIssued().after(maxAge) || settings.getMaximumPurchaseAge() == 0)
+							&& (marketOrder.getIssued().after(maxAge) || Settings.get().getMaximumPurchaseAge() == 0)
 							) {
 						int typeID = marketOrder.getTypeID();
 						if (!marketPriceData.containsKey(typeID)) {
@@ -356,24 +354,24 @@ public class ProfileData {
 	private void addAssets(final List<Asset> assets, List<Asset> addTo) {
 		for (Asset asset : assets) {
 			//Date added
-			if (settings.getAssetAdded().containsKey(asset.getItemID())) {
-				asset.setAdded(settings.getAssetAdded().get(asset.getItemID()));
+			if (Settings.get().getAssetAdded().containsKey(asset.getItemID())) {
+				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));
 			} else {
 				Date date = new Date();
-				settings.getAssetAdded().put(asset.getItemID(), date);
+				Settings.get().getAssetAdded().put(asset.getItemID(), date);
 				asset.setAdded(date);
 			}
 			//User price
 			if (asset.getItem().isBlueprint() && !asset.isBPO()) { //Blueprint Copy
-				asset.setUserPrice(settings.getUserPrices().get(-asset.getItem().getTypeID()));
+				asset.setUserPrice(Settings.get().getUserPrices().get(-asset.getItem().getTypeID()));
 			} else { //All other
-				asset.setUserPrice(settings.getUserPrices().get(asset.getItem().getTypeID()));
+				asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 			}
 			//Market price
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
-			if (settings.getUserItemNames().containsKey(asset.getItemID())) {
-				asset.setName(settings.getUserItemNames().get(asset.getItemID()).getValue());
+			if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
+				asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue());
 			} else {
 				asset.setName(asset.getTypeName());
 			}
@@ -395,8 +393,8 @@ public class ProfileData {
 			asset.setContainer(sContainer);
 
 			//Price data
-			if (asset.getItem().isMarketGroup() && settings.getPriceData().containsKey(asset.getItem().getTypeID()) && !settings.getPriceData().get(asset.getItem().getTypeID()).isEmpty()) { //Market Price
-				asset.setPriceData(settings.getPriceData().get(asset.getItem().getTypeID()));
+			if (asset.getItem().isMarketGroup() && Settings.get().getPriceData().containsKey(asset.getItem().getTypeID()) && !Settings.get().getPriceData().get(asset.getItem().getTypeID()).isEmpty()) { //Market Price
+				asset.setPriceData(Settings.get().getPriceData().get(asset.getItem().getTypeID()));
 			} else { //No Price :(
 				asset.setPriceData(null);
 			}
@@ -408,15 +406,15 @@ public class ProfileData {
 			for (ReprocessedMaterial material : asset.getItem().getReprocessedMaterial()) {
 				//Calculate reprocessed price
 				portionSize = material.getPortionSize();
-				if (settings.getPriceData().containsKey(material.getTypeID())) {
-					PriceData priceData = settings.getPriceData().get(material.getTypeID());
+				if (Settings.get().getPriceData().containsKey(material.getTypeID())) {
+					PriceData priceData = Settings.get().getPriceData().get(material.getTypeID());
 					double price;
-					if (settings.getUserPrices().containsKey(material.getTypeID())) {
-						price = settings.getUserPrices().get(material.getTypeID()).getValue();
+					if (Settings.get().getUserPrices().containsKey(material.getTypeID())) {
+						price = Settings.get().getUserPrices().get(material.getTypeID()).getValue();
 					} else {
 						price = Asset.getDefaultPriceReprocessed(priceData);
 					}
-					priceReprocessed = priceReprocessed + (price * settings.getReprocessSettings().getLeft(material.getQuantity()));
+					priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
 				}
 			}
 			if (priceReprocessed > 0 && portionSize > 0) {

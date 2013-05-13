@@ -34,6 +34,7 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
@@ -136,7 +137,7 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 
 	@Override
 	public MenuData<Material> getMenuData() {
-		return new MenuData<Material>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<Material>(selectionModel.getSelected());
 	}
 
 	@Override

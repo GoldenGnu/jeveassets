@@ -368,7 +368,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 			processFilterAction(e);
 		}
 		if (ACTION_FILTER_TIMER.equals(e.getActionCommand())) {
-			if (!Settings.isFilterOnEnter()) {
+			if (!Settings.get().isFilterOnEnter()) {
 				processFilterAction(e);
 			}
 		}

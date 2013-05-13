@@ -47,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -141,7 +142,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
@@ -169,7 +170,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	@Override
 	public MenuData<ContractItem> getMenuData() {
-		return new MenuData<ContractItem>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<ContractItem>(selectionModel.getSelected());
 	}
 
 	@Override

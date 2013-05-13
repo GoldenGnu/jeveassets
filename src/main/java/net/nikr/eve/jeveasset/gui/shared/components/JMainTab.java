@@ -29,7 +29,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -85,9 +85,9 @@ public abstract class JMainTab {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
 			if (tableFormat instanceof  EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
-				program.getSettings().getTableColumns().put(toolName, formatAdaptor.getColumns());
-				program.getSettings().getTableResize().put(toolName, formatAdaptor.getResizeMode());
-				program.getSettings().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
+				Settings.get().getTableColumns().put(toolName, formatAdaptor.getColumns());
+				Settings.get().getTableResize().put(toolName, formatAdaptor.getResizeMode());
+				Settings.get().getTableColumnsWidth().put(toolName, jTable.getColumnsWidth());
 			}
 		}
 		
@@ -196,9 +196,9 @@ public abstract class JMainTab {
 			TableFormat<?> tableFormat = eventTableModel.getTableFormat();
 			if (tableFormat instanceof  EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> formatAdaptor = (EnumTableFormatAdaptor<?, ?>) tableFormat;
-				formatAdaptor.setColumns(program.getSettings().getTableColumns().get(toolName));
-				formatAdaptor.setResizeMode(program.getSettings().getTableResize().get(toolName));
-				jTable.setColumnsWidth(program.getSettings().getTableColumnsWidth().get(toolName));
+				formatAdaptor.setColumns(Settings.get().getTableColumns().get(toolName));
+				formatAdaptor.setResizeMode(Settings.get().getTableResize().get(toolName));
+				jTable.setColumnsWidth(Settings.get().getTableColumnsWidth().get(toolName));
 				eventTableModel.fireTableStructureChanged();
 			}
 		}

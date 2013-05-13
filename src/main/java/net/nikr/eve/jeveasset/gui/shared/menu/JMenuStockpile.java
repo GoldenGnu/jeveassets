@@ -29,6 +29,7 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -62,10 +63,10 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 		add(jMenuItem);
 		jMenuItems.add(jMenuItem);
 
-		if (!program.getSettings().getStockpiles().isEmpty()) {
+		if (!Settings.get().getStockpiles().isEmpty()) {
 			this.addSeparator();
 		}
-		List<Stockpile> stockpiles = program.getSettings().getStockpiles();
+		List<Stockpile> stockpiles = Settings.get().getStockpiles();
 		Collections.sort(stockpiles);
 		for (Stockpile stockpile : stockpiles) {
 			jMenuItem = new JStockpileMenu(stockpile);
@@ -100,8 +101,8 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 				}
 				stockpile = program.getStockpileTool().addToStockpile(stockpile, items);
 				if (stockpile != null) {
-					program.getMainWindow().addTab(program.getStockpileTool(), program.getSettings().isStockpileFocusTab());
-					if (program.getSettings().isStockpileFocusTab()) {
+					program.getMainWindow().addTab(program.getStockpileTool(), Settings.get().isStockpileFocusTab());
+					if (Settings.get().isStockpileFocusTab()) {
 						program.getStockpileTool().scrollToSctockpile(stockpile);
 					}
 				}

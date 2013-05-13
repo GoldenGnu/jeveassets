@@ -76,6 +76,8 @@ public class Settings {
 	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
+	private static Settings settings;
+
 	private static boolean portable = false;
 	private Map<Integer, PriceData> priceDatas; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
@@ -98,8 +100,8 @@ public class Settings {
 	private int maximumPurchaseAge = 0;
 	private Map<String, OverviewGroup> overviewGroups;
 	private ReprocessSettings reprocessSettings;
-	private static ExportSettings exportSettings = new ExportSettings();
-	private static boolean filterOnEnter = false;
+	private ExportSettings exportSettings = new ExportSettings();
+	private boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
 	private Map<Long, String> owners = new HashMap<Long, String>();
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
@@ -107,7 +109,7 @@ public class Settings {
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 
-	public Settings() {
+	private Settings() {
 		SplashUpdater.setProgress(30);
 		priceDatas = new HashMap<Integer, PriceData>();
 
@@ -137,11 +139,22 @@ public class Settings {
 		windowSize = new Dimension(800, 600);
 		windowMaximized = false;
 		windowAutoSave = true;
-		loadSettings();
-		constructEveApiConnector();
 	}
 
-	public static ExportSettings getExportSettings() {
+	public static Settings get() {
+		load();
+		return settings;
+	}
+
+	public static void load() {
+		if (settings == null) {
+			settings = new Settings();
+			settings.loadSettings();
+			settings.constructEveApiConnector();
+		}
+	}
+
+	public ExportSettings getExportSettings() {
 		return exportSettings;
 	}
 
@@ -351,11 +364,11 @@ public class Settings {
 		this.maximumPurchaseAge = maximumPurchaseAge;
 	}
 
-	public static boolean isFilterOnEnter() {
-		return Settings.filterOnEnter; //Static
+	public boolean isFilterOnEnter() {
+		return filterOnEnter;
 	}
 	public void setFilterOnEnter(final boolean filterOnEnter) {
-		Settings.filterOnEnter = filterOnEnter; //Static
+		this.filterOnEnter = filterOnEnter;
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache

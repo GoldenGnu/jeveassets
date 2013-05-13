@@ -32,7 +32,6 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
@@ -54,11 +53,6 @@ public abstract class FakeProgram extends Program {
 
 	public FakeProgram() {
 		super(false);
-	}
-
-	@Override
-	public Settings getSettings() {
-		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override

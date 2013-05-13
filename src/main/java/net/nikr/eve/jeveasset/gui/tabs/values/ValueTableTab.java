@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -109,7 +110,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu

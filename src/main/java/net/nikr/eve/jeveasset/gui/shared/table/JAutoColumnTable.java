@@ -40,6 +40,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
@@ -104,7 +105,7 @@ public class JAutoColumnTable extends JTable {
 		} else {
 			component.setForeground(this.getForeground());
 			//Highlight selected row
-			if (program.getSettings().isHighlightSelectedRows() && this.isRowSelected(row)) {
+			if (Settings.get().isHighlightSelectedRows() && this.isRowSelected(row)) {
 				component.setBackground(new Color(220, 240, 255));
 				return component;
 			} else {

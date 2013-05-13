@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -44,12 +45,12 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 	@Override
 	protected Map<Integer, UserItem<Integer, Double>> getItems() {
-		return program.getSettings().getUserPrices();
+		return Settings.get().getUserPrices();
 	}
 
 	@Override
 	protected void setItems(final Map<Integer, UserItem<Integer, Double>> items) {
-		program.getSettings().setUserPrices(items);
+		Settings.get().setUserPrices(items);
 	}
 
 	@Override

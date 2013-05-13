@@ -35,6 +35,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -95,7 +96,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
@@ -123,7 +124,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 
 	@Override
 	public MenuData<Item> getMenuData() {
-		return new MenuData<Item>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<Item>(selectionModel.getSelected());
 	}
 
 	@Override

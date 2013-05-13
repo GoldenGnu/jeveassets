@@ -35,6 +35,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -497,7 +498,7 @@ public class AccountImportDialog extends JDialogCentered {
 					result = Result.OK_LIMITED_ACCESS;
 				} else if (accountGetter.getFails() >= accountGetter.getMaxFail()) { //No access
 					result = Result.FAIL_NO_ACCESS;
-				} else if (!Online.isOnline(program.getSettings())) { //Offline
+				} else if (!Online.isOnline()) { //Offline
 					result = Result.FAIL_NO_INTERNET;
 				} else {
 					result = Result.FAIL_NOT_VALID; //Not valid

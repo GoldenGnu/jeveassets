@@ -28,6 +28,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -145,27 +146,27 @@ public class ProxySettingsPanel extends JSettingsPanel {
 	public boolean save() {
 		if (proxyTypeField.getSelectedItem() != Proxy.Type.DIRECT) {
 			try {
-				program.getSettings().setProxy(
+				Settings.get().setProxy(
 								proxyAddressField.getText(), (Integer) proxyPortField.getValue(), (Proxy.Type) proxyTypeField.getSelectedItem());
 			} catch (IllegalArgumentException iae) {
 				JOptionPane.showMessageDialog(parent, "There was an error with the proxy:\n" + iae.getMessage(), "Proxy Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			program.getSettings().setProxy(null);
+			Settings.get().setProxy(null);
 		}
 
 		// save the API proxy.
 		if (enableApiProxy.isSelected()) {
-			program.getSettings().setApiProxy(apiProxyField.getText());
+			Settings.get().setApiProxy(apiProxyField.getText());
 		} else {
-			program.getSettings().setApiProxy(null);
+			Settings.get().setApiProxy(null);
 		}
 		return false;
 	}
 
 	@Override
 	public void load() {
-		Proxy proxy = program.getSettings().getProxy();
+		Proxy proxy = Settings.get().getProxy();
 		if (proxy.type().equals(Proxy.Type.DIRECT)) {
 			proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
 		} else {
@@ -179,7 +180,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		}
 
 		// set the API Proxy fields
-		String apiProxy = program.getSettings().getApiProxy();
+		String apiProxy = Settings.get().getApiProxy();
 		if (apiProxy == null) {
 			enableApiProxy.setSelected(false);
 		} else {

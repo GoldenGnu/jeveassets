@@ -32,6 +32,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -110,7 +111,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME),
+				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
 
@@ -143,7 +144,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 	@Override
 	public MenuData<MarketOrder> getMenuData() {
-		return new MenuData<MarketOrder>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<MarketOrder>(selectionModel.getSelected());
 	}
 
 	@Override

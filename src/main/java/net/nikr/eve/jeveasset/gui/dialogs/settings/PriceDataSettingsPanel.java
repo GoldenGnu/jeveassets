@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -258,7 +259,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 								|| !priceReprocessedType.equals(Asset.getPriceReprocessedType());
 
 		//Update settings
-		program.getSettings().setPriceDataSettings(new PriceDataSettings(locationType, locations, source));
+		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source));
 		Asset.setPriceType(priceType);
 		Asset.setPriceReprocessedType(priceReprocessedType);
 
@@ -268,12 +269,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public void load() {
-		jSource.setSelectedItem(program.getSettings().getPriceDataSettings().getSource());
+		jSource.setSelectedItem(Settings.get().getPriceDataSettings().getSource());
 	}
 
 	private void updateSource(final PriceSource source) {
-		final List<Long> locations = program.getSettings().getPriceDataSettings().getLocations();
-		final LocationType locationType = program.getSettings().getPriceDataSettings().getLocationType();
+		final List<Long> locations = Settings.get().getPriceDataSettings().getLocations();
+		final LocationType locationType = Settings.get().getPriceDataSettings().getLocationType();
 
 		//Price Types
 		jPriceType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));

@@ -197,7 +197,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
@@ -239,7 +239,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	@Override
 	public MenuData<StockpileItem> getMenuData() {
-		return new MenuData<StockpileItem>(selectionModel.getSelected(), program.getSettings());
+		return new MenuData<StockpileItem>(selectionModel.getSelected());
 	}
 
 	@Override
@@ -270,7 +270,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		updateOwners();
 
-		for (Stockpile stockpile : program.getSettings().getStockpiles()) {
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
 			stockpileItems.addAll(stockpile.getItems());
 			updateStockpile(stockpile);
 		}
@@ -432,7 +432,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 					continue;
 				}
 				final int TYPE_ID = item.getTypeID();
-				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC(), program.getSettings().getUserPrices(), program.getSettings().getPriceData());
+				double price = ApiIdConverter.getPrice(TYPE_ID, item.isBPC());
 				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
@@ -714,7 +714,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 				Stockpile stockpile = item.getStockpile();
 				int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), stockpile.getName(), TabsStockpile.get().deleteStockpileTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (value == JOptionPane.OK_OPTION) {
-					program.getSettings().getStockpiles().remove(stockpile);
+					Settings.get().getStockpiles().remove(stockpile);
 					removeStockpile(stockpile);
 				}
 			}

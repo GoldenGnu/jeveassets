@@ -81,7 +81,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
-		writeExportSettings(xmldoc, Settings.getExportSettings());
+		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeOwners(xmldoc, settings.getOwners());

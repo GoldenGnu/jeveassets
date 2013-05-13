@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -46,12 +47,12 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 	@Override
 	protected Map<Long, UserItem<Long, String>> getItems() {
-		return program.getSettings().getUserItemNames();
+		return Settings.get().getUserItemNames();
 	}
 
 	@Override
 	protected void setItems(final Map<Long, UserItem<Long, String>> items) {
-		program.getSettings().setUserItemNames(items);
+		Settings.get().setUserItemNames(items);
 	}
 
 	@Override

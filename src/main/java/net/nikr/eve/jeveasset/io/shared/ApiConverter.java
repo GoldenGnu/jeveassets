@@ -132,12 +132,12 @@ public final class ApiConverter {
 		return new MarketOrder(apiMarketOrder, item, location, owner);
 	}
 
-	public static List<Asset> assetMarketOrder(final List<MarketOrder> marketOrders, final Owner owner, final Settings settings) {
+	public static List<Asset> assetMarketOrder(final List<MarketOrder> marketOrders, final Owner owner) {
 		List<Asset> assets = new ArrayList<Asset>();
 		for (MarketOrder marketOrder : marketOrders) {
 			if (marketOrder.getOrderState() == 0 && marketOrder.getVolRemaining() > 0
-					&& ((marketOrder.getBid() < 1 && settings.isIncludeSellOrders())
-					|| (marketOrder.getBid() > 0 && settings.isIncludeBuyOrders()))
+					&& ((marketOrder.getBid() < 1 && Settings.get().isIncludeSellOrders())
+					|| (marketOrder.getBid() > 0 && Settings.get().isIncludeBuyOrders()))
 					) {
 				Asset asset = toAssetMarketOrder(marketOrder, owner);
 				assets.add(asset);
@@ -164,10 +164,10 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static Map<Contract, List<ContractItem>> convertContracts(final Map<EveContract, List<EveContractItem>> eveContracts, final Settings settings) {
+	public static Map<Contract, List<ContractItem>> convertContracts(final Map<EveContract, List<EveContractItem>> eveContracts) {
 		Map<Contract, List<ContractItem>> contracts = new HashMap<Contract, List<ContractItem>>();
 		for (Entry<EveContract, List<EveContractItem>> entry : eveContracts.entrySet()) {
-			Contract contract = toContract(entry.getKey(), settings);
+			Contract contract = toContract(entry.getKey());
 			List<ContractItem> contractItems = convertContractItems(entry.getValue(), contract);
 			contracts.put(contract, contractItems);
 		}
@@ -182,11 +182,11 @@ public final class ApiConverter {
 		return contractItems;
 	}
 
-	public static Contract toContract(final EveContract eveContract, final Settings settings) {
-		String acceptor = ApiIdConverter.getOwnerName(eveContract.getAcceptorID(), settings.getOwners());
-		String assignee = ApiIdConverter.getOwnerName(eveContract.getAssigneeID(), settings.getOwners());
-		String issuerCorp = ApiIdConverter.getOwnerName(eveContract.getIssuerCorpID(), settings.getOwners());
-		String issuer = ApiIdConverter.getOwnerName(eveContract.getIssuerID(), settings.getOwners());
+	public static Contract toContract(final EveContract eveContract) {
+		String acceptor = ApiIdConverter.getOwnerName(eveContract.getAcceptorID());
+		String assignee = ApiIdConverter.getOwnerName(eveContract.getAssigneeID());
+		String issuerCorp = ApiIdConverter.getOwnerName(eveContract.getIssuerCorpID());
+		String issuer = ApiIdConverter.getOwnerName(eveContract.getIssuerID());
 		Location endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
 		Location startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
 		return new Contract(eveContract, acceptor, assignee, issuerCorp, issuer, startStation, endStation);
@@ -198,9 +198,9 @@ public final class ApiConverter {
 	}
 
 	
-	public static List<Asset> assetContracts(final List<ContractItem> contractItems, final Owner owner, final Settings settings) {
+	public static List<Asset> assetContracts(final List<ContractItem> contractItems, final Owner owner) {
 		List<Asset> list = new ArrayList<Asset>();
-		if (!settings.isIncludeContracts()) {
+		if (!Settings.get().isIncludeContracts()) {
 			return list;
 		}
 		for (ContractItem contractItem : contractItems) {

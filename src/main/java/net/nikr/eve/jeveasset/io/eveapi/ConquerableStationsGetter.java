@@ -35,15 +35,12 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 public class ConquerableStationsGetter extends AbstractApiGetter<StationListResponse> {
 
-	private Settings settings;
-
 	public ConquerableStationsGetter() {
 		super("Conquerable Stations");
 	}
 
-	public void load(final UpdateTask updateTask, final Settings loadSettings) {
-		this.settings = loadSettings;
-		load(updateTask, loadSettings.isForceUpdate(), "jEveAssets");
+	public void load(final UpdateTask updateTask) {
+		load(updateTask, Settings.get().isForceUpdate(), "jEveAssets");
 	}
 
 	@Override
@@ -54,12 +51,12 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 
 	@Override
 	protected Date getNextUpdate() {
-		return settings.getConquerableStationsNextUpdate();
+		return Settings.get().getConquerableStationsNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		settings.setConquerableStationsNextUpdate(nextUpdate);
+		Settings.get().setConquerableStationsNextUpdate(nextUpdate);
 	}
 
 	@Override

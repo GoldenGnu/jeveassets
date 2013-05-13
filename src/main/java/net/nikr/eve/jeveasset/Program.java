@@ -141,7 +141,6 @@ public class Program implements ActionListener {
 	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
-	private final Settings settings;
 	private final ProfileData profileData;
 	private final ProfileManager profileManager;
 	private final PriceDataGetter priceDataGetter;
@@ -159,13 +158,13 @@ public class Program implements ActionListener {
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
 		StaticData.load();
-		settings = new Settings();
-		profileManager = new ProfileManager(settings);
+		Settings.load();
+		profileManager = new ProfileManager();
 		profileManager.searchProfile();
 		profileManager.loadActiveProfile();
-		profileData = new ProfileData(settings, profileManager);
+		profileData = new ProfileData(profileManager);
 		//Can not update profile data now - list needs to be empty doing creation...
-		priceDataGetter = new PriceDataGetter(settings, profileData);
+		priceDataGetter = new PriceDataGetter(profileData);
 		priceDataGetter.load();
 		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
@@ -229,7 +228,6 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
 		SplashUpdater.setProgress(82);
-		
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
@@ -300,7 +298,6 @@ public class Program implements ActionListener {
 	 * @param load does nothing except change the signature.
 	 */
 	protected Program(final boolean load) {
-		settings = null;
 		profileData = null;
 		profileManager = null;
 		priceDataGetter = null;
@@ -343,7 +340,7 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.saveSettings();
 		}
-		settings.saveSettings();
+		Settings.get().saveSettings();
 		profileManager.saveProfile();
 	}
 
@@ -383,12 +380,10 @@ public class Program implements ActionListener {
 		}
 	}
 
-	public Settings getSettings() {
-		return settings;
-	}
 	public MainWindow getMainWindow() {
 		return mainWindow;
 	}
+
 	public AssetsTab getAssetsTab() {
 		return assetsTab;
 	}
