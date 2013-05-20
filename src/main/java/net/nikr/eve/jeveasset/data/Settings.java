@@ -63,6 +63,7 @@ public class Settings {
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
 	private static final String PATH_PROFILES = "profiles";
+	private static final String PATH_DATA = "data";
 
 	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
@@ -79,27 +80,27 @@ public class Settings {
 	private static Settings settings;
 
 	private static boolean portable = false;
-	private Map<Integer, PriceData> priceDatas; //TypeID : int
-	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
-	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
+	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
+	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
+	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	private Date conquerableStationsNextUpdate;
-	private Map<String, Boolean> flags;
+	private Date conquerableStationsNextUpdate = Settings.getNow();;
+	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	private Proxy proxy;
 	private String apiProxy;
-	private Point windowLocation;
-	private Dimension windowSize;
-	private boolean windowMaximized;
-	private boolean windowAutoSave;
-	private boolean windowAlwaysOnTop;
+	private Point windowLocation = new Point(0, 0);;
+	private Dimension windowSize = new Dimension(800, 600);;
+	private boolean windowMaximized = false;
+	private boolean windowAutoSave = true;;
+	private boolean windowAlwaysOnTop = false;
 	private Boolean highlightSelectedRows = null;
 	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
-	private Map<String, OverviewGroup> overviewGroups;
-	private ReprocessSettings reprocessSettings;
+	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
 	private ExportSettings exportSettings = new ExportSettings();
 	private boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
@@ -111,14 +112,8 @@ public class Settings {
 
 	private Settings() {
 		SplashUpdater.setProgress(30);
-		priceDatas = new HashMap<Integer, PriceData>();
 
 		//Settings
-		userPrices = new HashMap<Integer, UserItem<Integer, Double>>();
-		userNames = new HashMap<Long, UserItem<Long, String>>();
-		overviewGroups = new HashMap<String, OverviewGroup>();
-
-		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 		flags.put(FLAG_AUTO_UPDATE, true);
@@ -130,16 +125,14 @@ public class Settings {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
-
-		reprocessSettings = new ReprocessSettings();
-
-		conquerableStationsNextUpdate = Settings.getNow();
-
-		windowLocation = new Point(0, 0);
-		windowSize = new Dimension(800, 600);
-		windowMaximized = false;
-		windowAutoSave = true;
 	}
+
+	/**
+	 *
+	 * @param load does nothing except change the method signature.
+	 */
+	protected Settings(final boolean load) { }
+
 
 	public static Settings get() {
 		load();
@@ -157,13 +150,6 @@ public class Settings {
 	public ExportSettings getExportSettings() {
 		return exportSettings;
 	}
-
-	/**
-	 *
-	 * @param load does nothing except change the method signature.
-	 */
-	protected Settings(final boolean load) { }
-
 
 	public void saveSettings() {
 		SettingsWriter.save(this);
@@ -512,6 +498,12 @@ public class Settings {
 	}
 	public static String getPathProfilesDirectory() {
 		return getLocalFile(Settings.PATH_PROFILES, !portable);
+	}
+	public static String getPathStaticDataDirectory() {
+		return getLocalFile(Settings.PATH_DATA, false);
+	}
+	public static String getPathDataDirectory() {
+		return getLocalFile(Settings.PATH_DATA, !portable);
 	}
 	public static String getPathItems() {
 		return getLocalFile(Settings.PATH_ITEMS, false);

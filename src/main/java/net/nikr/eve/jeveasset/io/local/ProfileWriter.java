@@ -48,27 +48,28 @@ public final class ProfileWriter extends AbstractXmlWriter {
 
 	private ProfileWriter() { }
 
-	public static void save(final ProfileManager profileManager, final String filename) {
+	public static boolean save(final ProfileManager profileManager, final String filename) {
 		ProfileWriter writer = new ProfileWriter();
-		writer.write(profileManager, filename);
+		return writer.write(profileManager, filename);
 	}
 
-	private void write(final ProfileManager profileManager, final String filename) {
+	private boolean write(final ProfileManager profileManager, final String filename) {
 		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("assets");
 		} catch (XmlException ex) {
 			LOG.error("Profile not saved " + ex.getMessage(), ex);
-			return;
+			return false;
 		}
 		writeAccounts(xmldoc, profileManager.getAccounts());
 		try {
 			writeXmlFile(xmldoc, filename, true);
 		} catch (XmlException ex) {
 			LOG.error("Profile not saved " + ex.getMessage(), ex);
-			return;
+			return false;
 		}
 		LOG.info("Profile saved");
+		return true;
 	}
 
 	private void writeAccounts(final Document xmldoc, final List<Account> accounts) {

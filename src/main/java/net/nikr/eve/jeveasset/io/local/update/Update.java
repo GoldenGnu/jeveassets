@@ -28,6 +28,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.io.local.update.updates.Update1To2;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
+import net.nikr.eve.jeveasset.io.shared.FileLock;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -100,7 +101,8 @@ public class Update extends AbstractXmlReader {
 			return;
 		}
 		try {
-			int currentVersion = getVersion(path);
+			int currentVersion = getVersion(path); //Got Its own lock...
+			FileLock.lock(xml);
 			if (requiredVersion > currentVersion) {
 				LOG.info("settings.xml are out of date, updating.");
 				Update1To2 update = new Update1To2();
@@ -112,6 +114,8 @@ public class Update extends AbstractXmlReader {
 		} catch (Exception ex) {
 			LOG.error("Failed to update settings", ex);
 			throw new RuntimeException(ex);
+		} finally {
+			FileLock.unlock(xml);
 		}
 	}
 }

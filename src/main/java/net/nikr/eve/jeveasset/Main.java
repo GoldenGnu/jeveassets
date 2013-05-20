@@ -26,7 +26,10 @@ import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
+import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.io.shared.FileLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.translations.conf.DefaultBundleConfiguration;
@@ -47,9 +50,20 @@ public final class Main {
 	 * JEveAssets main launcher.
 	 */
 	private Program program;
+	/**
+	 * Ensure only one instance is running...
+	 */
+	private SingleInstance instance;
 
 	/** Creates a new instance of Main. */
 	private Main() {
+		log.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
+		log.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+		log.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+		instance = new SingleInstance();
+		if (instance.isSingleInstance()) {
+			FileLock.unlockAll();
+		}
 		program = new Program();
 	}
 

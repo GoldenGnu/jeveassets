@@ -50,17 +50,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private SettingsWriter() { }
 
-	public static void save(final Settings settings) {
+	public static boolean save(final Settings settings) {
 		SettingsWriter writer = new SettingsWriter();
-		writer.write(settings);
+		return writer.write(settings);
 	}
 
-	private void write(final Settings settings) {
+	private boolean write(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("settings");
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
+			return false;
 		}
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
@@ -89,8 +90,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
+			return false;
 		}
 		LOG.info("Settings saved");
+		return true;
 	}
 
 	private void writeOwners(final Document xmldoc, final Map<Long, String> owners) {

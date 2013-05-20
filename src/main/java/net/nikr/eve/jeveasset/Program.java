@@ -146,10 +146,6 @@ public class Program implements ActionListener {
 	private final PriceDataGetter priceDataGetter;
 
 	public Program() {
-		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
-		LOG.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
-		LOG.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
-
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}

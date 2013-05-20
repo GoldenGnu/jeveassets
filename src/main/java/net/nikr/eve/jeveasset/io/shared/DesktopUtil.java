@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
@@ -85,6 +86,10 @@ public final class DesktopUtil {
 		} else {
 			LOG.warn("	Browsing failed");
 		}
-		JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
+		JFrame jFrame = null;
+		if (program != null) {
+			jFrame = program.getMainWindow().getFrame();
+		}
+		JOptionPane.showMessageDialog(jFrame, "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
 	}
 }
