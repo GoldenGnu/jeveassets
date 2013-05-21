@@ -151,7 +151,6 @@ public class FileLock {
 		jEditorPane.setEditable(false);
 		jEditorPane.setFocusable(false);
 		jEditorPane.setOpaque(false);
-		//FIXME - - > FileLock: i18n
 		jEditorPane.setText("<html><body style=\"font-family: " + jLabel.getFont().getName() + "; font-size: " + jLabel.getFont().getSize() + "pt\">"
 				+ General.get().fileLockMsg(file.getName())
 				+ "</body></html>");
