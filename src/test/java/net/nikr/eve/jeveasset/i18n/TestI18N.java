@@ -112,6 +112,11 @@ public class TestI18N {
 		assertNotNull(g.assets());
 	}
 
+	@Test public void testTabsContractsBundle_en() throws Exception {
+		TabsContracts g = Main.getBundleService().get(TabsContracts.class);
+		assertNotNull(g.auction());
+	}
+
 	@Test public void testTabsItemsBundle_en() throws Exception {
 		TabsItems g = Main.getBundleService().get(TabsItems.class);
 		assertNotNull(g.columnName());
@@ -142,6 +147,11 @@ public class TestI18N {
 		assertNotNull(g.add());
 	}
 
+	@Test public void testTabsReprocessedBundle_en() throws Exception {
+		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
+		assertNotNull(g.add());
+	}
+
 	@Test public void testTabsRoutingBundle_en() throws Exception {
 		TabsRouting g = Main.getBundleService().get(TabsRouting.class);
 		assertNotNull(g.add());
@@ -152,23 +162,18 @@ public class TestI18N {
 		assertNotNull(g.addItem());
 	}
 
-	@Test public void testTabsValuesBundle_en() throws Exception {
-		TabsValues g = Main.getBundleService().get(TabsValues.class);
-		assertNotNull(g.columnAssets());
-	}
-
 	@Test public void testTabsTrackerBundle_en() throws Exception {
 		TabsTracker g = Main.getBundleService().get(TabsTracker.class);
 		assertNotNull(g.all());
 	}
 
-	@Test public void testTabsReprocessedBundle_en() throws Exception {
-		TabsReprocessed g = Main.getBundleService().get(TabsReprocessed.class);
-		assertNotNull(g.batch());
+	@Test public void testTabsTransactionBundle_en() throws Exception {
+		TabsTransaction g = Main.getBundleService().get(TabsTransaction.class);
+		assertNotNull(g.buy());
 	}
 
-	@Test public void testTabsContractsBundle_en() throws Exception {
-		TabsContracts g = Main.getBundleService().get(TabsContracts.class);
-		assertNotNull(g.title());
+	@Test public void testTabsValuesBundle_en() throws Exception {
+		TabsValues g = Main.getBundleService().get(TabsValues.class);
+		assertNotNull(g.columnAssets());
 	}
 }
