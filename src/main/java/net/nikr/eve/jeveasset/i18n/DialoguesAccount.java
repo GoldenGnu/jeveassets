@@ -46,18 +46,22 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String cancel();
 	public abstract String ok();
 
-	public abstract String accountAlreadyImported();
-	public abstract String noAccess();
-	public abstract String noInternetConnection();
-	public abstract String accountNotValid();
-	public abstract String notEnoughAccess();
-	public abstract String accountValid();
-	public abstract String accountAlreadyImportedText();
-	public abstract String noAccessText();
-	public abstract String noInternetConnectionText();
-	public abstract String accountNotValidText();
-	public abstract String notEnoughAccessText();
-	public abstract String accountValidText();
+	public abstract String failApiError();
+	public abstract String failApiErrorText(String s);
+	public abstract String failApiException();
+	public abstract String failApiExceptionText();
+	public abstract String failExist();
+	public abstract String failExistText();
+	public abstract String failGeneric();
+	public abstract String failGenericText(String s);
+	public abstract String failNotEnoughPrivileges();
+	public abstract String failNotEnoughPrivilegesText();
+	public abstract String failNotValid();
+	public abstract String failNotValidText();
+	public abstract String okLimited();
+	public abstract String okLimitedText();
+	public abstract String okValid();
+	public abstract String okValidText();
 
 	public abstract String keyId();
 	public abstract String vCode();

@@ -27,8 +27,6 @@ import java.util.List;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.LoggerFactory;
@@ -154,22 +152,7 @@ public class FileLock {
 		jEditorPane.setText("<html><body style=\"font-family: " + jLabel.getFont().getName() + "; font-size: " + jLabel.getFont().getSize() + "pt\">"
 				+ General.get().fileLockMsg(file.getName())
 				+ "</body></html>");
-		jEditorPane.addHyperlinkListener(new LinkListener());
+		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(null));
 		return jEditorPane;
-	}
-
-	private static class LinkListener implements HyperlinkListener {
-
-		@Override
-		public void hyperlinkUpdate(HyperlinkEvent hle) {
-			Object o = hle.getSource();
-			if (o instanceof JEditorPane) {
-				JEditorPane jEditorPane = (JEditorPane) o;
-				if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
-					DesktopUtil.browse(hle.getURL().toString(), null);
-				}
-			}
-		}
-		
 	}
 }

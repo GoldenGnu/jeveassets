@@ -26,8 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,10 @@ public final class DesktopUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(DesktopUtil.class);
 
 	private DesktopUtil() { }
+
+	public static HyperlinkListener getHyperlinkListener(Program program) {
+		return new LinkListener(program);
+	}
 
 	private static boolean isSupported(final Desktop.Action action) {
 		if (Desktop.isDesktopSupported()) {
@@ -91,5 +98,25 @@ public final class DesktopUtil {
 			jFrame = program.getMainWindow().getFrame();
 		}
 		JOptionPane.showMessageDialog(jFrame, "Could not browse to:\n" + url, "Browse", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	private static class LinkListener implements HyperlinkListener {
+
+		private Program program;
+
+		public LinkListener(Program program) {
+			this.program = program;
+		}
+
+		@Override
+		public void hyperlinkUpdate(final HyperlinkEvent hle) {
+			Object o = hle.getSource();
+			if (o instanceof JEditorPane) {
+				JEditorPane jEditorPane = (JEditorPane) o;
+				if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
+					browse(hle.getURL().toString(), program);
+				}
+			}
+		}
 	}
 }

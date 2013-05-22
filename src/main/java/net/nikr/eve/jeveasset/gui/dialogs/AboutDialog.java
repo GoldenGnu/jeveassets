@@ -24,8 +24,6 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -34,7 +32,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
-public class AboutDialog extends JDialogCentered implements ActionListener, HyperlinkListener {
+public class AboutDialog extends JDialogCentered implements ActionListener {
 
 	private static final String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
 	private static final String ACTION_UPDATE = "ACTION_UPDATE";
@@ -161,7 +159,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 				);
 		jEditorPane.setEditable(false);
 		jEditorPane.setOpaque(false);
-		jEditorPane.addHyperlinkListener(this);
+		jEditorPane.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
 		if (addBorder) {
 			jEditorPane.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createLineBorder(jPanel.getBackground().darker(), 1),
@@ -193,17 +191,6 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		}
 		if (ACTION_UPDATE.equals(e.getActionCommand())) {
 			jLockWindow.show(new CheckProgramUpdate(), DialoguesAbout.get().updatesInProgress());
-		}
-	}
-
-	@Override
-	public void hyperlinkUpdate(final HyperlinkEvent hle) {
-		Object o = hle.getSource();
-		if (o instanceof JEditorPane) {
-			JEditorPane jEditorPane = (JEditorPane) o;
-			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType()) && jEditorPane.isEnabled()) {
-				DesktopUtil.browse(hle.getURL().toString(), program);
-			}
 		}
 	}
 
