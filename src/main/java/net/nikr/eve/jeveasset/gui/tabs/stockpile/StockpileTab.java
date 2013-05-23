@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
@@ -65,15 +66,11 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	private static final String ACTION_ADD = "ACTION_ADD";
 	private static final String ACTION_SHOPPING_LIST_MULTI = "ACTION_SHOPPING_LIST_MULTI";
-	private static final String ACTION_IMPORT = "ACTION_IMPORT";
+	private static final String ACTION_IMPORT_EFT = "ACTION_IMPORT_EFT";
+	private static final String ACTION_IMPORT_ISK_PER_HOUR = "ACTION_IMPORT_ISK_PER_HOUR";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
 
-	private JButton jAdd;
-	private JButton jShoppingList;
-	private JButton jImport;
-	private JButton jExpand;
-	private JButton jCollapse;
 	private JSeparatorTable jTable;
 	private JLabel jVolumeNow;
 	private JLabel jVolumeNeeded;
@@ -111,7 +108,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jToolBarLeft.setFloatable(false);
 		jToolBarLeft.setRollover(true);
 
-		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
+		JButton jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
 		jAdd.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
@@ -121,7 +118,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		jToolBarLeft.addSeparator();
 
-		jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
+		JButton jShoppingList = new JButton(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
 		jShoppingList.setActionCommand(ACTION_SHOPPING_LIST_MULTI);
 		jShoppingList.addActionListener(this);
 		jShoppingList.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
@@ -131,19 +128,27 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 		jToolBarLeft.addSeparator();
 
-		jImport = new JButton(TabsStockpile.get().importEFT(), Images.TOOL_SHIP_LOADOUTS.getIcon());
-		jImport.setActionCommand(ACTION_IMPORT);
-		jImport.addActionListener(this);
+		JDropDownButton jImport = new JDropDownButton(TabsStockpile.get().importButton(), Images.EDIT_IMPORT.getIcon());
 		jImport.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jImport.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jImport.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarLeft.add(jImport);
 
+		JMenuItem jImportEFT = new JMenuItem(TabsStockpile.get().importEft(), Images.TOOL_SHIP_LOADOUTS.getIcon());
+		jImportEFT.setActionCommand(ACTION_IMPORT_EFT);
+		jImportEFT.addActionListener(this);
+		jImport.add(jImportEFT);
+
+		JMenuItem jImportIskPerHour = new JMenuItem(TabsStockpile.get().importIskPerHour(), Images.TOOL_VALUES.getIcon());
+		jImportIskPerHour.setActionCommand(ACTION_IMPORT_ISK_PER_HOUR);
+		jImportIskPerHour.addActionListener(this);
+		jImport.add(jImportIskPerHour);
+
 		JToolBar jToolBarRight = new JToolBar();
 		jToolBarRight.setFloatable(false);
 		jToolBarRight.setRollover(true);
 
-		jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		JButton jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
 		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -151,7 +156,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jCollapse);
 
-		jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
+		JButton jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -501,18 +506,18 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Validate
 		fit = fit.trim();
 		if (fit.isEmpty()) { //Empty sting
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
 		String[] split = fit.split("[\r\n]");
 		if (split.length < 1) { //Malformed
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 		//Malformed
 		if (!split[0].startsWith("[") || !split[0].contains(",") || !split[0].endsWith("]")) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
@@ -526,7 +531,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			name = modules.get(1).trim();
 			modules.remove(1);
 		} else {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importNotValid(), TabsStockpile.get().importEFT(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEftHelp(), TabsStockpile.get().importEftTitle(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
@@ -563,6 +568,127 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
+	}
+
+	private void importIskPerHour() {
+		//Get string from clipboard
+		String shoppingList = getClipboardContents();
+
+		//Validate
+		shoppingList = shoppingList.trim();
+		if (shoppingList.isEmpty()) { //Empty sting
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importEmpty(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+		boolean doSkip = false;
+		if (shoppingList.contains("Shopping List for:")) {
+			int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourInclude(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			doSkip = (value != JOptionPane.YES_OPTION);
+		}
+		String[] lines = shoppingList.split("[\r\n]");
+		Map<String, Long> data = new HashMap<String, Long>();
+		boolean plain = shoppingList.contains("Material - Quantity");
+		boolean csv = shoppingList.contains("Material, Quantity, ME, Meta, Cost Per Item, Total Cost");
+		if (plain || csv) {
+			boolean skip = false;
+			for (String line : lines) {
+				if (line.contains("Shopping List for:") && doSkip) {
+					skip = true;
+				}
+				if (skip) { //Skip "Shopping List for" paragraph if selected
+					if (line.isEmpty()) {
+						skip = false;
+					}
+					continue;
+				}
+				String text;
+				String number;
+				boolean blueprint;
+				if (plain) {
+					//PLAIN (shopping list and copy to clipboard)
+					if (line.equals("Material - Quantity") //Skip none-data
+							|| line.isEmpty()
+							|| !line.contains(" - ")) {
+						continue;
+					}
+					int end = line.lastIndexOf(" - ");
+					if (end < 0) { //Validate
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+						return;
+					}
+					text = line.substring(0, end);
+					number = line.substring(end + 3);
+					blueprint = text.contains("(") && text.contains(")");
+				} else if (csv) {
+					//CSV (shopping list)
+					if (line.startsWith("Material") //Skip none-data
+							|| line.isEmpty()
+							|| !line.contains(",")
+							|| line.contains("Total")) {
+						continue;
+					}
+					String[] s = line.split(", ");
+					if (s.length != 6) { //Validate
+						JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+						return;
+					}
+					text = s[0];
+					number = s[1];
+					blueprint = !s[2].equals("-");
+				} else {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+					return;
+				}
+				//Format text
+				String module = text.toLowerCase();
+				blueprint = (blueprint && !module.contains("blueprint"));
+				module = module.replaceAll("\\([^\\)]*\\)", "").trim();
+				if (blueprint) {
+					module = module + " blueprint";
+				}
+				//Convert number
+				Long count;
+				try {
+					count = Long.valueOf(number.replace(",", "").trim());
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+					return;
+				}
+				if (data.containsKey(module)) { //Add count
+					count = count + data.get(module);
+				}
+				data.put(module, count);
+			}
+		}
+
+		if (data.isEmpty()) { //Validate
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
+			return;
+		}
+
+		//Create Stockpile
+		Stockpile stockpile = stockpileDialog.showAdd("");
+		if (stockpile == null) { //Dialog cancelled
+			return;
+		}
+		//Search for item names
+		for (Map.Entry<String, Long> entry : data.entrySet()) {
+			for (Item item : StaticData.get().getItems().values()) {
+				if (item.getTypeName().toLowerCase().equals(entry.getKey())) { //Found item
+					StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), entry.getValue());
+					stockpile.add(stockpileItem);
+					break; //search done
+				}
+			}
+		}
+
+		//Update stockpile data
+		addStockpile(stockpile);
+		scrollToSctockpile(stockpile);
+	}
+
+	private void importIskPerHourAdd(String text, String number, boolean bluerpint, Map<String, Long> data) {
+		
 	}
 
 	private void updateOwners() {
@@ -675,8 +801,12 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 			}
 		}
 		//Add stockpile (EFT Import)
-		if (ACTION_IMPORT.equals(e.getActionCommand())) {
+		if (ACTION_IMPORT_EFT.equals(e.getActionCommand())) {
 			importEFT();
+		}
+		//Add stockpile (EFT Import)
+		if (ACTION_IMPORT_ISK_PER_HOUR.equals(e.getActionCommand())) {
+			importIskPerHour();
 		}
 		//Add stockpile
 		if (ACTION_ADD.equals(e.getActionCommand())) {

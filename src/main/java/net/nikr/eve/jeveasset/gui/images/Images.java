@@ -58,6 +58,7 @@ public enum Images {
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
 	EDIT_SET ("edit_set.png"),
+	EDIT_IMPORT ("edit_import.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),

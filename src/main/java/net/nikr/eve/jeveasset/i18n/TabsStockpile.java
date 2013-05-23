@@ -64,9 +64,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String expand();
 	public abstract String flag();
 	public abstract String getShoppingList();
-	public abstract String importEFT();
+	public abstract String importButton();
+	public abstract String importEft();
+	public abstract String importEftTitle();
+	public abstract String importEftHelp();
 	public abstract String importEmpty();
-	public abstract String importNotValid();
+	public abstract String importIskPerHour();
+	public abstract String importIskPerHourTitle();
+	public abstract String importIskPerHourInclude();
+	public abstract String importIskPerHourHelp();
 	public abstract String include();
 	public abstract String inventory();
 	public abstract String item();
