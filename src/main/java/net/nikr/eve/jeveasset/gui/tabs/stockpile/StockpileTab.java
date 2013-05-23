@@ -328,34 +328,46 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		return stockpile;
 	}
 
-	public void scrollToSctockpile(final Stockpile stockpile) {
-		StockpileItem item = stockpile.getItems().get(0);
-		int row = separatorList.indexOf(item) - 1;
-		if (row < 0) { //Collapsed: Expand and run again...
-			for (int i = 0; i < separatorList.size(); i++) {
-				Object object = separatorList.get(i);
-				if (object instanceof SeparatorList.Separator) {
-					SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
-					if (separator.first().equals(item)) {
-						separatorList.getReadWriteLock().writeLock().lock();
-						try {
-							separator.setLimit(Integer.MAX_VALUE);
-						} finally {
-							separatorList.getReadWriteLock().writeLock().unlock();
-						}
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								scrollToSctockpile(stockpile);
-							}
-						});
+	private SeparatorList.Separator<?> getSeparator(final Stockpile stockpile) {
+		for (int i = 0; i < separatorList.size(); i++) {
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator) {
+				SeparatorList.Separator<?> separator = (SeparatorList.Separator) object;
+				Object first = separator.first();
+				if (first instanceof StockpileItem) {
+					StockpileItem firstItem = (StockpileItem) first;
+					if (firstItem.getStockpile().equals(stockpile)) {
+						return separator;
 					}
 				}
 			}
-		} else { //Expanded
+		}
+		return null;
+	}
+
+	public void scrollToSctockpile(final Stockpile stockpile) {
+		SeparatorList.Separator<?> separator = getSeparator(stockpile);
+		if (separator == null) {
+			return;
+		}
+		if (separator.getLimit() > 0) { //Expanded: Scroll
+			int row = separatorList.indexOf(separator.first()) - 1;
 			Rectangle rect = jTable.getCellRect(row, 0, true);
 			rect.setSize(jTable.getVisibleRect().getSize());
 			jTable.scrollRectToVisible(rect);
+		} else { //Collapsed: Expand and run again...
+			separatorList.getReadWriteLock().writeLock().lock();
+			try {
+				separator.setLimit(Integer.MAX_VALUE);
+			} finally {
+				separatorList.getReadWriteLock().writeLock().unlock();
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					scrollToSctockpile(stockpile);
+				}
+			});
 		}
 	}
 
