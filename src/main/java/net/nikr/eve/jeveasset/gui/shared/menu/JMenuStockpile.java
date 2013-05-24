@@ -44,7 +44,9 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 	private static final int DEFAULT_ADD_COUNT = 1;
 
 	private final Program program;
+	private List<Stockpile> stockpilesCashe = null;
 	private final List<JMenuItem> jMenuItems = new ArrayList<JMenuItem>();
+	private final JMenuItem jAddToNew;
 
 	private MenuData<T> menuData;
 
@@ -54,35 +56,43 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
-		JMenuItem jMenuItem;
-
-		jMenuItem = new JStockpileMenu(GuiShared.get().newStockpile());
-		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setActionCommand(ACTION_ADD_TO);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
-		jMenuItems.add(jMenuItem);
-
-		if (!Settings.get().getStockpiles().isEmpty()) {
-			this.addSeparator();
-		}
-		List<Stockpile> stockpiles = Settings.get().getStockpiles();
-		Collections.sort(stockpiles);
-		for (Stockpile stockpile : stockpiles) {
-			jMenuItem = new JStockpileMenu(stockpile);
-			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setActionCommand(ACTION_ADD_TO);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-			jMenuItems.add(jMenuItem);
-		}
+		jAddToNew = new JStockpileMenu(GuiShared.get().newStockpile());
+		jAddToNew.setIcon(Images.EDIT_ADD.getIcon());
+		jAddToNew.setActionCommand(ACTION_ADD_TO);
+		jAddToNew.addActionListener(this);
 	}
 
 	@Override
 	public void setMenuData(MenuData<T> menuData) {
 		this.menuData = menuData;
+		if (stockpilesCashe == null || !stockpilesCashe.equals(Settings.get().getStockpiles())) {
+			updateMenu(); //Stockpiles changed...
+		}
+		boolean enabled = !menuData.getTypeIDs().isEmpty();
 		for (JMenuItem jMenuItem : jMenuItems) {
-			jMenuItem.setEnabled(!menuData.getTypeIDs().isEmpty());
+			jMenuItem.setEnabled(enabled);
+		}
+	}
+
+	private void updateMenu() {
+		this.removeAll();
+
+		add(jAddToNew); //Add "To new Stockpile"
+
+		if (!Settings.get().getStockpiles().isEmpty()) { //Add Separator (if we have stockpiles)
+			this.addSeparator();
+		}
+
+		Collections.sort(Settings.get().getStockpiles()); //Sort Stockpiles
+		stockpilesCashe = new ArrayList<Stockpile>(Settings.get().getStockpiles()); //Update Cache
+		jMenuItems.clear(); //Clear update list
+		for (Stockpile stockpile : Settings.get().getStockpiles()) { //Create menu items
+			JMenuItem jMenuItem = new JStockpileMenu(stockpile);
+			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
+			jMenuItem.setActionCommand(ACTION_ADD_TO);
+			jMenuItem.addActionListener(this);
+			add(jMenuItem);
+			jMenuItems.add(jMenuItem);
 		}
 	}
 
