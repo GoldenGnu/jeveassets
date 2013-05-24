@@ -39,16 +39,13 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> implements ActionListener 
 	private static final String ACTION_ADD = "ACTION_ADD";
 	private static final String ACTION_SET = "ACTION_SET";
 
-	private final Program program;
 	private final JMenuItem jAdd;
 	private final JMenuItem jSet;
 	private final Set<Integer> items = new HashSet<Integer>();
 
 	public JMenuReprocessed(final Program program) {
-		super(TabsReprocessed.get().title());
+		super(TabsReprocessed.get().title(), program);
 		setIcon(Images.TOOL_REPROCESSED.getIcon());
-
-		this.program = program;
 
 		jAdd = new JMenuItem(TabsReprocessed.get().add());
 		jAdd.setIcon(Images.EDIT_ADD.getIcon());

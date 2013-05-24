@@ -50,7 +50,6 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 	private static final String ACTION_BROWSE_EVEMARKETEER = "ACTION_BROWSE_EVEMARKETEER";
 	private static final String ACTION_BROWSE_EVE_ADDICTS = "ACTION_BROWSE_EVE_ADDICTS";
 
-	private final Program program;
 	private final JMenu jDotlan;
 	private final JMenuItem jDotlanStation;
 	private final JMenuItem jDotlanSystem;
@@ -67,8 +66,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 	private MenuData<T> menuData;
 
 	public JMenuLookup(final Program program) {
-		super(GuiShared.get().lookup());
-		this.program = program;
+		super(GuiShared.get().lookup(), program);
 
 		this.setIcon(Images.LINK_LOOKUP.getIcon());
 

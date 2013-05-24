@@ -43,7 +43,6 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
 	private static final int DEFAULT_ADD_COUNT = 1;
 
-	private final Program program;
 	private List<Stockpile> stockpilesCashe = null;
 	private final List<JMenuItem> jMenuItems = new ArrayList<JMenuItem>();
 	private final JMenuItem jAddToNew;
@@ -51,8 +50,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 	private MenuData<T> menuData;
 
 	public JMenuStockpile(final Program program) {
-		super(GuiShared.get().stockpile());
-		this.program = program;
+		super(GuiShared.get().stockpile(), program);
 
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
@@ -113,7 +111,9 @@ public class JMenuStockpile<T> extends JAutoMenu<T> implements ActionListener {
 				if (stockpile != null) {
 					program.getMainWindow().addTab(program.getStockpileTool(), Settings.get().isStockpileFocusTab());
 					if (Settings.get().isStockpileFocusTab()) {
-						program.getStockpileTool().scrollToSctockpile(stockpile);
+						program.getStockpileTool().scrollToSctockpile(stockpile); //Updated when other tools gain focus
+					} else {
+						program.updateTableMenu(); //Needs update (to include new stockpile)
 					}
 				}
 			}

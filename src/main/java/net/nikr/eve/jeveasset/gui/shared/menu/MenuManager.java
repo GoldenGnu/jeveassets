@@ -349,8 +349,12 @@ public class MenuManager<Q> {
 	}
 
 	protected abstract static class JAutoMenu<T> extends JMenu implements AutoMenu<T> {
-		public JAutoMenu(String s) {
+
+		protected Program program;
+		
+		public JAutoMenu(final String s, final Program program) {
 			super(s);
+			this.program = program;
 		}
 	}
 

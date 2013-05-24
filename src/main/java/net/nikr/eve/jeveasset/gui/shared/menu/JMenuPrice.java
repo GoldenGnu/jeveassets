@@ -42,16 +42,14 @@ public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
 	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public static final String ACTION_USER_PRICE_DELETE = "ACTION_USER_PRICE_DELETE";
 
-	private final Program program;
 	private final JMenuItem jEdit;
 	private final JMenuItem jReset;
 
 	private MenuData<T> menuData;
 
 	public JMenuPrice(final Program program) {
-		super(GuiShared.get().itemPriceTitle()); //
+		super(GuiShared.get().itemPriceTitle(), program); //
 		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
-		this.program = program;
 
 		jEdit = new JMenuItem(GuiShared.get().itemEdit());
 		jEdit.setIcon(Images.EDIT_EDIT.getIcon());

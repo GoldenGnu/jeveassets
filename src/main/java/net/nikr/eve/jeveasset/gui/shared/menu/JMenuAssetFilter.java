@@ -43,7 +43,6 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 	private static final String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
 	private static final String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
 
-	private Program program;
 	private MenuData<T> menuData;
 
 	private final JMenuItem jTypeID;
@@ -53,8 +52,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 	private final JMenuItem jLocations;
 
 	public JMenuAssetFilter(final Program program) {
-		super(GuiShared.get().add());
-		this.program = program;
+		super(GuiShared.get().add(), program);
 
 		this.setIcon(Images.TOOL_ASSETS.getIcon());
 

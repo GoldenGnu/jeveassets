@@ -44,7 +44,6 @@ public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 
 	private List<UserItem<Long, String>> itemNames;
 	private List<UserItem<Long, String>> containerNames;
-	private Program program;
 	private Asset selected;
 
 	private JMenuItem jEditItem;
@@ -54,8 +53,7 @@ public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 	private JContainerDialog jContainerDialog;
 
 	public JMenuName(final Program program) {
-		super(GuiShared.get().itemNameTitle());
-		this.program = program;
+		super(GuiShared.get().itemNameTitle(), program);
 		this.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 
 		jContainerDialog = new JContainerDialog(program);
