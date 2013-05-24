@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class SplashUpdater extends Thread {
+public class SplashUpdater {
 	private static final Logger LOG = LoggerFactory.getLogger(SplashUpdater.class);
 
 	private static int progress = 0;
@@ -39,7 +39,7 @@ public class SplashUpdater extends Thread {
 	private static BufferedImage[] loadingImages;
 	private static SplashScreen splash;
 	private static final int UPDATE_DELAY = 200;
-	private static boolean repainting = false;
+	private static final Object PAINT_LOCK = new Object();
 
 	/** Creates a new instance of SplashUpdater. */
 	public SplashUpdater() {
@@ -54,17 +54,11 @@ public class SplashUpdater extends Thread {
 		}
 	}
 
-	@Override
-	public void run() {
-		while (splash != null && splash.isVisible()) {
-			nextLoadingImage();
-			update();
-			try {
-				Thread.sleep(UPDATE_DELAY);
-			} catch (InterruptedException e) {
-				break;
-			}
-		}
+	public void start() {
+		Animator animator = new Animator();
+		animator.start();
+		Paineter paineter = new Paineter();
+		paineter.start();
 	}
 
 	public synchronized static void nextLoadingImage() {
@@ -82,6 +76,10 @@ public class SplashUpdater extends Thread {
 		text = s;
 	}
 
+	/**
+	 * Set subprogress of splash screen progressbar in the range 0-100.
+	 * @param n	 Set progress in the range 0-100
+	 */
 	public synchronized static void setSubProgress(final int n) {
 		int number = n;
 		if (number >= 100) {
@@ -91,7 +89,7 @@ public class SplashUpdater extends Thread {
 			number = 0;
 		}
 		if (subProgress != number) {
-			if (number < subProgress && number != 0) {
+			if (isVisible() && number < subProgress && number != 0) {
 				throw new RuntimeException("please only move forward... (subProgress)");
 			}
 			subProgress = number;
@@ -112,7 +110,7 @@ public class SplashUpdater extends Thread {
 			number = 0;
 		}
 		if (progress != number) {
-			if (number < progress) {
+			if (isVisible() && number < progress) {
 				throw new RuntimeException("please only move forward... (progress)");
 			}
 			progress = number;
@@ -121,8 +119,13 @@ public class SplashUpdater extends Thread {
 	}
 
 	private synchronized static void update() {
-		if (splash != null && !repainting) {
-			repainting = true;
+		synchronized (PAINT_LOCK) {
+			PAINT_LOCK.notify();
+		}
+	}
+
+	private synchronized static void repaint() {
+		if (isVisible()) {
 			try {
 				Graphics2D g = splash.createGraphics();
 				//Clear Screen
@@ -155,7 +158,43 @@ public class SplashUpdater extends Thread {
 			} catch (IllegalStateException ex) {
 				LOG.info("SplashScreen: Closed before painting ended (NO PROBLEM)");
 			}
-			repainting = false;
+		}
+	}
+
+	private static boolean isVisible() {
+		return (splash != null && splash.isVisible());
+	}
+
+	private class Paineter extends Thread {
+
+		@Override
+		public void run() {
+			while (isVisible()) {
+				synchronized (PAINT_LOCK) {
+					try {
+						PAINT_LOCK.wait();
+					} catch (InterruptedException ex) {
+						
+					}
+				}
+				repaint();
+			}
+		}
+	}
+
+	private class Animator extends Thread {
+
+		@Override
+		public void run() {
+			while (isVisible()) {
+				nextLoadingImage();
+				update();
+				try {
+					Thread.sleep(UPDATE_DELAY);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
 		}
 	}
 }
