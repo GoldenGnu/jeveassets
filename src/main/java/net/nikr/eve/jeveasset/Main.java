@@ -72,9 +72,6 @@ public final class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		SplashUpdater splashUpdater = new SplashUpdater();
-		splashUpdater.start();
-
 		boolean isDebug = false;
 		boolean isPortable = false;
 		boolean hasNoUpdate = false;
@@ -143,6 +140,9 @@ public final class Main {
 	}
 
 	private static void createAndShowGUI() {
+		SplashUpdater splashUpdater = new SplashUpdater();
+		splashUpdater.start();
+
 		initLookAndFeel();
 
 		//Make sure we have nice window decorations.
