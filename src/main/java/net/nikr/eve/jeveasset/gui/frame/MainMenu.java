@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -272,6 +274,21 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(menuItem);
+
+		if (Program.isDebug()) {
+			menu = new JMenu("Debug");
+			this.add(menu);
+
+			menuItem = new JMenuItem("Update EventLists", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.updateEventLists();
+				}
+			});
+			menu.add(menuItem);
+
+		}
 	}
 
 	public JMenu getTableMenu() {

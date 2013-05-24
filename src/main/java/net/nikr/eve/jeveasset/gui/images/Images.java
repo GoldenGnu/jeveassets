@@ -107,6 +107,7 @@ public enum Images {
 	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
 	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
+	MISC_DEBUG ("misc_debug.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
