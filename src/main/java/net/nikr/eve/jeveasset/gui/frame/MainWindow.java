@@ -97,7 +97,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame.setTitle(GuiFrame.get().windowTitle(
 						Program.PROGRAM_NAME,
 						Program.PROGRAM_VERSION,
-						Settings.isPortable() ? 1 : 0,
+						Program.isPortable() ? 1 : 0,
 						program.getProfileManager().getProfiles().size(),
 						program.getProfileManager().getActiveProfile().getName()
 						));

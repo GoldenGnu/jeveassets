@@ -79,7 +79,6 @@ public class Settings {
 
 	private static Settings settings;
 
-	private static boolean portable = false;
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
@@ -160,14 +159,6 @@ public class Settings {
 		settingsLoaded = SettingsReader.load(this);
 		SplashUpdater.setProgress(35);
 		constructEveApiConnector();
-	}
-
-	public static void setPortable(final boolean portable) {
-		Settings.portable = portable;
-	}
-
-	public static boolean isPortable() {
-		return portable;
 	}
 
 	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
@@ -479,10 +470,10 @@ public class Settings {
 	}
 
 	public String getPathSettings() {
-		return getLocalFile(Settings.PATH_SETTINGS, !portable);
+		return getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
 	}
 	public static String getPathConquerableStations() {
-		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
+		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
 	}
 	public static String getPathJumps() {
 		return getLocalFile(Settings.PATH_JUMPS, false);
@@ -491,19 +482,19 @@ public class Settings {
 		return getLocalFile(Settings.PATH_FLAGS, false);
 	}
 	public static String getPathPriceData() {
-		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
+		return getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
 	}
 	public static String getPathAssetsOld() {
-		return getLocalFile(Settings.PATH_ASSETS, !portable);
+		return getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
 	}
 	public static String getPathProfilesDirectory() {
-		return getLocalFile(Settings.PATH_PROFILES, !portable);
+		return getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
 	}
 	public static String getPathStaticDataDirectory() {
 		return getLocalFile(Settings.PATH_DATA, false);
 	}
 	public static String getPathDataDirectory() {
-		return getLocalFile(Settings.PATH_DATA, !portable);
+		return getLocalFile(Settings.PATH_DATA, !Program.isPortable());
 	}
 	public static String getPathItems() {
 		return getLocalFile(Settings.PATH_ITEMS, false);

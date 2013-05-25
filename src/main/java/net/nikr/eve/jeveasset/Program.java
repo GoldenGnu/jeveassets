@@ -92,6 +92,7 @@ public class Program implements ActionListener {
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
 	private static boolean forceNoUpdate = false;
+	private static boolean portable = false;
 
 	//GUI
 	private MainWindow mainWindow;
@@ -122,6 +123,7 @@ public class Program implements ActionListener {
 	private ContractsTab contractsTab;
 
 	//Settings Panels
+	//FIXME - - > Move to Settings Dialog
 	private GeneralSettingsPanel generalSettingsPanel;
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
@@ -464,6 +466,14 @@ public class Program implements ActionListener {
 
 	public static void setForceUpdate(final boolean forceUpdate) {
 		Program.forceUpdate = forceUpdate;
+	}
+
+	public static void setPortable(final boolean portable) {
+		Program.portable = portable;
+	}
+
+	public static boolean isPortable() {
+		return portable;
 	}
 
 	/**
