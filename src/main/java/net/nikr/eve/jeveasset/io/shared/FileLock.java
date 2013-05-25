@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.shared;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -81,6 +82,9 @@ public class FileLock {
 	}
 
 	private static void unlockFiles(File[] files) {
+		if (files == null) { //We can not be sure directory has been created...
+			return;
+		}
 		for (File file : files) {
 			if (file.getName().endsWith(".LOCK")) {
 				file.delete();
