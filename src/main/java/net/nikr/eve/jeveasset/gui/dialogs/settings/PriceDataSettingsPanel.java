@@ -34,10 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -236,10 +235,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		//Price Type (can be a String)
 		object = jPriceType.getSelectedItem();
 		PriceMode priceType;
-		if (object  instanceof PriceMode) {
+		if (object instanceof PriceMode) {
 			priceType = (PriceMode) object;
 		} else {
-			priceType = Asset.getPriceType();
+			priceType = Settings.get().getPriceDataSettings().getPriceType();
 		}
 
 		//Price Reprocessed Type (can be a String)
@@ -248,20 +247,18 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		if (object  instanceof PriceMode) {
 			priceReprocessedType = (PriceMode) object;
 		} else {
-			priceReprocessedType = Asset.getPriceReprocessedType();
+			priceReprocessedType = Settings.get().getPriceDataSettings().getPriceReprocessedType();
 		}
 
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
 
 		//Eval if table need to be updated
-		boolean updateTable = !priceType.equals(Asset.getPriceType())
-								|| !priceReprocessedType.equals(Asset.getPriceReprocessedType());
+		boolean updateTable = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
+								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType());
 
 		//Update settings
-		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source));
-		Asset.setPriceType(priceType);
-		Asset.setPriceReprocessedType(priceReprocessedType);
+		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source, priceType, priceReprocessedType));
 
 		//Update table if needed
 		return updateTable;
@@ -278,7 +275,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		//Price Types
 		jPriceType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
-		jPriceType.setSelectedItem(Asset.getPriceType());
+		jPriceType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
 			jPriceType.setEnabled(false);
@@ -288,7 +285,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		//Price Reprocessed Types
 		jPriceReprocessedType.setModel(new DefaultComboBoxModel(source.getPriceTypes()));
-		jPriceReprocessedType.setSelectedItem(Asset.getPriceReprocessedType());
+		jPriceReprocessedType.setSelectedItem(Settings.get().getPriceDataSettings().getPriceReprocessedType());
 		if (source.getPriceTypes().length <= 0) { //Empty
 			jPriceReprocessedType.getModel().setSelectedItem(DialoguesSettings.get().notConfigurable());
 			jPriceReprocessedType.setEnabled(false);

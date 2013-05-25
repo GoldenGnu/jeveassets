@@ -33,86 +33,6 @@ import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
 public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType {
 
-	public enum PriceMode {
-		PRICE_SELL_MAX() {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceSellMax();
-			}
-		},
-		PRICE_SELL_AVG {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceSellAvg();
-			}
-		},
-		PRICE_SELL_MEDIAN {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceSellMedian();
-			}
-		},
-		PRICE_SELL_PERCENTILE {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceSellPercentile();
-			}
-		},
-		PRICE_SELL_MIN {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceSellMin();
-			}
-		},
-		PRICE_MIDPOINT {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceMidpoint();
-			}
-		},
-		PRICE_BUY_MAX {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceBuyMax();
-			}
-		},
-		PRICE_BUY_PERCENTILE {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceBuyPercentile();
-			}
-		},
-		PRICE_BUY_AVG {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceBuyAvg();
-			}
-		},
-		PRICE_BUY_MEDIAN {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceBuyMedian();
-			}
-		},
-		PRICE_BUY_MIN {
-			@Override
-			String getI18N() {
-				return DataModelAsset.get().priceBuyMin();
-			}
-		};
-		abstract String getI18N();
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-	}
-
-	//Default
-	private static final PriceMode DEFAULT_PRICE_TYPE = PriceMode.PRICE_MIDPOINT;
-
-	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
-	private static PriceMode priceReprocessedType = PriceMode.PRICE_MIDPOINT;
-
 	//Static values (set by constructor)
 	private List<Asset> assets = new ArrayList<Asset>();
 	private Item item;
@@ -139,6 +59,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private double priceReprocessed;
 	private MarketPriceData marketPriceData;
 	private Date added;
+	private double price;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean userPriceSet = false;
@@ -199,62 +120,6 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return count;
 	}
 
-	public double getDefaultPrice() {
-		return getDefaultPrice(getPriceData());
-	}
-
-	/*
-	 * These should be methods on the PriceMode enum.
-	 */
-	public static double getDefaultPrice(final PriceData priceData) {
-		return getDefaultPrice(priceData, priceType);
-	}
-	public static double getDefaultPriceReprocessed(final PriceData priceData) {
-		return getDefaultPrice(priceData, priceReprocessedType);
-	}
-	private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
-		if (priceData != null) {
-			if (priceMode.equals(PriceMode.PRICE_SELL_MAX)) {
-				return priceData.getSellMax();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_AVG)) {
-				return priceData.getSellAvg();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_MEDIAN)) {
-				return priceData.getSellMedian();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
-				return priceData.getSellPercentile();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_MIN)) {
-				return priceData.getSellMin();
-			}
-			if (priceMode.equals(PriceMode.PRICE_MIDPOINT)) {
-				return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MAX)) {
-				return priceData.getBuyMax();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_AVG)) {
-				return priceData.getBuyAvg();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MEDIAN)) {
-				return priceData.getBuyMedian();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
-				return priceData.getBuyPercentile();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MIN)) {
-				return priceData.getBuyMin();
-			}
-		}
-		return 0;
-	}
-
-	public static PriceMode getDefaultPriceType() {
-		return DEFAULT_PRICE_TYPE;
-	}
-
 	public String getFlag() {
 		return flag;
 	}
@@ -303,18 +168,11 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	@Override
 	public Double getDynamicPrice() {
-		//UserPrice
-		if (this.getUserPrice() != null) {
-			return this.getUserPrice().getValue();
-		}
+		return price;
+	}
 
-		//Blueprint Copy (Default Zero)
-		if (item.isBlueprint() && !isBPO()) {
-			return 0.0;
-		}
-
-		//PriceData
-		return getDefaultPrice();
+	public void setDynamicPrice(double price) {
+		this.price = price;
 	}
 
 	public double getPriceBuyMax() {
@@ -359,14 +217,6 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		}
 
 		return 0;
-	}
-
-	public static PriceMode getPriceType() {
-		return priceType;
-	}
-
-	public static PriceMode getPriceReprocessedType() {
-		return priceReprocessedType;
 	}
 
 	public int getRawQuantity() {
@@ -465,14 +315,6 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	public void setPriceReprocessed(final double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
-	}
-
-	public static void setPriceType(final PriceMode priceSource) {
-		Asset.priceType = priceSource;
-	}
-
-	public static void setPriceReprocessedType(final PriceMode reprocessedPriceType) {
-		Asset.priceReprocessedType = reprocessedPriceType;
 	}
 
 	public void setTypeCount(final long typeCount) {

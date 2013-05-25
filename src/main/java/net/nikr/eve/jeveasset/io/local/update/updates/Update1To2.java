@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.io.local.update.LocalUpdate;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -125,31 +125,31 @@ public class Update1To2 implements LocalUpdate {
 		}
 		String convert = oldVal.toLowerCase();
 		if (convert.contains("midpoint")) {
-			return Asset.PriceMode.PRICE_MIDPOINT.name();
+			return PriceMode.PRICE_MIDPOINT.name();
 		}
 		if (convert.contains("sell average")) {
-			return Asset.PriceMode.PRICE_SELL_AVG.name();
+			return PriceMode.PRICE_SELL_AVG.name();
 		}
 		if (convert.contains("sell median")) {
-			return Asset.PriceMode.PRICE_SELL_MEDIAN.name();
+			return PriceMode.PRICE_SELL_MEDIAN.name();
 		}
 		if (convert.contains("sell minimum")) {
-			return Asset.PriceMode.PRICE_SELL_MIN.name();
+			return PriceMode.PRICE_SELL_MIN.name();
 		}
 		if (convert.contains("sell maximum")) {
-			return Asset.PriceMode.PRICE_SELL_MAX.name();
+			return PriceMode.PRICE_SELL_MAX.name();
 		}
 		if (convert.contains("buy maximum")) {
-			return Asset.PriceMode.PRICE_BUY_MAX.name();
+			return PriceMode.PRICE_BUY_MAX.name();
 		}
 		if (convert.contains("buy average")) {
-			return Asset.PriceMode.PRICE_BUY_AVG.name();
+			return PriceMode.PRICE_BUY_AVG.name();
 		}
 		if (convert.contains("buy median")) {
-			return Asset.PriceMode.PRICE_BUY_MEDIAN.name();
+			return PriceMode.PRICE_BUY_MEDIAN.name();
 		}
 		if (convert.contains("buy minimum")) {
-			return Asset.PriceMode.PRICE_BUY_MIN.name();
+			return PriceMode.PRICE_BUY_MIN.name();
 		}
 		throw new IllegalArgumentException("Failed to convert the price type " + oldVal);
 	}

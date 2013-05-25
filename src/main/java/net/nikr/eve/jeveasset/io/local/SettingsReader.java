@@ -26,10 +26,10 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
 import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
@@ -435,17 +435,15 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parsePriceDataSettings(final Element element, final Settings settings) {
-		PriceMode priceType = Asset.getDefaultPriceType();
+		PriceMode priceType = settings.getPriceDataSettings().getPriceType(); //Default
 		if (AttributeGetters.haveAttribute(element, "defaultprice")) {
 			priceType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultprice"));
 		}
-		Asset.setPriceType(priceType);
 
-		PriceMode priceReprocessedType = Asset.getDefaultPriceType();
+		PriceMode priceReprocessedType = settings.getPriceDataSettings().getPriceReprocessedType(); //Default
 		if (AttributeGetters.haveAttribute(element, "defaultreprocessedprice")) {
 			priceReprocessedType = PriceMode.valueOf(AttributeGetters.getString(element, "defaultreprocessedprice"));
 		}
-		Asset.setPriceReprocessedType(priceReprocessedType);
 
 		//null = default
 		List<Long> locations = null;
@@ -479,7 +477,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				//In case a price source is removed: Use the default
 			}
 		}
-		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource));
+		settings.setPriceDataSettings(new PriceDataSettings(locationType, locations, priceSource, priceType, priceReprocessedType));
 	}
 
 	private void parseFlags(final Element element, final Settings settings) {

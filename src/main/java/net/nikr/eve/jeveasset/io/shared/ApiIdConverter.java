@@ -115,7 +115,7 @@ public final class ApiIdConverter {
 		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
 			priceData = Settings.get().getPriceData().get(typeID);
 		}
-		return Asset.getDefaultPrice(priceData);
+		return Settings.get().getPriceDataSettings().getDefaultPrice(priceData);
 	}
 
 	public static float getVolume(final int typeID, final boolean packaged) {

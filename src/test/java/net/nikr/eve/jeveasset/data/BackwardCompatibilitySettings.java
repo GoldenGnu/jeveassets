@@ -44,6 +44,7 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		GET_FLAGS,
 		GET_OVERVIEW_GROUPS,
 		GET_OWNERS,
+		GET_PRICE_DATA_SETTINGS,
 		GET_STOCKPILES,
 		GET_TABLE_COLUMNS,
 		GET_TABLE_COLUMNS_WIDTH,
@@ -158,6 +159,12 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<Long, String> getOwners() {
 		ok.put(Function.GET_OWNERS, true);
 		return new HashMap<Long, String>();
+	}
+
+	@Override
+	public PriceDataSettings getPriceDataSettings() {
+		ok.put(Function.GET_PRICE_DATA_SETTINGS, true);
+		return new PriceDataSettings();
 	}
 
 	@Override

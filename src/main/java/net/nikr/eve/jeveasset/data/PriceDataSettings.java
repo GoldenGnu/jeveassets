@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
@@ -445,17 +444,140 @@ public class PriceDataSettings {
 		}
 	}
 
+	public enum PriceMode {
+		PRICE_SELL_MAX() {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceSellMax();
+			}
+		},
+		PRICE_SELL_AVG {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceSellAvg();
+			}
+		},
+		PRICE_SELL_MEDIAN {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceSellMedian();
+			}
+		},
+		PRICE_SELL_PERCENTILE {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceSellPercentile();
+			}
+		},
+		PRICE_SELL_MIN {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceSellMin();
+			}
+		},
+		PRICE_MIDPOINT {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceMidpoint();
+			}
+		},
+		PRICE_BUY_MAX {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceBuyMax();
+			}
+		},
+		PRICE_BUY_PERCENTILE {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceBuyPercentile();
+			}
+		},
+		PRICE_BUY_AVG {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceBuyAvg();
+			}
+		},
+		PRICE_BUY_MEDIAN {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceBuyMedian();
+			}
+		},
+		PRICE_BUY_MIN {
+			@Override
+			String getI18N() {
+				return DataModelPriceDataSettings.get().priceBuyMin();
+			}
+		};
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+
+		private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
+			if (priceData != null) {
+				if (priceMode.equals(PriceMode.PRICE_SELL_MAX)) {
+					return priceData.getSellMax();
+				}
+				if (priceMode.equals(PriceMode.PRICE_SELL_AVG)) {
+					return priceData.getSellAvg();
+				}
+				if (priceMode.equals(PriceMode.PRICE_SELL_MEDIAN)) {
+					return priceData.getSellMedian();
+				}
+				if (priceMode.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
+					return priceData.getSellPercentile();
+				}
+				if (priceMode.equals(PriceMode.PRICE_SELL_MIN)) {
+					return priceData.getSellMin();
+				}
+				if (priceMode.equals(PriceMode.PRICE_MIDPOINT)) {
+					return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
+				}
+				if (priceMode.equals(PriceMode.PRICE_BUY_MAX)) {
+					return priceData.getBuyMax();
+				}
+				if (priceMode.equals(PriceMode.PRICE_BUY_AVG)) {
+					return priceData.getBuyAvg();
+				}
+				if (priceMode.equals(PriceMode.PRICE_BUY_MEDIAN)) {
+					return priceData.getBuyMedian();
+				}
+				if (priceMode.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
+					return priceData.getBuyPercentile();
+				}
+				if (priceMode.equals(PriceMode.PRICE_BUY_MIN)) {
+					return priceData.getBuyMin();
+				}
+			}
+			return 0;
+		}
+
+		public static PriceMode getDefaultPriceType() {
+			return PriceMode.PRICE_MIDPOINT;
+		}
+	}
+
+	//Default
 	private final LocationType locationType;
 	private final List<Long> locations;
 	private final PriceSource priceSource;
+	private PriceMode priceType;
+	private PriceMode priceReprocessedType;
 
 	public PriceDataSettings() {
 		locationType = LocationType.REGION;
 		locations = getDefaultRegionType().getRegions();
 		priceSource = getDefaultPriceSource();
+		priceType = PriceMode.getDefaultPriceType();
+		priceReprocessedType =  PriceMode.getDefaultPriceType();
+		
 	}
 
-	public PriceDataSettings(final LocationType locationType, final List<Long> locations, final PriceSource priceSource) {
+	public PriceDataSettings(final LocationType locationType, final List<Long> locations, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType) {
 		if (locationType != null && locations != null && !locations.isEmpty()) {
 			this.locationType = locationType;
 			this.locations = locations;
@@ -464,6 +586,8 @@ public class PriceDataSettings {
 			this.locations = getDefaultRegionType().getRegions();
 		}
 		this.priceSource = priceSource;
+		this.priceType = priceType;
+		this.priceReprocessedType = priceReprocessedType;
 	}
 
 	public PriceSource getSource() {
@@ -478,12 +602,36 @@ public class PriceDataSettings {
 		return locationType;
 	}
 
+	public double getDefaultPrice(final PriceData priceData) {
+		return PriceMode.getDefaultPrice(priceData, priceType);
+	}
+
+	public double getDefaultPriceReprocessed(final PriceData priceData) {
+		return PriceMode.getDefaultPrice(priceData, priceReprocessedType);
+	}
+
 	public static RegionType getDefaultRegionType() {
 		return RegionType.THE_FORGE;
 	}
 
 	public static PriceSource getDefaultPriceSource() {
 		return PriceSource.EVE_CENTRAL;
+	}
+
+	public void setPriceType(final PriceMode priceSource) {
+		this.priceType = priceSource;
+	}
+
+	public void setPriceReprocessedType(final PriceMode reprocessedPriceType) {
+		this.priceReprocessedType = reprocessedPriceType;
+	}
+
+	public PriceMode getPriceType() {
+		return priceType;
+	}
+
+	public PriceMode getPriceReprocessedType() {
+		return priceReprocessedType;
 	}
 
 	@Override

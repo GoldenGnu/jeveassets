@@ -367,6 +367,9 @@ public class ProfileData {
 			} else { //All other
 				asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 			}
+			//Dynamic Price
+			double dynamicPrice = ApiIdConverter.getPrice(asset.getItem().getTypeID(), false);
+			asset.setDynamicPrice(dynamicPrice);
 			//Market price
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
@@ -412,7 +415,7 @@ public class ProfileData {
 					if (Settings.get().getUserPrices().containsKey(material.getTypeID())) {
 						price = Settings.get().getUserPrices().get(material.getTypeID()).getValue();
 					} else {
-						price = Asset.getDefaultPriceReprocessed(priceData);
+						price = Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
 					}
 					priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
 				}

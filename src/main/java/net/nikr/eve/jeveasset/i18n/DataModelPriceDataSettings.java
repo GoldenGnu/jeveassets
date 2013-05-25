@@ -69,4 +69,15 @@ public abstract class DataModelPriceDataSettings extends Bundle {
 	public abstract String regionMoldenHeath();
 	public abstract String regionDerelik();
 	public abstract String regionKhanid();
+	public abstract String priceSellMax();
+	public abstract String priceSellAvg();
+	public abstract String priceSellMedian();
+	public abstract String priceSellMin();
+	public abstract String priceSellPercentile();
+	public abstract String priceMidpoint();
+	public abstract String priceBuyMax();
+	public abstract String priceBuyAvg();
+	public abstract String priceBuyMedian();
+	public abstract String priceBuyPercentile();
+	public abstract String priceBuyMin();
 }

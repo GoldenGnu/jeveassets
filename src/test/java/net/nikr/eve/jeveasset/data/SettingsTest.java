@@ -57,6 +57,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-0-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -71,6 +72,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-1-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -85,6 +87,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -104,6 +107,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-1");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -123,6 +127,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-2");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -142,6 +147,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-3");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -161,6 +167,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-3-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -180,6 +187,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -201,6 +209,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-1");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -223,6 +232,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -245,6 +255,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -267,6 +278,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -289,6 +301,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -311,6 +324,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -333,6 +347,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -355,6 +370,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -377,6 +393,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -399,6 +416,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -421,6 +439,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -444,6 +463,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -467,6 +487,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -490,6 +511,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -514,6 +536,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -538,6 +561,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -562,6 +586,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -587,6 +612,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -612,6 +638,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -637,6 +664,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -662,6 +690,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -688,6 +717,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -714,6 +744,7 @@ public class SettingsTest {
 		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);
@@ -744,6 +775,7 @@ public class SettingsTest {
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
 		test(settings, Function.GET_OWNERS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);

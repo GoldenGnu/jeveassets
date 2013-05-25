@@ -38,17 +38,6 @@ public abstract class DataModelAsset extends Bundle {
 		super(locale);
 	}
 
-	public abstract String priceSellMax();
-	public abstract String priceSellAvg();
-	public abstract String priceSellMedian();
-	public abstract String priceSellMin();
-	public abstract String priceSellPercentile();
-	public abstract String priceMidpoint();
-	public abstract String priceBuyMax();
-	public abstract String priceBuyAvg();
-	public abstract String priceBuyMedian();
-	public abstract String priceBuyPercentile();
-	public abstract String priceBuyMin();
 	public abstract String unpackaged();
 	public abstract String packaged();
 
