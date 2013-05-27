@@ -73,32 +73,39 @@ public class EditableListModel<T> extends AbstractListModel {
 
 	public T remove(final int index) {
 		T b = backed.remove(index);
-		changed();
+		fireRemoved(index, index);
 		return b;
 	}
 
 	public void clear() {
+		if (backed.isEmpty()) {
+			return;
+		}
+		int end = backed.size() - 1;
 		backed.clear();
-		changed();
+		fireRemoved(0, end);
 	}
 
 	public boolean remove(final T o) {
+		int index = backed.indexOf(o);
 		boolean b = backed.remove(o);
-		changed();
+		fireRemoved(index, index);
 		return b;
 	}
 
 	public boolean add(final T e) {
 		boolean b = backed.add(e);
 		Collections.sort(backed, sortComparator);
-		changed();
+		int index = backed.indexOf(e);
+		fireAdded(index, index);
 		return b;
 	}
 
 	public boolean addAll(final Collection<? extends T> c) {
-		boolean b = backed.addAll(c);
-		Collections.sort(backed, sortComparator);
-		changed();
+		boolean b = true;
+		for (T t : c) {
+			b = b && add(t);
+		}
 		return b;
 	}
 
@@ -106,14 +113,27 @@ public class EditableListModel<T> extends AbstractListModel {
 		return backed.contains(o);
 	}
 
-	void changed() {
+	private void fireRemoved(final int index0, final int index1) {
 		if (SwingUtilities.isEventDispatchThread()) {
-			fireContentsChanged(this, 0, backed.size() - 1);
+			super.fireIntervalRemoved(this, index0, index1);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					fireContentsChanged(this, 0, backed.size() - 1);
+					fireRemoved(index0, index1);
+				}
+			});
+		}
+	}
+
+	private void fireAdded(final int index0, final int index1) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			super.fireIntervalAdded(this, index0, index1);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					fireAdded(index0, index1);
 				}
 			});
 		}

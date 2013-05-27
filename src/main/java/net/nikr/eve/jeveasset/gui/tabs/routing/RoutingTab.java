@@ -25,6 +25,8 @@ import java.awt.event.*;
 import java.util.Map.Entry;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -58,30 +60,33 @@ public class RoutingTab extends JMainTab  {
 
 	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
-	public static final String ACTION_ADD = "ACTION_ADD";
-	public static final String ACTION_REMOVE = "ACTION_REMOVE";
-	public static final String ACTION_ADD_SYSTEM = "ACTION_ADD_SYSTEM";
-	public static final String ACTION_SOURCE = "ACTION_SOURCE";
-	public static final String ACTION_ALGORITHM = "ACTION_ALGORITHM";
-	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private static final String ACTION_ADD = "ACTION_ADD";
+	private static final String ACTION_REMOVE = "ACTION_REMOVE";
+	private static final String ACTION_ADD_SYSTEM = "ACTION_ADD_SYSTEM";
+	private static final String ACTION_SOURCE = "ACTION_SOURCE";
+	private static final String ACTION_ALGORITHM = "ACTION_ALGORITHM";
+	private static final String ACTION_ALGORITHM_HELP = "ACTION_ALGORITHM_HELP";
+	private static final String ACTION_CALCULATE = "ACTION_CALCULATE";
+	private static final String ACTION_CANCEL = "ACTION_CANCEL";
 
 	private JButton jAdd;
 	private JButton jRemove;
 	private JButton jCalculate;
 	private JButton jAddSystem;
 	private JComboBox jAlgorithm;
+	private JButton jAlgorithmInfo;
 	private JComboBox jSource;
-	private JTextArea jDescription;
 	private MoveJList<SolarSystem> jAvailable;
 	private MoveJList<SolarSystem> jWaypoints;
+	private JLabel jStartLabel;
+	private JTextField jStart;
 	private JLabel jAvailableRemaining;
 	private JLabel jWaypointsRemaining; // waypoint count
 	private JLabel jSourceLabel; // waypoint count
 	private JLabel jAlgorithmLabel; // waypoint count
 	private ProgressBar jProgress;
 	private JButton jCancel;
-	private JTextArea jLastResultArea;
+	private JTextArea jResult;
 
 	protected Graph filteredGraph;
 	/**
@@ -93,19 +98,19 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	public RoutingTab(final Program program) {
-		super(program, TabsRouting.get().routing(), Images.TOOL_ROUTING.getIcon(), true);
+		super(program, TabsRouting.get().routingTitle(), Images.TOOL_ROUTING.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 
-		jAdd = new JButton(TabsRouting.get().whitespace());
+		jAdd = new JButton(TabsRouting.get().add());
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(listener);
 
-		jRemove = new JButton(TabsRouting.get().whitespace1());
+		jRemove = new JButton(TabsRouting.get().remove());
 		jRemove.setActionCommand(ACTION_REMOVE);
 		jRemove.addActionListener(listener);
 
-		jAddSystem = new JButton(TabsRouting.get().add());
+		jAddSystem = new JButton(TabsRouting.get().addSystem());
 		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
 		jAddSystem.addActionListener(listener);
 
@@ -122,17 +127,15 @@ public class RoutingTab extends JMainTab  {
 		jAlgorithm.setActionCommand(ACTION_ALGORITHM);
 		jAlgorithm.addActionListener(listener);
 
+		jAlgorithmInfo = new JButton(Images.MISC_HELP.getIcon());
+		jAlgorithmInfo.setActionCommand(ACTION_ALGORITHM_HELP);
+		jAlgorithmInfo.addActionListener(listener);
+
 		jProgress = new ProgressBar();
 		jProgress.setValue(0);
 		jProgress.setMaximum(1);
 		jProgress.setMinimum(0);
 
-		jDescription = new JTextArea();
-		setAlgorithmDescriptionText(); // sets the desciption text.
-		jDescription.setEditable(false);
-		jDescription.setWrapStyleWord(true);
-		jDescription.setLineWrap(true);
-		jDescription.setFont(jAlgorithm.getFont());
 		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
 			@Override
 			public int compare(final SolarSystem o1, final SolarSystem o2) {
@@ -143,11 +146,20 @@ public class RoutingTab extends JMainTab  {
 		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		jAvailable.getEditableModel().setSortComparator(comp);
 		jAvailable.addMouseListener(listener);
+		jAvailable.addListSelectionListener(listener);
 		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		jWaypoints.getEditableModel().setSortComparator(comp);
 		jWaypoints.addMouseListener(listener);
+		jWaypoints.addListSelectionListener(listener);
 		jWaypointsRemaining = new JLabel();
 		jAvailableRemaining = new JLabel();
+
+		//Start system
+		jStartLabel = new JLabel(TabsRouting.get().startSystem());
+		jStart = new JTextField();
+		jStart.setEditable(false);
+		jStart.setFocusable(false);
+
 		updateRemaining();
 
 		jCalculate = new JButton(TabsRouting.get().calculate());
@@ -159,14 +171,13 @@ public class RoutingTab extends JMainTab  {
 		jCancel.addActionListener(listener);
 		jCancel.setEnabled(false);
 
-		jLastResultArea = new JTextArea();
-		jLastResultArea.setEditable(false);
+		jResult = new JTextArea();
+		jResult.setEditable(false);
+		jResult.setFont(jPanel.getFont());
 
-		JScrollPane descrSP = new JScrollPane(jDescription);
-		jDescription.setCaretPosition(0);
-		JScrollPane availSP = new JScrollPane(jAvailable);
-		JScrollPane waypoSP = new JScrollPane(jWaypoints);
-		JScrollPane routeSP = new JScrollPane(jLastResultArea);
+		JScrollPane jAvailableScroll = new JScrollPane(jAvailable);
+		JScrollPane jWaypointsScroll = new JScrollPane(jWaypoints);
+		JScrollPane jResultScroll = new JScrollPane(jResult);
 
 		// widths are defined in here.
 		layout.setHorizontalGroup(
@@ -174,72 +185,82 @@ public class RoutingTab extends JMainTab  {
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createSequentialGroup()
-							.addComponent(jSourceLabel)
-							.addComponent(jSource, 100, 100, 200)
-							.addComponent(jAlgorithmLabel)
-							.addComponent(jAlgorithm, 100, 100, 200)
-						)
-						.addComponent(jProgress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-						.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup()
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-									.addComponent(jAvailableRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-									.addGroup(layout.createSequentialGroup()
-										.addComponent(jCalculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-										.addComponent(jCancel, javax.swing.GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-									)
+							.addGroup(layout.createParallelGroup()
+								.addComponent(jAlgorithmLabel)
+								.addComponent(jSourceLabel)
+							)
+							.addGroup(layout.createParallelGroup()
+								.addGroup(layout.createSequentialGroup()
+									.addComponent(jAlgorithm)
+									.addGap(10)
+									.addComponent(jAlgorithmInfo)
 								)
-								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(jAdd, 80, 80, 80)
-									.addComponent(jRemove, 80, 80, 80)
-									//.addComponent(jAddSystem, 80, 80, 80)
-								)
-								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-									.addComponent(jWaypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-									.addComponent(routeSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-								)
+								.addComponent(jSource)
 							)
 						)
-						.addContainerGap()
+						.addComponent(jAvailableScroll, 200, 200, Short.MAX_VALUE)
+						.addComponent(jAvailableRemaining, 200, 200, Short.MAX_VALUE)
 					)
-				);
-		// heights are defined here.
-		layout.setVerticalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-						.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jAlgorithmLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jAlgorithm, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(jAdd, 80, 80, 80)
+						.addComponent(jRemove, 80, 80, 80)
+						//.addComponent(jAddSystem, 80, 80, 80)
 					)
-					.addComponent(jProgress, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-						.addComponent(waypoSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(availSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createSequentialGroup()
-							.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-							.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-							//.addComponent(jAddSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							.addComponent(jStartLabel)
+							.addComponent(jStart)
+						)
+						.addComponent(jWaypointsScroll, 200, 200, Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jWaypointsRemaining, 200, 200, 200)
+							.addGap(0, 0, Integer.MAX_VALUE)
+							.addComponent(jCalculate, 120, 120, 120)
 						)
 					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-						.addComponent(jAvailableRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jWaypointsRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					)
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-						.addComponent(jCalculate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(routeSP, GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
-					)
-					.addContainerGap()
 				)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jProgress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+					.addComponent(jCancel)
+				)
+				.addComponent(jResultScroll, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+			);
+		// heights are defined here.
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+					.addComponent(jAlgorithmLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAlgorithm, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAlgorithmInfo, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jSourceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSource, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStartLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jStart, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jAvailableScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					)
+					.addComponent(jWaypointsScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGroup(layout.createSequentialGroup()
+						.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						//.addComponent(jAddSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+					.addComponent(jAvailableRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jWaypointsRemaining, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCalculate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+					.addComponent(jProgress, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addComponent(jResultScroll, GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
+				
 			);
 		//Only need to build the graph once
 		buildGraph();
@@ -259,29 +280,21 @@ public class RoutingTab extends JMainTab  {
 		sources.add(0, new SourceItem(General.get().all()));
 		jSource.setModel(new DefaultComboBoxModel(sources.toArray()));
 		jAlgorithm.setSelectedIndex(0);
-		jLastResultArea.setText(TabsRouting.get().once());
-		jLastResultArea.setCaretPosition(0);
-		jLastResultArea.setEnabled(false);
+		jResult.setText(TabsRouting.get().emptyResult());
+		jResult.setCaretPosition(0);
+		jResult.setEnabled(false);
 		updateRemaining();
-		jCancel.setEnabled(false);
 		processFilteredAssets(Settings.get());
 	}
 
 	private void changeAlgorithm() {
-		setAlgorithmDescriptionText();
 		updateRemaining();
-	}
-
-	private void setAlgorithmDescriptionText() {
-		RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
-		jDescription.setText(TabsRouting.get().whitespace2(rac.getBasicDescription(),
-				rac.getTechnicalDescription()));
-		jDescription.setCaretPosition(0); //This should work
 	}
 
 	private void updateRemaining() {
 		updateWaypointsRemaining();
 		updateAvailableRemaining();
+		validateLists();
 	}
 
 	private void updateWaypointsRemaining() {
@@ -292,13 +305,13 @@ public class RoutingTab extends JMainTab  {
 		} else {
 			jWaypointsRemaining.setForeground(Color.BLACK);
 		}
-		jWaypointsRemaining.setText(TabsRouting.get().whitespace3(cur, max));
+		jWaypointsRemaining.setText(TabsRouting.get().allowed(cur, max));
 	}
 
 	private void updateAvailableRemaining() {
 		int cur = jAvailable.getModel().getSize();
 		int tot = cur + jWaypoints.getModel().getSize();
-		jAvailableRemaining.setText(TabsRouting.get().whitespace4(cur, tot));
+		jAvailableRemaining.setText(TabsRouting.get().total(cur, tot));
 	}
 
 	protected final void buildGraph() {
@@ -381,7 +394,7 @@ public class RoutingTab extends JMainTab  {
 	 */
 	private SolarSystem findNodeForLocation(final Graph g, final long locationID) {
 		if (locationID < 0) {
-			throw new RuntimeException(TabsRouting.get().unknown(locationID));
+			throw new RuntimeException("Unknown Location:" + locationID);
 		}
 		for (Node n : g.getNodes()) {
 			if (n instanceof SolarSystem) {
@@ -392,7 +405,6 @@ public class RoutingTab extends JMainTab  {
 			}
 		}
 		return null;
-		//throw new RuntimeException("Unknown Location: " + locationID + ", ssid = " + ssid);
 	}
 
 	/**
@@ -415,27 +427,45 @@ public class RoutingTab extends JMainTab  {
 			public void run() {
 				processRouteInner();
 			}
-		}, TabsRouting.get().route()).start();
+		}, TabsRouting.get().routingThread()).start();
 	}
 
 	private void processRouteInner() {
 		jProgress.setValue(0);
 		if (jWaypoints.getModel().getSize() <= 2) {
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().there(), TabsRouting.get().not(), JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsRouting.get().noSystems(), TabsRouting.get().noSystemsTitle(), JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 
 		try {
 			// disable the UI controls
 			setUIEnabled(false);
+			jResult.setText(TabsRouting.get().emptyResult());
+			jResult.setCaretPosition(0);
+			jResult.setEnabled(false);
 			List<Node> inputWaypoints = new ArrayList<Node>(jWaypoints.getEditableModel().getAll());
+			final String text = jStart.getText();
+			//Move frist system to the top....
+			if (!text.contains(TabsRouting.get().startEmpty())) {
+				Collections.sort(inputWaypoints, new Comparator<Node>() {
+					@Override
+					public int compare(Node o1, Node o2) {
+						if (o1.getName().equals(text) && o2.getName().equals(text)) {
+							return 0; //Equal
+						} else if (o1.getName().equals(text)) {
+							return -1; //Before
+						} else if (o2.getName().equals(text)) {
+							return 1; //After
+						} else {
+							return o1.getName().compareTo(o2.getName());
+						}
+					}
+				});
+			}
 
 			List<Node> route = executeRouteFinding(inputWaypoints);
 
 			if (route.isEmpty()) { //Cancelled
-				jLastResultArea.setText(TabsRouting.get().once());
-				jLastResultArea.setCaretPosition(0);
-				jLastResultArea.setEnabled(false);
 				int selectedIndex = jAlgorithm.getSelectedIndex();
 				jAlgorithm.setModel(new DefaultComboBoxModel(RoutingAlgorithmContainer.getRegisteredList().toArray()));
 				if (selectedIndex >= 0 && selectedIndex < jAlgorithm.getModel().getSize()) {
@@ -451,25 +481,18 @@ public class RoutingTab extends JMainTab  {
 				sb.append('\n');
 			}
 			int time = (int) Math.floor(((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastTimeTaken() / 1000);
-			sb.append(TabsRouting.get().generating());
+			int jumps = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastDistance();
+			sb.append(TabsRouting.get().jumps(jumps));
+			sb.append('\n');
 			sb.append(TabsRouting.get().second(time));
-			sb.append(TabsRouting.get().whitespace5());
 
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, TabsRouting
-									.get()
-									.a(((RoutingAlgorithmContainer) jAlgorithm
-											.getSelectedItem())
-											.getLastDistance(),
-											(int) Math
-													.floor(((RoutingAlgorithmContainer) jAlgorithm
-															.getSelectedItem())
-															.getLastTimeTaken() / 1000))
-							, TabsRouting.get().route1()
+							, TabsRouting.get().result(jumps, time)
+							, TabsRouting.get().resultTitle()
 							, JOptionPane.INFORMATION_MESSAGE);
 
-			jLastResultArea.setText(sb.toString());
-			jLastResultArea.setEnabled(true);
+			jResult.setText(sb.toString());
+			jResult.setEnabled(true);
 
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
@@ -492,7 +515,6 @@ public class RoutingTab extends JMainTab  {
 		jRemove.setEnabled(b);
 		jCalculate.setEnabled(b);
 		jAlgorithm.setEnabled(b);
-		jDescription.setEnabled(b);
 		jAvailable.setEnabled(b);
 		jWaypoints.setEnabled(b);
 		jWaypointsRemaining.setEnabled(b);
@@ -501,6 +523,13 @@ public class RoutingTab extends JMainTab  {
 		jSourceLabel.setEnabled(b);
 		jSource.setEnabled(b);
 		jAddSystem.setEnabled(b);
+		jAlgorithmInfo.setEnabled(b);
+		jStartLabel.setEnabled(b);
+		if (jStart.getText().contains(TabsRouting.get().startEmpty())) {
+			jStart.setEnabled(false);
+		} else {
+			jStart.setEnabled(b);
+		}
 		jCancel.setEnabled(!b);
 	}
 
@@ -508,7 +537,24 @@ public class RoutingTab extends JMainTab  {
 		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}
 
-	private class ListenerClass extends MouseAdapter implements ActionListener {
+	private void validateLists() {
+		jRemove.setEnabled(jWaypoints.getSelectedValues().length > 0);
+		jAdd.setEnabled(jAvailable.getSelectedValues().length > 0 && jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+		if (jWaypoints.getSelectedValues().length == 1) { //Selected OK
+			jStart.setText(jWaypoints.getSelectedValue().toString());
+			jStart.setEnabled(true);
+		} else { //Empty List
+			List<? extends SolarSystem> all = jWaypoints.getEditableModel().getAll();
+			if (!all.isEmpty()) {
+				jStart.setText(TabsRouting.get().startEmptyAuto(all.get(0).getName()));
+			} else {
+				jStart.setText(TabsRouting.get().startEmpty());
+			}
+			jStart.setEnabled(false);
+		}
+	}
+
+	private class ListenerClass extends MouseAdapter implements ActionListener, ListSelectionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -518,6 +564,12 @@ public class RoutingTab extends JMainTab  {
 			} else if (ACTION_REMOVE.equals(e.getActionCommand())) {
 				move(jWaypoints, jAvailable, Integer.MAX_VALUE);
 			} else if (ACTION_CALCULATE.equals(e.getActionCommand())) {
+				if (jResult.isEnabled()) {
+					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultOverwrite(), TabsRouting.get().calculate(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (value != JOptionPane.OK_OPTION) {
+						return;
+					}
+				}
 				processRoute();
 			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
 				cancelProcessing();
@@ -527,6 +579,10 @@ public class RoutingTab extends JMainTab  {
 				processFilteredAssets(Settings.get());
 			} else if (ACTION_ALGORITHM.equals(e.getActionCommand())) {
 				changeAlgorithm();
+			} else if (ACTION_ALGORITHM_HELP.equals(e.getActionCommand())) {
+				RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
+				JInfoDialog jInfoDialog = new JInfoDialog(program, TabsRouting.get().description(rac.getBasicDescription(), rac.getTechnicalDescription()));
+				jInfoDialog.setVisible(true);
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
 				//jAddSystem
 				AddSystemController system = new AddSystemController(program);
@@ -536,14 +592,18 @@ public class RoutingTab extends JMainTab  {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && !e.isConsumed()) {
-				e.consume();
-				if (e.getSource().equals(jAvailable)) {
+			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() % 2 == 0) {
+				if (e.getSource().equals(jAvailable) && jAvailable.isEnabled()) {
 					move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
-				} else if (e.getSource().equals(jWaypoints)) {
+				} else if (e.getSource().equals(jWaypoints) && jWaypoints.isEnabled()) {
 					move(jWaypoints, jAvailable, Integer.MAX_VALUE);
 				}
 			}
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			validateLists();
 		}
 	}
 
