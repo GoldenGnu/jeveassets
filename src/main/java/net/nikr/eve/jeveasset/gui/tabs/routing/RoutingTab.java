@@ -142,8 +142,10 @@ public class RoutingTab extends JMainTab  {
 
 		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		jAvailable.getEditableModel().setSortComparator(comp);
+		jAvailable.addMouseListener(listener);
 		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		jWaypoints.getEditableModel().setSortComparator(comp);
+		jWaypoints.addMouseListener(listener);
 		jWaypointsRemaining = new JLabel();
 		jAvailableRemaining = new JLabel();
 		updateRemaining();
@@ -506,7 +508,7 @@ public class RoutingTab extends JMainTab  {
 		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}
 
-	private class ListenerClass implements ActionListener {
+	private class ListenerClass extends MouseAdapter implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -530,6 +532,18 @@ public class RoutingTab extends JMainTab  {
 				AddSystemController system = new AddSystemController(program);
 			}
 
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && !e.isConsumed()) {
+				e.consume();
+				if (e.getSource().equals(jAvailable)) {
+					move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+				} else if (e.getSource().equals(jWaypoints)) {
+					move(jWaypoints, jAvailable, Integer.MAX_VALUE);
+				}
+			}
 		}
 	}
 
