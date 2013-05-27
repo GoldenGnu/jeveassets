@@ -62,6 +62,7 @@ public class RoutingTab extends JMainTab  {
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
 	public static final String ACTION_ADD_SYSTEM = "ACTION_ADD_SYSTEM";
 	public static final String ACTION_SOURCE = "ACTION_SOURCE";
+	public static final String ACTION_ALGORITHM = "ACTION_ALGORITHM";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 
@@ -92,7 +93,6 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	public RoutingTab(final Program program) {
-
 		super(program, TabsRouting.get().routing(), Images.TOOL_ROUTING.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
@@ -119,13 +119,8 @@ public class RoutingTab extends JMainTab  {
 
 		jAlgorithm = new JComboBox(RoutingAlgorithmContainer.getRegisteredList().toArray());
 		jAlgorithm.setSelectedIndex(0);
-		jAlgorithm.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(final ItemEvent e) {
-				changeAlgorithm();
-			}
-		});
+		jAlgorithm.setActionCommand(ACTION_ALGORITHM);
+		jAlgorithm.addActionListener(listener);
 
 		jProgress = new ProgressBar();
 		jProgress.setValue(0);
@@ -435,6 +430,19 @@ public class RoutingTab extends JMainTab  {
 
 			List<Node> route = executeRouteFinding(inputWaypoints);
 
+			if (route.isEmpty()) { //Cancelled
+				jLastResultArea.setText(TabsRouting.get().once());
+				jLastResultArea.setCaretPosition(0);
+				jLastResultArea.setEnabled(false);
+				int selectedIndex = jAlgorithm.getSelectedIndex();
+				jAlgorithm.setModel(new DefaultComboBoxModel(RoutingAlgorithmContainer.getRegisteredList().toArray()));
+				if (selectedIndex >= 0 && selectedIndex < jAlgorithm.getModel().getSize()) {
+					jAlgorithm.setSelectedIndex(selectedIndex);
+				}
+				return;
+			} else { //Completed!
+				jProgress.setValue(jProgress.getMaximum());
+			}
 			StringBuilder sb = new StringBuilder();
 			for (Node ss : route) {
 				sb.append(ss.getName());
@@ -494,7 +502,6 @@ public class RoutingTab extends JMainTab  {
 		jCancel.setEnabled(!b);
 	}
 
-	//FIXME - cancel processing in the routing tool doesn't work very well
 	private void cancelProcessing() {
 		((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getCancelService().cancel();
 	}
@@ -516,6 +523,8 @@ public class RoutingTab extends JMainTab  {
 				jAvailable.getEditableModel().clear();
 				jWaypoints.getEditableModel().clear();
 				processFilteredAssets(Settings.get());
+			} else if (ACTION_ALGORITHM.equals(e.getActionCommand())) {
+				changeAlgorithm();
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
 				//jAddSystem
 				AddSystemController system = new AddSystemController(program);
@@ -578,36 +587,6 @@ public class RoutingTab extends JMainTab  {
 				list.add(new RoutingAlgorithmContainer(ra));
 			}
 			return list;
-		}
-	}
-
-	static class DummyProgress implements Progress {
-
-		@Override
-		public int getMaximum() {
-			return 0;
-		}
-
-		@Override
-		public void setMaximum(final int maximum) {
-		}
-
-		@Override
-		public int getMinimum() {
-			return 0;
-		}
-
-		@Override
-		public void setMinimum(final int minimum) {
-		}
-
-		@Override
-		public int getValue() {
-			return 0;
-		}
-
-		@Override
-		public void setValue(final int value) {
 		}
 	}
 

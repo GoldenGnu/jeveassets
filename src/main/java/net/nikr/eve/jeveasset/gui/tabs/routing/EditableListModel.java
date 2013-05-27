@@ -45,11 +45,12 @@ public class EditableListModel<T> extends AbstractListModel {
 
 	public EditableListModel(final List<T> initial, final Comparator<T> sortComparator) {
 		backed.addAll(initial);
-		this.sortComparator = sortComparator;
+		setSortComparator(sortComparator);
 	}
 
-	public void setSortComparator(final Comparator<T> sortComparator) {
+	public final void setSortComparator(final Comparator<T> sortComparator) {
 		this.sortComparator = sortComparator;
+		Collections.sort(backed, sortComparator);
 	}
 
 	public Comparator<T> getSortComparator() {
@@ -96,6 +97,7 @@ public class EditableListModel<T> extends AbstractListModel {
 
 	public boolean addAll(final Collection<? extends T> c) {
 		boolean b = backed.addAll(c);
+		Collections.sort(backed, sortComparator);
 		changed();
 		return b;
 	}
@@ -105,12 +107,15 @@ public class EditableListModel<T> extends AbstractListModel {
 	}
 
 	void changed() {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				fireContentsChanged(this, 0, backed.size() - 1);
-			}
-		});
+		if (SwingUtilities.isEventDispatchThread()) {
+			fireContentsChanged(this, 0, backed.size() - 1);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					fireContentsChanged(this, 0, backed.size() - 1);
+				}
+			});
+		}
 	}
 }
