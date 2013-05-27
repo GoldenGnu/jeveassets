@@ -142,6 +142,28 @@
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.1</version>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<classpath/>
+						<argument>net.nikr.eve.jeveasset.Main</argument>
+						<argument>${arg1}</argument>
+						<argument>${arg2}</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -282,6 +304,35 @@
 		</plugins>
 	</reporting>
 
+	<profiles>
+		<profile>
+			<id>portable</id>
+			<properties>
+				<arg1>-portable</arg1>
+			</properties>
+		</profile>
+		<profile>
+			<id>debug</id>
+			<properties>
+				<arg1>-debug</arg1>
+			</properties>
+		</profile>
+		<profile>
+			<id>update</id>
+			<properties>
+				<arg1>-debug</arg1>
+				<arg2>-update</arg2>
+			</properties>
+		</profile>
+		<profile>
+			<id>noupdate</id>
+			<properties>
+				<arg1>-debug</arg1>
+				<arg2>-noupdate</arg2>
+			</properties>
+		</profile>
+	</profiles>
+
 	<repositories>
 		<repository>
 			<id>maven.nikr.net</id>
@@ -405,5 +456,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.sourceVersion>1.6</project.build.sourceVersion>
 		<targetJdk>1.6</targetJdk>
+		<arg1>-empty</arg1>
+		<arg2>-empty</arg2>
 	</properties>
 </project>
