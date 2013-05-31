@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.*;
 import javax.swing.AbstractListModel;
-import javax.swing.SwingUtilities;
 
 public class EditableListModel<T> extends AbstractListModel {
 
@@ -114,28 +113,10 @@ public class EditableListModel<T> extends AbstractListModel {
 	}
 
 	private void fireRemoved(final int index0, final int index1) {
-		if (SwingUtilities.isEventDispatchThread()) {
-			super.fireIntervalRemoved(this, index0, index1);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					fireRemoved(index0, index1);
-				}
-			});
-		}
+		super.fireIntervalRemoved(this, index0, index1);
 	}
 
 	private void fireAdded(final int index0, final int index1) {
-		if (SwingUtilities.isEventDispatchThread()) {
-			super.fireIntervalAdded(this, index0, index1);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					fireAdded(index0, index1);
-				}
-			});
-		}
+		super.fireIntervalAdded(this, index0, index1);
 	}
 }

@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Jump;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.StaticData;
@@ -267,7 +268,13 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	@Override
+	public void clearData() {
+		RoutingAlgorithm.setCache(false); //Clear cache
+	}
+
+	@Override
 	public void updateData() {
+		RoutingAlgorithm.setCache(true);
 		//Do everything the constructor does...
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
@@ -284,7 +291,32 @@ public class RoutingTab extends JMainTab  {
 		jResult.setCaretPosition(0);
 		jResult.setEnabled(false);
 		updateRemaining();
-		processFilteredAssets(Settings.get());
+		processFilteredAssets();
+	}
+
+	public void addSystems(int max) {
+		Set<SolarSystem> allLocs = new HashSet<SolarSystem>();
+		allLocs.addAll(jAvailable.getEditableModel().getAll());
+		allLocs.addAll(jWaypoints.getEditableModel().getAll());
+		int count = 0;
+		for (Location location : StaticData.get().getLocations().values()) {
+			if (count >= max) {
+				break;
+			}
+			SolarSystem loc = findNodeForLocation(filteredGraph, location.getSystemID());
+			if (loc != null) {
+				boolean add = allLocs.add(loc);
+				if (add) {
+					count++;
+				}
+			} else {
+				LOG.debug("ignoring {}", location);
+			}
+		}
+		jAvailable.getEditableModel().clear();
+		jWaypoints.getEditableModel().clear();
+		jAvailable.getEditableModel().addAll(allLocs);
+		updateRemaining();
 	}
 
 	private void changeAlgorithm() {
@@ -302,6 +334,8 @@ public class RoutingTab extends JMainTab  {
 		int cur = jWaypoints.getModel().getSize();
 		if (max < cur) {
 			jWaypointsRemaining.setForeground(Color.RED);
+		} else if (max == cur) {
+			jWaypointsRemaining.setForeground(Color.BLUE);
 		} else {
 			jWaypointsRemaining.setForeground(Color.BLACK);
 		}
@@ -343,7 +377,7 @@ public class RoutingTab extends JMainTab  {
 		}
 	}
 
-	protected void processFilteredAssets(final Settings settings) {
+	protected void processFilteredAssets() {
 		// select the active places.
 		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
 			@Override
@@ -353,6 +387,7 @@ public class RoutingTab extends JMainTab  {
 				return n1.compareToIgnoreCase(n2);
 			}
 		});
+		jAvailable.getEditableModel().addAll(allLocs);
 		List<Asset> assets;
 		SourceItem source = (SourceItem) jSource.getSelectedItem();
 		if (source.getName().equals(General.get().all())) { //ALL
@@ -464,13 +499,16 @@ public class RoutingTab extends JMainTab  {
 			}
 
 			List<Node> route = executeRouteFinding(inputWaypoints);
-
+			RoutingAlgorithmContainer algorithm = (RoutingAlgorithmContainer) jAlgorithm.getSelectedItem();
 			if (route.isEmpty()) { //Cancelled
+				algorithm.resetCancelService();
+				/*
 				int selectedIndex = jAlgorithm.getSelectedIndex();
 				jAlgorithm.setModel(new DefaultComboBoxModel(RoutingAlgorithmContainer.getRegisteredList().toArray()));
 				if (selectedIndex >= 0 && selectedIndex < jAlgorithm.getModel().getSize()) {
 					jAlgorithm.setSelectedIndex(selectedIndex);
 				}
+				*/
 				return;
 			} else { //Completed!
 				jProgress.setValue(jProgress.getMaximum());
@@ -480,19 +518,17 @@ public class RoutingTab extends JMainTab  {
 				sb.append(ss.getName());
 				sb.append('\n');
 			}
-			int time = (int) Math.floor(((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastTimeTaken() / 1000);
-			int jumps = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getLastDistance();
-			sb.append(TabsRouting.get().jumps(jumps));
-			sb.append('\n');
-			sb.append(TabsRouting.get().second(time));
-
-			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
-							, TabsRouting.get().result(jumps, time)
-							, TabsRouting.get().resultTitle()
-							, JOptionPane.INFORMATION_MESSAGE);
+			
+			String name = algorithm.getName();
+			int time = (int) Math.floor(algorithm.getLastTimeTaken() / 1000);
+			int jumps = algorithm.getLastDistance();
+			sb.append(TabsRouting.get().resultText(name, jumps, time));
 
 			jResult.setText(sb.toString());
 			jResult.setEnabled(true);
+			if (!program.getMainWindow().getSelectedTab().equals(this)) {
+				
+			}
 
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
@@ -576,13 +612,12 @@ public class RoutingTab extends JMainTab  {
 			} else if (ACTION_SOURCE.equals(e.getActionCommand())) {
 				jAvailable.getEditableModel().clear();
 				jWaypoints.getEditableModel().clear();
-				processFilteredAssets(Settings.get());
+				processFilteredAssets();
 			} else if (ACTION_ALGORITHM.equals(e.getActionCommand())) {
 				changeAlgorithm();
 			} else if (ACTION_ALGORITHM_HELP.equals(e.getActionCommand())) {
 				RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
-				JInfoDialog jInfoDialog = new JInfoDialog(program, TabsRouting.get().description(rac.getBasicDescription(), rac.getTechnicalDescription()));
-				jInfoDialog.setVisible(true);
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), rac.getBasicDescription(), rac.getName(), JOptionPane.INFORMATION_MESSAGE);
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
 				//jAddSystem
 				AddSystemController system = new AddSystemController(program);
@@ -649,6 +684,10 @@ public class RoutingTab extends JMainTab  {
 		public CancelService getCancelService() {
 			return contained.getCancelService();
 		}
+
+		public void resetCancelService() {
+			contained.resetCancelService();
+		}	
 
 		@Override
 		public String toString() {

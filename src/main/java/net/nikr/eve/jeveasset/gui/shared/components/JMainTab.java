@@ -137,6 +137,7 @@ public abstract class JMainTab {
 	}
 
 	public abstract void updateData();
+	public void clearData() { }
 
 	public void updateDataTableLock() {
 		beforeUpdateData();

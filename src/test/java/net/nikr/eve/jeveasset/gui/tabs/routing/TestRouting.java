@@ -23,12 +23,10 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.FakeRoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.RoutingMockProgram;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgress;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
 import org.junit.Test;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;

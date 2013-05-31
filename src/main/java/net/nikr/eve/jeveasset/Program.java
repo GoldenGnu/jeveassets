@@ -406,6 +406,9 @@ public class Program implements ActionListener {
 	public ReprocessedTab getReprocessedTab() {
 		return reprocessedTab;
 	}
+	public RoutingTab getRoutingTab() {
+		return routingTab;
+	}
 	public EventList<Asset> getAssetEventList() {
 		return profileData.getAssetsEventList();
 	}

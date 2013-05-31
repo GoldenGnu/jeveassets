@@ -144,6 +144,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		int index = tabs.indexOf(jMainTab);
 		jTabbedPane.removeTabAt(index);
 		tabs.remove(index);
+		jMainTab.clearData();
 	}
 
 	public List<JMainTab> getTabs() {
