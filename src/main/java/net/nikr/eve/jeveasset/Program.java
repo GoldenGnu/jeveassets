@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -122,20 +121,7 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 
-	//Settings Panels
-	//FIXME - - > Move to Settings Dialog
-	private GeneralSettingsPanel generalSettingsPanel;
-	private PriceDataSettingsPanel priceDataSettingsPanel;
-	private ProxySettingsPanel proxySettingsPanel;
-	private UserPriceSettingsPanel userPriceSettingsPanel;
-	private UserNameSettingsPanel userNameSettingsPanel;
-	private WindowSettingsPanel windowSettingsPanel;
-	private ReprocessingSettingsPanel reprocessingSettingsPanel;
-	private AssetsToolSettingsPanel assetsToolSettingsPanel;
-	private OverviewToolSettingsPanel overviewToolSettingsPanel;
-	private StockpileToolSettingsPanel stockpileToolSettingsPanel;
-
-
+	//Misc
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
@@ -239,38 +225,12 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
 		SplashUpdater.setProgress(90);
-	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(91);
-		LOG.info("Loading: General Settings Panel");
-		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
-		LOG.info("Loading: Assets Tool Settings Panel");
-		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(92);
-		LOG.info("Loading: Overview Tool Settings Panel");
-		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		LOG.info("Loading: Stockpile Tool Settings Panel");
-		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(93);
-		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
-		LOG.info("Loading: Assets Price Settings Panel");
-		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		LOG.info("Loading: Assets Name Settings Panel");
-		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(94);
-		LOG.info("Loading: Price Data Settings Panel");
-		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		LOG.info("Loading: Reprocessing Settings Panel");
-		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(95);
-		LOG.info("Loading: Proxy Settings Panel");
-		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		LOG.info("Loading: Window Settings Panel");
-		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(96);
+	//GUI Done
 		LOG.info("GUI loaded");
+	//Updating data...
 		LOG.info("Updating data...");
 		updateEventLists(); //Update price
 		macOsxCode();
@@ -394,11 +354,19 @@ public class Program implements ActionListener {
 		return this.getMainWindow().getStatusPanel();
 	}
 	public UserNameSettingsPanel getUserNameSettingsPanel() {
-		return userNameSettingsPanel;
+		if (settingsDialog != null) {
+			return settingsDialog.getUserNameSettingsPanel();
+		} else {
+			return null;
+		}
 	}
 
 	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
-		return userPriceSettingsPanel;
+		if (settingsDialog != null) {
+			return settingsDialog.getUserPriceSettingsPanel();
+		} else {
+			return null;
+		}
 	}
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;

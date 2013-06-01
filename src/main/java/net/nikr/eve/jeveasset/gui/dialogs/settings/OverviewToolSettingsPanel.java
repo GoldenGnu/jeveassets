@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -34,8 +33,8 @@ public class OverviewToolSettingsPanel extends JSettingsPanel {
 
 	private JCheckBox jIgnoreSecureContainers;
 
-	public OverviewToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon(), parentNode);
+	public OverviewToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
+		super(program, settingsDialog, DialoguesSettings.get().overview(), Images.TOOL_OVERVIEW.getIcon());
 		jIgnoreSecureContainers = new JCheckBox(DialoguesSettings.get().ignoreAuditLogContainers());
 
 		layout.setHorizontalGroup(

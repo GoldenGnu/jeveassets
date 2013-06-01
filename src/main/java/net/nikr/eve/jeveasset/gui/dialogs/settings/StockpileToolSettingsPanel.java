@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -39,8 +38,8 @@ public class StockpileToolSettingsPanel extends JSettingsPanel {
 
 		private static final int LABEL_WIDTH = 70;
 
-	public StockpileToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, DialoguesSettings.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), parentNode);
+	public StockpileToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
+		super(program, settingsDialog, DialoguesSettings.get().stockpile(), Images.TOOL_STOCKPILE.getIcon());
 
 		jSwitchTab = new JCheckBox(DialoguesSettings.get().stockpileSwitchTab());
 

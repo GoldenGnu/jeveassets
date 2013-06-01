@@ -25,7 +25,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -42,8 +41,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 	private JCheckBox jContracts;
 	private JTextField jMaxOrderAge;
 
-	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog, final DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon(), parentNode);
+	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
+		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
 
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());

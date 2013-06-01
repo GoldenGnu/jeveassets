@@ -37,15 +37,13 @@ public abstract class JSettingsPanel {
 	protected GroupLayout layout;
 	protected Window parent;
 	protected DefaultMutableTreeNode treeNode;
+	private Icon icon;
 
 	public JSettingsPanel(final Program program, final SettingsDialog optionsDialog, final String title, final Icon icon) {
-		this(program, optionsDialog, title, icon, null);
-	}
-
-	public JSettingsPanel(final Program program, final SettingsDialog optionsDialog, final String title, final Icon icon, final DefaultMutableTreeNode parentNode) {
 		this.program = program;
 		this.title = title;
 		this.parent = optionsDialog.getDialog();
+		this.icon = icon;
 
 		jPanel = new JPanel();
 
@@ -53,7 +51,6 @@ public abstract class JSettingsPanel {
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
-		treeNode = optionsDialog.add(this, icon, parentNode);
 	}
 
 	public abstract boolean save();
@@ -69,5 +66,13 @@ public abstract class JSettingsPanel {
 
 	public DefaultMutableTreeNode getTreeNode() {
 		return treeNode;
+	}
+
+	public void setTreeNode(DefaultMutableTreeNode treeNode) {
+		this.treeNode = treeNode;
+	}
+
+	public Icon getIcon() {
+		return icon;
 	}
 }

@@ -52,6 +52,9 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	private DefaultTreeModel treeModel;
 	private CardLayout cardLayout;
 
+	private UserPriceSettingsPanel userPriceSettingsPanel;
+	private UserNameSettingsPanel userNameSettingsPanel;
+
 	private boolean tabSelected = false;
 
 	public SettingsDialog(final Program program) {
@@ -117,16 +120,53 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 					.addComponent(jApply, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
+
+		GeneralSettingsPanel generalSettingsPanel = new GeneralSettingsPanel(program, this);
+		add(generalSettingsPanel);
+
+		DefaultMutableTreeNode toolNode = addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
+
+		AssetsToolSettingsPanel assetsToolSettingsPanel = new AssetsToolSettingsPanel(program, this);
+		add(assetsToolSettingsPanel, toolNode);
+
+		OverviewToolSettingsPanel overviewToolSettingsPanel = new OverviewToolSettingsPanel(program, this);
+		add(overviewToolSettingsPanel, toolNode);
+
+		StockpileToolSettingsPanel stockpileToolSettingsPanel = new StockpileToolSettingsPanel(program, this);
+		add(stockpileToolSettingsPanel, toolNode);
+		
+		DefaultMutableTreeNode valuesNode = addGroup("Values", Images.EDIT_RENAME.getIcon());
+		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);
+		add(userPriceSettingsPanel, valuesNode);
+		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
+		add(userNameSettingsPanel, valuesNode);
+
+		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
+		add(priceDataSettingsPanel);
+
+		ReprocessingSettingsPanel reprocessingSettingsPanel = new ReprocessingSettingsPanel(program, this);
+		add(reprocessingSettingsPanel);
+
+		ProxySettingsPanel proxySettingsPanel = new ProxySettingsPanel(program, this);
+		add(proxySettingsPanel);
+
+		WindowSettingsPanel windowSettingsPanel = new WindowSettingsPanel(program, this);
+		add(windowSettingsPanel);
 	}
 
-	public DefaultMutableTreeNode addGroup(final String name, final Icon icon) {
+	private DefaultMutableTreeNode addGroup(final String name, final Icon icon) {
 		SettingsGroup group = new SettingsGroup(program, this, name, icon);
+		add(group);
 		return group.getTreeNode();
 	}
 
-	public DefaultMutableTreeNode add(final JSettingsPanel jSettingsPanel, final Icon icon, final DefaultMutableTreeNode parentNode) {
+	private void add(final JSettingsPanel jSettingsPanel) {
+		add(jSettingsPanel, null);
+	}
+
+	private void add(final JSettingsPanel jSettingsPanel, final DefaultMutableTreeNode parentNode) {
 		settingsPanels.put(jSettingsPanel.getTitle(), jSettingsPanel);
-		icons.put(jSettingsPanel.getTitle(), icon);
+		icons.put(jSettingsPanel.getTitle(), jSettingsPanel.getIcon());
 		jContent.add(jSettingsPanel.getPanel(), jSettingsPanel.getTitle());
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(jSettingsPanel.getTitle());
 		if (parentNode == null) {
@@ -134,7 +174,15 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		} else {
 			treeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
 		}
-		return node;
+		jSettingsPanel.setTreeNode(node);
+	}
+
+	public UserNameSettingsPanel getUserNameSettingsPanel() {
+		return userNameSettingsPanel;
+	}
+
+	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
+		return userPriceSettingsPanel;
 	}
 
 	private void expandAll(final TreePath parent, final boolean expand) {

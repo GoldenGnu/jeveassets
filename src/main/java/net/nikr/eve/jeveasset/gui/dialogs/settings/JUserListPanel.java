@@ -26,7 +26,6 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -45,8 +44,8 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	private List<UserItem<K, V>> listItems;
 	private String type;
 
-	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final DefaultMutableTreeNode parentNode, final String title, final String type, final String help) {
-		super(program, optionsDialog, title, icon, parentNode);
+	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final String title, final String type, final String help) {
+		super(program, optionsDialog, title, icon);
 		this.type = type;
 
 		ListenerClass listener = new ListenerClass();
