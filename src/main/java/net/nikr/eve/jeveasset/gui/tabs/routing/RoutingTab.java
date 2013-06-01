@@ -88,6 +88,8 @@ public class RoutingTab extends JMainTab  {
 	private ProgressBar jProgress;
 	private JButton jCancel;
 	private JTextArea jResult;
+	private JTextArea jFullResult;
+	private JTextArea jInfo;
 
 	protected Graph filteredGraph;
 	/**
@@ -176,9 +178,32 @@ public class RoutingTab extends JMainTab  {
 		jResult.setEditable(false);
 		jResult.setFont(jPanel.getFont());
 
+		jFullResult = new JTextArea();
+		jFullResult.setEditable(false);
+		jFullResult.setFont(jPanel.getFont());
+
+		jInfo = new JTextArea();
+		jInfo.setEditable(false);
+		jInfo.setFont(jPanel.getFont());
+
 		JScrollPane jAvailableScroll = new JScrollPane(jAvailable);
 		JScrollPane jWaypointsScroll = new JScrollPane(jWaypoints);
-		JScrollPane jResultScroll = new JScrollPane(jResult);
+		final JScrollPane jResultScroll = new JScrollPane(jResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane jFullResultScroll = new JScrollPane(jFullResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		jFullResultScroll.getVerticalScrollBar().setModel(jResultScroll.getVerticalScrollBar().getModel());
+		jFullResultScroll.setWheelScrollingEnabled(false);
+		jFullResultScroll.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				jResultScroll.dispatchEvent(e);
+			}
+		});
+		JScrollPane jInfoScroll = new JScrollPane(jInfo);
+
+		JTabbedPane jTabbedPane = new JTabbedPane();
+		jTabbedPane.addTab(TabsRouting.get().resultTabShort(), jResultScroll);
+		jTabbedPane.addTab(TabsRouting.get().resultTabFull(), jFullResultScroll);
+		jTabbedPane.addTab(TabsRouting.get().resultTabInfo(), jInfoScroll);
 
 		// widths are defined in here.
 		layout.setHorizontalGroup(
@@ -224,7 +249,7 @@ public class RoutingTab extends JMainTab  {
 					.addComponent(jProgress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
 					.addComponent(jCancel)
 				)
-				.addComponent(jResultScroll, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+				.addComponent(jTabbedPane)
 			);
 		// heights are defined here.
 		layout.setVerticalGroup(
@@ -260,7 +285,7 @@ public class RoutingTab extends JMainTab  {
 					.addComponent(jProgress, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jResultScroll, GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
+				.addComponent(jTabbedPane)
 				
 			);
 		//Only need to build the graph once
@@ -290,6 +315,13 @@ public class RoutingTab extends JMainTab  {
 		jResult.setText(TabsRouting.get().emptyResult());
 		jResult.setCaretPosition(0);
 		jResult.setEnabled(false);
+		jFullResult.setText(TabsRouting.get().emptyResult());
+		jFullResult.setCaretPosition(0);
+		jFullResult.setEnabled(false);
+		jInfo.setText(TabsRouting.get().emptyResult());
+		jInfo.setCaretPosition(0);
+		jInfo.setEnabled(false);
+		
 		updateRemaining();
 		processFilteredAssets();
 	}
@@ -478,6 +510,13 @@ public class RoutingTab extends JMainTab  {
 			jResult.setText(TabsRouting.get().emptyResult());
 			jResult.setCaretPosition(0);
 			jResult.setEnabled(false);
+			jFullResult.setText(TabsRouting.get().emptyResult());
+			jFullResult.setCaretPosition(0);
+			jFullResult.setEnabled(false);
+			jResult.setCaretPosition(0);
+			jInfo.setText(TabsRouting.get().emptyResult());
+			jInfo.setCaretPosition(0);
+			jInfo.setEnabled(false);
 			List<Node> inputWaypoints = new ArrayList<Node>(jWaypoints.getEditableModel().getAll());
 			final String text = jStart.getText();
 			//Move frist system to the top....
@@ -497,39 +536,65 @@ public class RoutingTab extends JMainTab  {
 					}
 				});
 			}
-
+			//Start route finding:
 			List<Node> route = executeRouteFinding(inputWaypoints);
 			RoutingAlgorithmContainer algorithm = (RoutingAlgorithmContainer) jAlgorithm.getSelectedItem();
 			if (route.isEmpty()) { //Cancelled
 				algorithm.resetCancelService();
-				/*
-				int selectedIndex = jAlgorithm.getSelectedIndex();
-				jAlgorithm.setModel(new DefaultComboBoxModel(RoutingAlgorithmContainer.getRegisteredList().toArray()));
-				if (selectedIndex >= 0 && selectedIndex < jAlgorithm.getModel().getSize()) {
-					jAlgorithm.setSelectedIndex(selectedIndex);
-				}
-				*/
 				return;
 			} else { //Completed!
 				jProgress.setValue(jProgress.getMaximum());
 			}
-			StringBuilder sb = new StringBuilder();
-			for (Node ss : route) {
-				sb.append(ss.getName());
-				sb.append('\n');
-			}
-			
+			//Info
+			final StringBuilder infoString = new StringBuilder();
 			String name = algorithm.getName();
 			int time = (int) Math.floor(algorithm.getLastTimeTaken() / 1000);
 			int jumps = algorithm.getLastDistance();
-			sb.append(TabsRouting.get().resultText(name, jumps, time));
-
-			jResult.setText(sb.toString());
-			jResult.setEnabled(true);
-			if (!program.getMainWindow().getSelectedTab().equals(this)) {
-				
+			infoString.append(TabsRouting.get().resultText(name, jumps, inputWaypoints.size(), time));
+			//Full Route
+			Node lastNode = null;
+			final StringBuilder fullRouteString = new StringBuilder();
+			final StringBuilder routeString = new StringBuilder();
+			for (Node node : route) {
+				if (lastNode != null) {
+					boolean first = true;
+					for (Node subNode : filteredGraph.routeBetween(lastNode, node)) {
+						if (first) {
+							first = false;
+							fullRouteString.append(subNode.getName());
+						} else {
+							fullRouteString.append(TabsRouting.get().resultArrow());
+							fullRouteString.append(subNode.getName());
+						}
+					}
+					fullRouteString.append('\n');
+					routeString.append('\n');
+				}
+				routeString.append(node.getName());
+				lastNode = node;
 			}
-
+			boolean first = true;
+			for (Node subNode : filteredGraph.routeBetween(lastNode, route.get(0))) {
+				if (first) {
+					first = false;
+					fullRouteString.append(subNode.getName());
+				} else {
+					fullRouteString.append(TabsRouting.get().resultArrow()); //⇨→⇒
+					fullRouteString.append(subNode.getName());
+				}
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					jResult.setText(routeString.toString());
+					jResult.setEnabled(true);
+					jFullResult.setText(fullRouteString.toString());
+					jFullResult.setEnabled(true);
+					jResult.setCaretPosition(0);
+					jInfo.setText(infoString.toString());
+					jInfo.setEnabled(true);
+				}
+			});
 		} catch (DisconnectedGraphException dce) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame()
 							, dce.getMessage()

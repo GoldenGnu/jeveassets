@@ -277,6 +277,7 @@ public class MainMenu extends JMenuBar {
 
 		if (Program.isDebug()) {
 			menu = new JMenu("Debug");
+			//FIXME - - > Remove for production
 			this.add(menu);
 
 			menuItem = new JMenuItem("Update EventLists", Images.MISC_DEBUG.getIcon());
@@ -289,7 +290,6 @@ public class MainMenu extends JMenuBar {
 			menu.add(menuItem);
 
 			JMenu submenu = new JMenu("Add systems to routing");
-			//FIXME - - > Remove for production
 			menu.add(submenu);
 
 			menuItem = new JMenuItem("10", Images.MISC_DEBUG.getIcon());

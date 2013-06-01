@@ -48,8 +48,12 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String ok();
 	public abstract String overviewGroup(Object arg0);
 	public abstract String remove();
+	public abstract String resultArrow();
 	public abstract String resultOverwrite();
-	public abstract String resultText(String name, int jumps, int time);
+	public abstract String resultTabFull();
+	public abstract String resultTabInfo();
+	public abstract String resultTabShort();
+	public abstract String resultText(String name, int jumps, int waypoints, int time);
 	public abstract String routingThread();
 	public abstract String routingTitle();
 	public abstract String total(Object arg0, Object arg1);
