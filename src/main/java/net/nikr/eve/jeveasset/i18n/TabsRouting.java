@@ -36,6 +36,10 @@ public abstract class TabsRouting extends Bundle {
 
 	public abstract String add();
 	public abstract String addSystem();
+	public abstract String addSystemCancel();
+	public abstract String addSystemOK();
+	public abstract String addSystemSelect();
+	public abstract String addSystemTitle();
 	public abstract String algorithm();
 	public abstract String allowed(Object arg0, Object arg1);
 	public abstract String calculate();

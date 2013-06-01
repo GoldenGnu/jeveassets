@@ -35,7 +35,6 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
@@ -90,6 +89,7 @@ public class RoutingTab extends JMainTab  {
 	private JTextArea jResult;
 	private JTextArea jFullResult;
 	private JTextArea jInfo;
+	private JSystemDialog jSystemDialog;
 
 	protected Graph filteredGraph;
 	/**
@@ -104,6 +104,8 @@ public class RoutingTab extends JMainTab  {
 		super(program, TabsRouting.get().routingTitle(), Images.TOOL_ROUTING.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
+
+		jSystemDialog = new JSystemDialog(program, this);
 
 		jAdd = new JButton(TabsRouting.get().add());
 		jAdd.setActionCommand(ACTION_ADD);
@@ -230,7 +232,7 @@ public class RoutingTab extends JMainTab  {
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(jAdd, 80, 80, 80)
 						.addComponent(jRemove, 80, 80, 80)
-						//.addComponent(jAddSystem, 80, 80, 80)
+						.addComponent(jAddSystem, 80, 80, 80)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createSequentialGroup()
@@ -273,7 +275,7 @@ public class RoutingTab extends JMainTab  {
 					.addGroup(layout.createSequentialGroup()
 						.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						//.addComponent(jAddSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jAddSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
@@ -290,6 +292,7 @@ public class RoutingTab extends JMainTab  {
 			);
 		//Only need to build the graph once
 		buildGraph();
+		jSystemDialog.buildData();
 	}
 
 	@Override
@@ -348,10 +351,6 @@ public class RoutingTab extends JMainTab  {
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
 		jAvailable.getEditableModel().addAll(allLocs);
-		updateRemaining();
-	}
-
-	private void changeAlgorithm() {
 		updateRemaining();
 	}
 
@@ -484,6 +483,7 @@ public class RoutingTab extends JMainTab  {
 	 */
 	private boolean move(final MoveJList<SolarSystem> from, final MoveJList<SolarSystem> to, final int limit) {
 		boolean b = from.move(to, limit);
+		to.requestFocusInWindow();
 		updateRemaining();
 		return b;
 	}
@@ -588,9 +588,10 @@ public class RoutingTab extends JMainTab  {
 				public void run() {
 					jResult.setText(routeString.toString());
 					jResult.setEnabled(true);
+					jResult.setCaretPosition(0);
 					jFullResult.setText(fullRouteString.toString());
 					jFullResult.setEnabled(true);
-					jResult.setCaretPosition(0);
+					jFullResult.setCaretPosition(0);
 					jInfo.setText(infoString.toString());
 					jInfo.setEnabled(true);
 				}
@@ -604,6 +605,10 @@ public class RoutingTab extends JMainTab  {
 			setUIEnabled(true);
 			jProgress.setValue(0);
 		}
+	}
+
+	protected Graph getGraph() {
+		return filteredGraph;
 	}
 
 	protected List<Node> executeRouteFinding(final List<Node> inputWaypoints) {
@@ -641,6 +646,7 @@ public class RoutingTab extends JMainTab  {
 	private void validateLists() {
 		jRemove.setEnabled(jWaypoints.getSelectedValues().length > 0);
 		jAdd.setEnabled(jAvailable.getSelectedValues().length > 0 && jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
+		jAddSystem.setEnabled(jWaypoints.getModel().getSize() < ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
 		if (jWaypoints.getSelectedValues().length == 1) { //Selected OK
 			jStart.setText(jWaypoints.getSelectedValue().toString());
 			jStart.setEnabled(true);
@@ -679,13 +685,18 @@ public class RoutingTab extends JMainTab  {
 				jWaypoints.getEditableModel().clear();
 				processFilteredAssets();
 			} else if (ACTION_ALGORITHM.equals(e.getActionCommand())) {
-				changeAlgorithm();
+				updateRemaining();
 			} else if (ACTION_ALGORITHM_HELP.equals(e.getActionCommand())) {
 				RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), rac.getBasicDescription(), rac.getName(), JOptionPane.INFORMATION_MESSAGE);
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
-				//jAddSystem
-				AddSystemController system = new AddSystemController(program);
+				SolarSystem system = jSystemDialog.show();
+				if (system != null 
+						&& !jWaypoints.getEditableModel().contains(system)
+						&& !jAvailable.getEditableModel().contains(system)) {
+					jWaypoints.getEditableModel().add(system);
+					updateRemaining();
+				}
 			}
 
 		}
