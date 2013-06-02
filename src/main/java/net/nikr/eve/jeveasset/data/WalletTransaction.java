@@ -31,6 +31,7 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 	private Item item;
 	private Location location;
 	private Owner owner;
+	private String ownerCharacter;
 
 	public WalletTransaction(final ApiWalletTransaction apiWalletTransaction, final Item item, final Location location, final Owner owner) {		
 		this.setTransactionDateTime(apiWalletTransaction.getTransactionDateTime());
@@ -53,6 +54,7 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
+		this.ownerCharacter = "";
 	}
 
 	public int compareTo(final WalletTransaction o) {
@@ -62,10 +64,10 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 	}
 
 	public String getTransactionTypeFormatted() {
-		if (getTransactionType().equals("sell")) {
+		if (isSell()) {
 			return TabsTransaction.get().sell();
 		}
-		if (getTransactionType().equals("buy")) {
+		if (isBuy()) {
 			return TabsTransaction.get().buy();
 		}
 		return getTransactionType();
@@ -73,10 +75,10 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 
 	
 	public String getTransactionForFormatted() {
-		if (getTransactionFor().equals("personal")) {
+		if (isForPersonal()) {
 			return TabsTransaction.get().personal();
 		}
-		if (getTransactionFor().equals("corporation")) {
+		if (isForCorporation()) {
 			return TabsTransaction.get().corporation();
 		}
 		return getTransactionFor();
@@ -93,6 +95,61 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 	}
 
 	public String getOwnerName() {
-		return owner.getName();
+		if (ownerCharacter.isEmpty()) {
+			return owner.getName();
+		} else {
+			return ownerCharacter + " > " + owner.getName();
+		}
+	}
+
+	public double getValue() {
+		if (isSell()) {
+			return getQuantity() * getPrice();
+		} else {
+			return getQuantity() * -getPrice();
+		}
+	}
+
+	public boolean isSell() {
+		return getTransactionType().equals("sell");
+	}
+
+	public boolean isBuy() {
+		return getTransactionType().equals("buy");
+	}
+
+	public boolean isForPersonal() {
+		return getTransactionFor().equals("personal");
+	}
+
+	public boolean isForCorporation() {
+		return getTransactionFor().equals("corporation");
+	}
+
+	public void setOwnerCharacter(String ownerCharacter) {
+		this.ownerCharacter = ownerCharacter;
+	}
+	
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 37 * hash + (int) (this.getTransactionID() ^ (this.getTransactionID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final WalletTransaction other = (WalletTransaction) obj;
+		if (this.getTransactionID() != other.getTransactionID()) {
+			return false;
+		}
+		return true;
 	}
  }

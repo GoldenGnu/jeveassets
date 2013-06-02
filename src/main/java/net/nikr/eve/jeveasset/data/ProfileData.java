@@ -200,8 +200,20 @@ public class ProfileData {
 				//Wallet Transactions
 				if (!owner.getWalletTransactions().isEmpty() && !ownersWallet.contains(owner.getName())) {
 					//Wallet Transactions
-					//FIXME - - > Corporation transactions can be added twice (one from corp key and one for char key)
-					walletTransactions.addAll(owner.getWalletTransactions());
+					for (WalletTransaction walletTransaction : owner.getWalletTransactions()) {
+						int index = walletTransactions.indexOf(walletTransaction);
+						if (index >= 0) { //Dublicate
+							if (owner.isCorporation()) {
+								WalletTransaction remove = walletTransactions.remove(index);
+								walletTransaction.setOwnerCharacter(remove.getOwnerName());
+								walletTransactions.add(walletTransaction);
+							} else {
+								walletTransactions.get(index).setOwnerCharacter(walletTransaction.getOwnerName());
+							}
+						} else { //New
+							walletTransactions.add(walletTransaction);
+						}
+					}
 					//Assets
 					//FIXME - - > Wallet Transactions Assets
 					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);

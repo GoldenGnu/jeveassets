@@ -40,26 +40,6 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return from.getTransactionDateTime();
 		}
 	},
-	OWNER(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsTransaction.get().columnOwner();
-		}
-		@Override
-		public Object getColumnValue(final WalletTransaction from) {
-			return from.getOwnerName();
-		}
-	},
-	TYPE(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsTransaction.get().columnTransactionType();
-		}
-		@Override
-		public Object getColumnValue(final WalletTransaction from) {
-			return from.getTransactionTypeFormatted();
-		}
-	},
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -90,14 +70,24 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return from.getPrice();
 		}
 	},
-	CLIENT(String.class, GlazedLists.comparableComparator()) {
+	VALUE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsTransaction.get().columnClientName();
+			return TabsTransaction.get().columnValue();
 		}
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
-			return from.getClientName();
+			return from.getValue();
+		}
+	},
+	OWNER(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnOwner();
+		}
+		@Override
+		public Object getColumnValue(final WalletTransaction from) {
+			return from.getOwnerName();
 		}
 	},
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
@@ -120,6 +110,26 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return from.getLocation().getRegion();
 		}
 	},
+	CLIENT(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnClientName();
+		}
+		@Override
+		public Object getColumnValue(final WalletTransaction from) {
+			return from.getClientName();
+		}
+	},
+	TYPE(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnTransactionType();
+		}
+		@Override
+		public Object getColumnValue(final WalletTransaction from) {
+			return from.getTransactionTypeFormatted();
+		}
+	},
 	TRANSACTION_FOR(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -128,16 +138,6 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 		@Override
 		public Object getColumnValue(final WalletTransaction from) {
 			return from.getTransactionForFormatted();
-		}
-	},
-	VALUE(Double.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsTransaction.get().columnValue();
-		}
-		@Override
-		public Object getColumnValue(final WalletTransaction from) {
-			return from.getQuantity() * from.getPrice();
 		}
 	};
 	private Class<?> type;
