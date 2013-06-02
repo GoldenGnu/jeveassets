@@ -372,7 +372,7 @@ public class JMenuInfo {
 		jPopupMenu.add(jMenuItem);
 	}
 
-	private static void createDefault(final JPopupMenu jPopupMenu) {
+	public static void createDefault(final JPopupMenu jPopupMenu) {
 		JMenuItem jMenuItem;
 
 		jPopupMenu.addSeparator();
