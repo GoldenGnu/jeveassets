@@ -203,7 +203,7 @@ public class ProfileData {
 					//FIXME - - > Corporation transactions can be added twice (one from corp key and one for char key)
 					walletTransactions.addAll(owner.getWalletTransactions());
 					//Assets
-					//FIXME Wallet Transactions Assets
+					//FIXME - - > Wallet Transactions Assets
 					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
 					ownersWallet.add(owner.getName());
 				}
@@ -386,7 +386,7 @@ public class ProfileData {
 			String sContainer = "";
 			for (Asset parentAsset : asset.getParents()) {
 				if (!sContainer.isEmpty()) {
-					sContainer = sContainer + ">";
+					sContainer = sContainer + " > ";
 				}
 				if (!parentAsset.isUserName()) {
 					sContainer = sContainer + parentAsset.getName() + " #" + parentAsset.getItemID();
