@@ -46,13 +46,13 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private static final String ACTION_CANCEL = "ACTION_CANCEL";
 
 	//GUI
-	private JLabel jDate;
-	private JButton jOK;
+	private JTextField jDate;
 	private JTextField jWalletBalance;
 	private JTextField jAssets;
 	private JTextField jSellOrders;
 	private JTextField jEscrows;
 	private JTextField jEscrowsToCover;
+	private JButton jOK;
 
 	//Data
 	private TrackerData trackerData;
@@ -64,7 +64,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 		ListenerClass listener = new ListenerClass();
 
 		JLabel jDateLabel = new JLabel(TabsTracker.get().date());
-		jDate = new JLabel();
+		jDate = new JTextField();
+		jDate.setEditable(false);
+		jDate.setOpaque(false);
+		jDate.setHorizontalAlignment(JLabel.RIGHT);
 
 		JLabel jWalletBalanceLabel = new JLabel(TabsTracker.get().walletBalance());
 		jWalletBalance = new JTextField();
@@ -176,7 +179,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	}
 	
 	private String format(Date d) {
-		return Formater.dateOnly(d);
+		return Formater.columnDate(d);
 	}
 
 	private double parse(String s) throws ParseException {
@@ -234,7 +237,6 @@ public class JTrackerEditDialog extends JDialogCentered {
 		public void focusGained(FocusEvent e) {
 			JTextField jTextField = (JTextField) e.getSource();
 			jTextField.setBackground(Color.WHITE);
-			jTextField.setCaretPosition(jTextField.getText().length());
 		}
 
 		@Override
@@ -246,9 +248,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 			} catch (ParseException ex) {
 				jTextField.setBackground(new Color(255, 200, 200));
 			}
-			
+			jTextField.setCaretPosition(jTextField.getText().length());
 		}
-		
 	}
-	
 }
