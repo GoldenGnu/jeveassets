@@ -275,6 +275,10 @@ public class ProfileData {
 						contractItem.setDynamicPrice(price);
 					}
 				}
+				//Update Items dynamic values
+				for (Item item : StaticData.get().getItems().values()) {
+					item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
+				}
 			}
 		}
 		try {
@@ -403,27 +407,7 @@ public class ProfileData {
 			}
 
 			//Reprocessed price
-			asset.setPriceReprocessed(0);
-			double priceReprocessed = 0;
-			int portionSize = 0;
-			for (ReprocessedMaterial material : asset.getItem().getReprocessedMaterial()) {
-				//Calculate reprocessed price
-				portionSize = material.getPortionSize();
-				if (Settings.get().getPriceData().containsKey(material.getTypeID())) {
-					PriceData priceData = Settings.get().getPriceData().get(material.getTypeID());
-					double price;
-					if (Settings.get().getUserPrices().containsKey(material.getTypeID())) {
-						price = Settings.get().getUserPrices().get(material.getTypeID()).getValue();
-					} else {
-						price = Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
-					}
-					priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
-				}
-			}
-			if (priceReprocessed > 0 && portionSize > 0) {
-				priceReprocessed = priceReprocessed / portionSize;
-			}
-			asset.setPriceReprocessed(priceReprocessed);
+			asset.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(asset.getItem()));
 
 			//Type Count
 			if (!uniqueAssetsDuplicates.containsKey(asset.getItem().getTypeID())) {

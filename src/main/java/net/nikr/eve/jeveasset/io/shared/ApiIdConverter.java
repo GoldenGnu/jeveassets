@@ -31,6 +31,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
@@ -95,6 +96,14 @@ public final class ApiIdConverter {
 	}
 
 	public static double getPrice(final int typeID, final boolean isBlueprintCopy) {
+		return getPriceType(typeID, isBlueprintCopy, false);
+	}
+
+	private static double getPriceReprocessed(final int typeID, final boolean isBlueprintCopy) {
+		return getPriceType(typeID, isBlueprintCopy, true);
+	}
+
+	private static double getPriceType(final int typeID, final boolean isBlueprintCopy, boolean reprocessed) {
 		UserItem<Integer, Double> userPrice;
 		if (isBlueprintCopy) { //Blueprint Copy
 			userPrice = Settings.get().getUserPrices().get(-typeID);
@@ -115,7 +124,26 @@ public final class ApiIdConverter {
 		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
 			priceData = Settings.get().getPriceData().get(typeID);
 		}
-		return Settings.get().getPriceDataSettings().getDefaultPrice(priceData);
+		if (reprocessed) {
+			return Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
+		} else {
+			return Settings.get().getPriceDataSettings().getDefaultPrice(priceData);
+		}
+	}
+
+	public static double getPriceReprocessed(Item item) {
+		double priceReprocessed = 0;
+		int portionSize = 0;
+		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
+			//Calculate reprocessed price
+			portionSize = material.getPortionSize();
+			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID(), false);
+			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
+		}
+		if (priceReprocessed > 0 && portionSize > 0) {
+			priceReprocessed = priceReprocessed / portionSize;
+		}
+		return priceReprocessed;
 	}
 
 	public static float getVolume(final int typeID, final boolean packaged) {

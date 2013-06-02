@@ -41,6 +41,7 @@ public class Item implements Comparable<Item>, ItemType {
 	private int portion;
 	private boolean blueprint;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+	private double priceReprocessed;
 
 	public Item(int typeID) {
 		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0);
@@ -101,6 +102,10 @@ public class Item implements Comparable<Item>, ItemType {
 		return price;
 	}
 
+	public double getPriceReprocessed() {
+		return priceReprocessed;
+	}
+
 	public float getVolume() {
 		return volume;
 	}
@@ -128,6 +133,10 @@ public class Item implements Comparable<Item>, ItemType {
 	@Override
 	public Item getItem() {
 		return this;
+	}
+
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
 	@Override
