@@ -33,10 +33,7 @@ import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
-/**
- *
- * @author Niklas
- */
+
 public class JMenuInfoTest {
 
 	private static Material summaryAll;

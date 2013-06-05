@@ -24,7 +24,7 @@ Developers:
   Jochen Bedersdorfer
   TryfanMan*
   Jan
-  Ima Sohmbad*
+  Ima Sohmbadi*
 
 Testers:
   Varo Jan*

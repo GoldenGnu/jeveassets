@@ -42,10 +42,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import uk.me.candle.eve.graph.Node;
 
-/**
- *
- * @author Niklas
- */
+
 public class JSystemDialog extends JDialogCentered implements ActionListener {
 
 	private static final String ACTION_OK = "ACTION_OK";

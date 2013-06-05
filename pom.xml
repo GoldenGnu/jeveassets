@@ -34,6 +34,10 @@
 			<id>beders</id>
 			<name>Jochen Bedersdorfer</name>
 		</developer>
+		<developer>
+			<id>gavitron</id>
+			<name>Ima Sohmbadi</name>
+		</developer>
 	</developers>
 	<licenses>
 		<license>
