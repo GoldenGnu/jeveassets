@@ -278,7 +278,7 @@ public class MainMenu extends JMenuBar {
 		if (Program.isDebug()) {
 			menu = new JMenu("Debug");
 			//FIXME - - > Remove for production
-			this.add(menu);
+			//this.add(menu);
 
 			menuItem = new JMenuItem("Update EventLists", Images.MISC_DEBUG.getIcon());
 			menuItem.addActionListener(new ActionListener() {

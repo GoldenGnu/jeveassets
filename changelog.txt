@@ -16,6 +16,28 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.6.0_BETA_1___________________________________________________________________
+
+New Features:
+-New Tool: Wallet Transactions (by Ima Sohmbadi) 
+-Routing: Major overhaul
+-Assets: Rename Container
+-Account Import: Error handling
+-Stockpile: Import shopping list from "Eve ISK Per Hour"
+-Tracker: Edit data points
+-Items: Reprocessed Column
+-Optimized many parts of jEveAssets
+-Many more minor changes and bug fixes
+
+Changed:
+-Better handling of multiple instances of jEveAssets
+-Library: Updated Glazed Lists to 1.9.0
+-Library: Updated EVEAPI to the latest version
+-Source: Major cleanup of the source code
+-Source: Made it easy to checkout and compile (maven.nikr.net)
+
+
+________________________________________________________________________________
 _2.5.3__________________________________________________________________________
 
 Bug Fixes:
