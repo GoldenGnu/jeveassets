@@ -384,7 +384,7 @@ public class ProfileData {
 				asset.setUserPrice(Settings.get().getUserPrices().get(asset.getItem().getTypeID()));
 			}
 			//Dynamic Price
-			double dynamicPrice = ApiIdConverter.getPrice(asset.getItem().getTypeID(), false);
+			double dynamicPrice = ApiIdConverter.getPrice(asset.getItem().getTypeID(), asset.isBPC());
 			asset.setDynamicPrice(dynamicPrice);
 			//Market price
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
