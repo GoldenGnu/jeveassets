@@ -23,21 +23,21 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import uk.me.candle.eve.graph.Node;
@@ -49,9 +49,10 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 	private static final String ACTION_CANCEL = "ACTION_CANCEL";
 
 	private final EventList<SolarSystem> systems;
-	private JComboBox jSystem;
-	private JButton jOK;
-	private RoutingTab routingTab;
+	private final AutoCompleteSupport<SolarSystem> autoComplete;
+	private final JComboBox jSystem;
+	private final JButton jOK;
+	private final RoutingTab routingTab;
 
 	private SolarSystem system;
 
@@ -62,9 +63,10 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 		JLabel jText = new JLabel(TabsRouting.get().addSystemSelect());
 
 		jSystem = new JComboBox();
-		JCopyPopup.install((JTextComponent) jSystem.getEditor().getEditorComponent());
 		systems = new BasicEventList<SolarSystem>();
-		AutoCompleteSupport.install(jSystem, systems, new Filterator());
+		SortedList<SolarSystem> sortedSystems = new SortedList<SolarSystem>(systems, new SystemComparator());
+		autoComplete = AutoCompleteSupport.install(jSystem, sortedSystems, new Filterator());
+
 		jOK = new JButton(TabsRouting.get().addSystemOK());
 		jOK.setActionCommand(ACTION_OK);
 		jOK.addActionListener(this);
@@ -95,7 +97,7 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 		);
 	}
 
-	protected void buildData() {
+	protected final void buildData() {
 		if (!systems.isEmpty()) {
 			return;
 		}
@@ -109,11 +111,14 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 		} finally {
 			systems.getReadWriteLock().writeLock().unlock();
 		}
+		//Can not set strict on empty EventList - so we do it now
+		autoComplete.setStrict(true);
 	}
 
 	public SolarSystem show() {
 		buildData();
-		jSystem.getModel().setSelectedItem("");
+		autoComplete.removeFirstItem();
+		jSystem.setSelectedIndex(0);
 		system = null;
 		setVisible(true);
 		return system;
@@ -160,5 +165,11 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 			baseList.add(element.getName());
 		}
 	}
-	
+
+	private class SystemComparator implements Comparator<SolarSystem> {
+		@Override
+		public int compare(SolarSystem o1, SolarSystem o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	}
 }

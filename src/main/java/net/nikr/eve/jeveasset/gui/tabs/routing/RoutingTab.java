@@ -691,10 +691,16 @@ public class RoutingTab extends JMainTab  {
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), rac.getBasicDescription(), rac.getName(), JOptionPane.INFORMATION_MESSAGE);
 			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
 				SolarSystem system = jSystemDialog.show();
-				if (system != null 
-						&& !jWaypoints.getEditableModel().contains(system)
+				if (system != null ) {
+					if (!jWaypoints.getEditableModel().contains(system)
 						&& !jAvailable.getEditableModel().contains(system)) {
-					jWaypoints.getEditableModel().add(system);
+						//New
+						jWaypoints.getEditableModel().add(system);
+					} else if (jAvailable.getEditableModel().contains(system)) {
+						//In available: moving to waypoints
+						jAvailable.getEditableModel().remove(system);
+						jWaypoints.getEditableModel().add(system);
+					} //Else: Already in waypoints - do nothing
 					updateRemaining();
 				}
 			}
