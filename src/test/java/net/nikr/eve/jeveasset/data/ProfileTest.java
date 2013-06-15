@@ -58,6 +58,10 @@ public class ProfileTest {
 	}
 
 	private void test(String name, boolean supportContracts) throws URISyntaxException {
+		test(name, supportContracts, false);
+	}
+
+	private void test(String name, boolean supportContracts, boolean supportTransactions) throws URISyntaxException {
 		ProfileManager profileManager = new ProfileManager();
 		boolean load = ProfileReader.load(profileManager, getFilename(name));
 		assertEquals(name+" fail to load", load, true);
@@ -65,6 +69,7 @@ public class ProfileTest {
 		boolean marketOrders = false;
 		boolean industryJobs = false;
 		boolean contracts = false;
+		boolean transactions = false;
 		for (Account account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name: "+account.getName()+" is not safe");
@@ -75,6 +80,7 @@ public class ProfileTest {
 			for (Owner owner : account.getOwners()) {
 				marketOrders = marketOrders || !owner.getMarketOrders().isEmpty();
 				industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
+				transactions = transactions || !owner.getWalletTransactions().isEmpty();
 				contracts = contracts || !owner.getContracts().isEmpty();
 				assertEquals(name+" had no assets", true, !owner.getAssets().isEmpty());
 				assertEquals(name+" had no account balances", true, !owner.getAccountBalances().isEmpty());
@@ -84,6 +90,9 @@ public class ProfileTest {
 		assertEquals(name+" had no industry jobs", true, industryJobs);
 		if (supportContracts) {
 			assertEquals(name+" had no contracts", true, contracts);
+		}
+		if (supportTransactions) {
+			assertEquals(name+" had no wallet transactions", true, industryJobs);
 		}
 	}
 
@@ -120,5 +129,6 @@ public class ProfileTest {
 		test("data-2-3-0");
 		test("data-2-4-0");
 		test("data-2-5-0", true);
+		test("data-2-6-0", true, true);
 	}
 }
