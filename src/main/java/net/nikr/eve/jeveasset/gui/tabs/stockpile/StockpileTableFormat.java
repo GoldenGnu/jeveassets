@@ -47,7 +47,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getGroup();
+			return from.getItem().getGroup();
 		}
 	},
 	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
@@ -161,7 +161,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getPrice();
+			return from.getDynamicPrice();
 		}
 	},
 	VALUE_NOW(Double.class, GlazedLists.comparableComparator()) {

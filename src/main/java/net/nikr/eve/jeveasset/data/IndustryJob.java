@@ -22,9 +22,14 @@ package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
-public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob> {
+public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
+
 	public enum IndustryJobState {
 		STATE_ALL() {
 			@Override
@@ -186,13 +191,12 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	private IndustryActivity activity;
 	private IndustryJobState state;
-	private String name = "";
-	private String location = "";
-	private String system;
-	private String region;
-	private String owner = "";
+	private Item item;
+	private Owner owner;
+	private Location location;
+	private double price;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final String name, final String location, final String system, final String region, final String owner) {
+	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -226,10 +230,8 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.setBeginProductionTime(apiIndustryJob.getBeginProductionTime());
 		this.setEndProductionTime(apiIndustryJob.getEndProductionTime());
 		this.setPauseProductionTime(apiIndustryJob.getPauseProductionTime());
-		this.name = name;
+		this.item = item;
 		this.location = location;
-		this.system = system;
-		this.region = region;
 		this.owner = owner;
 
 		switch (this.getActivityID()) {
@@ -308,23 +310,41 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return state;
 	}
 
-	public String getName() {
-		return name;
+	
+	void setDynamicPrice(double price) {
+		this.price = price;
 	}
 
-	public String getLocation() {
+	@Override
+	public Double getDynamicPrice() {
+		return price;
+	}
+
+	@Override
+	public boolean isBPO() {
+		return !isBPC();
+	}
+
+	@Override
+	public boolean isBPC() {
+		return getInstalledItemCopy() > 0;
+	}
+
+	@Override
+	public Location getLocation() {
 		return location;
 	}
 
-	public String getRegion() {
-		return region;
-	}
-
-	public String getSystem() {
-		return system;
-	}
-
 	public String getOwner() {
-		return owner;
+		return owner.getName();
+	}
+
+	public long getOwnerID() {
+		return owner.getOwnerID();
+	}
+
+	@Override
+	public Item getItem() {
+		return item;
 	}
 }

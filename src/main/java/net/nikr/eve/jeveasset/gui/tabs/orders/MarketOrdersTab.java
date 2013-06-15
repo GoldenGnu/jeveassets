@@ -24,16 +24,15 @@ package net.nikr.eve.jeveasset.gui.tabs.orders;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -43,14 +42,16 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder> {
+public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder>, TableMenu<MarketOrder> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -61,10 +62,10 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	//Table
 	private MarketOrdersFilterControl filterControl;
 	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
-	private EventTableModel<MarketOrder> tableModel;
+	private DefaultEventTableModel<MarketOrder> tableModel;
 	private FilterList<MarketOrder> filterList;
 	private EventList<MarketOrder> eventList;
-	private EventSelectionModel<MarketOrder> selectionModel;
+	private DefaultEventSelectionModel<MarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
 
@@ -74,21 +75,22 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<MarketOrder>();
+		eventList = program.getMarketOrdersEventList();
 		//Filter
 		filterList = new FilterList<MarketOrder>(eventList);
 		filterList.addListEventListener(this);
 		//Sorting (per column)
 		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<MarketOrder>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
+		PaddingTableCellRenderer.install(jTable, 1);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<MarketOrder>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,9 +113,12 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME),
+				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
+
+		//Menu
+		installMenu(program, this, jTable, MarketOrder.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -140,70 +145,30 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	public MenuData<MarketOrder> getMenuData() {
+		return new MenuData<MarketOrder>(selectionModel.getSelected());
+	}
 
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+	@Override
+	public JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
 
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<MarketOrder> menuData = new MenuData<MarketOrder>(selectionModel.getSelected());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<MarketOrder>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<MarketOrder>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<MarketOrder>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<MarketOrder>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
+	@Override
+	public JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
 		JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
-	public void updateData() {
-		List<String> unique = new ArrayList<String>();
-		List<MarketOrder> allMarketOrders = new ArrayList<MarketOrder>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsOrders.get().whitespace(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					//Only add once and don't add empty orders
-					List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(owner, owner.getMarketOrders(), program.getSettings());
-					if (!unique.contains(name) && !marketOrders.isEmpty()) {
-						unique.add(name);
-						allMarketOrders.addAll(marketOrders);
-					}
-				}
-			}
-		}
-		if (!unique.isEmpty()) {
-			jTable.setEnabled(true);
-		} else {
-			jTable.setEnabled(false);
-		}
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(allMarketOrders);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-	}
+	public void addToolMenu(JComponent jComponent) { }
+
+	@Override
+	public void updateData() { }
 
 	@Override
 	public void listChanged(ListEvent<MarketOrder> listChanges) {

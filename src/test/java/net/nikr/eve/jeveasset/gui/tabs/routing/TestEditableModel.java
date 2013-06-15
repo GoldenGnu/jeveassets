@@ -38,7 +38,7 @@ public class TestEditableModel {
 
 	@Before
 	public void setup() {
-		Comparator<ListContents> comp = new Comparator<ListContents>() {
+		comp = new Comparator<ListContents>() {
 			@Override
 			public int compare(final ListContents o1, final ListContents o2) {
 				return o1.getName().compareToIgnoreCase(o2.getName());

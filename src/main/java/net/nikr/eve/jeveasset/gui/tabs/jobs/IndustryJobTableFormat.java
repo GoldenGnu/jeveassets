@@ -57,7 +57,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final IndustryJob from) {
-			return from.getName();
+			return from.getItem().getTypeName();
 		}
 	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
@@ -77,7 +77,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final IndustryJob from) {
-			return from.getLocation();
+			return from.getLocation().getLocation();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -87,7 +87,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		}
 		@Override
 		public Object getColumnValue(final IndustryJob from) {
-			return from.getRegion();
+			return from.getLocation().getRegion();
 		}
 	},
 	INSTALL_DATE(Date.class, GlazedLists.comparableComparator()) {

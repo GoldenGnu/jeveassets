@@ -50,17 +50,18 @@ public class SettingsWriter extends AbstractXmlWriter {
 
 	private SettingsWriter() { }
 
-	public static void save(final Settings settings) {
+	public static boolean save(final Settings settings) {
 		SettingsWriter writer = new SettingsWriter();
-		writer.write(settings);
+		return writer.write(settings);
 	}
 
-	private void write(final Settings settings) {
+	private boolean write(final Settings settings) {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("settings");
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
+			return false;
 		}
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
@@ -81,7 +82,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
-		writeExportSettings(xmldoc, Settings.getExportSettings());
+		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeOwners(xmldoc, settings.getOwners());
@@ -89,8 +90,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
 			LOG.error("Settings not saved " + ex.getMessage(), ex);
+			return false;
 		}
 		LOG.info("Settings saved");
+		return true;
 	}
 
 	private void writeOwners(final Document xmldoc, final Map<Long, String> owners) {
@@ -206,7 +209,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getOwnerID()));
 			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
 			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
-			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocationID()));
+			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocation().getLocationID()));
 			strockpileNode.setAttributeNS(null, "inventory", String.valueOf(strockpile.isInventory()));
 			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
 			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
@@ -289,8 +292,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 	}
 	private void writePriceDataSettings(final Document xmldoc, final PriceDataSettings priceDataSettings) {
 		Element parentNode = xmldoc.createElementNS(null, "marketstat");
-		parentNode.setAttributeNS(null, "defaultprice", Asset.getPriceType().name());
-		parentNode.setAttributeNS(null, "defaultreprocessedprice", Asset.getPriceReprocessedType().name());
+		parentNode.setAttributeNS(null, "defaultprice", priceDataSettings.getPriceType().name());
+		parentNode.setAttributeNS(null, "defaultreprocessedprice", priceDataSettings.getPriceReprocessedType().name());
 		parentNode.setAttributeNS(null, "pricesource", priceDataSettings.getSource().name());
 		StringBuilder builder = new StringBuilder();
 		for (long location : priceDataSettings.getLocations()) {
@@ -352,7 +355,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element node = xmldoc.createElementNS(null, "csvexport");
 		xmldoc.getDocumentElement().appendChild(node);
 		//CSV
-		node.setAttributeNS(null, "decimal", exportSettings.getDecimalSeperator().name());
+		node.setAttributeNS(null, "decimal", exportSettings.getDecimalSeparator().name());
 		node.setAttributeNS(null, "field", exportSettings.getFieldDelimiter().name());
 		node.setAttributeNS(null, "line", exportSettings.getLineDelimiter().name());
 		//SQL

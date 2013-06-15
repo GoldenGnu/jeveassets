@@ -44,7 +44,7 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String createTable();
 	public abstract String csv();
 	public abstract String currentFilter();
-	public abstract String decimalSeperator();
+	public abstract String decimalSeparator();
 	public abstract String defaultSettings();
 	public abstract String dot();
 	public abstract String dropTable();

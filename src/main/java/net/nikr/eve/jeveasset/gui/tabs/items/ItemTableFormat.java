@@ -36,7 +36,7 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		}
 		@Override
 		public Object getColumnValue(final Item from) {
-			return from.getName();
+			return from.getTypeName();
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {
@@ -66,7 +66,17 @@ public enum ItemTableFormat implements EnumTableColumn<Item> {
 		}
 		@Override
 		public Object getColumnValue(final Item from) {
-			return from.getPrice();
+			return from.getPriceBase();
+		}
+	},
+	PRICE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsItems.get().columnPriceReprocessed();
+		}
+		@Override
+		public Object getColumnValue(final Item from) {
+			return from.getPriceReprocessed();
 		}
 	},
 	META(Integer.class, GlazedLists.comparableComparator()) {

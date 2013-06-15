@@ -25,8 +25,8 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -69,9 +70,9 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private JDropDownButton jAssets;
 	private JButton jClose;
 	private EventList<Owner> eventList;
-	private EventTableModel<Owner> tableModel;
+	private DefaultEventTableModel<Owner> tableModel;
 	private SeparatorList<Owner> separatorList;
-	private EventSelectionModel<Owner> selectionModel;
+	private DefaultEventSelectionModel<Owner> selectionModel;
 
 	private Map<Owner, Boolean> shownAssets;
 	private boolean forceUpdate = false;
@@ -85,7 +86,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
 		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
-		tableModel = new EventTableModel<Owner>(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, jTable, separatorList));
@@ -95,7 +96,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
-		selectionModel = new EventSelectionModel<Owner>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
@@ -183,7 +184,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		//Update rows (Add all rows)
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				eventList.add(owner);
 			}
@@ -212,7 +213,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				}
 			}
 		} else { //Set all the check value
-			for (Account account : program.getSettings().getAccounts()) {
+			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					owner.setShowAssets(check);
 				}
@@ -235,7 +236,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected void windowShown() {
-		if (program.getSettings().getAccounts().isEmpty()) {
+		if (program.getAccounts().isEmpty()) {
 			accountImportDialog.show();
 		}
 	}
@@ -243,7 +244,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	@Override
 	protected void save() {
 		boolean changed = false;
-		for (Account account : program.getSettings().getAccounts()) {
+		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!shownAssets.containsKey(owner)) { //New account
 					if (owner.isShowAssets()) { //if shown: Updated
@@ -255,7 +256,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			}
 		}
 		if (changed || forceUpdate) {
-			program.updateEventList();
+			program.updateEventLists();
 		}
 		this.setVisible(false);
 	}
@@ -266,7 +267,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			forceUpdate = false;
 			updateTable();
 			shownAssets = new HashMap<Owner, Boolean>();
-			for (Account account : program.getSettings().getAccounts()) {
+			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					shownAssets.put(owner, owner.isShowAssets());
 				}
@@ -312,7 +313,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Owner owner = (Owner) separator.first();
 					Account account = owner.getParentAccount();
-					program.getSettings().getAccounts().remove(account);
+					program.getAccounts().remove(account);
 					forceUpdate();
 					updateTable();
 				}

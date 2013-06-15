@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.*;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -39,16 +39,19 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements ActionListener {
+public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<Module> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
@@ -76,8 +79,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private EventList<Module> eventList;
 	private FilterList<Module> filterList;
 	private SeparatorList<Module> separatorList;
-	private EventSelectionModel<Module> selectionModel;
-	private EventTableModel<Module> tableModel;
+	private DefaultEventSelectionModel<Module> selectionModel;
+	private DefaultEventTableModel<Module> tableModel;
 
 	public LoadoutsTab(final Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
@@ -134,20 +137,22 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		//Separator
 		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		tableModel = EventModels.createTableModel(separatorList, materialTableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
 		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Module>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTable(jTable, null);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Menu
+		installMenu(program, this, jTable, Module.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -181,6 +186,50 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	@Override
+	public MenuData<Module> getMenuData() {
+		return new MenuData<Module>(selectionModel.getSelected());
+	}
+
+	@Override
+	public JMenu getFilterMenu() {
+		return null;
+	}
+
+	@Override
+	public JMenu getColumnMenu() {
+		return null;
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
+		JMenuInfo.module(jComponent, selectionModel.getSelected());
+	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
+
+	@Override
+	public void updateData() {
+		if (!program.getOwners(false).isEmpty()) {
+			jOwners.setEnabled(true);
+			String selectedItem = (String) jOwners.getSelectedItem();
+			jOwners.setModel(new DefaultComboBoxModel(program.getOwners(true).toArray()));
+			if (selectedItem != null && program.getOwners(true).contains(selectedItem)) {
+				jOwners.setSelectedItem(selectedItem);
+			} else {
+				jOwners.setSelectedIndex(0);
+			}
+		} else {
+			jOwners.setEnabled(false);
+			jOwners.setModel(new DefaultComboBoxModel());
+			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
+			jShips.setModel(new DefaultComboBoxModel());
+			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
+		}
+		updateTable();
 	}
 
 	private String browse() {
@@ -222,13 +271,12 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
 			Asset exportAsset = null;
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-			for (Asset eveAsset : eveAssetEventList) {
-				String key = eveAsset.getName() + " #" + eveAsset.getItemID();
+			for (Asset asset : program.getAssetEventList()) {
+				String key = asset.getName() + " #" + asset.getItemID();
 				if (!selectedShip.equals(key)) {
 					continue;
 				} else {
-					exportAsset = eveAsset;
+					exportAsset = asset;
 					break;
 				}
 			}
@@ -248,50 +296,21 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 	}
 
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Module> menuData = new MenuData<Module>(selectionModel.getSelected());
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Module>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Module>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Module>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Module>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Module>(program, menuData));
-	//INFO
-		JMenuInfo.module(jComponent, selectionModel.getSelected());
-	}
-
 	private void updateTable() {
 		List<Module> ship = new ArrayList<Module>();
-		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-		for (Asset eveAsset : eveAssetEventList) {
-			String key = eveAsset.getName() + " #" + eveAsset.getItemID();
-			if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
+		for (Asset asset : program.getAssetEventList()) {
+			String key = asset.getName() + " #" + asset.getItemID();
+			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
 			}
-			Module moduleShip = new Module(eveAsset, TabsLoadout.get().totalShip(), eveAsset.getName(), key, TabsLoadout.get().flagTotalValue(), null, eveAsset.getPrice(), 1, eveAsset.isMarketGroup(), eveAsset.getTypeID());
-			Module moduleModules = new Module(eveAsset, TabsLoadout.get().totalModules(), null, key, TabsLoadout.get().flagTotalValue(), null, 0, 0, false, null);
-			Module moduleTotal = new Module(eveAsset, TabsLoadout.get().totalAll(), null, key, TabsLoadout.get().flagTotalValue(), null, eveAsset.getPrice(), 1, false, null);
+			Module moduleShip = new Module(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
+			Module moduleModules = new Module(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0);
+			Module moduleTotal = new Module(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
-			for (Asset assetModule : eveAsset.getAssets()) {
-				Module module = new Module(assetModule, assetModule.getName(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getPrice(), (assetModule.getPrice() * assetModule.getCount()), assetModule.getCount(), assetModule.isMarketGroup(), assetModule.getTypeID());
+			for (Asset assetModule : asset.getAssets()) {
+				Module module = new Module(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
@@ -303,11 +322,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				} else {
 					module = ship.get(ship.indexOf(module));
 					module.addCount(assetModule.getCount());
-					module.addValue(assetModule.getPrice() * assetModule.getCount());
+					module.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
 				}
-				moduleModules.addValue(assetModule.getPrice() * assetModule.getCount());
+				moduleModules.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
 				moduleModules.addCount(assetModule.getCount());
-				moduleTotal.addValue(assetModule.getPrice() * assetModule.getCount());
+				moduleTotal.addValue(assetModule.getDynamicPrice() * assetModule.getCount());
 				moduleTotal.addCount(assetModule.getCount());
 			}
 		}
@@ -334,60 +353,16 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	public void updateData() {
-		List<String> owners = new ArrayList<String>();
-		List<Account> accounts = program.getSettings().getAccounts();
-		for (Account account : accounts) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
-					String name;
-					if (owner.isCorporation()) {
-						name = TabsLoadout.get().whitespace9(owner.getName());
-					} else {
-						name = owner.getName();
-					}
-					if (!owners.contains(name)) {
-						owners.add(name);
-					}
-				}
-			}
-		}
-		if (!owners.isEmpty()) {
-			jOwners.setEnabled(true);
-			String selectedItem = (String) jOwners.getSelectedItem();
-			Collections.sort(owners, new CaseInsensitiveComparator());
-			owners.add(0, TabsLoadout.get().all());
-			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-			if (selectedItem != null && owners.contains(selectedItem)) {
-				jOwners.setSelectedItem(selectedItem);
-			} else {
-				jOwners.setSelectedIndex(0);
-			}
-		} else {
-			jOwners.setEnabled(false);
-			jOwners.setModel(new DefaultComboBoxModel());
-			jOwners.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel(new DefaultComboBoxModel());
-			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
-		}
-		updateTable();
-	}
-
-	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (ACTION_OWNERS.equals(e.getActionCommand())) {
 			String owner = (String) jOwners.getSelectedItem();
 			List<String> charShips = new ArrayList<String>();
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-			for (Asset eveAsset : eveAssetEventList) {
-				String key = eveAsset.getName() + " #" + eveAsset.getItemID();
-				if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
+			for (Asset asset : program.getAssetEventList()) {
+				String key = asset.getName() + " #" + asset.getItemID();
+				if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 					continue;
 				}
-				if (!owner.equals(eveAsset.getOwner())
-						&& !owner.equals(TabsLoadout.get().whitespace9(eveAsset.getOwner()))
-						&& !owner.equals(TabsLoadout.get().all())
-						) {
+				if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
 					continue;
 				}
 				charShips.add(key);
@@ -433,12 +408,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
 			List<Asset> ships = new ArrayList<Asset>();
-			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
-			for (Asset eveAsset : eveAssetEventList) {
-				if (!eveAsset.getCategory().equals(SHIP_CATEGORY) || !eveAsset.isSingleton()) {
+			for (Asset asset : program.getAssetEventList()) {
+				if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 					continue;
 				}
-				ships.add(eveAsset);
+				ships.add(asset);
 			}
 			if (filename != null) {
 				EveFittingWriter.save(new ArrayList<Asset>(ships), filename);

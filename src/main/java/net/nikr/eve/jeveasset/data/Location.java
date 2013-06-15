@@ -24,25 +24,69 @@ package net.nikr.eve.jeveasset.data;
 
 public class Location implements Comparable<Location> {
 	private long locationID; //LocationID : long
-	private String name;
-	private long regionID; //LocationID : long
-	private String security;
+	private String location;
+	private long stationID; //LocationID : long
+	private String station;
 	private long systemID; //LocationID : long
+	private String system;
+	private long regionID; //LocationID : long
+	private String region;
+	private String security;
 
-	public Location(final long locationID, final String name, final long regionID, final String security, final long systemID) {
+	public Location(long locationID) {
+		this(0, "", 0, "", 0, "", "0.0");
 		this.locationID = locationID;
-		this.name = name;
-		this.regionID = regionID;
-		this.security = security;
+	}
+
+	public Location(long stationID, String station, long systemID, String system, long regionID, String region, String security) {
+		this.stationID = stationID;
+		this.station = station;
 		this.systemID = systemID;
+		this.system = system;
+		this.regionID = regionID;
+		this.region = region;
+		this.security = security;
+		if (isStation()) {
+			this.locationID = stationID;
+			this.location = station;
+		} else if (isSystem()) {
+			this.locationID = systemID;
+			this.location = system;
+		} else if (isRegion()) {
+			this.locationID = regionID;
+			this.location = region;
+		} else {
+			this.locationID = 0;
+			this.location = "";
+		}
+	}
+
+	public String getLocation() {
+		return location;
 	}
 
 	public long getLocationID() {
 		return locationID;
 	}
 
-	public String getName() {
-		return name;
+	public String getStation() {
+		return station;
+	}
+
+	public long getStationID() {
+		return stationID;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
+	public long getSystemID() {
+		return systemID;
+	}
+
+	public String getRegion() {
+		return region;
 	}
 
 	public long getRegionID() {
@@ -53,27 +97,25 @@ public class Location implements Comparable<Location> {
 		return security;
 	}
 
-	public boolean isRegion() {
-		return regionID == locationID && locationID > 0;
+	public final boolean isStation() {
+		return (getStationID() != 0 && getSystemID() != 0 && getRegionID() != 0);
 	}
-	public boolean isSystem() {
-		return systemID == locationID && locationID > 0;
+
+	public final boolean isSystem() {
+		return (getStationID() == 0 && getSystemID() != 0 && getRegionID() != 0);
 	}
-	public boolean isStation() {
-		return !isSystem() && !isRegion() && locationID > 0;
+
+	public final boolean isRegion() {
+		return (getStationID() == 0 && getSystemID() == 0 && getRegionID() != 0);
+	}
+
+	public boolean isEmpty() {
+		return location.isEmpty();
 	}
 
 	@Override
 	public String toString() {
-		return name;
-	}
-
-	public long getSystemID() {
-		if (systemID == 0) {
-			return locationID;
-		} else {
-			return systemID;
-		}
+		return location;
 	}
 
 	@Override
@@ -104,6 +146,6 @@ public class Location implements Comparable<Location> {
 
 	@Override
 	public int compareTo(final Location o) {
-		return this.getName().compareToIgnoreCase(o.getName());
+		return getLocation().compareToIgnoreCase(o.getLocation());
 	}
 }

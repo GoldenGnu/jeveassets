@@ -55,12 +55,14 @@ public abstract class AbstractXmlWriter {
 
 	private void writeXmlFile(final Document doc, final String filename, final String encoding, boolean createBackup) throws XmlException {
 		DOMSource source = new DOMSource(doc);
+		FileOutputStream outputStream = null;
+		File file = new File(filename);
 		try {
+			FileLock.lock(file);
 			if (createBackup) {
 				backupFile(filename);
 			}
-			File outputFile = new File(filename);
-			FileOutputStream outputStream = new FileOutputStream(outputFile);
+			outputStream = new FileOutputStream(file);
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
 			// result
 			Result result = new StreamResult(outputStreamWriter);
@@ -82,6 +84,15 @@ public abstract class AbstractXmlWriter {
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (UnsupportedEncodingException ex) {
 			throw new XmlException(ex.getMessage(), ex);
+		} finally {
+			FileLock.unlock(file);
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException ex) {
+					throw new XmlException(ex.getMessage(), ex);
+				}
+			}
 		}
 	}
 
@@ -90,11 +101,19 @@ public abstract class AbstractXmlWriter {
 		int end = filename.lastIndexOf(".");
 		String backup = filename.substring(0, end) + ".bac";
 		File backupFile = new File(backup);
+		if (!outputFile.exists()) {
+			LOG.info("No file to backup: {}", outputFile.getName());
+			return;
+		}
 		if (backupFile.exists() && !backupFile.delete()) {
-			LOG.warn("Was not able to delete previous backup file: {}", backup);
+			LOG.warn("Was not able to delete previous backup file: {}", backupFile.getName());
+			return;
 		}
-		if (outputFile.exists() && !outputFile.renameTo(backupFile)) {
-			LOG.warn("Was not able to make backup of: {}", filename);
+		if (outputFile.exists() && outputFile.renameTo(backupFile)) {
+			LOG.info("Backup created: {}", backupFile.getName());
+		} else {
+			LOG.warn("Was not able to make backup of: {}", outputFile.getName());
 		}
+		
 	}
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -41,15 +42,15 @@ public final class FlagsReader extends AbstractXmlReader {
 
 	private FlagsReader() { }
 
-	public static boolean load(final Settings settings) {
+	public static boolean load() {
 		FlagsReader reader = new FlagsReader();
-		return reader.read(settings);
+		return reader.read();
 	}
 
-	private boolean read(final Settings settings) {
+	private boolean read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathFlags());
-			parseFlags(element, settings.getItemFlags());
+			parseFlags(element, StaticData.get().getItemFlags());
 		} catch (IOException ex) {
 			LOG.error("Flags not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {

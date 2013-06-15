@@ -57,6 +57,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-0-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -71,6 +72,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-1-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -85,6 +87,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -104,6 +107,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-1");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -123,6 +127,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-2");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -142,6 +147,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-2-3");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -161,6 +167,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-3-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_PRICES);
 		test(settings, Function.SET_API_PROXY);
@@ -180,6 +187,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-0");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -201,6 +209,7 @@ public class SettingsTest {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-4-1");
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -223,6 +232,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -245,6 +255,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -267,6 +278,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -289,6 +301,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -311,6 +324,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -333,6 +347,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -355,6 +370,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -377,6 +393,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -399,6 +416,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -421,6 +439,7 @@ public class SettingsTest {
 		SettingsReader.load(settings);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -441,8 +460,10 @@ public class SettingsTest {
 	public void backwardCompatibility180() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -463,8 +484,10 @@ public class SettingsTest {
 	public void backwardCompatibility181() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-8-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
 		test(settings, Function.GET_USER_PRICES);
@@ -485,10 +508,10 @@ public class SettingsTest {
 	public void backwardCompatibility190() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -510,10 +533,10 @@ public class SettingsTest {
 	public void backwardCompatibility191() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -535,10 +558,10 @@ public class SettingsTest {
 	public void backwardCompatibility192() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-1-9-2");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_FILTERS_KEY);
 		test(settings, Function.GET_USER_ITEM_NAMES);
@@ -560,10 +583,10 @@ public class SettingsTest {
 	public void backwardCompatibility200() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-0-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -586,10 +609,10 @@ public class SettingsTest {
 	public void backwardCompatibility210() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -612,10 +635,10 @@ public class SettingsTest {
 	public void backwardCompatibility211() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-1");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -638,10 +661,10 @@ public class SettingsTest {
 	public void backwardCompatibility212() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-1-2");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -664,10 +687,10 @@ public class SettingsTest {
 	public void backwardCompatibility220() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-2-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -691,10 +714,10 @@ public class SettingsTest {
 	public void backwardCompatibility230() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-3-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_FILTERS);
@@ -718,10 +741,10 @@ public class SettingsTest {
 	public void backwardCompatibility240() throws URISyntaxException {
 		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-4-0");
 		SettingsReader.load(settings);
+		test(settings, Function.GET_EXPORT_SETTINGS);
 		test(settings, Function.GET_FLAGS);
-		test(settings, Function.GET_ITEMS);
-		test(settings, Function.GET_LOCATIONS);
 		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
 		test(settings, Function.GET_STOCKPILES);
 		test(settings, Function.GET_TABLE_COLUMNS);
 		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);
@@ -744,7 +767,34 @@ public class SettingsTest {
 	}
 
 	@Test
-	public void backwardCompatibility241() throws URISyntaxException {
-		
+	public void backwardCompatibility250() throws URISyntaxException {
+		BackwardCompatibilitySettings settings = new BackwardCompatibilitySettings("data-2-5-0");
+		SettingsReader.load(settings);
+		test(settings, Function.GET_ASSET_ADDED);
+		test(settings, Function.GET_EXPORT_SETTINGS);
+		test(settings, Function.GET_FLAGS);
+		test(settings, Function.GET_OVERVIEW_GROUPS);
+		test(settings, Function.GET_OWNERS);
+		test(settings, Function.GET_PRICE_DATA_SETTINGS);
+		test(settings, Function.GET_STOCKPILES);
+		test(settings, Function.GET_TABLE_COLUMNS);
+		test(settings, Function.GET_TABLE_COLUMNS_WIDTH);
+		test(settings, Function.GET_TABLE_FILTERS);
+		test(settings, Function.GET_TABLE_RESIZE);
+		test(settings, Function.GET_TRACKER_DATA);
+		test(settings, Function.GET_USER_ITEM_NAMES);
+		test(settings, Function.GET_USER_PRICES);
+		test(settings, Function.SET_API_PROXY);
+		test(settings, Function.SET_CONQUERABLE_STATIONS_NEXT_UPDATE);
+		test(settings, Function.SET_MAXIMUM_PURCHASE_AGE);
+		test(settings, Function.SET_PRICE_DATA_SETTINGS);
+		test(settings, Function.SET_PROXY);
+		test(settings, Function.SET_REPROCESS_SETTINGS);
+		test(settings, Function.SET_WINDOW_ALWAYS_ON_TOP);
+		test(settings, Function.SET_WINDOW_AUTO_SAVE);
+		test(settings, Function.SET_WINDOW_LOCATION);
+		test(settings, Function.SET_WINDOW_MAXIMIZED);
+		test(settings, Function.SET_WINDOW_SIZE);
+		test(settings);
 	}
 }

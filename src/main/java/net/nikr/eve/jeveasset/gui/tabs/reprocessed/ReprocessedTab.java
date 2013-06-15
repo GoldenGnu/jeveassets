@@ -27,8 +27,8 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -46,32 +46,31 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuPrice;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class ReprocessedTab extends JMainTab {
+public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInterface> {
 
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -85,8 +84,8 @@ public class ReprocessedTab extends JMainTab {
 	private EventList<ReprocessedInterface> eventList;
 	private FilterList<ReprocessedInterface> filterList;
 	private SeparatorList<ReprocessedInterface> separatorList;
-	private EventSelectionModel<ReprocessedInterface> selectionModel;
-	private EventTableModel<ReprocessedInterface> tableModel;
+	private DefaultEventSelectionModel<ReprocessedInterface> selectionModel;
+	private DefaultEventTableModel<ReprocessedInterface> tableModel;
 	private EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
 	//Listener
@@ -151,7 +150,7 @@ public class ReprocessedTab extends JMainTab {
 		//Separator
 		separatorList = new SeparatorList<ReprocessedInterface>(sortedListTotal, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<ReprocessedInterface>(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
@@ -162,7 +161,7 @@ public class ReprocessedTab extends JMainTab {
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<ReprocessedInterface>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -175,8 +174,11 @@ public class ReprocessedTab extends JMainTab {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -203,45 +205,28 @@ public class ReprocessedTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		List<ReprocessedInterface> selected = new ArrayList<ReprocessedInterface>(selectionModel.getSelected());
-		for (int i = 0; i < selected.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
-			Object object = selected.get(i);
-			if ((object instanceof SeparatorList.Separator) || (object instanceof Stockpile.StockpileTotal)) {
-				selected.remove(i);
-				i--;
-			}
-		}
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<ReprocessedInterface> menuData = new MenuData<ReprocessedInterface>(selected);
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selected));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<ReprocessedInterface>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<ReprocessedInterface>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<ReprocessedInterface>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<ReprocessedInterface>(program, menuData));
-	//REPROCESSED
-		//jComponent.add(new JMenuReprocessed<ReprocessedItem>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
-		//FIXME - make info menu for Reprocessed Tool
-		//JMenuInfo.reprocessed(jComponent, selected, eventList);
+	public MenuData<ReprocessedInterface> getMenuData() {
+		return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
 	}
+
+	@Override
+	public JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	public JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
+		//FIXME - make info menu for Reprocessed Tool
+		//JMenuInfo.reprocessed(...);
+	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -249,19 +234,19 @@ public class ReprocessedTab extends JMainTab {
 		List<ReprocessedGrandItem> uniqueList = new ArrayList<ReprocessedGrandItem>();
 		ReprocessedGrandTotal grandTotal = new ReprocessedGrandTotal();
 		for (Integer i : typeIDs) {
-			Item item = program.getSettings().getItems().get(i);
+			Item item = StaticData.get().getItems().get(i);
 			if (item != null) {
 				if (item.getReprocessedMaterial().isEmpty()) {
 					continue; //Ignore types without materials
 				}
-				double sellPrice = program.getSettings().getPrice(i, false);
+				double sellPrice = ApiIdConverter.getPrice(i, false);
 				ReprocessedTotal total = new ReprocessedTotal(item, sellPrice);
 				list.add(total);
 				for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
-					Item materialItem = program.getSettings().getItems().get(material.getTypeID());
+					Item materialItem = StaticData.get().getItems().get(material.getTypeID());
 					if (materialItem != null) {
-						double price = program.getSettings().getPrice(materialItem.getTypeID(), false);
-						int quantitySkill = program.getSettings().getReprocessSettings().getLeft(material.getQuantity());
+						double price = ApiIdConverter.getPrice(materialItem.getTypeID(), false);
+						int quantitySkill = Settings.get().getReprocessSettings().getLeft(material.getQuantity());
 						ReprocessedItem reprocessedItem = new ReprocessedItem(total, materialItem, material, quantitySkill, price);
 						list.add(reprocessedItem);
 						//Total
@@ -269,7 +254,7 @@ public class ReprocessedTab extends JMainTab {
 						//Grand Total
 						grandTotal.add(reprocessedItem);
 						//Grand Item
-						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, grandTotal);
+						ReprocessedGrandItem grandItem = new ReprocessedGrandItem(reprocessedItem, materialItem, grandTotal);
 						int index = uniqueList.indexOf(grandItem);
 						if (index >= 0) {
 							grandItem = uniqueList.get(index);
@@ -338,7 +323,7 @@ public class ReprocessedTab extends JMainTab {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					ReprocessedInterface item = (ReprocessedInterface) separator.first();
 					ReprocessedTotal total = item.getTotal();
-					typeIDs.remove(total.getTypeID());
+					typeIDs.remove(total.getItem().getTypeID());
 					updateData();
 				}
 			}

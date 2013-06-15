@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
+import com.beimin.eveapi.core.ApiError;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,8 +31,6 @@ import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -42,7 +41,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.gui.shared.components.JWorking;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 import net.nikr.eve.jeveasset.io.eveapi.AccountGetter;
-import net.nikr.eve.jeveasset.io.online.Online;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,10 +63,12 @@ public class AccountImportDialog extends JDialogCentered {
 	private AccountManagerDialog apiManager;
 
 	private enum Result {
-		FAIL_ALREADY_IMPORTED,
-		FAIL_NO_INTERNET,
+		FAIL_EXIST,
+		FAIL_API_EXCEPTION,
+		FAIL_API_ERROR,
+		FAIL_API_GENERIC,
 		FAIL_NOT_VALID,
-		FAIL_NO_ACCESS,
+		FAIL_NOT_ENOUGH_PRIVILEGES,
 		OK_LIMITED_ACCESS,
 		OK_ACCOUNT_VALID
 	}
@@ -229,10 +229,10 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private void done() {
 		if (editAccount != null) { //Edit
-			program.getSettings().getAccounts().remove(editAccount);
+			program.getAccounts().remove(editAccount);
 		}
 		apiManager.forceUpdate();
-		program.getSettings().getAccounts().add(account);
+		program.getAccounts().add(account);
 		apiManager.updateTable();
 		this.setVisible(false);
 	}
@@ -255,7 +255,7 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private class ListenerClass implements ActionListener, PropertyChangeListener,
-											HyperlinkListener, WindowFocusListener {
+											WindowFocusListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -281,46 +281,50 @@ public class AccountImportDialog extends JDialogCentered {
 				if (validateApiKeyTask.done) {
 					validateApiKeyTask.done = false;
 					switch (validateApiKeyTask.result) {
-						case FAIL_ALREADY_IMPORTED:
+						case FAIL_EXIST:
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().accountAlreadyImported());
-							donePanel.setText(DialoguesAccount.get().accountAlreadyImportedText());
+							donePanel.setResult(DialoguesAccount.get().failExist());
+							donePanel.setText(DialoguesAccount.get().failExistText());
 							break;
-						case FAIL_NO_INTERNET:
+						case FAIL_API_EXCEPTION:
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().noInternetConnection());
-							donePanel.setText(DialoguesAccount.get().noInternetConnectionText());
+							donePanel.setResult(DialoguesAccount.get().failApiException());
+							donePanel.setText(DialoguesAccount.get().failApiExceptionText());
+							break;
+						case FAIL_API_ERROR:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().failApiError());
+							donePanel.setText(DialoguesAccount.get().failApiErrorText(validateApiKeyTask.error));
+							break;
+						case FAIL_API_GENERIC:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().failGeneric());
+							donePanel.setText(DialoguesAccount.get().failGenericText(validateApiKeyTask.error));
 							break;
 						case FAIL_NOT_VALID:
 							jNext.setEnabled(false);
-							donePanel.setResult(DialoguesAccount.get().accountNotValid());
-							donePanel.setText(DialoguesAccount.get().accountNotValidText());
+							donePanel.setResult(DialoguesAccount.get().failNotValid());
+							donePanel.setText(DialoguesAccount.get().failNotValidText());
 							break;
-						case FAIL_NO_ACCESS:
-							donePanel.setResult(DialoguesAccount.get().noAccess());
-							donePanel.setText(DialoguesAccount.get().noAccessText());
+						case FAIL_NOT_ENOUGH_PRIVILEGES:
+							jNext.setEnabled(false);
+							donePanel.setResult(DialoguesAccount.get().failNotEnoughPrivileges());
+							donePanel.setText(DialoguesAccount.get().failNotEnoughPrivilegesText());
 							break;
 						case OK_LIMITED_ACCESS:
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().notEnoughAccess());
-							donePanel.setText(DialoguesAccount.get().notEnoughAccessText());
+							donePanel.setResult(DialoguesAccount.get().okLimited());
+							donePanel.setText(DialoguesAccount.get().okLimitedText());
 							break;
 						case OK_ACCOUNT_VALID:
 							jNext.setEnabled(true);
-							donePanel.setResult(DialoguesAccount.get().accountValid());
-							donePanel.setText(DialoguesAccount.get().accountValidText());
+							donePanel.setResult(DialoguesAccount.get().okValid());
+							donePanel.setText(DialoguesAccount.get().okValidText());
 							break;
 					}
 					nTabIndex = 2;
 					updateTab();
 				}
-			}
-		}
-
-		@Override
-		public void hyperlinkUpdate(final HyperlinkEvent hle) {
-			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-				DesktopUtil.browse(hle.getURL().toString(), program);
 			}
 		}
 
@@ -346,13 +350,15 @@ public class AccountImportDialog extends JDialogCentered {
 
 			jVCode = new JTextField();
 			JCopyPopup.install(jVCode);
-			JEditorPane jHelp = new JEditorPane("text/html", DialoguesAccount.get().helpText());
+			JEditorPane jHelp = new JEditorPane(
+					"text/html", "<html><body style=\"font-family: " + jUserIdLabel.getFont().getName() + "; font-size: " + jUserIdLabel.getFont().getSize() + "pt\">"
+				+ DialoguesAccount.get().helpText() + "</body></html>");
 			((HTMLDocument) jHelp.getDocument()).getStyleSheet().addRule("body { font-family: " + this.getFont().getFamily() + "; " + "font-size: " + this.getFont().getSize() + "pt; }");
 			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setFocusable(false);
 			jHelp.setOpaque(false);
-			jHelp.addHyperlinkListener(listener);
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
 
 			cardLayout.setHorizontalGroup(
 				cardLayout.createSequentialGroup()
@@ -419,15 +425,16 @@ public class AccountImportDialog extends JDialogCentered {
 
 		private JLabel jResult;
 
-		private JTextArea jHelp;
+		private JEditorPane jHelp;
 
 		public DonePanel() {
 			jResult = new JLabel();
 			jResult.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
 
-			jHelp = new JTextArea();
-			jHelp.setLineWrap(true);
-			jHelp.setWrapStyleWord(true);
+			jHelp = new JEditorPane("text/html", "");
+			//jHelp.setLineWrap(true);
+			//jHelp.setWrapStyleWord(true);
+			jHelp.addHyperlinkListener(DesktopUtil.getHyperlinkListener(program));
 			jHelp.setFont(this.getFont());
 			jHelp.setEditable(false);
 			jHelp.setOpaque(false);
@@ -457,7 +464,9 @@ public class AccountImportDialog extends JDialogCentered {
 		}
 
 		public void setText(final String text) {
-			jHelp.setText(text);
+			jHelp.setText("<html><body style=\"font-family: " + jResult.getFont().getName() + "; font-size: " + jResult.getFont().getSize() + "pt\">"
+				+ text
+				+ "</body></html>");
 		}
 
 	}
@@ -481,28 +490,46 @@ public class AccountImportDialog extends JDialogCentered {
 
 		private Result result = null;
 		private boolean done = false;
+		private String error = "";
 		private AccountGetter accountGetter = new AccountGetter();
 
 		@Override
 		public Void doInBackground() {
 			setProgress(0);
-			if (program.getSettings().getAccounts().contains(account)) { //account already exist
-				result = Result.FAIL_ALREADY_IMPORTED;
+			if (program.getAccounts().contains(account)) { //account already exist
+				result = Result.FAIL_EXIST;
 				return null;
 			}
 			accountGetter.load(null, true, account); //Update account
-			if (accountGetter.hasError() || accountGetter.getFails() > 0) { //Failed to add new account
-				if (accountGetter.getFails() > 0 && accountGetter.getFails() < accountGetter.getMaxFail()) { //Not enough access
-					result = Result.OK_LIMITED_ACCESS;
-				} else if (accountGetter.getFails() >= accountGetter.getMaxFail()) { //No access
-					result = Result.FAIL_NO_ACCESS;
-				} else if (!Online.isOnline(program.getSettings())) { //Offline
-					result = Result.FAIL_NO_INTERNET;
+			if (accountGetter.hasError() || accountGetter.isFail()) { //Failed to add new account
+				Object object = accountGetter.getError();
+				if (object instanceof Exception) {
+					//Exception exception = (Exception) object;
+					result = Result.FAIL_API_EXCEPTION;
+				} else if (object instanceof ApiError) {
+					ApiError apiError = (ApiError) object;
+					if (apiError.getCode() == 203) {
+						result = Result.FAIL_NOT_VALID;
+					} else {
+						result = Result.FAIL_API_ERROR;
+						error = apiError.getError() + " (Code: " + apiError.getCode() + ")";
+					}
+				} else if (object instanceof String) {
+					String string = (String) object;
+					error = string;
+					result = Result.FAIL_API_GENERIC;
+				} else if (accountGetter.isFail()) {
+					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
 				} else {
-					result = Result.FAIL_NOT_VALID; //Not valid
+					result = Result.FAIL_API_GENERIC; //Fallback...
+					error = "Unknown Error";
 				}
 			} else { //Successfully added new account
-				result = Result.OK_ACCOUNT_VALID;
+				if (accountGetter.isLimited()) {
+					result = Result.OK_LIMITED_ACCESS;
+				} else {
+					result = Result.OK_ACCOUNT_VALID;
+				}
 			}
 			return null;
 		}

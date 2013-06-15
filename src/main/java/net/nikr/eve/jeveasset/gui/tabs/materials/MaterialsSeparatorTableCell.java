@@ -45,7 +45,7 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		jLocation.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(final MouseEvent e) {
 				if (e.getClickCount() >= 2) {
-					expandLocation();
+					expandHeader();
 				}
 			}
 		});
@@ -61,7 +61,7 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		jExpandLocation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				expandLocation();
+				expandHeader();
 			}
 		});
 
@@ -99,22 +99,22 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		} // handle 'late' rendering calls after this separator is invalid
 		jLocation.setVisible(material.isFirst());
 		jExpandLocation.setVisible(material.isFirst());
-		jLocation.setText(material.getLocation());
+		jLocation.setText(material.getHeader());
 		jGroup.setText(material.getGroup());
 		if (material.isFirst()) {
-			jExpandLocation.setIcon(isLocationCollapsed() ? EXPANDED_ICON : COLLAPSED_ICON);
+			jExpandLocation.setIcon(isHeaderCollapsed() ? EXPANDED_ICON : COLLAPSED_ICON);
 		}
 	}
 
-	private void expandLocation() {
+	private void expandHeader() {
 		Material material = (Material) currentSeparator.first();
-		boolean expand = isLocationCollapsed();
+		boolean expand = isHeaderCollapsed();
 		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator<?>) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 				Material currentMaterial = (Material) separator.first();
-				if (currentMaterial.getLocation().equals(material.getLocation())) {
+				if (currentMaterial.getHeader().equals(material.getHeader())) {
 					separatorList.getReadWriteLock().writeLock().lock();
 					try {
 						separator.setLimit(expand ? Integer.MAX_VALUE : 0);
@@ -126,14 +126,14 @@ public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 		}
 	}
 
-	private boolean isLocationCollapsed() {
+	private boolean isHeaderCollapsed() {
 		Material material = (Material) currentSeparator.first();
 		for (int i = 0; i < separatorList.size(); i++) {
 			Object object = separatorList.get(i);
 			if (object instanceof SeparatorList.Separator<?>) {
 				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) object;
 				Material currentMaterial = (Material) separator.first();
-				if (currentMaterial.getLocation().equals(material.getLocation())) {
+				if (currentMaterial.getHeader().equals(material.getHeader())) {
 					if (separator.getLimit() != 0) {
 						return false;
 					}

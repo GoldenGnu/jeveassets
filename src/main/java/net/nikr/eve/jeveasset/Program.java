@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset;
 
 import apple.dts.samplecode.osxadapter.OSXAdapter;
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -31,9 +30,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import javax.swing.tree.DefaultMutableTreeNode;
+import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.ProfileData;
+import net.nikr.eve.jeveasset.data.IndustryJob;
+import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
@@ -46,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
@@ -60,6 +67,8 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
+import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -69,7 +78,7 @@ public class Program implements ActionListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.5.0";
+	public static final String PROGRAM_VERSION = "2.6.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
@@ -82,6 +91,7 @@ public class Program implements ActionListener {
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
 	private static boolean forceNoUpdate = false;
+	private static boolean portable = false;
 
 	//GUI
 	private MainWindow mainWindow;
@@ -100,6 +110,7 @@ public class Program implements ActionListener {
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
+	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
 	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
@@ -110,19 +121,7 @@ public class Program implements ActionListener {
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
 
-	//Settings Panels
-	private GeneralSettingsPanel generalSettingsPanel;
-	private PriceDataSettingsPanel priceDataSettingsPanel;
-	private ProxySettingsPanel proxySettingsPanel;
-	private UserPriceSettingsPanel userPriceSettingsPanel;
-	private UserNameSettingsPanel userNameSettingsPanel;
-	private WindowSettingsPanel windowSettingsPanel;
-	private ReprocessingSettingsPanel reprocessingSettingsPanel;
-	private AssetsToolSettingsPanel assetsToolSettingsPanel;
-	private OverviewToolSettingsPanel overviewToolSettingsPanel;
-	private StockpileToolSettingsPanel stockpileToolSettingsPanel;
-
-
+	//Misc
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
@@ -130,14 +129,11 @@ public class Program implements ActionListener {
 	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
-	private Settings settings;
-	private EventList<Asset> eveAssetEventList;
+	private final ProfileData profileData;
+	private final ProfileManager profileManager;
+	private final PriceDataGetter priceDataGetter;
 
 	public Program() {
-		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
-		LOG.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
-		LOG.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
-
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
@@ -145,15 +141,21 @@ public class Program implements ActionListener {
 	//Data
 		SplashUpdater.setText("Loading DATA");
 		LOG.info("DATA Loading...");
-		settings = new Settings();
-		settings.loadActiveProfile();
-		eveAssetEventList = new BasicEventList<Asset>();
+		StaticData.load();
+		Settings.load();
+		profileManager = new ProfileManager();
+		profileManager.searchProfile();
+		profileManager.loadActiveProfile();
+		profileData = new ProfileData(profileManager);
+		//Can not update profile data now - list needs to be empty doing creation...
+		priceDataGetter = new PriceDataGetter(profileData);
+		priceDataGetter.load();
 		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
-		timer = new Timer(1000, this);
+		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ACTION_TIMER);
 	//Updatable
-		updatable = new Updatable(settings);
+		updatable = new Updatable(this);
 	//GUI
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
@@ -170,11 +172,15 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
-		industryPlotTab = new IndustryPlotTab(this);
+		//FIXME - - > IndustryPlotTab
+		//industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
 		SplashUpdater.setProgress(62);
+		LOG.info("Loading: Transactions Tab");
+		transactionsTab = new TransactionTab(this);
+		SplashUpdater.setProgress(63);
 		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
 		SplashUpdater.setProgress(64);
@@ -206,7 +212,6 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Contracts Tab");
 		contractsTab = new ContractsTab(this);
 		SplashUpdater.setProgress(82);
-		
 	//Dialogs
 		LOG.info("Loading: Account Manager Dialog");
 		accountManagerDialog = new AccountManagerDialog(this);
@@ -220,40 +225,14 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Update Dialog");
 		updateDialog = new UpdateDialog(this);
 		SplashUpdater.setProgress(90);
-	//Settings
 		LOG.info("Loading: Options Dialog");
 		settingsDialog = new SettingsDialog(this);
-		SplashUpdater.setProgress(91);
-		LOG.info("Loading: General Settings Panel");
-		generalSettingsPanel = new GeneralSettingsPanel(this, settingsDialog);
-		DefaultMutableTreeNode toolNode = settingsDialog.addGroup("Tools", Images.SETTINGS_TOOLS.getIcon());
-		LOG.info("Loading: Assets Tool Settings Panel");
-		assetsToolSettingsPanel = new AssetsToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(92);
-		LOG.info("Loading: Overview Tool Settings Panel");
-		overviewToolSettingsPanel = new OverviewToolSettingsPanel(this, settingsDialog, toolNode);
-		LOG.info("Loading: Stockpile Tool Settings Panel");
-		stockpileToolSettingsPanel = new StockpileToolSettingsPanel(this, settingsDialog, toolNode);
-		SplashUpdater.setProgress(93);
-		DefaultMutableTreeNode modifiedAssetsNode = settingsDialog.addGroup("Values", Images.EDIT_RENAME.getIcon());
-		LOG.info("Loading: Assets Price Settings Panel");
-		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		LOG.info("Loading: Assets Name Settings Panel");
-		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, modifiedAssetsNode);
-		SplashUpdater.setProgress(94);
-		LOG.info("Loading: Price Data Settings Panel");
-		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog);
-		LOG.info("Loading: Reprocessing Settings Panel");
-		reprocessingSettingsPanel = new ReprocessingSettingsPanel(this, settingsDialog);
-		SplashUpdater.setProgress(95);
-		LOG.info("Loading: Proxy Settings Panel");
-		proxySettingsPanel = new ProxySettingsPanel(this, settingsDialog);
-		LOG.info("Loading: Window Settings Panel");
-		windowSettingsPanel = new WindowSettingsPanel(this, settingsDialog);
 		SplashUpdater.setProgress(96);
+	//GUI Done
 		LOG.info("GUI loaded");
+	//Updating data...
 		LOG.info("Updating data...");
-		updateEventList();
+		updateEventLists(); //Update price
 		macOsxCode();
 		SplashUpdater.setProgress(100);
 		LOG.info("Showing GUI");
@@ -266,7 +245,7 @@ public class Program implements ActionListener {
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
 		programUpdateChecker.showMessages();
-		if (settings.getAccounts().isEmpty()) {
+		if (profileManager.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
 		}
@@ -276,7 +255,11 @@ public class Program implements ActionListener {
 	 *
 	 * @param load does nothing except change the signature.
 	 */
-	protected Program(final boolean load) { }
+	protected Program(final boolean load) {
+		profileData = null;
+		profileManager = null;
+		priceDataGetter = null;
+	}
 
 	public void addMainTab(final JMainTab jMainTab) {
 		jMainTabs.add(jMainTab);
@@ -286,20 +269,17 @@ public class Program implements ActionListener {
 		if (!timer.isRunning()) {
 			timer.start();
 		}
-		this.getStatusPanel().timerTicked(updatable.isUpdatable());
-		this.getMainWindow().getMenu().timerTicked(updatable.isUpdatable());
+		boolean isUpdatable = updatable.isUpdatable();
+		this.getStatusPanel().timerTicked(isUpdatable);
+		this.getMainWindow().getMenu().timerTicked(isUpdatable);
 	}
 
-	public final void updateEventList() {
+	public final void updateEventLists() {
 		LOG.info("Updating EventList");
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.beforeUpdateData();
 		}
-		settings.clearEveAssetList();
-		eveAssetEventList.getReadWriteLock().writeLock().lock();
-		eveAssetEventList.clear();
-		eveAssetEventList.addAll(settings.getEventListAssets());
-		eveAssetEventList.getReadWriteLock().writeLock().unlock();
+		profileData.updateEventLists();
 		System.gc(); //clean post-update mess :)
 		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -308,6 +288,8 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.afterUpdateData();
 		}
+		timerTicked();
+		updateTableMenu();
 	}
 
 	public void saveSettings() {
@@ -316,7 +298,8 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.saveSettings();
 		}
-		settings.saveSettings();
+		Settings.get().saveSettings();
+		profileManager.saveProfile();
 	}
 
 	public void exit() {
@@ -355,12 +338,10 @@ public class Program implements ActionListener {
 		}
 	}
 
-	public Settings getSettings() {
-		return settings;
-	}
 	public MainWindow getMainWindow() {
 		return mainWindow;
 	}
+
 	public AssetsTab getAssetsTab() {
 		return assetsTab;
 	}
@@ -373,11 +354,19 @@ public class Program implements ActionListener {
 		return this.getMainWindow().getStatusPanel();
 	}
 	public UserNameSettingsPanel getUserNameSettingsPanel() {
-		return userNameSettingsPanel;
+		if (settingsDialog != null) {
+			return settingsDialog.getUserNameSettingsPanel();
+		} else {
+			return null;
+		}
 	}
 
 	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
-		return userPriceSettingsPanel;
+		if (settingsDialog != null) {
+			return settingsDialog.getUserPriceSettingsPanel();
+		} else {
+			return null;
+		}
 	}
 	public StockpileTab getStockpileTool() {
 		return stockpileTab;
@@ -385,12 +374,43 @@ public class Program implements ActionListener {
 	public ReprocessedTab getReprocessedTab() {
 		return reprocessedTab;
 	}
-	public EventList<Asset> getEveAssetEventList() {
-		return eveAssetEventList;
+	public RoutingTab getRoutingTab() {
+		return routingTab;
+	}
+	public EventList<Asset> getAssetEventList() {
+		return profileData.getAssetsEventList();
+	}
+	public EventList<ContractItem> getContractItemEventList() {
+		return profileData.getContractItemEventList();
+	}
+	public EventList<IndustryJob> getIndustryJobsEventList() {
+		return profileData.getIndustryJobsEventList();
+	}
+	public EventList<MarketOrder> getMarketOrdersEventList() {
+		return profileData.getMarketOrdersEventList();
+	}
+	public EventList<WalletTransaction> getWalletTransactionsEventList() {
+		return profileData.getWalletTransactionsEventList();
+	}
+	public EventList<AccountBalance> getAccountBalanceEventList() {
+		return profileData.getAccountBalanceEventList();
+	}
+	public List<String> getOwners(boolean all) {
+		return profileData.getOwners(all);
+	}
+	public List<Account> getAccounts() {
+		return profileManager.getAccounts();
+	}
+	public ProfileManager getProfileManager() {
+		return profileManager;
+	}
+	public PriceDataGetter getPriceDataGetter() {
+		return priceDataGetter;
 	}
 	public void createTrackerDataPoint() {
 		trackerTab.createTrackerDataPoint();
 	}
+	
 	public static boolean onMac() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
@@ -419,6 +439,14 @@ public class Program implements ActionListener {
 		Program.forceUpdate = forceUpdate;
 	}
 
+	public static void setPortable(final boolean portable) {
+		Program.portable = portable;
+	}
+
+	public static boolean isPortable() {
+		return portable;
+	}
+
 	/**
 	 * Called when Overview Groups are changed.
 	 */
@@ -430,7 +458,7 @@ public class Program implements ActionListener {
 	 * Called when the table menu needs update.
 	 */
 	public void updateTableMenu() {
-		this.getMainWindow().getSelectedTab().updateTableMenu(this.getMainWindow().getMenu().getTableMenu());
+		this.getMainWindow().getSelectedTab().updateTableMenu();
 	}
 
 	/**
@@ -458,6 +486,9 @@ public class Program implements ActionListener {
 		}
 		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);
+		}
+		if (MainMenu.ACTION_OPEN_TRANSACTION.equals(e.getActionCommand())) {
+			mainWindow.addTab(transactionsTab);
 		}
 		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);

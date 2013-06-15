@@ -97,4 +97,28 @@ public class TrackerData {
 	public double getEscrowsToCover() {
 		return escrowsToCover;
 	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setWalletBalance(double walletBalance) {
+		this.walletBalance = walletBalance;
+	}
+
+	public void setAssets(double assets) {
+		this.assets = assets;
+	}
+
+	public void setSellOrders(double sellOrders) {
+		this.sellOrders = sellOrders;
+	}
+
+	public void setEscrows(double escrows) {
+		this.escrows = escrows;
+	}
+
+	public void setEscrowsToCover(double escrowsToCover) {
+		this.escrowsToCover = escrowsToCover;
+	}
 }

@@ -29,9 +29,11 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> {
@@ -70,7 +72,7 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 
 	@Override
 	protected void setData(final IndustryJobsResponse response) {
-		List<ApiIndustryJob> industryJobs = new ArrayList<ApiIndustryJob>(response.getAll());
+		List<IndustryJob> industryJobs = ApiConverter.convertIndustryJobs(new ArrayList<ApiIndustryJob>(response.getAll()), getOwner());
 		getOwner().setIndustryJobs(industryJobs);
 	}
 

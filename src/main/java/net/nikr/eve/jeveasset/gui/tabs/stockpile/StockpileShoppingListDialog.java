@@ -149,7 +149,7 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 					double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
 					if (countNeeded > 0) {
 						volume = volume + (countNeeded * stockpileItem.getVolume());
-						value = value + (countNeeded * stockpileItem.getPrice());
+						value = value + (countNeeded * stockpileItem.getDynamicPrice());
 						String key = stockpileItem.getName();
 
 						//Add

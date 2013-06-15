@@ -26,7 +26,6 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -45,8 +44,8 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	private List<UserItem<K, V>> listItems;
 	private String type;
 
-	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final DefaultMutableTreeNode parentNode, final String title, final String type, final String help) {
-		super(program, optionsDialog, title, icon, parentNode);
+	public JUserListPanel(final Program program, final SettingsDialog optionsDialog, final Icon icon, final String title, final String type, final String help) {
+		super(program, optionsDialog, title, icon);
 		this.type = type;
 
 		ListenerClass listener = new ListenerClass();
@@ -98,20 +97,20 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		jDelete.setEnabled(b);
 	}
 
+	//Work on live data AKA getItems() - no need to re-cache (never cancel) or update GUI (never shown)
 	public boolean contains(final List<UserItem<K, V>> userItems) {
-		load();
 		for (UserItem<K, V> userItem : userItems) {
-			if (items.containsKey(userItem.getKey())) {
+			if (getItems().containsKey(userItem.getKey())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	//Work on live data AKA getItems() - no need to re-cache (never cancel) or update GUI (never shown)
 	public boolean containsKey(final Set<K> key) {
-		load();
 		for (K k : key) {
-			if (items.containsKey(k)) {
+			if (getItems().containsKey(k)) {
 				return true;
 			}
 		}
@@ -142,13 +141,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				formatedValue = userItems.get(0).getValueFormated();
 			}
 		} else {
-			int count = 0;
-			for (UserItem<K, V> userItem : userItems) {
-				if (items.containsKey(userItem.getKey())) {
-					count++;
-				}
-			}
-			name = DialoguesSettings.get().items(count);
+			name = DialoguesSettings.get().items(userItems.size());
 		}
 		if (formatedValue == null) {
 			formatedValue = "0";
@@ -171,7 +164,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				if (save) { //Save (if not in setttings dialog)
 					boolean update = save();
 					if (update) {
-						program.updateEventList();
+						program.updateEventLists();
 					}
 				}
 			} else {
@@ -216,7 +209,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 			if (save) {
 				boolean update = save();
 				if (update) {
-					program.updateEventList();
+					program.updateEventLists();
 				}
 			}
 		}

@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import ca.odell.glazedlists.SeparatorList;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Module;
+import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -38,6 +40,7 @@ import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -117,6 +120,27 @@ public class JMenuInfo {
 		}
 	}
 
+	public static void wallet(final JComponent jComponent, final List<WalletTransaction> list) {
+		if (jComponent instanceof JPopupMenu) {
+			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
+
+			createDefault(jPopupMenu);
+
+			double sellTxTotal = 0;
+			double buyTxTotal = 0;
+			for (WalletTransaction walletTransaction : list) {
+				if (walletTransaction.getTransactionType().equals("sell")) { //Sell
+					sellTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+				} else { //Buy
+					buyTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+				}
+			}
+			createMenuItem(jPopupMenu, Formater.iskFormat(sellTxTotal), GuiShared.get().selectionOrdersSell(), Images.ORDERS_SELL.getIcon());
+
+			createMenuItem(jPopupMenu, Formater.iskFormat(buyTxTotal), GuiShared.get().selectionOrdersBuy(), Images.ORDERS_BUY.getIcon());
+		}
+	}
+
 	public static void industryJob(final JComponent jComponent, final List<IndustryJob> list) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
@@ -152,7 +176,15 @@ public class JMenuInfo {
 			double valueNow = 0;
 			double valueNeeded = 0;
 
-			for (StockpileItem item : list) {
+			for (int i = 0; i < list.size(); i++) {
+				Object object = list.get(i);
+				if (object instanceof SeparatorList.Separator) {
+					continue;
+				}
+				if (object instanceof StockpileTotal) {
+					continue;
+				}
+				StockpileItem item = (StockpileItem) object;
 				volumnNow = volumnNow + item.getVolumeNow();
 				if (item.getVolumeNeeded() < 0) { //Only add if negative
 					volumnNeeded = volumnNeeded + item.getVolumeNeeded();
@@ -217,38 +249,33 @@ public class JMenuInfo {
 					}
 					//Equals group
 					if (selectedMaterial.getType() == MaterialType.SUMMARY_TOTAL
-							&& material.getGroup().equals(selectedMaterial.getName())
-							) {
+							&& material.getGroup().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals name
 					if (selectedMaterial.getType() == MaterialType.SUMMARY
-							&& material.getName().equals(selectedMaterial.getName())
-							) {
+							&& material.getName().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals location
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS_ALL
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())) {
 						add = true;
 						break;
 					}
 					//Equals location and group
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS_TOTAL
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							&& material.getGroup().equals(selectedMaterial.getName())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())
+							&& material.getGroup().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
 					//Equals location and name
 					if (selectedMaterial.getType() == MaterialType.LOCATIONS
-							&& material.getLocation().equals(selectedMaterial.getLocation())
-							&& material.getName().equals(selectedMaterial.getName())
-							) {
+							&& material.getHeader().equals(selectedMaterial.getHeader())
+							&& material.getName().equals(selectedMaterial.getName())) {
 						add = true;
 						break;
 					}
@@ -345,7 +372,7 @@ public class JMenuInfo {
 		jPopupMenu.add(jMenuItem);
 	}
 
-	private static void createDefault(final JPopupMenu jPopupMenu) {
+	public static void createDefault(final JPopupMenu jPopupMenu) {
 		JMenuItem jMenuItem;
 
 		jPopupMenu.addSeparator();

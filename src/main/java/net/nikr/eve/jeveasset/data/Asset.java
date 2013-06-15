@@ -23,167 +23,84 @@ package net.nikr.eve.jeveasset.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
+import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class Asset implements Comparable<Asset>, InfoItem {
+public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType {
 
-	public enum PriceMode {
-		PRICE_SELL_MAX() {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceSellMax();
-			}
-		},
-		PRICE_SELL_AVG {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceSellAvg();
-			}
-		},
-		PRICE_SELL_MEDIAN {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceSellMedian();
-			}
-		},
-		PRICE_SELL_PERCENTILE {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceSellPercentile();
-			}
-		},
-		PRICE_SELL_MIN {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceSellMin();
-			}
-		},
-		PRICE_MIDPOINT {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceMidpoint();
-			}
-		},
-		PRICE_BUY_MAX {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMax();
-			}
-		},
-		PRICE_BUY_PERCENTILE {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceBuyPercentile();
-			}
-		},
-		PRICE_BUY_AVG {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceBuyAvg();
-			}
-		},
-		PRICE_BUY_MEDIAN {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMedian();
-			}
-		},
-		PRICE_BUY_MIN {
-			@Override
-			String getI18N() {
-				return DataModelEveAsset.get().priceBuyMin();
-			}
-		};
-		abstract String getI18N();
-		@Override
-		public String toString() {
-			return getI18N();
-		}
-	}
-
-	//Default
-	private static final PriceMode DEFAULT_PRICE_TYPE = PriceMode.PRICE_MIDPOINT;
-
-	private static PriceMode priceType = PriceMode.PRICE_MIDPOINT;
-	private static PriceMode priceReprocessedType = PriceMode.PRICE_MIDPOINT;
-
+	//Static values (set by constructor)
 	private List<Asset> assets = new ArrayList<Asset>();
-	private long locationID; //LocationID : long
-	private long itemID; //ItemID : long
-	private long solarSystemID; //LocationID : long
-	private long regionID; //LocationID : long
-	private int typeID; //TypeID : int
-	private int flagID; //FlagID : int
-	private long ownerID;
-	private String typeName;
-	private String name;
-	private String group;
-	private String category;
-	private String owner;
+	private Item item;
+	private Location location;
+	private Owner owner;
 	private long count;
-	private String location;
-	private String container = "";
 	private List<Asset> parents;
 	private String flag;
-	private double priceBase;
-	private String tech;
-	private int meta;
-	private boolean marketGroup;
+	private int flagID; //FlagID : int
+	private long itemID; //ItemID : long
+	private boolean singleton;
+	private int rawQuantity;
+	//Static values cache
+	private String typeName;
+	private boolean bpo;
+	private boolean bpc;
+	//Dynamic values
+	private String name;
+	private String container = "";
 	private PriceData priceData;
 	private UserItem<Integer, Double> userPrice;
-	private boolean corporation;
 	private float volume;
-	private String region;
 	private long typeCount = 0;
-	private boolean singleton;
-	private String security;
 	private double priceReprocessed;
-	private String system;
-	private int rawQuantity;
-	private boolean piMaterial;
 	private MarketPriceData marketPriceData;
 	private Date added;
+	private double price;
+	//Dynamic values cache
+	private boolean userNameSet = false;
+	private boolean userPriceSet = false;
 
 	/**
 	 * For mockups...
 	 */
 	protected Asset() { }
 
-	public Asset(final String typeName, final String group, final String category, final String owner, final long count, final String location, final List<Asset> parents, final String flag, final int flagID, final double priceBase, final int meta, final String tech, final long itemID, final int typeID, final boolean marketGroup, final boolean corporation, final float volume, final String region, final long locationID, final boolean singleton, final String security, final String system, final long solarSystemID, final int rawQuantity, final boolean piMaterial, long regionID, final long ownerID) {
-		this.typeName = typeName;
-		this.name = getTypeName();
-		this.group = group;
-		this.category = category;
+	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
+		this.item = item;
+		this.location = location;
 		this.owner = owner;
 		this.count = count;
-		this.location = location;
 		this.parents = parents;
 		this.flag = flag;
 		this.flagID = flagID;
-		this.priceBase = priceBase;
-		this.meta = meta;
-		this.tech = tech;
 		this.itemID = itemID;
-		this.typeID = typeID;
-		this.marketGroup = marketGroup;
-		this.corporation = corporation;
-		this.volume = volume;
-		this.region = region;
-		this.locationID = locationID;
+		this.volume = item.getVolume();
 		this.singleton = singleton;
-		this.security = security;
-		this.system = system;
-		this.solarSystemID = solarSystemID;
 		this.rawQuantity = rawQuantity;
-		this.piMaterial = piMaterial;
-		this.regionID = regionID;
-		this.ownerID = ownerID;
+		//The order matter!
+		//1st
+		this.bpo = (item.isBlueprint() && rawQuantity == -1);
+		this.bpc = (item.isBlueprint() && rawQuantity == -2);
+		//2nd
+		if (item.isBlueprint()) {
+			if (isBPO()) {
+				this.typeName = item.getTypeName() + " (BPO)";
+			} else {
+				this.typeName = item.getTypeName() + " (BPC)";
+			}
+		} else {
+			this.typeName = item.getTypeName();
+		}
+		//3rd
+		this.name = getTypeName();
 	}
 
-	public void addEveAsset(final Asset eveAsset) {
-		assets.add(eveAsset);
+	public void addAsset(final Asset asset) {
+		assets.add(asset);
 	}
 
 	public Date getAdded() {
@@ -192,10 +109,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public List<Asset> getAssets() {
 		return assets;
-	}
-
-	public String getCategory() {
-		return category;
 	}
 
 	public String getContainer() {
@@ -207,62 +120,6 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return count;
 	}
 
-	public double getDefaultPrice() {
-		return getDefaultPrice(getPriceData());
-	}
-
-	/*
-	 * These should be methods on the PriceMode enum.
-	 */
-	public static double getDefaultPrice(final PriceData priceData) {
-		return getDefaultPrice(priceData, priceType);
-	}
-	public static double getDefaultPriceReprocessed(final PriceData priceData) {
-		return getDefaultPrice(priceData, priceReprocessedType);
-	}
-	private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
-		if (priceData != null) {
-			if (priceMode.equals(PriceMode.PRICE_SELL_MAX)) {
-				return priceData.getSellMax();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_AVG)) {
-				return priceData.getSellAvg();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_MEDIAN)) {
-				return priceData.getSellMedian();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
-				return priceData.getSellPercentile();
-			}
-			if (priceMode.equals(PriceMode.PRICE_SELL_MIN)) {
-				return priceData.getSellMin();
-			}
-			if (priceMode.equals(PriceMode.PRICE_MIDPOINT)) {
-				return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MAX)) {
-				return priceData.getBuyMax();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_AVG)) {
-				return priceData.getBuyAvg();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MEDIAN)) {
-				return priceData.getBuyMedian();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
-				return priceData.getBuyPercentile();
-			}
-			if (priceMode.equals(PriceMode.PRICE_BUY_MIN)) {
-				return priceData.getBuyMin();
-			}
-		}
-		return 0;
-	}
-
-	public static PriceMode getDefaultPriceType() {
-		return DEFAULT_PRICE_TYPE;
-	}
-
 	public String getFlag() {
 		return flag;
 	}
@@ -271,20 +128,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return flagID;
 	}
 
-	public String getGroup() {
-		return group;
-	}
-
 	public long getItemID() {
 		return itemID;
 	}
 
-	public String getLocation() {
-		return location;
+	@Override
+	public Item getItem() {
+		return item;
 	}
 
-	public long getLocationID() {
-		return locationID;
+	@Override
+	public Location getLocation() {
+		return location;
 	}
 
 	public MarketPriceData getMarketPriceData() {
@@ -295,51 +150,33 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		}
 	}
 
-	public int getMeta() {
-		return meta;
-	}
-
-	public String getTech() {
-		return tech;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public String getOwner() {
-		return owner;
+		return owner.getName();
 	}
 
 	public long getOwnerID() {
-		return ownerID;
+		return owner.getOwnerID();
 	}
 
 	public List<Asset> getParents() {
 		return parents;
 	}
 
-	public double getPrice() {
-		//UserPrice
-		if (this.getUserPrice() != null) {
-			return this.getUserPrice().getValue();
-		}
-
-		//Blueprint Copy (Default Zero)
-		if (isBlueprint() && !isBpo()) {
-			return 0;
-		}
-
-		//PriceData
-		return getDefaultPrice();
+	@Override
+	public Double getDynamicPrice() {
+		return price;
 	}
 
-	public double getPriceBase() {
-		return priceBase;
+	public void setDynamicPrice(double price) {
+		this.price = price;
 	}
 
 	public double getPriceBuyMax() {
-		if (isBlueprint() && !isBpo()) {
+		if (item.isBlueprint() && !isBPO()) {
 			return 0;
 		}
 
@@ -359,19 +196,19 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 
 	public double getPriceReprocessedDifference() {
-		return getPrice() - getPriceReprocessed();
+		return getPriceReprocessed() - getDynamicPrice();
 	}
 
 	public double getPriceReprocessedPercent() {
-		if (getPrice() > 0 && getPriceReprocessed() > 0) {
-			return (getPrice() / getPriceReprocessed());
+		if (getDynamicPrice() > 0 && getPriceReprocessed() > 0) {
+			return (getPriceReprocessed() / getDynamicPrice());
 		} else {
 			return 0;
 		}
 	}
 
 	public double getPriceSellMin() {
-		if (isBlueprint() && !isBpo()) {
+		if (item.isBlueprint() && !isBPO()) {
 			return 0;
 		}
 
@@ -382,56 +219,16 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return 0;
 	}
 
-	public static PriceMode getPriceType() {
-		return priceType;
-	}
-
-	public static PriceMode getPriceReprocessedType() {
-		return priceReprocessedType;
-	}
-
 	public int getRawQuantity() {
 		return rawQuantity;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public long getRegionID() {
-		return regionID;
-	}
-
-	public String getSecurity() {
-		return security;
-	}
-
-	public long getSolarSystemID() {
-		return solarSystemID;
-	}
-
-	public String getSystem() {
-		return system;
 	}
 
 	public long getTypeCount() {
 		return typeCount;
 	}
 
-	public int getTypeID() {
-		return typeID;
-	}
-
 	public final String getTypeName() {
-		if (isBlueprint()) {
-			if (isBpo()) {
-				return typeName + " (BPO)";
-			} else {
-				return typeName + " (BPC)";
-			}
-		} else {
-			return typeName;
-		}
+		return typeName;
 	}
 
 	public UserItem<Integer, Double> getUserPrice() {
@@ -440,7 +237,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	@Override
 	public double getValue() {
-		return Formater.round(this.getPrice() * this.getCount(), 2);
+		return Formater.round(this.getDynamicPrice() * this.getCount(), 2);
 	}
 
 	@Override
@@ -457,24 +254,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		return volume * count;
 	}
 
-	public boolean isBlueprint() {
-		return (typeName.toLowerCase().contains("blueprint"));
+	@Override
+	public boolean isBPO() {
+		return bpo;
 	}
 
-	public boolean isBpo() {
-		return rawQuantity != -2;
+	@Override
+	public boolean isBPC() {
+		return bpc;
 	}
 
 	public boolean isCorporation() {
-		return corporation;
-	}
-
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	public boolean isPiMaterial() {
-		return piMaterial;
+		return owner.isCorporation();
 	}
 
 	/**
@@ -487,18 +278,18 @@ public class Asset implements Comparable<Asset>, InfoItem {
 	}
 	public String getSingleton() {
 		if (singleton) {
-			return DataModelEveAsset.get().unpackaged();
+			return DataModelAsset.get().unpackaged();
 		} else {
-			return DataModelEveAsset.get().packaged();
+			return DataModelAsset.get().packaged();
 		}
 	}
 
 	public boolean isUserName() {
-		return !getName().equals(getTypeName());
+		return userNameSet;
 	}
 
 	public boolean isUserPrice() {
-		return (this.getUserPrice() != null);
+		return userPriceSet;
 	}
 
 	public void setAdded(final Date added) {
@@ -515,6 +306,7 @@ public class Asset implements Comparable<Asset>, InfoItem {
 
 	public void setName(final String name) {
 		this.name = name;
+		userNameSet = !getName().equals(getTypeName());
 	}
 
 	public void setPriceData(final PriceData priceData) {
@@ -525,20 +317,13 @@ public class Asset implements Comparable<Asset>, InfoItem {
 		this.priceReprocessed = priceReprocessed;
 	}
 
-	public static void setPriceType(final PriceMode priceSource) {
-		Asset.priceType = priceSource;
-	}
-
-	public static void setPriceReprocessedType(final PriceMode reprocessedPriceType) {
-		Asset.priceReprocessedType = reprocessedPriceType;
-	}
-
 	public void setTypeCount(final long typeCount) {
 		this.typeCount = typeCount;
 	}
 
 	public void setUserPrice(final UserItem<Integer, Double> userPrice) {
 		this.userPrice = userPrice;
+		userPriceSet = (this.getUserPrice() != null);
 	}
 
 	public void setVolume(final float volume) {

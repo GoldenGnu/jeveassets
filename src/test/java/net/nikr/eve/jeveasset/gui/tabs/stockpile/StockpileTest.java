@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import org.junit.After;
@@ -54,9 +56,9 @@ public class StockpileTest {
 
 	@Test
 	public void testSomeMethod() {
-		Stockpile stockpile = new Stockpile("Name", 0, "Owner", 0, "Location", "System", "Region", 0, "Flag", "Container", true, true, true, true, 1);
-		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, "Name", "Group", 0, 0);
-		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, "Name", "Group", 0, 0);
+		Stockpile stockpile = new Stockpile("Name", 0, "Owner", new Location(0), 0, "Flag", "Container", true, true, true, true, 1);
+		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);
+		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);
 		StockpileTotal total1 = new StockpileTotal(stockpile);
 		StockpileTotal total2 = new StockpileTotal(stockpile);
 		assertEquals(item1.compareTo(item2), item2.compareTo(item2), 0);

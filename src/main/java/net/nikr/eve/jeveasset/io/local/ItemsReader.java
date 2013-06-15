@@ -26,6 +26,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -42,15 +43,15 @@ public final class ItemsReader extends AbstractXmlReader {
 
 	private ItemsReader() { }
 
-	public static void load(final Settings settings) {
+	public static void load() {
 		ItemsReader reader = new ItemsReader();
-		reader.read(settings);
+		reader.read();
 	}
 
-	private void read(final Settings settings) {
+	private void read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathItems());
-			parseItems(element, settings.getItems());
+			parseItems(element, StaticData.get().getItems());
 		} catch (IOException ex) {
 			LOG.error("Items not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {

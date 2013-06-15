@@ -16,6 +16,58 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.6.0__________________________________________________________________________
+
+New Features:
+-New Tool: Wallet Transactions (by Ima Sohmbadi) 
+-Routing: Major overhaul
+-Assets: Rename Container
+-Account Import: Error handling
+-Stockpile: Import shopping list from "Eve ISK Per Hour"
+-Tracker: Edit data points
+-Items: Reprocessed Column
+-Optimized many parts of jEveAssets
+-Many more minor changes and bug fixes
+
+Changed:
+-Better handling of multiple instances of jEveAssets
+-Library: Updated Glazed Lists to 1.9.0
+-Library: Updated EVEAPI to the latest version
+-Source: Major cleanup of the source code
+-Source: Made it easy to checkout and compile (maven.nikr.net)
+
+________________________________________________________________________________
+_2.5.4__________________________________________________________________________
+
+Changed:
+-Updated static data to Odyssey 1.0.89097
+
+________________________________________________________________________________
+_2.5.3__________________________________________________________________________
+
+Bug Fixes:
+-API Bug: The contract API returns alien contracts (Temp ban fix)
+-Export Bug: Changing the decimal separator was ignored until next export
+
+Changed:
+-Updated static data to Retribution 1.1.84566
+
+________________________________________________________________________________
+_2.5.2__________________________________________________________________________
+
+New Features:
+-Added "None" container label
+
+Bug Fixes:
+-Industry Jobs failed to update
+
+________________________________________________________________________________
+_2.5.1__________________________________________________________________________
+
+Bug Fixes:
+-Export: Deselecting columns caused a crash
+
+________________________________________________________________________________
 _2.5.0__________________________________________________________________________
 
 New Features:

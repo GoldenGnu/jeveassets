@@ -18,27 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+package net.nikr.eve.jeveasset.data.types;
 
-package net.nikr.eve.jeveasset.data;
-
-import java.util.HashMap;
-import java.util.Map;
-import net.nikr.eve.jeveasset.io.local.FlagsReader;
-import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
+import net.nikr.eve.jeveasset.data.Item;
 
 
-public class ModuleSettings extends FakeSettings {
-
-	Map<Integer, ItemFlag> flags = new HashMap<Integer, ItemFlag>();
-
-	public ModuleSettings() {
-		FlagsReader.load(this);
-	}
-
-	@Override
-	public Map<Integer, ItemFlag> getItemFlags() {
-		return flags;
-	}
-
-	
+public interface ItemType {
+	public Item getItem();
 }

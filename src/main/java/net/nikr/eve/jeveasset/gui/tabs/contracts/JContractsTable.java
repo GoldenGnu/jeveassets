@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import ca.odell.glazedlists.SeparatorList;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 public class JContractsTable extends JSeparatorTable {
 
-	private EventTableModel<ContractItem> tableModel;
+	private DefaultEventTableModel<ContractItem> tableModel;
 
-	public JContractsTable(final Program program, final EventTableModel<ContractItem> tableModel, SeparatorList<?> separatorList) {
+	public JContractsTable(final Program program, final DefaultEventTableModel<ContractItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
@@ -49,15 +49,14 @@ public class JContractsTable extends JSeparatorTable {
 		if (object instanceof ContractItem) {
 			ContractItem item = (ContractItem) object;
 			if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
-				if (item.getContract().isCourier()) {
+				if (isSelected) {
+					component.setBackground(this.getSelectionBackground().darker());
+				} else if (item.getContract().isCourier()) {
 					component.setBackground(new Color(255, 255, 160)); //Yellow
 				} else if (item.isIncluded()) {
 					component.setBackground(new Color(160, 255, 160)); //Green
 				} else {
 					component.setBackground(new Color(255, 160, 160)); //Red
-				}
-				if (isSelected) {
-					component.setForeground(Color.BLACK);
 				}
 			}
 		}

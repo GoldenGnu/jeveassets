@@ -25,7 +25,6 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.Node;
@@ -45,8 +44,8 @@ public class FakeRoutingTab extends RoutingTab {
 		this.ra = ra;
 	}
 
-	public void buildTestGraph(final Settings settings) {
-		super.buildGraph(settings);
+	public void buildTestGraph() {
+		super.buildGraph();
 	}
 
 	public List<Node> getNodesFromNames(final List<String> names) {

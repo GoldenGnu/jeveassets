@@ -88,7 +88,7 @@ public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 			return;
 		}
 		jLocation.setVisible(module.isFirst());
-		jLocation.setText(TabsLoadout.get().whitespace10(module.getLocation()));
+		jLocation.setText(TabsLoadout.get().whitespace10(module.getLocation().getLocation()));
 		jOwner.setVisible(module.isFirst());
 		jOwner.setText(TabsLoadout.get().whitespace10(module.getOwner()));
 		jFlag.setText(module.getFlag());

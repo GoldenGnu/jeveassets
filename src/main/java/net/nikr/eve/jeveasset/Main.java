@@ -22,11 +22,14 @@
 package net.nikr.eve.jeveasset;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import net.nikr.eve.jeveasset.data.Settings;
+import static net.nikr.eve.jeveasset.Program.PROGRAM_NAME;
+import static net.nikr.eve.jeveasset.Program.PROGRAM_VERSION;
+import net.nikr.eve.jeveasset.io.shared.FileLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.me.candle.translations.conf.DefaultBundleConfiguration;
@@ -47,9 +50,20 @@ public final class Main {
 	 * JEveAssets main launcher.
 	 */
 	private Program program;
+	/**
+	 * Ensure only one instance is running...
+	 */
+	private SingleInstance instance;
 
 	/** Creates a new instance of Main. */
 	private Main() {
+		log.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
+		log.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+		log.info("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+		instance = new SingleInstance();
+		if (instance.isSingleInstance()) {
+			FileLock.unlockAll();
+		}
 		program = new Program();
 	}
 
@@ -58,23 +72,23 @@ public final class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		boolean isDebug = false;
-		boolean isPortable = false;
-		boolean hasNoUpdate = false;
-		boolean hasUpdate = false;
+		boolean debug = false;
+		boolean portable = false;
+		boolean forceNoUpdate = false;
+		boolean forceUpdate = false;
 
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
-				isDebug = true;
+				debug = true;
 			}
 			if (arg.toLowerCase().equals("-portable")) {
-				isPortable = true;
+				portable = true;
 			}
 			if (arg.toLowerCase().equals("-noupdate")) {
-				hasNoUpdate = true;
+				forceNoUpdate = true;
 			}
 			if (arg.toLowerCase().equals("-update")) {
-				hasUpdate = true;
+				forceUpdate = true;
 			}
 		}
 
@@ -82,20 +96,32 @@ public final class Main {
 		// It is possible to set properties using the -Dlog.home=foo/bar
 		// and thus we want to allow this to take priority over the
 		// configuration options here.
-		if (isPortable && System.getProperty("log.home") == null) {
-			System.setProperty("log.home", "." + File.separator);
-		} else {
-			if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
-				System.setProperty("log.home", System.getProperty("user.home") + File.separator + "Library" + File.separator + "Preferences" + File.separator + "JEveAssets" + File.separator);
-			} else { //Windows/Linux
-				System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
+		if (System.getProperty("log.home") == null) {
+			if (portable) {
+				try {
+					//jeveassets.jar directory
+					File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+					System.setProperty("log.home", file.getAbsolutePath() + File.separator);
+				} catch (URISyntaxException ex) {
+					//Working directory
+					System.setProperty("log.home", System.getProperty("user.dir") + File.separator); //Working directory
+				}
+			} else {
+				//Note: We can not use Program.onMac() as that will initialize the Program LOG
+				if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) { //Mac
+					System.setProperty("log.home", System.getProperty("user.home") + File.separator + "Library" + File.separator + "Preferences" + File.separator + "JEveAssets" + File.separator);
+				} else { //Windows/Linux
+					System.setProperty("log.home", System.getProperty("user.home") + File.separator + ".jeveassets" + File.separator);
+				}
 			}
 		}
 		// ditto here.
-		if (isDebug && System.getProperty("log.level") == null) {
-			System.setProperty("log.level", "DEBUG");
-		} else {
-			System.setProperty("log.level", "INFO");
+		if (System.getProperty("log.level") == null) {
+			if (debug) {
+				System.setProperty("log.level", "DEBUG");
+			} else {
+				System.setProperty("log.level", "INFO");
+			}
 		}
 
 		// only now can we create the Logger.
@@ -103,10 +129,10 @@ public final class Main {
 
 		// Now we have the logging stuff done, we can pass the
 		// variables to the main program and settings.
-		Program.setDebug(isDebug);
-		Settings.setPortable(isPortable);
-		Program.setForceNoUpdate(hasNoUpdate && Program.isDebug());
-		Program.setForceUpdate(hasUpdate && Program.isDebug());
+		Program.setDebug(debug);
+		Program.setPortable(portable);
+		Program.setForceNoUpdate(forceNoUpdate && debug);
+		Program.setForceUpdate(forceUpdate && debug);
 
 		// fix the uncaught exception handlers
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");

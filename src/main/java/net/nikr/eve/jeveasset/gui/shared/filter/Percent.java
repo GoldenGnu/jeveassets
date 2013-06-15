@@ -25,10 +25,16 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
 public class Percent implements Comparable<Percent> {
-	private double percent;
+	private final double percent;
+	private final String formatted;
 
 	public Percent(final double percent) {
 		this.percent = percent;
+		if (Double.isInfinite(percent)) {
+			formatted = Formater.integerFormat(percent);
+		} else {
+			formatted = Formater.percentFormat(percent);
+		}
 	}
 
 	public double getPercent() {
@@ -44,11 +50,7 @@ public class Percent implements Comparable<Percent> {
 
 	@Override
 	public String toString() {
-		if (Double.isInfinite(percent)) {
-			return Formater.integerFormat(percent);
-		} else {
-			return Formater.percentFormat(percent);
-		}
+		return formatted;
 	}
 
 	@Override

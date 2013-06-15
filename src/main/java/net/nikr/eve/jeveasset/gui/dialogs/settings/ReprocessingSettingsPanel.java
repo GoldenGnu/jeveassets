@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -249,15 +250,15 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	@Override
 	public boolean save() {
 		ReprocessSettings reprocessSettings = new ReprocessSettings(Integer.parseInt(jStation.getText()), getSelected(jRefining), getSelected(jRefineryEfficiency), getSelected(jScrapmetalProcessing));
-		boolean update = !program.getSettings().getReprocessSettings().equals(reprocessSettings);
-		program.getSettings().setReprocessSettings(reprocessSettings);
+		boolean update = !Settings.get().getReprocessSettings().equals(reprocessSettings);
+		Settings.get().setReprocessSettings(reprocessSettings);
 		//Update table if needed
 		return update;
 	}
 
 	@Override
 	public void load() {
-		ReprocessSettings reprocessSettings = program.getSettings().getReprocessSettings();
+		ReprocessSettings reprocessSettings = Settings.get().getReprocessSettings();
 		if (reprocessSettings.getStation() == 50) {
 			 jStation50.setSelected(true);
 		} else {

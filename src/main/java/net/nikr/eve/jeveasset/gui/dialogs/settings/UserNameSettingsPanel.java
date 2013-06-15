@@ -21,9 +21,9 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.util.Map;
-import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -31,8 +31,8 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
-	public UserNameSettingsPanel(final Program program, final SettingsDialog optionsDialog, final DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, Images.SETTINGS_USER_NAME.getIcon(), parentNode,
+	public UserNameSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
+		super(program, optionsDialog, Images.SETTINGS_USER_NAME.getIcon(),
 				DialoguesSettings.get().names(),
 				DialoguesSettings.get().name(),
 				DialoguesSettings.get().namesInstruction()
@@ -46,12 +46,12 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 	@Override
 	protected Map<Long, UserItem<Long, String>> getItems() {
-		return program.getSettings().getUserItemNames();
+		return Settings.get().getUserItemNames();
 	}
 
 	@Override
 	protected void setItems(final Map<Long, UserItem<Long, String>> items) {
-		program.getSettings().setUserItemNames(items);
+		Settings.get().setUserItemNames(items);
 	}
 
 	@Override
@@ -64,8 +64,8 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 		public UserName(final UserItem<Long, String> userItem) {
 			super(userItem);
 		}
-		public UserName(final Asset eveAsset) {
-			super(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
+		public UserName(final Asset asset) {
+			super(asset.getName(), asset.getItemID(), asset.getItem().getTypeName());
 		}
 		public UserName(final String value, final Long key, final String name) {
 			super(value, key, name);

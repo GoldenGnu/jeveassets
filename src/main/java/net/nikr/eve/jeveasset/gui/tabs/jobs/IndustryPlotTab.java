@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -66,8 +65,6 @@ import org.slf4j.LoggerFactory;
 public class IndustryPlotTab extends JMainTab {
 	private static final Logger LOG = LoggerFactory.getLogger(IndustryPlotTab.class);
 
-	private IndustryJobData data;
-
 	private JButton updateButton;
 	private JPanel panel;
 	private JPanel infoPanel;
@@ -89,6 +86,15 @@ public class IndustryPlotTab extends JMainTab {
 		infoPanel = new JPanel();
 		panel = new JPanel(new BorderLayout());
 		updateInformationTable(null);
+		doLayout();
+	}
+
+	@Override
+	public void updateData() {
+		panel.removeAll();
+		panel.add(createPanel(), BorderLayout.CENTER);
+		panel.add(updateButton, BorderLayout.SOUTH);
+		panel.add(infoPanel, BorderLayout.NORTH);
 		doLayout();
 	}
 
@@ -117,26 +123,6 @@ public class IndustryPlotTab extends JMainTab {
 					.addContainerGap()
 				)
 		);
-	}
-
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) { }
-
-	@Override
-	protected void showTablePopupMenu(final MouseEvent e) { }
-
-	@Override
-	public void updateData() {
-		if (data == null) {
-			data = new IndustryJobData(program);
-		}
-		data.updateData();
-		panel.removeAll();
-		panel.add(createPanel(), BorderLayout.CENTER);
-		panel.add(updateButton, BorderLayout.SOUTH);
-		panel.add(infoPanel, BorderLayout.NORTH);
-		doLayout();
 	}
 
 	private JFreeChart createChart(final IntervalXYDataset dataset) {
@@ -246,7 +232,7 @@ public class IndustryPlotTab extends JMainTab {
 		// count how many we have added to each series.
 		Map<Integer, AtomicInteger> seriesCounters = new HashMap<Integer, AtomicInteger>();
 
-		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(data.getAll());
+		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(program.getIndustryJobsEventList());
 		Collections.sort(jobsSorted, new Comparator<IndustryJob>() {
 			@Override
 			public int compare(final IndustryJob o1, final IndustryJob o2) {
@@ -398,8 +384,8 @@ public class IndustryPlotTab extends JMainTab {
 			setJob(job);
 			state.setText(job.getState().toString());
 			activity.setText(job.getActivity().toString());
-			name.setText(job.getName());
-			location.setText(job.getLocation());
+			name.setText(job.getItem().getTypeName());
+			location.setText(job.getLocation().getLocation());
 			owner.setText(job.getOwner());
 			installDate.setText(String.valueOf(job.getInstallTime()));
 			startDate.setText(String.valueOf(job.getBeginProductionTime()));

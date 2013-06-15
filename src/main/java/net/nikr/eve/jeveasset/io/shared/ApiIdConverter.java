@@ -23,20 +23,68 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
+import net.nikr.eve.jeveasset.data.UserItem;
 
 
 public final class ApiIdConverter {
 
 	private ApiIdConverter() { }
 
-	public static String flag(final int flag, final Asset parentAsset, final Map<Integer, ItemFlag> flags) {
-		ItemFlag itemFlag = flags.get(flag);
+	private static final Map<String, Float> packagedVolume = new HashMap<String, Float>();
+
+	private static void buildVolume() {
+		packagedVolume.put("Assault Ship", 2500f);
+		packagedVolume.put("Battlecruiser", 15000f);
+		packagedVolume.put("Battleship", 50000f);
+		packagedVolume.put("Black Ops", 50000f);
+		packagedVolume.put("Capital Industrial Ship", 1000000f);
+		packagedVolume.put("Capsule", 500f);
+		packagedVolume.put("Carrier", 1000000f);
+		packagedVolume.put("Combat Recon Ship", 10000f);
+		packagedVolume.put("Command Ship", 15000f);
+		packagedVolume.put("Covert Ops", 2500f);
+		packagedVolume.put("Cruiser", 10000f);
+		packagedVolume.put("Destroyer", 5000f);
+		packagedVolume.put("Dreadnought", 1000000f);
+		packagedVolume.put("Electronic Attack Ship", 2500f);
+		packagedVolume.put("Elite Battleship", 50000f);
+		packagedVolume.put("Exhumer", 3750f);
+		packagedVolume.put("Force Recon Ship", 10000f);
+		packagedVolume.put("Freighter", 1000000f);
+		packagedVolume.put("Frigate", 2500f);
+		packagedVolume.put("Heavy Assault Ship", 10000f);
+		packagedVolume.put("Heavy Interdictor", 10000f);
+		packagedVolume.put("Industrial", 20000f);
+		packagedVolume.put("Industrial Command Ship", 500000f);
+		packagedVolume.put("Interceptor", 2500f);
+		packagedVolume.put("Interdictor", 5000f);
+		packagedVolume.put("Jump Freighter", 1000000f);
+		packagedVolume.put("Logistics", 10000f);
+		packagedVolume.put("Marauder", 50000f);
+		packagedVolume.put("Mining Barge", 3750f);
+		packagedVolume.put("Prototype Exploration Ship", 500f);
+		packagedVolume.put("Rookie ship", 2500f);
+		packagedVolume.put("Shuttle", 500f);
+		packagedVolume.put("Stealth Bomber", 2500f);
+		packagedVolume.put("Strategic Cruiser", 5000f);
+		packagedVolume.put("Supercarrier", 1000000f);
+		packagedVolume.put("Titan", 10000000f);
+		packagedVolume.put("Transport Ship", 20000f);
+	}
+
+	public static String flag(final int flag, final Asset parentAsset) {
+		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
 		if (itemFlag != null) {
 			if (parentAsset != null && !parentAsset.getFlag().isEmpty()) {
 				return parentAsset.getFlag() + " > " + itemFlag.getFlagName();
@@ -47,19 +95,122 @@ public final class ApiIdConverter {
 		return "!" + flag;
 	}
 
-	public static boolean locationTest(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			return true;
-		}
-
-		if (parentAsset != null) {
-			return true;
-		}
-		return false;
+	public static double getPrice(final int typeID, final boolean isBlueprintCopy) {
+		return getPriceType(typeID, isBlueprintCopy, false);
 	}
 
-	private static Location location(long locationID, final Map<Long, Location> locations) {
+	private static double getPriceReprocessed(final int typeID, final boolean isBlueprintCopy) {
+		return getPriceType(typeID, isBlueprintCopy, true);
+	}
+
+	private static double getPriceType(final int typeID, final boolean isBlueprintCopy, boolean reprocessed) {
+		UserItem<Integer, Double> userPrice;
+		if (isBlueprintCopy) { //Blueprint Copy
+			userPrice = Settings.get().getUserPrices().get(-typeID);
+		} else { //All other
+			userPrice = Settings.get().getUserPrices().get(typeID);
+		}
+		if (userPrice != null) {
+			return userPrice.getValue();
+		}
+
+		//Blueprint Copy (Default Zero)
+		if (isBlueprintCopy) {
+			return 0;
+		}
+
+		//Price data
+		PriceData priceData = null;
+		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
+			priceData = Settings.get().getPriceData().get(typeID);
+		}
+		if (reprocessed) {
+			return Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
+		} else {
+			return Settings.get().getPriceDataSettings().getDefaultPrice(priceData);
+		}
+	}
+
+	public static double getPriceReprocessed(Item item) {
+		double priceReprocessed = 0;
+		int portionSize = 0;
+		for (ReprocessedMaterial material : item.getReprocessedMaterial()) {
+			//Calculate reprocessed price
+			portionSize = material.getPortionSize();
+			double price = ApiIdConverter.getPriceReprocessed(material.getTypeID(), false);
+			priceReprocessed = priceReprocessed + (price * Settings.get().getReprocessSettings().getLeft(material.getQuantity()));
+		}
+		if (priceReprocessed > 0 && portionSize > 0) {
+			priceReprocessed = priceReprocessed / portionSize;
+		}
+		return priceReprocessed;
+	}
+
+	public static float getVolume(final int typeID, final boolean packaged) {
+		Item item = StaticData.get().getItems().get(typeID);
+		if (item != null) {
+			if (packagedVolume.isEmpty()) {
+				buildVolume();
+			}
+			if (packaged && packagedVolume.containsKey(item.getGroup())) {
+				return packagedVolume.get(item.getGroup());
+			} else {
+				return item.getVolume();
+			}
+		}
+		return 0;
+	}
+
+	public static boolean isLocationOK(final long locationID) {
+		return isLocationOK(locationID, null);
+	}
+
+	public static boolean isLocationOK(final long locationID, final Asset parentAsset) {
+		Location location = getLocation(locationID, parentAsset);
+		if (location != null && !location.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static Item getItem(final int typeID) {
+		Item item = StaticData.get().getItems().get(typeID);
+		if (item != null) {
+			return item;
+		} else {
+			return new Item(typeID);
+		}
+	}
+
+	public static String getOwnerName(final long ownerID) {
+		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
+			return "";
+		}
+		String owner = Settings.get().getOwners().get(ownerID);
+		if (owner != null) {
+			return owner;
+		}
+		return "!" + String.valueOf(ownerID);
+	}
+
+	public static List<Asset> getParents(final Asset parentAsset) {
+		List<Asset> parents;
+		if (parentAsset != null) {
+			parents = new ArrayList<Asset>(parentAsset.getParents());
+			parents.add(parentAsset);
+		} else {
+			parents = new ArrayList<Asset>();
+		}
+		
+		return parents;
+	}
+
+	public static Location getLocation(long locationID) {
+		return getLocation(locationID, null);
+	}
+
+	public static Location getLocation(long locationID, final Asset parentAsset) {
 		//Offices
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
@@ -68,181 +219,28 @@ public final class ApiIdConverter {
 				locationID = locationID - 6000000;
 			}
 		}
-
-		//locations.xml (staStations && mapDenormalize)
-		return locations.get(locationID);
-	}
-
-	public static String locationName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
+		Location location = StaticData.get().getLocations().get(locationID);
 		if (location != null) {
-			return location.getName();
+			return location;
 		}
-
 		if (parentAsset != null) {
-			return parentAsset.getLocation();
-		}
-		return "Error !" + String.valueOf(locationID);
-	}
-
-	public static String regionName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			location = locations.get(location.getRegionID());
+			location = parentAsset.getLocation();
 			if (location != null) {
-				return location.getName();
+				return location;
 			}
 		}
-		if (parentAsset != null) {
-			return parentAsset.getRegion();
-		}
-		return "Error !" + String.valueOf(locationID);
+		return new Location(locationID);
 	}
 
-	public static String security(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			return location.getSecurity();
-		}
-
-		if (parentAsset != null) {
-			return parentAsset.getSecurity();
-		}
-		return "Error !" + String.valueOf(locationID);
-	}
-
-	public static String systemName(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			location = locations.get(location.getSystemID());
-			if (location != null) {
-				return location.getName();
-			}
-		}
-		if (parentAsset != null) {
-			return parentAsset.getSystem();
-		}
-		return "Error !" + String.valueOf(locationID);
-	}
-	public static long systemID(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			return location.getSystemID();
-		}
-		if (parentAsset != null) {
-			return parentAsset.getSolarSystemID();
-		}
-		return -locationID;
-	}
-
-	public static long regionID(final long locationID, final Asset parentAsset, final Map<Long, Location> locations) {
-		Location location = location(locationID, locations);
-		if (location != null) {
-			return location.getRegionID();
-		}
-		if (parentAsset != null) {
-			return parentAsset.getRegionID();
-		}
-		return -locationID;
-	}
-
-	public static float volume(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getVolume();
-		}
-		return -1;
-	}
-
-	public static String typeName(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getName();
-		}
-		return "!" + String.valueOf(typeID);
-	}
-
-	public static String ownerName(final long ownerID, final Map<Long, String> owners) {
-		if (ownerID == 0) { //0 (zero) is valid, but, should return empty string
-			return "";
-		}
-		String owner = owners.get(ownerID);
-		if (owner != null) {
-			return owner;
-		}
-		return "!" + String.valueOf(ownerID);
-	}
-
-	public static double priceBase(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getPrice();
-		}
-		return -1;
-	}
-
-	public static String category(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getCategory();
-		}
-		return "";
-	}
-
-	public static String group(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getGroup();
-		}
-		return "";
-	}
-
-	public static int meta(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getMeta();
-		}
-		return 0;
-	}
-	public static String tech(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.getTech();
-		}
-		return "";
-	}
-	public static boolean piMaterial(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.isPiMaterial();
-		}
-		return false;
-	}
-
-	public static boolean marketGroup(final int typeID, final Map<Integer, Item> items) {
-		Item item = items.get(typeID);
-		if (item != null) {
-			return item.isMarketGroup();
-		}
-		return false;
-	}
-
-	public static List<Asset> parents(final Asset parentEveAsset) {
-		List<Asset> parents;
-		if (parentEveAsset != null) {
-			parents = new ArrayList<Asset>(parentEveAsset.getParents());
-			parents.add(parentEveAsset);
-		} else {
-			parents = new ArrayList<Asset>();
-		}
-		
-		return parents;
-	}
-
-	public static void addLocation(final ApiStation station, final Map<Long, Location> locations) {
-		long regionID = ApiIdConverter.location(station.getSolarSystemID(), locations).getRegionID();
-		String security = ApiIdConverter.security(station.getSolarSystemID(), null, locations);
-		Location location = new Location(station.getStationID(), station.getStationName(), regionID, security, station.getSolarSystemID());
-		locations.put(location.getLocationID(), location);
+	public static void addLocation(final ApiStation station) {
+		Location system = getLocation(station.getSolarSystemID());
+		Location location = new Location(station.getStationID(),
+				station.getStationName(),
+				system.getSystemID(),
+				system.getSystem(),
+				system.getRegionID(),
+				system.getRegion(),
+				system.getSecurity());
+		StaticData.get().getLocations().put(location.getLocationID(), location);
 	}
 }

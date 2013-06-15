@@ -21,18 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
-import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.data.types.BlueprintType;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class MenuData<T> {
@@ -45,6 +45,9 @@ public class MenuData<T> {
 	private final Set<String> regions = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+	private final List<Asset> assets = new ArrayList<Asset>();
+
+	public MenuData() { }
 
 	public MenuData(final List<T> items) {
 		if (items == null) { //Skip null
@@ -56,159 +59,58 @@ public class MenuData<T> {
 				continue;
 			}
 
-			if (t instanceof Material) {
-				Material material = (Material) t;
-				add(material.isMarketGroup(), //Market Group
-						material.getTypeName(), //Type Name
-						material.getTypeID(), //typeID
-						material.getStation(), //Station or Location Name
-						material.getSystem(), //System Name
-						material.getRegion(), //Region Name
-						material.getPrice(), //Price
-						false //Blueprint Copy
-						);
-				continue; //done
+			Location location = null;
+			if (t instanceof LocationType) {
+				LocationType type = (LocationType) t;
+				location = type.getLocation();
 			}
-			if (t instanceof Module) {
-				Module module = (Module) t;
-				add(module.isMarketGroup(), //Market Group
-						module.getTypeName(), //Type Name
-						module.getTypeID(), //typeID
-						module.getLocation(), //Station or Location Name
-						module.getSystem(), //System Name
-						module.getRegion(), //Region Name
-						module.getPrice(), //Price
-						false //Blueprint Copy
-						);
-				continue; //done
+
+			Item itemType = null;
+			if (t instanceof ItemType) {
+				ItemType type = (ItemType) t;
+				itemType = type.getItem();
 			}
-			if (t instanceof MarketOrder) {
-				MarketOrder marketOrder = (MarketOrder) t;
-				add(true, //Market Group
-						marketOrder.getName(), //Type Name
-						marketOrder.getTypeID(), //typeID
-						marketOrder.getLocation(), //Station or Location Name
-						marketOrder.getSystem(), //System Name
-						marketOrder.getRegion(), //Region Name
-						//TODO - can not edit price from Orders Tool
-						null, //Price 
-						false //Blueprint Copy
-						);
-				continue; //done
+
+			BlueprintType blueprint = null;
+			if (t instanceof BlueprintType) {
+				blueprint = (BlueprintType) t;
 			}
-			if (t instanceof IndustryJob) {
-				IndustryJob industryJob = (IndustryJob) t;
-				add(true, //Market Group
-						industryJob.getName(), //Type Name
-						industryJob.getInstalledItemTypeID(), //typeID
-						industryJob.getLocation(), //Station or Location Name
-						industryJob.getSystem(), //System Name
-						industryJob.getRegion(), //Region Name
-						//TODO - can not edit price from Jobs Tool
-						null, //Price 
-						industryJob.getInstalledItemCopy() > 0 //Blueprint Copy
-						);
-				continue; //done
+
+			Double price = null;
+			if (t instanceof PriceType) {
+				PriceType priceType = (PriceType) t;
+				price = priceType.getDynamicPrice();
 			}
-			if (t instanceof Asset) {
-				Asset eveAsset = (Asset) t;
-				add(eveAsset.isMarketGroup(), //Market Group
-						eveAsset.getTypeName(), //Type Name
-						eveAsset.getTypeID(), //typeID
-						eveAsset.getLocation(), //Station or Location Name
-						eveAsset.getSystem(), //System Name
-						eveAsset.getRegion(), //Region Name
-						eveAsset.getPrice(), //Price 
-						(eveAsset.isBlueprint() && !eveAsset.isBpo()) //Blueprint Copy
-						);
-				continue; //done
-			}
-			if (t instanceof Overview) {
-				Overview overview = (Overview) t;
-				add(false, //Market Group
-						null, //Type Name
-						null, //typeID
-						overview.isStation() && !overview.isGroup() ? overview.getName() : null, //Station or Location Name
-						!overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, //System Name
-						!overview.isGroup() ? overview.getRegion() : null, //Region Name
-						null, //Price 
-						false //Blueprint Copy
-						);
-				continue; //done
-			}
+
 			if (t instanceof Item) {
 				Item item = (Item) t;
-				add(item.isMarketGroup(), //Market Group
-						item.getName(), //Type Name
-						item.getTypeID(), //typeID
-						null, //Station or Location Name
-						null, //System Name
-						null, //Region Name
-						(double) item.getPrice(), //Price 
-						false //Blueprint Copy
-						);
-				continue; //done
+				if (items.size() == 1) { //Always zero for multiple items
+					price = ApiIdConverter.getPrice(item.getTypeID(), false);
+				}
+				if (price == null || price == 0) {
+					price = (double) item.getPriceBase();
+				}
 			}
-			if (t instanceof StockpileItem) { //
-				StockpileItem item = (StockpileItem) t;
-				add(item.isMarketGroup(), //Market Group
-						(t instanceof StockpileTotal) ? null : item.getTypeName(), //Type Name
-						(t instanceof StockpileTotal) ? null : item.getTypeID(), //typeID
-						item.getStockpile().getLocation(), //Station or Location Name
-						item.getStockpile().getSystem(), //System Name
-						item.getStockpile().getRegion(), //Region Name
-						item.getPrice(), //Price 
-						item.isBPC() //Blueprint Copy
-						);
-				continue; //done
-			}
-			if (t instanceof ReprocessedInterface) { //
-				ReprocessedInterface item = (ReprocessedInterface) t;
-				add(item.isMarketGroup(), //Market Group
-						item.getName(), //Type Name
-						item.getTypeID(), //typeID
-						null, //Station or Location Name
-						null, //System Name
-						null, //Region Name
-						item.getPrice(), //Price 
-						false //Blueprint Copy
-						);
-				continue; //done
-			}
-			if (t instanceof ContractItem) { //
-				ContractItem item = (ContractItem) t;
-				add(item.isMarketGroup(), //Market Group
-						item.getContract().isCourier() ? null : item.getName(), //Type Name
-						item.getContract().isCourier() ? null : item.getTypeID(), //typeID
-						item.getContract().getStartStation(), //Station or Location Name
-						item.getContract().getSystem(), //System Name
-						item.getContract().getRegion(), //Region Name
-						//TODO - can not edit price from Contract
-						null, //Price 
-						false //Blueprint Copy
-						);
-				continue; //done
-			}
+
+			add(itemType, location, price, blueprint);
 		}
 	}
 
-	private void add(final boolean marketGroup, final String typeName, final Integer typeID, final String station, final String system, final String region, final Double price, final boolean copy) {
-		//Type Name
-		if (typeName != null) {
-			typeNames.add(typeName);
-		}
-
-		//TypeID
-		if (typeID != null) {
+	private void add(final Item item, final Location location, final Double price, final BlueprintType blueprintType) {
+		if (item != null && !item.isEmpty()) {
+			//Type Name
+			typeNames.add(item.getTypeName());
 			//TypeID
+			int typeID = item.getTypeID();
 			typeIDs.add(typeID);
+			
 			//Market TypeID
-			if (marketGroup) {
+			if (item.isMarketGroup()) {
 				marketTypeIDs.add(typeID);
 			}
 			//Blueprint TypeID
 			int blueprintTypeID;
-			if (copy) {
+			if (blueprintType != null && blueprintType.isBPC()) {
 				blueprintTypeID = -typeID;
 			} else {
 				blueprintTypeID = typeID;
@@ -220,20 +122,16 @@ public class MenuData<T> {
 			}
 		}
 		//Locations
-		//Station (can be a system or a region)
-		if (station != null && system != null && region != null
-				&& !station.equals(system) //Not system
-				&& !station.equals(region) //Not region
-				) {
-			stations.add(station);
-		}
-		//System
-		if (system != null) {
-			systems.add(system);
-		}
-		//Region
-		if (region != null) {
-			regions.add(region);
+		if (location != null && !location.isEmpty()) {
+			if (location.isStation()) {
+				stations.add(location.getStation());
+			}
+			if (location.isStation() || location.isSystem()) {
+				systems.add(location.getSystem());
+			}
+			if (location.isStation() || location.isSystem() || location.isRegion()) {
+				regions.add(location.getRegion());
+			}
 		}
 	}
 
@@ -267,5 +165,14 @@ public class MenuData<T> {
 
 	public Set<Integer> getBlueprintTypeIDs() {
 		return blueprintTypeIDs;
+	}
+
+	public void setAssets(List<Asset> assets) {
+		this.assets.clear();
+		this.assets.addAll(assets);
+	}
+
+	public List<Asset> getAssets() {
+		return assets;
 	}
 }

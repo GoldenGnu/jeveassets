@@ -29,9 +29,7 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 public class ReprocessedTotal implements ReprocessedInterface {
 
-	private final int typeID; //TypeID : int
-	private final boolean marketGroup;
-	private final String name;
+	private final Item item;
 	private final double sellPrice;
 
 	//Calculated values
@@ -42,17 +40,8 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	private double valueSkill = 0;
 	private final List<Double> prices = new ArrayList<Double>();
 
-	public ReprocessedTotal(int typeID, boolean marketGroup, String name, double sellPrice) {
-		this.typeID = typeID;
-		this.marketGroup = marketGroup;
-		this.name = name;
-		this.sellPrice = sellPrice;
-	}
-
-	public ReprocessedTotal(final Item item, final double sellPrice) {
-		this.typeID = item.getTypeID();
-		this.name = item.getName();
-		this.marketGroup = item.isMarketGroup();
+	public ReprocessedTotal(Item item, double sellPrice) {
+		this.item = item;
 		this.sellPrice = sellPrice;
 	}
 
@@ -62,7 +51,7 @@ public class ReprocessedTotal implements ReprocessedInterface {
 		quantitySkill = quantitySkill + item.getQuantitySkill();
 		valueMax = valueMax + item.getValueMax();
 		valueSkill = valueSkill + item.getValueSkill();
-		prices.add(item.getPrice());
+		prices.add(item.getDynamicPrice());
 	}
 
 	public double getSellPrice() {
@@ -70,7 +59,7 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	public String getTypeName() {
-		return name;
+		return item.getTypeName();
 	}
 
 	public double getValue() {
@@ -90,6 +79,11 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	@Override
+	public Item getItem() {
+		return item;
+	}
+
+	@Override
 	public String getName() {
 		return TabsReprocessed.get().total();
 	}
@@ -102,17 +96,15 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	@Override
 	public long getQuantityMax() {
 		return quantityMax;
-		//return quantityMax / portionSize;
 	}
 
 	@Override
 	public long getQuantitySkill() {
 		return quantitySkill;
-		//return quantitySkill / portionSize;
 	}
 
 	@Override
-	public double getPrice() {
+	public Double getDynamicPrice() {
 		double total = 0;
 		for (double price : prices) {
 			total = total + price;
@@ -136,16 +128,6 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	@Override
-	public int getTypeID() {
-		return typeID;
-	}
-
-	@Override
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	@Override
 	public boolean isTotal() {
 		return true;
 	}
@@ -156,14 +138,25 @@ public class ReprocessedTotal implements ReprocessedInterface {
 	}
 
 	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getTotal().getTypeName());
+		builder.append("\t");
+		builder.append(getTotal().getSellPrice());
+		builder.append("\t");
+		builder.append(getTotal().getValue());
+		return builder.toString();
+	}
+
+	@Override
 	public int compareTo(final ReprocessedInterface o) {
 		return 0;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 5;
-		hash = 17 * hash + this.typeID;
+		int hash = 7;
+		hash = 97 * hash + (this.item != null ? this.item.hashCode() : 0);
 		return hash;
 	}
 
@@ -176,7 +169,7 @@ public class ReprocessedTotal implements ReprocessedInterface {
 			return false;
 		}
 		final ReprocessedTotal other = (ReprocessedTotal) obj;
-		if (this.typeID != other.typeID) {
+		if (this.item != other.item && (this.item == null || !this.item.equals(other.item))) {
 			return false;
 		}
 		return true;

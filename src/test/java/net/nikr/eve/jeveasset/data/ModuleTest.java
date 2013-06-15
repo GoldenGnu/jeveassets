@@ -53,8 +53,7 @@ public class ModuleTest {
 	 */
 	@Test
 	public void testFlags() {
-		ModuleSettings settings = new ModuleSettings();
-		List<ItemFlag> flags = new ArrayList<ItemFlag>(settings.getItemFlags().values());
+		List<ItemFlag> flags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
 
 		for (FlagType type : FlagType.values()) {
 			if (type == FlagType.TOTAL_VALUE) {

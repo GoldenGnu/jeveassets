@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -38,19 +39,19 @@ public final class ConquerableStationsWriter extends AbstractXmlWriter {
 
 	private ConquerableStationsWriter() { }
 
-	public static void save(final Settings settings) {
+	public static void save() {
 		ConquerableStationsWriter writer = new ConquerableStationsWriter();
-		writer.write(settings);
+		writer.write();
 	}
 
-	private void write(final Settings settings) {
+	private void write() {
 		Document xmldoc = null;
 		try {
 			xmldoc = getXmlDocument("stations");
 		} catch (XmlException ex) {
 			LOG.error("Conquerable stations not saved " + ex.getMessage(), ex);
 		}
-		writeConquerableStations(xmldoc, settings.getConquerableStations());
+		writeConquerableStations(xmldoc, StaticData.get().getConquerableStations());
 
 		//xmldoc.normalizeDocument();
 		try {

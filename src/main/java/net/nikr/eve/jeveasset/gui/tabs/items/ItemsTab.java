@@ -22,8 +22,8 @@
 package net.nikr.eve.jeveasset.gui.tabs.items;
 
 import ca.odell.glazedlists.*;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,32 +31,36 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab {
+public class ItemsTab extends JMainTab implements TableMenu<Item> {
 
 	private JAutoColumnTable jTable;
 
 	//Table
 	private ItemsFilterControl filterControl;
 	private EnumTableFormatAdaptor<ItemTableFormat, Item> tableFormat;
-	private EventTableModel<Item> tableModel;
+	private DefaultEventTableModel<Item> tableModel;
 	private FilterList<Item> filterList;
 	private EventList<Item> eventList;
-	private EventSelectionModel<Item> selectionModel;
+	private DefaultEventSelectionModel<Item> selectionModel;
 
 	public static final String NAME = "items"; //Not to be changed!
 
@@ -72,14 +76,14 @@ public class ItemsTab extends JMainTab {
 		//Sorting (per column)
 		SortedList<Item> sortedList = new SortedList<Item>(filterList);
 		//Table Model
-		tableModel = new EventTableModel<Item>(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Item>(sortedList);
+		selectionModel = EventModels.createSelectionModel(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -92,8 +96,11 @@ public class ItemsTab extends JMainTab {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -109,47 +116,38 @@ public class ItemsTab extends JMainTab {
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
-			eventList.addAll(program.getSettings().getItems().values());
+			eventList.addAll(StaticData.get().getItems().values());
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
 	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<Item> menuData = new MenuData<Item>(selectionModel.getSelected());
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<Item>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<Item>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<Item>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<Item>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<Item>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
+	public MenuData<Item> getMenuData() {
+		return new MenuData<Item>(selectionModel.getSelected());
 	}
 
 	@Override
-	public void updateData() {
-		updateTableMenu(program.getMainWindow().getMenu().getTableMenu());
+	public JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
+	@Override
+	public JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
+		//FIXME - make info menu for Items Tool
+		//JMenuInfo.items(...);
+	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
+
+	@Override
+	public void updateData() { }
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 

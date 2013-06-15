@@ -25,50 +25,52 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
-public class JMenuReprocessed<T> extends JMenu implements ActionListener {
+public class JMenuReprocessed<T> extends JAutoMenu<T> implements ActionListener {
 
 	private static final String ACTION_ADD = "ACTION_ADD";
 	private static final String ACTION_SET = "ACTION_SET";
 
-	private Program program;
-	private Set<Integer> items = new HashSet<Integer>();
+	private final JMenuItem jAdd;
+	private final JMenuItem jSet;
+	private final Set<Integer> items = new HashSet<Integer>();
 
-	public JMenuReprocessed(final Program program, final MenuData<T> menuData) {
-		super(TabsReprocessed.get().title());
+	public JMenuReprocessed(final Program program) {
+		super(TabsReprocessed.get().title(), program);
 		setIcon(Images.TOOL_REPROCESSED.getIcon());
 
-		this.program = program;
+		jAdd = new JMenuItem(TabsReprocessed.get().add());
+		jAdd.setIcon(Images.EDIT_ADD.getIcon());
+		jAdd.setActionCommand(ACTION_ADD);
+		jAdd.addActionListener(this);
+		add(jAdd);
 
+		jSet = new JMenuItem(TabsReprocessed.get().set());
+		jSet.setIcon(Images.EDIT_SET.getIcon());
+		jSet.setActionCommand(ACTION_SET);
+		jSet.addActionListener(this);
+		add(jSet);
+	}
+
+	@Override
+	public void setMenuData(MenuData<T> menuData) {
+		items.clear();
 		for (int typeID : menuData.getTypeIDs()) {
-			Item item = program.getSettings().getItems().get(typeID);
+			Item item = StaticData.get().getItems().get(typeID);
 			if (item != null && !item.getReprocessedMaterial().isEmpty()) {
 				items.add(typeID);
 			}
 		}
-
-		JMenuItem jMenuItem;
-
-		jMenuItem = new JMenuItem(TabsReprocessed.get().add());
-		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
-		jMenuItem.setEnabled(!items.isEmpty());
-		jMenuItem.setActionCommand(ACTION_ADD);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
-
-		jMenuItem = new JMenuItem(TabsReprocessed.get().set());
-		jMenuItem.setIcon(Images.EDIT_SET.getIcon());
-		jMenuItem.setEnabled(!items.isEmpty());
-		jMenuItem.setActionCommand(ACTION_SET);
-		jMenuItem.addActionListener(this);
-		add(jMenuItem);
+		jAdd.setEnabled(!items.isEmpty());
+		jSet.setEnabled(!items.isEmpty());
 	}
 
 	@Override
@@ -82,6 +84,4 @@ public class JMenuReprocessed<T> extends JMenu implements ActionListener {
 			program.getReprocessedTab().show();
 		}
 	}
-	
-	
 }

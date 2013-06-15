@@ -21,25 +21,20 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -158,6 +153,40 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		);
 	}
 
+	@Override
+	public void updateData() {
+		calcTotal();
+		jCharacters.removeAllItems();
+		List<String> characterNames = new ArrayList<String>(characters.keySet());
+		Collections.sort(characterNames, new CaseInsensitiveComparator());
+		for (String owner : characterNames) {
+			jCharacters.addItem(owner);
+		}
+		if (jCharacters.getModel().getSize() > 0) {
+			jCharacters.setEnabled(true);
+		} else {
+			jCharacters.addItem(TabsValues.get().oldNoCharacter());
+			jCharacters.setEnabled(false);
+		}
+		jCharacters.setSelectedIndex(0);
+
+		jCorporations.removeAllItems();
+		List<String> corporationNames = new ArrayList<String>(corporations.keySet());
+		Collections.sort(corporationNames, new CaseInsensitiveComparator());
+		for (String corp : corporationNames) {
+			jCorporations.addItem(corp);
+		}
+		if (jCorporations.getModel().getSize() > 0) {
+			jCorporations.setEnabled(true);
+		} else {
+			jCorporations.addItem(TabsValues.get().oldNoCorporation());
+			jCorporations.setEnabled(false);
+		}
+		jCorporations.setSelectedIndex(0);
+
+		setData(jTotal, total);
+	}
+
 	private Value getValue(String key, boolean corporation) {
 		Map<String, Value> values;
 		if (corporation) {
@@ -177,8 +206,7 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = new Value(TabsValues.get().grandTotal());
-		Set<String> uniqueOwners = new HashSet<String>();
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -197,38 +225,26 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 			value.addAssets(asset);
 			total.addAssets(asset);
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowAssets()) { //Ignore hidden owners
-					continue;
-				}
-				String key = owner.getName();
-				if (uniqueOwners.contains(key)) {
-					continue;
-				} else {
-					uniqueOwners.add(key);
-				}
-				Value value = getValue(owner.getName(), owner.isCorporation());
-				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					value.addBalance(accountBalance.getBalance());
-					total.addBalance(accountBalance.getBalance());
-				}
-				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
-					if (apiMarketOrder.getOrderState() == 0) {
-						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							value.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							total.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-						} else { //Buy Orders
-							value.addEscrows(apiMarketOrder.getEscrow());
-							value.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							total.addEscrows(apiMarketOrder.getEscrow());
-							total.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-						}
-					}
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			Value value = getValue(marketOrder.getOwner(), marketOrder.isCorporation());
+			if (marketOrder.getOrderState() == 0) {
+				if (marketOrder.getBid() < 1) { //Sell Orders
+					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+				} else { //Buy Orders
+					value.addEscrows(marketOrder.getEscrow());
+					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					total.addEscrows(marketOrder.getEscrow());
+					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
 			}
 		}
-		return !program.getEveAssetEventList().isEmpty();
+		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+			Value value = getValue(accountBalance.getOwner(), accountBalance.isCorporation());
+			value.addBalance(accountBalance.getBalance());
+			total.addBalance(accountBalance.getBalance());
+		}
+		return !program.getAssetEventList().isEmpty();
 	}
 
 	private void setData(JEditorPane jEditorPane, Value value) {
@@ -293,49 +309,6 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 			setData(jCorporation, corporations.get(s));
 		}
 	}
-
-	@Override
-	public void updateTableMenu(final JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
-	}
-
-	@Override
-	public void updateData() {
-		calcTotal();
-		jCharacters.removeAllItems();
-		List<String> characterNames = new ArrayList<String>(characters.keySet());
-		Collections.sort(characterNames, new CaseInsensitiveComparator());
-		for (String owner : characterNames) {
-			jCharacters.addItem(owner);
-		}
-		if (jCharacters.getModel().getSize() > 0) {
-			jCharacters.setEnabled(true);
-		} else {
-			jCharacters.addItem(TabsValues.get().oldNoCharacter());
-			jCharacters.setEnabled(false);
-		}
-		jCharacters.setSelectedIndex(0);
-
-		jCorporations.removeAllItems();
-		List<String> corporationNames = new ArrayList<String>(corporations.keySet());
-		Collections.sort(corporationNames, new CaseInsensitiveComparator());
-		for (String corp : corporationNames) {
-			jCorporations.addItem(corp);
-		}
-		if (jCorporations.getModel().getSize() > 0) {
-			jCorporations.setEnabled(true);
-		} else {
-			jCorporations.addItem(TabsValues.get().oldNoCorporation());
-			jCorporations.setEnabled(false);
-		}
-		jCorporations.setSelectedIndex(0);
-
-		setData(jTotal, total);
-	}
-
-	@Override
-	protected void showTablePopupMenu(final MouseEvent e) { }
 
 	private class Output {
 		private String output;

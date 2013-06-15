@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
@@ -150,11 +151,11 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	}
 
 	private void setValuesFromWindow() {
-		jWidth.setText(String.valueOf(program.getSettings().getWindowSize().width));
-		jHeight.setText(String.valueOf(program.getSettings().getWindowSize().height));
-		jX.setText(String.valueOf(program.getSettings().getWindowLocation().x));
-		jY.setText(String.valueOf(program.getSettings().getWindowLocation().y));
-		jMaximized.setSelected(program.getSettings().isWindowMaximized());
+		jWidth.setText(String.valueOf(Settings.get().getWindowSize().width));
+		jHeight.setText(String.valueOf(Settings.get().getWindowSize().height));
+		jX.setText(String.valueOf(Settings.get().getWindowLocation().x));
+		jY.setText(String.valueOf(Settings.get().getWindowLocation().y));
+		jMaximized.setSelected(Settings.get().isWindowMaximized());
 	}
 
 	private int validate(final String s) {
@@ -182,7 +183,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 	@Override
 	public boolean save() {
 		if (jAutoSave.isSelected()) {
-			program.getSettings().setWindowAutoSave(true);
+			Settings.get().setWindowAutoSave(true);
 		} else {
 			int width = validate(jWidth.getText());
 			int height = validate(jHeight.getText());
@@ -191,31 +192,31 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			boolean maximized = jMaximized.isSelected();
 			Dimension d = new Dimension(width, height);
 			Point p = new Point(x, y);
-			boolean first = program.getSettings().isWindowAutoSave();
-			program.getSettings().setWindowAutoSave(false);
+			boolean first = Settings.get().isWindowAutoSave();
+			Settings.get().setWindowAutoSave(false);
 
 			//if changed...
-			if ((program.getSettings().getWindowSize().height != d.height)
-					|| (program.getSettings().getWindowSize().width != d.width)
-					|| (program.getSettings().getWindowLocation().x != p.x)
-					|| (program.getSettings().getWindowLocation().y != p.y)
-					|| (program.getSettings().isWindowMaximized() != maximized)
+			if ((Settings.get().getWindowSize().height != d.height)
+					|| (Settings.get().getWindowSize().width != d.width)
+					|| (Settings.get().getWindowLocation().x != p.x)
+					|| (Settings.get().getWindowLocation().y != p.y)
+					|| (Settings.get().isWindowMaximized() != maximized)
 					|| first) {
-				program.getSettings().setWindowSize(d);
-				program.getSettings().setWindowLocation(p);
-				program.getSettings().setWindowMaximized(maximized);
+				Settings.get().setWindowSize(d);
+				Settings.get().setWindowLocation(p);
+				Settings.get().setWindowMaximized(maximized);
 				program.getMainWindow().setSizeAndLocation(d, p, maximized);
 			}
 		}
 		boolean alwaysOnTop = jAlwaysOnTop.isSelected();
-		program.getSettings().setWindowAlwaysOnTop(alwaysOnTop);
+		Settings.get().setWindowAlwaysOnTop(alwaysOnTop);
 		program.getMainWindow().getFrame().setAlwaysOnTop(alwaysOnTop);
 		return false;
 	}
 
 	@Override
 	public void load() {
-		if (program.getSettings().isWindowAutoSave()) {
+		if (Settings.get().isWindowAutoSave()) {
 			jAutoSave.setSelected(true);
 			setValuesFromSettings();
 			setInputEnabled(false);
@@ -224,7 +225,7 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 			setValuesFromWindow();
 			setInputEnabled(true);
 		}
-		jAlwaysOnTop.setSelected(program.getSettings().isWindowAlwaysOnTop());
+		jAlwaysOnTop.setSelected(Settings.get().isWindowAlwaysOnTop());
 	}
 
 	@Override

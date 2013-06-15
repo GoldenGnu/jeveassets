@@ -23,13 +23,12 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.StaticData;
 import static org.junit.Assert.*;
 import org.junit.*;
 
 
 public class ApiIdConverterTest {
-
-	private MockSettings settings = new MockSettings();
 
 	public ApiIdConverterTest() {
 	}
@@ -55,37 +54,53 @@ public class ApiIdConverterTest {
 	 */
 	@Test
 	public void testLocation() {
-		for (Location o1 : settings.getLocations().values()) {
-		//LocationID
-			//Name - region | system | station
-			assertEquals(o1.getName(), ApiIdConverter.locationName(o1.getLocationID(), null, settings.getLocations()));
-			//System
-			assertEquals(settings.getLocations().get(o1.getSystemID()).getName(), ApiIdConverter.systemName(o1.getLocationID(), null, settings.getLocations()));
-			//System ID
-			assertEquals(settings.getLocations().get(o1.getSystemID()).getSystemID(), ApiIdConverter.systemID(o1.getLocationID(), null, settings.getLocations()));
-			//Region
-			assertEquals(settings.getLocations().get(o1.getRegionID()).getName(), ApiIdConverter.regionName(o1.getLocationID(), null, settings.getLocations()));
-		//SystemID
-			//Name - region | system | station
-			//assertEquals(o1.getName(), ApiIdConverter.locationName(o1.getLocationID(), null, settings.getSystemID()));
-			//System
-			assertEquals(settings.getLocations().get(o1.getSystemID()).getName(), ApiIdConverter.systemName(o1.getSystemID(), null, settings.getLocations()));
-			//System ID
-			assertEquals(settings.getLocations().get(o1.getSystemID()).getSystemID(), ApiIdConverter.systemID(o1.getSystemID(), null, settings.getLocations()));
-			//Region
-			assertEquals(settings.getLocations().get(o1.getRegionID()).getName(), ApiIdConverter.regionName(o1.getSystemID(), null, settings.getLocations()));
-		//RegionID
-			//Name - region | system | station
-			//assertEquals(o1.getName(), ApiIdConverter.locationName(o1.getRegionID(), null, settings.getLocations()));
-			//System
-			//assertEquals(settings.getLocations().get(o1.getSystemID()).getName(), ApiIdConverter.systemName(o1.getRegionID(), null, settings.getLocations()));
-			//System ID
-			//assertEquals(settings.getLocations().get(o1.getSystemID()).getSystemID(), ApiIdConverter.systemID(o1.getRegionID(), null, settings.getLocations()));
-			//Region
-			assertEquals(settings.getLocations().get(o1.getRegionID()).getName(), ApiIdConverter.regionName(o1.getRegionID(), null, settings.getLocations()));
+		for (Location o1 : StaticData.get().getLocations().values()) {
+			Location location = ApiIdConverter.getLocation(o1.getLocationID());
+			assertEquals(o1.getLocation(), location.getLocation());
+			assertEquals(o1.getLocationID(), location.getLocationID());
+			if (o1.isRegion()) {
+				assertEquals(o1.getStation(), location.getStation());
+				assertEquals(o1.getStationID(), location.getStationID());
+				assertEquals(o1.getStation(), "");
+				assertEquals(o1.getStationID(), 0);
+				assertEquals(o1.getSystem(), location.getSystem());
+				assertEquals(o1.getSystemID(), location.getSystemID());
+				assertEquals(o1.getSystem(), "");
+				assertEquals(o1.getSystemID(), 0);
+				assertEquals(o1.getRegion(), location.getRegion());
+				assertEquals(o1.getRegionID(), location.getRegionID());
+				assertFalse(o1.getRegion().equals(""));
+				assertFalse(o1.getRegionID() == 0);
+			} else if (o1.isSystem()) {
+				assertEquals(o1.getStation(), location.getStation());
+				assertEquals(o1.getStationID(), location.getStationID());
+				assertEquals(o1.getStation(), "");
+				assertEquals(o1.getStationID(), 0);
+				assertEquals(o1.getSystem(), location.getSystem());
+				assertEquals(o1.getSystemID(), location.getSystemID());
+				assertFalse(o1.getSystem().equals(""));
+				assertFalse(o1.getSystemID() == 0);
+				assertEquals(o1.getRegion(), location.getRegion());
+				assertEquals(o1.getRegionID(), location.getRegionID());
+				assertFalse(o1.getRegion().equals(""));
+				assertFalse(o1.getRegionID() == 0);
+			} else if (o1.isStation()) {
+				assertEquals(o1.getStation(), location.getStation());
+				assertEquals(o1.getStationID(), location.getStationID());
+				assertFalse(o1.getStation().equals(""));
+				assertFalse(o1.getStationID() == 0);
+				assertEquals(o1.getSystem(), location.getSystem());
+				assertEquals(o1.getSystemID(), location.getSystemID());
+				assertFalse(o1.getSystem().equals(""));
+				assertFalse(o1.getSystemID() == 0);
+				assertEquals(o1.getRegion(), location.getRegion());
+				assertEquals(o1.getRegionID(), location.getRegionID());
+				assertFalse(o1.getRegion().equals(""));
+				assertFalse(o1.getRegionID() == 0);
+			}
 		}
-		for (ApiStation apiStation : settings.getConquerableStations().values()) {
-			String system = ApiIdConverter.systemName(apiStation.getSolarSystemID(), null, settings.getLocations());
+		for (ApiStation apiStation : StaticData.get().getConquerableStations().values()) {
+			String system = ApiIdConverter.getLocation(apiStation.getSolarSystemID()).getSystem();
 			assertTrue("Station name: " + apiStation.getStationName() + " System name: " + system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
 		}
 	}

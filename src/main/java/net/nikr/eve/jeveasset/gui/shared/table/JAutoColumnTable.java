@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -40,6 +40,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
@@ -92,20 +93,24 @@ public class JAutoColumnTable extends JTable {
 	@Override
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
-		boolean isSelected = isCellSelected(row, column);
 
 		if (component instanceof JPanel) { //Ignore Separator Panels
 			return component;
 		}
 
 		//Default Colors
-		component.setForeground(isSelected ? this.getSelectionForeground() : this.getForeground());
-		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
-
-		//Highlight selected row
-		if (this.isRowSelected(row) && !isSelected && program.getSettings().isHighlightSelectedRows()) {
-			component.setBackground(new Color(220, 240, 255));
-			return component;
+		if (isCellSelected(row, column)) {
+			component.setForeground(this.getSelectionForeground());
+			component.setBackground(this.getSelectionBackground());
+		} else {
+			component.setForeground(this.getForeground());
+			//Highlight selected row
+			if (Settings.get().isHighlightSelectedRows() && this.isRowSelected(row)) {
+				component.setBackground(new Color(220, 240, 255));
+				return component;
+			} else {
+				component.setBackground(this.getBackground());
+			}
 		}
 		return component;
 	}
@@ -140,9 +145,6 @@ public class JAutoColumnTable extends JTable {
 			return;
 		}
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
-		if (resizeMode == null && tableFormat != null) {
-			resizeMode = tableFormat.getResizeMode();
-		}
 		loadingWidth = true;
 		if (tableFormat == null || tableFormat.getResizeMode() == ResizeMode.TEXT) {
 			resizeColumnsText();
@@ -168,10 +170,10 @@ public class JAutoColumnTable extends JTable {
 		return this;
 	}
 
-	private EventTableModel<?> getEventTableModel() {
+	private DefaultEventTableModel<?> getEventTableModel() {
 		TableModel model = this.getModel();
-		if (model instanceof EventTableModel) {
-			return (EventTableModel) model;
+		if (model instanceof DefaultEventTableModel) {
+			return (DefaultEventTableModel) model;
 		} else {
 			return null;
 		}
@@ -254,6 +256,7 @@ public class JAutoColumnTable extends JTable {
 		size = 0;
 		if (resizeMode != ResizeMode.TEXT) {
 			resizeMode = ResizeMode.TEXT;
+			this.getTableHeader().setResizingAllowed(false);
 		}
 		for (int i = 0; i < getColumnCount(); i++) {
 			size = size + resizeColumn(this, getColumnModel().getColumn(i), i);
@@ -264,6 +267,7 @@ public class JAutoColumnTable extends JTable {
 	public void resizeColumnsWindow() {
 		if (resizeMode != ResizeMode.WINDOW) { //Only do once
 			resizeMode = ResizeMode.WINDOW;
+			this.getTableHeader().setResizingAllowed(true);
 			for (int i = 0; i < getColumnCount(); i++) {
 				getColumnModel().getColumn(i).setPreferredWidth(75);
 			}
@@ -271,6 +275,10 @@ public class JAutoColumnTable extends JTable {
 		updateScroll();
 	}
 	public void resizeColumnsNone() {
+		if (resizeMode != ResizeMode.NONE) { //Only do once
+			resizeMode = ResizeMode.NONE;
+			this.getTableHeader().setResizingAllowed(true);
+		}
 		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
 		List<SimpleColumn> columns = tableFormat.getColumns();
 		int i = 0;
@@ -338,9 +346,9 @@ public class JAutoColumnTable extends JTable {
 		return maxWidth; //Return width
 	}
 
-	private void saveColumnsWidth() {
-		if (!loadingWidth) {
-			EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+	protected void saveColumnsWidth() {
+		EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
+		if (!loadingWidth && tableFormat != null && tableFormat.getResizeMode() == ResizeMode.NONE) {
 			List<SimpleColumn> columns = tableFormat.getColumns();
 			int i = 0;
 			for (SimpleColumn column : columns) {
@@ -357,6 +365,7 @@ public class JAutoColumnTable extends JTable {
 			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener {
 
 		private boolean columnMoved = false;
+		private boolean columnResized = false;
 		private int from = 0;
 		private int to = 0;
 		private int rowsLastTime = 0;
@@ -455,7 +464,7 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void columnMarginChanged(final ChangeEvent e) {
-			saveColumnsWidth();
+			columnResized = true;
 		}
 
 		@Override
@@ -467,6 +476,7 @@ public class JAutoColumnTable extends JTable {
 		@Override
 		public void mousePressed(final MouseEvent e) {
 			columnMoved = false;
+			columnResized = false;
 		}
 
 		@Override
@@ -474,12 +484,16 @@ public class JAutoColumnTable extends JTable {
 			if (columnMoved) {
 				columnMoved = false;
 				EnumTableFormatAdaptor<?, ?> tableFormat = getEnumTableFormatAdaptor();
-				EventTableModel<?> model = getEventTableModel();
+				DefaultEventTableModel<?> model = getEventTableModel();
 				if (tableFormat != null && model != null) {
 					tableFormat.moveColumn(from, to);
 					model.fireTableStructureChanged();
 				}
 				autoResizeColumns();
+			}
+			if (columnResized) {
+				columnResized = false;
+				saveColumnsWidth();
 			}
 		}
 

@@ -58,6 +58,7 @@ public enum Images {
 	EDIT_DELETE ("edit_delete.png"),
 	EDIT_ADD ("edit_add.png"),
 	EDIT_SET ("edit_set.png"),
+	EDIT_IMPORT ("edit_import.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
@@ -106,6 +107,7 @@ public enum Images {
 	MISC_COLLAPSED_WHITE ("misc_collapsed_white.png"),
 	MISC_ASSETS_32 ("misc_assets_32.png"),
 	MISC_ASSETS_64 ("misc_assets_64.png"),
+	MISC_DEBUG ("misc_debug.png"),
 
 	SETTINGS_TOOLS ("settings_tools.png"),
 	SETTINGS_PRICE_DATA ("settings_price_data.png"),
@@ -137,6 +139,7 @@ public enum Images {
 	TOOL_TRACKER ("tool_tracker.png"),
 	TOOL_REPROCESSED ("tool_reprocessed.png"),
 	TOOL_CONTRACTS ("tool_contracts.png"),
+	TOOL_WALLET ("tool_wallet.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),
@@ -148,6 +151,7 @@ public enum Images {
 	private static final Logger LOG = LoggerFactory.getLogger(Images.class);
 	private final String filename;   // in kilograms
 	private BufferedImage image = null;
+	private Icon icon;
 
 	Images(final String filename) {
 		this.filename = filename;
@@ -155,7 +159,7 @@ public enum Images {
 
 	public Icon getIcon() {
 		load();
-		return new ImageIcon(image);
+		return icon;
 	}
 
 	public Image getImage() {
@@ -170,6 +174,7 @@ public enum Images {
 	private boolean load() {
 		if (image == null) {
 			image = getBufferedImage(filename);
+			icon = new ImageIcon(image);
 		}
 		return (image != null);
 	}

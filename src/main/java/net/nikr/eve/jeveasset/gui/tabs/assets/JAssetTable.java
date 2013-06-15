@@ -21,20 +21,21 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.assets;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public class JAssetTable extends JAutoColumnTable {
 
-	private EventTableModel<Asset> tableModel;
+	private DefaultEventTableModel<Asset> tableModel;
 
-	public JAssetTable(final Program program, final EventTableModel<Asset> tableModel) {
+	public JAssetTable(final Program program, final DefaultEventTableModel<Asset> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -47,7 +48,7 @@ public class JAssetTable extends JAutoColumnTable {
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		//User set price
-		if (asset.isUserPrice() && columnName.equals(EveAssetTableFormat.PRICE.getColumnName())) {
+		if (asset.isUserPrice() && columnName.equals(AssetTableFormat.PRICE.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {
@@ -56,7 +57,7 @@ public class JAssetTable extends JAutoColumnTable {
 			return component;
 		}
 		//User set name
-		if (asset.isUserName() && columnName.equals(EveAssetTableFormat.NAME.getColumnName())) {
+		if (asset.isUserName() && columnName.equals(AssetTableFormat.NAME.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {
@@ -65,12 +66,12 @@ public class JAssetTable extends JAutoColumnTable {
 			return component;
 		}
 		//Blueprint Original
-		if (asset.isBpo()
-				&& asset.isBlueprint()
-				&& (columnName.equals(EveAssetTableFormat.PRICE.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.PRICE_SELL_MIN.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.PRICE_BUY_MAX.getColumnName())
-				|| columnName.equals(EveAssetTableFormat.NAME.getColumnName()))) {
+		if (asset.isBPO()
+				&& asset.getItem().isBlueprint()
+				&& (columnName.equals(AssetTableFormat.PRICE.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_SELL_MIN.getColumnName())
+				|| columnName.equals(AssetTableFormat.PRICE_BUY_MAX.getColumnName())
+				|| columnName.equals(AssetTableFormat.NAME.getColumnName()))) {
 			if (!isSelected) {
 				component.setBackground(new Color(255, 255, 200));
 			} else {
@@ -80,14 +81,14 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 
 		//Reproccessing Colors
-		if (program.getSettings().isReprocessColors() && !isSelected) {
+		if (Settings.get().isReprocessColors() && !isSelected) {
 			//Zero price (White)
-			if (asset.getPriceReprocessed() == 0 || asset.getPrice() == 0) {
+			if (asset.getPriceReprocessed() == 0 || asset.getDynamicPrice() == 0) {
 				return component;
 			}
 			//Equal price (Yellow)
-			if (asset.getPriceReprocessed() == asset.getPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+			if (asset.getPriceReprocessed() == asset.getDynamicPrice()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 255, 160));
 				} else {
 					component.setBackground(new Color(255, 255, 200));
@@ -95,8 +96,8 @@ public class JAssetTable extends JAutoColumnTable {
 				return component;
 			}
 			//Reprocessed highest (Red)
-			if (asset.getPriceReprocessed() > asset.getPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+			if (asset.getPriceReprocessed() > asset.getDynamicPrice()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(255, 160, 160));
 				} else {
 					component.setBackground(new Color(255, 200, 200));
@@ -104,8 +105,8 @@ public class JAssetTable extends JAutoColumnTable {
 				return component;
 			}
 			//Price highest (Green)
-			if (asset.getPriceReprocessed() < asset.getPrice()) {
-				if (this.isRowSelected(row) && program.getSettings().isHighlightSelectedRows()) {
+			if (asset.getPriceReprocessed() < asset.getDynamicPrice()) {
+				if (this.isRowSelected(row) && Settings.get().isHighlightSelectedRows()) {
 					component.setBackground(new Color(160, 255, 160));
 				} else {
 					component.setBackground(new Color(200, 255, 200));
@@ -115,7 +116,7 @@ public class JAssetTable extends JAutoColumnTable {
 		}
 
 		//Reproccessed is greater then price
-		if (asset.getPriceReprocessed() > asset.getPrice() && columnName.equals(EveAssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
+		if (asset.getPriceReprocessed() > asset.getDynamicPrice() && columnName.equals(AssetTableFormat.PRICE_REPROCESSED.getColumnName())) {
 			if (!isSelected) {
 				component.setBackground(new Color(255, 255, 200));
 			} else {

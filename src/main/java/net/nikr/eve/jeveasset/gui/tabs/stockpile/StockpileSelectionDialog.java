@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -101,7 +102,7 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 
 	@Override
 	protected void windowShown() {
-		jList.setModel(new DataListModel(program.getSettings().getStockpiles()));
+		jList.setModel(new DataListModel(Settings.get().getStockpiles()));
 	}
 
 	@Override

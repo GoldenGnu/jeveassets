@@ -24,11 +24,6 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -38,19 +33,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
-import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.io.local.*;
-import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +63,7 @@ public class Settings {
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
 	private static final String PATH_PROFILES = "profiles";
+	private static final String PATH_DATA = "data";
 
 	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
@@ -86,66 +77,42 @@ public class Settings {
 	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 
-	private static boolean portable = false;
+	private static Settings settings;
 
-	//Data
-	private Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
-	private Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
-	private Map<Long, Location> locations = new HashMap<Long, Location>(); //LocationID : long
-	private List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
-	//XXX - Integer locationID
-	private Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>(); //LocationID : long
-	private Set<Integer> uniqueIds = null; //TypeID : int
-	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
-	private Map<Integer, PriceData> priceDatas; //TypeID : int
-	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
-	private Map<Integer, UserItem<Integer, Double>> userPrices; //TypeID : int
-	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
+	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
+	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
+	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
-	private List<Asset> eventListAssets = null;
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	private List<Account> accounts;
-	private final Map<String, Float> packagedVolume = new HashMap<String, Float>();
-	private Date conquerableStationsNextUpdate;
-	private Map<String, Boolean> flags;
-	private List<Profile> profiles;
+	private Date conquerableStationsNextUpdate = Settings.getNow();;
+	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	private Proxy proxy;
 	private String apiProxy;
-	private Point windowLocation;
-	private Dimension windowSize;
-	private boolean windowMaximized;
-	private boolean windowAutoSave;
-	private boolean windowAlwaysOnTop;
+	private Point windowLocation = new Point(0, 0);;
+	private Dimension windowSize = new Dimension(800, 600);;
+	private boolean windowMaximized = false;
+	private boolean windowAutoSave = true;;
+	private boolean windowAlwaysOnTop = false;
+	private Boolean highlightSelectedRows = null;
+	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
-	private Profile activeProfile;
-	private Map<String, OverviewGroup> overviewGroups;
-	private ReprocessSettings reprocessSettings;
-	private Galaxy model;
-	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
-	private static ExportSettings exportSettings = new ExportSettings();
-	private static boolean filterOnEnter = false;
+	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
+	private ExportSettings exportSettings = new ExportSettings();
+	private boolean filterOnEnter = false;
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
 	private Map<Long, String> owners = new HashMap<Long, String>();
-
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 
-	public Settings() {
-		SplashUpdater.setProgress(5);
-		priceDatas = new HashMap<Integer, PriceData>();
-		accounts = new ArrayList<Account>();
-		profiles = new ArrayList<Profile>();
+	private Settings() {
+		SplashUpdater.setProgress(30);
 
 		//Settings
-		userPrices = new HashMap<Integer, UserItem<Integer, Double>>();
-		userNames = new HashMap<Long, UserItem<Long, String>>();
-		overviewGroups = new HashMap<String, OverviewGroup>();
-
-		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 		flags.put(FLAG_AUTO_UPDATE, true);
@@ -157,63 +124,6 @@ public class Settings {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
-
-		packagedVolume.put("Assault Ship", 2500f);
-		packagedVolume.put("Battlecruiser", 15000f);
-		packagedVolume.put("Battleship", 50000f);
-		packagedVolume.put("Black Ops", 50000f);
-		packagedVolume.put("Capital Industrial Ship", 1000000f);
-		packagedVolume.put("Capsule", 500f);
-		packagedVolume.put("Carrier", 1000000f);
-		packagedVolume.put("Combat Recon Ship", 10000f);
-		packagedVolume.put("Command Ship", 15000f);
-		packagedVolume.put("Covert Ops", 2500f);
-		packagedVolume.put("Cruiser", 10000f);
-		packagedVolume.put("Destroyer", 5000f);
-		packagedVolume.put("Dreadnought", 1000000f);
-		packagedVolume.put("Electronic Attack Ship", 2500f);
-		packagedVolume.put("Elite Battleship", 50000f);
-		packagedVolume.put("Exhumer", 3750f);
-		packagedVolume.put("Force Recon Ship", 10000f);
-		packagedVolume.put("Freighter", 1000000f);
-		packagedVolume.put("Frigate", 2500f);
-		packagedVolume.put("Heavy Assault Ship", 10000f);
-		packagedVolume.put("Heavy Interdictor", 10000f);
-		packagedVolume.put("Industrial", 20000f);
-		packagedVolume.put("Industrial Command Ship", 500000f);
-		packagedVolume.put("Interceptor", 2500f);
-		packagedVolume.put("Interdictor", 5000f);
-		packagedVolume.put("Jump Freighter", 1000000f);
-		packagedVolume.put("Logistics", 10000f);
-		packagedVolume.put("Marauder", 50000f);
-		packagedVolume.put("Mining Barge", 3750f);
-		packagedVolume.put("Prototype Exploration Ship", 500f);
-		packagedVolume.put("Rookie ship", 2500f);
-		packagedVolume.put("Shuttle", 500f);
-		packagedVolume.put("Stealth Bomber", 2500f);
-		packagedVolume.put("Strategic Cruiser", 5000f);
-		packagedVolume.put("Supercarrier", 1000000f);
-		packagedVolume.put("Titan", 10000000f);
-		packagedVolume.put("Transport Ship", 20000f);
-
-		reprocessSettings = new ReprocessSettings();
-
-		activeProfile = new Profile("Default", true, true);
-		profiles.add(activeProfile);
-
-		conquerableStationsNextUpdate = Settings.getNow();
-
-		windowLocation = new Point(0, 0);
-		windowSize = new Dimension(800, 600);
-		windowMaximized = false;
-		windowAutoSave = true;
-		loadSettings();
-		model = new Galaxy(this.locations, this.jumps);
-		constructEveApiConnector();
-	}
-
-	public static ExportSettings getExportSettings() {
-		return exportSettings;
 	}
 
 	/**
@@ -222,336 +132,37 @@ public class Settings {
 	 */
 	protected Settings(final boolean load) { }
 
-	public Galaxy getGalaxyModel() {
-		return model;
+
+	public static Settings get() {
+		load();
+		return settings;
+	}
+
+	public static void load() {
+		if (settings == null) {
+			settings = new Settings();
+			settings.loadSettings();
+			settings.constructEveApiConnector();
+		}
+	}
+
+	public ExportSettings getExportSettings() {
+		return exportSettings;
 	}
 
 	public void saveSettings() {
 		SettingsWriter.save(this);
-		saveAssets();
 	}
 
 	private void loadSettings() {
-	//Load static data
-		SplashUpdater.setProgress(10);
-		ItemsReader.load(this); //Items (Must be loaded before Assets)
-		SplashUpdater.setProgress(15);
-		LocationsReader.load(this); //Locations (Must be loaded before Assets)
-		SplashUpdater.setProgress(20);
-		JumpsReader.load(this); //Jumps
-		SplashUpdater.setProgress(25);
-		FlagsReader.load(this); //Item Flags (Must be loaded before Assets)
-		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
-		SplashUpdater.setProgress(30);
 	//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
-	//Find profiles
-		ProfileReader.load(this);
 		SplashUpdater.setProgress(35);
 		constructEveApiConnector();
 	}
 
-	public void loadActiveProfile() {
-	//Load Assets
-		LOG.info("Loading profile: {}", activeProfile.getName());
-		accounts = new ArrayList<Account>();
-		AssetsReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
-		SplashUpdater.setProgress(40);
-	//Price data (update as needed)
-		clearEveAssetList(); //Must be cleared to update uniqueIds
-		priceDataGetter.load(); //Price Data - Must be loaded last
-		SplashUpdater.setProgress(45);
-		constructEveApiConnector();
-	}
-
-	public void saveAssets() {
-		AssetsWriter.save(this, activeProfile.getFilename());
-	}
-
-	public PriceDataGetter getPriceDataGetter() {
-		return priceDataGetter;
-	}
-
-	public static void setPortable(final boolean portable) {
-		Settings.portable = portable;
-	}
-
-	public static boolean isPortable() {
-		return portable;
-	}
-
-	public void clearEveAssetList() {
-		eventListAssets = null;
-		uniqueIds = null;
-		uniqueAssetsDuplicates = null;
-	}
-	public List<Asset> getEventListAssets() {
-		updateAssetLists();
-		return eventListAssets;
-	}
-	public Set<Integer> getUniqueIds() {
-		updateAssetLists();
-		return uniqueIds;
-	}
-
-	public boolean hasAssets() {
-		updateAssetLists();
-		return !uniqueIds.isEmpty();
-	}
-	private void updateAssetLists() {
-		if (eventListAssets == null || uniqueIds == null || uniqueAssetsDuplicates == null) {
-			eventListAssets = new ArrayList<Asset>();
-			uniqueIds = new HashSet<Integer>();
-			uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
-			List<String> ownersOrders = new ArrayList<String>();
-			List<String> ownersJobs = new ArrayList<String>();
-			List<String> ownersContracts = new ArrayList<String>();
-			List<String> ownersAssets = new ArrayList<String>();
-			List<Long> contractIDs = new ArrayList<Long>();
-			//Create Market Price Data
-			marketPriceData = new HashMap<Integer, MarketPriceData>();
-			//Date - maximumPurchaseAge in days
-			Date maxAge = new Date(System.currentTimeMillis() - (maximumPurchaseAge * 24 * 60 * 60 * 1000L));
-			for (Account account : accounts) {
-				for (Owner owner : account.getOwners()) {
-					for (ApiMarketOrder marketOrder : owner.getMarketOrders()) {
-						if (marketOrder.getBid() > 0 //Buy orders only
-								//at least one bought
-								&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
-								//Date in range or unlimited
-								&& (marketOrder.getIssued().after(maxAge) || maximumPurchaseAge == 0)
-								) {
-							int typeID = marketOrder.getTypeID();
-							if (!marketPriceData.containsKey(typeID)) {
-								marketPriceData.put(typeID, new MarketPriceData());
-							}
-							MarketPriceData data = marketPriceData.get(typeID);
-							data.update(marketOrder.getPrice(), marketOrder.getIssued());
-						}
-					}
-				}
-			}
-			//Add assets
-			for (Account account : accounts) {
-				for (Owner owner : account.getOwners()) {
-					//Market Orders
-					if (!owner.getMarketOrders().isEmpty() && !ownersOrders.contains(owner.getName())) {
-						List<Asset> marketOrdersAssets = ApiConverter.apiMarketOrder(owner.getMarketOrders(), owner, this);
-						addAssets(marketOrdersAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersOrders.add(owner.getName());
-						}
-					}
-					//Industry Jobs
-					if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
-						List<Asset> industryJobAssets = ApiConverter.apiIndustryJob(owner.getIndustryJobs(), owner, this);
-						addAssets(industryJobAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersJobs.add(owner.getName());
-						}
-					}
-					//Contracts
-					if (!owner.getContracts().isEmpty() && !ownersContracts.contains(owner.getName()) && isIncludeContracts()) {
-						List<Asset> contractAssets = ApiConverter.eveContracts(owner.getContracts(), this, contractIDs);
-						addAssets(contractAssets, owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersContracts.add(owner.getName());
-						}
-					}
-					//Assets (Must be after Industry Jobs, for bpos to be marked)
-					if (!owner.getAssets().isEmpty() && !ownersAssets.contains(owner.getName())) {
-						addAssets(owner.getAssets(), owner.isShowAssets());
-						if (owner.isShowAssets()) {
-							ownersAssets.add(owner.getName());
-						}
-					}
-					//Add StockpileItems to uniqueIds
-					for (Stockpile stockpile : this.getStockpiles()) {
-						for (StockpileItem item : stockpile.getItems()) {
-							int typeID = item.getTypeID();
-							boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-							if (marketGroup) {
-								uniqueIds.add(typeID);
-							}
-						}
-					}
-					//Add MarketOrders to uniqueIds
-					for (ApiMarketOrder order : owner.getMarketOrders()) {
-						int typeID = order.getTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-						if (marketGroup) {
-							uniqueIds.add(typeID);
-						}
-					}
-					//Add IndustryJobs to uniqueIds
-					for (ApiIndustryJob job : owner.getIndustryJobs()) {
-						int typeID = job.getInstalledItemTypeID();
-						boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-						if (marketGroup) {
-							uniqueIds.add(typeID);
-						}
-					}
-					//Add Contracts to uniqueIds
-					for (Map.Entry<EveContract, List<EveContractItem>> entry : owner.getContracts().entrySet()) {
-						for (EveContractItem contractItem : entry.getValue()) {
-							int typeID = contractItem.getTypeID();
-							boolean marketGroup = ApiIdConverter.marketGroup(typeID, this.getItems());
-							if (marketGroup) {
-								uniqueIds.add(typeID);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	private void addAssets(final List<Asset> assets, final boolean shouldShow) {
-		for (Asset asset : assets) {
-			if (shouldShow) {
-				//Data added
-				if (assetAdded.containsKey(asset.getItemID())) {
-					asset.setAdded(assetAdded.get(asset.getItemID()));
-				} else {
-					Date date = new Date();
-					assetAdded.put(asset.getItemID(), date);
-					asset.setAdded(date);
-				}
-				//User price
-				if (asset.isBlueprint() && !asset.isBpo()) { //Blueprint Copy
-					asset.setUserPrice(userPrices.get(-asset.getTypeID()));
-				} else { //All other
-					asset.setUserPrice(userPrices.get(asset.getTypeID()));
-				}
-				//Market price
-				asset.setMarketPriceData(marketPriceData.get(asset.getTypeID()));
-				//User Item Names
-				if (userNames.containsKey(asset.getItemID())) {
-					asset.setName(userNames.get(asset.getItemID()).getValue());
-				} else {
-					asset.setName(asset.getTypeName());
-				}
-				//Contaioner
-				String sContainer = "";
-				for (Asset parentEveAsset : asset.getParents()) {
-					if (!sContainer.isEmpty()) {
-						sContainer = sContainer + ">";
-					}
-					if (!parentEveAsset.isUserName()) {
-						sContainer = sContainer + parentEveAsset.getName() + " #" + parentEveAsset.getItemID();
-					} else {
-						sContainer = sContainer + parentEveAsset.getName();
-					}
-				}
-				asset.setContainer(sContainer);
-
-				//Price data
-				if (asset.isMarketGroup() && priceDatas.containsKey(asset.getTypeID()) && !priceDatas.get(asset.getTypeID()).isEmpty()) { //Market Price
-					asset.setPriceData(priceDatas.get(asset.getTypeID()));
-				} else { //No Price :(
-					asset.setPriceData(null);
-				}
-
-				//Reprocessed price
-				asset.setPriceReprocessed(0);
-				if (getItems().containsKey(asset.getTypeID())) {
-					List<ReprocessedMaterial> reprocessedMaterials = getItems().get(asset.getTypeID()).getReprocessedMaterial();
-					double priceReprocessed = 0;
-					int portionSize = 0;
-					for (ReprocessedMaterial material : reprocessedMaterials) {
-						//Calculate reprocessed price
-						portionSize = material.getPortionSize();
-						if (priceDatas.containsKey(material.getTypeID())) {
-							PriceData priceData = priceDatas.get(material.getTypeID());
-							double price;
-							if (userPrices.containsKey(material.getTypeID())) {
-								price = userPrices.get(material.getTypeID()).getValue();
-							} else {
-								price = Asset.getDefaultPriceReprocessed(priceData);
-							}
-							priceReprocessed = priceReprocessed + (price * this.getReprocessSettings().getLeft(material.getQuantity()));
-						}
-						//Unique Ids
-						boolean marketGroup = ApiIdConverter.marketGroup(material.getTypeID(), this.getItems());
-						if (marketGroup && !uniqueIds.contains(material.getTypeID())) {
-							uniqueIds.add(material.getTypeID());
-						}
-					}
-					if (priceReprocessed > 0 && portionSize > 0) {
-						priceReprocessed = priceReprocessed / portionSize;
-					}
-					asset.setPriceReprocessed(priceReprocessed);
-				}
-
-				//Type Count
-				if (!uniqueAssetsDuplicates.containsKey(asset.getTypeID())) {
-					uniqueAssetsDuplicates.put(asset.getTypeID(), new ArrayList<Asset>());
-				}
-				if (shouldShow) {
-					List<Asset> dup = uniqueAssetsDuplicates.get(asset.getTypeID());
-					long newCount = asset.getCount();
-					if (!dup.isEmpty()) {
-						newCount = newCount + dup.get(0).getTypeCount();
-					}
-					dup.add(asset);
-					for (Asset assetLoop : dup) {
-						assetLoop.setTypeCount(newCount);
-					}
-				}
-				//Packaged Volume
-				if (!asset.isSingleton() && packagedVolume.containsKey(asset.getGroup())) {
-					asset.setVolume(packagedVolume.get(asset.getGroup()));
-				}
-
-				//Add asset
-				eventListAssets.add(asset);
-			}
-			//Unique Ids
-			if (asset.isMarketGroup()) {
-				uniqueIds.add(asset.getTypeID());
-			}
-			//Add sub-assets
-			addAssets(asset.getAssets(), shouldShow);
-		}
-	}
-
 	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
 		return trackerData;
-	}
-
-	public double getPrice(final int typeID, final boolean isBlueprintCopy) {
-		UserItem<Integer, Double> userPrice;
-		if (isBlueprintCopy) { //Blueprint Copy
-			userPrice = userPrices.get(-typeID);
-		} else { //All other
-			userPrice = userPrices.get(typeID);
-		}
-		if (userPrice != null) {
-			return userPrice.getValue();
-		}
-
-		//Blueprint Copy (Default Zero)
-		if (isBlueprintCopy) {
-			return 0;
-		}
-
-		//Price data
-		PriceData priceData = null;
-		if (priceDatas.containsKey(typeID) && !priceDatas.get(typeID).isEmpty()) { //Market Price
-			priceData = priceDatas.get(typeID);
-		}
-		return Asset.getDefaultPrice(priceData);
-	}
-
-	public float getVolume(final int typeID, final boolean packaged) {
-		Item item = getItems().get(typeID);
-		if (item != null) {
-			if (packaged && packagedVolume.containsKey(item.getGroup())) {
-				return packagedVolume.get(item.getGroup());
-			} else {
-				return item.getVolume();
-			}
-		}
-		return 0;
 	}
 
 	public Date getConquerableStationsNextUpdate() {
@@ -566,9 +177,6 @@ public class Settings {
 	public void setPriceDataSettings(final PriceDataSettings priceDataSettings) {
 		this.priceDataSettings = priceDataSettings;
 	}
-	public Date getPriceDataNextUpdate() {
-		return priceDataGetter.getNextUpdate();
-	}
 	public Map<Integer, UserItem<Integer, Double>> getUserPrices() {
 		return userPrices;
 	}
@@ -581,36 +189,17 @@ public class Settings {
 	public void setUserItemNames(final Map<Long, UserItem<Long, String>> userItemNames) {
 		this.userNames = userItemNames;
 	}
-	public List<Account> getAccounts() {
-		return accounts;
-	}
-
-	public void setAccounts(final List<Account> accounts) {
-		this.accounts = accounts;
-	}
 
 	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
 	}
 
+	public Map<Integer, PriceData> getPriceData() {
+		return priceDatas;
+	}
+
 	public Map<String, Boolean> getFlags() {
 		return flags;
-	}
-
-	public List<Profile> getProfiles() {
-		return profiles;
-	}
-
-	public void setProfiles(final List<Profile> profiles) {
-		this.profiles = profiles;
-	}
-
-	public void setActiveProfile(final Profile activeProfile) {
-		this.activeProfile = activeProfile;
-	}
-
-	public Profile getActiveProfile() {
-		return activeProfile;
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -713,35 +302,8 @@ public class Settings {
 		EveApi.setConnector(connector);
 	}
 
-	public Map<Integer, ApiStation> getConquerableStations() {
-		return conquerableStations;
-	}
-
-	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
-		this.conquerableStations = conquerableStations;
-		for (ApiStation station : conquerableStations.values()) {
-			ApiIdConverter.addLocation(station, getLocations());
-		}
-	}
-
-	public Map<Integer, ItemFlag> getItemFlags() {
-		return itemFlags;
-	}
-
-	public Map<Integer, Item> getItems() {
-		return items;
-	}
-
 	public Map<Long, String> getOwners() {
 		return owners;
-	}
-
-	public List<Jump> getJumps() {
-		return jumps;
-	}
-
-	public Map<Long, Location> getLocations() {
-		return locations;
 	}
 
 	public Map<String, Map<String, List<Filter>>> getTableFilters() {
@@ -779,18 +341,22 @@ public class Settings {
 		this.maximumPurchaseAge = maximumPurchaseAge;
 	}
 
-	public static boolean isFilterOnEnter() {
-		return Settings.filterOnEnter; //Static
+	public boolean isFilterOnEnter() {
+		return filterOnEnter;
 	}
 	public void setFilterOnEnter(final boolean filterOnEnter) {
-		Settings.filterOnEnter = filterOnEnter; //Static
+		this.filterOnEnter = filterOnEnter;
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
-	public boolean isHighlightSelectedRows() {
-		return flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
+		if (highlightSelectedRows == null) {
+			highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+		}
+		return highlightSelectedRows;
 	}
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
+		this.highlightSelectedRows = highlightSelectedRows;
 	}
 
 	public boolean isAutoUpdate() {
@@ -811,11 +377,15 @@ public class Settings {
 	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
-	public boolean isReprocessColors() {
-		return flags.get(FLAG_REPROCESS_COLORS);
+	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
+		if (reprocessColors == null) {
+			reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
+		}
+		return reprocessColors;
 	}
 	public void setReprocessColors(final boolean reprocessColors) {
 		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
+		this.reprocessColors = reprocessColors;
 	}
 	public boolean isStockpileFocusTab() {
 		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
@@ -900,10 +470,10 @@ public class Settings {
 	}
 
 	public String getPathSettings() {
-		return getLocalFile(Settings.PATH_SETTINGS, !portable);
+		return getLocalFile(Settings.PATH_SETTINGS, !Program.isPortable());
 	}
 	public static String getPathConquerableStations() {
-		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
+		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !Program.isPortable());
 	}
 	public static String getPathJumps() {
 		return getLocalFile(Settings.PATH_JUMPS, false);
@@ -912,13 +482,19 @@ public class Settings {
 		return getLocalFile(Settings.PATH_FLAGS, false);
 	}
 	public static String getPathPriceData() {
-		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
+		return getLocalFile(Settings.PATH_PRICE_DATA, !Program.isPortable());
 	}
 	public static String getPathAssetsOld() {
-		return getLocalFile(Settings.PATH_ASSETS, !portable);
+		return getLocalFile(Settings.PATH_ASSETS, !Program.isPortable());
 	}
 	public static String getPathProfilesDirectory() {
-		return getLocalFile(Settings.PATH_PROFILES, !portable);
+		return getLocalFile(Settings.PATH_PROFILES, !Program.isPortable());
+	}
+	public static String getPathStaticDataDirectory() {
+		return getLocalFile(Settings.PATH_DATA, false);
+	}
+	public static String getPathDataDirectory() {
+		return getLocalFile(Settings.PATH_DATA, !Program.isPortable());
 	}
 	public static String getPathItems() {
 		return getLocalFile(Settings.PATH_ITEMS, false);

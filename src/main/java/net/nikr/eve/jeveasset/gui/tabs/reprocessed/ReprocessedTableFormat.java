@@ -65,7 +65,7 @@ public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterf
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getPrice();
+			return from.getDynamicPrice();
 		}
 	},
 	VALUE_MAX(Double.class, GlazedLists.comparableComparator()) {
@@ -105,7 +105,7 @@ public enum ReprocessedTableFormat  implements EnumTableColumn<ReprocessedInterf
 		}
 		@Override
 		public Object getColumnValue(final ReprocessedInterface from) {
-			return from.getTypeID();
+			return from.getItem().getTypeID();
 		}
 	};
 

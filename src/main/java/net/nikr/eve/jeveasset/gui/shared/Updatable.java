@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
-import java.util.List;
+import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -30,62 +30,59 @@ import net.nikr.eve.jeveasset.data.Settings;
 
 public class Updatable {
 
-	private boolean updatable;
-	private Settings settings;
+	private Program program;
 
-	public Updatable(final Settings settings) {
-		this.settings = settings;
+	public Updatable(final Program program) {
+		this.program = program;
 	}
 
 	public boolean isUpdatable() {
-		Date accountsNextUpdate = null;
-		Date industryJobsNextUpdate = null;
-		Date marketOrdersNextUpdate = null;
-		Date assetsNextUpdate = null;
-		Date accountBalanceNextUpdate = null;
-		Date priceDataNextUpdate = settings.getPriceDataNextUpdate();
-		for (Account account : settings.getAccounts()) {
+		if (isUpdatable(program.getPriceDataGetter().getNextUpdate(), false)) {
+			return true;
+		}
+		for (Account account : program.getAccounts()) {
 			//Account
-			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
+			if (isUpdatable(account.getAccountNextUpdate())) {
+				return true;
+			}
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowAssets()) {
-					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
-					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
-					assetsNextUpdate = nextUpdate(assetsNextUpdate, owner.getAssetNextUpdate());
-					accountBalanceNextUpdate = nextUpdate(accountBalanceNextUpdate, owner.getBalanceNextUpdate());
+					if (isUpdatable(owner.getIndustryJobsNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getMarketOrdersNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getAssetNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getBalanceNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getContractsNextUpdate())){
+						return true;
+					}
+					if (isUpdatable(owner.getWalletTransactionsNextUpdate())){
+						return true;
+					}
 				}
 			}
 		}
-		updatable = false;
-		isUpdatable(marketOrdersNextUpdate);
-		isUpdatable(industryJobsNextUpdate);
-		isUpdatable(accountsNextUpdate);
-		isUpdatable(accountBalanceNextUpdate);
-		isUpdatable(assetsNextUpdate);
-		isUpdatable(priceDataNextUpdate, false);
-		return updatable;
+		return false;
 	}
 
-	private void isUpdatable(final Date nextUpdate) {
-		isUpdatable(nextUpdate, true);
+	private boolean isUpdatable(final Date nextUpdate) {
+		return isUpdatable(nextUpdate, true);
 	}
 
-	private void isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
+	private boolean isUpdatable(Date nextUpdate, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
-			nextUpdate = Settings.getNow();
+			return false;
 		}
-		if (settings.isUpdatable(nextUpdate, ignoreOnProxy)) {
-			updatable = true;
+		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
+			return true;
+		} else {
+			return false;
 		}
-	}
-
-	private Date nextUpdate(Date nextUpdate, final Date thisUpdate) {
-		if (nextUpdate == null) {
-				nextUpdate = thisUpdate;
-		}
-		if (thisUpdate.before(nextUpdate)) {
-			nextUpdate = thisUpdate;
-		}
-		return nextUpdate;
 	}
 }

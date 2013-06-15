@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import java.util.*;
 import javax.swing.AbstractListModel;
-import javax.swing.SwingUtilities;
 
 public class EditableListModel<T> extends AbstractListModel {
 
@@ -45,11 +44,12 @@ public class EditableListModel<T> extends AbstractListModel {
 
 	public EditableListModel(final List<T> initial, final Comparator<T> sortComparator) {
 		backed.addAll(initial);
-		this.sortComparator = sortComparator;
+		setSortComparator(sortComparator);
 	}
 
-	public void setSortComparator(final Comparator<T> sortComparator) {
+	public final void setSortComparator(final Comparator<T> sortComparator) {
 		this.sortComparator = sortComparator;
+		Collections.sort(backed, sortComparator);
 	}
 
 	public Comparator<T> getSortComparator() {
@@ -72,31 +72,39 @@ public class EditableListModel<T> extends AbstractListModel {
 
 	public T remove(final int index) {
 		T b = backed.remove(index);
-		changed();
+		fireRemoved(index, index);
 		return b;
 	}
 
 	public void clear() {
+		if (backed.isEmpty()) {
+			return;
+		}
+		int end = backed.size() - 1;
 		backed.clear();
-		changed();
+		fireRemoved(0, end);
 	}
 
 	public boolean remove(final T o) {
+		int index = backed.indexOf(o);
 		boolean b = backed.remove(o);
-		changed();
+		fireRemoved(index, index);
 		return b;
 	}
 
 	public boolean add(final T e) {
 		boolean b = backed.add(e);
 		Collections.sort(backed, sortComparator);
-		changed();
+		int index = backed.indexOf(e);
+		fireAdded(index, index);
 		return b;
 	}
 
 	public boolean addAll(final Collection<? extends T> c) {
-		boolean b = backed.addAll(c);
-		changed();
+		boolean b = true;
+		for (T t : c) {
+			b = b && add(t);
+		}
 		return b;
 	}
 
@@ -104,13 +112,11 @@ public class EditableListModel<T> extends AbstractListModel {
 		return backed.contains(o);
 	}
 
-	void changed() {
-		SwingUtilities.invokeLater(new Runnable() {
+	private void fireRemoved(final int index0, final int index1) {
+		super.fireIntervalRemoved(this, index0, index1);
+	}
 
-			@Override
-			public void run() {
-				fireContentsChanged(this, 0, backed.size() - 1);
-			}
-		});
+	private void fireAdded(final int index0, final int index1) {
+		super.fireIntervalAdded(this, index0, index1);
 	}
 }

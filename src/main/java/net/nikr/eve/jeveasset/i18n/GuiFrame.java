@@ -63,6 +63,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String table();
 	public abstract String tools();
 	public abstract String tracker();
+	public abstract String transaction();
 	public abstract String updatable();
 	public abstract String update();
 	public abstract String update1();

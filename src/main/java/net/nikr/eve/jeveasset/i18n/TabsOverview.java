@@ -34,7 +34,6 @@ public abstract class TabsOverview extends Bundle {
 		super(locale);
 	}
 
-	public abstract String all();
 	public abstract String add();
 	public abstract String addGroup();
 	public abstract String average();

@@ -48,7 +48,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private UpdateTask updateTask;
 	private Map<String, Owner> owners;
 	private List<Owner> failOwners;
-	private boolean error;
+	private Object error;
 
 	protected AbstractApiGetter(final String name) {
 		this(name, false, false);
@@ -155,9 +155,9 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		this.owner = owner;
 		this.account = account;
 		this.updated = false;
-		this.error = false;
 		this.owners = new HashMap<String, Owner>();
 		this.failOwners = new ArrayList<Owner>();
+		this.error = null;
 	}
 
 	private void loadOwner() {
@@ -209,12 +209,12 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 					return true;
 				} else {
 					ApiError apiError = apiResponse.getError();
-					addError(updateName, apiError.getError());
+					addError(updateName, apiError.getError(), apiError);
 					LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 				}
 			}
 		} catch (ApiException ex) {
-			addError(updateName, "Api Error (" + ex.getMessage() + ")");
+			addError(updateName, ex.getMessage(), ex);
 			LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
 		}
 		return false;
@@ -252,14 +252,22 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	public boolean hasError() {
+		return error != null;
+	}
+
+	public Object getError() {
 		return error;
 	}
 
 	protected void addError(final String owner, final String errorText) {
+		addError(owner, errorText, errorText);
+	}
+
+	protected void addError(final String owner, final String errorText, final Object errorObject) {
 		if (updateTask != null) {
 			updateTask.addError(owner, errorText);
 		}
-		error = true;
+		error = errorObject;
 	}
 
 	protected abstract T getResponse(boolean bCorp) throws ApiException;

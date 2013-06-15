@@ -23,10 +23,16 @@
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 
 
-public class Material implements Comparable<Material> {
+public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
 
 	public enum MaterialType {
 		LOCATIONS(2, 1, 1),
@@ -36,17 +42,17 @@ public class Material implements Comparable<Material> {
 		SUMMARY_TOTAL(1, 2, 1),
 		SUMMARY_ALL(1, 2, 2);
 
-		private int locationOrder;
+		private int headerOrder;
 		private int goupeOrder;
 		private int nameOrder;
-		private MaterialType(final int locationOrder, final int goupeOrder, final int nameOrder) {
-			this.locationOrder = locationOrder;
+		private MaterialType(final int headerOrder, final int goupeOrder, final int nameOrder) {
+			this.headerOrder = headerOrder;
 			this.goupeOrder = goupeOrder;
 			this.nameOrder = nameOrder;
 		}
 
-		public int getLocationOrder() {
-			return locationOrder;
+		public int getHeaderOrder() {
+			return headerOrder;
 		}
 
 		public int getGoupeOrder() {
@@ -58,56 +64,43 @@ public class Material implements Comparable<Material> {
 		}
 	}
 
-	private final String name;
-	private final String location;
+	private final String header;
 	private final String group;
-	private final String typeName;
-	private final boolean marketGroup;
-	private final Integer typeID; //TypeID : int
-	private final String station;
-	private final String system;
-	private final String region;
+	private final String name;
+	private final Location location;
+	private final Item item;
+
 	private double value = 0;
 	private long count = 0;
 	private boolean first = false;
 	private final Double price;
 	private final MaterialType type;
 
-	public Material(final MaterialType type, final String name, final String location, final String group, final Asset eveAsset) {
+	public Material(final MaterialType type, final Asset asset, final String header, final String group, final String name) {
 		this.type = type;
-		this.name = name;
-		this.location = location;
+		this.header = header;
 		this.group = group;
-		if (eveAsset != null) {
+		this.name = name;
+		if (asset != null) {
 			//Has item
 			if (type == MaterialType.LOCATIONS || type == MaterialType.SUMMARY) {
-				this.typeName = eveAsset.getName();
-				this.marketGroup = eveAsset.isMarketGroup();
-				this.typeID = eveAsset.getTypeID();
-				this.price = eveAsset.getPrice();
+				this.item = asset.getItem();
+				this.price = asset.getDynamicPrice();
 			} else {
-				this.typeName = null;
-				this.marketGroup = false;
-				this.typeID = null;
+				this.item = new Item(0);
 				this.price = null;
 			}
+
+			
 			//Has location
 			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
-				this.station = eveAsset.getLocation();
-				this.system = eveAsset.getSystem();
-				this.region = eveAsset.getRegion();
+				location = asset.getLocation();
 			} else {
-				this.station = null;
-				this.system = null;
-				this.region = null;
+				location = new Location(0);
 			}
 		} else {
-			this.typeName = null;
-			this.marketGroup = false;
-			this.typeID = null;
-			this.station = null;
-			this.system = null;
-			this.region = null;
+			location = new Location(0);
+			this.item = new Item(0);
 			this.price = null;
 		}
 	}
@@ -121,44 +114,30 @@ public class Material implements Comparable<Material> {
 		return count;
 	}
 
-	public String getGroup() {
-		return group;
+	public String getHeader() {
+		return header;
 	}
 
-	public String getLocation() {
+	@Override
+	public Item getItem() {
+		return item;
+	}
+
+	@Override
+	public Location getLocation() {
 		return location;
+	}
+
+	public String getGroup() {
+		return group;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public String getSystem() {
-		return system;
-	}
-
 	public MaterialType getType() {
 		return type;
-	}
-
-	public Integer getTypeID() {
-		return typeID;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public String getStation() {
-		return station;
 	}
 
 	public boolean isFirst() {
@@ -169,7 +148,8 @@ public class Material implements Comparable<Material> {
 		first = true;
 	}
 
-	public Double getPrice() {
+	@Override
+	public Double getDynamicPrice() {
 		return price;
 	}
 
@@ -177,12 +157,21 @@ public class Material implements Comparable<Material> {
 		return Formater.round(value, 2);
 	}
 
-	public String getSeperator() {
-		return type.getLocationOrder() + location + type.getGoupeOrder() + group;
+	public String getSeparator() {
+		return type.getHeaderOrder() + header + type.getGoupeOrder() + group;
 	}
 
 	protected String getCompare() {
-		return type.getLocationOrder() + location + type.getGoupeOrder() + group + type.getNameOrder() + name;
+		return type.getHeaderOrder() + header + type.getGoupeOrder() + group + type.getNameOrder() + name;
+	}
+
+	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getHeader());
+		builder.append("\t");
+		builder.append(getGroup());
+		return builder.toString();
 	}
 
 	@Override
@@ -197,7 +186,7 @@ public class Material implements Comparable<Material> {
 		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
 			return false;
 		}
-		if ((this.location == null) ? (other.location != null) : !this.location.equals(other.location)) {
+		if ((this.header == null) ? (other.header != null) : !this.header.equals(other.header)) {
 			return false;
 		}
 		if ((this.group == null) ? (other.group != null) : !this.group.equals(other.group)) {
@@ -210,7 +199,7 @@ public class Material implements Comparable<Material> {
 	public int hashCode() {
 		int hash = 3;
 		hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
-		hash = 29 * hash + (this.location != null ? this.location.hashCode() : 0);
+		hash = 29 * hash + (this.header != null ? this.header.hashCode() : 0);
 		hash = 29 * hash + (this.group != null ? this.group.hashCode() : 0);
 		return hash;
 	}

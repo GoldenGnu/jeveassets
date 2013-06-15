@@ -29,7 +29,7 @@ public class ModuleSeparatorComparator implements Comparator<Module> {
 
 	@Override
 	public int compare(final Module o1, final Module o2) {
-		return o1.getSeperator().compareTo(o2.getSeperator());
+		return o1.getSeparator().compareTo(o2.getSeparator());
 	}
 
 }

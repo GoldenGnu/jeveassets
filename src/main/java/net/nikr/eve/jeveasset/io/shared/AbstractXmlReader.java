@@ -47,8 +47,10 @@ public abstract class AbstractXmlReader {
 		DocumentBuilder builder;
 		Document doc;
 		FileInputStream is = null;
+		File file = new File(filename);
 		try {
-			is = new FileInputStream(new File(filename));
+			FileLock.lock(file);
+			is = new FileInputStream(file);
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(is);
@@ -58,12 +60,14 @@ public abstract class AbstractXmlReader {
 				is.close();
 			}
 			if (!usingBackupFile && restoreBackupFile(filename)) {
+				FileLock.unlock(file);
 				return getDocumentElement(filename, true);
 			}
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
+			FileLock.unlock(file);
 			if (is != null) {
 				is.close();
 			}
@@ -76,19 +80,19 @@ public abstract class AbstractXmlReader {
 		File backupFile = new File(backup);
 		File inputFile = new File(filename);
 		if (!backupFile.exists()) {
-			LOG.warn("No backup file found: {}", backup);
+			LOG.warn("No backup file found: {}", backupFile.getName());
 			return false;
 		}
 		if (inputFile.exists() && !inputFile.delete()) {
-			LOG.warn("Was not able to delete buggy inputfile: {}", filename);
+			LOG.warn("Was not able to delete buggy file: {}", inputFile.getName());
 			return false;
 		}
 		if (backupFile.renameTo(inputFile)) {
-			LOG.warn("Backup file restored: {}", backup);
+			LOG.warn("Backup file restored: {}", backupFile.getName());
 			return true;
 		} else {
-			LOG.warn("Was not able to restore backup: {}", backup);
+			LOG.warn("Was not able to restore backup: {}", backupFile.getName());
+			return false;
 		}
-		return false;
 	}
 }

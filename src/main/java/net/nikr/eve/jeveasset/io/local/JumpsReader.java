@@ -27,6 +27,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -43,15 +44,15 @@ public final class JumpsReader extends AbstractXmlReader {
 
 	private JumpsReader() { }
 
-	public static void load(final Settings settings) {
+	public static void load() {
 		JumpsReader reader = new JumpsReader();
-		reader.read(settings);
+		reader.read();
 	}
 
-	private void read(final Settings settings) {
+	private void read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathJumps());
-			parseJumps(element, settings.getLocations(), settings.getJumps());
+			parseJumps(element, StaticData.get().getLocations(), StaticData.get().getJumps());
 		} catch (IOException ex) {
 			LOG.error("Jumps not loaded: " + ex.getMessage(), ex);
 		} catch (XmlException ex) {

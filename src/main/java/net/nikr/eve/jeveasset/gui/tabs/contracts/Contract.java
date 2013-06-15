@@ -23,29 +23,27 @@ package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
 import com.beimin.eveapi.shared.contract.ContractType;
 import com.beimin.eveapi.shared.contract.EveContract;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class Contract extends EveContract {
+public class Contract extends EveContract implements LocationType{
 
 	private String acceptor;
 	private String assignee;
 	private String issuerCorp;
 	private String issuer;
-	private String endStation;
-	private String startStation;
-	private String system;
-	private String region;
+	private Location endStation;
+	private Location startStation;
 
-	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, String endStation, String startStation, String system, String region) {
+	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, Location startStation, Location endStation) {
 		this.acceptor = acceptor;
 		this.assignee = assignee;
 		this.issuerCorp = issuerCorp;
 		this.issuer = issuer;
 		this.endStation = endStation;
 		this.startStation = startStation;
-		this.system = system;
-		this.region = region;
 		this.setAcceptorID(contract.getAcceptorID());
 		this.setAssigneeID(contract.getAssigneeID());
 		this.setAvailability(contract.getAvailability());
@@ -104,20 +102,17 @@ public class Contract extends EveContract {
 		return issuer;
 	}
 
-	public String getEndStation() {
+	public Location getEndStation() {
 		return endStation;
 	}
 
-	public String getStartStation() {
+	@Override
+	public Location getLocation() {
 		return startStation;
 	}
 
-	public String getSystem() {
-		return system;
-	}
-
-	public String getRegion() {
-		return region;
+	public Location getStartStation() {
+		return startStation;
 	}
 
 	public boolean isCourier() {

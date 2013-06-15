@@ -125,6 +125,10 @@ public final class Formater {
 		return LONG_FORMAT.format(obj);
 	}
 
+	public static double longParse(final String s) throws ParseException{
+		return LONG_FORMAT.parse(s).doubleValue();
+	}
+
 	public static double round(final double number, final int decimalPlaces) {
 		double modifier = Math.pow(10.0, decimalPlaces);
 		return Math.round(number * modifier) / modifier;

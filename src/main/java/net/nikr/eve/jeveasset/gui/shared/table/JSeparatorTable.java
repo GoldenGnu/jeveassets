@@ -4,8 +4,8 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import ca.odell.glazedlists.SeparatorList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -20,6 +20,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
 
 /**
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
@@ -34,7 +35,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	private final Map<Integer, Boolean> expandedSate = new HashMap<Integer, Boolean>();
 	private boolean defaultState = true;
 
-	public JSeparatorTable(final Program program, final EventTableModel<?> tableModel, SeparatorList<?> separatorList) {
+	public JSeparatorTable(final Program program, final DefaultEventTableModel<?> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel);
 		setUI(new SpanTableUI());
 		this.separatorList = separatorList;
@@ -42,13 +43,15 @@ public class JSeparatorTable extends JAutoColumnTable {
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
+
+		JMenuCopy.installCopyFormatter(this);
 	}
 
 	public void expandSeparators(final boolean expand) {
 		clearExpandedState(); //Reset
 		defaultState = expand;
 		lock();
-		final EventSelectionModel<?> selectModel = getEventSelectionModel();
+		final DefaultEventSelectionModel<?> selectModel = getEventSelectionModel();
 		if (selectModel != null) {
 			selectModel.setEnabled(false);
 		}
@@ -112,9 +115,9 @@ public class JSeparatorTable extends JAutoColumnTable {
 		}
 	}
 
-	private EventSelectionModel<?> getEventSelectionModel() {
-		if (selectionModel instanceof EventSelectionModel<?>) {
-			return (EventSelectionModel) selectionModel;
+	private DefaultEventSelectionModel<?> getEventSelectionModel() {
+		if (selectionModel instanceof DefaultEventSelectionModel<?>) {
+			return (DefaultEventSelectionModel) selectionModel;
 		} else {
 			return null;
 		}
@@ -126,15 +129,15 @@ public class JSeparatorTable extends JAutoColumnTable {
 	 *
 	 * @return the EventTableModel that backs this table
 	 */
-	private EventTableModel<?> getEventTableModel() {
-		return (EventTableModel) getModel();
+	private DefaultEventTableModel<?> getEventTableModel() {
+		return (DefaultEventTableModel) getModel();
 	}
 
 
 	/** {@inheritDoc} */
 	@Override
 	public Rectangle getCellRect(final int row, final int column, final boolean includeSpacing) {
-		final EventTableModel<?> eventTableModel = getEventTableModel();
+		final DefaultEventTableModel<?> eventTableModel = getEventTableModel();
 
 		// sometimes JTable asks for a cellrect that doesn't exist anymore, due
 		// to an editor being installed before a bunch of rows were removed.
@@ -506,7 +509,7 @@ class SpanTableUI extends BasicTableUI {
 
 		for (int row = rMin; row <= rMax; row++) {
 			// skip separator rows
-			Object rowValue = ((EventTableModel) separatorTable.getModel()).getElementAt(row);
+			Object rowValue = ((DefaultEventTableModel) separatorTable.getModel()).getElementAt(row);
 
 			// only paint the cell on non-separator rows
 			if (!(rowValue instanceof SeparatorList.Separator)) {

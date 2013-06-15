@@ -23,11 +23,15 @@
 package net.nikr.eve.jeveasset.data;
 
 import ca.odell.glazedlists.matchers.Matcher;
+import net.nikr.eve.jeveasset.data.types.ItemType;
+import net.nikr.eve.jeveasset.data.types.LocationType;
+import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-public class Module implements Comparable<Module> {
+public class Module implements Comparable<Module>, LocationType, ItemType, PriceType, CopySeparator {
 
 	public enum FlagType {
 		TOTAL_VALUE("Total Value", 1) {
@@ -99,35 +103,27 @@ public class Module implements Comparable<Module> {
 		}
 	}
 
+	private Item item;
+	private Location location;
 	private String name;
-	private String typeName;
 	private String key;
-	private String location;
 	private FlagType flag;
 	private String owner;
 	private Double price;
 	private double value;
 	private long count;
-	private boolean marketGroup;
-	private Integer typeID; //TypeID : int
-	private String system;
-	private String region;
 	private boolean first = false;
 
-	public Module(final Asset eveAsset, final String name, final String typeName, final String key, final String flag, final Double price, final double value, final long count, final boolean marketGroup, final Integer typeID) {
+	public Module(final Item item, final Location location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
+		this.item = item;
+		this.location = location;
+		this.owner = owner;
 		this.name = name;
-		this.typeName = typeName;
 		this.key = key;
-		this.location = eveAsset.getLocation();
 		this.flag = convertFlag(flag);
-		this.system = eveAsset.getSystem();
-		this.region = eveAsset.getRegion();
-		this.owner = eveAsset.getOwner();
 		this.price = price;
 		this.value = value;
 		this.count = count;
-		this.marketGroup = marketGroup;
-		this.typeID = typeID;
 	}
 
 	private FlagType convertFlag(final String s) {
@@ -162,7 +158,8 @@ public class Module implements Comparable<Module> {
 		return count;
 	}
 
-	public Double getPrice() {
+	@Override
+	public Double getDynamicPrice() {
 		return price;
 	}
 
@@ -182,32 +179,18 @@ public class Module implements Comparable<Module> {
 		}
 	}
 
-	public String getLocation() {
+	@Override
+	public Item getItem() {
+		return item;
+	}
+
+	@Override
+	public Location getLocation() {
 		return location;
 	}
 
 	public String getOwner() {
 		return owner;
-	}
-
-	public boolean isMarketGroup() {
-		return marketGroup;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public String getSystem() {
-		return system;
-	}
-
-	public Integer getTypeID() {
-		return typeID;
-	}
-
-	public String getTypeName() {
-		return typeName;
 	}
 
 	public ModulePriceValue getModulePriceValue() {
@@ -226,12 +209,19 @@ public class Module implements Comparable<Module> {
 		return key;
 	}
 
-	public String getSeperator() {
+	public String getSeparator() {
 		return String.valueOf(flag.getOrder());
 	}
 
 	protected String getCompare() {
 		return key + flag.getOrder() + convertName(name);
+	}
+
+	@Override
+	public String getCopyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(getFlag());
+		return builder.toString();
 	}
 
 	@Override

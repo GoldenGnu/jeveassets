@@ -21,17 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.EveContract;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,41 +36,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuPrice;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuReprocessed;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuStockpile;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
-import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class ContractsTab extends JMainTab {
+public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
@@ -85,8 +74,8 @@ public class ContractsTab extends JMainTab {
 	private EventList<ContractItem> eventList;
 	private FilterList<ContractItem> filterList;
 	private SeparatorList<ContractItem> separatorList;
-	private EventSelectionModel<ContractItem> selectionModel;
-	private EventTableModel<ContractItem> tableModel;
+	private DefaultEventSelectionModel<ContractItem> selectionModel;
+	private DefaultEventTableModel<ContractItem> tableModel;
 	private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
 	private ContractsFilterControl filterControl;
 
@@ -121,7 +110,7 @@ public class ContractsTab extends JMainTab {
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<ContractItem>();
+		eventList = program.getContractItemEventList();
 		//Filter
 		filterList = new FilterList<ContractItem>(eventList);
 		//Sorting (per column)
@@ -129,7 +118,7 @@ public class ContractsTab extends JMainTab {
 		//Separator
 		separatorList = new SeparatorList<ContractItem>(sortedList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = new EventTableModel<ContractItem>(separatorList, tableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JContractsTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
@@ -140,7 +129,7 @@ public class ContractsTab extends JMainTab {
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<ContractItem>(separatorList);
+		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -153,8 +142,12 @@ public class ContractsTab extends JMainTab {
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, ContractItem.class);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
@@ -176,74 +169,31 @@ public class ContractsTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
-
-		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-		List<ContractItem> selected = new ArrayList<ContractItem>(selectionModel.getSelected());
-		for (int i = 0; i < selected.size(); i++) { //Remove StockpileTotal and SeparatorList.Separator
-			Object object = selected.get(i);
-			if ((object instanceof SeparatorList.Separator)) {
-				selected.remove(i);
-				i--;
-			}
-		}
-
-	//COPY
-		if (isSelected && jComponent instanceof JPopupMenu) {
-			jComponent.add(new JMenuCopy(jTable));
-			addSeparator(jComponent);
-		}
-	//DATA
-		MenuData<ContractItem> menuData = new MenuData<ContractItem>(selected);
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selected));
-	//ASSET FILTER
-		jComponent.add(new JMenuAssetFilter<ContractItem>(program, menuData));
-	//STOCKPILE
-		jComponent.add(new JMenuStockpile<ContractItem>(program, menuData));
-	//LOOKUP
-		jComponent.add(new JMenuLookup<ContractItem>(program, menuData));
-	//EDIT
-		jComponent.add(new JMenuPrice<ContractItem>(program, menuData));
-	//REPROCESSED
-		jComponent.add(new JMenuReprocessed<ContractItem>(program, menuData));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
-		//FIXME - make info menu for Contracts Tool
-		//JMenuInfo.reprocessed(jComponent, selected, eventList);
+	public MenuData<ContractItem> getMenuData() {
+		return new MenuData<ContractItem>(selectionModel.getSelected());
 	}
 
 	@Override
-	public void updateData() {
-		Set<ContractItem> list = new HashSet<ContractItem>();
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				List<ContractItem> contractItems
-						= ApiConverter.eveContractItemsToContractItems(owner.getContracts(), program.getSettings());
-				list.addAll(contractItems);
-				for (EveContract contract : owner.getContracts().keySet()) {
-					if (contract.getType() == ContractType.COURIER) {
-						list.add(new ContractItem(ApiConverter.eveContractToContract(contract, program.getSettings())));
-					}
-				}
-			}
-		}
-		//Save separator expanded/collapsed state
-		jTable.saveExpandedState();
-		//Update list
-		try {
-			eventList.getReadWriteLock().writeLock().lock();
-			eventList.clear();
-			eventList.addAll(list);
-		} finally {
-			eventList.getReadWriteLock().writeLock().unlock();
-		}
-		//Restore separator expanded/collapsed state
-		jTable.loadExpandedState();
+	public JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
+
+	@Override
+	public JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
+		//FIXME - make info menu for Contracts Tool
+		//JMenuInfo.contracts(...);
+	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
+
+	@Override
+	public void updateData() { }
 
 	public class ListenerClass implements ActionListener {
 

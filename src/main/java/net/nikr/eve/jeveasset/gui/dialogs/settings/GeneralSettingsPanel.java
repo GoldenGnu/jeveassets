@@ -71,19 +71,19 @@ public class GeneralSettingsPanel extends JSettingsPanel {
 
 	@Override
 	public boolean save() {
-		program.getSettings().setAutoUpdate(jStable.isSelected());
-		program.getSettings().setUpdateDev(jDev.isSelected());
-		boolean update = jHighlightSelectedRow.isSelected() != program.getSettings().isHighlightSelectedRows();
-		program.getSettings().setFilterOnEnter(jEnterFilters.isSelected());
-		program.getSettings().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
+		Settings.get().setAutoUpdate(jStable.isSelected());
+		Settings.get().setUpdateDev(jDev.isSelected());
+		boolean update = jHighlightSelectedRow.isSelected() != Settings.get().isHighlightSelectedRows();
+		Settings.get().setFilterOnEnter(jEnterFilters.isSelected());
+		Settings.get().setHighlightSelectedRows(jHighlightSelectedRow.isSelected());
 		return update;
 	}
 
 	@Override
 	public void load() {
-		jStable.setSelected(program.getSettings().isAutoUpdate());
-		jDev.setSelected(program.getSettings().isUpdateDev());
-		jEnterFilters.setSelected(Settings.isFilterOnEnter());
-		jHighlightSelectedRow.setSelected(program.getSettings().isHighlightSelectedRows());
+		jStable.setSelected(Settings.get().isAutoUpdate());
+		jDev.setSelected(Settings.get().isUpdateDev());
+		jEnterFilters.setSelected(Settings.get().isFilterOnEnter());
+		jHighlightSelectedRow.setSelected(Settings.get().isHighlightSelectedRows());
 	}
 }

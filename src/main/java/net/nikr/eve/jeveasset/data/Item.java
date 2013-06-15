@@ -23,9 +23,10 @@ package net.nikr.eve.jeveasset.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.types.ItemType;
 
 
-public class Item implements Comparable<Item> {
+public class Item implements Comparable<Item>, ItemType {
 
 	private int typeID; //TypeID : int
 	private String name;
@@ -38,7 +39,13 @@ public class Item implements Comparable<Item> {
 	private boolean marketGroup;
 	private boolean piMaterial;
 	private int portion;
+	private boolean blueprint;
 	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+	private double priceReprocessed;
+
+	public Item(int typeID) {
+		this(typeID, emptyType(typeID), "", "", -1, -1, -1, "", false, false, 0);
+	}
 
 	public Item(final int typeID, final String name, final String group, final String category, final long price, final float volume, final int meta, final String tech, final boolean marketGroup, final boolean piMaterial, final int portion) {
 		this.typeID = typeID;
@@ -52,6 +59,7 @@ public class Item implements Comparable<Item> {
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
 		this.portion = portion;
+		this.blueprint = (name.toLowerCase().contains("blueprint"));
 	}
 
 	public void addReprocessedMaterial(final ReprocessedMaterial material) {
@@ -86,12 +94,16 @@ public class Item implements Comparable<Item> {
 		return tech;
 	}
 
-	public String getName() {
+	public String getTypeName() {
 		return name;
 	}
 
-	public long getPrice() {
+	public long getPriceBase() {
 		return price;
+	}
+
+	public double getPriceReprocessed() {
+		return priceReprocessed;
 	}
 
 	public float getVolume() {
@@ -102,8 +114,29 @@ public class Item implements Comparable<Item> {
 		return piMaterial;
 	}
 
+	public boolean isBlueprint() {
+		return blueprint;
+	}
+
 	public int getPortion() {
 		return portion;
+	}
+
+	public boolean isEmpty() {
+		return emptyType(typeID).equals(name);
+	}
+
+	private static String emptyType(int typeID) {
+		return "!"+typeID;
+	}
+
+	@Override
+	public Item getItem() {
+		return this;
+	}
+
+	public void setPriceReprocessed(double priceReprocessed) {
+		this.priceReprocessed = priceReprocessed;
 	}
 
 	@Override
@@ -113,11 +146,18 @@ public class Item implements Comparable<Item> {
 
 	@Override
 	public int compareTo(final Item o) {
-		return this.getName().compareToIgnoreCase(o.getName());
+		return this.getTypeName().compareToIgnoreCase(o.getTypeName());
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public int hashCode() {
+		int hash = 5;
+		hash = 53 * hash + this.typeID;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(java.lang.Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -129,12 +169,5 @@ public class Item implements Comparable<Item> {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 17 * hash + this.typeID;
-		return hash;
 	}
 }

@@ -41,13 +41,13 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 
 	private EveFittingWriter() { }
 
-	public static void save(final List<Asset> eveassets, final String filename) {
-		save(eveassets, filename, null, null);
+	public static void save(final List<Asset> assets, final String filename) {
+		save(assets, filename, null, null);
 	}
 
-	public static void save(final List<Asset> eveassets, final String filename, final String setupName, final String description) {
+	public static void save(final List<Asset> assets, final String filename, final String setupName, final String description) {
 		EveFittingWriter writer = new EveFittingWriter();
-		writer.write(eveassets, filename, setupName, description);
+		writer.write(assets, filename, setupName, description);
 	}
 
 	private void write(final List<Asset> assets, final String filename, String setupName, String description) {
@@ -77,7 +77,8 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Eve fitting saved");
 	}
-	private void writeFitting(final Document xmldoc, final Asset eveAsset, final String setupName, final String description) {
+
+	private void writeFitting(final Document xmldoc, final Asset asset, final String setupName, final String description) {
 		Element fittingsNode = xmldoc.getDocumentElement();
 		Element fittingNode = xmldoc.createElementNS(null, "fitting");
 		fittingNode.setAttributeNS(null, "name", setupName);
@@ -88,86 +89,85 @@ public final class EveFittingWriter extends AbstractXmlWriter {
 		fittingNode.appendChild(descriptionNode);
 
 		Element shipTypeNode = xmldoc.createElementNS(null, "shipType");
-		shipTypeNode.setAttributeNS(null, "value", eveAsset.getName());
+		shipTypeNode.setAttributeNS(null, "value", asset.getName());
 		fittingNode.appendChild(shipTypeNode);
 
 		Map<String, List<Asset>> modules = new HashMap<String, List<Asset>>();
-			List<Asset> assets = eveAsset.getAssets();
-			for (Asset module : assets) {
-				String flag = module.getFlag();
-				if (flag.contains(" > ")) {
-					int start = flag.indexOf(" > ") + 3;
-					flag = flag.substring(start);
-				}
-				if (modules.containsKey(flag)) {
-					modules.get(flag).add(module);
+		for (Asset module : asset.getAssets()) {
+			String flag = module.getFlag();
+			if (flag.contains(" > ")) {
+				int start = flag.indexOf(" > ") + 3;
+				flag = flag.substring(start);
+			}
+			if (modules.containsKey(flag)) {
+				modules.get(flag).add(module);
+			} else {
+				List<Asset> subModules = new ArrayList<Asset>();
+				subModules.add(module);
+				modules.put(flag, subModules);
+			}
+		}
+		Element hardwareNode;
+		for (int i = 0; i < 8; i++) {
+			if (modules.containsKey("LoSlot" + i)) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "slot", "low slot " + i);
+				hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + i).get(0).getName());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			if (modules.containsKey("MedSlot" + i)) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "slot", "med slot " + i);
+				hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + i).get(0).getName());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			if (modules.containsKey("HiSlot" + i)) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "slot", "hi slot " + i);
+				hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + i).get(0).getName());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			if (modules.containsKey("RigSlot" + i)) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "slot", "rig slot " + i);
+				hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + i).get(0).getName());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
+		for (int i = 0; i < 5; i++) {
+			if (modules.containsKey("SubSystem" + i)) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + i);
+				hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + i).get(0).getName());
+				fittingNode.appendChild(hardwareNode);
+			}
+		}
+		if (modules.containsKey("DroneBay")) {
+			Map<String, Long> moduleCount = new HashMap<String, Long>();
+			List<Asset> subModules = modules.get("DroneBay");
+			for (Asset subModule : subModules) {
+				if (moduleCount.containsKey(subModule.getName())) {
+					long count = moduleCount.get(subModule.getName());
+					moduleCount.remove(subModule.getName());
+					count = count +  subModule.getCount();
+					moduleCount.put(subModule.getName(), count);
 				} else {
-					List<Asset> subModules = new ArrayList<Asset>();
-					subModules.add(module);
-					modules.put(flag, subModules);
+					moduleCount.put(subModule.getName(), subModule.getCount());
 				}
 			}
-			Element hardwareNode;
-			for (int i = 0; i < 8; i++) {
-				if (modules.containsKey("LoSlot" + i)) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "low slot " + i);
-					hardwareNode.setAttributeNS(null, "type", modules.get("LoSlot" + i).get(0).getName());
-					fittingNode.appendChild(hardwareNode);
-				}
+			for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
+				hardwareNode = xmldoc.createElementNS(null, "hardware");
+				hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
+				hardwareNode.setAttributeNS(null, "slot", "drone bay");
+				hardwareNode.setAttributeNS(null, "type", entry.getKey());
+				fittingNode.appendChild(hardwareNode);
 			}
-			for (int i = 0; i < 8; i++) {
-				if (modules.containsKey("MedSlot" + i)) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "med slot " + i);
-					hardwareNode.setAttributeNS(null, "type", modules.get("MedSlot" + i).get(0).getName());
-					fittingNode.appendChild(hardwareNode);
-				}
-			}
-			for (int i = 0; i < 8; i++) {
-				if (modules.containsKey("HiSlot" + i)) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "hi slot " + i);
-					hardwareNode.setAttributeNS(null, "type", modules.get("HiSlot" + i).get(0).getName());
-					fittingNode.appendChild(hardwareNode);
-				}
-			}
-			for (int i = 0; i < 8; i++) {
-				if (modules.containsKey("RigSlot" + i)) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "rig slot " + i);
-					hardwareNode.setAttributeNS(null, "type", modules.get("RigSlot" + i).get(0).getName());
-					fittingNode.appendChild(hardwareNode);
-				}
-			}
-			for (int i = 0; i < 5; i++) {
-				if (modules.containsKey("SubSystem" + i)) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "slot", "subsystem slot" + i);
-					hardwareNode.setAttributeNS(null, "type", modules.get("SubSystem" + i).get(0).getName());
-					fittingNode.appendChild(hardwareNode);
-				}
-			}
-			if (modules.containsKey("DroneBay")) {
-				Map<String, Long> moduleCount = new HashMap<String, Long>();
-				List<Asset> subModules = modules.get("DroneBay");
-				for (Asset subModule : subModules) {
-					if (moduleCount.containsKey(subModule.getName())) {
-						long count = moduleCount.get(subModule.getName());
-						moduleCount.remove(subModule.getName());
-						count = count +  subModule.getCount();
-						moduleCount.put(subModule.getName(), count);
-					} else {
-						moduleCount.put(subModule.getName(), subModule.getCount());
-					}
-				}
-				for (Map.Entry<String, Long> entry : moduleCount.entrySet()) {
-					hardwareNode = xmldoc.createElementNS(null, "hardware");
-					hardwareNode.setAttributeNS(null, "qty", String.valueOf(entry.getValue()));
-					hardwareNode.setAttributeNS(null, "slot", "drone bay");
-					hardwareNode.setAttributeNS(null, "type", entry.getKey());
-					fittingNode.appendChild(hardwareNode);
-				}
-			}
+		}
 	}
 }

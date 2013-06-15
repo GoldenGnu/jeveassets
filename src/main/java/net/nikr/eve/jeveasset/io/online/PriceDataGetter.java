@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
-	private Settings settings;
+	private ProfileData profileData;
 	private UpdateTask updateTask;
 	private long nextUpdate = 0;
 	private long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
@@ -57,8 +58,8 @@ public class PriceDataGetter implements PricingListener {
 	private boolean failed;
 	private Set<Integer> ids;
 
-	public PriceDataGetter(final Settings settings) {
-		this.settings = settings;
+	public PriceDataGetter(final ProfileData profileData) {
+		this.profileData = profileData;
 	}
 	/**
 	 * Load price data from cache and only update missing price data.
@@ -90,18 +91,18 @@ public class PriceDataGetter implements PricingListener {
 		this.update = processUpdate;
 
 		if (processUpdate) {
-			LOG.info("Price data update (" + settings.getPriceDataSettings().getSource() + "):");
+			LOG.info("Price data update (" + Settings.get().getPriceDataSettings().getSource() + "):");
 		} else {
-			LOG.info("Price data loading (" + settings.getPriceDataSettings().getSource() + "):");
+			LOG.info("Price data loading (" + Settings.get().getPriceDataSettings().getSource() + "):");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
 		failed = false;
 
 		//Get all price ids
-		ids = settings.getUniqueIds();
+		ids = profileData.getPriceTypeIDs();
 
-		PricingFactory.setPricingOptions(new EveAssetPricingOptions());
+		PricingFactory.setPricingOptions(new DefaultPricingOptions());
 		Pricing pricing = PricingFactory.getPricing();
 		pricing.addPricingListener(this);
 		pricing.resetAllAttemptCounters();
@@ -142,7 +143,7 @@ public class PriceDataGetter implements PricingListener {
 				LOG.info("	Price data loaded");
 			}
 			//We only set the price data if everthing worked (AKA all updated)
-			settings.setPriceData(priceDataList);
+			Settings.get().setPriceData(priceDataList);
 			try {
 				pricing.writeCache();
 				LOG.info("	Price data cached saved");
@@ -221,7 +222,7 @@ public class PriceDataGetter implements PricingListener {
 		}
 	}
 
-	private class EveAssetPricingOptions implements PricingOptions {
+	private class DefaultPricingOptions implements PricingOptions {
 
 		@Override
 		public long getPriceCacheTimer() {
@@ -230,17 +231,17 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public String getPricingFetchImplementation() {
-			return settings.getPriceDataSettings().getSource().getName();
+			return Settings.get().getPriceDataSettings().getSource().getName();
 		}
 
 		@Override
 		public LocationType getLocationType() {
-			return settings.getPriceDataSettings().getLocationType();
+			return Settings.get().getPriceDataSettings().getLocationType();
 		}
 
 		@Override
 		public List<Long> getLocations() {
-			return settings.getPriceDataSettings().getLocations();
+			return Settings.get().getPriceDataSettings().getLocations();
 		}
 
 		@Override
@@ -274,7 +275,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public Proxy getProxy() {
-			return settings.getProxy();
+			return Settings.get().getProxy();
 		}
 
 		@Override

@@ -160,7 +160,7 @@ public class TaskDialog {
 			updateTask.addPropertyChangeListener(listener);
 			updateTask.execute();
 		} else {
-			program.updateEventList();
+			program.updateEventLists();
 			//Create value tracker point
 			program.createTrackerDataPoint();
 			//Save settings after updating (if we crash later)

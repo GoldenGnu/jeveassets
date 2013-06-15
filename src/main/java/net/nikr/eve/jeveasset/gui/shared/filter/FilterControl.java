@@ -23,10 +23,11 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -113,21 +114,23 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
+		//FIXME Add support for adding filters from more than one cell...
 		String text = null;
 		Enum<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
 		TableModel model = jTable.getModel();
 		int columnIndex = jTable.getSelectedColumn();
-		if (model instanceof EventTableModel) {
-			EventTableModel<?> tableModel = (EventTableModel<?>) model;
+		if (jTable.getSelectedColumnCount() == 1
+				&& jTable.getSelectedRowCount() == 1
+				&& items.size() == 1
+				&& !(items.get(0) instanceof SeparatorList.Separator)
+				&& model instanceof DefaultEventTableModel) {
+			DefaultEventTableModel<?> tableModel = (DefaultEventTableModel<?>) model;
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor) {
 				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0
-						&& columnIndex < adaptor.getShownColumns().size()
-						&& items.size() == 1
-						) {
+				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()) {
 					Object object = adaptor.getShownColumns().get(columnIndex);
 					if (object instanceof Enum) {
 						column = (Enum) object;

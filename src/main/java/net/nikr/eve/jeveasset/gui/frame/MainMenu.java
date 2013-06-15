@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.frame;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -37,6 +39,7 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_VALUE_TABLE = "ACTION_OPEN_VALUE_TABLE";
 	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
 	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
+	public static final String ACTION_OPEN_TRANSACTION = "ACTION_OPEN_TRANSACTION";
 	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
 	public static final String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
 	public static final String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
@@ -58,8 +61,8 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
 	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
 
-	private JMenuItem jUpdatable;
-	private JMenuItem jTable;
+	private JMenuItem jUpdateMenu;
+	private JMenu jTableMenu;
 
 	public MainMenu(final Program program) {
 		JMenu menu;
@@ -134,6 +137,13 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+ 		menuItem = new JMenuItem(GuiFrame.get().transaction());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_WALLET.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_TRANSACTION);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
@@ -183,16 +193,16 @@ public class MainMenu extends JMenuBar {
 		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		jUpdatable = new JMenuItem(GuiFrame.get().update1());
-		jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
-		jUpdatable.setActionCommand(ACTION_OPEN_UPDATE);
-		jUpdatable.addActionListener(program);
+		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
+		jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+		jUpdateMenu.setActionCommand(ACTION_OPEN_UPDATE);
+		jUpdateMenu.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menu.add(jUpdatable);
+		menu.add(jUpdateMenu);
 
-		jTable = new JMenu(GuiFrame.get().table());
+		jTableMenu = new JMenu(GuiFrame.get().table());
 		//menu.setActionCommand("Something");
-		this.add(jTable);
+		this.add(jTableMenu);
 
 		menu = new JMenu(GuiFrame.get().options());
 		//menu.setActionCommand("Something");
@@ -264,19 +274,65 @@ public class MainMenu extends JMenuBar {
 		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(menuItem);
+
+		if (Program.isDebug()) {
+			menu = new JMenu("Debug");
+			//FIXME - - > Remove for production
+			//this.add(menu);
+
+			menuItem = new JMenuItem("Update EventLists", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.updateEventLists();
+				}
+			});
+			menu.add(menuItem);
+
+			JMenu submenu = new JMenu("Add systems to routing");
+			menu.add(submenu);
+
+			menuItem = new JMenuItem("10", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.getRoutingTab().addSystems(10);
+				}
+			});
+			submenu.add(menuItem);
+
+			menuItem = new JMenuItem("50", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.getRoutingTab().addSystems(50);
+				}
+			});
+			submenu.add(menuItem);
+
+			menuItem = new JMenuItem("100", Images.MISC_DEBUG.getIcon());
+			menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					program.getRoutingTab().addSystems(100);
+				}
+			});
+			submenu.add(menuItem);
+
+		}
 	}
 
-	public JMenuItem getTableMenu() {
-		return jTable;
+	public JMenu getTableMenu() {
+		return jTableMenu;
 	}
 
 	public void timerTicked(final boolean updatable) {
 		if (updatable) {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().updatable());
+			jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
+			jUpdateMenu.setToolTipText(GuiFrame.get().updatable());
 		} else {
-			jUpdatable.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
-			jUpdatable.setToolTipText(GuiFrame.get().not());
+			jUpdateMenu.setIcon(Images.DIALOG_UPDATE_DISABLED.getIcon());
+			jUpdateMenu.setToolTipText(GuiFrame.get().not());
 		}
 	}
 }

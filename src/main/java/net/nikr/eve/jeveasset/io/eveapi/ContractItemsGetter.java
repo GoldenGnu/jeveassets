@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.ContractItemsResponse;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import java.util.ArrayList;
@@ -35,12 +34,15 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private EveContract currentContract;
+	private Contract currentContract;
 	private Map<Long, List<EveContractItem>> savedItems = new HashMap<Long, List<EveContractItem>>();
 
 	public ContractItemsGetter() {
@@ -59,8 +61,8 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		int count = 0;
 		for (Account account : accounts) {
 			for (Owner owner : account.getOwners()) {
-				for (Map.Entry<EveContract, List<EveContractItem>> entry : owner.getContracts().entrySet()) {
-					EveContract contract = entry.getKey();
+				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
+					Contract contract = entry.getKey();
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
@@ -69,11 +71,26 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 						continue; //Ignore courier
 					}
 					if (!entry.getValue().isEmpty()) {
-						continue; //Ignore old
+							continue; //Ignore existing
+ 					}
+					///XXX - workaround for alien contracts
+					if ((owner.getOwnerID() != contract.getAcceptorID()
+							&& owner.getOwnerID() != contract.getAssigneeID()
+							&& owner.getOwnerID() != contract.getIssuerID())
+							&& owner.getOwnerID() != contract.getIssuerCorpID()
+							) {
+						continue; //Ignore not owned
+					}
+					if ((owner.getOwnerID() != contract.getAcceptorID()
+							&& owner.getOwnerID() != contract.getAssigneeID()
+							&& owner.getOwnerID() != contract.getIssuerID())
+							&& !contract.isForCorp()
+							) {
+						continue; //Only IssuerCorpID match and is not for corp
 					}
 					List<EveContractItem> items = savedItems.get(contract.getContractID());
 					if (items != null) { //Set already updated
-						owner.setContracts(contract, items);
+						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract));
 						continue; //Ignore already updated
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
@@ -119,7 +136,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected void setData(ContractItemsResponse response) {
 		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
-		getOwner().setContracts(currentContract, contractItems);
+		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
 		savedItems.put(currentContract.getContractID(), contractItems);
 	}
 

@@ -27,10 +27,10 @@ import com.beimin.eveapi.shared.assetlist.EveAsset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -38,15 +38,13 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
-	private Settings settings;
-
 	public AssetsGetter() {
 		super("Assets", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final Settings loadSettings) {
-		this.settings = loadSettings;
-		super.load(updateTask, loadSettings.isForceUpdate(), loadSettings.getAccounts());
+	@Override
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<Account> accounts) {
+		super.load(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
@@ -74,8 +72,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<EveAsset<?>> apiAssets = new ArrayList<EveAsset<?>>(response.getAll());
-		List<Asset> assets = ApiConverter.apiAsset(getOwner(), apiAssets, settings);
+		List<EveAsset<?>> eveAssets = new ArrayList<EveAsset<?>>(response.getAll());
+		List<Asset> assets = ApiConverter.convertAsset(eveAssets, getOwner());
 		getOwner().setAssets(assets);
 	}
 

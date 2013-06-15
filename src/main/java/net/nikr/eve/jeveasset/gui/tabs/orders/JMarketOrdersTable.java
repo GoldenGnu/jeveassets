@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
@@ -33,9 +33,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JMarketOrdersTable extends JAutoColumnTable {
 
-	private EventTableModel<MarketOrder> tableModel;
+	private DefaultEventTableModel<MarketOrder> tableModel;
 
-	public JMarketOrdersTable(final Program program, final EventTableModel<MarketOrder> tableModel) {
+	public JMarketOrdersTable(final Program program, final DefaultEventTableModel<MarketOrder> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}

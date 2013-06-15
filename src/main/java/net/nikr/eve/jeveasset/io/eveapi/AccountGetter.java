@@ -36,8 +36,9 @@ import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 
-	private int fails = 0;
-	private final int MAX_FAIL = 5;
+	private boolean limited = false;
+	private boolean full = false;
+	private boolean fail = true;
 
 	public AccountGetter() {
 		super("Accounts", false, true);
@@ -83,24 +84,38 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
 		List<Owner> owners = new ArrayList<Owner>();
 
-		fails = 0;
+		int fails = 0;
+		int max = 0;
 		if (isForceUpdate()) {
+			max++;
 			if (!getAccount().isAccountBalance()) {
 				fails++;
 			}
+			max++;
 			if (!getAccount().isIndustryJobs()) {
 				fails++;
 			}
+			max++;
 			if (!getAccount().isMarketOrders()) {
 				fails++;
 			}
+			max++;
+			if (!getAccount().isWalletTransactions()) {
+				fails++;
+			}
+			max++;
 			if (!getAccount().isContracts()) {
 				fails++;
 			}
+			max++;
 			if (!getAccount().isAssetList()) { //Can not work without it...
-				fails = 5;
+				fails = max;
 			}
 		}
+
+		limited = (fails > 0 && fails < max);
+		full = (fails == 0);
+		fail = (fails >= max);
 
 		for (EveCharacter apiCharacter : characters) {
 			boolean found = false;
@@ -143,11 +158,15 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		}
 	}
 
-	public int getFails() {
-		return fails;
+	public boolean isLimited() {
+		return limited;
 	}
 
-	public int getMaxFail() {
-		return MAX_FAIL;
+	public boolean isFull() {
+		return full;
+	}
+
+	public boolean isFail() {
+		return fail;
 	}
 }

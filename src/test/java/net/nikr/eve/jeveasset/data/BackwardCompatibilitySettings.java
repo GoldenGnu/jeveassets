@@ -31,22 +31,27 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
+import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 
 public class BackwardCompatibilitySettings extends FakeSettings {
 
 	public enum Function {
+		GET_ASSET_ADDED,
+		GET_EXPORT_SETTINGS,
 		GET_FLAGS,
-		GET_ITEMS,
-		GET_LOCATIONS,
 		GET_OVERVIEW_GROUPS,
+		GET_OWNERS,
+		GET_PRICE_DATA_SETTINGS,
 		GET_STOCKPILES,
 		GET_TABLE_COLUMNS,
 		GET_TABLE_COLUMNS_WIDTH,
 		GET_TABLE_FILTERS,
 		GET_TABLE_FILTERS_KEY,
 		GET_TABLE_RESIZE,
+		GET_TRACKER_DATA,
 		GET_USER_ITEM_NAMES,
 		GET_USER_PRICES,
 		SET_API_PROXY,
@@ -61,6 +66,8 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_WINDOW_MAXIMIZED,
 		SET_WINDOW_SIZE,
 	}
+
+	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
 
 	private String settingsPath;
 	private String name;
@@ -125,27 +132,39 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
+	public Map<Long, Date> getAssetAdded() {
+		ok.put(Function.GET_ASSET_ADDED, true);
+		return new HashMap<Long, Date>();
+	}
+
+	@Override
+	public ExportSettings getExportSettings() {
+		ok.put(Function.GET_EXPORT_SETTINGS, true);
+		return new ExportSettings();
+	}
+
+	@Override
 	public Map<String, Boolean> getFlags() {
 		ok.put(Function.GET_FLAGS, true);
 		return new HashMap<String, Boolean>();
 	}
 
 	@Override
-	public Map<Integer, Item> getItems() {
-		ok.put(Function.GET_ITEMS, true);
-		return new HashMap<Integer, Item>();
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		ok.put(Function.GET_LOCATIONS, true);
-		return new HashMap<Long, Location>();
-	}
-
-	@Override
 	public Map<String, OverviewGroup> getOverviewGroups() {
 		ok.put(Function.GET_OVERVIEW_GROUPS, true);
 		return new HashMap<String, OverviewGroup>();
+	}
+
+	@Override
+	public Map<Long, String> getOwners() {
+		ok.put(Function.GET_OWNERS, true);
+		return new HashMap<Long, String>();
+	}
+
+	@Override
+	public PriceDataSettings getPriceDataSettings() {
+		ok.put(Function.GET_PRICE_DATA_SETTINGS, true);
+		return new PriceDataSettings();
 	}
 
 	@Override
@@ -187,6 +206,12 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	public Map<String, EnumTableFormatAdaptor.ResizeMode> getTableResize() {
 		ok.put(Function.GET_TABLE_RESIZE, true);
 		return new HashMap<String, EnumTableFormatAdaptor.ResizeMode>();
+	}
+
+	@Override
+	public Map<TrackerOwner, List<TrackerData>> getTrackerData() {
+		ok.put(Function.GET_TRACKER_DATA, true);
+		return trackerData;
 	}
 
 	@Override

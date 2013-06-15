@@ -20,12 +20,8 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
-import net.nikr.eve.jeveasset.io.local.LocationsReader;
-import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -52,37 +48,21 @@ public class PriceDataSettingsTest {
 
 	@Test
 	public void testGetRegion() {
-		Settings settings = new PriceDataSettingsMock();
 		for (RegionType regionType : RegionType.values()) {
 			List<Long> regions = regionType.getRegions();
 			if (regions.size() == 1) { //Single location
-				Location location = settings.getLocations().get(regions.get(0));
+				Location location = StaticData.get().getLocations().get(regions.get(0));
 				String locationName = regionType.toString();
 				if (locationName.contains("(")) {
 					locationName = locationName.substring(0, locationName.indexOf("(")).trim();
 				}
-				assertEquals(location.getName(), locationName);
+				assertEquals(location.getLocation(), locationName);
 			} else { //Multiple locations
 				for (Long regionID : regionType.getRegions()) {
-					Location location = settings.getLocations().get(regionID);
+					Location location = StaticData.get().getLocations().get(regionID);
 					assertNotNull(location);
 				}
 			}
 		}
 	}
-
-	public static class PriceDataSettingsMock extends FakeSettings {
-
-	private Map<Long, Location> locations = new HashMap<Long, Location>();
-
-	public PriceDataSettingsMock() {
-		LocationsReader.load(this);
-	}
-
-	@Override
-	public Map<Long, Location> getLocations() {
-		return locations;
-	}
-}
-
 }

@@ -59,7 +59,7 @@ public class ProgramUpdateChecker {
 	public ProgramUpdateChecker(final Program program) {
 		this.program = program;
 		parseDataVersion();
-		if ((program.getSettings().isAutoUpdate())) {
+		if ((Settings.get().isAutoUpdate())) {
 			parseUpdateVersion();
 		}
 	}
@@ -99,11 +99,11 @@ public class ProgramUpdateChecker {
 	}
 
 	private boolean isStableUpdateAvailable() {
-		return stable.isNewerThen(getProgram()) && (stable.isNewerThen(dev)	|| !program.getSettings().isUpdateDev());
+		return stable.isNewerThen(getProgram()) && (stable.isNewerThen(dev)	|| !Settings.get().isUpdateDev());
 	}
 
 	private boolean isDevUpdateAvailable() {
-		return dev.isNewerThen(getProgram()) && dev.isNewerThen(stable) && program.getSettings().isUpdateDev();
+		return dev.isNewerThen(getProgram()) && dev.isNewerThen(stable) && Settings.get().isUpdateDev();
 	}
 
 	private Version getProgram() {
@@ -156,7 +156,7 @@ public class ProgramUpdateChecker {
 	private void parseUpdateVersion() {
 		try {
 			URL url = new URL(Program.PROGRAM_UPDATE_URL);
-			URLConnection connection = url.openConnection(program.getSettings().getProxy());
+			URLConnection connection = url.openConnection(Settings.get().getProxy());
 			connection.setConnectTimeout(10 * 1000); //10 sec
 			InputStream is = connection.getInputStream();
 			parseUpdate(parse(is));

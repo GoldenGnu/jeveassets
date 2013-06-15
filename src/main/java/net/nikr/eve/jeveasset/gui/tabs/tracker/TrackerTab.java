@@ -21,29 +21,30 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.tracker;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,18 +53,29 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -76,6 +88,7 @@ import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
+import org.jfree.ui.RectangleEdge;
 
 
 public class TrackerTab extends JMainTab {
@@ -84,6 +97,13 @@ public class TrackerTab extends JMainTab {
 	private static final String ACTION_UPDATE_DATA = "ACTION_UPDATE_DATA";
 	private static final String ACTION_UPDATE_SHOWN = "ACTION_UPDATE_SHOWN";
 	private static final String ACTION_All = "ACTION_All";
+	private static final String ACTION_EDIT = "ACTION_EDIT";
+	private static final String ACTION_DELETE = "ACTION_DELETE";
+
+	private final int PANEL_WIDTH = 140;
+
+	private NumberFormat iskFormat = new DecimalFormat("#,##0.00 isk");
+	private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 	private JFreeChart jNextChart;
 	private JDateChooser jFrom;
@@ -97,62 +117,12 @@ public class TrackerTab extends JMainTab {
 	private JCheckBox jSellOrders;
 	private JCheckBox jEscrows;
 	private JCheckBox jEscrowsToCover;
-
-	private enum QuickDate {
-		EMPTY(null, null, TabsTracker.get().quickDate())
-		,MONTH_ONE(Calendar.MONTH, -1, TabsTracker.get().month1())
-		,MONTH_THREE(Calendar.MONTH, -3, TabsTracker.get().months3())
-		,MONTH_SIX(Calendar.MONTH, -6, TabsTracker.get().months6())
-		,YEAR_ONE(Calendar.YEAR, -1, TabsTracker.get().year1())
-		,YEAR_TWO(Calendar.YEAR, -2, TabsTracker.get().years2());
-
-		private Integer field;
-		private Integer amount;
-		private String title;
-
-		private QuickDate(Integer field, Integer amount, String title) {
-			this.field = field;
-			this.amount = amount;
-			this.title = title;
-		}
-
-		public Date apply(Date to) {
-			if (field == null || amount == null) {
-				return null;
-			}
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(to);
-			calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.add(field, amount);
-			return calendar.getTime();
-		}
-
-		public boolean isValid(Date from, Date to) {
-			if (to == null) {
-				to = new Date(); //now
-			}
-			if (from == null) {
-				return false;
-			}
-			to = apply(to);
-			return from.equals(to);
-		}
-
-		public QuickDate getSelected(Date from, Date to) {
-			for (QuickDate quickDate : QuickDate.values()) {
-				if (quickDate.isValid(from, to)) {
-					return quickDate;
-				}
-			}
-			return QuickDate.EMPTY;
-		}
-
-		@Override
-		public String toString() {
-			return title;
-		}
-	}
+	private JPopupMenu jPopupMenu;
+	private JMenuItem jIskValue;
+	private JMenuItem jDateValue;
+	private JTrackerEditDialog jEditDialog;
+	private ChartPanel jChartPanel;
+	private JTextArea jHelp;
 
 	private Listener listener = new Listener();
 
@@ -167,6 +137,38 @@ public class TrackerTab extends JMainTab {
 	public TrackerTab(Program program) {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
 
+		jPopupMenu = new JPopupMenu();
+		jPopupMenu.addPopupMenuListener(listener);
+
+		JMenuItem jMenuItem;
+		jMenuItem = new JMenuItem(TabsTracker.get().edit(), Images.EDIT_EDIT.getIcon());
+		jMenuItem.setActionCommand(ACTION_EDIT);
+		jMenuItem.addActionListener(listener);
+		jPopupMenu.add(jMenuItem);
+
+		jMenuItem = new JMenuItem(TabsTracker.get().delete(), Images.EDIT_DELETE.getIcon());
+		jMenuItem.setActionCommand(ACTION_DELETE);
+		jMenuItem.addActionListener(listener);
+		jPopupMenu.add(jMenuItem);
+
+		JMenuInfo.createDefault(jPopupMenu);
+
+		jIskValue = new JMenuItem();
+		jIskValue.setEnabled(false);
+		jIskValue.setForeground(Color.BLACK);
+		jIskValue.setHorizontalAlignment(SwingConstants.RIGHT);
+		jIskValue.setDisabledIcon(Images.TOOL_VALUES.getIcon());
+		jPopupMenu.add(jIskValue);
+
+		jDateValue = new JMenuItem();
+		jDateValue.setEnabled(false);
+		jDateValue.setForeground(Color.BLACK);
+		jDateValue.setHorizontalAlignment(SwingConstants.RIGHT);
+		//jDate.setDisabledIcon(Images.TOOL_VALUES.getIcon());
+		jPopupMenu.add(jDateValue);
+
+		jEditDialog = new JTrackerEditDialog(program);
+
 		jOwners = new JComboBox();
 		jOwners.setActionCommand(ACTION_UPDATE_DATA);
 		jOwners.addActionListener(listener);
@@ -175,10 +177,12 @@ public class TrackerTab extends JMainTab {
 		jQuickDate.setActionCommand(ACTION_QUICK_DATE);
 		jQuickDate.addActionListener(listener);
 
-		jFrom = createDateChooser(TabsTracker.get().from());
-		jTo = createDateChooser(TabsTracker.get().to());
+		jFrom = createDateChooser();
+		JPanel jFromPanel = wrapDateChooser(TabsTracker.get().from(), jFrom);
+		jTo = createDateChooser();
+		JPanel jToPanel = wrapDateChooser(TabsTracker.get().to(), jTo);
 
-		jAll = new JCheckBox(TabsTracker.get().all());
+		jAll = new JCheckBox(General.get().all());
 		jAll.setSelected(true);
 		jAll.setActionCommand(ACTION_All);
 		jAll.addActionListener(listener);
@@ -189,7 +193,7 @@ public class TrackerTab extends JMainTab {
 		jTotal.setActionCommand(ACTION_UPDATE_SHOWN);
 		jTotal.addActionListener(listener);
 
-		jWalletBalance = new JCheckBox(TabsTracker.get().walletBalanc());
+		jWalletBalance = new JCheckBox(TabsTracker.get().walletBalance());
 		jWalletBalance.setSelected(true);
 		jWalletBalance.setActionCommand(ACTION_UPDATE_SHOWN);
 		jWalletBalance.addActionListener(listener);
@@ -214,6 +218,15 @@ public class TrackerTab extends JMainTab {
 		jEscrowsToCover.setActionCommand(ACTION_UPDATE_SHOWN);
 		jEscrowsToCover.addActionListener(listener);
 
+		jHelp = new JTextArea();
+		jHelp.setEditable(false);
+		jHelp.setOpaque(false);
+		jHelp.setBorder(null);
+		jHelp.setWrapStyleWord(true);
+		jHelp.setLineWrap(true);
+		jHelp.setFont(jPanel.getFont());
+		jHelp.setText(TabsTracker.get().help());
+
 		DateAxis domainAxis = new DateAxis(TabsTracker.get().date());
 		domainAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
 		domainAxis.setVerticalTickLabels(true);
@@ -230,34 +243,43 @@ public class TrackerTab extends JMainTab {
 		plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
 		plot.getRenderer().setBaseToolTipGenerator(new StandardXYToolTipGenerator(
 				"{0}: {2} ({1})",
-				new SimpleDateFormat("dd-MM-yyyy"),
-				new DecimalFormat("#,##0.00 isk")));
+				dateFormat,
+				iskFormat));
+		plot.setDomainCrosshairLockedOnData(true);
+		plot.setDomainCrosshairStroke(new BasicStroke(1));
+		plot.setDomainCrosshairPaint(Color.BLACK);
+		plot.setDomainCrosshairVisible(false);
+		plot.setRangeCrosshairLockedOnData(true);
+		plot.setRangeCrosshairVisible(false);
 
 		jNextChart = new JFreeChart(plot);
 		jNextChart.setAntiAlias(true);
 		jNextChart.setBackgroundPaint(jPanel.getBackground());
+		jNextChart.addProgressListener(null);
 
-		ChartPanel jChartPanel = new ChartPanel(jNextChart);
+		jChartPanel = new ChartPanel(jNextChart);
 		jChartPanel.addMouseListener(listener);
 		jChartPanel.setDomainZoomable(false);
 		jChartPanel.setRangeZoomable(false);
 		jChartPanel.setPopupMenu(null);
+		jChartPanel.addChartMouseListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jChartPanel)
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jOwners)
-					.addComponent(jQuickDate)
-					.addComponent(jFrom)
-					.addComponent(jTo)
-					.addComponent(jAll)
-					.addComponent(jTotal)
-					.addComponent(jWalletBalance)
-					.addComponent(jAssets)
-					.addComponent(jSellOrders)
-					.addComponent(jEscrows)
-					.addComponent(jEscrowsToCover)
+					.addComponent(jOwners, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jQuickDate, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jFromPanel, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jToPanel, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jAll, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jTotal, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jWalletBalance, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jAssets, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jSellOrders, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jEscrows, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jHelp, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 				)
 		);
 		layout.setVerticalGroup(
@@ -266,8 +288,8 @@ public class TrackerTab extends JMainTab {
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jQuickDate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jFrom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jTo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jFromPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jTotal, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jWalletBalance, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -275,13 +297,34 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jHelp, 35, 35, 35)
 				)
 		);
 	}
 
-	private JDateChooser createDateChooser(String title) {
+	@Override
+	public void updateData() {
+		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(Settings.get().getTrackerData().keySet());
+		if (owners.isEmpty()) {
+			jOwners.setEnabled(false);
+			jOwners.getModel().setSelectedItem(new TrackerOwner(-1, TabsTracker.get().noDataFound()));
+		} else {
+			jOwners.setEnabled(true);
+			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
+		}
+		createData();
+	}
+
+	private JPanel wrapDateChooser(String title, JDateChooser jDate) {
+		JPanel jDatePanel = new JPanel();
+		jDatePanel.setBorder(BorderFactory.createTitledBorder(title));
+		jDatePanel.add(jDate);
+		return jDatePanel;
+	}
+
+	private JDateChooser createDateChooser() {
 		JDateChooser jDate = new JDateChooser(Settings.getNow());
-		jDate.setBorder(BorderFactory.createTitledBorder(title));
 		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
 		jDate.setCalendar(null);
 		JCalendar jCalendar = jDate.getJCalendar();
@@ -310,12 +353,11 @@ public class TrackerTab extends JMainTab {
 
 	public void createTrackerDataPoint() {
 		Date date = new Date();
-		Set<String> uniqueOwners = new HashSet<String>();
 		Map<TrackerOwner, TrackerData> data = new HashMap<TrackerOwner, TrackerData>();
 		//All
 		TrackerData allTracker = new TrackerData(date);
 		data.put(new TrackerOwner(), allTracker);
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -332,39 +374,27 @@ public class TrackerTab extends JMainTab {
 			}
 			//Assets
 			TrackerData trackerData = getTrackerData(data, asset.getOwnerID(), asset.getOwner(), date);
-			trackerData.addAssets(asset.getPrice() * asset.getCount());
-			allTracker.addAssets(asset.getPrice() * asset.getCount());
+			trackerData.addAssets(asset.getDynamicPrice() * asset.getCount());
+			allTracker.addAssets(asset.getDynamicPrice() * asset.getCount());
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowAssets()) { //Ignore hidden owners
-					continue;
-				}
-				if (uniqueOwners.contains(owner.getName())) {
-					continue;
-				} else {
-					uniqueOwners.add(owner.getName());
-				}
-				//TrackerData
-				TrackerData trackerData = getTrackerData(data, owner.getOwnerID(), owner.getName(), date);
-				//Account Balance
-				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					trackerData.addWalletBalance(accountBalance.getBalance());
-					allTracker.addWalletBalance(accountBalance.getBalance());
-				}
-				//Market Orders
-				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
-					if (apiMarketOrder.getOrderState() == 0) {
-						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							trackerData.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							allTracker.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-						} else { //Buy Orders
-							trackerData.addEscrows(apiMarketOrder.getEscrow());
-							allTracker.addEscrows(apiMarketOrder.getEscrow());
-							trackerData.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							allTracker.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-						}
-					}
+		//Account Balance
+		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+			TrackerData trackerData = getTrackerData(data, accountBalance.getOwnerID(), accountBalance.getOwner(), date);
+			trackerData.addWalletBalance(accountBalance.getBalance());
+			allTracker.addWalletBalance(accountBalance.getBalance());
+		}
+		//Market Orders
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			TrackerData trackerData = getTrackerData(data, marketOrder.getOwnerID(), marketOrder.getOwner(), date);
+			if (marketOrder.getOrderState() == 0) {
+				if (marketOrder.getBid() < 1) { //Sell Orders
+					trackerData.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					allTracker.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+				} else { //Buy Orders
+					trackerData.addEscrows(marketOrder.getEscrow());
+					allTracker.addEscrows(marketOrder.getEscrow());
+					trackerData.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					allTracker.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
 			}
 		}
@@ -373,48 +403,20 @@ public class TrackerTab extends JMainTab {
 			TrackerOwner trackerOwner = entry.getKey();
 			TrackerData trackerData = entry.getValue();
 			//New TrackerOwner
-			if (!program.getSettings().getTrackerData().containsKey(trackerOwner)) {
-				program.getSettings().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
+			if (!Settings.get().getTrackerData().containsKey(trackerOwner)) {
+				Settings.get().getTrackerData().put(trackerOwner, new ArrayList<TrackerData>());
 			}
-			program.getSettings().getTrackerData().get(trackerOwner).add(trackerData);
+			Settings.get().getTrackerData().get(trackerOwner).add(trackerData);
 			
 		}
 		//Update data
 		updateData();
 	}
 
-	private double deepAsset(List<Asset> assets) {
-		double assetValue = 0;
-		for (Asset asset : assets) {
-			
-			assetValue = assetValue + deepAsset(asset.getAssets());
-		}
-		return assetValue;
-	}
-
-	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
-	}
-
-	@Override
-	public void updateData() {
-		Set<TrackerOwner> owners = new TreeSet<TrackerOwner>(program.getSettings().getTrackerData().keySet());
-		if (owners.isEmpty()) {
-			jOwners.setEnabled(false);
-			jOwners.getModel().setSelectedItem(new TrackerOwner(-1, TabsTracker.get().noDataFound()));
-		} else {
-			jOwners.setEnabled(true);
-			jOwners.setModel(new DefaultComboBoxModel(owners.toArray()));
-		}
-		createData();
-	}
-
 	private void createData() {
 		TrackerOwner owner = (TrackerOwner) jOwners.getSelectedItem();
 		total = new TimePeriodValues(TabsTracker.get().total());
-		walletBalance = new TimePeriodValues(TabsTracker.get().walletBalanc());
+		walletBalance = new TimePeriodValues(TabsTracker.get().walletBalance());
 		assets = new TimePeriodValues(TabsTracker.get().assets());
 		sellOrders = new TimePeriodValues(TabsTracker.get().sellOrders());
 		escrows = new TimePeriodValues(TabsTracker.get().escrows());
@@ -436,7 +438,7 @@ public class TrackerTab extends JMainTab {
 			to = calendar.getTime();
 		}
 		if (!owner.isEmpty()) { //No data set...
-			for (TrackerData data : program.getSettings().getTrackerData().get(owner)) {
+			for (TrackerData data : Settings.get().getTrackerData().get(owner)) {
 				SimpleTimePeriod date = new SimpleTimePeriod(data.getDate(), data.getDate());
 				if ((from == null || data.getDate().after(from)) && (to == null || data.getDate().before(to))) {
 					total.add(date, data.getTotal());
@@ -512,8 +514,24 @@ public class TrackerTab extends JMainTab {
 		renderer.setSeriesShape(index, new Ellipse2D.Float(-3.0f, -3.0f, 6.0f, 6.0f));
 	}
 
+	private TrackerData getSelectedTrackerData() {
+		String date = Formater.simpleDate(new Date((long)jNextChart.getXYPlot().getDomainCrosshairValue()));
+		TrackerOwner owner = (TrackerOwner) jOwners.getSelectedItem();
+		if (owner == null || owner.isEmpty()) {
+			return null;
+		}
+		for (TrackerData trackerData : Settings.get().getTrackerData().get(owner)) {
+			if (date.equals(Formater.simpleDate(trackerData.getDate()))) {
+				return trackerData;
+			}
+		}
+		return null;
+
+	}
+
 	private class Listener extends MouseAdapter implements 
-			ActionListener, PropertyChangeListener {
+			ActionListener, PropertyChangeListener, PopupMenuListener,
+			ChartMouseListener {
 
 		private int defaultDismissTimeout;
 		private int defaultInitialDelay;
@@ -544,11 +562,9 @@ public class TrackerTab extends JMainTab {
 				if (fromDate != null) {
 					jFrom.setDate(fromDate);
 				}
-			}
-			if (ACTION_UPDATE_DATA.equals(e.getActionCommand())) {
+			} else if (ACTION_UPDATE_DATA.equals(e.getActionCommand())) {
 				createData();
-			}
-			if (ACTION_UPDATE_SHOWN.equals(e.getActionCommand())) {
+			} else if (ACTION_UPDATE_SHOWN.equals(e.getActionCommand())) {
 				updateShown();
 				jAll.setSelected(jTotal.isSelected()
 						&& jWalletBalance.isSelected()
@@ -556,8 +572,7 @@ public class TrackerTab extends JMainTab {
 						&& jSellOrders.isSelected()
 						&& jEscrows.isSelected()
 						&& jEscrowsToCover.isSelected());
-			}
-			if (ACTION_All.equals(e.getActionCommand())) {
+			} else if (ACTION_All.equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
 				jAssets.setSelected(jAll.isSelected());
@@ -565,7 +580,30 @@ public class TrackerTab extends JMainTab {
 				jEscrows.setSelected(jAll.isSelected());
 				jEscrowsToCover.setSelected(jAll.isSelected());
 				updateShown();
+			} else if (ACTION_EDIT.equals(e.getActionCommand())) {
+				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				TrackerData trackerData = getSelectedTrackerData();
+				if (trackerData != null) {
+					boolean update = jEditDialog.showEdit(trackerData);
+					if (update) {
+						createData();
+					}
+				}
+				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+			} else if (ACTION_DELETE.equals(e.getActionCommand())) {
+				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+				TrackerOwner owner = (TrackerOwner) jOwners.getSelectedItem();
+				TrackerData trackerData = getSelectedTrackerData();
+				if (trackerData != null && owner != null && !owner.isEmpty()) {
+					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsTracker.get().deleteSelected(), TabsTracker.get().delete(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (value == JOptionPane.OK_OPTION) {
+						Settings.get().getTrackerData().get(owner).remove(trackerData);
+						createData();
+					}
+				}
+				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
 			}
+			
 		}
 
 		@Override
@@ -581,6 +619,48 @@ public class TrackerTab extends JMainTab {
 				jTo.setDate(from);
 			}
 			createData();
+		}
+
+		boolean mouseClicked = false;
+		
+
+		@Override
+		public void chartMouseClicked(final ChartMouseEvent cme) {
+			if (cme.getTrigger().getClickCount() % 2 == 0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						jNextChart.getXYPlot().setDomainCrosshairVisible(true);
+						Point2D p = jChartPanel.translateScreenToJava2D(cme.getTrigger().getPoint());
+						double xValue = jNextChart.getXYPlot().getDomainCrosshairValue();
+						double yValue = jNextChart.getXYPlot().getRangeCrosshairValue();
+						RectangleEdge xEdge = jNextChart.getXYPlot().getDomainAxisEdge();
+						RectangleEdge yEdge = jNextChart.getXYPlot().getRangeAxisEdge();
+						Rectangle2D dataArea = jChartPanel.getScreenDataArea(); // jChartPanel.getChartRenderingInfo().getPlotInfo().getSubplotInfo(0).getDataArea();
+						int x = (int) jNextChart.getXYPlot().getDomainAxis().valueToJava2D(xValue, dataArea, xEdge);
+						int y = (int) jNextChart.getXYPlot().getRangeAxis().valueToJava2D(yValue, dataArea, yEdge);
+						jIskValue.setText(iskFormat.format(yValue));
+						jDateValue.setText(dateFormat.format(new Date((long)xValue)));
+						jPopupMenu.show((Component)cme.getTrigger().getSource(), x, y);
+					}
+				});
+			}
+		}
+
+		@Override
+		public void chartMouseMoved(ChartMouseEvent cme) { }
+
+		@Override
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
+
+		@Override
+		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			jNextChart.getXYPlot().setDomainCrosshairVisible(false);
+		}
+
+		@Override
+		public void popupMenuCanceled(PopupMenuEvent e) {
+			
 		}
 	}
 }

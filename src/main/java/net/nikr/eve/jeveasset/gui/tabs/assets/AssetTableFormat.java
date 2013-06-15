@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
+public enum AssetTableFormat implements EnumTableColumn<Asset> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -49,7 +49,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getGroup();
+			return from.getItem().getGroup();
 		}
 	},
 	CATEGORY(String.class, GlazedLists.comparableComparator()) {
@@ -59,7 +59,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getCategory();
+			return from.getItem().getCategory();
 		}
 	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
@@ -79,7 +79,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getLocation();
+			return from.getLocation().getLocation();
 		}
 	},
 	SECURITY(String.class, GlazedLists.comparableComparator()) {
@@ -89,7 +89,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getSecurity();
+			return from.getLocation().getSecurity();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -99,7 +99,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getRegion();
+			return from.getLocation().getRegion();
 		}
 	},
 	CONTAINER(String.class, GlazedLists.comparableComparator()) {
@@ -129,7 +129,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getPrice();
+			return from.getDynamicPrice();
 		}
 	},
 	PRICE_SELL_MIN(Double.class, GlazedLists.comparableComparator()) {
@@ -209,7 +209,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getPriceBase();
+			return from.getItem().getPriceBase();
 		}
 	},
 	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
@@ -279,7 +279,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getMeta();
+			return from.getItem().getMeta();
 		}
 	},
 	TECH(String.class, GlazedLists.comparableComparator()) {
@@ -289,7 +289,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getTech();
+			return from.getItem().getTech();
 		}
 	},
 	VOLUME(Float.class, GlazedLists.comparableComparator()) {
@@ -353,14 +353,14 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getTypeID();
+			return from.getItem().getTypeID();
 		}
 	};
 
 	private Class<?> type;
 	private Comparator<?> comparator;
 
-	private EveAssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private AssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -392,10 +392,12 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	@Override public abstract Object getColumnValue(final Asset from);
 
 	public class LongInt implements Comparable<LongInt> {
-		private Long number;
+		private final Long number;
+		private final String formatted;
 
 		public LongInt(final Long number) {
 			this.number = number;
+			this.formatted = Formater.integerFormat(number);
 		}
 
 		public Long getNumber() {
@@ -404,7 +406,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 
 		@Override
 		public String toString() {
-			return Formater.integerFormat(number);
+			return formatted;
 		}
 
 		@Override

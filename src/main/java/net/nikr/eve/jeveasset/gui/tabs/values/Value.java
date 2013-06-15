@@ -42,7 +42,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public void addAssets(Asset asset) {
-		this.assets = this.assets + (asset.getPrice() * asset.getCount());
+		this.assets = this.assets + (asset.getDynamicPrice() * asset.getCount());
 		setBestAsset(asset);
 		setBestShip(asset);
 		setBestShipFitted(asset);
@@ -151,24 +151,24 @@ public class Value implements Comparable<Value> {
 	private void setBestAsset(Asset bestAsset) {
 		if (this.bestAsset == null) { //First
 			this.bestAsset = bestAsset;
-		} else if (bestAsset.getPrice() > this.bestAsset.getPrice()) { //Higher
+		} else if (bestAsset.getDynamicPrice() > this.bestAsset.getDynamicPrice()) { //Higher
 			this.bestAsset = bestAsset;
 		}
 	}
 
 	private void setBestShip(Asset bestShip) {
-		if (!bestShip.getCategory().equals("Ship")) {
+		if (!bestShip.getItem().getCategory().equals("Ship")) {
 			return; //Not a ship
 		}
 		if (this.bestShip == null) { //First
 			this.bestShip = bestShip;
-		} else if (bestShip.getPrice() > this.bestShip.getPrice()) { //Higher
+		} else if (bestShip.getDynamicPrice() > this.bestShip.getDynamicPrice()) { //Higher
 			this.bestShip = bestShip;
 		}
 	}
 
 	private void setBestShipFitted(Asset bestShipFitted) {
-		if (!bestShipFitted.getCategory().equals("Ship")) {
+		if (!bestShipFitted.getItem().getCategory().equals("Ship")) {
 			return; //Not a ship
 		}
 		if (this.bestShipFitted == null) { //First
@@ -179,18 +179,18 @@ public class Value implements Comparable<Value> {
 	}
 
 	private void setBestModule(Asset bestModule) {
-		if (!bestModule.getCategory().equals("Module")) {
+		if (!bestModule.getItem().getCategory().equals("Module")) {
 			return; //Not a Module
 		}
 		if (this.bestModule == null) { //First
 			this.bestModule = bestModule;
-		} else if (bestModule.getPrice() > this.bestModule.getPrice()) { //Higher
+		} else if (bestModule.getDynamicPrice() > this.bestModule.getDynamicPrice()) { //Higher
 			this.bestModule = bestModule;
 		}
 	}
 
 	private double getShipFittedValue(Asset patentAsset) {
-		double value = (patentAsset.getPrice() * patentAsset.getCount());
+		double value = (patentAsset.getDynamicPrice() * patentAsset.getCount());
 		for (Asset asset : patentAsset.getAssets()) {
 			value = value + getShipFittedValue(asset);
 		}

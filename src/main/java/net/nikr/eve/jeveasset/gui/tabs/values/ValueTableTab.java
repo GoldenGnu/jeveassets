@@ -26,50 +26,51 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.AccountBalance;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class ValueTableTab extends JMainTab {
+public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 
 	//GUI
 	private JAutoColumnTable jTable;
 
 	//Table
 	private ValueFilterControl filterControl;
-	private EventTableModel<Value> tableModel;
+	private DefaultEventTableModel<Value> tableModel;
 	private EventList<Value> eventList;
 	private FilterList<Value> filterList;
 	private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
-	private EventSelectionModel<Value> selectionModel;
+	private DefaultEventSelectionModel<Value> selectionModel;
 
 	public static final String NAME = "value"; //Not to be changed!
 
@@ -86,11 +87,9 @@ public class ValueTableTab extends JMainTab {
 		//Sorting Total
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
 		//Table Model
-		tableModel = new EventTableModel<Value>(totalSortedList, tableFormat);
+		tableModel = EventModels.createTableModel(totalSortedList, tableFormat);
 		//Table
 		jTable = new JValueTable(program, tableModel);
-		jTable.getTableHeader().setReorderingAllowed(true);
-		jTable.getTableHeader().setResizingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
@@ -98,7 +97,7 @@ public class ValueTableTab extends JMainTab {
 		//Sorting
 		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = new EventSelectionModel<Value>(totalSortedList);
+		selectionModel = EventModels.createSelectionModel(totalSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -106,14 +105,16 @@ public class ValueTableTab extends JMainTab {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
-
 		filterControl = new ValueFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
 				eventList,
 				filterList,
-				program.getSettings().getTableFilters(NAME)
+				Settings.get().getTableFilters(NAME)
 				);
+
+		//Menu
+		installMenu(program, this, jTable, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -128,17 +129,36 @@ public class ValueTableTab extends JMainTab {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(true);
+	public MenuData<Value> getMenuData() {
+		return new MenuData<Value>();
+	}
 
-	//FILTER
-		jComponent.add(filterControl.getMenu(jTable, selectionModel.getSelected()));
-	//COLUMNS
-		jComponent.add(tableFormat.getMenu(program, tableModel, jTable));
-	//INFO
+	@Override
+	public JMenu getFilterMenu() {
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
+	}
+
+	@Override
+	public JMenu getColumnMenu() {
+		return tableFormat.getMenu(program, tableModel, jTable);
+	}
+
+	@Override
+	public void addInfoMenu(JComponent jComponent) {
 		//FIXME - make info menu for Values Table Tool
-		//JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		//JMenuInfo.values(...);
+	}
+
+	@Override
+	public void addToolMenu(JComponent jComponent) { }
+
+	private Value getValue(Map<String, Value> values, String owner) {
+		Value value = values.get(owner);
+		if (value == null) {
+			value = new Value(owner);
+			values.put(owner, value);
+		}
+		return value;
 	}
 
 	@Override
@@ -146,8 +166,7 @@ public class ValueTableTab extends JMainTab {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal());
 		values.put(total.getName(), total);
-		Set<String> uniqueOwners = new HashSet<String>();
-		for (Asset asset : program.getEveAssetEventList()) {
+		for (Asset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -162,47 +181,28 @@ public class ValueTableTab extends JMainTab {
 			if (asset.getFlag().equals(General.get().contractExcluded())) {
 				continue; //Ignore contracts excluded
 			}
-			String key = asset.getOwner();
-			Value value = values.get(key);
-			if (value == null) {
-				value = new Value(key);
-				values.put(key, value);
-			}
+			Value value = getValue(values, asset.getOwner());
 			value.addAssets(asset);
 			total.addAssets(asset);
 		}
-		for (Account account : program.getSettings().getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (!owner.isShowAssets()) { //Ignore hidden owners
-					continue;
-				}
-				String key = owner.getName();
-				if (uniqueOwners.contains(key)) {
-					continue;
-				} else {
-					uniqueOwners.add(key);
-				}
-				Value value = values.get(key);
-				if (value == null) {
-					value = new Value(key);
-					values.put(key, value);
-				}
-				for (EveAccountBalance accountBalance : owner.getAccountBalances()) {
-					value.addBalance(accountBalance.getBalance());
-					total.addBalance(accountBalance.getBalance());
-				}
-				for (ApiMarketOrder apiMarketOrder : owner.getMarketOrders()) {
-					if (apiMarketOrder.getOrderState() == 0) {
-						if (apiMarketOrder.getBid() < 1) { //Sell Orders
-							value.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-							total.addSellOrders(apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining());
-						} else { //Buy Orders
-							value.addEscrows(apiMarketOrder.getEscrow());
-							value.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-							total.addEscrows(apiMarketOrder.getEscrow());
-							total.addEscrowsToCover((apiMarketOrder.getPrice() * apiMarketOrder.getVolRemaining()) - apiMarketOrder.getEscrow());
-						}
-					}
+		//Account Balance
+		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+			Value value = getValue(values, accountBalance.getOwner());
+			value.addBalance(accountBalance.getBalance());
+			total.addBalance(accountBalance.getBalance());
+		}
+		//Market Orders
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			Value value = getValue(values, marketOrder.getOwner());
+			if (marketOrder.getOrderState() == 0) {
+				if (marketOrder.getBid() < 1) { //Sell Orders
+					value.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+					total.addSellOrders(marketOrder.getPrice() * marketOrder.getVolRemaining());
+				} else { //Buy Orders
+					value.addEscrows(marketOrder.getEscrow());
+					value.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
+					total.addEscrows(marketOrder.getEscrow());
+					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
 			}
 		}

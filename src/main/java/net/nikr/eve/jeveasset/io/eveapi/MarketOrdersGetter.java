@@ -29,9 +29,11 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> {
@@ -70,7 +72,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
-		List<ApiMarketOrder> marketOrders = new ArrayList<ApiMarketOrder>(response.getAll());
+		List<MarketOrder> marketOrders = ApiConverter.convertMarketOrders(new ArrayList<ApiMarketOrder>(response.getAll()), getOwner());
 		getOwner().setMarketOrders(marketOrders);
 	}
 
