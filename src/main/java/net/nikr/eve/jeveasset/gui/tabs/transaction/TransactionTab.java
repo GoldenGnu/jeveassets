@@ -31,7 +31,7 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
+import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -50,7 +50,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public class TransactionTab extends JMainTab implements ListEventListener<WalletTransaction>, TableMenu<WalletTransaction> {
+public class TransactionTab extends JMainTab implements ListEventListener<Transaction>, TableMenu<Transaction> {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -58,26 +58,26 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 
 	//Table
 	private TransactionsFilterControl filterControl;
-	private EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat;
-	private DefaultEventTableModel<WalletTransaction> tableModel;
-	private FilterList<WalletTransaction> filterList;
-	private EventList<WalletTransaction> eventList;
-	private DefaultEventSelectionModel<WalletTransaction> selectionModel;
+	private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
+	private DefaultEventTableModel<Transaction> tableModel;
+	private FilterList<Transaction> filterList;
+	private EventList<Transaction> eventList;
+	private DefaultEventSelectionModel<Transaction> selectionModel;
 
 	public static final String NAME = "transaction"; //Not to be changed!
 
 	public TransactionTab(final Program program) {
-		super(program, TabsTransaction.get().title(), Images.TOOL_WALLET.getIcon(), true);
+		super(program, TabsTransaction.get().title(), Images.TOOL_TRANSACTION.getIcon(), true);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction>(TransactionTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, Transaction>(TransactionTableFormat.class);
 		//Backend
-		eventList = program.getWalletTransactionsEventList();
+		eventList = program.getTransactionsEventList();
 		//Filter
-		filterList = new FilterList<WalletTransaction>(eventList);
+		filterList = new FilterList<Transaction>(eventList);
 		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<WalletTransaction> sortedList = new SortedList<WalletTransaction>(filterList);
+		SortedList<Transaction> sortedList = new SortedList<Transaction>(filterList);
 		//Table Model
 		tableModel = EventModels.createTableModel(sortedList, tableFormat);
 		//Table
@@ -113,7 +113,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 				);
 
 		//Menu
-		installMenu(program, this, jTable, WalletTransaction.class);
+		installMenu(program, this, jTable, Transaction.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalSell(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -144,13 +144,13 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 	}
 
 	@Override
-	public MenuData<WalletTransaction> getMenuData() {
-		return new MenuData<WalletTransaction>(selectionModel.getSelected());
+	public MenuData<Transaction> getMenuData() {
+		return new MenuData<Transaction>(selectionModel.getSelected());
 	}
 
 	@Override
 	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.wallet(jComponent, selectionModel.getSelected());
+		JMenuInfo.transctions(jComponent, selectionModel.getSelected());
 	}
 
 	@Override
@@ -160,10 +160,10 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 	public void updateData() { }
 
 	@Override
-	public void listChanged(ListEvent<WalletTransaction> listChanges) {
+	public void listChanged(ListEvent<Transaction> listChanges) {
 		double sellOrdersTotal = 0;
 		double buyOrdersTotal = 0;
-		for (WalletTransaction transaction : filterList) {
+		for (Transaction transaction : filterList) {
 			if (transaction.getTransactionType().equals("sell")) { //Sell
 				sellOrdersTotal += transaction.getPrice() * transaction.getQuantity();
 			} else { //Buy
@@ -174,17 +174,17 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 		jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
 	}
 
-	public static class TransactionsFilterControl extends FilterControl<WalletTransaction> {
+	public static class TransactionsFilterControl extends FilterControl<Transaction> {
 
-		private EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat;
+		private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
 
-		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, WalletTransaction> tableFormat, final EventList<WalletTransaction> eventList, final FilterList<WalletTransaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat, final EventList<Transaction> eventList, final FilterList<Transaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected Object getColumnValue(final WalletTransaction item, final String column) {
+		protected Object getColumnValue(final Transaction item, final String column) {
 			TransactionTableFormat format = TransactionTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -221,13 +221,13 @@ public class TransactionTab extends JMainTab implements ListEventListener<Wallet
 		}
 
 		@Override
-		protected List<EnumTableColumn<WalletTransaction>> getEnumColumns() {
+		protected List<EnumTableColumn<Transaction>> getEnumColumns() {
 			return columnsAsList(TransactionTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<WalletTransaction>> getEnumShownColumns() {
-			return new ArrayList<EnumTableColumn<WalletTransaction>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<Transaction>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Transaction>>(tableFormat.getShownColumns());
 		}
 	}
 }

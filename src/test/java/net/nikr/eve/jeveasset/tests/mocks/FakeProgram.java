@@ -32,7 +32,8 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
+import net.nikr.eve.jeveasset.data.Journal;
+import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
@@ -203,12 +204,17 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public EventList<WalletTransaction> getWalletTransactionsEventList() {
+	public EventList<Transaction> getTransactionsEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public RoutingTab getRoutingTab() {
 		throw new UnsupportedOperationException("Not implemented");
-	}	
+	}
+
+	@Override
+	public EventList<Journal> getJournalEventList() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

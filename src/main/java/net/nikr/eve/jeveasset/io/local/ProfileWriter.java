@@ -31,7 +31,8 @@ import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.ProfileManager;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
+import net.nikr.eve.jeveasset.data.Journal;
+import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -100,7 +101,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));
-			node.setAttributeNS(null, "wallettransactionsnextupdate", String.valueOf(owner.getWalletTransactionsNextUpdate().getTime()));
+			node.setAttributeNS(null, "journalnextupdate", String.valueOf(owner.getJournalNextUpdate().getTime()));
+			node.setAttributeNS(null, "wallettransactionsnextupdate", String.valueOf(owner.getTransactionsNextUpdate().getTime()));
 			node.setAttributeNS(null, "industryjobsnextupdate", String.valueOf(owner.getIndustryJobsNextUpdate().getTime()));
 			node.setAttributeNS(null, "contractsnextupdate", String.valueOf(owner.getContractsNextUpdate().getTime()));
 			parentNode.appendChild(node);
@@ -110,7 +112,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			writeContractItems(xmldoc, node, owner.getContracts());
 			writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 			writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
-			writeWalletTransactions(xmldoc, node, owner.getWalletTransactions(), owner.isCorporation());
+			writeJournals(xmldoc, node, owner.getJournal(), owner.isCorporation());
+			writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
 			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		}
 	}
@@ -220,32 +223,65 @@ public final class ProfileWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private void writeWalletTransactions(final Document xmldoc, final Element parentNode, final List<WalletTransaction> walletTransactions, final boolean bCorp) {
-		Element node = xmldoc.createElementNS(null, "wallettransactions");
-		if (!walletTransactions.isEmpty()) {
+	private void writeJournals(final Document xmldoc, final Element parentNode, final List<Journal> journals, final boolean bCorp) {
+		Element node = xmldoc.createElementNS(null, "journals");
+		if (!journals.isEmpty()) {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (ApiWalletTransaction apiWalletTransaction : walletTransactions) {
+		for (Journal journal : journals) {
+			Element childNode = xmldoc.createElementNS(null, "journal");
+			//Base
+			childNode.setAttributeNS(null, "amount", String.valueOf(journal.getAmount()));
+			childNode.setAttributeNS(null, "argid1", String.valueOf(journal.getArgID1()));
+			childNode.setAttributeNS(null, "argname1", String.valueOf(journal.getArgName1()));
+			childNode.setAttributeNS(null, "balance", String.valueOf(journal.getBalance()));
+			childNode.setAttributeNS(null, "date", String.valueOf(journal.getDate().getTime()));
+			childNode.setAttributeNS(null, "ownerid1", String.valueOf(journal.getOwnerID1()));
+			childNode.setAttributeNS(null, "ownerid2", String.valueOf(journal.getOwnerID2()));
+			childNode.setAttributeNS(null, "ownername1", journal.getOwnerName1());
+			childNode.setAttributeNS(null, "ownername2", journal.getOwnerName2());
+			childNode.setAttributeNS(null, "reason", journal.getReason());
+			childNode.setAttributeNS(null, "refid", String.valueOf(journal.getRefID()));
+			childNode.setAttributeNS(null, "reftypeid", String.valueOf(journal.getRefType().getId()));
+			if (journal.getTaxAmount() != null) {
+				childNode.setAttributeNS(null, "taxamount", String.valueOf(journal.getTaxAmount()));
+			}
+			if (journal.getTaxReceiverID() != null) {
+				childNode.setAttributeNS(null, "taxreceiverid", String.valueOf(journal.getTaxReceiverID()));
+			}
+			//Extra
+			childNode.setAttributeNS(null, "accountkey", String.valueOf(journal.getAccountKey()));
+			node.appendChild(childNode);
+		}
+	}
+
+	private void writeTransactions(final Document xmldoc, final Element parentNode, final List<Transaction> transactions, final boolean bCorp) {
+		Element node = xmldoc.createElementNS(null, "wallettransactions");
+		if (!transactions.isEmpty()) {
+			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
+			parentNode.appendChild(node);
+		}
+		for (ApiWalletTransaction apiTransaction : transactions) {
 			Element childNode = xmldoc.createElementNS(null, "wallettransaction");
-			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(apiWalletTransaction.getTransactionDateTime().getTime()));
-			childNode.setAttributeNS(null, "transactionid", String.valueOf(apiWalletTransaction.getTransactionID()));
-			childNode.setAttributeNS(null, "quantity", String.valueOf(apiWalletTransaction.getQuantity()));
-			childNode.setAttributeNS(null, "typename", String.valueOf(apiWalletTransaction.getTypeName()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(apiWalletTransaction.getTypeID()));
-			childNode.setAttributeNS(null, "price", String.valueOf(apiWalletTransaction.getPrice()));
-			childNode.setAttributeNS(null, "clientid", String.valueOf(apiWalletTransaction.getClientID()));
-			childNode.setAttributeNS(null, "clientname", String.valueOf(apiWalletTransaction.getClientName()));
-			if (apiWalletTransaction.getCharacterID() != null) {
-				childNode.setAttributeNS(null, "characterid", String.valueOf(apiWalletTransaction.getCharacterID()));
+			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(apiTransaction.getTransactionDateTime().getTime()));
+			childNode.setAttributeNS(null, "transactionid", String.valueOf(apiTransaction.getTransactionID()));
+			childNode.setAttributeNS(null, "quantity", String.valueOf(apiTransaction.getQuantity()));
+			childNode.setAttributeNS(null, "typename", String.valueOf(apiTransaction.getTypeName()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(apiTransaction.getTypeID()));
+			childNode.setAttributeNS(null, "price", String.valueOf(apiTransaction.getPrice()));
+			childNode.setAttributeNS(null, "clientid", String.valueOf(apiTransaction.getClientID()));
+			childNode.setAttributeNS(null, "clientname", String.valueOf(apiTransaction.getClientName()));
+			if (apiTransaction.getCharacterID() != null) {
+				childNode.setAttributeNS(null, "characterid", String.valueOf(apiTransaction.getCharacterID()));
 			}
-			if (apiWalletTransaction.getCharacterName() != null) {
-				childNode.setAttributeNS(null, "charactername", String.valueOf(apiWalletTransaction.getCharacterName()));
+			if (apiTransaction.getCharacterName() != null) {
+				childNode.setAttributeNS(null, "charactername", String.valueOf(apiTransaction.getCharacterName()));
 			}
-			childNode.setAttributeNS(null, "stationid", String.valueOf(apiWalletTransaction.getStationID()));
-			childNode.setAttributeNS(null, "stationname", String.valueOf(apiWalletTransaction.getStationName()));
-			childNode.setAttributeNS(null, "transactiontype", String.valueOf(apiWalletTransaction.getTransactionType()));
-			childNode.setAttributeNS(null, "transactionfor", String.valueOf(apiWalletTransaction.getTransactionFor()));
+			childNode.setAttributeNS(null, "stationid", String.valueOf(apiTransaction.getStationID()));
+			childNode.setAttributeNS(null, "stationname", String.valueOf(apiTransaction.getStationName()));
+			childNode.setAttributeNS(null, "transactiontype", String.valueOf(apiTransaction.getTransactionType()));
+			childNode.setAttributeNS(null, "transactionfor", String.valueOf(apiTransaction.getTransactionFor()));
 			node.appendChild(childNode);
 		}
 	}

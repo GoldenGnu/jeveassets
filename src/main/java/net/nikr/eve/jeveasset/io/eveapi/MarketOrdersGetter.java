@@ -42,9 +42,8 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		super("Market Orders", true, false);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

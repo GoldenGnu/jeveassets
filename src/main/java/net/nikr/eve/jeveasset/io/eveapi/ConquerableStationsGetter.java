@@ -40,7 +40,7 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 	}
 
 	public void load(final UpdateTask updateTask) {
-		load(updateTask, Settings.get().isForceUpdate(), "jEveAssets");
+		loadEve(updateTask, Settings.get().isForceUpdate(), "jEveAssets");
 	}
 
 	@Override

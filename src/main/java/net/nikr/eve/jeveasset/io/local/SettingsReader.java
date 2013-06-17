@@ -48,6 +48,8 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
@@ -613,7 +615,15 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Wallet Transaction
+		//Journal
+		try {
+			if (tableName.equals(JournalTab.NAME)) {
+				return JournalTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Transaction
 		try {
 			if (tableName.equals(TransactionTab.NAME)) {
 				return TransactionTableFormat.valueOf(column);

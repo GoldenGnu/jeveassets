@@ -47,6 +47,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String items();
 	public abstract String industry();
 	public abstract String industryPlot();
+	public abstract String journal();
 	public abstract String license();
 	public abstract String market();
 	public abstract String materials();

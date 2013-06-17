@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,17 +279,23 @@ public final class ApiConverter {
 		return new Asset(item, location, owner, count, parents, flag, flagID, itemId, singleton, rawQuantity);
 	}
 
-	public static List<WalletTransaction> convertWalletTransactions(final List<ApiWalletTransaction> apiWalletTransactions, final Owner owner) {
-		List<WalletTransaction> walletTransactions = new ArrayList<WalletTransaction>();
-		for (ApiWalletTransaction apiWalletTransaction : apiWalletTransactions) {
-			walletTransactions.add(toWalletTransaction(owner, apiWalletTransaction));
-		}
-		return walletTransactions;
+	public static Journal convertJournal(final ApiJournalEntry apiJournal, final Owner owner, final int accountKey) {
+		Journal journal = new Journal(apiJournal, owner);
+		journal.setAccountKey(accountKey);
+		return journal;
 	}
 
-	private static WalletTransaction toWalletTransaction(final Owner owner, final ApiWalletTransaction apiWalletTransaction) {
-		Item item = ApiIdConverter.getItem(apiWalletTransaction.getTypeID());
-		Location location = ApiIdConverter.getLocation(apiWalletTransaction.getStationID());
-		return new WalletTransaction(apiWalletTransaction, item, location, owner);
+	public static List<Transaction> convertTransactions(final List<ApiWalletTransaction> apiTransactions, final Owner owner) {
+		List<Transaction> transactions = new ArrayList<Transaction>();
+		for (ApiWalletTransaction apiTransaction : apiTransactions) {
+			transactions.add(toTransaction(owner, apiTransaction));
+		}
+		return transactions;
+	}
+
+	private static Transaction toTransaction(final Owner owner, final ApiWalletTransaction apiTransaction) {
+		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
+		Location location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		return new Transaction(apiTransaction, item, location, owner);
 	}
 }

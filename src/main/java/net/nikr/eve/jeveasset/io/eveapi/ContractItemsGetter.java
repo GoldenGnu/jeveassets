@@ -49,7 +49,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 		super("Contract Items", false, false);
 	}
 
-	@Override
+	//FIXME - - > Move to overwrite load (See: JournalGetter)
 	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
 		//Calc size
 		int size = 0;
@@ -95,7 +95,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 					}
 					this.setTaskName("Contract Item ("+contract.getContractID()+")");
 					currentContract = contract;
-					super.load(updateTask, forceUpdate, owner);
+					super.loadOwner(updateTask, forceUpdate, owner);
 					if (updateTask != null) {
 						updateTask.setTaskProgress(size, count, getProgressStart(), getProgressEnd());
 					}

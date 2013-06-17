@@ -19,22 +19,22 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.transaction;
+package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Transaction;
+import net.nikr.eve.jeveasset.data.Journal;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
-public class JTransactionTable extends JAutoColumnTable {
+public class JJournalTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<Transaction> tableModel;
+	final DefaultEventTableModel<Journal> tableModel;
 
-	public JTransactionTable(Program program, final DefaultEventTableModel<Transaction> tableModel) {
+	public JJournalTable(Program program, final DefaultEventTableModel<Journal> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -43,26 +43,17 @@ public class JTransactionTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		Transaction transaction = tableModel.getElementAt(row);
+		Journal journal = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		//User set price
-		if (columnName.equals(TransactionTableFormat.NAME.getColumnName())) {
-			if (transaction.isSell()) {
-				if (!isSelected) {
-					component.setBackground(new Color(200, 255, 200));
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+		if (columnName.equals(JournalTableFormat.AMOUNT.getColumnName()) && journal.getAmount() < 0) {
+			if (!isSelected) {
+				component.setForeground(Color.RED.darker());
 			} else {
-				if (!isSelected) {
-					component.setBackground(new Color(255, 200, 200));
-				} else {
-					component.setBackground(this.getSelectionBackground().darker());
-				}
+				component.setForeground(new Color(255, 200, 200));
 			}
 		}
-		if (columnName.equals(TransactionTableFormat.VALUE.getColumnName()) && transaction.isBuy()) {
+		if (columnName.equals(JournalTableFormat.BALANCE.getColumnName()) && journal.getBalance() < 0) {
 			if (!isSelected) {
 				component.setForeground(Color.RED.darker());
 			} else {

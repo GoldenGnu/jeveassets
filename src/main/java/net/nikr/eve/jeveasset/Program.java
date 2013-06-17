@@ -39,7 +39,8 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
+import net.nikr.eve.jeveasset.data.Journal;
+import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
@@ -57,6 +58,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
@@ -110,6 +112,7 @@ public class Program implements ActionListener {
 	private LoadoutsTab loadoutsTab;
 	private RoutingTab routingTab;
 	private MarketOrdersTab marketOrdersTab;
+	private JournalTab journalTab;
 	private TransactionTab transactionsTab;
 	private IndustryJobsTab industryJobsTab;
 	private IndustryPlotTab industryPlotTab;
@@ -178,12 +181,15 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
 		SplashUpdater.setProgress(62);
+		LOG.info("Loading: Journal Tab");
+		journalTab = new JournalTab(this);
+		SplashUpdater.setProgress(63);
 		LOG.info("Loading: Transactions Tab");
 		transactionsTab = new TransactionTab(this);
-		SplashUpdater.setProgress(63);
+		SplashUpdater.setProgress(64);
 		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
-		SplashUpdater.setProgress(64);
+		SplashUpdater.setProgress(65);
 		LOG.info("Loading: Ship Loadouts Tab");
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
@@ -389,8 +395,11 @@ public class Program implements ActionListener {
 	public EventList<MarketOrder> getMarketOrdersEventList() {
 		return profileData.getMarketOrdersEventList();
 	}
-	public EventList<WalletTransaction> getWalletTransactionsEventList() {
-		return profileData.getWalletTransactionsEventList();
+	public EventList<Journal> getJournalEventList() {
+		return profileData.getJournalEventList();
+	}
+	public EventList<Transaction> getTransactionsEventList() {
+		return profileData.getTransactionsEventList();
 	}
 	public EventList<AccountBalance> getAccountBalanceEventList() {
 		return profileData.getAccountBalanceEventList();
@@ -486,6 +495,9 @@ public class Program implements ActionListener {
 		}
 		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);
+		}
+		if (MainMenu.ACTION_OPEN_JOURNAL.equals(e.getActionCommand())) {
+			mainWindow.addTab(journalTab);
 		}
 		if (MainMenu.ACTION_OPEN_TRANSACTION.equals(e.getActionCommand())) {
 			mainWindow.addTab(transactionsTab);

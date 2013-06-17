@@ -42,9 +42,8 @@ public class IndustryJobsGetter extends AbstractApiGetter<IndustryJobsResponse> 
 		super("Industry Jobs", true, false);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
 			if (updateTask != null) {
 				updateTask.setTaskProgress(ownerIDs.length, (i + 1), getProgressStart(), getProgressEnd());
 			}
-			super.load(updateTask, true, "jEveAssets (Request " + (i + 1) + " of " + ownerIDs.length + ")");
+			super.loadEve(updateTask, true, "jEveAssets (Request " + (i + 1) + " of " + ownerIDs.length + ")");
 		}
 	}
 

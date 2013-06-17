@@ -42,9 +42,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		super("Assets", true, false);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

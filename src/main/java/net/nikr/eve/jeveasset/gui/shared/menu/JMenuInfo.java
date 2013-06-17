@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
+import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
@@ -120,7 +120,7 @@ public class JMenuInfo {
 		}
 	}
 
-	public static void wallet(final JComponent jComponent, final List<WalletTransaction> list) {
+	public static void transctions(final JComponent jComponent, final List<Transaction> transactions) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -128,11 +128,11 @@ public class JMenuInfo {
 
 			double sellTxTotal = 0;
 			double buyTxTotal = 0;
-			for (WalletTransaction walletTransaction : list) {
-				if (walletTransaction.getTransactionType().equals("sell")) { //Sell
-					sellTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+			for (Transaction transaction : transactions) {
+				if (transaction.getTransactionType().equals("sell")) { //Sell
+					sellTxTotal += transaction.getPrice() * transaction.getQuantity();
 				} else { //Buy
-					buyTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+					buyTxTotal += transaction.getPrice() * transaction.getQuantity();
 				}
 			}
 			createMenuItem(jPopupMenu, Formater.iskFormat(sellTxTotal), GuiShared.get().selectionOrdersSell(), Images.ORDERS_SELL.getIcon());

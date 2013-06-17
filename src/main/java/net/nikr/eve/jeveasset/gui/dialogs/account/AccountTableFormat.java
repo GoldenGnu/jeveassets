@@ -116,14 +116,24 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return new YesNo(from.getParentAccount().isMarketOrders());
 		}
 	},
-	WALLET_TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
+	TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return DialoguesAccount.get().tableFormatWalletTransactions();
+			return DialoguesAccount.get().tableFormatTransactions();
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isWalletTransactions());
+			return new YesNo(from.getParentAccount().isTransactions());
+		}
+	},
+	JOURNAL(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatJournal();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isJournal());
 		}
 	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {

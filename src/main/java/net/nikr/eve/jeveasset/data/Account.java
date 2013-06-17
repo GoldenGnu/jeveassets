@@ -35,8 +35,10 @@ public class Account {
 		ASSET_LIST(2L),
 		INDUSTRY_JOBS(128L),
 		MARKET_ORDERS(4096L),
-		WALLET_TRANSACTIONS_CHAR(4194304L),
-		WALLET_TRANSACTIONS_CORP(2097152L),
+		TRANSACTIONS_CHAR(4194304L),
+		TRANSACTIONS_CORP(2097152L),
+		JOURNAL_CHAR(2097152L),
+		JOURNAL_CORP(1048576L),
 		CONTRACTS_CORP(8388608L),
 		CONTRACTS_CHAR(67108864L);
 
@@ -198,11 +200,19 @@ public class Account {
 		}
 	}
 
-	public boolean isWalletTransactions() {
+	public boolean isJournal() {
 		if (isCorporation()) {
-			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask()) == AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask());
+			return ((getAccessMask() & AccessMask.JOURNAL_CORP.getAccessMask()) == AccessMask.JOURNAL_CORP.getAccessMask());
 		} else {
-			return ((getAccessMask() & AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask());
+			return ((getAccessMask() & AccessMask.JOURNAL_CHAR.getAccessMask()) == AccessMask.JOURNAL_CHAR.getAccessMask());
+		}
+	}
+
+	public boolean isTransactions() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.TRANSACTIONS_CORP.getAccessMask()) == AccessMask.TRANSACTIONS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.TRANSACTIONS_CHAR.getAccessMask());
 		}
 	}
 

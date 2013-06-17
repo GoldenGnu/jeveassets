@@ -47,7 +47,8 @@ public class ProfileData {
 	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
 	private final EventList<IndustryJob> industryJobsEventList = new BasicEventList<IndustryJob>();
 	private final EventList<MarketOrder> marketOrdersEventList = new BasicEventList<MarketOrder>();
-	private final EventList<WalletTransaction> walletTransactionsEventList = new BasicEventList<WalletTransaction>();
+	private final EventList<Journal> journalEventList = new BasicEventList<Journal>();
+	private final EventList<Transaction> transactionsEventList = new BasicEventList<Transaction>();
 	private final EventList<Asset> assetsEventList = new BasicEventList<Asset>();
 	private final EventList<AccountBalance> accountBalanceEventList = new BasicEventList<AccountBalance>();
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
@@ -78,8 +79,12 @@ public class ProfileData {
 		return marketOrdersEventList;
 	}
 
-	public EventList<WalletTransaction> getWalletTransactionsEventList() {
-		return walletTransactionsEventList;
+	public EventList<Journal> getJournalEventList() {
+		return journalEventList;
+	}
+
+	public EventList<Transaction> getTransactionsEventList() {
+		return transactionsEventList;
 	}
 
 	public EventList<ContractItem> getContractItemEventList() {
@@ -107,9 +112,9 @@ public class ProfileData {
 						priceTypeIDs.add(item.getTypeID());
 					}
 				}
-				//Add Wallet Transaction to uniqueIds
-				for (WalletTransaction walletTransaction : owner.getWalletTransactions()) {
-					Item item = walletTransaction.getItem();
+				//Add Transaction to uniqueIds
+				for (Transaction transaction : owner.getTransactions()) {
+					Item item = transaction.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
 					}
@@ -168,7 +173,8 @@ public class ProfileData {
 		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 		Set<String> uniqueOwners = new HashSet<String>();
 		List<String> ownersOrders = new ArrayList<String>();
-		List<String> ownersWallet = new ArrayList<String>();
+		List<String> ownersJournal = new ArrayList<String>();
+		List<String> ownersTransactions = new ArrayList<String>();
 		List<String> ownersJobs = new ArrayList<String>();
 		List<String> ownersAssets = new ArrayList<String>();
 		List<String> ownersAccountBalance = new ArrayList<String>();
@@ -176,7 +182,8 @@ public class ProfileData {
 		//Temp
 		List<Asset> assets = new ArrayList<Asset>();
 		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		List<WalletTransaction> walletTransactions = new ArrayList<WalletTransaction>();
+		List<Journal> journal = new ArrayList<Journal>();
+		List<Transaction> transactions = new ArrayList<Transaction>();
 		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
 		List<ContractItem> contractItems = new ArrayList<ContractItem>();
 		List<AccountBalance> accountBalance = new ArrayList<AccountBalance>();
@@ -197,27 +204,33 @@ public class ProfileData {
 					addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner), assets);
 					ownersOrders.add(owner.getName());
 				}
-				//Wallet Transactions
-				if (!owner.getWalletTransactions().isEmpty() && !ownersWallet.contains(owner.getName())) {
-					//Wallet Transactions
-					for (WalletTransaction walletTransaction : owner.getWalletTransactions()) {
-						int index = walletTransactions.indexOf(walletTransaction);
+				//Journal
+				if (!owner.getJournal().isEmpty() && !ownersJournal.contains(owner.getName())) {
+					//Journal
+					journal.addAll(owner.getJournal());
+					ownersJournal.add(owner.getName());
+				}
+				//Transactions
+				if (!owner.getTransactions().isEmpty() && !ownersTransactions.contains(owner.getName())) {
+					//Transactions
+					for (Transaction transaction : owner.getTransactions()) {
+						int index = transactions.indexOf(transaction);
 						if (index >= 0) { //Dublicate
 							if (owner.isCorporation()) {
-								WalletTransaction remove = walletTransactions.remove(index);
-								walletTransaction.setOwnerCharacter(remove.getOwnerName());
-								walletTransactions.add(walletTransaction);
+								Transaction remove = transactions.remove(index);
+								transaction.setOwnerCharacter(remove.getOwnerName());
+								transactions.add(transaction);
 							} else {
-								walletTransactions.get(index).setOwnerCharacter(walletTransaction.getOwnerName());
+								transactions.get(index).setOwnerCharacter(transaction.getOwnerName());
 							}
 						} else { //New
-							walletTransactions.add(walletTransaction);
+							transactions.add(transaction);
 						}
 					}
 					//Assets
-					//FIXME - - > Wallet Transactions Assets
+					//FIXME - - > Transactions Assets
 					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
-					ownersWallet.add(owner.getName());
+					ownersTransactions.add(owner.getName());
 				}
 				//Industry Jobs
 				if (!owner.getIndustryJobs().isEmpty() && !ownersJobs.contains(owner.getName())) {
@@ -308,11 +321,18 @@ public class ProfileData {
 			marketOrdersEventList.getReadWriteLock().writeLock().unlock();
 		}
 		try {
-			walletTransactionsEventList.getReadWriteLock().writeLock().lock();
-			walletTransactionsEventList.clear();
-			walletTransactionsEventList.addAll(walletTransactions);
+			journalEventList.getReadWriteLock().writeLock().lock();
+			journalEventList.clear();
+			journalEventList.addAll(journal);
 		} finally {
-			walletTransactionsEventList.getReadWriteLock().writeLock().unlock();
+			journalEventList.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			transactionsEventList.getReadWriteLock().writeLock().lock();
+			transactionsEventList.clear();
+			transactionsEventList.addAll(transactions);
+		} finally {
+			transactionsEventList.getReadWriteLock().writeLock().unlock();
 		}
 		try {
 			industryJobsEventList.getReadWriteLock().writeLock().lock();

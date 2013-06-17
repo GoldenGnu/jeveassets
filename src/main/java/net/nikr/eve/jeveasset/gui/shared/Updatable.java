@@ -62,7 +62,7 @@ public class Updatable {
 					if (isUpdatable(owner.getContractsNextUpdate())){
 						return true;
 					}
-					if (isUpdatable(owner.getWalletTransactionsNextUpdate())){
+					if (isUpdatable(owner.getTransactionsNextUpdate())){
 						return true;
 					}
 				}

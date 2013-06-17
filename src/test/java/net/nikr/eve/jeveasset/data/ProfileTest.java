@@ -80,7 +80,7 @@ public class ProfileTest {
 			for (Owner owner : account.getOwners()) {
 				marketOrders = marketOrders || !owner.getMarketOrders().isEmpty();
 				industryJobs = industryJobs || !owner.getIndustryJobs().isEmpty();
-				transactions = transactions || !owner.getWalletTransactions().isEmpty();
+				transactions = transactions || !owner.getTransactions().isEmpty();
 				contracts = contracts || !owner.getContracts().isEmpty();
 				assertEquals(name+" had no assets", true, !owner.getAssets().isEmpty());
 				assertEquals(name+" had no account balances", true, !owner.getAccountBalances().isEmpty());
@@ -92,7 +92,7 @@ public class ProfileTest {
 			assertEquals(name+" had no contracts", true, contracts);
 		}
 		if (supportTransactions) {
-			assertEquals(name+" had no wallet transactions", true, industryJobs);
+			assertEquals(name+" had no transactions", true, industryJobs);
 		}
 	}
 
