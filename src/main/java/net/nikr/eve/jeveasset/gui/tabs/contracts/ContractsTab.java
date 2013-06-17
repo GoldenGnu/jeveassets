@@ -175,7 +175,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
 	}
 
 	@Override

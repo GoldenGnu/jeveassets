@@ -211,7 +211,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
 	}
 
 	@Override

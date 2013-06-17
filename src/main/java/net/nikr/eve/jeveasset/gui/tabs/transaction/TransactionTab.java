@@ -135,7 +135,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
 	}
 
 	@Override

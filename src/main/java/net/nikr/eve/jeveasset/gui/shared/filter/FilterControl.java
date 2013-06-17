@@ -113,32 +113,25 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		gui.addToolSeparator();
 	}
 
-	public JMenu getMenu(final JTable jTable, final List<E> items) {
+	public JMenu getMenu(final JTable jTable, EnumTableFormatAdaptor<?, ?> adaptor, final List<E> items) {
 		//FIXME Add support for adding filters from more than one cell...
 		String text = null;
 		Enum<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
-		TableModel model = jTable.getModel();
 		int columnIndex = jTable.getSelectedColumn();
-		if (jTable.getSelectedColumnCount() == 1
-				&& jTable.getSelectedRowCount() == 1
-				&& items.size() == 1
-				&& !(items.get(0) instanceof SeparatorList.Separator)
-				&& model instanceof DefaultEventTableModel) {
-			DefaultEventTableModel<?> tableModel = (DefaultEventTableModel<?>) model;
-			TableFormat<?> tableFormat = tableModel.getTableFormat();
-			if (tableFormat instanceof EnumTableFormatAdaptor) {
-				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()) {
-					Object object = adaptor.getShownColumns().get(columnIndex);
-					if (object instanceof Enum) {
-						column = (Enum) object;
-						isNumeric = isNumeric(column);
-						isDate = isDate(column);
-						text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
-					}
-				}
+		if (jTable.getSelectedColumnCount() == 1 //Single cell (column)
+				&& jTable.getSelectedRowCount() == 1 //Single cell (row)
+				&& items.size() == 1 //Single element
+				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
+				&& columnIndex >= 0 //Shown column
+				&& columnIndex < adaptor.getShownColumns().size()) { //Shown column
+			Object object = adaptor.getShownColumns().get(columnIndex);
+			if (object instanceof Enum) {
+				column = (Enum) object;
+				isNumeric = isNumeric(column);
+				isDate = isDate(column);
+				text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
 			}
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
