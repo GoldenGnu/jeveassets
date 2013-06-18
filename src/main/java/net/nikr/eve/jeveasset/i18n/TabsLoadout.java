@@ -36,14 +36,17 @@ public abstract class TabsLoadout extends Bundle {
 
 	public abstract String cancel();
 	public abstract String collapse();
-	public abstract String columnValue();
+	public abstract String columnLocation();
 	public abstract String columnName();
+	public abstract String columnOwner();
+	public abstract String columnValue();
 	public abstract String description();
 	public abstract String empty();
 	public abstract String expand();
 	public abstract String export();
-	public abstract String export1();
-	public abstract String export2();
+	public abstract String exportEveXml();
+	public abstract String exportEveXmlAll();
+	public abstract String exportSqlCsvHtml();
 	public abstract String flagCargo();
 	public abstract String flagDroneBay();
 	public abstract String flagHighSlot();

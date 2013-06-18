@@ -24,10 +24,12 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
@@ -37,26 +39,32 @@ import net.nikr.eve.jeveasset.data.Module.FlagType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 import net.nikr.eve.jeveasset.io.local.EveFittingWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<Module> {
+public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
 	private static final String ACTION_FILTER = "ACTION_FILTER";
 	private static final String ACTION_OWNERS = "ACTION_OWNERS";
+	private static final String ACTION_EXPORT = "ACTION_EXPORT";
 	private static final String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
 	private static final String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
@@ -70,8 +78,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
-	private JButton jExport;
-	private JButton jExportAll;
+	private JDropDownButton jExport;
 	private LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
 
@@ -81,11 +88,19 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 	private SeparatorList<Module> separatorList;
 	private DefaultEventSelectionModel<Module> selectionModel;
 	private DefaultEventTableModel<Module> tableModel;
+	private EnumTableFormatAdaptor<ModuleTableFormat, Module> tableFormat;
+
+	//Dialog
+	ExportDialog<Module> exportDialog;
+
+	public static final String NAME = "loadouts"; //Not to be changed!
 
 	public LoadoutsTab(final Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
+
+		ListenerClass listener = new ListenerClass();
 
 		try {
 			jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
@@ -105,31 +120,53 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
 		jOwners = new JComboBox();
 		jOwners.setActionCommand(ACTION_OWNERS);
-		jOwners.addActionListener(this);
+		jOwners.addActionListener(listener);
 
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jShips = new JComboBox();
 		jShips.setActionCommand(ACTION_FILTER);
-		jShips.addActionListener(this);
+		jShips.addActionListener(listener);
 
-		jCollapse = new JButton(TabsLoadout.get().collapse());
+		JToolBar jToolBarLeft = new JToolBar();
+		jToolBarLeft.setFloatable(false);
+		jToolBarLeft.setRollover(true);
+
+		jToolBarLeft.addSeparator();
+
+		jExport = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		addToolButton(jToolBarLeft, jExport);
+
+		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXml(), Images.MISC_EVE.getIcon());
+		jExportEveXml.setActionCommand(ACTION_EXPORT_LOADOUT);
+		jExportEveXml.addActionListener(listener);
+		jExport.add(jExportEveXml);
+		
+		JMenuItem jExportEveXmlAll = new JMenuItem(TabsLoadout.get().exportEveXmlAll(), Images.MISC_EVE.getIcon());
+		jExportEveXmlAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
+		jExportEveXmlAll.addActionListener(listener);
+		jExport.add(jExportEveXmlAll);
+
+		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportSqlCsvHtml(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExportSqlCsvHtml.setActionCommand(ACTION_EXPORT);
+		jExportSqlCsvHtml.addActionListener(listener);
+		jExport.add(jExportSqlCsvHtml);
+
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+
+		jCollapse = new JButton(TabsLoadout.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
-		jCollapse.addActionListener(this);
+		jCollapse.addActionListener(listener);
+		addToolButton(jToolBarRight, jCollapse);
 
-		jExpand = new JButton(TabsLoadout.get().expand());
+		jExpand = new JButton(TabsLoadout.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
-		jExpand.addActionListener(this);
-
-		jExport = new JButton(TabsLoadout.get().export1());
-		jExport.setActionCommand(ACTION_EXPORT_LOADOUT);
-		jExport.addActionListener(this);
-
-		jExportAll = new JButton(TabsLoadout.get().export2());
-		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
-		jExportAll.addActionListener(this);
+		jExpand.addActionListener(listener);
+		addToolButton(jToolBarRight, jExpand);
 
 		//Table Format
-		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Module>();
 		//Filter
@@ -137,7 +174,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 		//Separator
 		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = EventModels.createTableModel(separatorList, materialTableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
@@ -154,6 +191,14 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 		//Menu
 		installMenu(program, this, jTable, Module.class);
 
+		List<EnumTableColumn<Module>> enumColumns = new ArrayList<EnumTableColumn<Module>>();
+		enumColumns.addAll(Arrays.asList(ModuleExtendedTableFormat.values()));
+		enumColumns.addAll(Arrays.asList(ModuleTableFormat.values()));
+		List<EventList<Module>> eventLists = new ArrayList<EventList<Module>>();
+		eventLists.add(filterList);
+		exportDialog = new ExportDialog<Module>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
+
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
@@ -161,12 +206,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 					.addComponent(jOwners, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jShipsLabel)
 					.addComponent(jShips, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarLeft)
 				)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExport, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExportAll, Program.BUTTONS_WIDTH + 10, Program.BUTTONS_WIDTH + 10, Program.BUTTONS_WIDTH + 10)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
@@ -177,15 +221,26 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShipsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShips, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExportAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
+		addToolButton(jToolBar, jButton, 90);
+	}
+
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
+		if (width > 0) {
+			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+		}
+		jButton.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBar.add(jButton);
 	}
 
 	@Override
@@ -352,73 +407,97 @@ public class LoadoutsTab extends JMainTab implements ActionListener, TableMenu<M
 		jTable.loadExpandedState();
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OWNERS.equals(e.getActionCommand())) {
-			String owner = (String) jOwners.getSelectedItem();
-			List<String> charShips = new ArrayList<String>();
-			for (Asset asset : program.getAssetEventList()) {
-				String key = asset.getName() + " #" + asset.getItemID();
-				if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
-					continue;
+	public class ListenerClass implements ActionListener {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (ACTION_OWNERS.equals(e.getActionCommand())) {
+				String owner = (String) jOwners.getSelectedItem();
+				List<String> charShips = new ArrayList<String>();
+				for (Asset asset : program.getAssetEventList()) {
+					String key = asset.getName() + " #" + asset.getItemID();
+					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
+						continue;
+					}
+					if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
+						continue;
+					}
+					charShips.add(key);
 				}
-				if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
-					continue;
-				}
-				charShips.add(key);
-			}
-			if (!charShips.isEmpty()) {
-				Collections.sort(charShips, new CaseInsensitiveComparator());
-				jExpand.setEnabled(true);
-				jCollapse.setEnabled(true);
-				jExport.setEnabled(true);
-				jExportAll.setEnabled(true);
-				jOwners.setEnabled(true);
-				jShips.setEnabled(true);
-				String selectedItem = (String) jShips.getSelectedItem();
-				jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
-				if (selectedItem != null && charShips.contains(selectedItem)) {
-					jShips.setSelectedItem(selectedItem);
+				if (!charShips.isEmpty()) {
+					Collections.sort(charShips, new CaseInsensitiveComparator());
+					jExpand.setEnabled(true);
+					jCollapse.setEnabled(true);
+					jExport.setEnabled(true);
+					jOwners.setEnabled(true);
+					jShips.setEnabled(true);
+					String selectedItem = (String) jShips.getSelectedItem();
+					jShips.setModel(new DefaultComboBoxModel(charShips.toArray()));
+					if (selectedItem != null && charShips.contains(selectedItem)) {
+						jShips.setSelectedItem(selectedItem);
+					} else {
+						jShips.setSelectedIndex(0);
+					}
 				} else {
-					jShips.setSelectedIndex(0);
+					jExpand.setEnabled(false);
+					jCollapse.setEnabled(false);
+					jExport.setEnabled(false);
+					jShips.setEnabled(false);
+					jShips.setModel(new DefaultComboBoxModel());
+					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
-			} else {
-				jExpand.setEnabled(false);
-				jCollapse.setEnabled(false);
-				jExport.setEnabled(false);
-				jExportAll.setEnabled(false);
-				jShips.setEnabled(false);
-				jShips.setModel(new DefaultComboBoxModel());
-				jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 			}
-		}
-		if (ACTION_FILTER.equals(e.getActionCommand())) {
-			String selectedShip = (String) jShips.getSelectedItem();
-			filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
-		}
-		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false);
-		}
-		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true);
-		}
-		if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
-			loadoutsExportDialog.setVisible(true);
-		}
-		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
-			String filename = browse();
-			List<Asset> ships = new ArrayList<Asset>();
-			for (Asset asset : program.getAssetEventList()) {
-				if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
-					continue;
+			if (ACTION_FILTER.equals(e.getActionCommand())) {
+				String selectedShip = (String) jShips.getSelectedItem();
+				filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
+			}
+			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+				jTable.expandSeparators(false);
+			}
+			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+				jTable.expandSeparators(true);
+			}
+			if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
+				loadoutsExportDialog.setVisible(true);
+			}
+			if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
+				String filename = browse();
+				List<Asset> ships = new ArrayList<Asset>();
+				for (Asset asset : program.getAssetEventList()) {
+					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
+						continue;
+					}
+					ships.add(asset);
 				}
-				ships.add(asset);
+				if (filename != null) {
+					EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
+				}
 			}
-			if (filename != null) {
-				EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
+			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+				exportDialog.setVisible(true);
 			}
+		}
+	}
 
+	public class LoadoutsFilterControl extends ExportFilterControl<Module> {
+		@Override
+		protected Enum<?> valueOf(final String column) {
+			try {
+				return ModuleTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			try {
+				return ModuleExtendedTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			throw new RuntimeException("Fail to parse filter column: " + column);
 		}
 
+		@Override
+		protected List<EnumTableColumn<Module>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Module>>(tableFormat.getShownColumns());
+		}
 	}
 }
