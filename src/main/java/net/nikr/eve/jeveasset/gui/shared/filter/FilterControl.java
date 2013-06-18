@@ -26,17 +26,14 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
-public abstract class FilterControl<E> implements ListEventListener<E> {
+public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	private final String name;
 	private final List<EventList<E>> eventLists;
@@ -73,12 +70,14 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		this.filterLists = filterLists;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
+		ListenerClass listener = new ListenerClass();
 		for (FilterList<E> filterList : filterLists) {
-			filterList.addListEventListener(this);
+			filterList.addListEventListener(listener);
 		}
 		gui = new FilterGui<E>(jFrame, this);
 	}
 
+	@Override
 	public List<Filter> getCurrentFilters() {
 		return gui.getFilters();
 	}
@@ -153,6 +152,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return filters;
 	}
 
+	@Override
 	public Map<String, List<Filter>> getAllFilters() {
 		//Need to be updated each time something has changed....
 		Map<String, List<Filter>> allFilters = new HashMap<String, List<Filter>>();
@@ -175,8 +175,6 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 
 	protected abstract Enum<?>[] getColumns();
 	protected abstract List<EnumTableColumn<E>> getEnumColumns();
-	protected abstract List<EnumTableColumn<E>> getEnumShownColumns();
-	protected abstract Enum<?> valueOf(String column);
 	/**
 	 * Use isNumeric(Enum column) instead.
 	 */
@@ -227,8 +225,10 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return (column instanceof ExtraColumns);
 	}
 
-	@Override
-	public void listChanged(final ListEvent<E> listChanges) {
-		gui.updateShowing();
+	public class ListenerClass implements ListEventListener<E> {
+		@Override
+		public void listChanged(final ListEvent<E> listChanges) {
+			gui.updateShowing();
+		}
 	}
 }

@@ -27,6 +27,7 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,28 +35,33 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<Material> {
+public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 
 	private static final String ACTION_SELECTED = "ACTION_SELECTED";
 	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private static final String ACTION_EXPORT = "ACTION_EXPORT";
 
 	//GUI
 	private JComboBox jOwners;
+	private JButton jExport;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JCheckBox jPiMaterial;
@@ -67,36 +73,61 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 	private SeparatorList<Material> separatorList;
 	private DefaultEventSelectionModel<Material> selectionModel;
 	private DefaultEventTableModel<Material> tableModel;
+	private EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
+
+	//Dialog
+	ExportDialog<Material> exportDialog;
+
+	public static final String NAME = "materials"; //Not to be changed!
 
 	public MaterialsTab(final Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
 		//Category: Material
 
+		ListenerClass listener = new ListenerClass();
+
 		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
 		jPiMaterial.setActionCommand(ACTION_SELECTED);
-		jPiMaterial.addActionListener(this);
+		jPiMaterial.addActionListener(listener);
 
 		jOwners = new JComboBox();
 		jOwners.setActionCommand(ACTION_SELECTED);
-		jOwners.addActionListener(this);
+		jOwners.addActionListener(listener);
+		
+		JToolBar jToolBarLeft = new JToolBar();
+		jToolBarLeft.setFloatable(false);
+		jToolBarLeft.setRollover(true);
 
-		jCollapse = new JButton(TabsMaterials.get().collapse());
+		jToolBarLeft.addSeparator();
+
+		jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExport.setActionCommand(ACTION_EXPORT);
+		jExport.addActionListener(listener);
+		addToolButton(jToolBarLeft, jExport);
+
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+
+		jCollapse = new JButton(TabsMaterials.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
-		jCollapse.addActionListener(this);
+		jCollapse.addActionListener(listener);
+		addToolButton(jToolBarRight, jCollapse);
 
-		jExpand = new JButton(TabsMaterials.get().expand());
+		jExpand = new JButton(TabsMaterials.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
-		jExpand.addActionListener(this);
+		jExpand.addActionListener(listener);
+		addToolButton(jToolBarRight, jExpand);
 
 		//Table Format
-		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Material>();
 		//Separator
 		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = EventModels.createTableModel(separatorList, materialTableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
@@ -113,13 +144,19 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 		//Menu
 		installMenu(program, this, jTable, Material.class);
 
+		List<EnumTableColumn<Material>> enumColumns = new ArrayList<EnumTableColumn<Material>>();
+		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
+		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
+
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOwners, 200, 200, 200)
-					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jPiMaterial)
+					.addComponent(jToolBarLeft)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
@@ -127,12 +164,25 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+	}
+
+	final void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
+		addToolButton(jToolBar, jButton, 90);
+	}
+
+	final void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
+		if (width > 0) {
+			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+		}
+		jButton.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBar.add(jButton);
 	}
 
 	@Override
@@ -284,16 +334,40 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 		afterUpdateData();
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_SELECTED.equals(e.getActionCommand())) {
-			updateTable();
+	public class ListenerClass implements ActionListener {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (ACTION_SELECTED.equals(e.getActionCommand())) {
+				updateTable();
+			}
+			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+				jTable.expandSeparators(false);
+			}
+			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+				jTable.expandSeparators(true);
+			}
+			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+				exportDialog.setVisible(true);
+			}
 		}
-		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false);
+	}
+
+	class MaterialsFilterControl extends ExportFilterControl<Material> {
+
+		@Override
+		protected Enum<?> valueOf(final String column) {
+			try {
+				return MaterialTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			throw new RuntimeException("Fail to parse filter column: " + column);
 		}
-		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true);
+
+		@Override
+		protected List<EnumTableColumn<Material>> getEnumShownColumns() {
+			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
 		}
 	}
 }
