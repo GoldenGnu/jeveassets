@@ -63,7 +63,7 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private boolean read(ProfileManager profileManager, final String filename) {
 		try {
-			Element element = getDocumentElement(filename);
+			Element element = getDocumentElement(filename, true);
 			parseSettings(element, profileManager);
 		} catch (IOException ex) {
 			LOG.info("Profile not loaded");

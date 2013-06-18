@@ -93,7 +93,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(settings.getPathSettings());
+			Element element = getDocumentElement(settings.getPathSettings(), true);
 			parseSettings(element, settings);
 		} catch (IOException ex) {
 			LOG.info("Settings not loaded");

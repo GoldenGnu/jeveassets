@@ -47,7 +47,7 @@ public class Update extends AbstractXmlReader {
 	private static final Logger LOG = LoggerFactory.getLogger(Update.class);
 
 	int getVersion(final String filename) throws XmlException, IOException {
-		org.w3c.dom.Element element = getDocumentElement(filename);
+		org.w3c.dom.Element element = getDocumentElement(filename, true);
 		if (element.getNodeName().equals("settings")) {
 			if (AttributeGetters.haveAttribute((Node) element, "version")) {
 				return AttributeGetters.getInt((Node) element, "version");
