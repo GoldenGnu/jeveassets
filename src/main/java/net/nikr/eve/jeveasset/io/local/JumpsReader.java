@@ -51,7 +51,7 @@ public final class JumpsReader extends AbstractXmlReader {
 
 	private void read() {
 		try {
-			Element element = getDocumentElement(Settings.getPathJumps());
+			Element element = getDocumentElement(Settings.getPathJumps(), false);
 			parseJumps(element, StaticData.get().getLocations(), StaticData.get().getJumps());
 		} catch (IOException ex) {
 			LOG.error("Jumps not loaded: " + ex.getMessage(), ex);

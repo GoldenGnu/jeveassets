@@ -49,7 +49,7 @@ public final class FlagsReader extends AbstractXmlReader {
 
 	private boolean read() {
 		try {
-			Element element = getDocumentElement(Settings.getPathFlags());
+			Element element = getDocumentElement(Settings.getPathFlags(), false);
 			parseFlags(element, StaticData.get().getItemFlags());
 		} catch (IOException ex) {
 			LOG.error("Flags not loaded: " + ex.getMessage(), ex);

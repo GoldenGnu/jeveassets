@@ -49,7 +49,7 @@ public final class LocationsReader extends AbstractXmlReader {
 
 	private void read() {
 		try {
-			Element element = getDocumentElement(Settings.getPathLocations());
+			Element element = getDocumentElement(Settings.getPathLocations(), false);
 			parseLocations(element, StaticData.get().getLocations());
 		} catch (IOException ex) {
 			LOG.error("Locations not loaded: " + ex.getMessage(), ex);
