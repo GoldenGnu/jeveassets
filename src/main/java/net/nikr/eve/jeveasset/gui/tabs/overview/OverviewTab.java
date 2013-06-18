@@ -88,6 +88,8 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 	//Data
 	private int rowCount;
 
+	public static final String NAME = "overview"; //Not to be changed!
+
 	public OverviewTab(final Program program) {
 		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
 
@@ -154,7 +156,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, null);
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
@@ -224,8 +226,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		//FIXME - - > Overview should NOT have selectable columns -_-
-		return tableFormat.getMenu(program, tableModel, jTable, "overview");
+		return tableFormat.getMenu(program, tableModel, jTable, "overview", false);
 	}
 
 	@Override

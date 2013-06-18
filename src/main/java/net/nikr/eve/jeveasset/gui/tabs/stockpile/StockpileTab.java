@@ -183,7 +183,6 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jTable = new JStockpileTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(program, jTable, separatorList, this));
-		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting

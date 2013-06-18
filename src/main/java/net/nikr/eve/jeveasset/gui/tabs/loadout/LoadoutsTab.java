@@ -185,7 +185,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, null);
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
@@ -255,7 +255,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return null;
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

@@ -155,7 +155,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
-		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting

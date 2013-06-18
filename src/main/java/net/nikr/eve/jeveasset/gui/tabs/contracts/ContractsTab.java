@@ -123,7 +123,6 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jTable = new JContractsTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
-		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting

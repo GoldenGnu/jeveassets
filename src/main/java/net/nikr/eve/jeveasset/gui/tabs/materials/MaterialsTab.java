@@ -138,7 +138,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, null);
+		installTable(jTable, NAME);
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
@@ -198,7 +198,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return null;
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override
