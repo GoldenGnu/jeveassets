@@ -499,6 +499,15 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	@Override
 	protected void windowShown() { }
 
+	private String sqlHeader(Object object) {
+		if (object instanceof Enum) {
+			Enum headerEnum = (Enum) object;
+			return headerEnum.name();
+		} else {
+			throw new RuntimeException("Failed to convert SQL header");
+		}
+	}
+
 	@Override
 	protected void save() {
 		List<Map<String, String>> stringRows = new ArrayList<Map<String, String>>();
@@ -508,11 +517,13 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 	//Columns + Header
 		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
 		List<String> header = new ArrayList<String>();
+		Map<String, String> sqlHeader = new HashMap<String, String>();
 		if (jToolColumns.isSelected()) {
 			//Use the tool current shown columns + order
 			selectedColumns = matcherControl.getEnumShownColumns();
 			for (EnumTableColumn<E> column : selectedColumns) {
 				header.add(column.getColumnName());
+				sqlHeader.put(column.getColumnName(), sqlHeader(column));
 			}
 		} else {
 			//Use custom columns
@@ -522,6 +533,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 					String columnName = (String) object;
 					EnumTableColumn<E> column = columns.get(columnName);
 					header.add(column.getColumnName());
+					sqlHeader.put(column.getColumnName(), sqlHeader(column));
 					selectedColumns.add(column);
 				}
 			}
@@ -597,7 +609,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(matcherControl.getName()), stringRows, header);
 		} else if (extension.equals(EXPORT_SQL)) {
 			//SQL
-			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(matcherControl.getName()), objectRows, header, Settings.get().getExportSettings().getTableName(matcherControl.getName()), Settings.get().getExportSettings().isDropTable(), Settings.get().getExportSettings().isCreateTable(), Settings.get().getExportSettings().isExtendedInserts());
+			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(matcherControl.getName()), objectRows, header, sqlHeader, Settings.get().getExportSettings().getTableName(matcherControl.getName()), Settings.get().getExportSettings().isDropTable(), Settings.get().getExportSettings().isCreateTable(), Settings.get().getExportSettings().isExtendedInserts());
 		} else {
 			saved = false;
 		}

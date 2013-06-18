@@ -40,25 +40,26 @@ import org.slf4j.LoggerFactory;
 public final class SqlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SqlWriter.class);
-	private static final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final int MAX_LENGTH = 944000; //a little less than 1MB
-	private static final DateFormat SQL_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+
+	private final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final int MAX_LENGTH = 944000; //a little less than 1MB
+	private final DateFormat SQL_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
 	private SqlWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	public static boolean save(final String filename, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		SqlWriter writer = new SqlWriter();
-		return writer.write(filename, rows, header, tableName, dropTable, createTable, extendedInserts);
+		return writer.write(filename, rows, header, sqlHeader, tableName, dropTable, createTable, extendedInserts);
 	}
 
-	private boolean write(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	private boolean write(final String filename, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			writeComment(writer);
-			writeTable(writer, rows, header, tableName, dropTable, createTable);
-			writeRows(writer, rows, header, tableName, extendedInserts);
+			writeTable(writer, rows, header, sqlHeader, tableName, dropTable, createTable);
+			writeRows(writer, rows, header, sqlHeader, tableName, extendedInserts);
 			writer.close();
 		} catch (IOException ex) {
 			LOG.warn("SQL file not saved");
@@ -91,7 +92,7 @@ public final class SqlWriter {
 			return "text";
 		}
 	}
-	private void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
+	private void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
 		if (dropTable) {
 			writer.write("DROP TABLE IF EXISTS `" + tableName + "`;\r\n");
 		}
@@ -104,14 +105,14 @@ public final class SqlWriter {
 				} else {
 					writer.write(",\r\n");
 				}
-				writer.write("`" + column + "` " + getType(rows.get(0).get(column)));
+				writer.write("`" + sqlHeader.get(column) + "` " + getType(rows.get(0).get(column)));
 			}
 			writer.write("\r\n");
 			writer.write(") ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;\r\n");
 		}
 	}
 
-	private void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean extendedInserts) throws IOException {
+	private void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean extendedInserts) throws IOException {
 		if (!rows.isEmpty()) {
 			//Create INSERT statement
 			String insert = "INSERT INTO `" + tableName + "` (";
@@ -122,7 +123,7 @@ public final class SqlWriter {
 				} else {
 					insert = insert + ", ";
 				}
-				insert = insert + "`" + column + "`";
+				insert = insert + "`" + sqlHeader.get(column) + "`";
 			}
 			insert = insert + ") VALUES\r\n";
 			if (extendedInserts) {
