@@ -39,6 +39,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String columnLocation();
 	public abstract String columnName();
 	public abstract String columnOwner();
+	public abstract String columnSlot();
 	public abstract String columnValue();
 	public abstract String description();
 	public abstract String empty();
@@ -46,6 +47,7 @@ public abstract class TabsLoadout extends Bundle {
 	public abstract String export();
 	public abstract String exportEveXml();
 	public abstract String exportEveXmlAll();
+	public abstract String exportEveXmlSelected();
 	public abstract String exportSqlCsvHtml();
 	public abstract String flagCargo();
 	public abstract String flagDroneBay();

@@ -39,6 +39,16 @@ enum ModuleExtendedTableFormat  implements EnumTableColumn<Module> {
 			return from.getLocation().getLocation();
 		}
 	},
+	SLOT(String.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsLoadout.get().columnSlot();
+		}
+		@Override
+		public Object getColumnValue(final Module from) {
+			return from.getFlag();
+		}
+	},
 	OWNER(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

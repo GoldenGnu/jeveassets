@@ -136,15 +136,19 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		jExport = new JDropDownButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
 		addToolButton(jToolBarLeft, jExport);
 
-		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXml(), Images.MISC_EVE.getIcon());
+		JMenu jMenu = new JMenu(TabsLoadout.get().exportEveXml());
+		jMenu.setIcon(Images.MISC_EVE.getIcon());
+		jExport.add(jMenu);
+
+		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
 		jExportEveXml.setActionCommand(ACTION_EXPORT_LOADOUT);
 		jExportEveXml.addActionListener(listener);
-		jExport.add(jExportEveXml);
-		
-		JMenuItem jExportEveXmlAll = new JMenuItem(TabsLoadout.get().exportEveXmlAll(), Images.MISC_EVE.getIcon());
+		jMenu.add(jExportEveXml);
+
+		JMenuItem jExportEveXmlAll = new JMenuItem(TabsLoadout.get().exportEveXmlAll());
 		jExportEveXmlAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportEveXmlAll.addActionListener(listener);
-		jExport.add(jExportEveXmlAll);
+		jMenu.add(jExportEveXmlAll);
 
 		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportSqlCsvHtml(), Images.DIALOG_CSV_EXPORT.getIcon());
 		jExportSqlCsvHtml.setActionCommand(ACTION_EXPORT);
@@ -203,12 +207,10 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOwnersLabel)
-					.addComponent(jOwners, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jOwners, 200, 200, 200)
 					.addComponent(jShipsLabel)
-					.addComponent(jShips, 200, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jShips, 200, 200, 200)
 					.addComponent(jToolBarLeft)
-				)
-				.addGroup(layout.createSequentialGroup()
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jToolBarRight)
 				)
@@ -222,8 +224,6 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 					.addComponent(jShipsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jShips, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
