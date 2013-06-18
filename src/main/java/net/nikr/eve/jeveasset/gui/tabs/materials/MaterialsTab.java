@@ -145,6 +145,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		installMenu(program, this, jTable, Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<EnumTableColumn<Material>>();
+		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
 		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
 		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
 
@@ -172,11 +173,11 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		);
 	}
 
-	final void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
 		addToolButton(jToolBar, jButton, 90);
 	}
 
-	final void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
 		if (width > 0) {
 			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
 			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
@@ -211,6 +212,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 	@Override
 	public void updateData() {
 		if (!program.getOwners(false).isEmpty()) {
+			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
@@ -222,6 +224,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 				jOwners.setSelectedIndex(0);
 			}
 		} else {
+			jExport.setEnabled(false);
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jOwners.setEnabled(false);
@@ -324,9 +327,11 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		jTable.loadExpandedState();
 
 		if (!materials.isEmpty()) {
+			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 		} else {
+			jExport.setEnabled(false);
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 		}
@@ -359,6 +364,11 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		protected Enum<?> valueOf(final String column) {
 			try {
 				return MaterialTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			try {
+				return MaterialExtenedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
