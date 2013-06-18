@@ -156,7 +156,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

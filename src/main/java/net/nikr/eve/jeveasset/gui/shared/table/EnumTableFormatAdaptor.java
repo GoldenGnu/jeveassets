@@ -29,9 +29,11 @@ import java.util.*;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.table.AbstractTableModel;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import org.slf4j.Logger;
@@ -75,7 +77,9 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 	private List<T> orderColumns;
 	private ColumnComparator columnComparator;
 
-	private EditColumnsDialog<T, Q> dialog;
+	private EditColumnsDialog<T, Q> editColumns;
+	private ViewSave viewSave;
+	private ViewManager viewManager;
 	private ResizeMode resizeMode;
 
 	public EnumTableFormatAdaptor(final Class<T> enumClass) {
@@ -195,9 +199,15 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		updateColumns();
 	}
 
-	public JMenu getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable) {
-		if (dialog == null) { //Create dialog (only once)
-			dialog = new EditColumnsDialog<T, Q>(program, this);
+	public JMenu getMenu(final Program program, final AbstractTableModel tableModel, final JAutoColumnTable jTable, final String name) {
+		if (editColumns == null) { //Create dialog (only once)
+			editColumns = new EditColumnsDialog<T, Q>(program, this);
+		}
+		if (viewSave == null) { //Create dialog (only once)
+			viewSave = new ViewSave(program);
+		}
+		if (viewManager == null) { //Create dialog (only once)
+			viewManager = new ViewManager(program, this, tableModel, jTable);
 		}
 
 		JMenu jMenu;
@@ -207,12 +217,72 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & EnumTableColumn<Q>, Q> i
 		jMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				dialog.setVisible(true);
+				editColumns.setVisible(true);
 				tableModel.fireTableStructureChanged();
 				jTable.autoResizeColumns();
 			}
 		});
 		jMenu.add(jMenuItem);
+
+		jMenu.addSeparator();
+
+		jMenuItem = new JMenuItem(GuiShared.get().saveView(), Images.FILTER_SAVE.getIcon());
+		jMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				//Get views...
+				Map<String, View> views = Settings.get().getTableViews(name);
+				viewSave.updateData(new ArrayList<View>(views.values())); //Update views
+				View view = viewSave.show();
+				if (view != null ) { //Validate
+					view.setColumns(getColumns()); //Set data
+					if (views.containsValue(view)) { //Ovwewrite?
+						int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), GuiShared.get().overwrite(), GuiShared.get().saveView(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (value != JOptionPane.OK_OPTION) {
+							return;
+						}
+					}
+					views.remove(view.getName()); //Remove old
+					views.put(view.getName(), view); //Add new
+				}
+			}
+		});
+		jMenu.add(jMenuItem);
+
+		JMenu jLoad = new JMenu(GuiShared.get().loadView());
+		jLoad.setIcon(Images.FILTER_LOAD.getIcon());
+		jMenu.add(jLoad);
+
+		JMenuItem jManage = new JMenuItem(GuiShared.get().editViews(), Images.DIALOG_SETTINGS.getIcon());
+		jManage.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Map<String, View> views = Settings.get().getTableViews(name);
+				viewManager.updateData(views);
+				viewManager.setVisible(true);
+			}
+		});
+
+		if (!Settings.get().getTableViews(name).isEmpty()) {
+			jLoad.setEnabled(true);
+
+			jLoad.add(jManage);
+
+			jLoad.addSeparator();
+
+			for (final View view : Settings.get().getTableViews(name).values()) {
+				jMenuItem = new JMenuItem(view.getName(), Images.FILTER_LOAD.getIcon());
+				jMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(final ActionEvent e) {
+						viewManager.loadView(view);
+					}
+				});
+				jLoad.add(jMenuItem);
+			}
+		} else {
+			jLoad.setEnabled(false);
+		}
 
 		jMenu.addSeparator();
 

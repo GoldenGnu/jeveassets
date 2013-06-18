@@ -180,7 +180,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

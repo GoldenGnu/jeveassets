@@ -140,7 +140,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

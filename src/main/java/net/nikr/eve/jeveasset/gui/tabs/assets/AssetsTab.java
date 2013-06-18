@@ -158,7 +158,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

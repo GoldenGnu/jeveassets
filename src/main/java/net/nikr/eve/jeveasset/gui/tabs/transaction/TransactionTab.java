@@ -140,7 +140,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

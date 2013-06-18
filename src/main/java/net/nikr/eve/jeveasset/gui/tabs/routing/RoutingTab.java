@@ -105,7 +105,7 @@ public class RoutingTab extends JMainTab  {
 
 		ListenerClass listener = new ListenerClass();
 
-		jSystemDialog = new JSystemDialog(program, this);
+		jSystemDialog = new JSystemDialog(program);
 
 		jAdd = new JButton(TabsRouting.get().add());
 		jAdd.setActionCommand(ACTION_ADD);
@@ -292,7 +292,7 @@ public class RoutingTab extends JMainTab  {
 			);
 		//Only need to build the graph once
 		buildGraph();
-		jSystemDialog.buildData();
+		jSystemDialog.updateData(getGraph().getNodes());
 	}
 
 	@Override

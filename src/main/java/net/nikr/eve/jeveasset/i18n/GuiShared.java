@@ -98,6 +98,18 @@ public abstract class GuiShared extends Bundle {
 	public abstract String today(Object arg0);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
+	//ViewsdeleteFilter=Delete Filter
+	public abstract String deleteView();
+	public abstract String deleteViews(int size);
+	public abstract String editViews();
+	public abstract String enterViewName();
+	public abstract String loadView();
+	public abstract String manageViews();
+	public abstract String noViewName();
+	public abstract String overwriteView();
+	public abstract String renameView();
+	public abstract String saveView();
+	public abstract String saveViewMsg();
 	//Filters
 	public abstract String saveFilter();
 	public abstract String enterFilterName();

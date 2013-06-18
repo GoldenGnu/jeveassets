@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
@@ -237,6 +238,13 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (tableResizeNodes.getLength() == 1) {
 			Element tableResizeElement = (Element) tableResizeNodes.item(0);
 			parseTableResize(tableResizeElement, settings);
+		}
+
+		//Table Views
+		NodeList tableViewsNodes = element.getElementsByTagName("tableviews");
+		if (tableViewsNodes.getLength() == 1) {
+			Element tableViewsElement = (Element) tableViewsNodes.item(0);
+			parseTableViews(tableViewsElement, settings);
 		}
 
 		//Asset added
@@ -552,6 +560,30 @@ public final class SettingsReader extends AbstractXmlReader {
 			String tableName = AttributeGetters.getString(tableNode, "name");
 			ResizeMode resizeMode = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
 			settings.getTableResize().put(tableName, resizeMode);
+		}
+	}
+
+	private void parseTableViews(final Element element, final Settings settings) {
+		NodeList viewToolNodeList = element.getElementsByTagName("viewtool");
+		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
+			Element viewToolNode = (Element) viewToolNodeList.item(a);
+			String toolName = AttributeGetters.getString(viewToolNode, "tool");
+			Map<String, View> views = new HashMap<String, View>();
+			settings.getTableViews().put(toolName, views);
+			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
+			for (int b = 0; b < viewNodeList.getLength(); b++) {
+				Element viewNode = (Element) viewNodeList.item(b);
+				String viewName = AttributeGetters.getString(viewNode, "name");
+				View view = new View(viewName);
+				views.put(view.getName(), view);
+				NodeList viewColumnList = viewNode.getElementsByTagName("viewcolumn");
+				for (int c = 0; c < viewColumnList.getLength(); c++) {
+					Element viewColumnNode = (Element) viewColumnList.item(c);
+					String name = AttributeGetters.getString(viewColumnNode, "name");
+					boolean shown = AttributeGetters.getBoolean(viewColumnNode, "shown");
+					view.getColumns().add(new SimpleColumn(name, shown));
+				}
+			}
 		}
 	}
 

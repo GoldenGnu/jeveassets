@@ -216,7 +216,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

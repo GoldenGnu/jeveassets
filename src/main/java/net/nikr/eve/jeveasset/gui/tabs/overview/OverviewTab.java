@@ -224,7 +224,8 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		//FIXME - - > Overview should NOT have selectable columns -_-
+		return tableFormat.getMenu(program, tableModel, jTable, "overview");
 	}
 
 	@Override

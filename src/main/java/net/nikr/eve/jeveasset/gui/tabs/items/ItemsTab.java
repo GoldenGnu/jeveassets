@@ -134,7 +134,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

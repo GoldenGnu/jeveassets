@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -82,6 +83,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableColumns(xmldoc, settings.getTableColumns());
 		writeTableColumnsWidth(xmldoc, settings.getTableColumnsWidth());
 		writeTablesResize(xmldoc, settings.getTableResize());
+		writeTablesViews(xmldoc, settings.getTableViews());
 		writeExportSettings(xmldoc, settings.getExportSettings());
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
@@ -191,6 +193,28 @@ public class SettingsWriter extends AbstractXmlWriter {
 			nameNode.setAttributeNS(null, "name", entry.getKey());
 			nameNode.setAttributeNS(null, "resize", entry.getValue().name());
 			tablecolumnsNode.appendChild(nameNode);
+		}
+	}
+
+	private void writeTablesViews(final Document xmldoc, final Map<String, Map<String ,View>> tableViews) {
+		Element tableviewsNode = xmldoc.createElementNS(null, "tableviews");
+		xmldoc.getDocumentElement().appendChild(tableviewsNode);
+		for (Map.Entry<String, Map<String ,View>> entry : tableViews.entrySet()) {
+			Element nameNode = xmldoc.createElementNS(null, "viewtool");
+			nameNode.setAttributeNS(null, "tool", entry.getKey());
+			tableviewsNode.appendChild(nameNode);
+			for (View view : entry.getValue().values()) {
+				Element tableviewNode = xmldoc.createElementNS(null, "view");
+				tableviewNode.setAttributeNS(null, "name", view.getName());
+				nameNode.appendChild(tableviewNode);
+				for (SimpleColumn column : view.getColumns()) {
+					Element viewColumnNode = xmldoc.createElementNS(null, "viewcolumn");
+					viewColumnNode.setAttributeNS(null, "name", column.getEnumName());
+					viewColumnNode.setAttributeNS(null, "shown", String.valueOf(column.isShown()));
+					tableviewNode.appendChild(viewColumnNode);
+				}
+			}
+			
 		}
 	}
 

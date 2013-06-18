@@ -147,7 +147,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override

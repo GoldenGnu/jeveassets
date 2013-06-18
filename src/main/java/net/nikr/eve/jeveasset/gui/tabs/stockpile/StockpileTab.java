@@ -254,7 +254,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 
 	@Override
 	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override
