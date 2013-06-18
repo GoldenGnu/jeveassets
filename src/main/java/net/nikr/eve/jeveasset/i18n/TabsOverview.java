@@ -71,7 +71,6 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String whitespace1(Object arg0);
 	public abstract String whitespace2(Object arg0);
 	public abstract String whitespace3(Object arg0);
-	public abstract String whitespace4(Object arg0);
 	public abstract String columnName();
 	public abstract String columnSystem();
 	public abstract String columnRegion();

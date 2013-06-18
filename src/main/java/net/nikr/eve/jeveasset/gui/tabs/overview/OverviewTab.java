@@ -325,12 +325,6 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			}
 		}
 		for (Asset asset : input) {
-			String name;
-			if (asset.isCorporation()) {
-				name = TabsOverview.get().whitespace4(asset.getOwner());
-			} else {
-				name = asset.getOwner();
-			}
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
@@ -338,7 +332,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(name) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
 				continue;
 			}
 
