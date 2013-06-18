@@ -332,6 +332,26 @@ public class ExportDialog<E> extends JDialogCentered {
 		);
 	}
 
+	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
+		columns.clear();
+		columnNames.clear();
+		for (EnumTableColumn<E> column : enumColumns) {
+			columns.put(column.getColumnName(), column);
+			columnNames.add(column.getColumnName());
+		}
+		jColumnSelection.setModel(new AbstractListModel() {
+			@Override
+			public int getSize() {
+				return columnNames.size();
+			}
+
+			@Override
+			public Object getElementAt(int index) {
+				return columnNames.get(index);
+			}
+		});
+	}
+
 	private List<String> getExportColumns() {
 		List<String> selectedColumns = new ArrayList<String>();
 		Object[] values = jColumnSelection.getSelectedValues();
