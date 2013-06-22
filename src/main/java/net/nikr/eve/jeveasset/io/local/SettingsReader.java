@@ -63,6 +63,8 @@ import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -699,6 +701,14 @@ public final class SettingsReader extends AbstractXmlReader {
 		try {
 			if (tableName.equals(ValueTableTab.NAME)) {
 				return ValueTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Values (Extra)
+		try {
+			if (tableName.equals(TreeTab.NAME)) {
+				return TreeTableFormat.valueOf(column);
 			}
 		} catch (IllegalArgumentException exception) {
 

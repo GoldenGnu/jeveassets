@@ -70,6 +70,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -123,6 +124,7 @@ public class Program implements ActionListener {
 	private TrackerTab trackerTab;
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
+	private TreeTab treeTab;
 
 	//Misc
 	private ProgramUpdateChecker programUpdateChecker;
@@ -171,25 +173,28 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
-		SplashUpdater.setProgress(55);
+		SplashUpdater.setProgress(52);
+		LOG.info("Loading: Tree Tab");
+		treeTab = new TreeTab(this);
+		SplashUpdater.setProgress(54);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
 		//FIXME - - > IndustryPlotTab
 		//industryPlotTab = new IndustryPlotTab(this);
-		SplashUpdater.setProgress(60);
+		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
-		SplashUpdater.setProgress(62);
+		SplashUpdater.setProgress(58);
 		LOG.info("Loading: Journal Tab");
 		journalTab = new JournalTab(this);
-		SplashUpdater.setProgress(63);
+		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Transactions Tab");
 		transactionsTab = new TransactionTab(this);
-		SplashUpdater.setProgress(64);
+		SplashUpdater.setProgress(62);
 		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
-		SplashUpdater.setProgress(65);
+		SplashUpdater.setProgress(64);
 		LOG.info("Loading: Ship Loadouts Tab");
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
@@ -529,6 +534,9 @@ public class Program implements ActionListener {
 		}
 		if (MainMenu.ACTION_OPEN_CONTRACTS.equals(e.getActionCommand())) {
 			mainWindow.addTab(contractsTab);
+		}
+		if (MainMenu.ACTION_OPEN_TREE.equals(e.getActionCommand())) {
+			mainWindow.addTab(treeTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {

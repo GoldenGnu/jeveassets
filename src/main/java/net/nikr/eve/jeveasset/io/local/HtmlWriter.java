@@ -80,7 +80,7 @@ public final class HtmlWriter {
 			writer.write("<tr>\r\n");
 			for (String s : header) {
 				writer.write("\t<td>");
-				writer.write(map.get(s));
+				writer.write(map.get(s).replace(" ", "&nbsp;"));
 				writer.write("</td>\r\n");
 			}
 			writer.write("</tr>\r\n");

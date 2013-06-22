@@ -96,6 +96,7 @@ public enum Images {
 	LOC_STATION ("loc_station.png"),
 	LOC_SYSTEM ("loc_system.png"),
 	LOC_REGION ("loc_region.png"),
+	LOC_CONTAINER ("loc_container.png"),
 	LOC_LOCATIONS ("loc_locations.png"),
 
 	MISC_EVE ("misc_eve.png"),
@@ -141,6 +142,7 @@ public enum Images {
 	TOOL_CONTRACTS ("tool_contracts.png"),
 	TOOL_TRANSACTION ("tool_transaction.png"),
 	TOOL_JOURNAL ("tool_journal.png"),
+	TOOL_TREE ("tool_tree.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

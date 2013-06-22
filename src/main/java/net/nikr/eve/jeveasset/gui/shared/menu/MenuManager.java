@@ -42,6 +42,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
 
 public class MenuManager<Q> {
@@ -92,7 +93,7 @@ public class MenuManager<Q> {
 		this.program = program;
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
-		assets = Asset.class.isAssignableFrom(clazz);
+		assets = Asset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);

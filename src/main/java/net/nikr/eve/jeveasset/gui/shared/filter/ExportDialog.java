@@ -574,6 +574,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Data source
+		//FIXME - - > ExportDialog: Row order is all wrong -_-
 		if (jNoFilter.isSelected()) {
 			for (EventList<E> eventList : eventLists) {
 				for (E e : eventList) {

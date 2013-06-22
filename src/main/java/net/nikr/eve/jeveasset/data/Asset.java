@@ -69,6 +69,32 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	 */
 	protected Asset() { }
 
+	protected Asset(Asset asset) {
+		this(asset.item,
+				asset.location,
+				asset.owner,
+				asset.count,
+				asset.parents,
+				asset.flag,
+				asset.flagID,
+				asset.itemID,
+				asset.singleton,
+				asset.rawQuantity);
+		//this.assets = asset.assets;
+		this.added = asset.added;
+		this.container = asset.container;
+		this.price = asset.price;
+		this.marketPriceData = asset.marketPriceData;
+		this.name = asset.name;
+		this.priceData = asset.priceData;
+		this.priceReprocessed = asset.priceReprocessed;
+		this.typeCount = asset.typeCount;
+		this.userPrice = asset.userPrice;
+		this.volume = asset.volume;
+		this.userNameSet = asset.userNameSet;
+		this.userPriceSet = asset.userPriceSet;
+	}
+
 	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
 		this.item = item;
 		this.location = location;

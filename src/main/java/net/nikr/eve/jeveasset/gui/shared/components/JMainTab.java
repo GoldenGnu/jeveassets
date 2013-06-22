@@ -176,6 +176,16 @@ public abstract class JMainTab {
 		}
 	}
 
+	/**
+	 * Table automation
+	 * 1. Saving table settings (TableColumns, TableResize, TableColumnsWidth)
+	 * 2. Restore table selection after update
+	 * 3. Restore expanded state for JSeparatorTable after update
+	 * 4. Lock/unlock table doing update
+	 * 
+	 * @param jTable
+	 * @param toolName unique tool name
+	 */
 	protected void installTable(final JAutoColumnTable jTable, String toolName) {
 		this.toolName = toolName;
 

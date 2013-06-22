@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -50,6 +51,23 @@ public class JMenuInfo {
 	private static Border border = null;
 
 	private JMenuInfo() {}
+
+	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
+		List<InfoItem> items = new ArrayList<InfoItem>();
+		for (TreeAsset asset : list) {
+			boolean add = true;
+			for (TreeAsset tree : asset.getTree()) {
+				if (list.contains(tree)) {
+					add = false;
+					break;
+				}
+			}
+			if (add) {
+				items.add(asset);
+			}
+		}
+		infoItem(jComponent, items);
+	}
 
 	public static void asset(final JComponent jComponent, final List<Asset> list) {
 		infoItem(jComponent, new ArrayList<InfoItem>(list));
