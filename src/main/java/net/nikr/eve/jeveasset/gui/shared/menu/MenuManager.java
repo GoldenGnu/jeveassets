@@ -274,8 +274,12 @@ public class MenuManager<Q> {
 
 			//Clicked outside selection, select clicked cell
 			if (!clickInRowsSelection || !clickInColumnsSelection) {
-				jSelectTable.setRowSelectionInterval(jSelectTable.rowAtPoint(e.getPoint()), jSelectTable.rowAtPoint(e.getPoint()));
-				jSelectTable.setColumnSelectionInterval(jSelectTable.columnAtPoint(e.getPoint()), jSelectTable.columnAtPoint(e.getPoint()));
+				int row = jSelectTable.rowAtPoint(e.getPoint());
+				int column = jSelectTable.columnAtPoint(e.getPoint());
+				if (row >= 0 && column >= 0) {
+					jSelectTable.setRowSelectionInterval(row, row);
+					jSelectTable.setColumnSelectionInterval(column, column);
+				}
 			}
 		}
 	}
