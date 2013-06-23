@@ -45,16 +45,19 @@ public class JCustomFileChooser extends JFileChooser {
 	//List of extensions
 	public JCustomFileChooser(final JFrame jFrame, final List<String> extensions) {
 		this.jFrame = jFrame;
+		setExtensions(extensions);
+		this.setAcceptAllFileFilterUsed(false);
+	}
+
+	public final void setExtensions(final String... extension) {
+		setExtensions(Arrays.asList(extension));
+	}
+
+	public final void setExtensions(List<String> extensions) {
+		this.resetChoosableFileFilters();
 		for (String extension : extensions) {
 			this.addChoosableFileFilter(new CustomFileFilter(extension, GuiShared.get().files(extension.toUpperCase())));
 		}
-		/*
-		if (!extensions.isEmpty()){
-			String extension = extensions.get(0);
-			this.setFileFilter(new CustomFileFilter(extension, GuiShared.get().files(extension.toUpperCase())));
-		}
-		*/
-		this.setAcceptAllFileFilterUsed(false);
 	}
 
 	@Override

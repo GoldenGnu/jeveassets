@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,6 +48,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
 import net.nikr.eve.jeveasset.io.local.HtmlWriter;
@@ -56,16 +58,21 @@ import org.supercsv.prefs.CsvPreference;
 
 public class ExportDialog<E> extends JDialogCentered {
 
-	public static final String ACTION_DISABLE_SAVED_FILTERS = "ACTION_DISABLE_SAVED_FILTERS";
-	public static final String ACTION_ENABLE_SAVED_FILTERS = "ACTION_ENABLE_SAVED_FILTERS";
-	public static final String ACTION_OK = "ACTION_OK";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
-	public static final String ACTION_DEFAULT = "ACTION_DEFAULT";
-	public static final String ACTION_TOOL_COLUMNS = "ACTION_TOOL_COLUMNS";
+	private static final String ACTION_DISABLE_SAVED_FILTERS = "ACTION_DISABLE_SAVED_FILTERS";
+	private static final String ACTION_ENABLE_SAVED_FILTERS = "ACTION_ENABLE_SAVED_FILTERS";
+	private static final String ACTION_OK = "ACTION_OK";
+	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private static final String ACTION_DEFAULT = "ACTION_DEFAULT";
+	private static final String ACTION_TOOL_COLUMNS = "ACTION_TOOL_COLUMNS";
+	private static final String ACTION_FORMAT = "ACTION_FORMAT";
 
-	public static final String EXPORT_CSV = "csv";
-	public static final String EXPORT_HTML = "html";
-	public static final String EXPORT_SQL = "sql";
+	private static final String CARD_CSV = "CARD_CSV";
+	private static final String CARD_SQL = "CARD_SQL";
+	private static final String CARD_HTML = "CARD_HTML";
+
+	private static final String EXPORT_CSV = "csv";
+	private static final String EXPORT_HTML = "html";
+	private static final String EXPORT_SQL = "sql";
 
 	//Filter
 	private JRadioButton jNoFilter;
@@ -75,10 +82,20 @@ public class ExportDialog<E> extends JDialogCentered {
 	//Columns
 	private JCheckBox jToolColumns;
 	private JMultiSelectionList jColumnSelection;
+	//Format
+	private JRadioButton jCsv;
+	private JRadioButton jHtml;
+	private JRadioButton jSql;
+	//Options
+	private CardLayout cardLayout;
+	private JPanel jCardPanel;
 	//CSV
 	private JComboBox jFieldDelimiter;
 	private JComboBox jLineDelimiter;
 	private JComboBox jDecimalSeparator;
+	//Html
+	private JCheckBox jHtmlStyle;
+	private JSlider jHtmlHeaderRepeat;
 	//SQL
 	private JTextField jTableName;
 	private JCheckBox jDropTable;
@@ -107,33 +124,43 @@ public class ExportDialog<E> extends JDialogCentered {
 		this.eventLists = eventLists;
 
 		ListenerClass listener = new ListenerClass();
-		//layout.setAutoCreateContainerGaps(false);
-
-		columnNames = new ArrayList<String>();
-		for (EnumTableColumn<E> column : enumColumns) {
-			columns.put(column.getColumnName(), column);
-			columnNames.add(column.getColumnName());
-		}
-
-		jToolColumns = new JCheckBox(DialoguesExport.get().toolColumns());
-		jToolColumns.setActionCommand(ACTION_TOOL_COLUMNS);
-		jToolColumns.addActionListener(listener);
+		layout.setAutoCreateContainerGaps(false);
 
 		try {
-			jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
+			jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
 		} catch (RuntimeException e) {
 			// Workaround for JRE bug 4711700. A NullPointer is thrown
 			// sometimes on the first construction under XP look and feel,
 			// but construction succeeds on successive attempts.
 			try {
-				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
+				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
 			} catch (RuntimeException npe) {
 				// ok, now we use the metal file chooser, takes a long time to load
 				// but the user can still use the program
 				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV, EXPORT_HTML, EXPORT_SQL);
+				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
 			}
 		}
+	//Format
+		JLabel jFormatLabel = new JLabel(DialoguesExport.get().format());
+		jFormatLabel.setFont(new Font(jFormatLabel.getFont().getName(), Font.BOLD, jFormatLabel.getFont().getSize()));
+
+		jCsv = new JRadioButton(DialoguesExport.get().csv());
+		jCsv.setActionCommand(ACTION_FORMAT);
+		jCsv.addActionListener(listener);
+
+		jHtml = new JRadioButton(DialoguesExport.get().html());
+		jHtml.setActionCommand(ACTION_FORMAT);
+		jHtml.addActionListener(listener);
+
+		jSql = new JRadioButton(DialoguesExport.get().sql());
+		jSql.setActionCommand(ACTION_FORMAT);
+		jSql.addActionListener(listener);
+
+		ButtonGroup jFormatButtonGroup = new ButtonGroup();
+		jFormatButtonGroup.add(jCsv);
+		jFormatButtonGroup.add(jHtml);
+		jFormatButtonGroup.add(jSql);
 	//Filters
 		JLabel jFiltersLabel = new JLabel(DialoguesExport.get().filters());
 		jFiltersLabel.setFont(new Font(jFiltersLabel.getFont().getName(), Font.BOLD, jFiltersLabel.getFont().getSize()));
@@ -158,47 +185,87 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		jFilters = new JComboBox();
 		jFilters.setEnabled(false);
-
 	//Columns
+		//FIXME - - > ExportDialog: Use saved view...
 		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
 		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
+
+		columnNames = new ArrayList<String>();
+		for (EnumTableColumn<E> column : enumColumns) {
+			columns.put(column.getColumnName(), column);
+			columnNames.add(column.getColumnName());
+		}
+
+		jToolColumns = new JCheckBox(DialoguesExport.get().toolColumns());
+		jToolColumns.setActionCommand(ACTION_TOOL_COLUMNS);
+		jToolColumns.addActionListener(listener);
 
 		jColumnSelection = new JMultiSelectionList(columnNames);
 		jColumnSelection.selectAll();
 
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 
+	//Options
+		cardLayout = new CardLayout();
+		jCardPanel = new JPanel(cardLayout);
+
+		JLabel jOptionsLabel = new JLabel(DialoguesExport.get().options());
+		jOptionsLabel.setFont(new Font(jOptionsLabel.getFont().getName(), Font.BOLD, jOptionsLabel.getFont().getSize()));
 	//Csv
-		JLabel jCsvLable = new JLabel(DialoguesExport.get().csv());
-		jCsvLable.setFont(new Font(jCsvLable.getFont().getName(), Font.BOLD, jCsvLable.getFont().getSize()));
+		JOptionPanel jCsvPanel = new JOptionPanel();
+		jCardPanel.add(jCsvPanel, CARD_CSV);
 
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
 		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
+		jCsvPanel.add(jFieldDelimiterLabel);
+		jCsvPanel.add(jFieldDelimiter);
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesExport.get().linesTerminated());
 		jLineDelimiter = new JComboBox(LineDelimiter.values());
+		jCsvPanel.add(jLineDelimiterLabel);
+		jCsvPanel.add(jLineDelimiter);
 
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
 		jDecimalSeparator = new JComboBox(DecimalSeparator.values());
-
+		jCsvPanel.add(jDecimalSeparatorLabel);
+		jCsvPanel.add(jDecimalSeparator);
 	//Sql
-		JLabel jSqlLable = new JLabel(DialoguesExport.get().sql());
-		jSqlLable.setFont(new Font(jSqlLable.getFont().getName(), Font.BOLD, jSqlLable.getFont().getSize()));
+		JOptionPanel jSqlPanel = new JOptionPanel();
+		jCardPanel.add(jSqlPanel, CARD_SQL);
 
-		JLabel jTableNameLable = new JLabel(DialoguesExport.get().tableName());
+		JLabel jTableNameLabel = new JLabel(DialoguesExport.get().tableName());
 		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase());
 		jTableName.setDocument(DocumentFactory.getWordPlainDocument());
+		jSqlPanel.add(jTableNameLabel);
+		jSqlPanel.add(jTableName);
 
 		jDropTable = new JCheckBox(DialoguesExport.get().dropTable());
+		jSqlPanel.add(jDropTable);
 
 		jCreateTable = new JCheckBox(DialoguesExport.get().createTable());
+		jSqlPanel.add(jCreateTable);
 
 		jExtendedInserts = new JCheckBox(DialoguesExport.get().extendedInserts());
+		jSqlPanel.add(jExtendedInserts);
+	//Html
+		JOptionPanel jHtmlPanel = new JOptionPanel();
+		jCardPanel.add(jHtmlPanel, CARD_HTML);
 
+		jHtmlStyle = new JCheckBox(DialoguesExport.get().htmlStyled());
+		jHtmlPanel.add(jHtmlStyle);
+
+		JLabel jHtmlHeaderRepeatLabel = new JLabel(DialoguesExport.get().htmlHeaderRepeat());
+		jHtmlHeaderRepeat = new JSlider(JSlider.HORIZONTAL, 0, 50, 0);
+		jHtmlHeaderRepeat.setMajorTickSpacing(10);
+		jHtmlHeaderRepeat.setMinorTickSpacing(5);
+		jHtmlHeaderRepeat.setSnapToTicks(true);
+		jHtmlHeaderRepeat.setPaintTicks(true);
+		jHtmlHeaderRepeat.setPaintLabels(true);
+		jHtmlPanel.add(jHtmlHeaderRepeatLabel);
+		jHtmlPanel.add(jHtmlHeaderRepeat);
 	//Separatora
 		JSeparator jHorizontalSeparator = new JSeparator(SwingConstants.HORIZONTAL);
 		JSeparator jVerticalSeparator = new JSeparator(SwingConstants.VERTICAL);
-
 	//Buttons
 		JSeparator jButtonSeparator = new JSeparator();
 
@@ -217,58 +284,46 @@ public class ExportDialog<E> extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(15)
+					.addContainerGap()
 					.addGroup(layout.createParallelGroup()
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jFiltersLabel, GroupLayout.Alignment.CENTER)
-							.addComponent(jNoFilter)
-							.addComponent(jCurrentFilter)
-							.addComponent(jSavedFilter)
-							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-								.addGroup(layout.createSequentialGroup()
-									.addGap(20)
-									.addComponent(jFilters, 150, 150, 150)
-								)
+						//Format
+						.addComponent(jFormatLabel, GroupLayout.Alignment.CENTER)
+						.addComponent(jCsv)
+						.addComponent(jHtml)
+						.addComponent(jSql)
+						//Filters
+						.addComponent(jFiltersLabel, GroupLayout.Alignment.CENTER)
+						.addComponent(jNoFilter)
+						.addComponent(jCurrentFilter)
+						.addComponent(jSavedFilter)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+							.addGroup(layout.createSequentialGroup()
+								.addGap(20)
+								.addComponent(jFilters, 150, 150, 150)
 							)
-						)
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jCsvLable, GroupLayout.Alignment.CENTER)
-							.addComponent(jFieldDelimiterLabel)
-							.addComponent(jFieldDelimiter)
-							.addComponent(jLineDelimiterLabel)
-							.addComponent(jLineDelimiter)
-							.addComponent(jDecimalSeparatorLabel)
-							.addComponent(jDecimalSeparator)
 						)
 					)
 					.addGap(15)
 					.addComponent(jVerticalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(15)
 					.addGroup(layout.createParallelGroup()
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jColumnLabel, GroupLayout.Alignment.CENTER)
-							.addComponent(jToolColumns)
-							.addComponent(jColumnSelectionPanel, 165, 165, 165)
-						)
-						.addGroup(layout.createParallelGroup()
-							.addComponent(jSqlLable, GroupLayout.Alignment.CENTER)
-							.addComponent(jTableNameLable)
-							.addComponent(jTableName)
-							.addComponent(jDropTable)
-							.addComponent(jCreateTable)
-							.addComponent(jExtendedInserts)
-						)
+						//Columns
+						.addComponent(jColumnLabel, GroupLayout.Alignment.CENTER)
+						.addComponent(jToolColumns)
+						.addComponent(jColumnSelectionPanel, 165, 165, 165)
+						//Options
+						.addComponent(jOptionsLabel, GroupLayout.Alignment.CENTER)
+						.addComponent(jCardPanel)
 					)
-					.addGap(15)
+					.addContainerGap()
 				)
 				.addComponent(jHorizontalSeparator)
 				.addComponent(jButtonSeparator)
 				.addGroup(layout.createSequentialGroup()
-					//.addGap(15)
 					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jDefault, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					//.addGap(15)
+					.addContainerGap()
 				)
 		);
 		layout.setVerticalGroup(
@@ -276,8 +331,28 @@ public class ExportDialog<E> extends JDialogCentered {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jVerticalSeparator)
 					.addGroup(layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(layout.createParallelGroup()
+							//Columns
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jFormatLabel)
+								.addGap(10)
+								.addComponent(jCsv, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jHtml, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jSql, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							)
+							//Options
+							.addGroup(layout.createSequentialGroup()
+								.addComponent(jOptionsLabel)
+								.addGap(10)
+								.addComponent(jCardPanel)
+							)
+						)
+						.addGap(15)
+						.addComponent(jHorizontalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addGap(10)
 						.addGroup(layout.createParallelGroup()
+							//Filters
 							.addGroup(layout.createSequentialGroup()
 								.addComponent(jFiltersLabel)
 								.addGap(10)
@@ -286,35 +361,12 @@ public class ExportDialog<E> extends JDialogCentered {
 								.addComponent(jSavedFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 								.addComponent(jFilters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 							)
+							//Columns
 							.addGroup(layout.createSequentialGroup()
 								.addComponent(jColumnLabel)
 								.addGap(10)
 								.addComponent(jToolColumns)
 								.addComponent(jColumnSelectionPanel, 120, 120, 120)
-							)
-						)
-						.addGap(15)
-						.addComponent(jHorizontalSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGap(10)
-						.addGroup(layout.createParallelGroup()
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jCsvLable)
-								.addGap(10)
-								.addComponent(jFieldDelimiterLabel)
-								.addComponent(jFieldDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jLineDelimiterLabel)
-								.addComponent(jLineDelimiter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jDecimalSeparatorLabel)
-								.addComponent(jDecimalSeparator, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-							)
-							.addGroup(layout.createSequentialGroup()
-								.addComponent(jSqlLable)
-								.addGap(10)
-								.addComponent(jTableNameLable)
-								.addComponent(jTableName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jDropTable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jCreateTable, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-								.addComponent(jExtendedInserts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 							)
 						)
 						.addGap(20)
@@ -328,8 +380,14 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addComponent(jDefault, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addGap(10)
+				.addContainerGap()
 		);
+	}
+
+	private void setVisible(List<JComponent> list, boolean visible) {
+		for (JComponent jComponent : list) {
+			jComponent.setVisible(visible);
+		}
 	}
 
 	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
@@ -369,23 +427,39 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private boolean browse() {
-		String current = Settings.get().getExportSettings().getFilename(toolName);
-		int end = current.lastIndexOf(File.separator);
-		if (end > 0) {
-			current = current.substring(0, end + 1);
+		String filename = Settings.get().getExportSettings().getFilename(toolName);
+		int extensionEnd = filename.lastIndexOf(".");
+		if (extensionEnd >= 0) {
+			filename = filename.substring(0, extensionEnd + 1);
 		}
-		File currentPath = new File(current);
+		if (jCsv.isSelected()) {
+			jFileChooser.setExtensions(EXPORT_CSV);
+			filename = filename + EXPORT_CSV;
+		} else if (jHtml.isSelected()) {
+			jFileChooser.setExtensions(EXPORT_HTML);
+			filename = filename + EXPORT_HTML;
+		} else if (jSql.isSelected()) {
+			jFileChooser.setExtensions(EXPORT_SQL);
+			filename = filename + EXPORT_SQL;
+		}
+		File file = new File(filename);
+		String pathname = Settings.get().getExportSettings().getFilename(toolName);
+		int end = pathname.lastIndexOf(File.separator);
+		if (end > 0) {
+			pathname = pathname.substring(0, end + 1);
+		}
+		File pathFile = new File(pathname);
 
-		if (currentPath.exists()) {
-			jFileChooser.setCurrentDirectory(currentPath);
-			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings().getFilename(toolName)));
+		if (pathFile.exists()) {
+			jFileChooser.setCurrentDirectory(pathFile);
+			jFileChooser.setSelectedFile(file);
 		} else {
 			jFileChooser.setCurrentDirectory(new File(ExportSettings.getDefaultPath()));
 			jFileChooser.setSelectedFile(new File(ExportSettings.getDefaultFilename(toolName)));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
-			File file = jFileChooser.getSelectedFile();
+			file = jFileChooser.getSelectedFile();
 			Settings.get().getExportSettings().putFilename(toolName, file.getAbsolutePath());
 			return true;
 		} else {
@@ -420,6 +494,9 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().setDropTable(jDropTable.isSelected());
 		Settings.get().getExportSettings().setCreateTable(jCreateTable.isSelected());
 		Settings.get().getExportSettings().setExtendedInserts(jExtendedInserts.isSelected());
+		//HTML
+		Settings.get().getExportSettings().setHtmlStyled(jHtmlStyle.isSelected());
+		Settings.get().getExportSettings().setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
 		//Shared
 		if (jColumnSelection.getSelectedIndices().length == columnNames.size()) { //All is selected - nothing worth saving...
 			Settings.get().getExportSettings().putTableExportColumns(toolName, null);
@@ -438,7 +515,22 @@ public class ExportDialog<E> extends JDialogCentered {
 		jDropTable.setSelected(Settings.get().getExportSettings().isDropTable());
 		jCreateTable.setSelected(Settings.get().getExportSettings().isCreateTable());
 		jExtendedInserts.setSelected(Settings.get().getExportSettings().isExtendedInserts());
-		//Shared
+		//HTML
+		jHtmlStyle.setSelected(Settings.get().getExportSettings().isHtmlStyled());
+		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
+		//Filename
+		String filename = Settings.get().getExportSettings().getFilename(toolName);
+		if (filename.endsWith(EXPORT_HTML)) {
+			jHtml.setSelected(true);
+			cardLayout.show(jCardPanel, CARD_HTML);
+		} else if (filename.endsWith(EXPORT_SQL)) {
+			jSql.setSelected(true);
+			cardLayout.show(jCardPanel, CARD_SQL);
+		} else { //EXPORT_CSV and Default
+			jCsv.setSelected(true);
+			cardLayout.show(jCardPanel, CARD_CSV);
+		}
+		//Columns (Shared)
 		jColumnSelection.clearSelection();
 		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
 		if (list == null) {
@@ -471,6 +563,9 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().setDropTable(true);
 		Settings.get().getExportSettings().setCreateTable(true);
 		Settings.get().getExportSettings().setExtendedInserts(true);
+		//HTML
+		Settings.get().getExportSettings().setHtmlStyled(true);
+		Settings.get().getExportSettings().setHtmlRepeatHeader(0);
 		//Shared
 		Settings.get().getExportSettings().putFilename(toolName, ExportSettings.getDefaultFilename(toolName));
 		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
@@ -535,8 +630,6 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		List<Map<String, String>> stringRows = new ArrayList<Map<String, String>>();
-		List<Map<String, Object>> objectRows = new ArrayList<Map<String, Object>>();
 		List<E> items = new ArrayList<E>();
 
 	//Columns + Header
@@ -562,6 +655,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					selectedColumns.add(column);
 				}
 			}
+			
 		}
 	//Bad selection
 		if (selectedColumns.isEmpty() || header.isEmpty()) {
@@ -574,7 +668,6 @@ public class ExportDialog<E> extends JDialogCentered {
 			return;
 		}
 	//Data source
-		//FIXME - - > ExportDialog: Row order is all wrong -_-
 		if (jNoFilter.isSelected()) {
 			for (EventList<E> eventList : eventLists) {
 				for (E e : eventList) {
@@ -601,17 +694,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 	//Save settings
 		saveSettings();
-	//Add data
-		for (E e : items) {
-			Map<String, String> line = new HashMap<String, String>();
-			Map<String, Object> row = new HashMap<String, Object>();
-			for (EnumTableColumn<E> column : selectedColumns) {
-				line.put(column.getColumnName(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
-				row.put(column.getColumnName(), column.getColumnValue(e));
-			}
-			objectRows.add(row);
-			stringRows.add(line);
-		}
 	//Save file
 		String extension = jFileChooser.getExtension();
 		boolean saved;
@@ -629,13 +711,58 @@ public class ExportDialog<E> extends JDialogCentered {
 					return;
 				}
 			}
-			saved = CsvWriter.save(Settings.get().getExportSettings().getFilename(toolName), stringRows, header.toArray(new String[header.size()]), new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
+			//Create data
+			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
+			for (E e : items) {
+				Map<String, String> row = new HashMap<String, String>();
+				for (EnumTableColumn<E> column : selectedColumns) {
+					row.put(column.getColumnName(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()).replace("+", ""));
+				}
+				rows.add(row);
+			}
+			//Save data
+			saved = CsvWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+					rows,
+					header.toArray(new String[header.size()]),
+					new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
 		} else if (extension.equals(EXPORT_HTML)) {
 			//HTML
-			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName), stringRows, header);
+			//Create data
+			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
+			for (E e : items) {
+				Map<String, String> row = new HashMap<String, String>();
+				for (EnumTableColumn<E> column : selectedColumns) {
+					row.put(column.getColumnName(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
+				}
+				rows.add(row);
+			}
+			//Save data
+			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+					rows,
+					header,
+					Settings.get().getExportSettings().isHtmlStyled(),
+					Settings.get().getExportSettings().getHtmlRepeatHeader(),
+					toolName.equals(TreeTab.NAME));
 		} else if (extension.equals(EXPORT_SQL)) {
 			//SQL
-			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName), objectRows, header, sqlHeader, Settings.get().getExportSettings().getTableName(toolName), Settings.get().getExportSettings().isDropTable(), Settings.get().getExportSettings().isCreateTable(), Settings.get().getExportSettings().isExtendedInserts());
+			//Create data
+			List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+			for (E e : items) {
+				Map<String, Object> row = new HashMap<String, Object>();
+				for (EnumTableColumn<E> column : selectedColumns) {
+					row.put(column.getColumnName(), column.getColumnValue(e));
+				}
+				rows.add(row);
+			}
+			//Save data
+			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
+					rows,
+					header,
+					sqlHeader,
+					Settings.get().getExportSettings().getTableName(toolName),
+					Settings.get().getExportSettings().isDropTable(),
+					Settings.get().getExportSettings().isCreateTable(),
+					Settings.get().getExportSettings().isExtendedInserts());
 		} else {
 			saved = false;
 		}
@@ -661,22 +788,70 @@ public class ExportDialog<E> extends JDialogCentered {
 		public void actionPerformed(final ActionEvent e) {
 			if (ACTION_DISABLE_SAVED_FILTERS.equals(e.getActionCommand())) {
 				jFilters.setEnabled(false);
-			}
-			if (ACTION_ENABLE_SAVED_FILTERS.equals(e.getActionCommand())) {
+			} else if (ACTION_ENABLE_SAVED_FILTERS.equals(e.getActionCommand())) {
 				jFilters.setEnabled(true);
-			}
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			} else if (ACTION_OK.equals(e.getActionCommand())) {
 				save();
-			}
-			if (ACTION_DEFAULT.equals(e.getActionCommand())) {
+			} else if (ACTION_DEFAULT.equals(e.getActionCommand())) {
 				resetSettings();
-			}
-			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
 				setVisible(false);
-			}
-			if (ACTION_TOOL_COLUMNS.equals(e.getActionCommand())) {
+			} else if (ACTION_TOOL_COLUMNS.equals(e.getActionCommand())) {
 				jColumnSelection.setEnabled(!jToolColumns.isSelected());
+			} else if (ACTION_FORMAT.equals(e.getActionCommand())) {
+				if (jCsv.isSelected()) {
+					cardLayout.show(jCardPanel, CARD_CSV);
+				} else if (jHtml.isSelected()) {
+					cardLayout.show(jCardPanel, CARD_HTML);
+				} else if (jSql.isSelected()) {
+					cardLayout.show(jCardPanel, CARD_SQL);
+				}
 			}
+		}
+	}
+
+	public static class JOptionPanel extends JPanel {
+		protected final GroupLayout layout;
+		private final List<JComponent> components = new ArrayList<JComponent>();
+
+		private JOptionPanel() {
+			layout = new GroupLayout(this);
+			this.setLayout(layout);
+			layout.setAutoCreateGaps(false);
+			layout.setAutoCreateContainerGaps(false);
+		}
+
+		public void add(JComponent comp) {
+			components.add(comp);
+			createLayout();
+		}
+
+		protected void createLayout() {
+			this.removeAll();
+			GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
+			GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
+
+			for (JComponent jComponent : components) {
+				horizontalGroup.addComponent(jComponent);
+				if (jComponent instanceof JLabel
+						|| jComponent instanceof JButton
+						|| jComponent instanceof JCheckBox
+						|| jComponent instanceof JTextField
+						|| jComponent instanceof JComboBox) {
+					verticalGroup.addComponent(jComponent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
+				} else {
+					verticalGroup.addComponent(jComponent);
+				}
+			}
+			layout.setHorizontalGroup(
+				layout.createSequentialGroup()
+					.addGroup(horizontalGroup)
+				);
+			layout.setVerticalGroup(
+				layout.createSequentialGroup()
+					.addGroup(verticalGroup)
+					//.addGap(0, 0, Integer.MAX_VALUE)
+				);
 		}
 	}
 }

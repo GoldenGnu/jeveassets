@@ -74,13 +74,13 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
 		eventList = program.getIndustryJobsEventList();
-		//Filter
-		filterList = new FilterList<IndustryJob>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
+		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(eventList);
+		//Filter
+		filterList = new FilterList<IndustryJob>(sortedList);
+		filterList.addListEventListener(this);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -88,7 +88,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,7 +111,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters

@@ -71,19 +71,20 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Item>();
-		//Filter
-		filterList = new FilterList<Item>(eventList);
 		//Sorting (per column)
-		SortedList<Item> sortedList = new SortedList<Item>(filterList);
+		SortedList<Item> sortedList = new SortedList<Item>(eventList);
+		//Filter
+		filterList = new FilterList<Item>(sortedList);
+		
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -94,7 +95,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);

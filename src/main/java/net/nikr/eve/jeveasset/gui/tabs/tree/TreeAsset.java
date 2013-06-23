@@ -38,6 +38,7 @@ public class TreeAsset extends Asset {
 	}
 
 	private final String SPACE = "    ";
+	private final String SPACE_LEVEL = "+";
 
 	private final String treeName;
 	private final List<TreeAsset> tree;
@@ -61,7 +62,7 @@ public class TreeAsset extends Asset {
 
 	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
 		super(asset);
-		this.treeName = createSpace(tree.size()) + asset.getName();
+		this.treeName = createSpace(tree.size(), tree.size(), parent) + asset.getName();
 		this.tree = tree;
 		this.compare = compare + asset.getName() + " #" + asset.getItemID();
 		this.ownerName = asset.getOwner();
@@ -87,7 +88,7 @@ public class TreeAsset extends Asset {
 
 	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
 		super(new Item(0), location, null, 0, new ArrayList<Asset>(), "", 0, 0L, false, 0);
-		this.treeName = createSpace(tree.size()) + treeName;
+		this.treeName = createSpace(tree.size(), tree.size() + depthOffset, true) + treeName;
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare;
 		this.ownerName = "";
@@ -97,10 +98,15 @@ public class TreeAsset extends Asset {
 		this.item = false;
 	}
 
-	private String createSpace(int size) {
+	private String createSpace(int size, int depth, boolean parent) {
 		String space = "";
 		for (int i = 0; i < size; i++) {
 			space = space + SPACE;
+		}
+		if (parent) {
+			for (int i = 0; i <= depth; i++) {
+				space = space + SPACE_LEVEL;
+			}
 		}
 		return space;
 	}

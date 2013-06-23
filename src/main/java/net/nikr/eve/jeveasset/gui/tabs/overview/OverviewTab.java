@@ -93,7 +93,6 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 	//Data
 	private int rowCount;
-	private List<EnumTableColumn<Overview>> enumColumns;
 
 	//Dialog
 	ExportDialog<Overview> exportDialog;
@@ -189,10 +188,11 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		//Menu
 		installMenu(program, this, jTable, Overview.class);
 
-		enumColumns = new ArrayList<EnumTableColumn<Overview>>();
-		//enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
-		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
+		List<EventList<Overview>> eventLists = new ArrayList<EventList<Overview>>();
+		eventLists.add(sortedList);
+		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), eventLists, enumColumns);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -478,51 +478,29 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-			enumColumns.remove(OverviewTableFormat.SYSTEM);
-			enumColumns.remove(OverviewTableFormat.REGION);
-			enumColumns.remove(OverviewTableFormat.SECURITY);
-			exportDialog.setColumns(enumColumns);
 		}
 		if (view.equals(TabsOverview.get().systems())) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-			enumColumns.remove(OverviewTableFormat.SYSTEM);
-			if (!enumColumns.contains(OverviewTableFormat.REGION)) {
-				enumColumns.add(OverviewTableFormat.REGION);
-			}
-			if (!enumColumns.contains(OverviewTableFormat.SECURITY)) {
-				enumColumns.add(OverviewTableFormat.SECURITY);
-			}
-			exportDialog.setColumns(enumColumns);
 		}
 		if (view.equals(TabsOverview.get().stations())) {
 			tableFormat.showColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.showColumn(OverviewTableFormat.REGION);
 			tableFormat.showColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-			if (!enumColumns.contains(OverviewTableFormat.SYSTEM)) {
-				enumColumns.add(OverviewTableFormat.SYSTEM);
-			}
-			if (!enumColumns.contains(OverviewTableFormat.REGION)) {
-				enumColumns.add(OverviewTableFormat.REGION);
-			}
-			if (!enumColumns.contains(OverviewTableFormat.SECURITY)) {
-				enumColumns.add(OverviewTableFormat.SECURITY);
-			}
-			exportDialog.setColumns(enumColumns);
 		}
 		if (view.equals(TabsOverview.get().groups())) {
 			tableFormat.hideColumn(OverviewTableFormat.SYSTEM);
 			tableFormat.hideColumn(OverviewTableFormat.REGION);
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
-			enumColumns.remove(OverviewTableFormat.SYSTEM);
-			enumColumns.remove(OverviewTableFormat.REGION);
-			enumColumns.remove(OverviewTableFormat.SECURITY);
-			exportDialog.setColumns(enumColumns);
 		}
+		//Update Export Columns
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
+		enumColumns.addAll(tableFormat.getShownColumns());
+		exportDialog.setColumns(enumColumns);
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();

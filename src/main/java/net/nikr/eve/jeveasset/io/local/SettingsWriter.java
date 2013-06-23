@@ -386,6 +386,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 		node.setAttributeNS(null, "sqlcreatetable", String.valueOf(exportSettings.isCreateTable()));
 		node.setAttributeNS(null, "sqldroptable", String.valueOf(exportSettings.isDropTable()));
 		node.setAttributeNS(null, "sqlextendedinserts", String.valueOf(exportSettings.isExtendedInserts()));
+		//Html
+		node.setAttributeNS(null, "htmlstyled", String.valueOf(exportSettings.isHtmlStyled()));
+		node.setAttributeNS(null, "htmlrepeatheader", String.valueOf(exportSettings.getHtmlRepeatHeader()));
 		for (Map.Entry<String, String> entry : exportSettings.getTableNames().entrySet()) {
 			Element nameNode = xmldoc.createElementNS(null, "sqltablenames");
 			nameNode.setAttributeNS(null, "tool", entry.getKey());

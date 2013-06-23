@@ -73,13 +73,13 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, Transaction>(TransactionTableFormat.class);
 		//Backend
 		eventList = program.getTransactionsEventList();
-		//Filter
-		filterList = new FilterList<Transaction>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<Transaction> sortedList = new SortedList<Transaction>(filterList);
+		SortedList<Transaction> sortedList = new SortedList<Transaction>(eventList);
+		//Filter
+		filterList = new FilterList<Transaction>(sortedList);
+		filterList.addListEventListener(this);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JTransactionTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -87,7 +87,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -106,7 +106,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 		filterControl = new TransactionsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters

@@ -107,6 +107,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 
+		//FIXME - - > ExportDialog: Column sort not preserved
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
 		//Backend

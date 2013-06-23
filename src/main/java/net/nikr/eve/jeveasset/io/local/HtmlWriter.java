@@ -37,19 +37,26 @@ public final class HtmlWriter {
 
 	private HtmlWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, String>> data, final List<String> header) {
+	public static boolean save(final String filename, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
 		HtmlWriter writer = new HtmlWriter();
-		return writer.write(filename, data, header);
+		return writer.write(filename, data, header, htmlStyled, htmlRepeatHeader, treetable);
 	}
 
-	private boolean write(final String filename, final List<Map<String, String>> data, final List<String> header) {
+	private boolean write(final String filename, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-			writeComment(writer);
+			if (htmlStyled) {
+				writeHeader(writer);
+			} else {
+				writeComment(writer);
+			}
 			writer.write("<table>\r\n");
-			writeHeader(writer, header);
-			writeRows(writer, data, header);
+			writeTableHeader(writer, header);
+			writeTableRows(writer, data, header, htmlStyled, htmlRepeatHeader, treetable);
 			writer.write("</table>\r\n");
+			if (htmlStyled) {
+				writeFooter(writer);
+			}
 			writer.close();
 		} catch (IOException ex) {
 			LOG.warn("Html file not saved");
@@ -59,13 +66,66 @@ public final class HtmlWriter {
 		return true;
 	}
 
+	private void writeHeader(final BufferedWriter writer) throws IOException {
+		writer.write("<!DOCTYPE html>\r\n");
+		writer.write("<html>\r\n");
+		writer.write("<header>\r\n");
+		writeComment(writer);
+		writer.write("<style type=\"text/css\">\r\n");
+		writer.write(
+					//Table
+					"table {\r\n" +
+					"	border: solid #ccc;\r\n" +
+					"	border-width: 1px 0px 1px 1px;\r\n" +
+					"	border-spacing: 0;\r\n" +
+					"	font-family: Arial, Helvetica, sans-serif;\n" +
+					"	font-size: 13px;" +
+					"}\r\n" +
+					//Cells
+					"table td, table th {\r\n" +
+					"	border: solid #ccc;\r\n" +
+					"	border-width: 0px 1px 0px 0px;\r\n" +
+					"	margin: 0;\r\n" +
+					"	padding: 2px 3px 2px 3px;\r\n" +
+					"	white-space: nowrap;\r\n" +
+					"}\r\n" +
+					//Header
+					"table th {\r\n" +
+					"	background-color: #ddd;\r\n" +
+					"	font-size: 15px;" +
+					"}" +
+					//Even rows (dark)
+					".even {\r\n" +
+					"	background-color: #f3f3f3;\r\n" +
+					"}" +
+					//TreeTable
+					".level0 {\r\n" +
+					"	background-color: #777;\r\n" +
+					"}" +
+					".level1 {\r\n" +
+					"	background-color: #999;\r\n" +
+					"}" +
+					".level2 {\r\n" +
+					"	background-color: #bbb;\r\n" +
+					"}"
+					);
+		writer.write("</style>\r\n");
+		writer.write("</header>\r\n");
+		writer.write("<body>\r\n");
+	}
+
+	private void writeFooter(final BufferedWriter writer) throws IOException {
+		writer.write("</body>\r\n");
+		writer.write("</html>\r\n");
+	}
+
 	private void writeComment(final BufferedWriter writer) throws IOException {
 		writer.write("<!-- " + Program.PROGRAM_NAME + " Html Export -->\r\n");
 		writer.write("<!-- version " + Program.PROGRAM_VERSION + " -->\r\n");
 		writer.write("<!-- " + Program.PROGRAM_HOMEPAGE + " -->\r\n");
 	}
 
-	private void writeHeader(final BufferedWriter writer, final List<String> header) throws IOException {
+	private void writeTableHeader(final BufferedWriter writer, final List<String> header) throws IOException {
 		writer.write("<tr>\r\n");
 		for (String column : header) {
 			writer.write("\t<th>");
@@ -75,15 +135,54 @@ public final class HtmlWriter {
 		writer.write("</tr>\r\n");
 	}
 
-	private void writeRows(final BufferedWriter writer, final List<Map<String, String>> data, final List<String> header) throws IOException {
+	private void writeTableRows(final BufferedWriter writer, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) throws IOException {
+		boolean even = false;
+		int count = 0;
 		for (Map<String, String> map : data) {
-			writer.write("<tr>\r\n");
+			boolean level0 = false;
+			boolean level1 = false;
+			boolean level2 = false;
+			if (treetable && htmlStyled) {
+				for (String s : header) {
+					if (map.get(s).contains("+++") && treetable) { //Level 2
+						level2 = true;
+						break;
+					} else if (map.get(s).contains("++") && treetable) { //Level 1
+						level1 = true;
+						break;
+					} else if (map.get(s).contains("+") && treetable) { //Level 1
+						level0 = true;
+						break;
+					}
+				}
+			}
+			if (htmlRepeatHeader != 0 && htmlRepeatHeader == count) {
+				if (!level0 && !level1 && !level2) {
+					writeTableHeader(writer, header);
+					count = 0;
+				} else {
+					count = count - 1; //Wait to next row
+				}
+			}
+			if (level0 && htmlStyled) {
+				writer.write("\t<tr class=\"level0\">");
+			} else if (level1 && htmlStyled) {
+				writer.write("\t<tr class=\"level1\">");
+			} else if (level2 && htmlStyled) {
+				writer.write("\t<tr class=\"level2\">");
+			} else if (even && htmlStyled) {
+				writer.write("\t<tr class=\"even\">");
+			} else {
+				writer.write("\t<tr>");
+			}
 			for (String s : header) {
 				writer.write("\t<td>");
-				writer.write(map.get(s).replace(" ", "&nbsp;"));
+				writer.write(map.get(s).replace(" ", "&nbsp;").replace("+", "")); //.replace("-", "&#8209;")
 				writer.write("</td>\r\n");
 			}
 			writer.write("</tr>\r\n");
+			even = !even;
+			count++;
 		}
 	}
 }

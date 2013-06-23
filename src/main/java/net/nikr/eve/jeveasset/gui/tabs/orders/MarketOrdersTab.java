@@ -76,13 +76,13 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		//Backend
 		eventList = program.getMarketOrdersEventList();
-		//Filter
-		filterList = new FilterList<MarketOrder>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
+		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(eventList);
+		//Filter
+		filterList = new FilterList<MarketOrder>(sortedList);
+		filterList.addListEventListener(this);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -90,7 +90,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,7 +111,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters

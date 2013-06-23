@@ -67,12 +67,12 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 		tableFormat = new EnumTableFormatAdaptor<JournalTableFormat, Journal>(JournalTableFormat.class);
 		//Backend
 		eventList = program.getJournalEventList();
-		//Filter
-		filterList = new FilterList<Journal>(eventList);
 		//Sorting (per column)
-		SortedList<Journal> sortedList = new SortedList<Journal>(filterList);
+		SortedList<Journal> sortedList = new SortedList<Journal>(eventList);
+		//Filter
+		filterList = new FilterList<Journal>(sortedList);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JJournalTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -80,7 +80,7 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -91,7 +91,7 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 		filterControl = new JournalFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);

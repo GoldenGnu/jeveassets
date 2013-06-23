@@ -164,6 +164,7 @@ public class StockpileTab extends JMainTab implements ActionListener, ListEventL
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 
+		//FIXME - - > ExportDialog: Column sort not preserved
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		//Backend

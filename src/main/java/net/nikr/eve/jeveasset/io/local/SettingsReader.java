@@ -824,6 +824,14 @@ public final class SettingsReader extends AbstractXmlReader {
 			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
 			settings.getExportSettings().setExtendedInserts(extendedInserts);
 		}
+		if (AttributeGetters.haveAttribute(element, "htmlstyled")) {
+			boolean htmlStyled = AttributeGetters.getBoolean(element, "htmlstyled");
+			settings.getExportSettings().setHtmlStyled(htmlStyled);
+		}
+		if (AttributeGetters.haveAttribute(element, "htmlrepeatheader")) {
+			int htmlRepeatHeader = AttributeGetters.getInt(element, "htmlrepeatheader");
+			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
+		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {
 			Element tableNameNode = (Element) tableNamesNodeList.item(a);

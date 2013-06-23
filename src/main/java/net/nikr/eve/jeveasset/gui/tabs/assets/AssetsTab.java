@@ -84,13 +84,13 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, Asset>(AssetTableFormat.class);
 		//Backend
 		eventList = program.getAssetEventList();
-		//Filter
-		filterList = new FilterList<Asset>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
+		SortedList<Asset> sortedList = new SortedList<Asset>(eventList);
+		//Filter
+		filterList = new FilterList<Asset>(sortedList);
+		filterList.addListEventListener(this);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAssetTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -99,7 +99,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,7 +111,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);

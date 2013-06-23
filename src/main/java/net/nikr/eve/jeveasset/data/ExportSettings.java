@@ -113,11 +113,13 @@ public class ExportSettings {
 	private LineDelimiter lineDelimiter;
 	private DecimalSeparator decimalSeparator;
 	//SQL
-	private final Map<String, String> tableNames = new HashMap<String, String>();
+	private final Map<String, String> tableNames = new HashMap<String, String>(); // Per tool option
 	private boolean createTable;
 	private boolean dropTable;
 	private boolean extendedInserts;
-	//Shared
+	private boolean htmlStyled;
+	private int htmlRepeatHeader;
+	//Common - Per tool options
 	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
 	private final Map<String, String> filenames = new HashMap<String, String>();
 	//private String filename = FILENAME;
@@ -130,6 +132,7 @@ public class ExportSettings {
 		createTable = true;
 		dropTable = true;
 		extendedInserts = true;
+		htmlStyled = true;
 	}
 
 	public DecimalSeparator getDecimalSeparator() {
@@ -178,6 +181,22 @@ public class ExportSettings {
 
 	public void setExtendedInserts(final boolean extendedInserts) {
 		this.extendedInserts = extendedInserts;
+	}
+
+	public boolean isHtmlStyled() {
+		return htmlStyled;
+	}
+
+	public void setHtmlStyled(boolean htmlStyled) {
+		this.htmlStyled = htmlStyled;
+	}
+
+	public int getHtmlRepeatHeader() {
+		return htmlRepeatHeader;
+	}
+
+	public void setHtmlRepeatHeader(int htmlRepeatHeader) {
+		this.htmlRepeatHeader = htmlRepeatHeader;
 	}
 
 	public Map<String, String> getTableNames() {

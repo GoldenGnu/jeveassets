@@ -621,6 +621,9 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 			TreeAsset treeAsset = tableModel.getElementAt(row);
 			JLabel jLabel = (JLabel) jPanel.getComponent(3);
 			jLabel.setIcon(treeAsset.getIcon());
+			if (value instanceof HierarchyColumn) {
+				jLabel.setText(jLabel.getText().replace("+", "").trim());
+			}
 			return jPanel;
 		}
 
@@ -660,7 +663,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 			JLabel jLabel = (JLabel) jPanel.getComponent(3);
 			jLabel.setIcon(treeAsset.getIcon());
 			if (value instanceof HierarchyColumn) {
-				jLabel.setText(jLabel.getText().trim());
+				jLabel.setText(jLabel.getText().replace("+", "").trim());
 			}
 			return jPanel;
 		}

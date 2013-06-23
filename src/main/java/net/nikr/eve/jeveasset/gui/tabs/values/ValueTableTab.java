@@ -80,14 +80,14 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Value>();
-		//Filter
-		filterList = new FilterList<Value>(eventList);
 		//Sorting (per column)
-		SortedList<Value> columnSortedList = new SortedList<Value>(filterList);
+		SortedList<Value> columnSortedList = new SortedList<Value>(eventList);
 		//Sorting Total
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
+		//Filter
+		filterList = new FilterList<Value>(totalSortedList);
 		//Table Model
-		tableModel = EventModels.createTableModel(totalSortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JValueTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -97,7 +97,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		//Sorting
 		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(totalSortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -108,7 +108,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		filterControl = new ValueFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				totalSortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
