@@ -63,6 +63,7 @@ public abstract class TabsOverview extends Bundle {
 	public abstract String columnSecurity();
 	public abstract String columnVolume();
 	public abstract String columnValue();
+	public abstract String columnValuePerVolume();
 	public abstract String columnCount();
 	public abstract String columnAverageValue();
 	public abstract String columnReprocessedValue();

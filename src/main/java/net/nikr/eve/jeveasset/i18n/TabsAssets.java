@@ -62,6 +62,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnPriceReprocessedPercent();
 	public abstract String columnValueReprocessed();
 	public abstract String columnValue();
+	public abstract String columnValuePerVolume();
 	public abstract String columnCount();
 	public abstract String columnTypeCount();
 	public abstract String columnMeta();

@@ -80,6 +80,14 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem, Locat
 		return volume;
 	}
 
+	public double getValuePerVolume() {
+		if (getVolumeTotal() > 0 && getValue() > 0) {
+			return getValue() / getVolumeTotal();
+		} else {
+			return 0;
+		}
+	}
+
 	public void addCount(final long addCount) {
 		this.count = this.count + addCount;
 	}

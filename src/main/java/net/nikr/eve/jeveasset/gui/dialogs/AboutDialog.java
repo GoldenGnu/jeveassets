@@ -64,6 +64,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener {
 				+ "&nbsp;TryfanMan<br>"
 				+ "&nbsp;Jan<br>"
 				+ "&nbsp;Ima Sohmbadi<br>"
+				+ "&nbsp;Saulvin<br>"
 				+ "<br>"
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"

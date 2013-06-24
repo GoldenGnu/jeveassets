@@ -25,6 +25,7 @@ Developers:
   TryfanMan*
   Jan
   Ima Sohmbadi*
+  Saulvin
 
 Testers:
   Varo Jan*

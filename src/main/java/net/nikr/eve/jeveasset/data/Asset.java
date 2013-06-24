@@ -275,6 +275,14 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return volume;
 	}
 
+	public double getValuePerVolume () {
+		if (getVolume() > 0 && getDynamicPrice() > 0) {
+			return getDynamicPrice() / getVolume();
+		} else {
+			return 0;
+		}
+	}
+
 	@Override
 	public double getVolumeTotal() {
 		return volume * count;

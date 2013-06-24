@@ -311,6 +311,16 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getVolumeTotal();
 		}
 	},
+	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnValuePerVolume();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getValuePerVolume();
+		}
+	},
 	SINGLETON(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

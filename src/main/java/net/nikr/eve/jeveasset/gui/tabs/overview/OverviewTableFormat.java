@@ -89,6 +89,16 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getValue();
 		}
 	},
+	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public  String getColumnName() {
+			return TabsOverview.get().columnValuePerVolume();
+		}
+		@Override
+		public Object getColumnValue(final Overview from) {
+			return from.getValuePerVolume();
+		}
+	},
 	COUNT(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
