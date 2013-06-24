@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
@@ -137,19 +138,18 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 
-		//FIXME - - > ExportDialog: Column sort not preserved
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<ReprocessedInterface>();
-		//Filter
-		filterList = new FilterList<ReprocessedInterface>(eventList);
 		//Sorting (per column)
-		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(filterList);
+		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(eventList);
 		//Sorting Total (Ensure that total is always last)
 		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<ReprocessedInterface>(sortedListColumn, new TotalComparator());
+		//Filter
+		filterList = new FilterList<ReprocessedInterface>(sortedListTotal);
 		//Separator
-		separatorList = new SeparatorList<ReprocessedInterface>(sortedListTotal, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<ReprocessedInterface>(filterList, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -172,7 +172,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		filterControl = new ReprocessedFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedListTotal,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
@@ -332,16 +332,33 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 	}
 
 	public static class TotalComparator implements Comparator<ReprocessedInterface> {
+
+		private final Comparator<ReprocessedInterface> comparator;
+
+		public TotalComparator() {
+			List<Comparator<ReprocessedInterface>> comparators = new ArrayList<Comparator<ReprocessedInterface>>();
+			comparators.add(new ReprocessedSeparatorComparator());
+			comparators.add(new InnerTotalComparator());
+			comparator = GlazedLists.chainComparators(comparators);
+		}
+
 		@Override
 		public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
-			if (o1.isTotal() && o2.isTotal()) {
-				return 0;  //Equal (both StockpileTotal)
-			} else if (o1.isTotal()) {
-				return 1;  //After
-			} else if (o2.isTotal()) {
-				return -1; //Before
-			} else {
-				return 0;  //Equal (not StockpileTotal)
+			return comparator.compare(o1, o2);
+		}
+
+		private static class InnerTotalComparator implements Comparator<ReprocessedInterface> {
+			@Override
+			public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
+				if (o1.isTotal() && o2.isTotal()) {
+					return 0;  //Equal (both StockpileTotal)
+				} else if (o1.isTotal()) {
+					return 1;  //After
+				} else if (o2.isTotal()) {
+					return -1; //Before
+				} else {
+					return 0;  //Equal (not StockpileTotal)
+				}
 			}
 		}
 	}

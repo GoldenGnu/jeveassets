@@ -107,17 +107,18 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBarRight.add(jExpand);
 
-		//FIXME - - > ExportDialog: Column sort not preserved
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
 		//Backend
 		eventList = program.getContractItemEventList();
-		//Filter
-		filterList = new FilterList<ContractItem>(eventList);
 		//Sorting (per column)
-		SortedList<ContractItem> sortedList = new SortedList<ContractItem>(filterList);
+		SortedList<ContractItem> sortedListColumn = new SortedList<ContractItem>(eventList);
+		//Sorting Separator (ensure export always has the right order)
+		SortedList<ContractItem> sortedListSeparator = new SortedList<ContractItem>(sortedListColumn, new SeparatorComparator());
+		//Filter
+		filterList = new FilterList<ContractItem>(sortedListSeparator);
 		//Separator
-		separatorList = new SeparatorList<ContractItem>(sortedList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<ContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
@@ -127,7 +128,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -140,7 +141,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		filterControl = new ContractsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedListSeparator,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);

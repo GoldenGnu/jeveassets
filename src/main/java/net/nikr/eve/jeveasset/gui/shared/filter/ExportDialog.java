@@ -384,12 +384,6 @@ public class ExportDialog<E> extends JDialogCentered {
 		);
 	}
 
-	private void setVisible(List<JComponent> list, boolean visible) {
-		for (JComponent jComponent : list) {
-			jComponent.setVisible(visible);
-		}
-	}
-
 	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
 		columns.clear();
 		columnNames.clear();
