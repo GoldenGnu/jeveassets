@@ -256,7 +256,7 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 			accountsNextUpdate = nextUpdate(accountsNextUpdate, account.getAccountNextUpdate());
 			accountsUpdateAll = updateAll(accountsUpdateAll, account.getAccountNextUpdate());
 			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
+				if (owner.isShowOwner()) {
 					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
 					marketOrdersNextUpdate = nextUpdate(marketOrdersNextUpdate, owner.getMarketOrdersNextUpdate());
 					journalNextUpdate = nextUpdate(journalNextUpdate, owner.getJournalNextUpdate());

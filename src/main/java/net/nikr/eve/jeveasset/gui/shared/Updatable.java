@@ -46,7 +46,7 @@ public class Updatable {
 				return true;
 			}
 			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
+				if (owner.isShowOwner()) {
 					if (isUpdatable(owner.getIndustryJobsNextUpdate())){
 						return true;
 					}

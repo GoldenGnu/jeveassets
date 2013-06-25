@@ -31,11 +31,13 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -77,24 +79,49 @@ public class ProgramUpdateChecker {
 	}
 
 	public void showMessages(final Window parent, final boolean requestedUpdate) {
-		//FIXME - i18n
 		if (requestedUpdate) {
 			parseUpdateVersion();
 		}
 		if (isStableUpdateAvailable()) {
-			int value = JOptionPane.showConfirmDialog(parent, "A new version of " + Program.PROGRAM_NAME + " is available\r\nGo to website now?", "New Version Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION) {
-				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
-			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					int value = JOptionPane.showConfirmDialog(parent,
+							GuiShared.get().newVersionMsg(Program.PROGRAM_NAME),
+							GuiShared.get().newVersionTitle(),
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+					if (value == JOptionPane.YES_OPTION) {
+						DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
+					}
+				}
+			});
 		}
 		if (isDevUpdateAvailable()) {
-			int value = JOptionPane.showConfirmDialog(parent, "A new " + dev.getType().toLowerCase() + " version of " + Program.PROGRAM_NAME + " is available\r\nGo to website now?", "New Build Available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (value == JOptionPane.YES_OPTION) {
-				DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
-			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					int value = JOptionPane.showConfirmDialog(parent,
+							GuiShared.get().newBuildMsg(dev.getType().toLowerCase(), Program.PROGRAM_NAME),
+							GuiShared.get().newBuildTitle(),
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+					if (value == JOptionPane.YES_OPTION) {
+						DesktopUtil.browse(Program.PROGRAM_HOMEPAGE, program);
+					}
+				}
+			});
 		}
 		if (requestedUpdate && !isStableUpdateAvailable() && !isDevUpdateAvailable()) {
-			JOptionPane.showMessageDialog(parent, "No updates available", "Program Updates", JOptionPane.INFORMATION_MESSAGE);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(parent,
+							GuiShared.get().noNewVersionMsg(),
+							GuiShared.get().noNewVersionTitle(),
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
 		}
 	}
 
@@ -256,14 +283,14 @@ public class ProgramUpdateChecker {
 		public String getType() {
 			switch (arrVersion[VERSION_TYPE]) {
 				case DEV_BUILD:
-					return "Dev Build";
+					return GuiShared.get().devBuild();
 				case BETA:
-					return "Beta";
+					return GuiShared.get().beta();
 				case RELEASE_CANDIDATE:
-					return "Release Candidate";
+					return GuiShared.get().releaseCandidate();
 				case STABLE:
 				default:
-					return "Stable";
+					return GuiShared.get().stable();
 			}
 		}
 

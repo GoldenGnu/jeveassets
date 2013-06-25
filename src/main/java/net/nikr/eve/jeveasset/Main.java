@@ -138,7 +138,7 @@ public final class Main {
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
 
-		//XXX Workaround for IPv6 fail (force IPv4)
+		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
@@ -181,7 +181,7 @@ public final class Main {
 	}
 
 	public static BundleService getBundleService() {
-		//XXX Workaround for default language
+		//XXX - Workaround for default language
 		if (bundleService == null) {
 			bundleService = new BasicBundleService(new DefaultBundleConfiguration(), Locale.ENGLISH);
 		}

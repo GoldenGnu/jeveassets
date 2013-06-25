@@ -150,7 +150,7 @@ public final class HtmlWriter {
 					} else if (map.get(s).contains("++") && treetable) { //Level 1
 						level1 = true;
 						break;
-					} else if (map.get(s).contains("+") && treetable) { //Level 1
+					} else if (map.get(s).contains("+") && treetable) { //Level 0
 						level0 = true;
 						break;
 					}

@@ -97,7 +97,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			Element node = xmldoc.createElementNS(null, "human");
 			node.setAttributeNS(null, "id", String.valueOf(owner.getOwnerID()));
 			node.setAttributeNS(null, "name", owner.getName());
-			node.setAttributeNS(null, "show", String.valueOf(owner.isShowAssets()));
+			node.setAttributeNS(null, "show", String.valueOf(owner.isShowOwner()));
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(owner.getAssetNextUpdate().getTime()));
 			node.setAttributeNS(null, "balancenextupdate", String.valueOf(owner.getBalanceNextUpdate().getTime()));
 			node.setAttributeNS(null, "marketordersnextupdate", String.valueOf(owner.getMarketOrdersNextUpdate().getTime()));

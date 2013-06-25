@@ -477,7 +477,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());
 		}
-		//FIXME - Consider making "All Locations" the default for the Add Stockpile Dialog
 		jMyLocations.setSelected(true);
 		jStations.setSelected(true);
 		locationsAutoComplete.removeFirstItem();

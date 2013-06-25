@@ -180,7 +180,7 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
-		//FIXME - - > IndustryPlotTab
+		//FIXME - - > IndustryPlotTab - remove or ?
 		//industryPlotTab = new IndustryPlotTab(this);
 		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");

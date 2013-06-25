@@ -191,7 +191,7 @@ public class ProfileData {
 		//Add assets
 		for (Account account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				if (owner.isShowAssets()) {
+				if (owner.isShowOwner()) {
 					uniqueOwners.add(owner.getName());
 				} else {
 					continue;
@@ -228,7 +228,9 @@ public class ProfileData {
 						}
 					}
 					//Assets
-					//FIXME - - > Transactions Assets
+					//FIXME - - > Transactions Assets:
+					//Add items added after last asset update
+					//Remove item sold after last asset update
 					//addAssets(ApiConverter.assetMarketOrder(owner.getMarketOrders(), owner, settings), assets);
 					ownersTransactions.add(owner.getName());
 				}
@@ -237,7 +239,6 @@ public class ProfileData {
 					//Industry Jobs
 					industryJobs.addAll(owner.getIndustryJobs());
 					//Assets
-					//FIXME make Asset Industry Jobs optional?
 					addAssets(ApiConverter.assetIndustryJob(owner.getIndustryJobs(), owner), assets);
 					ownersJobs.add(owner.getName());
 				}

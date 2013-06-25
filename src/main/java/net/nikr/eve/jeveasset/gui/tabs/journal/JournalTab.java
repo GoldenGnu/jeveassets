@@ -22,8 +22,6 @@
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import ca.odell.glazedlists.*;
-import ca.odell.glazedlists.event.ListEvent;
-import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -127,10 +125,7 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 	}
 
 	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Journal Tool
-		//JMenuInfo.journal(jComponent, selectionModel.getSelected());
-	}
+	public void addInfoMenu(JComponent jComponent) { }
 
 	@Override
 	public void addToolMenu(JComponent jComponent) {

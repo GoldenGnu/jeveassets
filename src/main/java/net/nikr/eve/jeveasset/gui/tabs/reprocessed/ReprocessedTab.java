@@ -220,10 +220,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 	}
 
 	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Reprocessed Tool
-		//JMenuInfo.reprocessed(...);
-	}
+	public void addInfoMenu(JComponent jComponent) { }
 
 	@Override
 	public void addToolMenu(JComponent jComponent) { }

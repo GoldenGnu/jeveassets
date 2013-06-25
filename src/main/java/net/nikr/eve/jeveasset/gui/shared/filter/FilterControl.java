@@ -113,7 +113,6 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 	}
 
 	public JMenu getMenu(final JTable jTable, EnumTableFormatAdaptor<?, ?> adaptor, final List<E> items) {
-		//FIXME Add support for adding filters from more than one cell...
 		String text = null;
 		Enum<?> column = null;
 		boolean isNumeric = false;

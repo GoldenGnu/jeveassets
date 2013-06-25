@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 public class Owner implements Comparable<Owner> {
 	private String name;
 	private long ownerID;
-	private boolean showAssets;
+	private boolean showOwner;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
 	private Date marketOrdersNextUpdate;
@@ -55,7 +55,7 @@ public class Owner implements Comparable<Owner> {
 		this(parentAccount,
 				owner.getName(),
 				owner.getOwnerID(),
-				owner.isShowAssets(),
+				owner.isShowOwner(),
 				owner.getAssetNextUpdate(),
 				owner.getBalanceNextUpdate(),
 				owner.getMarketOrdersNextUpdate(),
@@ -76,11 +76,11 @@ public class Owner implements Comparable<Owner> {
 		this(parentAccount, name, ownerID, true, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
+	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
-		this.showAssets = showAssets;
+		this.showOwner = showOwner;
 
 		this.assetNextUpdate = assetNextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
@@ -147,8 +147,8 @@ public class Owner implements Comparable<Owner> {
 		this.ownerID = ownerID;
 	}
 
-	public void setShowAssets(final boolean showAssets) {
-		this.showAssets = showAssets;
+	public void setShowOwner(final boolean showOwner) {
+		this.showOwner = showOwner;
 	}
 
 	public void setJournal(List<Journal> journal) {
@@ -167,9 +167,8 @@ public class Owner implements Comparable<Owner> {
 		this.transactionsNextUpdate = transactionsNextUpdate;
 	}
 
-	//FIXME - isShowAssets is not a good name - should be isShowOwner
-	public boolean isShowAssets() {
-		return showAssets;
+	public boolean isShowOwner() {
+		return showOwner;
 	}
 
 	public boolean isCorporation() {

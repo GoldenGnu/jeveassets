@@ -66,6 +66,7 @@ public class Settings {
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
+	//FIXME - - > Settings: create flag enum
 	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	private static final String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
@@ -80,36 +81,54 @@ public class Settings {
 
 	private static Settings settings;
 
+	//Price
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
+	//Custom Price
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
+	//Custom Item Name
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
+	//Assets
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
+	//Stockpile
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+	//API
 	private Date conquerableStationsNextUpdate = Settings.getNow();;
+	//Mixed boolean flags
 	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
+	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
+	//Proxy (API)
 	private Proxy proxy;
 	private String apiProxy;
+	//FIXME - - > Settings: Create windows settings
 	private Point windowLocation = new Point(0, 0);;
 	private Dimension windowSize = new Dimension(800, 600);;
 	private boolean windowMaximized = false;
 	private boolean windowAutoSave = true;;
 	private boolean windowAlwaysOnTop = false;
+	//Assets
 	private Boolean highlightSelectedRows = null;
 	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
+	//Overview
 	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
+	//Export
 	private ExportSettings exportSettings = new ExportSettings();
+	//Filter tools
 	private boolean filterOnEnter = false;
+	//Tracker
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+	//Api id to owner name
 	private Map<Long, String> owners = new HashMap<Long, String>();
+	//Table settings
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
-	private Map<String, Map<String ,View>> tableViews = new HashMap<String, Map<String ,View>>();
+	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
 
 	private Settings() {
 		SplashUpdater.setProgress(30);

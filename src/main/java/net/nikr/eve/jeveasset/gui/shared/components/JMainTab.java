@@ -115,7 +115,6 @@ public abstract class JMainTab {
 	}
 
 	public final void afterUpdateData() {
-		//FIXME JMainTab.afterUpdateData() is too slow
 		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
 			eventSelectionModel.setValueIsAdjusting(true);
 			for (int i = 0; i < eventTableModel.getRowCount(); i++) {

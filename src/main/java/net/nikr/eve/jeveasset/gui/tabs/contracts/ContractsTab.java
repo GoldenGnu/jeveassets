@@ -185,10 +185,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 	}
 
 	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Contracts Tool
-		//JMenuInfo.contracts(...);
-	}
+	public void addInfoMenu(JComponent jComponent) { }
 
 	@Override
 	public void addToolMenu(JComponent jComponent) { }

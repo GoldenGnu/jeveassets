@@ -144,10 +144,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 	}
 
 	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Values Table Tool
-		//JMenuInfo.values(...);
-	}
+	public void addInfoMenu(JComponent jComponent) { }
 
 	@Override
 	public void addToolMenu(JComponent jComponent) { }

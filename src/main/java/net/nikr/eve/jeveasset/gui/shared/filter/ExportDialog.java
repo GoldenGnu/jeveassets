@@ -207,6 +207,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
 		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
 
+		//FIXME - - > ExportDialog: Column names are not always unique
 		columnNames = new ArrayList<String>();
 		for (EnumTableColumn<E> column : enumColumns) {
 			columns.put(column.getColumnName(), column);

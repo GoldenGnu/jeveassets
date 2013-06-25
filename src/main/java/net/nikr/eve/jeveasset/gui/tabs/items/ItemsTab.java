@@ -139,10 +139,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 	}
 
 	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Items Tool
-		//JMenuInfo.items(...);
-	}
+	public void addInfoMenu(JComponent jComponent) { }
 
 	@Override
 	public void addToolMenu(JComponent jComponent) { }

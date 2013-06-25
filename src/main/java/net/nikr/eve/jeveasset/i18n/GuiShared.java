@@ -110,6 +110,19 @@ public abstract class GuiShared extends Bundle {
 	public abstract String renameView();
 	public abstract String saveView();
 	public abstract String saveViewMsg();
+	
+	//Update
+	public abstract String beta();
+	public abstract String devBuild();
+	public abstract String newBuildMsg(String buildType, String programName);
+	public abstract String newBuildTitle();
+	public abstract String newVersionTitle();
+	public abstract String newVersionMsg(String programName);
+	public abstract String noNewVersionTitle();
+	public abstract String noNewVersionMsg();
+	public abstract String releaseCandidate();
+	public abstract String stable();
+	
 	//Filters
 	public abstract String saveFilter();
 	public abstract String enterFilterName();

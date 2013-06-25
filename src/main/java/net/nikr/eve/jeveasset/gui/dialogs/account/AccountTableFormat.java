@@ -39,7 +39,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return from.isShowAssets();
+			return from.isShowOwner();
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
@@ -50,7 +50,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			if ((editedValue instanceof Boolean) && (baseObject instanceof Owner)) {
 				Owner owner = (Owner) baseObject;
 				boolean value = (Boolean) editedValue;
-				owner.setShowAssets(value);
+				owner.setShowOwner(value);
 				return owner;
 			}
 			return null;

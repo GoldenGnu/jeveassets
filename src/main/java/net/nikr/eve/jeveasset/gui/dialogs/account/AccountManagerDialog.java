@@ -209,13 +209,13 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				Object o = tableModel.getElementAt(selectedRows[i]);
 				if (o instanceof Owner) {
 					Owner owner = (Owner) o;
-					owner.setShowAssets(check);
+					owner.setShowOwner(check);
 				}
 			}
 		} else { //Set all the check value
 			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
-					owner.setShowAssets(check);
+					owner.setShowOwner(check);
 				}
 			}
 		}
@@ -247,10 +247,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		for (Account account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!shownAssets.containsKey(owner)) { //New account
-					if (owner.isShowAssets()) { //if shown: Updated
+					if (owner.isShowOwner()) { //if shown: Updated
 						changed = true;
 					}
-				} else if (owner.isShowAssets() != shownAssets.get(owner)) { //Old account changed: Update
+				} else if (owner.isShowOwner() != shownAssets.get(owner)) { //Old account changed: Update
 					changed = true;
 				}
 			}
@@ -269,7 +269,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 			shownAssets = new HashMap<Owner, Boolean>();
 			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
-					shownAssets.put(owner, owner.isShowAssets());
+					shownAssets.put(owner, owner.isShowOwner());
 				}
 			}
 		}
