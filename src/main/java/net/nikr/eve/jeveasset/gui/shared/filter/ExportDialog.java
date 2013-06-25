@@ -48,6 +48,8 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDefaultField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
@@ -58,13 +60,12 @@ import org.supercsv.prefs.CsvPreference;
 
 public class ExportDialog<E> extends JDialogCentered {
 
-	private static final String ACTION_DISABLE_SAVED_FILTERS = "ACTION_DISABLE_SAVED_FILTERS";
-	private static final String ACTION_ENABLE_SAVED_FILTERS = "ACTION_ENABLE_SAVED_FILTERS";
 	private static final String ACTION_OK = "ACTION_OK";
 	private static final String ACTION_CANCEL = "ACTION_CANCEL";
 	private static final String ACTION_DEFAULT = "ACTION_DEFAULT";
-	private static final String ACTION_TOOL_COLUMNS = "ACTION_TOOL_COLUMNS";
-	private static final String ACTION_FORMAT = "ACTION_FORMAT";
+	private static final String ACTION_FILTER_CHANGED = "ACTION_FILTER_CHANGED";
+	private static final String ACTION_VIEW_CHANGED = "ACTION_VIEW_CHANGED";
+	private static final String ACTION_FORMAT_CHANGED = "ACTION_FORMAT_CHANGED";
 
 	private static final String CARD_CSV = "CARD_CSV";
 	private static final String CARD_SQL = "CARD_SQL";
@@ -80,7 +81,10 @@ public class ExportDialog<E> extends JDialogCentered {
 	private JRadioButton jCurrentFilter;
 	private JComboBox jFilters;
 	//Columns
-	private JCheckBox jToolColumns;
+	private JRadioButton jViewCurrent;
+	private JRadioButton jViewSelect;
+	private JRadioButton jViewSaved;
+	private JComboBox jViews;
 	private JMultiSelectionList jColumnSelection;
 	//Format
 	private JRadioButton jCsv;
@@ -146,15 +150,15 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFormatLabel.setFont(new Font(jFormatLabel.getFont().getName(), Font.BOLD, jFormatLabel.getFont().getSize()));
 
 		jCsv = new JRadioButton(DialoguesExport.get().csv());
-		jCsv.setActionCommand(ACTION_FORMAT);
+		jCsv.setActionCommand(ACTION_FORMAT_CHANGED);
 		jCsv.addActionListener(listener);
 
 		jHtml = new JRadioButton(DialoguesExport.get().html());
-		jHtml.setActionCommand(ACTION_FORMAT);
+		jHtml.setActionCommand(ACTION_FORMAT_CHANGED);
 		jHtml.addActionListener(listener);
 
 		jSql = new JRadioButton(DialoguesExport.get().sql());
-		jSql.setActionCommand(ACTION_FORMAT);
+		jSql.setActionCommand(ACTION_FORMAT_CHANGED);
 		jSql.addActionListener(listener);
 
 		ButtonGroup jFormatButtonGroup = new ButtonGroup();
@@ -166,27 +170,40 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFiltersLabel.setFont(new Font(jFiltersLabel.getFont().getName(), Font.BOLD, jFiltersLabel.getFont().getSize()));
 
 		jNoFilter = new JRadioButton(DialoguesExport.get().noFilter());
-		jNoFilter.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
+		jNoFilter.setActionCommand(ACTION_FILTER_CHANGED);
 		jNoFilter.addActionListener(listener);
 		jNoFilter.setSelected(true);
 
 		jCurrentFilter = new JRadioButton(DialoguesExport.get().currentFilter());
-		jCurrentFilter.setActionCommand(ACTION_DISABLE_SAVED_FILTERS);
+		jCurrentFilter.setActionCommand(ACTION_FILTER_CHANGED);
 		jCurrentFilter.addActionListener(listener);
 
 		jSavedFilter = new JRadioButton(DialoguesExport.get().savedFilter());
-		jSavedFilter.setActionCommand(ACTION_ENABLE_SAVED_FILTERS);
+		jSavedFilter.setActionCommand(ACTION_FILTER_CHANGED);
 		jSavedFilter.addActionListener(listener);
 
-		ButtonGroup jButtonGroup = new ButtonGroup();
-		jButtonGroup.add(jNoFilter);
-		jButtonGroup.add(jSavedFilter);
-		jButtonGroup.add(jCurrentFilter);
+		ButtonGroup jFilterButtonGroup = new ButtonGroup();
+		jFilterButtonGroup.add(jNoFilter);
+		jFilterButtonGroup.add(jSavedFilter);
+		jFilterButtonGroup.add(jCurrentFilter);
 
 		jFilters = new JComboBox();
-		jFilters.setEnabled(false);
 	//Columns
-		//FIXME - - > ExportDialog: Use saved view...
+		jViewCurrent = new JRadioButton(DialoguesExport.get().viewCurrent());
+		jViewCurrent.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewCurrent.addActionListener(listener);
+		jViewCurrent.setSelected(true);
+
+		jViewSaved = new JRadioButton(DialoguesExport.get().viewSaved());
+		jViewSaved.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewSaved.addActionListener(listener);
+
+		jViews = new JComboBox();
+
+		jViewSelect = new JRadioButton(DialoguesExport.get().viewSelect());
+		jViewSelect.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewSelect.addActionListener(listener);
+		
 		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
 		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
 
@@ -196,15 +213,16 @@ public class ExportDialog<E> extends JDialogCentered {
 			columnNames.add(column.getColumnName());
 		}
 
-		jToolColumns = new JCheckBox(DialoguesExport.get().toolColumns());
-		jToolColumns.setActionCommand(ACTION_TOOL_COLUMNS);
-		jToolColumns.addActionListener(listener);
-
 		jColumnSelection = new JMultiSelectionList(columnNames);
 		jColumnSelection.selectAll();
+		jColumnSelection.setEnabled(false);
 
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 
+		ButtonGroup jViewButtonGroup = new ButtonGroup();
+		jViewButtonGroup.add(jViewCurrent);
+		jViewButtonGroup.add(jViewSaved);
+		jViewButtonGroup.add(jViewSelect);
 	//Options
 		cardLayout = new CardLayout();
 		jCardPanel = new JPanel(cardLayout);
@@ -309,8 +327,21 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addGroup(layout.createParallelGroup()
 						//Columns
 						.addComponent(jColumnLabel, GroupLayout.Alignment.CENTER)
-						.addComponent(jToolColumns)
-						.addComponent(jColumnSelectionPanel, 165, 165, 165)
+						.addComponent(jViewCurrent)
+						.addComponent(jViewSaved)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+							.addGroup(layout.createSequentialGroup()
+								.addGap(20)
+								.addComponent(jViews, 150, 150, 150)
+							)
+						)
+						.addComponent(jViewSelect)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+							.addGroup(layout.createSequentialGroup()
+								.addGap(20)
+								.addComponent(jColumnSelectionPanel, 150, 150, 150)
+							)
+						)
 						//Options
 						.addComponent(jOptionsLabel, GroupLayout.Alignment.CENTER)
 						.addComponent(jCardPanel)
@@ -333,7 +364,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					.addGroup(layout.createSequentialGroup()
 						.addContainerGap()
 						.addGroup(layout.createParallelGroup()
-							//Columns
+							//Format
 							.addGroup(layout.createSequentialGroup()
 								.addComponent(jFormatLabel)
 								.addGap(10)
@@ -365,7 +396,10 @@ public class ExportDialog<E> extends JDialogCentered {
 							.addGroup(layout.createSequentialGroup()
 								.addComponent(jColumnLabel)
 								.addGap(10)
-								.addComponent(jToolColumns)
+								.addComponent(jViewCurrent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jViewSaved, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jViews, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+								.addComponent(jViewSelect, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 								.addComponent(jColumnSelectionPanel, 120, 120, 120)
 							)
 						)
@@ -570,6 +604,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	public void setVisible(final boolean b) {
 		if (b) {
 			loadSettings();
+			//Filters (Saved)
 			jFilters.setEnabled(false);
 			if (exportFilterControl.getAllFilters().isEmpty()) {
 				if (jSavedFilter.isSelected()) {
@@ -584,8 +619,13 @@ public class ExportDialog<E> extends JDialogCentered {
 				jSavedFilter.setEnabled(true);
 				List<String> filterNames = new ArrayList<String>(exportFilterControl.getAllFilters().keySet());
 				Collections.sort(filterNames, new CaseInsensitiveComparator());
+				Object selectedItem = jFilters.getSelectedItem(); //Save selection
 				jFilters.setModel(new DefaultComboBoxModel(filterNames.toArray()));
+				if (selectedItem != null) { //Restore selection
+					jFilters.setSelectedItem(selectedItem);
+				}
 			}
+			//Filters (Current)
 			if (exportFilterControl.getCurrentFilters().isEmpty()) {
 				if (jCurrentFilter.isSelected()) {
 					jNoFilter.setSelected(true);
@@ -593,6 +633,26 @@ public class ExportDialog<E> extends JDialogCentered {
 				jCurrentFilter.setEnabled(false);
 			} else {
 				jCurrentFilter.setEnabled(true);
+			}
+			//Views
+			jViews.setEnabled(false);
+			Map<String, View> tableViews = Settings.get().getTableViews(toolName);
+			if (tableViews.isEmpty()) {
+				if (jViewSaved.isSelected()) {
+					jViewCurrent.setSelected(true);
+				}
+				jViewSaved.setEnabled(false);
+				jViews.getModel().setSelectedItem(DialoguesExport.get().viewNoSaved());
+			} else {
+				if (jViewSaved.isSelected()) {
+					jViews.setEnabled(true);
+				}
+				jViewSaved.setEnabled(true);
+				Object selectedItem = jViews.getSelectedItem(); //Save selection
+				jViews.setModel(new DefaultComboBoxModel(tableViews.keySet().toArray()));
+				if (selectedItem != null) { //Restore selection
+					jViews.setSelectedItem(selectedItem);
+				}
 			}
 		} else {
 			saveSettings();
@@ -613,10 +673,10 @@ public class ExportDialog<E> extends JDialogCentered {
 	@Override
 	protected void windowShown() { }
 
-	private String sqlHeader(Object object) {
+	private String getEnumName(Object object) {
 		if (object instanceof Enum) {
-			Enum headerEnum = (Enum) object;
-			return headerEnum.name();
+			Enum enumColumn = (Enum) object;
+			return enumColumn.name();
 		} else {
 			throw new RuntimeException("Failed to convert SQL header");
 		}
@@ -630,12 +690,28 @@ public class ExportDialog<E> extends JDialogCentered {
 		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
 		List<String> header = new ArrayList<String>();
 		Map<String, String> sqlHeader = new HashMap<String, String>();
-		if (jToolColumns.isSelected()) {
+		if (jViewCurrent.isSelected()) {
 			//Use the tool current shown columns + order
 			selectedColumns = exportFilterControl.getEnumShownColumns();
 			for (EnumTableColumn<E> column : selectedColumns) {
 				header.add(column.getColumnName());
-				sqlHeader.put(column.getColumnName(), sqlHeader(column));
+				sqlHeader.put(column.getColumnName(), getEnumName(column));
+			}
+		} else if (jViewSaved.isSelected()) {
+			String viewKey = (String) jViews.getSelectedItem();
+			View view = Settings.get().getTableViews(toolName).get(viewKey);
+			for (SimpleColumn simpleColumn : view.getColumns()) {
+				if (simpleColumn.isShown()) {
+					for (EnumTableColumn<E> column : columns.values()) {
+						String enumName = getEnumName(column);
+						if (enumName.equals(simpleColumn.getEnumName())) {
+							header.add(column.getColumnName());
+							sqlHeader.put(column.getColumnName(), enumName);
+							selectedColumns.add(column);
+							break;
+						}
+					}
+				}
 			}
 		} else {
 			//Use custom columns
@@ -645,7 +721,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					String columnName = (String) object;
 					EnumTableColumn<E> column = columns.get(columnName);
 					header.add(column.getColumnName());
-					sqlHeader.put(column.getColumnName(), sqlHeader(column));
+					sqlHeader.put(column.getColumnName(), getEnumName(column));
 					selectedColumns.add(column);
 				}
 			}
@@ -722,6 +798,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else if (extension.equals(EXPORT_HTML)) {
 			//HTML
 			//Create data
+			//FIXME - - > ExportDialog: Align numbers to the right
 			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
 			for (E e : items) {
 				Map<String, String> row = new HashMap<String, String>();
@@ -780,19 +857,13 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_DISABLE_SAVED_FILTERS.equals(e.getActionCommand())) {
-				jFilters.setEnabled(false);
-			} else if (ACTION_ENABLE_SAVED_FILTERS.equals(e.getActionCommand())) {
-				jFilters.setEnabled(true);
-			} else if (ACTION_OK.equals(e.getActionCommand())) {
+			if (ACTION_OK.equals(e.getActionCommand())) {
 				save();
 			} else if (ACTION_DEFAULT.equals(e.getActionCommand())) {
 				resetSettings();
 			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
 				setVisible(false);
-			} else if (ACTION_TOOL_COLUMNS.equals(e.getActionCommand())) {
-				jColumnSelection.setEnabled(!jToolColumns.isSelected());
-			} else if (ACTION_FORMAT.equals(e.getActionCommand())) {
+			} else if (ACTION_FORMAT_CHANGED.equals(e.getActionCommand())) {
 				if (jCsv.isSelected()) {
 					cardLayout.show(jCardPanel, CARD_CSV);
 				} else if (jHtml.isSelected()) {
@@ -800,6 +871,11 @@ public class ExportDialog<E> extends JDialogCentered {
 				} else if (jSql.isSelected()) {
 					cardLayout.show(jCardPanel, CARD_SQL);
 				}
+			} else if (ACTION_FILTER_CHANGED.equals(e.getActionCommand())) {
+				jFilters.setEnabled(jSavedFilter.isSelected());
+			} else if (ACTION_VIEW_CHANGED.equals(e.getActionCommand())) {
+				jViews.setEnabled(jViewSaved.isSelected());
+				jColumnSelection.setEnabled(jViewSelect.isSelected());
 			}
 		}
 	}

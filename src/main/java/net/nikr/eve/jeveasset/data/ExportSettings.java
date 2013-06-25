@@ -55,6 +55,7 @@ public class ExportSettings {
 		}
 		abstract String getI18N();
 	}
+
 	public enum LineDelimiter {
 		DOS("\r\n") {
 			@Override
@@ -87,7 +88,8 @@ public class ExportSettings {
 		}
 		abstract String getI18N();
 	}
-	public  enum DecimalSeparator {
+
+	public enum DecimalSeparator {
 		DOT() {
 			@Override
 			String getI18N() {
@@ -108,27 +110,26 @@ public class ExportSettings {
 	}
 
 	private static final String PATH = Settings.getUserDirectory();
-	//CSV
+	//CSV (shared by all tools)
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeparator decimalSeparator;
 	//SQL
 	private final Map<String, String> tableNames = new HashMap<String, String>(); // Per tool option
-	private boolean createTable;
-	private boolean dropTable;
-	private boolean extendedInserts;
+	private boolean createTable; //shared by all tools
+	private boolean dropTable; //shared by all tools
+	private boolean extendedInserts; //shared by all tools
+	//HTML (shared by all tools)
 	private boolean htmlStyled;
 	private int htmlRepeatHeader;
 	//Common - Per tool options
 	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
 	private final Map<String, String> filenames = new HashMap<String, String>();
-	//private String filename = FILENAME;
 
 	public ExportSettings() {
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
 		decimalSeparator = DecimalSeparator.DOT;
-		//filename = FILENAME;
 		createTable = true;
 		dropTable = true;
 		extendedInserts = true;

@@ -70,5 +70,8 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String semicolon();
 	public abstract String sql();
 	public abstract String tableName();
-	public abstract String toolColumns();
+	public abstract String viewCurrent();
+	public abstract String viewSaved();
+	public abstract String viewSelect();
+	public abstract String viewNoSaved();
 }
