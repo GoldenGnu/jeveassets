@@ -21,25 +21,62 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import java.util.Comparator;
 import javax.swing.Icon;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class Filter {
 
-	public enum ExtraColumns {
-		ALL() {
-			@Override
-			public String getI18N() {
-				return GuiShared.get().filterAll();
-			}
-		};
+	public static class AllColumn<T> implements EnumTableColumn<T> {
 
-		abstract String getI18N();
+		public static final AllColumn<Object> ALL = new AllColumn<Object>();
+		
+		@Override
+		public Class<?> getType() {
+			return Object.class;
+		}
+
+		@Override
+		public Comparator<?> getComparator() {
+			return null;
+		}
+
+		@Override
+		public String getColumnName() {
+			return GuiShared.get().filterAll();
+		}
+
+		@Override
+		public Object getColumnValue(T from) {
+			return null;
+		}
+
+		@Override
+		public String name() {
+			return "ALL";
+		}
+
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			return false;
+		}
+
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
+
+		@Override
+		public T setColumnValue(Object baseObject, Object editedValue) {
+			return null;
+		}
+
 		@Override
 		public String toString() {
-			return getI18N();
+			return GuiShared.get().filterAll();
 		}
 	}
 
@@ -227,22 +264,22 @@ public class Filter {
 	}
 
 	private LogicType logic;
-	private Enum<?> column;
+	private EnumTableColumn<?> column;
 	private CompareType compare;
 	private String text;
 
-	public Filter(final String logic, final Enum<?> column, final String compare, final String text) {
+	public Filter(final String logic, final EnumTableColumn<?> column, final String compare, final String text) {
 		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text);
 	}
 
-	public Filter(final LogicType logic, final Enum<?> column, final CompareType compare, final String text) {
+	public Filter(final LogicType logic, final EnumTableColumn<?> column, final CompareType compare, final String text) {
 		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
 	}
 
-	public Enum<?> getColumn() {
+	public EnumTableColumn<?> getColumn() {
 		return column;
 	}
 

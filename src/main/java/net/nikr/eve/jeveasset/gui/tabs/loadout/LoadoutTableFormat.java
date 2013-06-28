@@ -23,23 +23,22 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 /**
  *
  * @author Candle
  */
-enum ModuleTableFormat implements EnumTableColumn<Module> {
+enum LoadoutTableFormat implements EnumTableColumn<Loadout> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsLoadout.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(final Module from) {
+		public Object getColumnValue(final Loadout from) {
 			return from.getName();
 		}
 	},
@@ -49,14 +48,14 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 			return TabsLoadout.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(final Module from) {
+		public Object getColumnValue(final Loadout from) {
 			return from.getModulePriceValue();
 		}
 	};
 
 	private Class<?> type;
 	private Comparator<?> comparator;
-	private ModuleTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private LoadoutTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -76,7 +75,11 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public Module setColumnValue(final Object baseObject, final Object editedValue) {
+	@Override public Loadout setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 }

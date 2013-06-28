@@ -21,17 +21,40 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -54,8 +77,9 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
@@ -644,7 +668,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 	class MaterialsFilterControl extends ExportFilterControl<Overview> {
 
 		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
 				return OverviewTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -654,7 +678,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Overview>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Overview>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Overview>>(tableFormat.getShownColumns());
 		}
 	}

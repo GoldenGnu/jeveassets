@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,17 +50,17 @@ public final class SqlWriter {
 
 	private SqlWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	public static boolean save(final String filename, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		SqlWriter writer = new SqlWriter();
-		return writer.write(filename, rows, header, sqlHeader, tableName, dropTable, createTable, extendedInserts);
+		return writer.write(filename, rows, header, tableName, dropTable, createTable, extendedInserts);
 	}
 
-	private boolean write(final String filename, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	private boolean write(final String filename, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			writeComment(writer);
-			writeTable(writer, rows, header, sqlHeader, tableName, dropTable, createTable);
-			writeRows(writer, rows, header, sqlHeader, tableName, extendedInserts);
+			writeTable(writer, rows, header, tableName, dropTable, createTable);
+			writeRows(writer, rows, header, tableName, extendedInserts);
 			writer.close();
 		} catch (IOException ex) {
 			LOG.warn("SQL file not saved");
@@ -92,38 +93,38 @@ public final class SqlWriter {
 			return "text";
 		}
 	}
-	private void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
+	private void writeTable(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
 		if (dropTable) {
 			writer.write("DROP TABLE IF EXISTS `" + tableName + "`;\r\n");
 		}
 		if (createTable && !rows.isEmpty()) {
 			writer.write("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\r\n");
 			boolean first = true;
-			for (String column : header) {
+			for (EnumTableColumn<?> column : header) {
 				if (first) {
 					first = false;
 				} else {
 					writer.write(",\r\n");
 				}
-				writer.write("`" + sqlHeader.get(column) + "` " + getType(rows.get(0).get(column)));
+				writer.write("`" + column.name() + "` " + getType(rows.get(0).get(column)));
 			}
 			writer.write("\r\n");
 			writer.write(") ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;\r\n");
 		}
 	}
 
-	private void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final Map<String, String> sqlHeader, final String tableName, final boolean extendedInserts) throws IOException {
+	private void writeRows(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean extendedInserts) throws IOException {
 		if (!rows.isEmpty()) {
 			//Create INSERT statement
 			String insert = "INSERT INTO `" + tableName + "` (";
 			boolean firstInsert = true;
-			for (String column : header) {
+			for (EnumTableColumn<?> column : header) {
 				if (firstInsert) {
 					firstInsert = false;
 				} else {
 					insert = insert + ", ";
 				}
-				insert = insert + "`" + sqlHeader.get(column) + "`";
+				insert = insert + "`" + column.name() + "`";
 			}
 			insert = insert + ") VALUES\r\n";
 			if (extendedInserts) {
@@ -134,7 +135,7 @@ public final class SqlWriter {
 			//Add values
 			String values;
 			int length = insert.getBytes("UTF-8").length;
-			for (Map<String, Object> map : rows) {
+			for (Map<EnumTableColumn<?>, Object> map : rows) {
 				values = "";
 				if (extendedInserts && length > MAX_LENGTH) {
 					length = insert.getBytes("UTF-8").length;
@@ -155,7 +156,7 @@ public final class SqlWriter {
 				//Values
 				values = values + "	(";
 				firstCell = true;
-				for (String column : header) {
+				for (EnumTableColumn<?> column : header) {
 					if (firstCell) {
 						firstCell = false;
 					} else {

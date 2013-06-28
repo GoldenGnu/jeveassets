@@ -28,16 +28,17 @@ import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 class FilterMenu<E> extends JMenu implements ActionListener {
 
 	private FilterGui<E> gui;
-	private Enum<?> column;
+	private EnumTableColumn<?> column;
 	private String text;
 
-	FilterMenu(final FilterGui<E> gui, final Enum<?> column, final String text, final boolean isNumeric, final boolean isDate) {
+	FilterMenu(final FilterGui<E> gui, final EnumTableColumn<?> column, final String text, final boolean isNumeric, final boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
 		this.gui = gui;
 		this.setIcon(Images.FILTER_CONTAIN.getIcon());

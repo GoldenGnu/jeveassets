@@ -22,10 +22,10 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 

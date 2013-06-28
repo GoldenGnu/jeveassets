@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +39,12 @@ public final class HtmlWriter {
 
 	private HtmlWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
+	public static boolean save(final String filename, final List<Map<EnumTableColumn<?>, String>> data, final List<EnumTableColumn<?>> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
 		HtmlWriter writer = new HtmlWriter();
 		return writer.write(filename, data, header, htmlStyled, htmlRepeatHeader, treetable);
 	}
 
-	private boolean write(final String filename, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
+	private boolean write(final String filename, final List<Map<EnumTableColumn<?>, String>> data, final List<EnumTableColumn<?>> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			if (htmlStyled) {
@@ -79,7 +81,7 @@ public final class HtmlWriter {
 					"	border-width: 1px 0px 1px 1px;\r\n" +
 					"	border-spacing: 0;\r\n" +
 					"	font-family: Arial, Helvetica, sans-serif;\n" +
-					"	font-size: 13px;" +
+					"	font-size: 13px;\r\n" +
 					"}\r\n" +
 					//Cells
 					"table td, table th {\r\n" +
@@ -92,22 +94,25 @@ public final class HtmlWriter {
 					//Header
 					"table th {\r\n" +
 					"	background-color: #ddd;\r\n" +
-					"	font-size: 15px;" +
-					"}" +
+					"	font-size: 15px;\r\n" +
+					"}\r\n" +
 					//Even rows (dark)
 					".even {\r\n" +
 					"	background-color: #f3f3f3;\r\n" +
-					"}" +
+					"}\r\n" +
 					//TreeTable
 					".level0 {\r\n" +
 					"	background-color: #777;\r\n" +
-					"}" +
+					"}\r\n" +
 					".level1 {\r\n" +
 					"	background-color: #999;\r\n" +
-					"}" +
+					"}\r\n" +
 					".level2 {\r\n" +
 					"	background-color: #bbb;\r\n" +
-					"}"
+					"}\r\n" +
+					".number {\r\n" +
+					"	text-align: right;\r\n" +
+					"}\r\n"
 					);
 		writer.write("</style>\r\n");
 		writer.write("</header>\r\n");
@@ -125,32 +130,32 @@ public final class HtmlWriter {
 		writer.write("<!-- " + Program.PROGRAM_HOMEPAGE + " -->\r\n");
 	}
 
-	private void writeTableHeader(final BufferedWriter writer, final List<String> header) throws IOException {
+	private void writeTableHeader(final BufferedWriter writer, List<EnumTableColumn<?>> header) throws IOException {
 		writer.write("<tr>\r\n");
-		for (String column : header) {
+		for (EnumTableColumn<?> column : header) {
 			writer.write("\t<th>");
-			writer.write(column);
+			writer.write(column.getColumnName());
 			writer.write("</th>\r\n");
 		}
 		writer.write("</tr>\r\n");
 	}
 
-	private void writeTableRows(final BufferedWriter writer, final List<Map<String, String>> data, final List<String> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) throws IOException {
+	private void writeTableRows(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, String>> data, final List<EnumTableColumn<?>> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) throws IOException {
 		boolean even = false;
 		int count = 0;
-		for (Map<String, String> map : data) {
+		for (Map<EnumTableColumn<?>, String> map : data) {
 			boolean level0 = false;
 			boolean level1 = false;
 			boolean level2 = false;
 			if (treetable && htmlStyled) {
-				for (String s : header) {
-					if (map.get(s).contains("+++") && treetable) { //Level 2
+				for (EnumTableColumn<?> column : header) {
+					if (map.get(column).contains("+++") && treetable) { //Level 2
 						level2 = true;
 						break;
-					} else if (map.get(s).contains("++") && treetable) { //Level 1
+					} else if (map.get(column).contains("++") && treetable) { //Level 1
 						level1 = true;
 						break;
-					} else if (map.get(s).contains("+") && treetable) { //Level 0
+					} else if (map.get(column).contains("+") && treetable) { //Level 0
 						level0 = true;
 						break;
 					}
@@ -175,9 +180,14 @@ public final class HtmlWriter {
 			} else {
 				writer.write("\t<tr>");
 			}
-			for (String s : header) {
-				writer.write("\t<td>");
-				writer.write(map.get(s).replace(" ", "&nbsp;").replace("+", "")); //.replace("-", "&#8209;")
+			for (EnumTableColumn<?> column : header) {
+				if ((Number.class.isAssignableFrom(column.getType())
+				 || NumberValue.class.isAssignableFrom(column.getType()))) {
+					writer.write("\t<td class=\"number\">");
+				} else {
+					writer.write("\t<td>");
+				}
+				writer.write(map.get(column).replace(" ", "&nbsp;").replace("+", "")); //.replace("-", "&#8209;")
 				writer.write("</td>\r\n");
 			}
 			writer.write("</tr>\r\n");

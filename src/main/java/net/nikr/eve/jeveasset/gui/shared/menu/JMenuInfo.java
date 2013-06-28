@@ -28,19 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
@@ -310,7 +310,7 @@ public class JMenuInfo {
 		return new MaterialTotal(totalCount, totalValue, averageValue);
 	}
 
-	public static void module(final JComponent jComponent, final List<Module> selected) {
+	public static void module(final JComponent jComponent, final List<Loadout> selected) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -319,13 +319,13 @@ public class JMenuInfo {
 			long totalCount = 0;
 			double totalValue = 0;
 			double averageValue = 0;
-			Module totalShip = null;
-			Module totalModule = null;
-			Module totalAll = null;
+			Loadout totalShip = null;
+			Loadout totalModule = null;
+			Loadout totalAll = null;
 			for (int i = 0; i < selected.size(); i++) {
 				Object object = selected.get(i);
-				if (object instanceof Module) {
-					Module module = (Module) object;
+				if (object instanceof Loadout) {
+					Loadout module = (Loadout) object;
 					if (module.getName().equals(TabsLoadout.get().totalShip())) {
 						totalShip = module;
 					} else if (module.getName().equals(TabsLoadout.get().totalModules())) {

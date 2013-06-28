@@ -18,25 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
-package net.nikr.eve.jeveasset.gui.shared.filter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 
-public abstract class ExportFilterControl<E> {
-
-	protected abstract EnumTableColumn<?> valueOf(String column);
-	protected abstract List<EnumTableColumn<E>> getShownColumns();
-
-	public Map<String, List<Filter>> getAllFilters() {
-		return new HashMap<String, List<Filter>>();
+public abstract class NumberValue {
+	public Double getDouble() {
+		return null;
 	}
-	public List<Filter> getCurrentFilters() {
-		return new ArrayList<Filter>();
+	public Long getLong() {
+		return null;
+	}
+	public Number getNumber() {
+		return null;
 	}
 }

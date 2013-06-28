@@ -37,7 +37,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -211,7 +210,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -362,7 +361,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 	public class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
 
-		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ReprocessedInterface>> columns = null;
 		private EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
@@ -373,7 +371,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 		@Override
 		protected Object getColumnValue(final ReprocessedInterface item, final String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof ReprocessedTableFormat) {
 				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
 				return format.getColumnValue(item);
@@ -387,50 +385,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			if (column instanceof ReprocessedTableFormat) {
-				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			if (column instanceof ReprocessedExtendedTableFormat) {
-				ReprocessedExtendedTableFormat format = (ReprocessedExtendedTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			if (column instanceof ReprocessedTableFormat) {
-				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			if (column instanceof ReprocessedExtendedTableFormat) {
-				ReprocessedExtendedTableFormat format = (ReprocessedExtendedTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			if (enumColumns == null) {
-				enumColumns = concat(ReprocessedExtendedTableFormat.values(), ReprocessedTableFormat.values());
-			}
-			return enumColumns;
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
 				return ReprocessedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -445,7 +400,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getEnumColumns() {
+		protected List<EnumTableColumn<ReprocessedInterface>> getColumns() {
 			if (columns == null) {
 				columns = new ArrayList<EnumTableColumn<ReprocessedInterface>>();
 				columns.addAll(Arrays.asList(ReprocessedExtendedTableFormat.values()));
@@ -455,7 +410,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getEnumShownColumns() {
+		protected List<EnumTableColumn<ReprocessedInterface>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<ReprocessedInterface>>(tableFormat.getShownColumns());
 		}
 
@@ -467,13 +422,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
-		}
-
-		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum<?>[] c = new Enum<?>[a.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(b, 0, c, a.length, b.length);
-			return c;
 		}
 	}
 

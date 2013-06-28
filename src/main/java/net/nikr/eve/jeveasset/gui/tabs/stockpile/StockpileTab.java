@@ -21,8 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SeparatorList.Separator;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
@@ -36,8 +42,26 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -47,7 +71,6 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
@@ -55,7 +78,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedInterface;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -251,7 +276,7 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -886,7 +911,6 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 
 	public class StockpileFilterControl extends FilterControl<StockpileItem> {
 
-		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<StockpileItem>> columns = null;
 		private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
@@ -897,7 +921,7 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 
 		@Override
 		protected Object getColumnValue(final StockpileItem item, final String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof StockpileTableFormat) {
 				StockpileTableFormat format = (StockpileTableFormat) column;
 				return format.getColumnValue(item);
@@ -911,39 +935,7 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			if (column instanceof StockpileTableFormat) {
-				StockpileTableFormat format = (StockpileTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				} else if (format.getType().getName().equals(Percent.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			if (column instanceof StockpileTableFormat) {
-				StockpileTableFormat format = (StockpileTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected Enum[] getColumns() {
-			if (enumColumns == null) {
-				enumColumns = concat(StockpileExtendedTableFormat.values(), StockpileTableFormat.values());
-			}
-			return enumColumns;
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
 				return StockpileTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -967,15 +959,8 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 			jTable.saveExpandedState();
 		}
 
-		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum<?>[] c = new Enum<?>[a.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(b, 0, c, a.length, b.length);
-			return c;
-		}
-
 		@Override
-		protected List<EnumTableColumn<StockpileItem>> getEnumColumns() {
+		protected List<EnumTableColumn<StockpileItem>> getColumns() {
 			if (columns == null) {
 				columns = new ArrayList<EnumTableColumn<StockpileItem>>();
 				columns.addAll(Arrays.asList(StockpileExtendedTableFormat.values()));
@@ -985,7 +970,7 @@ public class StockpileTab extends JMainTab implements TableMenu<StockpileItem> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<StockpileItem>> getEnumShownColumns() {
+		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<StockpileItem>>(tableFormat.getShownColumns());
 		}
 	}

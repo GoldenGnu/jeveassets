@@ -25,23 +25,30 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
-import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
@@ -59,12 +66,12 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -605,7 +612,7 @@ public final class SettingsReader extends AbstractXmlReader {
 					Element rowNode = (Element) rowNodes.item(c);
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
-					Enum<?> column =  getColumn(columnString, tableName);
+					EnumTableColumn<?> column =  getColumn(columnString, tableName);
 					String compare = AttributeGetters.getString(rowNode, "compare");
 					String logic = AttributeGetters.getString(rowNode, "logic");
 					filter.add(new Filter(logic, column, compare, text));
@@ -616,7 +623,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum<?> getColumn(final String column, final String tableName) {
+	private EnumTableColumn<?> getColumn(final String column, final String tableName) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
@@ -714,10 +721,8 @@ public final class SettingsReader extends AbstractXmlReader {
 
 		}
 		//All
-		try {
-			return Filter.ExtraColumns.valueOf(column);
-		} catch (IllegalArgumentException exception) {
-
+		if (column.equals("ALL")) {
+			return AllColumn.ALL;
 		}
 		throw new RuntimeException("Fail to load filter column: " + column);
 	}
@@ -734,7 +739,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
 				Element rowNode = (Element) rowNodeList.item(b);
 				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and"));
-				Enum<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
+				EnumTableColumn<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
 				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
 				String text;
 				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")) {
@@ -757,7 +762,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum<?> convertColumn(final String column) {
+	private EnumTableColumn<?> convertColumn(final String column) {
 		if (column.equals("Name")) { return AssetTableFormat.NAME; }
 		if (column.equals("Group")) { return AssetTableFormat.GROUP; }
 		if (column.equals("Category")) { return AssetTableFormat.CATEGORY; }
@@ -782,7 +787,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (column.equals("Reprocessed Value")) { return AssetTableFormat.VALUE_REPROCESSED; }
 		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
 		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
-		return Filter.ExtraColumns.ALL; //Fallback
+		return AllColumn.ALL; //Fallback
 	}
 
 	private CompareType convertMode(final String compareMixed) {

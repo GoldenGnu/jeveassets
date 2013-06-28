@@ -26,12 +26,21 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import java.util.*;
-import javax.swing.*;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
-
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
@@ -112,9 +121,9 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		gui.addToolSeparator();
 	}
 
-	public JMenu getMenu(final JTable jTable, EnumTableFormatAdaptor<?, ?> adaptor, final List<E> items) {
+	public JMenu getMenu(final JTable jTable, final List<E> items) {
 		String text = null;
-		Enum<?> column = null;
+		EnumTableColumn<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
 		int columnIndex = jTable.getSelectedColumn();
@@ -123,14 +132,11 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 				&& items.size() == 1 //Single element
 				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
 				&& columnIndex >= 0 //Shown column
-				&& columnIndex < adaptor.getShownColumns().size()) { //Shown column
-			Object object = adaptor.getShownColumns().get(columnIndex);
-			if (object instanceof Enum) {
-				column = (Enum) object;
-				isNumeric = isNumeric(column);
-				isDate = isDate(column);
-				text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
-			}
+				&& columnIndex < getShownColumns().size()) { //Shown column
+			column = getShownColumns().get(columnIndex);
+			isNumeric = isNumeric(column);
+			isDate = isDate(column);
+			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
 	}
@@ -172,16 +178,8 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return totalSize;
 	}
 
-	protected abstract Enum<?>[] getColumns();
-	protected abstract List<EnumTableColumn<E>> getEnumColumns();
-	/**
-	 * Use isNumeric(Enum column) instead.
-	 */
-	protected abstract boolean isNumericColumn(Enum<?> column);
-	/**
-	 * Use isDate(Enum column) instead.
-	 */
-	protected abstract boolean isDateColumn(Enum<?> column);
+	protected abstract List<EnumTableColumn<E>> getColumns();
+
 	protected abstract Object getColumnValue(E item, String column);
 
 	/**
@@ -205,23 +203,30 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return columns;
 	}
 
-	boolean isNumeric(final Enum<?> column) {
-		if (column instanceof ExtraColumns) {
+	boolean isNumeric(final EnumTableColumn<?> column) {
+		if (column instanceof AllColumn) {
 			return false;
+		} else if (Number.class.isAssignableFrom(column.getType())) {
+			return true;
+		} else if (NumberValue.class.isAssignableFrom(column.getType())) {
+			return true;
 		} else {
-			return isNumericColumn(column);
+			return false;
 		}
 	}
 
-	boolean isDate(final Enum<?> column) {
-		if (column instanceof ExtraColumns) {
+	boolean isDate(final EnumTableColumn<?> column) {
+		if (column instanceof AllColumn) {
 			return false;
+		} else if (column.getType().getName().equals(Date.class.getName())) {
+			return true;
 		} else {
-			return isDateColumn(column);
+			return false;
 		}
 	}
-	boolean isAll(final Enum<?> column) {
-		return (column instanceof ExtraColumns);
+
+	boolean isAll(final EnumTableColumn<?> column) {
+		return (column instanceof AllColumn);
 	}
 
 	public class ListenerClass implements ListEventListener<E> {

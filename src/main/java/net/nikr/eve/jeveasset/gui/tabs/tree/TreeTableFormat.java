@@ -24,9 +24,9 @@ package net.nikr.eve.jeveasset.gui.tabs.tree;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat.LongInt;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 

@@ -31,8 +31,33 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.swing.AbstractListModel;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.ExportSettings;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
@@ -115,7 +140,7 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	private List<EventList<E>> eventLists;
 	private Map<String, EnumTableColumn<E>> columns = new HashMap<String, EnumTableColumn<E>>();
-	private List<String> columnNames;
+	private List<EnumTableColumn<E>> columnIndex = new ArrayList<EnumTableColumn<E>>();
 	private FilterControl<E> filterControl;
 	private ExportFilterControl<E> exportFilterControl;
 	private String toolName;
@@ -207,14 +232,12 @@ public class ExportDialog<E> extends JDialogCentered {
 		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
 		jColumnLabel.setFont(new Font(jColumnLabel.getFont().getName(), Font.BOLD, jColumnLabel.getFont().getSize()));
 
-		//FIXME - - > ExportDialog: Column names are not always unique
-		columnNames = new ArrayList<String>();
+		columnIndex.addAll(enumColumns);
 		for (EnumTableColumn<E> column : enumColumns) {
-			columns.put(column.getColumnName(), column);
-			columnNames.add(column.getColumnName());
+			columns.put(column.name(), column);
 		}
 
-		jColumnSelection = new JMultiSelectionList(columnNames);
+		jColumnSelection = new JMultiSelectionList(columnIndex);
 		jColumnSelection.selectAll();
 		jColumnSelection.setEnabled(false);
 
@@ -421,20 +444,20 @@ public class ExportDialog<E> extends JDialogCentered {
 
 	public void setColumns(final List<EnumTableColumn<E>> enumColumns) {
 		columns.clear();
-		columnNames.clear();
+		columnIndex.clear();
+		columnIndex.addAll(enumColumns);
 		for (EnumTableColumn<E> column : enumColumns) {
-			columns.put(column.getColumnName(), column);
-			columnNames.add(column.getColumnName());
+			columns.put(column.name(), column);
 		}
 		jColumnSelection.setModel(new AbstractListModel() {
 			@Override
 			public int getSize() {
-				return columnNames.size();
+				return columnIndex.size();
 			}
 
 			@Override
 			public Object getElementAt(int index) {
-				return columnNames.get(index);
+				return columnIndex.get(index);
 			}
 		});
 	}
@@ -443,13 +466,9 @@ public class ExportDialog<E> extends JDialogCentered {
 		List<String> selectedColumns = new ArrayList<String>();
 		Object[] values = jColumnSelection.getSelectedValues();
 		for (Object object : values) {
-			if (object instanceof String) {
-				String columnName = (String) object;
-				Object column = columns.get(columnName);
-				if (column instanceof Enum<?>) {
-					Enum<?> e = (Enum<?>) column;
-					selectedColumns.add(e.name());
-				}
+			if (object instanceof EnumTableColumn<?>) {
+				EnumTableColumn<?> column = (EnumTableColumn) object;
+				selectedColumns.add(column.name());
 			}
 		}
 		return selectedColumns;
@@ -527,7 +546,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().setHtmlStyled(jHtmlStyle.isSelected());
 		Settings.get().getExportSettings().setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
 		//Shared
-		if (jColumnSelection.getSelectedIndices().length == columnNames.size()) { //All is selected - nothing worth saving...
+		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
 			Settings.get().getExportSettings().putTableExportColumns(toolName, null);
 		} else {
 			Settings.get().getExportSettings().putTableExportColumns(toolName, getExportColumns());
@@ -564,22 +583,19 @@ public class ExportDialog<E> extends JDialogCentered {
 		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
 		if (list == null) {
 			jColumnSelection.selectAll();
-			list = new ArrayList<String>(getExportColumns());
-		}
-		List<Integer> selections = new ArrayList<Integer>();
-		for (String column : list) {
-			Enum<?> e = exportFilterControl.valueOf(column);
-			if (e instanceof EnumTableColumn) {
-				EnumTableColumn<?> enumColumn = (EnumTableColumn) e;
-				int index = columnNames.indexOf(enumColumn.getColumnName());
+		} else {
+			List<Integer> selections = new ArrayList<Integer>();
+			for (String column : list) {
+				EnumTableColumn<?> enumColumn = exportFilterControl.valueOf(column);
+				int index = columnIndex.indexOf(enumColumn);
 				selections.add(index);
 			}
+			int[] indices = new int[selections.size()];
+			for (int i = 0; i < selections.size(); i++) {
+				indices[i] = selections.get(i);
+			}
+			jColumnSelection.setSelectedIndices(indices);
 		}
-		int[] indices = new int[selections.size()];
-		for (int i = 0; i < selections.size(); i++) {
-			indices[i] = selections.get(i);
-		}
-		jColumnSelection.setSelectedIndices(indices);
 	}
 
 	private void resetSettings() {
@@ -674,62 +690,38 @@ public class ExportDialog<E> extends JDialogCentered {
 	@Override
 	protected void windowShown() { }
 
-	private String getEnumName(Object object) {
-		if (object instanceof Enum) {
-			Enum enumColumn = (Enum) object;
-			return enumColumn.name();
-		} else {
-			throw new RuntimeException("Failed to convert SQL header");
-		}
-	}
-
 	@Override
 	protected void save() {
 		List<E> items = new ArrayList<E>();
 
 	//Columns + Header
-		List<EnumTableColumn<E>> selectedColumns = new ArrayList<EnumTableColumn<E>>();
-		List<String> header = new ArrayList<String>();
-		Map<String, String> sqlHeader = new HashMap<String, String>();
+		List<EnumTableColumn<E>> header = new ArrayList<EnumTableColumn<E>>();
 		if (jViewCurrent.isSelected()) {
 			//Use the tool current shown columns + order
-			selectedColumns = exportFilterControl.getEnumShownColumns();
-			for (EnumTableColumn<E> column : selectedColumns) {
-				header.add(column.getColumnName());
-				sqlHeader.put(column.getColumnName(), getEnumName(column));
-			}
+			header = exportFilterControl.getShownColumns();
 		} else if (jViewSaved.isSelected()) {
 			String viewKey = (String) jViews.getSelectedItem();
 			View view = Settings.get().getTableViews(toolName).get(viewKey);
 			for (SimpleColumn simpleColumn : view.getColumns()) {
 				if (simpleColumn.isShown()) {
-					for (EnumTableColumn<E> column : columns.values()) {
-						String enumName = getEnumName(column);
-						if (enumName.equals(simpleColumn.getEnumName())) {
-							header.add(column.getColumnName());
-							sqlHeader.put(column.getColumnName(), enumName);
-							selectedColumns.add(column);
-							break;
-						}
-					}
+					EnumTableColumn<E> column = columns.get(simpleColumn.getEnumName());
+					header.add(column);
 				}
 			}
 		} else {
 			//Use custom columns
 			Object[] values = jColumnSelection.getSelectedValues();
 			for (Object object : values) {
-				if (object instanceof String) {
-					String columnName = (String) object;
+				if (object instanceof EnumTableColumn<?>) {
+					String columnName = ((EnumTableColumn) object).name();
 					EnumTableColumn<E> column = columns.get(columnName);
-					header.add(column.getColumnName());
-					sqlHeader.put(column.getColumnName(), getEnumName(column));
-					selectedColumns.add(column);
+					header.add(column);
 				}
 			}
 			
 		}
 	//Bad selection
-		if (selectedColumns.isEmpty() || header.isEmpty()) {
+		if (header.isEmpty()) {
 			JOptionPane.showMessageDialog(getDialog(), DialoguesExport.get().selectOne(), DialoguesExport.get().export(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
@@ -783,54 +775,59 @@ public class ExportDialog<E> extends JDialogCentered {
 				}
 			}
 			//Create data
+			List<String> headerStrings = new ArrayList<String>(header.size());
+			List<String> headerKeys = new ArrayList<String>(header.size());
+			for (EnumTableColumn<E> column : header) {
+				headerStrings.add(column.getColumnName());
+				headerKeys.add(column.name());
+			}
 			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
 			for (E e : items) {
 				Map<String, String> row = new HashMap<String, String>();
-				for (EnumTableColumn<E> column : selectedColumns) {
-					row.put(column.getColumnName(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()).replace("+", ""));
+				for (EnumTableColumn<E> column : header) {
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()).replace("+", ""));
 				}
 				rows.add(row);
 			}
 			//Save data
 			saved = CsvWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
-					header.toArray(new String[header.size()]),
+					headerStrings.toArray(new String[headerStrings.size()]),
+					headerKeys.toArray(new String[headerKeys.size()]),
 					new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
 		} else if (extension.equals(EXPORT_HTML)) {
 			//HTML
 			//Create data
-			//FIXME - - > ExportDialog: Align numbers to the right
-			List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
+			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<Map<EnumTableColumn<?>, String>>();
 			for (E e : items) {
-				Map<String, String> row = new HashMap<String, String>();
-				for (EnumTableColumn<E> column : selectedColumns) {
-					row.put(column.getColumnName(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
+				Map<EnumTableColumn<?>, String> row = new HashMap<EnumTableColumn<?>, String>();
+				for (EnumTableColumn<E> column : header) {
+					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
 				}
 				rows.add(row);
 			}
 			//Save data
 			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
-					header,
+					new ArrayList<EnumTableColumn<?>>(header),
 					Settings.get().getExportSettings().isHtmlStyled(),
 					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
 		} else if (extension.equals(EXPORT_SQL)) {
 			//SQL
 			//Create data
-			List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<Map<EnumTableColumn<?>, Object>>();
 			for (E e : items) {
-				Map<String, Object> row = new HashMap<String, Object>();
-				for (EnumTableColumn<E> column : selectedColumns) {
-					row.put(column.getColumnName(), column.getColumnValue(e));
+				Map<EnumTableColumn<?>, Object> row = new HashMap<EnumTableColumn<?>, Object>();
+				for (EnumTableColumn<E> column : header) {
+					row.put(column, column.getColumnValue(e));
 				}
 				rows.add(row);
 			}
 			//Save data
 			saved = SqlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
-					header,
-					sqlHeader,
+					new ArrayList<EnumTableColumn<?>>(header),
 					Settings.get().getExportSettings().getTableName(toolName),
 					Settings.get().getExportSettings().isDropTable(),
 					Settings.get().getExportSettings().isCreateTable(),

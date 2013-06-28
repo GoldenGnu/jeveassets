@@ -19,24 +19,37 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.filter;
+package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public abstract class ExportFilterControl<E> {
+public class LongInt extends NumberValue implements Comparable<LongInt> {
+	private final Long number;
+	private final String formatted;
 
-	protected abstract EnumTableColumn<?> valueOf(String column);
-	protected abstract List<EnumTableColumn<E>> getShownColumns();
-
-	public Map<String, List<Filter>> getAllFilters() {
-		return new HashMap<String, List<Filter>>();
+	public LongInt(final Long number) {
+		this.number = number;
+		this.formatted = Formater.integerFormat(number);
 	}
-	public List<Filter> getCurrentFilters() {
-		return new ArrayList<Filter>();
+
+	@Override
+	public Number getNumber() {
+		return number;
+	}
+
+	@Override
+	public Long getLong() {
+		return number;
+	}
+
+	@Override
+	public String toString() {
+		return formatted;
+	}
+
+	@Override
+	public int compareTo(final LongInt o) {
+		return number.compareTo(o.getLong());
 	}
 }

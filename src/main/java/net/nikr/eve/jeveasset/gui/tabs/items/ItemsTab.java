@@ -26,7 +26,6 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -130,7 +129,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -163,43 +162,17 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			ItemTableFormat format = (ItemTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			ItemTableFormat format = (ItemTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return ItemTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return ItemTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumColumns() {
+		protected List<EnumTableColumn<Item>> getColumns() {
 			return columnsAsList(ItemTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Item>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Item>>(tableFormat.getShownColumns());
 		}
 	}

@@ -19,14 +19,18 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -218,42 +222,5 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
-	}
-
-	public class Quantity implements Comparable<Quantity> {
-		private int quantityEntered;
-		private int quantityRemaining;
-
-		public Quantity(final int quantityEntered, final int quantityRemaining) {
-			this.quantityEntered = quantityEntered;
-			this.quantityRemaining = quantityRemaining;
-		}
-
-		@Override
-		public String toString() {
-			return quantityRemaining + "/" + quantityEntered;
-		}
-
-		public int getQuantityEntered() {
-			return quantityEntered;
-		}
-
-		public int getQuantityRemaining() {
-			return quantityRemaining;
-		}
-
-		@Override
-		public int compareTo(final Quantity o) {
-			Integer thatQuantityRemaining = o.getQuantityRemaining();
-			Integer thisQuantityRemaining = quantityRemaining;
-			int result = thatQuantityRemaining.compareTo(thisQuantityRemaining);
-			if (result != 0) {
-				return result;
-			}
-			Integer thatQuantityEntered = o.getQuantityEntered();
-			Integer thisQuantityEntered = quantityEntered;
-			return thatQuantityEntered.compareTo(thisQuantityEntered);
-		}
-
 	}
 }

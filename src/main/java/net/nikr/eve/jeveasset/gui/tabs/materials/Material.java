@@ -22,7 +22,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.ItemType;
@@ -30,6 +29,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 
 
 public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
@@ -208,19 +208,4 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	public int compareTo(final Material o) {
 		return this.getCompare().compareToIgnoreCase(o.getCompare());
 	}
-
-	public static class ISK {
-
-		private String price;
-
-		public ISK(final String price) {
-			this.price = price;
-		}
-
-		@Override
-		public String toString() {
-			return price;
-		}
-	}
-
 }

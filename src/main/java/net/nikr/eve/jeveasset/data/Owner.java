@@ -27,8 +27,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 
 
 public class Owner implements Comparable<Owner> {

@@ -19,9 +19,12 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;

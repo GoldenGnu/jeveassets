@@ -31,12 +31,10 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -45,14 +43,13 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat.LongInt;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -153,7 +150,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -254,57 +251,21 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		@Override
 		protected Object getColumnValue(final Asset item, final String column) {
 			AssetTableFormat format = AssetTableFormat.valueOf(column);
-			if (format == AssetTableFormat.ITEM_ID) {
-				LongInt longInt = (LongInt) format.getColumnValue(item);
-				return longInt.getNumber();
-			} else {
-				return format.getColumnValue(item);
-			}
+			return format.getColumnValue(item);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			AssetTableFormat format = (AssetTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else if (format.getType().getName().equals(Percent.class.getName())) {
-				return true;
-			} else if (format == AssetTableFormat.ITEM_ID) {
-				return true;
-			} else if (format == AssetTableFormat.SECURITY) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			AssetTableFormat format = (AssetTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public Enum[] getColumns() {
-			return AssetTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return AssetTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getEnumColumns() {
+		protected List<EnumTableColumn<Asset>> getColumns() {
 			return columnsAsList(AssetTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Asset>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
 		}
 

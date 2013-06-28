@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 

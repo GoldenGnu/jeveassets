@@ -24,10 +24,11 @@ package net.nikr.eve.jeveasset.gui.tabs.tree;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 
 
 public class TreeAsset extends Asset {
@@ -39,6 +40,7 @@ public class TreeAsset extends Asset {
 
 	private final String SPACE = "    ";
 	private final String SPACE_LEVEL = "+";
+	private final Security EMPTY_SECURITY = new Security("");
 
 	private final String treeName;
 	private final List<TreeAsset> tree;
@@ -254,11 +256,11 @@ public class TreeAsset extends Asset {
 		}
 	}
 
-	public String getSecurity() {
+	public Security getSecurity() {
 		if (!getLocation().isEmpty() && !getLocation().isRegion()) {
-			return getLocation().getSecurity();
+			return getLocation().getSecurityObject();
 		} else {
-			return "";
+			return EMPTY_SECURITY;
 		}
 	}
 

@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
@@ -176,7 +175,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -217,7 +216,6 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	public class ContractsFilterControl extends FilterControl<ContractItem> {
 
-		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ContractItem>> columns = null;
 		private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
 
@@ -227,15 +225,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected Enum<?>[] getColumns() {
-			if (enumColumns == null) {
-				enumColumns = concat(ContractsExtendedTableFormat.values(), ContractsTableFormat.values());
-			}
-			return enumColumns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<ContractItem>> getEnumColumns() {
+		protected List<EnumTableColumn<ContractItem>> getColumns() {
 			if (columns == null) {
 				columns = new ArrayList<EnumTableColumn<ContractItem>>();
 				columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
@@ -245,12 +235,12 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<ContractItem>> getEnumShownColumns() {
+		protected List<EnumTableColumn<ContractItem>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<ContractItem>>(tableFormat.getShownColumns());
 		}
 
 		@Override
-		protected Enum<?> valueOf(String column) {
+		protected EnumTableColumn<?> valueOf(String column) {
 			try {
 				return ContractsTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -265,30 +255,8 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(Enum<?> column) {
-			if (column instanceof ContractsTableFormat) {
-				ContractsTableFormat format = (ContractsTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(Enum<?> column) {
-			if (column instanceof ContractsTableFormat) {
-				ContractsTableFormat format = (ContractsTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
 		protected Object getColumnValue(ContractItem item, String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof ContractsTableFormat) {
 				ContractsTableFormat format = (ContractsTableFormat) column;
 				return format.getColumnValue(item);
@@ -309,13 +277,5 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
 		}
-
-		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum<?>[] c = new Enum<?>[a.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(b, 0, c, a.length, b.length);
-			return c;
-		}
-		
 	}
 }

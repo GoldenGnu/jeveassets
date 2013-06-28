@@ -29,7 +29,6 @@ import java.util.*;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.Journal;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -111,7 +110,7 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -152,43 +151,17 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			JournalTableFormat format = (JournalTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			JournalTableFormat format = (JournalTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return JournalTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return JournalTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Journal>> getEnumColumns() {
+		protected List<EnumTableColumn<Journal>> getColumns() {
 			return columnsAsList(JournalTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Journal>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Journal>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Journal>>(tableFormat.getShownColumns());
 		}
 	}

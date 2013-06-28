@@ -21,17 +21,25 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -41,13 +49,15 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -151,7 +161,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -203,54 +213,21 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		@Override
 		protected Object getColumnValue(final MarketOrder item, final String column) {
 			MarketTableFormat format = MarketTableFormat.valueOf(column);
-			if (format == MarketTableFormat.QUANTITY) {
-				Quantity quantity = (Quantity) format.getColumnValue(item);
-				return quantity.getQuantityRemaining();
-			} else {
-				return format.getColumnValue(item);
-			}
+			return format.getColumnValue(item);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			MarketTableFormat format = (MarketTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else if (Quantity.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			MarketTableFormat format = (MarketTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return MarketTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return MarketTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getEnumColumns() {
+		protected List<EnumTableColumn<MarketOrder>> getColumns() {
 			return columnsAsList(MarketTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getEnumShownColumns() {
+		protected List<EnumTableColumn<MarketOrder>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<MarketOrder>>(tableFormat.getShownColumns());
 		}
 	}

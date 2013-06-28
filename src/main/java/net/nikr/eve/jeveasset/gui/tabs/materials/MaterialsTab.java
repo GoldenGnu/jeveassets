@@ -31,10 +31,23 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
@@ -46,6 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -361,7 +375,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 	class MaterialsFilterControl extends ExportFilterControl<Material> {
 
 		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
 				return MaterialTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -376,7 +390,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Material>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Material>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
 		}
 	}

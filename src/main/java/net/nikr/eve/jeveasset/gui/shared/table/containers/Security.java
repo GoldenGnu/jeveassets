@@ -19,24 +19,44 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.filter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 
-public abstract class ExportFilterControl<E> {
+public class Security extends NumberValue implements Comparable<Security> {
 
-	protected abstract EnumTableColumn<?> valueOf(String column);
-	protected abstract List<EnumTableColumn<E>> getShownColumns();
+	private String security;
+	private Double securityValue;
 
-	public Map<String, List<Filter>> getAllFilters() {
-		return new HashMap<String, List<Filter>>();
+	public Security(String security) {
+		this.security = security;
+		try {
+			securityValue = Double.valueOf(security);
+		} catch (NumberFormatException e) {
+			securityValue = null;
+		}
 	}
-	public List<Filter> getCurrentFilters() {
-		return new ArrayList<Filter>();
+
+	public String getSecurity() {
+		return security;
+	}
+
+	@Override
+	public Double getDouble() {
+		return securityValue; //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public Number getNumber() {
+		return securityValue;
+	}
+
+	@Override
+	public String toString() {
+		return security;
+	}
+
+	@Override
+	public int compareTo(Security o) {
+		return this.getSecurity().compareTo(o.getSecurity());
 	}
 }

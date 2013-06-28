@@ -27,7 +27,6 @@ import java.awt.Component;
 import java.util.Date;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 

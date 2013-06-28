@@ -25,7 +25,7 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.tabs.materials.Material.ISK;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ISK;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
@@ -99,5 +99,9 @@ enum MaterialTableFormat implements EnumTableColumn<Material> {
 	}
 	@Override public Material setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 }

@@ -18,15 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
+
 
 public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
 
@@ -311,7 +316,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	}
 
 	
-	void setDynamicPrice(double price) {
+	public void setDynamicPrice(double price) {
 		this.price = price;
 	}
 

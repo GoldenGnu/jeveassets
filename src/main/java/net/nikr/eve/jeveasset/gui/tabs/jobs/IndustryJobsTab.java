@@ -21,18 +21,25 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -49,6 +56,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
@@ -142,7 +151,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -196,42 +205,17 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public Enum[] getColumns() {
-			return IndustryJobTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getEnumColumns() {
+		protected List<EnumTableColumn<IndustryJob>> getColumns() {
 			return columnsAsList(IndustryJobTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getEnumShownColumns() {
+		protected List<EnumTableColumn<IndustryJob>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<IndustryJob>>(tableFormat.getShownColumns());
 		}
 	}

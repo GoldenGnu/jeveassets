@@ -18,11 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MarketPriceData;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;

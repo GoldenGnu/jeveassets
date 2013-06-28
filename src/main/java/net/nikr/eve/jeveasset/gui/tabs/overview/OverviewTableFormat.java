@@ -25,6 +25,7 @@ package net.nikr.eve.jeveasset.gui.tabs.overview;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -59,14 +60,14 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 			return from.getLocation().getRegion();
 		}
 	},
-	SECURITY(String.class, GlazedLists.comparableComparator()) {
+	SECURITY(Security.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsOverview.get().columnSecurity();
 		}
 		@Override
 		public Object getColumnValue(final Overview from) {
-			return from.getLocation().getSecurity();
+			return from.getLocation().getSecurityObject();
 		}
 	},
 	VOLUME(Double.class, GlazedLists.comparableComparator()) {
@@ -157,4 +158,8 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 	}
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
+	@Override
+	public String toString() {
+		return getColumnName();
+	}
 }

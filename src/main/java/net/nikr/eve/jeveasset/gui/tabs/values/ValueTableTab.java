@@ -31,7 +31,6 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,6 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -55,6 +52,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -135,7 +134,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -228,43 +227,17 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			ValueTableFormat format = (ValueTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			ValueTableFormat format = (ValueTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return ValueTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return ValueTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Value>> getEnumColumns() {
+		protected List<EnumTableColumn<Value>> getColumns() {
 			return columnsAsList(ValueTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Value>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Value>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Value>>(tableFormat.getShownColumns());
 		}
 	}

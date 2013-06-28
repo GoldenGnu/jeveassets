@@ -19,9 +19,10 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.journal;
 
 import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
+import net.nikr.eve.jeveasset.data.Owner;
 
 
 public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEntry> {

@@ -21,7 +21,11 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Dimension;
@@ -32,10 +36,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.data.Module.FlagType;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JCustomFileChooser;
@@ -50,6 +68,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
@@ -58,7 +78,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
+public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
@@ -83,15 +103,15 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Table
-	private EventList<Module> eventList;
-	private FilterList<Module> filterList;
-	private SeparatorList<Module> separatorList;
-	private DefaultEventSelectionModel<Module> selectionModel;
-	private DefaultEventTableModel<Module> tableModel;
-	private EnumTableFormatAdaptor<ModuleTableFormat, Module> tableFormat;
+	private EventList<Loadout> eventList;
+	private FilterList<Loadout> filterList;
+	private SeparatorList<Loadout> separatorList;
+	private DefaultEventSelectionModel<Loadout> selectionModel;
+	private DefaultEventTableModel<Loadout> tableModel;
+	private EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
 
 	//Dialog
-	ExportDialog<Module> exportDialog;
+	ExportDialog<Loadout> exportDialog;
 
 	public static final String NAME = "loadouts"; //Not to be changed!
 
@@ -170,19 +190,19 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		addToolButton(jToolBarRight, jExpand);
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<LoadoutTableFormat, Loadout>(LoadoutTableFormat.class);
 		//Backend
-		eventList = new BasicEventList<Module>();
+		eventList = new BasicEventList<Loadout>();
 		//Filter
-		filterList = new FilterList<Module>(eventList);
+		filterList = new FilterList<Loadout>(eventList);
 		//Separator
-		separatorList = new SeparatorList<Module>(filterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<Loadout>(filterList, new LoadoutSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
-		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
-		jTable.setSeparatorEditor(new ModuleSeparatorTableCell(jTable, separatorList));
+		jTable.setSeparatorRenderer(new LoadoutSeparatorTableCell(jTable, separatorList));
+		jTable.setSeparatorEditor(new LoadoutSeparatorTableCell(jTable, separatorList));
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
@@ -193,14 +213,14 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Module.class);
+		installMenu(program, this, jTable, Loadout.class);
 
-		List<EnumTableColumn<Module>> enumColumns = new ArrayList<EnumTableColumn<Module>>();
-		enumColumns.addAll(Arrays.asList(ModuleExtendedTableFormat.values()));
-		enumColumns.addAll(Arrays.asList(ModuleTableFormat.values()));
-		List<EventList<Module>> eventLists = new ArrayList<EventList<Module>>();
+		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<EnumTableColumn<Loadout>>();
+		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
+		enumColumns.addAll(Arrays.asList(LoadoutTableFormat.values()));
+		List<EventList<Loadout>> eventLists = new ArrayList<EventList<Loadout>>();
 		eventLists.add(filterList);
-		exportDialog = new ExportDialog<Module>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
+		exportDialog = new ExportDialog<Loadout>(program.getMainWindow().getFrame(), NAME, null, new LoadoutsFilterControl(), eventLists, enumColumns);
 
 		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
@@ -244,8 +264,8 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 	}
 
 	@Override
-	public MenuData<Module> getMenuData() {
-		return new MenuData<Module>(selectionModel.getSelected());
+	public MenuData<Loadout> getMenuData() {
+		return new MenuData<Loadout>(selectionModel.getSelected());
 	}
 
 	@Override
@@ -352,20 +372,20 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 	}
 
 	private void updateTable() {
-		List<Module> ship = new ArrayList<Module>();
+		List<Loadout> ship = new ArrayList<Loadout>();
 		for (Asset asset : program.getAssetEventList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
 			}
-			Module moduleShip = new Module(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
-			Module moduleModules = new Module(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0);
-			Module moduleTotal = new Module(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
+			Loadout moduleShip = new Loadout(asset.getItem(), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalShip(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
+			Loadout moduleModules = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalModules(), key, TabsLoadout.get().flagTotalValue(), null, 0, 0);
+			Loadout moduleTotal = new Loadout(new Item(0), asset.getLocation(), asset.getOwner(), TabsLoadout.get().totalAll(), key, TabsLoadout.get().flagTotalValue(), null, asset.getDynamicPrice(), 1);
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
 			for (Asset assetModule : asset.getAssets()) {
-				Module module = new Module(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
+				Loadout module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
 						|| assetModule.getFlag().contains(FlagType.MEDIUM_SLOT.getFlag())
@@ -387,7 +407,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		}
 		Collections.sort(ship);
 		String key = "";
-		for (Module module : ship) {
+		for (Loadout module : ship) {
 			if (!key.equals(module.getKey())) {
 				module.first();
 				key = module.getKey();
@@ -449,7 +469,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 			}
 			if (ACTION_FILTER.equals(e.getActionCommand())) {
 				String selectedShip = (String) jShips.getSelectedItem();
-				filterList.setMatcher(new Module.ModuleMatcher(selectedShip));
+				filterList.setMatcher(new Loadout.ModuleMatcher(selectedShip));
 			}
 			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
@@ -479,16 +499,16 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		}
 	}
 
-	public class LoadoutsFilterControl extends ExportFilterControl<Module> {
+	public class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
 		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
-				return ModuleTableFormat.valueOf(column);
+				return LoadoutTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
 			try {
-				return ModuleExtendedTableFormat.valueOf(column);
+				return LoadoutExtendedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
@@ -496,8 +516,8 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Module> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Module>> getEnumShownColumns() {
-			return new ArrayList<EnumTableColumn<Module>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<Loadout>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<Loadout>>(tableFormat.getShownColumns());
 		}
 	}
 }

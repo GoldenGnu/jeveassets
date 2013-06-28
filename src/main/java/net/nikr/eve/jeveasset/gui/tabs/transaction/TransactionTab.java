@@ -21,17 +21,26 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.Transaction;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -135,7 +144,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 
 	@Override
 	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, tableFormat, selectionModel.getSelected());
+		return filterControl.getMenu(jTable, selectionModel.getSelected());
 	}
 
 	@Override
@@ -190,43 +199,17 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			TransactionTableFormat format = (TransactionTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			TransactionTableFormat format = (TransactionTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return TransactionTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return TransactionTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Transaction>> getEnumColumns() {
+		protected List<EnumTableColumn<Transaction>> getColumns() {
 			return columnsAsList(TransactionTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Transaction>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Transaction>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Transaction>>(tableFormat.getShownColumns());
 		}
 	}

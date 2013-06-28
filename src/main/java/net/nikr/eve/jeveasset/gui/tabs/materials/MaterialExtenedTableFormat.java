@@ -74,4 +74,8 @@ enum MaterialExtenedTableFormat implements EnumTableColumn<Material> {
 	@Override public Material setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
+	@Override
+	public String toString() {
+		return getColumnName();
+	}
 }

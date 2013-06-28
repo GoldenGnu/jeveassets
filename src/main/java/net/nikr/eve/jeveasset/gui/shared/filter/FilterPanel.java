@@ -31,18 +31,26 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 
 class FilterPanel<E> {
@@ -68,9 +76,9 @@ class FilterPanel<E> {
 
 	private FilterGui<E> gui;
 	private FilterControl<E> filterControl;
-	private final List<Enum<?>> allColumns;
-	private final List<Enum<?>> numericColumns;
-	private final List<Enum<?>> dateColumns;
+	private final List<EnumTableColumn<E>> allColumns;
+	private final List<EnumTableColumn<E>> numericColumns;
+	private final List<EnumTableColumn<E>> dateColumns;
 
 	private boolean loading = false;
 
@@ -80,19 +88,19 @@ class FilterPanel<E> {
 
 		ListenerClass listener = new ListenerClass();
 
-		allColumns = new ArrayList<Enum<?>>();
-		allColumns.add(ExtraColumns.ALL);
-		allColumns.addAll(Arrays.asList(filterControl.getColumns()));
+		allColumns = new ArrayList<EnumTableColumn<E>>();
+		allColumns.add(new AllColumn<E>());
+		allColumns.addAll(filterControl.getColumns());
 
-		numericColumns = new ArrayList<Enum<?>>();
-		for (Enum<?> object : filterControl.getColumns()) {
+		numericColumns = new ArrayList<EnumTableColumn<E>>();
+		for (EnumTableColumn<E> object : filterControl.getColumns()) {
 			if (filterControl.isNumeric(object)) {
 				numericColumns.add(object);
 			}
 		}
 
-		dateColumns = new ArrayList<Enum<?>>();
-		for (Enum<?> object : filterControl.getColumns()) {
+		dateColumns = new ArrayList<EnumTableColumn<E>>();
+		for (EnumTableColumn<E> object : filterControl.getColumns()) {
 			if (filterControl.isDate(object)) {
 				dateColumns.add(object);
 			}
@@ -189,11 +197,11 @@ class FilterPanel<E> {
 	FilterMatcher<E> getMatcher() {
 		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum<?> column = (Enum) jColumn.getSelectedItem();
+		EnumTableColumn<?> column = (EnumTableColumn<?>) jColumn.getSelectedItem();
 		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()) {
-			Enum<?> compareColumn = (Enum) jCompareColumn.getSelectedItem();
+			EnumTableColumn<?> compareColumn = (EnumTableColumn<?>) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();
@@ -205,11 +213,11 @@ class FilterPanel<E> {
 
 	Filter getFilter() {
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Enum<?> column = (Enum) jColumn.getSelectedItem();
+		EnumTableColumn<?> column = (EnumTableColumn<?>) jColumn.getSelectedItem();
 		CompareType compare = (CompareType) jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()) {
-			Enum<?> compareColumn = (Enum) jCompareColumn.getSelectedItem();
+			EnumTableColumn<?> compareColumn = (EnumTableColumn<?>) jCompareColumn.getSelectedItem();
 			text = compareColumn.name();
 		} else if (isDateCompare()) {
 			text = getDataString();
@@ -264,11 +272,11 @@ class FilterPanel<E> {
 	private void updateNumeric(final boolean saveIndex) {
 		Object object = jCompare.getSelectedItem();
 		CompareType[] compareTypes;
-		if (filterControl.isNumeric((Enum) jColumn.getSelectedItem())) {
+		if (filterControl.isNumeric((EnumTableColumn<?>) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesNumeric();
-		} else if (filterControl.isDate((Enum) jColumn.getSelectedItem())) {
+		} else if (filterControl.isDate((EnumTableColumn<?>) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesDate();
-		} else if (filterControl.isAll((Enum) jColumn.getSelectedItem())) {
+		} else if (filterControl.isAll((EnumTableColumn<?>) jColumn.getSelectedItem())) {
 			compareTypes = CompareType.valuesAll();
 		} else {
 			compareTypes = CompareType.valuesString();
@@ -306,7 +314,7 @@ class FilterPanel<E> {
 		} else if (isDateCompare()) {
 			compareColumns = dateColumns.toArray();
 		} else {
-			compareColumns = filterControl.getColumns();
+			compareColumns = filterControl.getColumns().toArray();
 		}
 		jCompareColumn.setModel(new DefaultComboBoxModel(compareColumns));
 		for (Object column : compareColumns) {

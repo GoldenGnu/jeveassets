@@ -20,18 +20,20 @@
  */
 
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.matchers.Matcher;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-public class Module implements Comparable<Module>, LocationType, ItemType, PriceType, CopySeparator {
+public class Loadout implements Comparable<Loadout>, LocationType, ItemType, PriceType, CopySeparator {
 
 	public enum FlagType {
 		TOTAL_VALUE("Total Value", 1) {
@@ -114,7 +116,7 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 	private long count;
 	private boolean first = false;
 
-	public Module(final Item item, final Location location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
+	public Loadout(final Item item, final Location location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -232,7 +234,7 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Module other = (Module) obj;
+		final Loadout other = (Loadout) obj;
 		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
 			return false;
 		}
@@ -263,32 +265,11 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 	 * @return
 	 */
 	@Override
-	public int compareTo(final Module o) {
+	public int compareTo(final Loadout o) {
 		return this.getCompare().compareTo(o.getCompare());
 	}
 
-	public static class ModulePriceValue {
-		private Double price;
-		private double value;
-		private long count;
-
-		public ModulePriceValue(final Double price, final double value, final long count) {
-			this.price = price;
-			this.value = value;
-			this.count = count;
-		}
-
-		@Override
-		public String toString() {
-			if (count > 1 && price != null) {
-				return Formater.iskFormat(price) + " (" + Formater.iskFormat(value) + ")";
-			} else {
-				return Formater.iskFormat(value);
-			}
-		}
-	}
-
-	public static class ModuleMatcher implements Matcher<Module> {
+	public static class ModuleMatcher implements Matcher<Loadout> {
 
 		private String key;
 
@@ -297,7 +278,7 @@ public class Module implements Comparable<Module>, LocationType, ItemType, Price
 		}
 
 		@Override
-		public boolean matches(final Module item) {
+		public boolean matches(final Loadout item) {
 			return item.getKey().equals(key);
 		}
 

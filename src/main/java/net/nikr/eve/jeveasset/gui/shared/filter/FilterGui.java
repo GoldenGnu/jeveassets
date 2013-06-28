@@ -29,7 +29,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
@@ -67,7 +77,7 @@ class FilterGui<E> {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
 
-		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, filterControl.getEventLists(), filterControl.getEnumColumns());
+		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, filterControl.getEventLists(), filterControl.getColumns());
 
 		jPanel = new JPanel();
 
