@@ -44360,7 +44360,12 @@
         <material id="40" portionsize="1" quantity="2"/>
     </row>
     <row category="Blueprint" group="Frigate Blueprint" id="33191" marketgroup="false" meta="0" name="Tash-Murkon Magnate Blueprint" pi="false" portion="1" price="2775000" tech="Tech I" volume="0.01"/>
-    <row category="Commodity" group="Construction Components" id="33195" marketgroup="false" meta="0" name="Spatial Attunement Unit" pi="false" portion="1" price="6720" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Construction Components" id="33195" marketgroup="true" meta="0" name="Spatial Attunement Unit" pi="false" portion="1" price="6720" tech="Tech I" volume="1.0">
+        <material id="16673" portionsize="1" quantity="16"/>
+        <material id="16678" portionsize="1" quantity="2"/>
+        <material id="16681" portionsize="1" quantity="2"/>
+        <material id="16682" portionsize="1" quantity="2"/>
+    </row>
     <row category="Blueprint" group="Construction Component Blueprints" id="33196" marketgroup="false" meta="0" name="Spatial Attunement Unit Blueprint" pi="false" portion="1" price="5000000" tech="Tech I" volume="0.01"/>
     <row category="Module" group="Scanning Upgrade Time" id="33197" marketgroup="true" meta="5" name="Scan Acquisition Array II" pi="false" portion="1" price="81458" tech="Tech II" volume="5.0">
         <material id="34" portionsize="1" quantity="6589"/>
