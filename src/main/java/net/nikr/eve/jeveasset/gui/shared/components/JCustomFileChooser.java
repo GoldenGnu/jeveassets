@@ -22,50 +22,41 @@
 package net.nikr.eve.jeveasset.gui.shared.components;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.FileChooserUI;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JCustomFileChooser extends JFileChooser {
 
 	private JFrame jFrame;
+	private String extension;
 
-	//Multiple extensions
-	public JCustomFileChooser(final JFrame jFrame, final String... extension) {
-		this(jFrame, Arrays.asList(extension));
-	}
-
-	//List of extensions
-	public JCustomFileChooser(final JFrame jFrame, final List<String> extensions) {
+	public JCustomFileChooser(final JFrame jFrame, final String extension) {
 		this.jFrame = jFrame;
-		setExtensions(extensions);
+		setExtension(extension);
 		this.setAcceptAllFileFilterUsed(false);
 	}
 
-	public final void setExtensions(final String... extension) {
-		setExtensions(Arrays.asList(extension));
-	}
-
-	public final void setExtensions(List<String> extensions) {
+	public final void setExtension(final String extension) {
+		this.extension = extension.toLowerCase();
 		this.resetChoosableFileFilters();
-		for (String extension : extensions) {
-			this.addChoosableFileFilter(new CustomFileFilter(extension, GuiShared.get().files(extension.toUpperCase())));
-		}
+		this.addChoosableFileFilter(new CustomFileFilter(extension));
 	}
 
 	@Override
 	public void approveSelection() {
 		File selectedFile = this.getSelectedFile();
-		//No extension - Add extension from file filter
-		if (Utils.getExtension(selectedFile) == null) {
-			selectedFile = new File(selectedFile.getAbsolutePath() + "." + getExtension());
+		//No or wrong extension - Add extension from file filter
+		String currentExtension = Utils.getExtension(selectedFile);
+		if (currentExtension == null || !currentExtension.toLowerCase().equals(this.extension)) {
+			if (selectedFile.getAbsolutePath().endsWith(".")) {
+				selectedFile = new File(selectedFile.getAbsolutePath() + getExtension());
+			} else {
+				selectedFile = new File(selectedFile.getAbsolutePath() + "." + getExtension());
+			}
 			this.setSelectedFile(selectedFile);
 		}
 		//Confirm Overwrite file
@@ -85,64 +76,15 @@ public class JCustomFileChooser extends JFileChooser {
 	}
 
 	public String getExtension() {
-		FileFilter fileFilter = getFileFilter();
-		if (fileFilter instanceof CustomFileFilter) {
-			CustomFileFilter filter = (CustomFileFilter) fileFilter;
-			return filter.getExtension();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void setFileFilter(final FileFilter filter) {
-		super.setFileFilter(filter);
-
-		//Add extension from FileFilter
-		FileChooserUI fcui = getUI();
-		if (fcui instanceof BasicFileChooserUI) {
-			BasicFileChooserUI bui = (BasicFileChooserUI) fcui;
-
-			String file = bui.getFileName();
-
-			if (file != null) {
-				int end = file.lastIndexOf(".");
-				if (end > 0) {
-					file = file.substring(0, end);
-				}
-				String extension = getExtension();
-				if (extension != null) {
-					bui.setFileName(file + "." + extension);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void setSelectedFile(final File file) {
-		super.setSelectedFile(file);
-
-		//Set the correct FileFilter
-		if (file != null) {
-			for (FileFilter fileFilter : this.getChoosableFileFilters()) {
-				if (fileFilter instanceof CustomFileFilter) {
-					CustomFileFilter filter = (CustomFileFilter) fileFilter;
-					if (filter.getExtension().equals(Utils.getExtension(file))) {
-						setFileFilter(filter);
-					}
-				}
-			}
-		}
+		return extension;
 	}
 
 	public static class CustomFileFilter extends FileFilter {
 
-		private String filterExtension;
-		private String filterDescription;
+		private String extension;
 
-		public CustomFileFilter(final String filterExtension, final String filterDescription) {
-			this.filterExtension = filterExtension;
-			this.filterDescription = filterDescription;
+		public CustomFileFilter(final String extension) {
+			this.extension = extension;
 		}
 
 		@Override
@@ -150,9 +92,9 @@ public class JCustomFileChooser extends JFileChooser {
 			if (f.isDirectory()) {
 				return true;
 			}
-			String extension = Utils.getExtension(f);
-			if (extension != null) {
-				return extension.equals(filterExtension);
+			String currentExtension = Utils.getExtension(f);
+			if (currentExtension != null && currentExtension.equals(extension)) {
+				return true;
 			} else {
 				return false;
 			}
@@ -161,15 +103,18 @@ public class JCustomFileChooser extends JFileChooser {
 		//The description of this filter
 		@Override
 		public String getDescription() {
-			return filterDescription;
-		}
-
-		public String getExtension() {
-			return filterExtension;
+			return GuiShared.get().files(extension.toUpperCase());
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public int hashCode() {
+			int hash = 7;
+			hash = 23 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
 			if (obj == null) {
 				return false;
 			}
@@ -177,35 +122,23 @@ public class JCustomFileChooser extends JFileChooser {
 				return false;
 			}
 			final CustomFileFilter other = (CustomFileFilter) obj;
-			if ((this.filterExtension == null) ? (other.filterExtension != null) : !this.filterExtension.equals(other.filterExtension)) {
-				return false;
-			}
-			if ((this.filterDescription == null) ? (other.filterDescription != null) : !this.filterDescription.equals(other.filterDescription)) {
+			if ((this.extension == null) ? (other.extension != null) : !this.extension.equals(other.extension)) {
 				return false;
 			}
 			return true;
 		}
-
-		@Override
-		public int hashCode() {
-			int hash = 7;
-			hash = 97 * hash + (this.filterExtension != null ? this.filterExtension.hashCode() : 0);
-			hash = 97 * hash + (this.filterDescription != null ? this.filterDescription.hashCode() : 0);
-			return hash;
-		}
 	}
 
-	public static class Utils {
+	private static class Utils {
 		//public final static String XML = "xml";
-		public static String getExtension(final File f) {
-			String ext = null;
-			String s = f.getName();
-			int i = s.lastIndexOf('.');
-			if (i > 0 &&  i < s.length() - 1) {
-				ext = s.substring(i + 1).toLowerCase();
+		public static String getExtension(final File file) {
+			String extension = null;
+			String filename = file.getName();
+			int i = filename.lastIndexOf('.');
+			if (i > 0 &&  i < filename.length() - 1) {
+				extension = filename.substring(i + 1).toLowerCase();
 			}
-			return ext;
+			return extension;
 		}
-
 	}
 }

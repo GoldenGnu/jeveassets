@@ -59,8 +59,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.ExportSettings;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
+import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -85,20 +85,14 @@ import org.supercsv.prefs.CsvPreference;
 
 public class ExportDialog<E> extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_DEFAULT = "ACTION_DEFAULT";
-	private static final String ACTION_FILTER_CHANGED = "ACTION_FILTER_CHANGED";
-	private static final String ACTION_VIEW_CHANGED = "ACTION_VIEW_CHANGED";
-	private static final String ACTION_FORMAT_CHANGED = "ACTION_FORMAT_CHANGED";
-
-	private static final String CARD_CSV = "CARD_CSV";
-	private static final String CARD_SQL = "CARD_SQL";
-	private static final String CARD_HTML = "CARD_HTML";
-
-	private static final String EXPORT_CSV = "csv";
-	private static final String EXPORT_HTML = "html";
-	private static final String EXPORT_SQL = "sql";
+	private enum ExportAction {
+		OK,
+		CANCEL,
+		DEFAULT,
+		FILTER_CHANGED,
+		VIEW_CHANGED,
+		FORMAT_CHANGED
+	}
 
 	//Filter
 	private JRadioButton jNoFilter;
@@ -156,18 +150,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		layout.setAutoCreateContainerGaps(false);
 
 		try {
-			jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
+			jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
 		} catch (RuntimeException e) {
 			// Workaround for JRE bug 4711700. A NullPointer is thrown
 			// sometimes on the first construction under XP look and feel,
 			// but construction succeeds on successive attempts.
 			try {
-				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
+				jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
 			} catch (RuntimeException npe) {
 				// ok, now we use the metal file chooser, takes a long time to load
 				// but the user can still use the program
 				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jFileChooser = new JCustomFileChooser(jFrame, EXPORT_CSV);
+				jFileChooser = new JCustomFileChooser(jFrame, Settings.get().getExportSettings().getExportFormat().getExtension());
 			}
 		}
 	//Format
@@ -175,15 +169,15 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFormatLabel.setFont(new Font(jFormatLabel.getFont().getName(), Font.BOLD, jFormatLabel.getFont().getSize()));
 
 		jCsv = new JRadioButton(DialoguesExport.get().csv());
-		jCsv.setActionCommand(ACTION_FORMAT_CHANGED);
+		jCsv.setActionCommand(ExportAction.FORMAT_CHANGED.name());
 		jCsv.addActionListener(listener);
 
 		jHtml = new JRadioButton(DialoguesExport.get().html());
-		jHtml.setActionCommand(ACTION_FORMAT_CHANGED);
+		jHtml.setActionCommand(ExportAction.FORMAT_CHANGED.name());
 		jHtml.addActionListener(listener);
 
 		jSql = new JRadioButton(DialoguesExport.get().sql());
-		jSql.setActionCommand(ACTION_FORMAT_CHANGED);
+		jSql.setActionCommand(ExportAction.FORMAT_CHANGED.name());
 		jSql.addActionListener(listener);
 
 		ButtonGroup jFormatButtonGroup = new ButtonGroup();
@@ -195,16 +189,16 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFiltersLabel.setFont(new Font(jFiltersLabel.getFont().getName(), Font.BOLD, jFiltersLabel.getFont().getSize()));
 
 		jNoFilter = new JRadioButton(DialoguesExport.get().noFilter());
-		jNoFilter.setActionCommand(ACTION_FILTER_CHANGED);
+		jNoFilter.setActionCommand(ExportAction.FILTER_CHANGED.name());
 		jNoFilter.addActionListener(listener);
 		jNoFilter.setSelected(true);
 
 		jCurrentFilter = new JRadioButton(DialoguesExport.get().currentFilter());
-		jCurrentFilter.setActionCommand(ACTION_FILTER_CHANGED);
+		jCurrentFilter.setActionCommand(ExportAction.FILTER_CHANGED.name());
 		jCurrentFilter.addActionListener(listener);
 
 		jSavedFilter = new JRadioButton(DialoguesExport.get().savedFilter());
-		jSavedFilter.setActionCommand(ACTION_FILTER_CHANGED);
+		jSavedFilter.setActionCommand(ExportAction.FILTER_CHANGED.name());
 		jSavedFilter.addActionListener(listener);
 
 		ButtonGroup jFilterButtonGroup = new ButtonGroup();
@@ -215,18 +209,18 @@ public class ExportDialog<E> extends JDialogCentered {
 		jFilters = new JComboBox();
 	//Columns
 		jViewCurrent = new JRadioButton(DialoguesExport.get().viewCurrent());
-		jViewCurrent.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewCurrent.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewCurrent.addActionListener(listener);
 		jViewCurrent.setSelected(true);
 
 		jViewSaved = new JRadioButton(DialoguesExport.get().viewSaved());
-		jViewSaved.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewSaved.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSaved.addActionListener(listener);
 
 		jViews = new JComboBox();
 
 		jViewSelect = new JRadioButton(DialoguesExport.get().viewSelect());
-		jViewSelect.setActionCommand(ACTION_VIEW_CHANGED);
+		jViewSelect.setActionCommand(ExportAction.VIEW_CHANGED.name());
 		jViewSelect.addActionListener(listener);
 		
 		JLabel jColumnLabel = new JLabel(DialoguesExport.get().columns());
@@ -255,7 +249,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jOptionsLabel.setFont(new Font(jOptionsLabel.getFont().getName(), Font.BOLD, jOptionsLabel.getFont().getSize()));
 	//Csv
 		JOptionPanel jCsvPanel = new JOptionPanel();
-		jCardPanel.add(jCsvPanel, CARD_CSV);
+		jCardPanel.add(jCsvPanel, ExportFormat.CSV.name());
 
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesExport.get().fieldTerminated());
 		jFieldDelimiter = new JComboBox(FieldDelimiter.values());
@@ -267,13 +261,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		jCsvPanel.add(jLineDelimiterLabel);
 		jCsvPanel.add(jLineDelimiter);
 
+		//FIXME - - > ExportDialog: DecimalSeparator also used by HTML export...
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesExport.get().decimalSeparator());
 		jDecimalSeparator = new JComboBox(DecimalSeparator.values());
 		jCsvPanel.add(jDecimalSeparatorLabel);
 		jCsvPanel.add(jDecimalSeparator);
 	//Sql
 		JOptionPanel jSqlPanel = new JOptionPanel();
-		jCardPanel.add(jSqlPanel, CARD_SQL);
+		jCardPanel.add(jSqlPanel, ExportFormat.SQL.name());
 
 		JLabel jTableNameLabel = new JLabel(DialoguesExport.get().tableName());
 		jTableName = new JDefaultField(Program.PROGRAM_NAME.toLowerCase() + "_" + toolName.toLowerCase());
@@ -291,7 +286,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jSqlPanel.add(jExtendedInserts);
 	//Html
 		JOptionPanel jHtmlPanel = new JOptionPanel();
-		jCardPanel.add(jHtmlPanel, CARD_HTML);
+		jCardPanel.add(jHtmlPanel, ExportFormat.HTML.name());
 
 		jHtmlStyle = new JCheckBox(DialoguesExport.get().htmlStyled());
 		jHtmlPanel.add(jHtmlStyle);
@@ -312,15 +307,15 @@ public class ExportDialog<E> extends JDialogCentered {
 		JSeparator jButtonSeparator = new JSeparator();
 
 		jOK = new JButton(DialoguesExport.get().ok());
-		jOK.setActionCommand(ACTION_OK);
+		jOK.setActionCommand(ExportAction.OK.name());
 		jOK.addActionListener(listener);
 
 		JButton jDefault = new JButton(DialoguesExport.get().defaultSettings());
-		jDefault.setActionCommand(ACTION_DEFAULT);
+		jDefault.setActionCommand(ExportAction.DEFAULT.name());
 		jDefault.addActionListener(listener);
 
 		JButton jCancel = new JButton(DialoguesExport.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(ExportAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
@@ -475,35 +470,14 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private boolean browse() {
-		String filename = Settings.get().getExportSettings().getFilename(toolName);
-		int extensionEnd = filename.lastIndexOf(".");
-		if (extensionEnd >= 0) {
-			filename = filename.substring(0, extensionEnd + 1);
-		}
-		if (jCsv.isSelected()) {
-			jFileChooser.setExtensions(EXPORT_CSV);
-			filename = filename + EXPORT_CSV;
-		} else if (jHtml.isSelected()) {
-			jFileChooser.setExtensions(EXPORT_HTML);
-			filename = filename + EXPORT_HTML;
-		} else if (jSql.isSelected()) {
-			jFileChooser.setExtensions(EXPORT_SQL);
-			filename = filename + EXPORT_SQL;
-		}
-		File file = new File(filename);
-		String pathname = Settings.get().getExportSettings().getFilename(toolName);
-		int end = pathname.lastIndexOf(File.separator);
-		if (end > 0) {
-			pathname = pathname.substring(0, end + 1);
-		}
-		File pathFile = new File(pathname);
-
-		if (pathFile.exists()) {
-			jFileChooser.setCurrentDirectory(pathFile);
+		File file = new File(Settings.get().getExportSettings().getFilename(toolName));
+		File path = new File(Settings.get().getExportSettings().getPath(toolName));
+		if (path.exists()) {
+			jFileChooser.setCurrentDirectory(path);
 			jFileChooser.setSelectedFile(file);
 		} else {
-			jFileChooser.setCurrentDirectory(new File(ExportSettings.getDefaultPath()));
-			jFileChooser.setSelectedFile(new File(ExportSettings.getDefaultFilename(toolName)));
+			jFileChooser.setCurrentDirectory(new File(Settings.get().getExportSettings().getDefaultPath()));
+			jFileChooser.setSelectedFile(new File(Settings.get().getExportSettings().getDefaultFilename(toolName)));
 		}
 		int bFound = jFileChooser.showDialog(getDialog(), DialoguesExport.get().ok());
 		if (bFound  == JFileChooser.APPROVE_OPTION) {
@@ -567,16 +541,14 @@ public class ExportDialog<E> extends JDialogCentered {
 		jHtmlStyle.setSelected(Settings.get().getExportSettings().isHtmlStyled());
 		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
 		//Filename
-		String filename = Settings.get().getExportSettings().getFilename(toolName);
-		if (filename.endsWith(EXPORT_HTML)) {
+		ExportFormat exportFormat = Settings.get().getExportSettings().getExportFormat();
+		cardLayout.show(jCardPanel, exportFormat.name());
+		if (exportFormat == ExportFormat.HTML) {
 			jHtml.setSelected(true);
-			cardLayout.show(jCardPanel, CARD_HTML);
-		} else if (filename.endsWith(EXPORT_SQL)) {
+		} else if (exportFormat == ExportFormat.SQL) {
 			jSql.setSelected(true);
-			cardLayout.show(jCardPanel, CARD_SQL);
-		} else { //EXPORT_CSV and Default
+		} else { //CSV and Default
 			jCsv.setSelected(true);
-			cardLayout.show(jCardPanel, CARD_CSV);
 		}
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
@@ -612,8 +584,9 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().setHtmlStyled(true);
 		Settings.get().getExportSettings().setHtmlRepeatHeader(0);
 		//Shared
-		Settings.get().getExportSettings().putFilename(toolName, ExportSettings.getDefaultFilename(toolName));
+		Settings.get().getExportSettings().putFilename(toolName, Settings.get().getExportSettings().getDefaultFilename(toolName));
 		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
+		Settings.get().getExportSettings().setExportFormat(ExportFormat.CSV);
 		loadSettings();
 	}
 
@@ -758,9 +731,8 @@ public class ExportDialog<E> extends JDialogCentered {
 	//Save settings
 		saveSettings();
 	//Save file
-		String extension = jFileChooser.getExtension();
 		boolean saved;
-		if (extension.equals(EXPORT_CSV)) {
+		if (jCsv.isSelected()) {
 			//CSV
 			//Bad selection
 			if (Settings.get().getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
@@ -795,7 +767,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					headerStrings.toArray(new String[headerStrings.size()]),
 					headerKeys.toArray(new String[headerKeys.size()]),
 					new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
-		} else if (extension.equals(EXPORT_HTML)) {
+		} else if (jHtml.isSelected()) {
 			//HTML
 			//Create data
 			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<Map<EnumTableColumn<?>, String>>();
@@ -813,7 +785,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					Settings.get().getExportSettings().isHtmlStyled(),
 					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
-		} else if (extension.equals(EXPORT_SQL)) {
+		} else if (jSql.isSelected()) {
 			//SQL
 			//Create data
 			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<Map<EnumTableColumn<?>, Object>>();
@@ -855,23 +827,27 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (ExportAction.OK.name().equals(e.getActionCommand())) {
 				save();
-			} else if (ACTION_DEFAULT.equals(e.getActionCommand())) {
+			} else if (ExportAction.DEFAULT.name().equals(e.getActionCommand())) {
 				resetSettings();
-			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			} else if (ExportAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
-			} else if (ACTION_FORMAT_CHANGED.equals(e.getActionCommand())) {
+			} else if (ExportAction.FORMAT_CHANGED.name().equals(e.getActionCommand())) {
+				ExportFormat exportFormat = ExportFormat.CSV;
 				if (jCsv.isSelected()) {
-					cardLayout.show(jCardPanel, CARD_CSV);
+					exportFormat = ExportFormat.CSV;
 				} else if (jHtml.isSelected()) {
-					cardLayout.show(jCardPanel, CARD_HTML);
+					exportFormat = ExportFormat.HTML;
 				} else if (jSql.isSelected()) {
-					cardLayout.show(jCardPanel, CARD_SQL);
+					exportFormat = ExportFormat.SQL;
 				}
-			} else if (ACTION_FILTER_CHANGED.equals(e.getActionCommand())) {
+				Settings.get().getExportSettings().setExportFormat(exportFormat);
+				cardLayout.show(jCardPanel, exportFormat.name());
+				jFileChooser.setExtension(exportFormat.getExtension());
+			} else if (ExportAction.FILTER_CHANGED.name().equals(e.getActionCommand())) {
 				jFilters.setEnabled(jSavedFilter.isSelected());
-			} else if (ACTION_VIEW_CHANGED.equals(e.getActionCommand())) {
+			} else if (ExportAction.VIEW_CHANGED.name().equals(e.getActionCommand())) {
 				jViews.setEnabled(jViewSaved.isSelected());
 				jColumnSelection.setEnabled(jViewSelect.isSelected());
 			}

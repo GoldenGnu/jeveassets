@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
+import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Item;
@@ -836,6 +837,10 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "htmlrepeatheader")) {
 			int htmlRepeatHeader = AttributeGetters.getInt(element, "htmlrepeatheader");
 			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
+		}
+		if (AttributeGetters.haveAttribute(element, "exportformat")) {
+			ExportFormat exportFormat = ExportFormat.valueOf(AttributeGetters.getString(element, "exportformat"));
+			settings.getExportSettings().setExportFormat(exportFormat);
 		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {

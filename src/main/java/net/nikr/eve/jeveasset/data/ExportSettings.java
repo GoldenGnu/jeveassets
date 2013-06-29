@@ -20,6 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,20 +110,41 @@ public class ExportSettings {
 		abstract String getI18N();
 	}
 
+	public enum ExportFormat {
+		CSV("csv"),
+		SQL("sql"),
+		HTML("html");
+		
+		private String extension;
+
+		private ExportFormat(String extension) {
+			this.extension = extension;
+		}
+
+		public String getExtension() {
+			return extension;
+		}
+	}
+
 	private static final String PATH = Settings.getUserDirectory();
-	//CSV (shared by all tools)
+//CSV - shared by all tools
 	private FieldDelimiter fieldDelimiter;
 	private LineDelimiter lineDelimiter;
 	private DecimalSeparator decimalSeparator;
-	//SQL
-	private final Map<String, String> tableNames = new HashMap<String, String>(); // Per tool option
-	private boolean createTable; //shared by all tools
-	private boolean dropTable; //shared by all tools
-	private boolean extendedInserts; //shared by all tools
-	//HTML (shared by all tools)
+//SQL
+	//Shared
+	private boolean createTable; 
+	private boolean dropTable;
+	private boolean extendedInserts;
+	//Per tool option
+	private final Map<String, String> tableNames = new HashMap<String, String>();
+//HTML  - shared
 	private boolean htmlStyled;
 	private int htmlRepeatHeader;
-	//Common - Per tool options
+//Common
+	//Shared
+	private ExportFormat exportFormat; 
+	//Per tool options
 	private final Map<String, List<String>> tableExportColumns = new HashMap<String, List<String>>();
 	private final Map<String, String> filenames = new HashMap<String, String>();
 
@@ -130,6 +152,7 @@ public class ExportSettings {
 		fieldDelimiter = FieldDelimiter.COMMA;
 		lineDelimiter = LineDelimiter.DOS;
 		decimalSeparator = DecimalSeparator.DOT;
+		exportFormat = ExportFormat.CSV;
 		createTable = true;
 		dropTable = true;
 		extendedInserts = true;
@@ -200,6 +223,14 @@ public class ExportSettings {
 		this.htmlRepeatHeader = htmlRepeatHeader;
 	}
 
+	public ExportFormat getExportFormat() {
+		return exportFormat;
+	}
+
+	public void setExportFormat(ExportFormat exportFormat) {
+		this.exportFormat = exportFormat;
+	}
+
 	public Map<String, String> getTableNames() {
 		return tableNames;
 	}
@@ -221,6 +252,16 @@ public class ExportSettings {
 			return filenames.get(tool);
 		} else {
 			return getDefaultFilename(tool);
+		}
+	}
+
+	public String getPath(final String tool) {
+		String pathname = getFilename(tool);
+		int end = pathname.lastIndexOf(File.separator);
+		if (end >= 0) {
+			return pathname.substring(0, end + 1);
+		} else {
+			return getDefaultPath();
 		}
 	}
 
@@ -246,11 +287,11 @@ public class ExportSettings {
 		}
 	}
 
-	public static String getDefaultPath() {
+	public String getDefaultPath() {
 		return PATH;
 	}
 
-	public static String getDefaultFilename(final String tool) {
-		return Settings.getUserDirectory() + tool + "_export.csv";
+	public String getDefaultFilename(final String tool) {
+		return PATH + tool + "_export." + exportFormat.getExtension();
 	}
 }

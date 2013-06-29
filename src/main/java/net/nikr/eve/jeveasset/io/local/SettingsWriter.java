@@ -396,6 +396,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			node.appendChild(nameNode);
 		}
 		//Shared
+		node.setAttributeNS(null, "exportformat", exportSettings.getExportFormat().name());
 		for (Map.Entry<String, String> entry : exportSettings.getFilenames().entrySet()) {
 			Element nameNode = xmldoc.createElementNS(null, "filenames");
 			nameNode.setAttributeNS(null, "tool", entry.getKey());
