@@ -256,6 +256,7 @@ public class Program implements ActionListener {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
+		programUpdateChecker.showDevBuildMessage();
 		programUpdateChecker.showMessages();
 		if (profileManager.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");

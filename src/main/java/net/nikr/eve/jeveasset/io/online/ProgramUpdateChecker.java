@@ -74,6 +74,16 @@ public class ProgramUpdateChecker {
 		return programDataVersion;
 	}
 
+	public void showDevBuildMessage() {
+		Version version = getProgram();
+		if (version.isDevBuild() || version.isBeta()) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+					GuiShared.get().devThankMsg(Program.PROGRAM_NAME, version.getType().toLowerCase()),
+					version.getType(),
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
 	public void showMessages() {
 		showMessages(program.getMainWindow().getFrame(), false);
 	}
@@ -263,6 +273,18 @@ public class ProgramUpdateChecker {
 
 		public String getVersion() {
 			return version;
+		}
+
+		public boolean isDevBuild() {
+			return (arrVersion[VERSION_TYPE] == DEV_BUILD);
+		}
+
+		public boolean isBeta() {
+			return (arrVersion[VERSION_TYPE] == BETA);
+		}
+
+		public boolean isReleaseCandidate() {
+			return (arrVersion[VERSION_TYPE] == RELEASE_CANDIDATE);
 		}
 
 		public boolean isNewerThen(final Version updateInfo) {

@@ -114,6 +114,7 @@ public abstract class GuiShared extends Bundle {
 	//Update
 	public abstract String beta();
 	public abstract String devBuild();
+	public abstract String devThankMsg(String programName, String versionType);
 	public abstract String newBuildMsg(String buildType, String programName);
 	public abstract String newBuildTitle();
 	public abstract String newVersionTitle();
