@@ -177,6 +177,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		return null;
 	}
 
+	//FIXME - - > Account Table Format: Move inner classes to containers
 	public class YesNo implements Comparable<YesNo> {
 
 		private boolean b;

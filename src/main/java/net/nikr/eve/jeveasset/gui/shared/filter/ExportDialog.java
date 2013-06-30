@@ -817,13 +817,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		setVisible(false);
 	}
 
-	@Override
-	public void windowClosing(final WindowEvent e) {
-		super.windowClosing(e);
-		saveSettings();
-	}
-
-	public class ListenerClass implements ActionListener {
+	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {

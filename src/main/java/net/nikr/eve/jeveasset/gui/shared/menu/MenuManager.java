@@ -100,7 +100,7 @@ public class MenuManager<Q> {
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 		createCashe(program, mainMenu);
 		createCashe(program, tablePopupMenu);
-		TableMenuListener listener  = new TableMenuListener();
+		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
@@ -284,7 +284,7 @@ public class MenuManager<Q> {
 		}
 	}
 
-	private class TableMenuListener implements MouseListener, ListSelectionListener {
+	private class ListenerClass implements MouseListener, ListSelectionListener {
 
 		int[] selectedColumns;
 		int[] selectedRows;

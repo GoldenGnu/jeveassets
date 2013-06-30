@@ -41,7 +41,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.profile.ProfileDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.*;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
-import net.nikr.eve.jeveasset.gui.frame.MainMenu;
+import net.nikr.eve.jeveasset.gui.frame.MainMenu.MainMenuAction;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -80,6 +80,9 @@ import org.slf4j.LoggerFactory;
 public class Program implements ActionListener {
 	private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
+	private enum ProgramAction {
+		TIMER
+	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
 	public static final String PROGRAM_VERSION = "2.7.0 DEV BUILD 1";
 	public static final String PROGRAM_NAME = "jEveAssets";
@@ -88,8 +91,6 @@ public class Program implements ActionListener {
 
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
-
-	private static final String ACTION_TIMER = "ACTION_TIMER";
 
 	private static boolean debug = false;
 	private static boolean forceUpdate = false;
@@ -158,7 +159,7 @@ public class Program implements ActionListener {
 		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
-		timer.setActionCommand(ACTION_TIMER);
+		timer.setActionCommand(ProgramAction.TIMER.name());
 	//Updatable
 		updatable = new Updatable(this);
 	//GUI
@@ -486,93 +487,93 @@ public class Program implements ActionListener {
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 	//Tools
-		if (MainMenu.ACTION_OPEN_VALUES.equals(e.getActionCommand())) {
+		if (MainMenuAction.VALUES.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueRetroTab);
 		}
-		if (MainMenu.ACTION_OPEN_VALUE_TABLE.equals(e.getActionCommand())) {
+		if (MainMenuAction.VALUE_TABLE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(valueTableTab);
 		}
-		if (MainMenu.ACTION_OPEN_MATERIALS.equals(e.getActionCommand())) {
+		if (MainMenuAction.MATERIALS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(materialsTab);
 		}
-		if (MainMenu.ACTION_OPEN_LOADOUTS.equals(e.getActionCommand())) {
+		if (MainMenuAction.LOADOUTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(loadoutsTab);
 		}
-		if (MainMenu.ACTION_OPEN_MARKET_ORDERS.equals(e.getActionCommand())) {
+		if (MainMenuAction.MARKET_ORDERS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(marketOrdersTab);
 		}
-		if (MainMenu.ACTION_OPEN_JOURNAL.equals(e.getActionCommand())) {
+		if (MainMenuAction.JOURNAL.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(journalTab);
 		}
-		if (MainMenu.ACTION_OPEN_TRANSACTION.equals(e.getActionCommand())) {
+		if (MainMenuAction.TRANSACTION.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(transactionsTab);
 		}
-		if (MainMenu.ACTION_OPEN_INDUSTRY_JOBS.equals(e.getActionCommand())) {
+		if (MainMenuAction.INDUSTRY_JOBS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryJobsTab);
 		}
-		if (MainMenu.ACTION_OPEN_INDUSTRY_PLOT.equals(e.getActionCommand())) {
+		if (MainMenuAction.INDUSTRY_PLOT.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(industryPlotTab, true, true);
 		}
-		if (MainMenu.ACTION_OPEN_OVERVIEW.equals(e.getActionCommand())) {
+		if (MainMenuAction.OVERVIEW.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(overviewTab);
 			overviewTab.resetViews();
 		}
-		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
+		if (MainMenuAction.ROUTING.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(routingTab);
 		}
-		if (MainMenu.ACTION_OPEN_STOCKPILE.equals(e.getActionCommand())) {
+		if (MainMenuAction.STOCKPILE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(stockpileTab);
 		}
-		if (MainMenu.ACTION_OPEN_ITEMS.equals(e.getActionCommand())) {
+		if (MainMenuAction.ITEMS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(itemsTab);
 		}
-		if (MainMenu.ACTION_OPEN_TRACKER.equals(e.getActionCommand())) {
+		if (MainMenuAction.TRACKER.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(trackerTab);
 		}
-		if (MainMenu.ACTION_OPEN_REPROCESSED.equals(e.getActionCommand())) {
+		if (MainMenuAction.REPROCESSED.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(reprocessedTab);
 		}
-		if (MainMenu.ACTION_OPEN_CONTRACTS.equals(e.getActionCommand())) {
+		if (MainMenuAction.CONTRACTS.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(contractsTab);
 		}
-		if (MainMenu.ACTION_OPEN_TREE.equals(e.getActionCommand())) {
+		if (MainMenuAction.TREE.name().equals(e.getActionCommand())) {
 			mainWindow.addTab(treeTab);
 		}
 	//Settings
-		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
+		if (MainMenuAction.ACCOUNT_MANAGER.name().equals(e.getActionCommand())) {
 			accountManagerDialog.setVisible(true);
 		}
-		if (MainMenu.ACTION_OPEN_PROFILES.equals(e.getActionCommand())) {
+		if (MainMenuAction.PROFILES.name().equals(e.getActionCommand())) {
 			profileDialog.setVisible(true);
 		}
-		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
+		if (MainMenuAction.OPTIONS.name().equals(e.getActionCommand())) {
 			showSettings();
 		}
 	//Others
-		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {
+		if (MainMenuAction.ABOUT.name().equals(e.getActionCommand())) {
 			showAbout();
 		}
-		if (MainMenu.ACTION_OPEN_UPDATE.equals(e.getActionCommand())) {
+		if (MainMenuAction.UPDATE.name().equals(e.getActionCommand())) {
 			updateDialog.setVisible(true);
 		}
 	//External Files
-		if (MainMenu.ACTION_OPEN_README.equals(e.getActionCommand())) {
+		if (MainMenuAction.README.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathReadme(), this);
 		}
-		if (MainMenu.ACTION_OPEN_LICENSE.equals(e.getActionCommand())) {
+		if (MainMenuAction.LICENSE.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathLicense(), this);
 		}
-		if (MainMenu.ACTION_OPEN_CREDITS.equals(e.getActionCommand())) {
+		if (MainMenuAction.CREDITS.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathCredits(), this);
 		}
-		if (MainMenu.ACTION_OPEN_CHANGELOG.equals(e.getActionCommand())) {
+		if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathChangeLog(), this);
 		}
-		if (MainMenu.ACTION_EXIT_PROGRAM.equals(e.getActionCommand())) {
+		if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) {
 			exit();
 		}
 	//Ticker
-		if (ACTION_TIMER.equals(e.getActionCommand())) {
+		if (ProgramAction.TIMER.name().equals(e.getActionCommand())) {
 			timerTicked();
 		}
 	}

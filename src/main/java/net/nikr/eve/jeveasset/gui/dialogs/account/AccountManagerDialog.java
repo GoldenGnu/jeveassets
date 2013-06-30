@@ -37,6 +37,7 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.ExpirerDate;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -49,17 +50,18 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRe
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
-public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
+public class AccountManagerDialog extends JDialogCentered {
 
-	// TODO action enum - more string enum pattern, to be converted to an enum
-	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_CLOSE = "ACTION_CLOSE";
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
-	private static final String ACTION_ASSETS_CHECK_ALL = "ACTION_ASSETS_CHECK_ALL";
-	private static final String ACTION_ASSETS_UNCHECK_ALL = "ACTION_ASSETS_UNCHECK_ALL";
-	private static final String ACTION_ASSETS_CHECK_SELECTED = "ACTION_ASSETS_CHECK_SELECTED";
-	private static final String ACTION_ASSETS_UNCHECK_SELECTED = "ACTION_ASSETS_UNCHECK_SELECTED";
+	private enum AccountManagerAction {
+		ADD,
+		CLOSE,
+		COLLAPSE,
+		EXPAND,
+		CHECK_ALL,
+		UNCHECK_ALL,
+		CHECK_SELECTED,
+		UNCHECK_SELECTED
+	}
 
 	//GUI
 	private AccountImportDialog accountImportDialog;
@@ -81,6 +83,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		super(program, DialoguesAccount.get().dialogueNameAccountManagement(), Images.DIALOG_ACCOUNTS.getImage());
 
 		accountImportDialog = new AccountImportDialog(this, program);
+		ListenerClass listener = new ListenerClass();
 
 		eventList = new BasicEventList<Owner>();
 
@@ -89,8 +92,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
-		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(this, jTable, separatorList));
-		jTable.setSeparatorEditor(new AccountSeparatorTableCell(this, jTable, separatorList));
+		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(listener, jTable, separatorList));
+		jTable.setSeparatorEditor(new AccountSeparatorTableCell(listener, jTable, separatorList));
 		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
@@ -102,47 +105,47 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		//Add Button
 		jAdd = new JButton(DialoguesAccount.get().add());
-		jAdd.setActionCommand(ACTION_ADD);
-		jAdd.addActionListener(this);
+		jAdd.setActionCommand(AccountManagerAction.ADD.name());
+		jAdd.addActionListener(listener);
 
 		jCollapse = new JButton(DialoguesAccount.get().collapse());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
-		jCollapse.addActionListener(this);
+		jCollapse.setActionCommand(AccountManagerAction.COLLAPSE.name());
+		jCollapse.addActionListener(listener);
 
 		jExpand = new JButton(DialoguesAccount.get().expand());
-		jExpand.setActionCommand(ACTION_EXPAND);
-		jExpand.addActionListener(this);
+		jExpand.setActionCommand(AccountManagerAction.EXPAND.name());
+		jExpand.addActionListener(listener);
 
 		jAssets = new JDropDownButton(DialoguesAccount.get().showAssets());
 		//jAssets.setIcon( ImageGetter.getIcon( "database_edit.png"));
 		JMenuItem menuItem;
 
 		menuItem = new JMenuItem(DialoguesAccount.get().checkAll());
-		menuItem.setActionCommand(ACTION_ASSETS_CHECK_ALL);
-		menuItem.addActionListener(this);
+		menuItem.setActionCommand(AccountManagerAction.CHECK_ALL.name());
+		menuItem.addActionListener(listener);
 		jAssets.add(menuItem);
 
 		menuItem = new JMenuItem(DialoguesAccount.get().uncheckAll());
-		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_ALL);
-		menuItem.addActionListener(this);
+		menuItem.setActionCommand(AccountManagerAction.UNCHECK_ALL.name());
+		menuItem.addActionListener(listener);
 		jAssets.add(menuItem);
 
 		jAssets.addSeparator();
 
 		menuItem = new JMenuItem(DialoguesAccount.get().checkSelected());
-		menuItem.setActionCommand(ACTION_ASSETS_CHECK_SELECTED);
-		menuItem.addActionListener(this);
+		menuItem.setActionCommand(AccountManagerAction.CHECK_SELECTED.name());
+		menuItem.addActionListener(listener);
 		jAssets.add(menuItem);
 
 		menuItem = new JMenuItem(DialoguesAccount.get().uncheckSelected());
-		menuItem.setActionCommand(ACTION_ASSETS_UNCHECK_SELECTED);
-		menuItem.addActionListener(this);
+		menuItem.setActionCommand(AccountManagerAction.UNCHECK_SELECTED.name());
+		menuItem.addActionListener(listener);
 		jAssets.add(menuItem);
 
 		//Done Button
 		jClose = new JButton(DialoguesAccount.get().close());
-		jClose.setActionCommand(ACTION_CLOSE);
-		jClose.addActionListener(this);
+		jClose.setActionCommand(AccountManagerAction.CLOSE.name());
+		jClose.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -275,64 +278,65 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		}
 		super.setVisible(b);
 	}
-
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ADD.equals(e.getActionCommand())) {
-			accountImportDialog.show();
-		}
-		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false);
-		}
-		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true);
-		}
-		if (ACTION_CLOSE.equals(e.getActionCommand())) {
-			save();
-		}
-		if (AccountSeparatorTableCell.ACTION_EDIT.equals(e.getActionCommand())) {
-			int index = jTable.getSelectedRow();
-			Object o = tableModel.getElementAt(index);
-			if (o instanceof SeparatorList.Separator<?>) {
-				SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
-				Owner owner = (Owner) separator.first();
-				Account account = owner.getParentAccount();
-				accountImportDialog.show(account);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (AccountManagerAction.ADD.name().equals(e.getActionCommand())) {
+				accountImportDialog.show();
 			}
-		}
-		if (AccountSeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
-			int index = jTable.getSelectedRow();
-			Object o = tableModel.getElementAt(index);
-			if (o instanceof SeparatorList.Separator<?>) {
-				int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame()
-						, DialoguesAccount.get().deleteAccountQuestion()
-						, DialoguesAccount.get().deleteAccount()
-						, JOptionPane.YES_NO_OPTION
-						, JOptionPane.PLAIN_MESSAGE);
-				if (nReturn == JOptionPane.YES_OPTION) {
+			if (AccountManagerAction.COLLAPSE.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(false);
+			}
+			if (AccountManagerAction.EXPAND.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(true);
+			}
+			if (AccountManagerAction.CLOSE.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (AccountCellAction.EDIT.name().equals(e.getActionCommand())) {
+				int index = jTable.getSelectedRow();
+				Object o = tableModel.getElementAt(index);
+				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Owner owner = (Owner) separator.first();
 					Account account = owner.getParentAccount();
-					program.getAccounts().remove(account);
-					forceUpdate();
-					updateTable();
+					accountImportDialog.show(account);
 				}
 			}
-		}
-		if (ACTION_ASSETS_CHECK_ALL.equals(e.getActionCommand())) {
-			checkAssets(false, true);
-		}
+			if (AccountCellAction.DELETE.name().equals(e.getActionCommand())) {
+				int index = jTable.getSelectedRow();
+				Object o = tableModel.getElementAt(index);
+				if (o instanceof SeparatorList.Separator<?>) {
+					int nReturn = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame()
+							, DialoguesAccount.get().deleteAccountQuestion()
+							, DialoguesAccount.get().deleteAccount()
+							, JOptionPane.YES_NO_OPTION
+							, JOptionPane.PLAIN_MESSAGE);
+					if (nReturn == JOptionPane.YES_OPTION) {
+						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
+						Owner owner = (Owner) separator.first();
+						Account account = owner.getParentAccount();
+						program.getAccounts().remove(account);
+						forceUpdate();
+						updateTable();
+					}
+				}
+			}
+			if (AccountManagerAction.CHECK_ALL.name().equals(e.getActionCommand())) {
+				checkAssets(false, true);
+			}
 
-		if (ACTION_ASSETS_UNCHECK_ALL.equals(e.getActionCommand())) {
-			checkAssets(false, false);
-		}
+			if (AccountManagerAction.UNCHECK_ALL.name().equals(e.getActionCommand())) {
+				checkAssets(false, false);
+			}
 
-		if (ACTION_ASSETS_CHECK_SELECTED.equals(e.getActionCommand())) {
-			checkAssets(true, true);
-		}
+			if (AccountManagerAction.CHECK_SELECTED.name().equals(e.getActionCommand())) {
+				checkAssets(true, true);
+			}
 
-		if (ACTION_ASSETS_UNCHECK_SELECTED.equals(e.getActionCommand())) {
-			checkAssets(true, false);
+			if (AccountManagerAction.UNCHECK_SELECTED.name().equals(e.getActionCommand())) {
+				checkAssets(true, false);
+			}
 		}
 	}
 }

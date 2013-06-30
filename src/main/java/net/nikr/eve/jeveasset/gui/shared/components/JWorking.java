@@ -90,7 +90,7 @@ public class JWorking extends JPanel {
 		}
 	}
 
-	public class ListenerClass implements AncestorListener {
+	private class ListenerClass implements AncestorListener {
 
 		@Override
 		public void ancestorAdded(AncestorEvent event) {

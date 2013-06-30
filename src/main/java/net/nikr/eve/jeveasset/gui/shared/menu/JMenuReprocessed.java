@@ -34,10 +34,11 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 
 
-public class JMenuReprocessed<T> extends JAutoMenu<T> implements ActionListener {
+public class JMenuReprocessed<T> extends JAutoMenu<T> {
 
-	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_SET = "ACTION_SET";
+	private enum MenuReprocessedAction {
+		ADD, SET
+	}
 
 	private final JMenuItem jAdd;
 	private final JMenuItem jSet;
@@ -47,16 +48,18 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> implements ActionListener 
 		super(TabsReprocessed.get().title(), program);
 		setIcon(Images.TOOL_REPROCESSED.getIcon());
 
+		ListenerClass listener = new ListenerClass();
+
 		jAdd = new JMenuItem(TabsReprocessed.get().add());
 		jAdd.setIcon(Images.EDIT_ADD.getIcon());
-		jAdd.setActionCommand(ACTION_ADD);
-		jAdd.addActionListener(this);
+		jAdd.setActionCommand(MenuReprocessedAction.ADD.name());
+		jAdd.addActionListener(listener);
 		add(jAdd);
 
 		jSet = new JMenuItem(TabsReprocessed.get().set());
 		jSet.setIcon(Images.EDIT_SET.getIcon());
-		jSet.setActionCommand(ACTION_SET);
-		jSet.addActionListener(this);
+		jSet.setActionCommand(MenuReprocessedAction.SET.name());
+		jSet.addActionListener(listener);
 		add(jSet);
 	}
 
@@ -73,15 +76,17 @@ public class JMenuReprocessed<T> extends JAutoMenu<T> implements ActionListener 
 		jSet.setEnabled(!items.isEmpty());
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ADD.equals(e.getActionCommand())) {
-			program.getReprocessedTab().add(items);
-			program.getReprocessedTab().show();
-		}
-		if (ACTION_SET.equals(e.getActionCommand())) {
-			program.getReprocessedTab().set(items);
-			program.getReprocessedTab().show();
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (MenuReprocessedAction.ADD.name().equals(e.getActionCommand())) {
+				program.getReprocessedTab().add(items);
+				program.getReprocessedTab().show();
+			}
+			if (MenuReprocessedAction.SET.name().equals(e.getActionCommand())) {
+				program.getReprocessedTab().set(items);
+				program.getReprocessedTab().show();
+			}
 		}
 	}
 }

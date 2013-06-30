@@ -269,11 +269,11 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 		return this.getCompare().compareTo(o.getCompare());
 	}
 
-	public static class ModuleMatcher implements Matcher<Loadout> {
+	public static class LoadoutMatcher implements Matcher<Loadout> {
 
 		private String key;
 
-		public ModuleMatcher(final String key) {
+		public LoadoutMatcher(final String key) {
 			this.key = key;
 		}
 

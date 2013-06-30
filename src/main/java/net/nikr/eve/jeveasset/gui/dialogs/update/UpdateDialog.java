@@ -46,13 +46,11 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.eveapi.*;
 
 
-public class UpdateDialog extends JDialogCentered implements ActionListener {
+public class UpdateDialog extends JDialogCentered {
 
-
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_UPDATE = "ACTION_UPDATE";
-	private static final String ACTION_CHANGED = "ACTION_CHANGED";
-	private static final String ACTION_CHECK_ALL = "ACTION_CHECK_ALL";
+	private enum UpdateDialogAction {
+		CANCEL, UPDATE, CHANGED, CHECK_ALL
+	}
 
 	private JCheckBox jCheckAll;
 	private JCheckBox jMarketOrders;
@@ -80,9 +78,11 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	public UpdateDialog(final Program program) {
 		super(program, DialoguesUpdate.get().update(), Images.DIALOG_UPDATE.getImage());
 
+		ListenerClass listener = new ListenerClass();
+
 		jCheckAll = new JCheckBox(General.get().all());
-		jCheckAll.setActionCommand(ACTION_CHECK_ALL);
-		jCheckAll.addActionListener(this);
+		jCheckAll.setActionCommand(UpdateDialogAction.CHECK_ALL.name());
+		jCheckAll.addActionListener(listener);
 
 		jMarketOrders = new JCheckBox(DialoguesUpdate.get().marketOrders());
 		jJournal = new JCheckBox(DialoguesUpdate.get().journal());
@@ -104,8 +104,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jCheckBoxes.add(jAssets);
 		jCheckBoxes.add(jPriceData);
 		for (JCheckBox jCheckBox : jCheckBoxes) {
-			jCheckBox.setActionCommand(ACTION_CHANGED);
-			jCheckBox.addActionListener(this);
+			jCheckBox.setActionCommand(UpdateDialogAction.CHANGED.name());
+			jCheckBox.addActionListener(listener);
 		}
 		JLabel jNextUpdateLabel = new JLabel(DialoguesUpdate.get().nextUpdate());
 		jMarketOrdersUpdate = new JLabel();
@@ -119,12 +119,12 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 		jPriceDataUpdate = new JLabel();
 
 		jUpdate = new JButton(DialoguesUpdate.get().update());
-		jUpdate.setActionCommand(ACTION_UPDATE);
-		jUpdate.addActionListener(this);
+		jUpdate.setActionCommand(UpdateDialogAction.UPDATE.name());
+		jUpdate.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesUpdate.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(UpdateDialogAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -370,65 +370,67 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_UPDATE.equals(e.getActionCommand())) {
-			this.setVisible(false);
-			List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
-			if (jMarketOrders.isSelected() || jIndustryJobs.isSelected()
-					|| jAssets.isSelected() || jContracts.isSelected()
-					|| jTransactions.isSelected()) {
-				updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
-			}
-			if (jAccounts.isSelected()) {
-				updateTasks.add(new AccountsTask());
-			}
-			if (jMarketOrders.isSelected()) {
-				updateTasks.add(new MarketOrdersTask());
-			}
-			if (jJournal.isSelected()) {
-				updateTasks.add(new JournalTask());
-			}
-			if (jTransactions.isSelected()) {
-				updateTasks.add(new TransactionsTask());
-			}
-			if (jIndustryJobs.isSelected()) {
-				updateTasks.add(new IndustryJobsTask());
-			}
-			if (jAccountBalance.isSelected()) {
-				updateTasks.add(new BalanceTask());
-			}
-			if (jContracts.isSelected()) {
-				updateTasks.add(new ContractsTask());
-			}
-			if (jAssets.isSelected()) {
-				updateTasks.add(new AssetsTask());
-			}
-			if (jPriceData.isSelected()
-					|| jMarketOrders.isSelected()
-					|| jIndustryJobs.isSelected()
-					|| jAssets.isSelected()
-					) {
-				updateTasks.add(new PriceDataTask(jPriceData.isSelected()));
-			}
-			if (!updateTasks.isEmpty()) {
-				TaskDialog taskDialog = new TaskDialog(program, updateTasks);
-			}
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			setVisible(false);
-		}
-		if (ACTION_CHANGED.equals(e.getActionCommand())) {
-			changed();
-		}
-		if (ACTION_CHECK_ALL.equals(e.getActionCommand())) {
-			boolean checked = jCheckAll.isSelected();
-			for (JCheckBox jCheckBox : jCheckBoxes) {
-				if (jCheckBox.isEnabled()) {
-					jCheckBox.setSelected(checked);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (UpdateDialogAction.UPDATE.name().equals(e.getActionCommand())) {
+				setVisible(false);
+				List<UpdateTask> updateTasks = new ArrayList<UpdateTask>();
+				if (jMarketOrders.isSelected() || jIndustryJobs.isSelected()
+						|| jAssets.isSelected() || jContracts.isSelected()
+						|| jTransactions.isSelected()) {
+					updateTasks.add(new ConquerableStationsTask()); //Should properly always be first
+				}
+				if (jAccounts.isSelected()) {
+					updateTasks.add(new AccountsTask());
+				}
+				if (jMarketOrders.isSelected()) {
+					updateTasks.add(new MarketOrdersTask());
+				}
+				if (jJournal.isSelected()) {
+					updateTasks.add(new JournalTask());
+				}
+				if (jTransactions.isSelected()) {
+					updateTasks.add(new TransactionsTask());
+				}
+				if (jIndustryJobs.isSelected()) {
+					updateTasks.add(new IndustryJobsTask());
+				}
+				if (jAccountBalance.isSelected()) {
+					updateTasks.add(new BalanceTask());
+				}
+				if (jContracts.isSelected()) {
+					updateTasks.add(new ContractsTask());
+				}
+				if (jAssets.isSelected()) {
+					updateTasks.add(new AssetsTask());
+				}
+				if (jPriceData.isSelected()
+						|| jMarketOrders.isSelected()
+						|| jIndustryJobs.isSelected()
+						|| jAssets.isSelected()
+						) {
+					updateTasks.add(new PriceDataTask(jPriceData.isSelected()));
+				}
+				if (!updateTasks.isEmpty()) {
+					TaskDialog taskDialog = new TaskDialog(program, updateTasks);
 				}
 			}
-			changed();
+			if (UpdateDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
+			if (UpdateDialogAction.CHANGED.name().equals(e.getActionCommand())) {
+				changed();
+			}
+			if (UpdateDialogAction.CHECK_ALL.name().equals(e.getActionCommand())) {
+				boolean checked = jCheckAll.isSelected();
+				for (JCheckBox jCheckBox : jCheckBoxes) {
+					if (jCheckBox.isEnabled()) {
+						jCheckBox.setSelected(checked);
+					}
+				}
+				changed();
+			}
 		}
 	}
 

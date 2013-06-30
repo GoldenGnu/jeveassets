@@ -35,10 +35,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
-public class JValidatedInputDialog extends JDialogCentered implements ActionListener {
+public class JValidatedInputDialog extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum InputDialogAction {
+		OK, CANCEL
+	}
 
 	private JTextArea jMessage;
 	private JTextField jName;
@@ -50,6 +51,8 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 	public JValidatedInputDialog(final Program program, final JDialogCentered jDialogCentered) {
 		super(program, "", jDialogCentered.getDialog());
 
+		ListenerClass listener = new ListenerClass();
+
 		jMessage = new JTextArea();
 		jMessage.setFocusable(false);
 		jMessage.setEditable(false);
@@ -59,12 +62,12 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 		jName = new JTextField();
 
 		jOK = new JButton(DialoguesProfiles.get().ok());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(InputDialogAction.OK.name());
+		jOK.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesProfiles.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(InputDialogAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -140,15 +143,17 @@ public class JValidatedInputDialog extends JDialogCentered implements ActionList
 	@Override
 	protected void save() { }
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			failed = false;
-			this.setVisible(false);
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			failed = true;
-			this.setVisible(false);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (InputDialogAction.OK.name().equals(e.getActionCommand())) {
+				failed = false;
+				setVisible(false);
+			}
+			if (InputDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+				failed = true;
+				setVisible(false);
+			}
 		}
 	}
 }

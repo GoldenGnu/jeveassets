@@ -229,7 +229,7 @@ public abstract class FilterControl<E> extends ExportFilterControl<E> {
 		return (column instanceof AllColumn);
 	}
 
-	public class ListenerClass implements ListEventListener<E> {
+	private class ListenerClass implements ListEventListener<E> {
 		@Override
 		public void listChanged(final ListEvent<E> listChanges) {
 			gui.updateShowing();

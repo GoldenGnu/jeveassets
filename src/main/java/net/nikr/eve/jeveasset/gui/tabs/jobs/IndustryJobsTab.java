@@ -61,7 +61,7 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab implements ListEventListener<IndustryJob>, TableMenu<IndustryJob> {
+public class IndustryJobsTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 	private JLabel jInventionSuccess;
@@ -79,6 +79,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	public IndustryJobsTab(final Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
@@ -87,7 +88,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(eventList);
 		//Filter
 		filterList = new FilterList<IndustryJob>(sortedList);
-		filterList.addListEventListener(this);
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -127,7 +128,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 				);
 
 		//Menu
-		installMenu(program, this, jTable, IndustryJob.class);
+		installMenu(program, new JobsTableMenu(), jTable, IndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -145,47 +146,51 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	}
 
 	@Override
-	public MenuData<IndustryJob> getMenuData() {
-		return new MenuData<IndustryJob>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	@Override
-	public void listChanged(final ListEvent<IndustryJob> listChanges) {
-		int count = 0;
-		double success = 0;
-		for (IndustryJob industryJob : filterList) {
-			if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
-				count++;
-				if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
-					success++;
+	private class JobsTableMenu implements TableMenu<IndustryJob> {
+		@Override
+		public MenuData<IndustryJob> getMenuData() {
+			return new MenuData<IndustryJob>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<IndustryJob> {
+		@Override
+		public void listChanged(final ListEvent<IndustryJob> listChanges) {
+			int count = 0;
+			double success = 0;
+			for (IndustryJob industryJob : filterList) {
+				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
+					count++;
+					if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
+						success++;
+					}
 				}
 			}
-		}
-		if (count <= 0) {
-			jInventionSuccess.setText(Formater.percentFormat(0.0));
-		} else {
-			jInventionSuccess.setText(Formater.percentFormat(success / count));
+			if (count <= 0) {
+				jInventionSuccess.setText(Formater.percentFormat(0.0));
+			} else {
+				jInventionSuccess.setText(Formater.percentFormat(success / count));
+			}
 		}
 	}
 

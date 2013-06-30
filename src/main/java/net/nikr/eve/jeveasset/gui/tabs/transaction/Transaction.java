@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class Transaction extends ApiWalletTransaction implements LocationType, ItemType{
+public class Transaction extends ApiWalletTransaction implements LocationType, ItemType {
 
 	private Item item;
 	private Location location;

@@ -68,14 +68,14 @@ public class JAutoColumnTable extends JTable {
 		this.program = program;
 
 		//Listeners
-		ModelListener modelListener = new ModelListener();
-		this.addHierarchyListener(modelListener);
-		this.getModel().addTableModelListener(modelListener);
-		this.addPropertyChangeListener("model", modelListener);
-		this.getTableHeader().addMouseListener(modelListener);
-		this.addPropertyChangeListener("tableHeader", modelListener);
-		this.getColumnModel().addColumnModelListener(modelListener);
-		this.addPropertyChangeListener("columnModel", modelListener);
+		ListenerClass listener = new ListenerClass();
+		this.addHierarchyListener(listener);
+		this.getModel().addTableModelListener(listener);
+		this.addPropertyChangeListener("model", listener);
+		this.getTableHeader().addMouseListener(listener);
+		this.addPropertyChangeListener("tableHeader", listener);
+		this.getColumnModel().addColumnModelListener(listener);
+		this.addPropertyChangeListener("columnModel", listener);
 
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
@@ -373,7 +373,7 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 
-	private class ModelListener implements TableModelListener, ComponentListener,
+	private class ListenerClass implements TableModelListener, ComponentListener,
 			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener {
 
 		private boolean columnMoved = false;

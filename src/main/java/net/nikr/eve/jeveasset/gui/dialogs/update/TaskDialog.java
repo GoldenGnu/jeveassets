@@ -36,8 +36,9 @@ import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 
 public class TaskDialog {
 
-	public static final String ACTION_OK = "ACTION_OK";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum TaskAction {
+		OK, CANCEL
+	}
 	public static final int WIDTH = 260;
 
 	//GUI
@@ -49,7 +50,7 @@ public class TaskDialog {
 	private JLabel jErrorName;
 	private JScrollPane jErrorScroll;
 
-	private Listener listener;
+	private ListenerClass listener;
 
 	private Program program;
 
@@ -66,7 +67,7 @@ public class TaskDialog {
 		this.program = program;
 		this.updateTasks = updateTasks;
 
-		listener = new Listener();
+		listener = new ListenerClass();
 
 		jWindow = new JDialog(program.getMainWindow().getFrame());
 		jWindow.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -88,11 +89,11 @@ public class TaskDialog {
 		jProgressBar = new JProgressBar(0, 100);
 
 		jOK = new JButton(DialoguesUpdate.get().ok());
-		jOK.setActionCommand(ACTION_OK);
+		jOK.setActionCommand(TaskAction.OK.name());
 		jOK.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesUpdate.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(TaskAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		jErrorName = new JLabel("");
@@ -207,7 +208,7 @@ public class TaskDialog {
 		jProgressBar.setValue(0);
 	}
 
-	class Listener implements PropertyChangeListener, ActionListener, WindowListener {
+	private class ListenerClass implements PropertyChangeListener, ActionListener, WindowListener {
 
 		@Override
 		public void propertyChange(final PropertyChangeEvent evt) {
@@ -228,13 +229,12 @@ public class TaskDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (TaskAction.OK.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			if (TaskAction.CANCEL.name().equals(e.getActionCommand())) {
 				cancelUpdate();
 			}
-
 		}
 
 		@Override

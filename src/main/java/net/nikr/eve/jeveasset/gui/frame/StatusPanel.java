@@ -39,7 +39,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JGroupLayoutPanel;
 import net.nikr.eve.jeveasset.i18n.GuiFrame;
 
 
-public class StatusPanel extends JGroupLayoutPanel implements ActionListener {
+public class StatusPanel extends JGroupLayoutPanel {
 
 	//GUI
 	private JLabel jEveTime;
@@ -52,6 +52,8 @@ public class StatusPanel extends JGroupLayoutPanel implements ActionListener {
 
 	public StatusPanel(final Program program) {
 		super(program);
+
+		ListenerClass listener = new ListenerClass();
 
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
@@ -66,7 +68,7 @@ public class StatusPanel extends JGroupLayoutPanel implements ActionListener {
 		jEveTime = createLabel(GuiFrame.get().eve(),  Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
-		eveTimer = new Timer(1000, this);
+		eveTimer = new Timer(1000, listener);
 		eveTimer.start();
 
 		layout.setHorizontalGroup(
@@ -136,8 +138,10 @@ public class StatusPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.add(jSpace);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		jEveTime.setText(Formater.eveTime(Settings.getNow()));
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			jEveTime.setText(Formater.eveTime(Settings.getNow()));
+		}
 	}
 }

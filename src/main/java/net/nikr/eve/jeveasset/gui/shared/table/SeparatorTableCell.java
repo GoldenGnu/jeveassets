@@ -20,7 +20,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
+public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		implements TableCellRenderer, TableCellEditor {
 
 	protected static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);

@@ -54,9 +54,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 
 
 class FilterPanel<E> {
-	private static final String ACTION_FILTER = "ACTION_FILTER";
-	private static final String ACTION_FILTER_TIMER = "ACTION_FILTER_TIMER";
-	private static final String ACTION_REMOVE = "ACTION_REMOVE";
+
+	private enum FilterPanelAction {
+		FILTER, FILTER_TIMER, REMOVE
+	}
 
 	private JPanel jPanel;
 	private GroupLayout layout;
@@ -109,19 +110,19 @@ class FilterPanel<E> {
 		jEnabled = new JCheckBox();
 		jEnabled.setSelected(true);
 		jEnabled.addActionListener(listener);
-		jEnabled.setActionCommand(ACTION_FILTER);
+		jEnabled.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jLogic = new JComboBox(LogicType.values());
 		jLogic.addActionListener(listener);
-		jLogic.setActionCommand(ACTION_FILTER);
+		jLogic.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jColumn = new JComboBox(allColumns.toArray());
 		jColumn.addActionListener(listener);
-		jColumn.setActionCommand(ACTION_FILTER);
+		jColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jCompare = new JComboBox();
 		jCompare.addActionListener(listener);
-		jCompare.setActionCommand(ACTION_FILTER);
+		jCompare.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jText = new JTextField();
 		jText.getDocument().addDocumentListener(listener);
@@ -129,7 +130,7 @@ class FilterPanel<E> {
 
 		jCompareColumn = new JComboBox();
 		jCompareColumn.addActionListener(listener);
-		jCompareColumn.setActionCommand(ACTION_FILTER);
+		jCompareColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jDate = new JDateChooser(Settings.getNow());
 		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
@@ -147,10 +148,10 @@ class FilterPanel<E> {
 		jRemove = new JButton();
 		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.addActionListener(listener);
-		jRemove.setActionCommand(ACTION_REMOVE);
+		jRemove.setActionCommand(FilterPanelAction.REMOVE.name());
 
 		timer = new Timer(500, listener);
-		timer.setActionCommand(ACTION_FILTER_TIMER);
+		timer.setActionCommand(FilterPanelAction.FILTER_TIMER.name());
 
 		jPanel = new JPanel();
 
@@ -340,7 +341,7 @@ class FilterPanel<E> {
 		refilter();
 	}
 
-	public class ListenerClass implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener {
+	private class ListenerClass implements ActionListener, KeyListener, DocumentListener, PropertyChangeListener {
 
 		@Override
 		public void insertUpdate(final DocumentEvent e) {
@@ -375,15 +376,15 @@ class FilterPanel<E> {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_REMOVE.equals(e.getActionCommand())) {
+			if (FilterPanelAction.REMOVE.name().equals(e.getActionCommand())) {
 				gui.remove(getThis());
 				gui.addEmpty();
 				refilter();
 			}
-			if (ACTION_FILTER.equals(e.getActionCommand())) {
+			if (FilterPanelAction.FILTER.name().equals(e.getActionCommand())) {
 				processFilterAction(e);
 			}
-			if (ACTION_FILTER_TIMER.equals(e.getActionCommand())) {
+			if (FilterPanelAction.FILTER_TIMER.name().equals(e.getActionCommand())) {
 				if (!Settings.get().isFilterOnEnter()) {
 					processFilterAction(e);
 				}

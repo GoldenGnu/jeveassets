@@ -38,7 +38,7 @@ public class JMenuCopy extends JMenuItem {
 	public JMenuCopy(final JTable jTable) {
 		super(GuiShared.get().copy());
 		this.setIcon(Images.EDIT_COPY.getIcon());
-		this.addActionListener(new CopyListener(jTable));
+		this.addActionListener(new ListenerClass(jTable));
 	}
 
 	private static void copy(JTable jTable) {
@@ -94,14 +94,14 @@ public class JMenuCopy extends JMenuItem {
 	}
 
 	public static void installCopyFormatter(JTable jTable) {
-		jTable.addKeyListener(new CopyListener(jTable));
+		jTable.addKeyListener(new ListenerClass(jTable));
 	}
 
-	private static class CopyListener extends KeyAdapter implements ActionListener {
+	private static class ListenerClass extends KeyAdapter implements ActionListener {
 
 		private JTable jTable;
 
-		public CopyListener(JTable jTable) {
+		public ListenerClass(JTable jTable) {
 			this.jTable = jTable;
 		}
 		

@@ -37,8 +37,9 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JContainerDialog extends JDialogCentered {
 
-	public static final String ACTION_OK = "ACTION_OK";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum ContainerDialogAction {
+		OK, CANCEL
+	}
 
 	private JComboBox jContainers;
 	private JButton jOK;
@@ -54,11 +55,11 @@ public class JContainerDialog extends JDialogCentered {
 		jContainers = new JComboBox();
 
 		jOK = new JButton(GuiShared.get().ok());
-		jOK.setActionCommand(ACTION_OK);
+		jOK.setActionCommand(ContainerDialogAction.OK.name());
 		jOK.addActionListener(listenerClass);
 
 		JButton jCancel = new JButton(GuiShared.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(ContainerDialogAction.CANCEL.name());
 		jCancel.addActionListener(listenerClass);
 
 		layout.setHorizontalGroup(
@@ -114,14 +115,13 @@ public class JContainerDialog extends JDialogCentered {
 		setVisible(false);
 	}
 
-	public class ListenerClass implements ActionListener {
-
+	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (ContainerDialogAction.OK.name().equals(e.getActionCommand())) {
 				save();
 			}
-			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			if (ContainerDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
 		}

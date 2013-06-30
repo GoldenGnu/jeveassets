@@ -40,14 +40,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JLockWindow;
 import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
 
 
-public class ProfileDialog extends JDialogCentered implements ActionListener, MouseListener {
+public class ProfileDialog extends JDialogCentered {
 
-	private static final String ACTION_NEW_PROFILE = "ACTION_NEW_PROFILE";
-	private static final String ACTION_LOAD_PROFILE = "ACTION_LOAD_PROFILE";
-	private static final String ACTION_RENAME_PROFILE = "ACTION_RENAME_PROFILE";
-	private static final String ACTION_DELETE_PROFILE = "ACTION_DELETE_PROFILE";
-	private static final String ACTION_DEFAULT_PROFILE = "ACTION_DEFAULT_PROFILE";
-	private static final String ACTION_CLOSE = "ACTION_CLOSE";
+	private enum ProfileDialogAction {
+		NEW, LOAD, RENAME, DELETE, DEFAULT, CLOSE
+	}
 
 	private JList jProfiles;
 	private JButton jNew;
@@ -65,36 +62,38 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		jLockWindow = new JLockWindow(this.getDialog());
 		jValidatedInputDialog = new JValidatedInputDialog(program, this);
 
+		ListenerClass listener = new ListenerClass();
+
 		jProfiles = new JList();
 		jProfiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jProfiles.setVisibleRowCount(-1);
 		jProfiles.setCellRenderer(new JProfileListRenderer());
-		jProfiles.addMouseListener(this);
+		jProfiles.addMouseListener(listener);
 		JScrollPane jProfilesScrollPane = new JScrollPane(jProfiles);
 
 		jLoad = new JButton(DialoguesProfiles.get().load());
-		jLoad.setActionCommand(ACTION_LOAD_PROFILE);
-		jLoad.addActionListener(this);
+		jLoad.setActionCommand(ProfileDialogAction.LOAD.name());
+		jLoad.addActionListener(listener);
 
 		jNew = new JButton(DialoguesProfiles.get().newP());
-		jNew.setActionCommand(ACTION_NEW_PROFILE);
-		jNew.addActionListener(this);
+		jNew.setActionCommand(ProfileDialogAction.NEW.name());
+		jNew.addActionListener(listener);
 
 		jRename = new JButton(DialoguesProfiles.get().rename());
-		jRename.setActionCommand(ACTION_RENAME_PROFILE);
-		jRename.addActionListener(this);
+		jRename.setActionCommand(ProfileDialogAction.RENAME.name());
+		jRename.addActionListener(listener);
 
 		jDelete = new JButton(DialoguesProfiles.get().delete());
-		jDelete.setActionCommand(ACTION_DELETE_PROFILE);
-		jDelete.addActionListener(this);
+		jDelete.setActionCommand(ProfileDialogAction.DELETE.name());
+		jDelete.addActionListener(listener);
 
 		jDefault = new JButton(DialoguesProfiles.get().defaultP());
-		jDefault.setActionCommand(ACTION_DEFAULT_PROFILE);
-		jDefault.addActionListener(this);
+		jDefault.setActionCommand(ProfileDialogAction.DEFAULT.name());
+		jDefault.addActionListener(listener);
 
 		jClose = new JButton(DialoguesProfiles.get().close());
-		jClose.setActionCommand(ACTION_CLOSE);
-		jClose.addActionListener(this);
+		jClose.setActionCommand(ProfileDialogAction.CLOSE.name());
+		jClose.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -208,116 +207,118 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	@Override
 	protected void save() { }
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_NEW_PROFILE.equals(e.getActionCommand())) {
-			String s = jValidatedInputDialog.show(
-					DialoguesProfiles.get().newProfile(),
-					DialoguesProfiles.get().typeName(),
-					"",
-					JDialogCentered.WORDS_ONLY);
-			if (s != null && !s.isEmpty()) {
-				if (program.getProfileManager().getProfiles().contains(new Profile(s, false, false))) {
-					JOptionPane.showMessageDialog(this.getDialog(),
-							DialoguesProfiles.get().nameAlreadyExists(),
-							DialoguesProfiles.get().newProfile(),
-							JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					jLockWindow.show(new NewProfile(s), DialoguesProfiles.get().creatingProfile());
-				}
-			}
-		}
-		if (ACTION_LOAD_PROFILE.equals(e.getActionCommand())) {
-			startLoadProfile();
-		}
-		if (ACTION_RENAME_PROFILE.equals(e.getActionCommand())) {
-			Profile profile = (Profile) jProfiles.getSelectedValue();
-			if (profile != null) {
-				String s = jValidatedInputDialog.show(DialoguesProfiles.get().renameProfile(),
-						DialoguesProfiles.get().enterNewName(),
-						profile.getName(),
+	private class ListenerClass implements ActionListener, MouseListener {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (ProfileDialogAction.NEW.name().equals(e.getActionCommand())) {
+				String s = jValidatedInputDialog.show(
+						DialoguesProfiles.get().newProfile(),
+						DialoguesProfiles.get().typeName(),
+						"",
 						JDialogCentered.WORDS_ONLY);
 				if (s != null && !s.isEmpty()) {
 					if (program.getProfileManager().getProfiles().contains(new Profile(s, false, false))) {
-						JOptionPane.showMessageDialog(this.getDialog(),
+						JOptionPane.showMessageDialog(getDialog(),
 								DialoguesProfiles.get().nameAlreadyExists(),
-								DialoguesProfiles.get().renameProfile(),
+								DialoguesProfiles.get().newProfile(),
 								JOptionPane.INFORMATION_MESSAGE);
 					} else {
-						profile.setName(s);
+						jLockWindow.show(new NewProfile(s), DialoguesProfiles.get().creatingProfile());
 					}
 				}
-				program.getMainWindow().updateTitle();
-				jProfiles.updateUI();
 			}
-		}
-		if (ACTION_DELETE_PROFILE.equals(e.getActionCommand())) {
-			Profile profile = (Profile) jProfiles.getSelectedValue();
-			if (profile != null && profile.isActiveProfile()) {
-				JOptionPane.showMessageDialog(this.getDialog(),
-						DialoguesProfiles.get().cannotDeleteActive(),
-						DialoguesProfiles.get().deleteProfile(),
-						JOptionPane.INFORMATION_MESSAGE);
-				//showMessageDialog("Delete Profile", "You can not delete the active profile");
+			if (ProfileDialogAction.LOAD.name().equals(e.getActionCommand())) {
+				startLoadProfile();
 			}
-			if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()) {
-				JOptionPane.showMessageDialog(this.getDialog(),
-						DialoguesProfiles.get().cannotDeleteDefault(),
-						DialoguesProfiles.get().deleteProfile(),
-						JOptionPane.INFORMATION_MESSAGE);
-				//showMessageDialog("Delete Profile", "You can not delete the default profile");
-			}
-			if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()) {
-				int value = JOptionPane.showConfirmDialog(this.getDialog(),
-						DialoguesProfiles.get().deleteProfileConfirm(profile.getName()),
-						DialoguesProfiles.get().deleteProfile(),
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
-				//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
-				if (value == JOptionPane.YES_OPTION) {
-					program.getProfileManager().getProfiles().remove(profile);
-					profile.getFile().delete();
-					profile.getBackupFile().delete();
-					updateProfiles();
+			if (ProfileDialogAction.RENAME.name().equals(e.getActionCommand())) {
+				Profile profile = (Profile) jProfiles.getSelectedValue();
+				if (profile != null) {
+					String s = jValidatedInputDialog.show(DialoguesProfiles.get().renameProfile(),
+							DialoguesProfiles.get().enterNewName(),
+							profile.getName(),
+							JDialogCentered.WORDS_ONLY);
+					if (s != null && !s.isEmpty()) {
+						if (program.getProfileManager().getProfiles().contains(new Profile(s, false, false))) {
+							JOptionPane.showMessageDialog(getDialog(),
+									DialoguesProfiles.get().nameAlreadyExists(),
+									DialoguesProfiles.get().renameProfile(),
+									JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							profile.setName(s);
+						}
+					}
 					program.getMainWindow().updateTitle();
 					jProfiles.updateUI();
 				}
 			}
-		}
-		if (ACTION_DEFAULT_PROFILE.equals(e.getActionCommand())) {
-			Profile profile = (Profile) jProfiles.getSelectedValue();
-			if (profile != null && !profile.isDefaultProfile()) {
-				for (Profile profileLoop : program.getProfileManager().getProfiles()) {
-					profileLoop.setDefaultProfile(false);
+			if (ProfileDialogAction.DELETE.name().equals(e.getActionCommand())) {
+				Profile profile = (Profile) jProfiles.getSelectedValue();
+				if (profile != null && profile.isActiveProfile()) {
+					JOptionPane.showMessageDialog(getDialog(),
+							DialoguesProfiles.get().cannotDeleteActive(),
+							DialoguesProfiles.get().deleteProfile(),
+							JOptionPane.INFORMATION_MESSAGE);
+					//showMessageDialog("Delete Profile", "You can not delete the active profile");
 				}
-				profile.setDefaultProfile(true);
-				jProfiles.updateUI();
+				if (profile != null && !profile.isActiveProfile() && profile.isDefaultProfile()) {
+					JOptionPane.showMessageDialog(getDialog(),
+							DialoguesProfiles.get().cannotDeleteDefault(),
+							DialoguesProfiles.get().deleteProfile(),
+							JOptionPane.INFORMATION_MESSAGE);
+					//showMessageDialog("Delete Profile", "You can not delete the default profile");
+				}
+				if (profile != null && !profile.isActiveProfile() && !profile.isDefaultProfile()) {
+					int value = JOptionPane.showConfirmDialog(getDialog(),
+							DialoguesProfiles.get().deleteProfileConfirm(profile.getName()),
+							DialoguesProfiles.get().deleteProfile(),
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+					//boolean value = showConfirmDialog("Delete Profile", "Delete Profile: \""+profile.getName()+"\"?\r\nWarning: Deleted profiles can not be restored");
+					if (value == JOptionPane.YES_OPTION) {
+						program.getProfileManager().getProfiles().remove(profile);
+						profile.getFile().delete();
+						profile.getBackupFile().delete();
+						updateProfiles();
+						program.getMainWindow().updateTitle();
+						jProfiles.updateUI();
+					}
+				}
+			}
+			if (ProfileDialogAction.DEFAULT.name().equals(e.getActionCommand())) {
+				Profile profile = (Profile) jProfiles.getSelectedValue();
+				if (profile != null && !profile.isDefaultProfile()) {
+					for (Profile profileLoop : program.getProfileManager().getProfiles()) {
+						profileLoop.setDefaultProfile(false);
+					}
+					profile.setDefaultProfile(true);
+					jProfiles.updateUI();
+				}
+			}
+			if (ProfileDialogAction.CLOSE.name().equals(e.getActionCommand())) {
+				setVisible(false);
 			}
 		}
-		if (ACTION_CLOSE.equals(e.getActionCommand())) {
-			this.setVisible(false);
+
+		@Override
+		public void mouseClicked(final MouseEvent e) {
+			if (e.getClickCount() == 2 && getDialog().isEnabled()) {
+				startLoadProfile();
+			}
 		}
+
+		@Override
+		public void mousePressed(final MouseEvent e) { }
+
+		@Override
+		public void mouseReleased(final MouseEvent e) { }
+
+		@Override
+		public void mouseEntered(final MouseEvent e) { }
+
+		@Override
+		public void mouseExited(final MouseEvent e) { }
 	}
-
-	@Override
-	public void mouseClicked(final MouseEvent e) {
-		if (e.getClickCount() == 2 && this.getDialog().isEnabled()) {
-			startLoadProfile();
-		}
-	}
-
-	@Override
-	public void mousePressed(final MouseEvent e) { }
-
-	@Override
-	public void mouseReleased(final MouseEvent e) { }
-
-	@Override
-	public void mouseEntered(final MouseEvent e) { }
-
-	@Override
-	public void mouseExited(final MouseEvent e) { }
-
 	public class JProfileListRenderer extends DefaultListCellRenderer {
 
 		@Override

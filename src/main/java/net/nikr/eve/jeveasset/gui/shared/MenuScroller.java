@@ -346,8 +346,7 @@ public class MenuScroller {
 		}
 	}
 
-	private class MenuScrollItem extends JMenuItem
-			implements ChangeListener {
+	private class MenuScrollItem extends JMenuItem implements ChangeListener {
 
 		private Timer timer;
 

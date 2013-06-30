@@ -23,15 +23,15 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class AccountSeparatorTableCell extends SeparatorTableCell<Owner>
-		implements FocusListener, ActionListener {
+public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 
-	// TODO action enum - more string enum pattern, to be converted to an enum
-	private static final String ACTION_ACCOUNT_NAME = "ACTION_ACCOUNT_NAME";
-	public static final String ACTION_EDIT = "ACTION_EDIT";
-	public static final String ACTION_DELETE = "ACTION_DELETE";
+	public enum AccountCellAction {
+		ACCOUNT_NAME,
+		EDIT,
+		DELETE,
+		
+	}
 
-	/** the separator list to lock. */
 	private final JTextField jAccountName;
 	private final JButton jEdit;
 	private final JButton jDelete;
@@ -39,21 +39,22 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner>
 	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Owner> separatorList) {
 		super(jTable, separatorList);
 
+		ListenerClass listener = new ListenerClass();
 		jAccountName = new JTextField();
-		jAccountName.addFocusListener(this);
+		jAccountName.addFocusListener(listener);
 		jAccountName.setBorder(null);
 		jAccountName.setOpaque(false);
-		jAccountName.setActionCommand(ACTION_ACCOUNT_NAME);
-		jAccountName.addActionListener(this);
+		jAccountName.setActionCommand(AccountCellAction.ACCOUNT_NAME.name());
+		jAccountName.addActionListener(listener);
 
 		jEdit = new JButton(DialoguesAccount.get().edit());
 		jEdit.setOpaque(false);
-		jEdit.setActionCommand(ACTION_EDIT);
+		jEdit.setActionCommand(AccountCellAction.EDIT.name());
 		jEdit.addActionListener(actionListener);
 
 		jDelete = new JButton(DialoguesAccount.get().delete());
 		jDelete.setOpaque(false);
-		jDelete.setActionCommand(ACTION_DELETE);
+		jDelete.setActionCommand(AccountCellAction.DELETE.name());
 		jDelete.addActionListener(actionListener);
 
 		layout.setHorizontalGroup(
@@ -91,32 +92,35 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner>
 			jAccountName.setText(account.getName());
 		}
 	}
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ACCOUNT_NAME.equals(e.getActionCommand())) {
-			Owner owner = (Owner) currentSeparator.first();
-			Account account = owner.getParentAccount();
-			if (jAccountName.getText().isEmpty()) {
-				jAccountName.setText(String.valueOf(account.getKeyID()));
-			}
-			account.setName(jAccountName.getText());
-			jAccountName.transferFocus();
-			expandSeparator(true);
-			int index = jTable.getSelectedRow() + 1;
-			if (jTable.getRowCount() >= index) {
-				jTable.setRowSelectionInterval(index, index);
+
+	private class ListenerClass implements FocusListener, ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (AccountCellAction.ACCOUNT_NAME.name().equals(e.getActionCommand())) {
+				Owner owner = (Owner) currentSeparator.first();
+				Account account = owner.getParentAccount();
+				if (jAccountName.getText().isEmpty()) {
+					jAccountName.setText(String.valueOf(account.getKeyID()));
+				}
+				account.setName(jAccountName.getText());
+				jAccountName.transferFocus();
+				expandSeparator(true);
+				int index = jTable.getSelectedRow() + 1;
+				if (jTable.getRowCount() >= index) {
+					jTable.setRowSelectionInterval(index, index);
+				}
 			}
 		}
-	}
 
-	@Override
-	public void focusGained(final FocusEvent e) {
-		if (e.getSource() instanceof JTextField) {
-			jTable.setRowSelectionInterval(currentRow, currentRow);
-			jAccountName.selectAll();
+		@Override
+		public void focusGained(final FocusEvent e) {
+			if (e.getSource() instanceof JTextField) {
+				jTable.setRowSelectionInterval(currentRow, currentRow);
+				jAccountName.selectAll();
+			}
 		}
-	}
 
-	@Override
-	public void focusLost(final FocusEvent e) { }
+		@Override
+		public void focusLost(final FocusEvent e) { }
+	}
 }

@@ -26,14 +26,16 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileItem> implements HierarchyListener, AdjustmentListener {
+public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileItem> {
 
-	public static final String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
-	public static final String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
-	public static final String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
-	public static final String ACTION_SHOPPING_LIST_SINGLE = "ACTION_SHOPPING_LIST_SINGLE";
-	public static final String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
-	public static final String ACTION_UPDATE_MULTIPLIER = "ACTION_UPDATE_MULTIPLIER";
+	public enum StockpileCellAction {
+		DELETE_STOCKPILE,
+		EDIT_STOCKPILE,
+		CLONE_STOCKPILE,
+		SHOPPING_LIST_SINGLE,
+		ADD_ITEM,
+		UPDATE_MULTIPLIER
+	}
 
 	private final JLabel jStartSpace;
 	private final JLabel jGroup;
@@ -45,13 +47,13 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	private final JLabel jLocation;
 	private final JLabel jLocationLabel;
 	private final JDoubleField jMultiplier;
-	private Program program;
 
 	public StockpileSeparatorTableCell(final Program program, final JTable jTable, final SeparatorList<StockpileItem> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
-		this.program = program;
 
-		jTable.addHierarchyListener(this);
+		ListenerClass listener = new ListenerClass();
+
+		jTable.addHierarchyListener(listener);
 
 		jStartSpace = new JLabel();
 
@@ -65,7 +67,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		jColorDisabled.setVisible(false);
 
 		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
-		jMultiplier.setActionCommand(ACTION_UPDATE_MULTIPLIER);
+		jMultiplier.setActionCommand(StockpileCellAction.UPDATE_MULTIPLIER.name());
 		jMultiplier.addActionListener(actionListener);
 		jMultiplier.setHorizontalAlignment(JTextField.RIGHT);
 		jMultiplier.setOpaque(false);
@@ -108,31 +110,31 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		JMenuItem jMenuItem;
 
 		JMenuItem jAdd = new JMenuItem(TabsStockpile.get().addItem(), Images.EDIT_ADD.getIcon());
-		jAdd.setActionCommand(ACTION_ADD_ITEM);
+		jAdd.setActionCommand(StockpileCellAction.ADD_ITEM.name());
 		jAdd.addActionListener(actionListener);
 		jStockpile.add(jAdd);
 
 		jStockpile.addSeparator();
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().editStockpile(), Images.EDIT_EDIT.getIcon());
-		jMenuItem.setActionCommand(ACTION_EDIT_STOCKPILE);
+		jMenuItem.setActionCommand(StockpileCellAction.EDIT_STOCKPILE.name());
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().cloneStockpile(), Images.EDIT_COPY.getIcon());
-		jMenuItem.setActionCommand(ACTION_CLONE_STOCKPILE);
+		jMenuItem.setActionCommand(StockpileCellAction.CLONE_STOCKPILE.name());
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().deleteStockpile(), Images.EDIT_DELETE.getIcon());
-		jMenuItem.setActionCommand(ACTION_DELETE_STOCKPILE);
+		jMenuItem.setActionCommand(StockpileCellAction.DELETE_STOCKPILE.name());
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
 		jStockpile.addSeparator();
 
 		jMenuItem = new JMenuItem(TabsStockpile.get().getShoppingList(), Images.STOCKPILE_SHOPPING_LIST.getIcon());
-		jMenuItem.setActionCommand(ACTION_SHOPPING_LIST_SINGLE);
+		jMenuItem.setActionCommand(StockpileCellAction.SHOPPING_LIST_SINGLE.name());
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 
@@ -235,34 +237,36 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		}
 	}
 
-	@Override
-	public void hierarchyChanged(final HierarchyEvent e) {
-		if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED) {
-			JViewport jViewport = getParentViewport();
-			if (jViewport != null) {
-				Container container = getParentViewport().getParent();
-				if (container instanceof JScrollPane) {
-					JScrollPane jScroll = (JScrollPane) container;
-					//jScroll.getVerticalScrollBar().removeAdjustmentListener(this);
-					jScroll.getHorizontalScrollBar().removeAdjustmentListener(this);
-					//jScroll.getVerticalScrollBar().addAdjustmentListener(this);
-					jScroll.getHorizontalScrollBar().addAdjustmentListener(this);
+	private class ListenerClass implements HierarchyListener, AdjustmentListener {
+		@Override
+		public void hierarchyChanged(final HierarchyEvent e) {
+			if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED) {
+				JViewport jViewport = getParentViewport();
+				if (jViewport != null) {
+					Container container = getParentViewport().getParent();
+					if (container instanceof JScrollPane) {
+						JScrollPane jScroll = (JScrollPane) container;
+						//jScroll.getVerticalScrollBar().removeAdjustmentListener(this);
+						jScroll.getHorizontalScrollBar().removeAdjustmentListener(this);
+						//jScroll.getVerticalScrollBar().addAdjustmentListener(this);
+						jScroll.getHorizontalScrollBar().addAdjustmentListener(this);
+					}
 				}
 			}
 		}
-	}
 
-	@Override
-	public void adjustmentValueChanged(final AdjustmentEvent e) {
-		if (!e.getValueIsAdjusting()) {
-			int position = getParentViewport().getViewPosition().x;
-			jStartSpace.setMinimumSize(new Dimension(position, Program.BUTTONS_HEIGHT));
-			setEnabled(true);
-			jTable.repaint();
-		} else {
-			if (jExpand.isEnabled()) { //Only do once
-				setEnabled(false);
+		@Override
+		public void adjustmentValueChanged(final AdjustmentEvent e) {
+			if (!e.getValueIsAdjusting()) {
+				int position = getParentViewport().getViewPosition().x;
+				jStartSpace.setMinimumSize(new Dimension(position, Program.BUTTONS_HEIGHT));
+				setEnabled(true);
 				jTable.repaint();
+			} else {
+				if (jExpand.isEnabled()) { //Only do once
+					setEnabled(false);
+					jTable.repaint();
+				}
 			}
 		}
 	}

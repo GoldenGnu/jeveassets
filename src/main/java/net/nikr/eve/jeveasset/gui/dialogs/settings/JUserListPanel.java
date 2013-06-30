@@ -33,8 +33,9 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettingsPanel {
 
-	public static final String ACTION_DELETE = "ACTION_DELETE";
-	public static final String ACTION_EDIT = "ACTION_EDIT";
+	private enum UserListAction {
+		DELETE, EDIT
+	}
 
 	private JComboBox jItems;
 	private JButton jEdit;
@@ -53,11 +54,11 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 		jItems = new JComboBox();
 
 		jEdit = new JButton(DialoguesSettings.get().editItem());
-		jEdit.setActionCommand(ACTION_EDIT);
+		jEdit.setActionCommand(UserListAction.EDIT.name());
 		jEdit.addActionListener(listener);
 
 		jDelete = new JButton(DialoguesSettings.get().deleteItem());
-		jDelete.setActionCommand(ACTION_DELETE);
+		jDelete.setActionCommand(UserListAction.DELETE.name());
 		jDelete.addActionListener(listener);
 
 		JTextArea jHelp = new JTextArea(help);
@@ -256,16 +257,15 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	}
 
 	private class ListenerClass implements ActionListener {
-
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_DELETE.equals(e.getActionCommand())) {
+			if (UserListAction.DELETE.name().equals(e.getActionCommand())) {
 				int index = jItems.getSelectedIndex();
 				if (index >= 0) {
 					delete(listItems.get(index), false);
 				}
 			}
-			if (ACTION_EDIT.equals(e.getActionCommand())) {
+			if (UserListAction.EDIT.name().equals(e.getActionCommand())) {
 				int index = jItems.getSelectedIndex();
 				if (index >= 0) {
 					edit(listItems.get(index), false);

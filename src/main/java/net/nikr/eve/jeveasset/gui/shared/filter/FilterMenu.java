@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-class FilterMenu<E> extends JMenu implements ActionListener {
+class FilterMenu<E> extends JMenu {
 
 	private FilterGui<E> gui;
 	private EnumTableColumn<?> column;
@@ -44,6 +44,8 @@ class FilterMenu<E> extends JMenu implements ActionListener {
 		this.setIcon(Images.FILTER_CONTAIN.getIcon());
 		this.column = column;
 		this.text = text;
+
+		ListenerClass listener = new ListenerClass();
 
 		boolean isValid = column != null && text != null;
 
@@ -62,19 +64,21 @@ class FilterMenu<E> extends JMenu implements ActionListener {
 			jMenuItem = new JMenuItem(compareType.toString());
 			jMenuItem.setIcon(compareType.getIcon());
 			jMenuItem.setActionCommand(compareType.name());
-			jMenuItem.addActionListener(this);
+			jMenuItem.addActionListener(listener);
 			jMenuItem.setEnabled(isValid);
 			add(jMenuItem);
 		}
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
-		if (CompareType.isColumnCompare(compareType)) {
-			gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
-		} else {
-			gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
+			if (CompareType.isColumnCompare(compareType)) {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, column.name()));
+			} else {
+				gui.addFilter(new Filter(LogicType.AND, column, compareType, text));
+			}
 		}
 	}
 }

@@ -78,17 +78,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
+public class LoadoutsTab extends JMainTab {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadoutsTab.class);
 
-	private static final String ACTION_FILTER = "ACTION_FILTER";
-	private static final String ACTION_OWNERS = "ACTION_OWNERS";
-	private static final String ACTION_EXPORT = "ACTION_EXPORT";
-	private static final String ACTION_EXPORT_LOADOUT = "ACTION_EXPORT_LOADOUT";
-	private static final String ACTION_EXPORT_ALL_LOADOUTS = "ACTION_EXPORT_ALL_LOADOUTS";
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private enum LoadoutsAction {
+		FILTER,
+		OWNERS,
+		EXPORT,
+		EXPORT_LOADOUT_SELECTED,
+		EXPORT_LOADOUT_ALL,
+		COLLAPSE,
+		EXPAND
+	}
 
 	private static final String SHIP_CATEGORY = "Ship";
 
@@ -139,12 +141,12 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		}
 		JLabel jOwnersLabel = new JLabel(TabsLoadout.get().owner());
 		jOwners = new JComboBox();
-		jOwners.setActionCommand(ACTION_OWNERS);
+		jOwners.setActionCommand(LoadoutsAction.OWNERS.name());
 		jOwners.addActionListener(listener);
 
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
 		jShips = new JComboBox();
-		jShips.setActionCommand(ACTION_FILTER);
+		jShips.setActionCommand(LoadoutsAction.FILTER.name());
 		jShips.addActionListener(listener);
 
 		JToolBar jToolBarLeft = new JToolBar();
@@ -161,17 +163,17 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		jExport.add(jMenu);
 
 		JMenuItem jExportEveXml = new JMenuItem(TabsLoadout.get().exportEveXmlSelected());
-		jExportEveXml.setActionCommand(ACTION_EXPORT_LOADOUT);
+		jExportEveXml.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_SELECTED.name());
 		jExportEveXml.addActionListener(listener);
 		jMenu.add(jExportEveXml);
 
 		JMenuItem jExportEveXmlAll = new JMenuItem(TabsLoadout.get().exportEveXmlAll());
-		jExportEveXmlAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
+		jExportEveXmlAll.setActionCommand(LoadoutsAction.EXPORT_LOADOUT_ALL.name());
 		jExportEveXmlAll.addActionListener(listener);
 		jMenu.add(jExportEveXmlAll);
 
 		JMenuItem jExportSqlCsvHtml = new JMenuItem(TabsLoadout.get().exportSqlCsvHtml(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExportSqlCsvHtml.setActionCommand(ACTION_EXPORT);
+		jExportSqlCsvHtml.setActionCommand(LoadoutsAction.EXPORT.name());
 		jExportSqlCsvHtml.addActionListener(listener);
 		jExport.add(jExportSqlCsvHtml);
 
@@ -180,12 +182,12 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		jToolBarRight.setRollover(true);
 
 		jCollapse = new JButton(TabsLoadout.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(LoadoutsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		addToolButton(jToolBarRight, jCollapse);
 
 		jExpand = new JButton(TabsLoadout.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(LoadoutsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		addToolButton(jToolBarRight, jExpand);
 
@@ -213,7 +215,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Loadout.class);
+		installMenu(program, new LoadoutTableMenu(), jTable, Loadout.class);
 
 		List<EnumTableColumn<Loadout>> enumColumns = new ArrayList<EnumTableColumn<Loadout>>();
 		enumColumns.addAll(Arrays.asList(LoadoutExtendedTableFormat.values()));
@@ -262,29 +264,6 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
 	}
-
-	@Override
-	public MenuData<Loadout> getMenuData() {
-		return new MenuData<Loadout>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.module(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -427,11 +406,35 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 		jTable.loadExpandedState();
 	}
 
-	public class ListenerClass implements ActionListener {
+	private class LoadoutTableMenu implements TableMenu<Loadout> {
+		@Override
+		public MenuData<Loadout> getMenuData() {
+			return new MenuData<Loadout>(selectionModel.getSelected());
+		}
 
 		@Override
+		public JMenu getFilterMenu() {
+			return null;
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.module(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_OWNERS.equals(e.getActionCommand())) {
+			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<String>();
 				for (Asset asset : program.getAssetEventList()) {
@@ -467,20 +470,20 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 					jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 				}
 			}
-			if (ACTION_FILTER.equals(e.getActionCommand())) {
+			if (LoadoutsAction.FILTER.name().equals(e.getActionCommand())) {
 				String selectedShip = (String) jShips.getSelectedItem();
-				filterList.setMatcher(new Loadout.ModuleMatcher(selectedShip));
+				filterList.setMatcher(new Loadout.LoadoutMatcher(selectedShip));
 			}
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (LoadoutsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (LoadoutsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
-			if (ACTION_EXPORT_LOADOUT.equals(e.getActionCommand())) {
+			if (LoadoutsAction.EXPORT_LOADOUT_SELECTED.name().equals(e.getActionCommand())) {
 				loadoutsExportDialog.setVisible(true);
 			}
-			if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
+			if (LoadoutsAction.EXPORT_LOADOUT_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
 				List<Asset> ships = new ArrayList<Asset>();
 				for (Asset asset : program.getAssetEventList()) {
@@ -493,7 +496,7 @@ public class LoadoutsTab extends JMainTab implements TableMenu<Loadout> {
 					EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
 				}
 			}
-			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+			if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
 			}
 		}

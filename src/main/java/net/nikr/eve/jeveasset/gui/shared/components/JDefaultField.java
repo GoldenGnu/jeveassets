@@ -26,7 +26,7 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextField;
 
 
-public class JDefaultField extends JTextField implements FocusListener {
+public class JDefaultField extends JTextField {
 
 	private String defaultValue;
 	private boolean autoSelectAll;
@@ -34,18 +34,13 @@ public class JDefaultField extends JTextField implements FocusListener {
 	public JDefaultField(final String defaultValue) {
 		this.defaultValue = defaultValue;
 		autoSelectAll = false;
-		this.addFocusListener(this);
+
+		ListenerClass listener = new ListenerClass();
+
+		addFocusListener(listener);
 	}
 
-	@Override
-	public void focusGained(final FocusEvent e) {
-		if (autoSelectAll) {
-			selectAll();
-		}
-	}
-
-	@Override
-	public void focusLost(final FocusEvent e) {
+	private void restoreDefault() {
 		if (super.getText().length() == 0) {
 			super.setText(defaultValue);
 		}
@@ -53,9 +48,7 @@ public class JDefaultField extends JTextField implements FocusListener {
 
 	@Override
 	public String getText() {
-		if (super.getText().length() == 0) {
-			super.setText(defaultValue);
-		}
+		restoreDefault();
 		return super.getText();
 	}
 
@@ -74,5 +67,19 @@ public class JDefaultField extends JTextField implements FocusListener {
 
 	public void setAutoSelectAll(boolean autoSelectAll) {
 		this.autoSelectAll = autoSelectAll;
+	}
+
+	private class ListenerClass implements FocusListener {
+		@Override
+		public void focusGained(final FocusEvent e) {
+			if (autoSelectAll) {
+				selectAll();
+			}
+		}
+
+		@Override
+		public void focusLost(final FocusEvent e) {
+			restoreDefault();
+		}
 	}
 }

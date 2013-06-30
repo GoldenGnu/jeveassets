@@ -59,7 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public class TransactionTab extends JMainTab implements ListEventListener<Transaction>, TableMenu<Transaction> {
+public class TransactionTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -78,6 +78,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 	public TransactionTab(final Program program) {
 		super(program, TabsTransaction.get().title(), Images.TOOL_TRANSACTION.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<TransactionTableFormat, Transaction>(TransactionTableFormat.class);
 		//Backend
@@ -86,7 +87,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 		SortedList<Transaction> sortedList = new SortedList<Transaction>(eventList);
 		//Filter
 		filterList = new FilterList<Transaction>(sortedList);
-		filterList.addListEventListener(this);
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -122,7 +123,7 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Transaction.class);
+		installMenu(program, new TransactionTableMenu(), jTable, Transaction.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsTransaction.get().totalSell(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -143,44 +144,48 @@ public class TransactionTab extends JMainTab implements ListEventListener<Transa
 	}
 
 	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public MenuData<Transaction> getMenuData() {
-		return new MenuData<Transaction>(selectionModel.getSelected());
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.transctions(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	@Override
-	public void listChanged(ListEvent<Transaction> listChanges) {
-		double sellOrdersTotal = 0;
-		double buyOrdersTotal = 0;
-		for (Transaction transaction : filterList) {
-			if (transaction.getTransactionType().equals("sell")) { //Sell
-				sellOrdersTotal += transaction.getPrice() * transaction.getQuantity();
-			} else { //Buy
-				buyOrdersTotal += transaction.getPrice() * transaction.getQuantity();
-			}
+	private class TransactionTableMenu implements TableMenu<Transaction> {
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
 		}
-		jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
-		jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public MenuData<Transaction> getMenuData() {
+			return new MenuData<Transaction>(selectionModel.getSelected());
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.transctions(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<Transaction> {
+		@Override
+		public void listChanged(ListEvent<Transaction> listChanges) {
+			double sellOrdersTotal = 0;
+			double buyOrdersTotal = 0;
+			for (Transaction transaction : filterList) {
+				if (transaction.getTransactionType().equals("sell")) { //Sell
+					sellOrdersTotal += transaction.getPrice() * transaction.getQuantity();
+				} else { //Buy
+					buyOrdersTotal += transaction.getPrice() * transaction.getQuantity();
+				}
+			}
+			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
+			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
+		}
 	}
 
 	public static class TransactionsFilterControl extends FilterControl<Transaction> {

@@ -42,11 +42,13 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class StockpileItemDialog extends JDialogCentered implements ActionListener, CaretListener, ItemListener {
+public class StockpileItemDialog extends JDialogCentered {
 
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_COPY = "ACTION_COPY";
+	private enum StockpileItemAction {
+		CANCEL,
+		OK,
+		COPY
+	}
 
 	private JButton jOK;
 	private JButton jCancel;
@@ -61,12 +63,14 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	public StockpileItemDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
 
+		ListenerClass listener = new ListenerClass();
+
 		JLabel jItemsLabel = new JLabel(TabsStockpile.get().item());
 		jItems = new JComboBox();
 		AutoCompleteSupport<Item> itemAutoComplete = AutoCompleteSupport.install(jItems, items, new ItemFilterator());
 		itemAutoComplete.setStrict(true);
 		itemAutoComplete.setCorrectsCase(true);
-		jItems.addItemListener(this); //Must be added after AutoCompleteSupport
+		jItems.addItemListener(listener); //Must be added after AutoCompleteSupport
 
 		JLabel jCountMinimumLabel = new JLabel(TabsStockpile.get().countMinimum());
 		jCountMinimum = new JTextField();
@@ -76,20 +80,20 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 				jCountMinimum.selectAll();
 			}
 		});
-		jCountMinimum.addCaretListener(this);
+		jCountMinimum.addCaretListener(listener);
 
 		jCopy = new JCheckBox(TabsStockpile.get().copy());
-		jCopy.setActionCommand(ACTION_COPY);
-		jCopy.addActionListener(this);
+		jCopy.setActionCommand(StockpileItemAction.COPY.name());
+		jCopy.addActionListener(listener);
 
 		jOK = new JButton(TabsStockpile.get().ok());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(StockpileItemAction.OK.name());
+		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
 		jCancel = new JButton(TabsStockpile.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(StockpileItemAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 
 		layout.setHorizontalGroup(
@@ -305,29 +309,31 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		super.setVisible(false);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
+	private class ListenerClass implements ActionListener, CaretListener, ItemListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (StockpileItemAction.OK.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (StockpileItemAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
+			if (StockpileItemAction.COPY.name().equals(e.getActionCommand())) {
+				autoSet();
+				autoValidate();
+			}
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
-		}
-		if (ACTION_COPY.equals(e.getActionCommand())) {
-			autoSet();
+
+		@Override
+		public void caretUpdate(final CaretEvent e) {
 			autoValidate();
 		}
-	}
 
-	@Override
-	public void caretUpdate(final CaretEvent e) {
-		autoValidate();
-	}
-
-	@Override
-	public void itemStateChanged(final ItemEvent e) {
-		autoValidate();
-		autoSet();
+		@Override
+		public void itemStateChanged(final ItemEvent e) {
+			autoValidate();
+			autoSet();
+		}
 	}
 
 	static class ItemFilterator implements TextFilterator<Item> {

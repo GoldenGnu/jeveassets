@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
-public class JournalTab extends JMainTab implements TableMenu<Journal> {
+public class JournalTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 
@@ -94,7 +94,7 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Journal.class);
+		installMenu(program, new JournalTableMenu(), jTable, Journal.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -109,31 +109,33 @@ public class JournalTab extends JMainTab implements TableMenu<Journal> {
 	}
 
 	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public MenuData<Journal> getMenuData() {
-		return new MenuData<Journal>(selectionModel.getSelected());
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) { }
-
-	@Override
-	public void addToolMenu(JComponent jComponent) {
-		//FIXME - - > Journal - ToolMenu
-		//Link with contracts and Transactions
-	}
-
-	@Override
 	public void updateData() { }
+
+	private class JournalTableMenu implements TableMenu<Journal> {
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public MenuData<Journal> getMenuData() {
+			return new MenuData<Journal>(selectionModel.getSelected());
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) {
+			//FIXME - - > Journal - ToolMenu
+			//Link with contracts and Transactions
+		}
+	}
 
 	public static class JournalFilterControl extends FilterControl<Journal> {
 

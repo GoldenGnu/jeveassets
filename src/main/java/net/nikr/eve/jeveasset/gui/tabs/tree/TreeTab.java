@@ -86,11 +86,13 @@ import net.nikr.eve.jeveasset.i18n.TabsTree;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
+public class TreeTab extends JMainTab {
 
-	private static final String ACTION_UPDATE = "ACTION_UPDATE";
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private enum TreeAction {
+		UPDATE,
+		COLLAPSE,
+		EXPAND
+	}
 
 	private final int INDENT = 10;
 
@@ -131,13 +133,13 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		jCategories = new JToggleButton(TabsTree.get().categories(), Images.LOC_GROUPS.getIcon());
-		jCategories.setActionCommand(ACTION_UPDATE);
+		jCategories.setActionCommand(TreeAction.UPDATE.name());
 		jCategories.addActionListener(listener);
 		buttonGroup.add(jCategories);
 		addToolButton(jToolBarLeft, jCategories);
 
 		jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
-		jLocation.setActionCommand(ACTION_UPDATE);
+		jLocation.setActionCommand(TreeAction.UPDATE.name());
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
@@ -148,12 +150,12 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jToolBarRight.setRollover(true);
 
 		JButton jCollapse = new JButton(TabsTree.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(TreeAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		addToolButton(jToolBarRight, jCollapse);
 
 		JButton jExpand = new JButton(TabsTree.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(TreeAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		addToolButton(jToolBarRight, jExpand);
 
@@ -203,7 +205,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 				);
 
 		//Menu
-		installMenu(program, this, jTable, TreeAsset.class);
+		installMenu(program, new TreeTableMenu(), jTable, TreeAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -254,29 +256,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
 	}
-
-	@Override
-	public MenuData<TreeAsset> getMenuData() {
-		return new MenuData<TreeAsset>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.treeAsset(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -419,20 +398,44 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
-	public class ListenerClass implements ActionListener, MouseListener, ListEventListener<TreeAsset> {
+	private class TreeTableMenu implements TableMenu<TreeAsset> {
+		@Override
+		public MenuData<TreeAsset> getMenuData() {
+			return new MenuData<TreeAsset>(selectionModel.getSelected());
+		}
 
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.treeAsset(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener, MouseListener, ListEventListener<TreeAsset> {
 		private final int WIDTH = UIManager.getIcon("Tree.expandedIcon").getIconWidth();
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (ACTION_UPDATE.equals(e.getActionCommand())) {
+			if (TreeAction.UPDATE.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandeState.LOAD);
 				updateTable();
-			} else if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			} else if (TreeAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandeState.COLLAPSE);
 				updateTable();
 				expansionModel.setState(ExpandeState.LOAD);
-			} else if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			} else if (TreeAction.EXPAND.name().equals(e.getActionCommand())) {
 				expansionModel.setState(ExpandeState.EXPANDE);
 				updateTable();
 				expansionModel.setState(ExpandeState.LOAD);

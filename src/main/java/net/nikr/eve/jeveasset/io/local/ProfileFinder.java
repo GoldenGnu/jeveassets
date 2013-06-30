@@ -137,7 +137,7 @@ public final class ProfileFinder {
 		return name.startsWith("#");
 	}
 
-	private class XmlFileFilter implements  FileFilter {
+	private class XmlFileFilter implements FileFilter {
 		@Override
 		public boolean accept(final File file) {
 			return !file.isDirectory() && file.getName().endsWith(".xml");

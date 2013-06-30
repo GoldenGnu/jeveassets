@@ -83,14 +83,16 @@ public class RoutingTab extends JMainTab  {
 
 	private static final  Logger LOG = LoggerFactory.getLogger(RoutingTab.class);
 
-	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_REMOVE = "ACTION_REMOVE";
-	private static final String ACTION_ADD_SYSTEM = "ACTION_ADD_SYSTEM";
-	private static final String ACTION_SOURCE = "ACTION_SOURCE";
-	private static final String ACTION_ALGORITHM = "ACTION_ALGORITHM";
-	private static final String ACTION_ALGORITHM_HELP = "ACTION_ALGORITHM_HELP";
-	private static final String ACTION_CALCULATE = "ACTION_CALCULATE";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum RoutingAction {
+		ADD,
+		REMOVE,
+		ADD_SYSTEM,
+		SOURCE,
+		ALGORITHM,
+		ALGORITHM_HELP,
+		CALCULATE,
+		CANCEL
+	}
 
 	private JButton jAdd;
 	private JButton jRemove;
@@ -131,32 +133,32 @@ public class RoutingTab extends JMainTab  {
 		jSystemDialog = new JSystemDialog(program);
 
 		jAdd = new JButton(TabsRouting.get().add());
-		jAdd.setActionCommand(ACTION_ADD);
+		jAdd.setActionCommand(RoutingAction.ADD.name());
 		jAdd.addActionListener(listener);
 
 		jRemove = new JButton(TabsRouting.get().remove());
-		jRemove.setActionCommand(ACTION_REMOVE);
+		jRemove.setActionCommand(RoutingAction.REMOVE.name());
 		jRemove.addActionListener(listener);
 
 		jAddSystem = new JButton(TabsRouting.get().addSystem());
-		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
+		jAddSystem.setActionCommand(RoutingAction.ADD_SYSTEM.name());
 		jAddSystem.addActionListener(listener);
 
 		jSourceLabel = new JLabel(TabsRouting.get().source());
 
 		jSource = new JComboBox();
-		jSource.setActionCommand(ACTION_SOURCE);
+		jSource.setActionCommand(RoutingAction.SOURCE.name());
 		jSource.addActionListener(listener);
 
 		jAlgorithmLabel = new JLabel(TabsRouting.get().algorithm());
 
 		jAlgorithm = new JComboBox(RoutingAlgorithmContainer.getRegisteredList().toArray());
 		jAlgorithm.setSelectedIndex(0);
-		jAlgorithm.setActionCommand(ACTION_ALGORITHM);
+		jAlgorithm.setActionCommand(RoutingAction.ALGORITHM.name());
 		jAlgorithm.addActionListener(listener);
 
 		jAlgorithmInfo = new JButton(Images.MISC_HELP.getIcon());
-		jAlgorithmInfo.setActionCommand(ACTION_ALGORITHM_HELP);
+		jAlgorithmInfo.setActionCommand(RoutingAction.ALGORITHM_HELP.name());
 		jAlgorithmInfo.addActionListener(listener);
 
 		jProgress = new ProgressBar();
@@ -191,11 +193,11 @@ public class RoutingTab extends JMainTab  {
 		updateRemaining();
 
 		jCalculate = new JButton(TabsRouting.get().calculate());
-		jCalculate.setActionCommand(ACTION_CALCULATE);
+		jCalculate.setActionCommand(RoutingAction.CALCULATE.name());
 		jCalculate.addActionListener(listener);
 
 		jCancel = new JButton(TabsRouting.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(RoutingAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 		jCancel.setEnabled(false);
 
@@ -689,11 +691,11 @@ public class RoutingTab extends JMainTab  {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			LOG.debug(e.getActionCommand());
-			if (ACTION_ADD.equals(e.getActionCommand())) {
+			if (RoutingAction.ADD.name().equals(e.getActionCommand())) {
 				move(jAvailable, jWaypoints, ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem()).getWaypointLimit());
-			} else if (ACTION_REMOVE.equals(e.getActionCommand())) {
+			} else if (RoutingAction.REMOVE.name().equals(e.getActionCommand())) {
 				move(jWaypoints, jAvailable, Integer.MAX_VALUE);
-			} else if (ACTION_CALCULATE.equals(e.getActionCommand())) {
+			} else if (RoutingAction.CALCULATE.name().equals(e.getActionCommand())) {
 				if (jResult.isEnabled()) {
 					int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsRouting.get().resultOverwrite(), TabsRouting.get().calculate(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (value != JOptionPane.OK_OPTION) {
@@ -701,18 +703,18 @@ public class RoutingTab extends JMainTab  {
 					}
 				}
 				processRoute();
-			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			} else if (RoutingAction.CANCEL.name().equals(e.getActionCommand())) {
 				cancelProcessing();
-			} else if (ACTION_SOURCE.equals(e.getActionCommand())) {
+			} else if (RoutingAction.SOURCE.name().equals(e.getActionCommand())) {
 				jAvailable.getEditableModel().clear();
 				jWaypoints.getEditableModel().clear();
 				processFilteredAssets();
-			} else if (ACTION_ALGORITHM.equals(e.getActionCommand())) {
+			} else if (RoutingAction.ALGORITHM.name().equals(e.getActionCommand())) {
 				updateRemaining();
-			} else if (ACTION_ALGORITHM_HELP.equals(e.getActionCommand())) {
+			} else if (RoutingAction.ALGORITHM_HELP.name().equals(e.getActionCommand())) {
 				RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) jAlgorithm.getSelectedItem());
 				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), rac.getBasicDescription(), rac.getName(), JOptionPane.INFORMATION_MESSAGE);
-			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
+			} else if (RoutingAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {
 				SolarSystem system = jSystemDialog.show();
 				if (system != null ) {
 					if (!jWaypoints.getEditableModel().contains(system)

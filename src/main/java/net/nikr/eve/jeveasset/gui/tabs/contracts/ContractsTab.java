@@ -61,10 +61,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
+public class ContractsTab extends JMainTab {
 
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private enum ContractsAction {
+		COLLAPSE, EXPAND
+	}
 
 	//GUI
 	private JSeparatorTable jTable;
@@ -91,7 +92,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jToolBarRight.setRollover(true);
 
 		JButton jCollapse = new JButton(TabsContracts.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(ContractsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -99,7 +100,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jToolBarRight.add(jCollapse);
 
 		JButton jExpand = new JButton(TabsContracts.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(ContractsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -146,7 +147,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 				);
 
 		//Menu
-		installMenu(program, this, jTable, ContractItem.class);
+		installMenu(program, new ContractsTableMenu(), jTable, ContractItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -169,37 +170,39 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 	}
 
 	@Override
-	public MenuData<ContractItem> getMenuData() {
-		return new MenuData<ContractItem>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) { }
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	public class ListenerClass implements ActionListener {
+	private class ContractsTableMenu implements TableMenu<ContractItem> {
+		@Override
+		public MenuData<ContractItem> getMenuData() {
+			return new MenuData<ContractItem>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (ContractsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (ContractsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
 		}

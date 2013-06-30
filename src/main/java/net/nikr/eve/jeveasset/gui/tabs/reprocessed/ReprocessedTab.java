@@ -66,15 +66,18 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInterface> {
+public class ReprocessedTab extends JMainTab {
 
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
-	private static final String ACTION_CLEAR = "ACTION_CLEAR";
+	private enum ReprocessedAction {
+		COLLAPSE,
+		EXPAND,
+		CLEAR
+	}
 
 	//GUI
 	private JSeparatorTable jTable;
@@ -114,7 +117,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.setRollover(true);
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
-		jClear.setActionCommand(ACTION_CLEAR);
+		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
 		jClear.addActionListener(listener);
 		jClear.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jClear.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
@@ -122,7 +125,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.add(jClear);
 
 		JButton jCollapse = new JButton(TabsReprocessed.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(ReprocessedAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -130,7 +133,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.add(jCollapse);
 
 		JButton jExpand = new JButton(TabsReprocessed.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(ReprocessedAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -177,7 +180,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				);
 
 		//Menu
-		installMenu(program, this, jTable, ReprocessedInterface.class);
+		installMenu(program, new ReprocessedTableMenu(), jTable, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -202,27 +205,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public MenuData<ReprocessedInterface> getMenuData() {
-		return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) { }
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -298,21 +280,43 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		program.getMainWindow().addTab(this, true);	
 	}
 
-	public class ListenerClass implements ActionListener {
+	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
+		@Override
+		public MenuData<ReprocessedInterface> getMenuData() {
+			return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
+		}
 
 		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (ReprocessedAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (ReprocessedAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
-			if (ACTION_CLEAR.equals(e.getActionCommand())) {
+			if (ReprocessedAction.CLEAR.name().equals(e.getActionCommand())) {
 				typeIDs.clear();
 				updateData();
 			}
-			if (ReprocessedSeparatorTableCell.ACTION_REMOVE.equals(e.getActionCommand())) {
+			if (ReprocessedCellAction.REMOVE.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -324,7 +328,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				}
 			}
 		}
-
 	}
 
 	public static class TotalComparator implements Comparator<ReprocessedInterface> {

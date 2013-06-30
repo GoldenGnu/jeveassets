@@ -42,8 +42,9 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum AutoCompleteAction {
+		OK, CANCEL
+	}
 
 	private final EventList<T> eventList;
 	private final AutoCompleteSupport<T> autoComplete;
@@ -67,11 +68,11 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		autoComplete = AutoCompleteSupport.install(jItems, sortedList, getFilterator());
 
 		jOK = new JButton(GuiShared.get().ok());
-		jOK.setActionCommand(ACTION_OK);
+		jOK.setActionCommand(AutoCompleteAction.OK.name());
 		jOK.addActionListener(listener);
 
 		JButton jCancel = new JButton(GuiShared.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(AutoCompleteAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
@@ -157,10 +158,10 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	private class ListenerClass implements ActionListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (AutoCompleteAction.OK.name().equals(e.getActionCommand())) {
 				save();
 			}
-			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			if (AutoCompleteAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
 		}

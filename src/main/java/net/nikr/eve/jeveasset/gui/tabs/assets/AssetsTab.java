@@ -49,11 +49,10 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab implements ListEventListener<Asset>, TableMenu<Asset> {
+public class AssetsTab extends JMainTab {
 
 	//GUI
 	private JAssetTable jTable;
@@ -77,6 +76,8 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
+		ListenerClass listener = new ListenerClass();
+
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, Asset>(AssetTableFormat.class);
 		//Backend
@@ -85,7 +86,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		SortedList<Asset> sortedList = new SortedList<Asset>(eventList);
 		//Filter
 		filterList = new FilterList<Asset>(sortedList);
-		filterList.addListEventListener(this);
+		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
@@ -114,7 +115,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Asset.class);
+		installMenu(program, new AssetTableMenu(), jTable, Asset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -142,29 +143,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public MenuData<Asset> getMenuData() {
-		return new AssetMenuData(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.asset(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }
@@ -231,10 +209,38 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		return ret;
 	}
 
-	@Override
-	public void listChanged(final ListEvent<Asset> listChanges) {
-		updateStatusbar();
-		program.getOverviewTab().updateTable();
+	private class AssetTableMenu implements TableMenu<Asset> {
+		@Override
+		public MenuData<Asset> getMenuData() {
+			return new AssetMenuData(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+
+	private class ListenerClass implements ListEventListener<Asset> {
+		@Override
+		public void listChanged(final ListEvent<Asset> listChanges) {
+			updateStatusbar();
+			program.getOverviewTab().updateTable();
+		}
 	}
 
 	public static class AssetFilterControl extends FilterControl<Asset> {

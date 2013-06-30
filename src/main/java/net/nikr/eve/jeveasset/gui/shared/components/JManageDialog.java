@@ -46,10 +46,12 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public abstract class JManageDialog extends JDialogCentered {
 
-	public static final String ACTION_DONE = "ACTION_DONE";
-	public static final String ACTION_LOAD = "ACTION_LOAD";
-	public static final String ACTION_RENAME = "ACTION_RENAME";
-	public static final String ACTION_DELETE = "ACTION_DELETE";
+	private enum ManageDialogAction {
+		DONE,
+		LOAD,
+		RENAME,
+		DELETE
+	}
 
 	private DefaultListModel listModel;
 	private JList jList;
@@ -66,19 +68,19 @@ public abstract class JManageDialog extends JDialogCentered {
 
 		//Load
 		jLoad = new JButton(GuiShared.get().managerLoad());
-		jLoad.setActionCommand(ACTION_LOAD);
+		jLoad.setActionCommand(ManageDialogAction.LOAD.name());
 		jLoad.addActionListener(listener);
 		jPanel.add(jLoad);
 
 		//Rename
 		jRename = new JButton(GuiShared.get().managerRename());
-		jRename.setActionCommand(ACTION_RENAME);
+		jRename.setActionCommand(ManageDialogAction.RENAME.name());
 		jRename.addActionListener(listener);
 		jPanel.add(jRename);
 
 		//Delete
 		jDelete = new JButton(GuiShared.get().managerDelete());
-		jDelete.setActionCommand(ACTION_DELETE);
+		jDelete.setActionCommand(ManageDialogAction.DELETE.name());
 		jDelete.addActionListener(listener);
 		jPanel.add(jDelete);
 
@@ -92,7 +94,7 @@ public abstract class JManageDialog extends JDialogCentered {
 
 		//Done
 		jDone = new JButton(GuiShared.get().managerDone());
-		jDone.setActionCommand(ACTION_DONE);
+		jDone.setActionCommand(ManageDialogAction.DONE.name());
 		jDone.addActionListener(listener);
 		jPanel.add(jDone);
 
@@ -268,20 +270,20 @@ public abstract class JManageDialog extends JDialogCentered {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_DONE.equals(e.getActionCommand())) {
+			if (ManageDialogAction.DONE.name().equals(e.getActionCommand())) {
 				save();
 			}
-			if (ACTION_LOAD.equals(e.getActionCommand())) {
+			if (ManageDialogAction.LOAD.name().equals(e.getActionCommand())) {
 				if (jList.getSelectedIndices().length == 1) {
 					load();
 				} else {
 					merge();
 				}
 			}
-			if (ACTION_RENAME.equals(e.getActionCommand())) {
+			if (ManageDialogAction.RENAME.name().equals(e.getActionCommand())) {
 				rename();
 			}
-			if (ACTION_DELETE.equals(e.getActionCommand())) {
+			if (ManageDialogAction.DELETE.name().equals(e.getActionCommand())) {
 				delete();
 			}
 		}

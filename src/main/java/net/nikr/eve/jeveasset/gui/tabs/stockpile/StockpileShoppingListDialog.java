@@ -42,10 +42,12 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-class StockpileShoppingListDialog extends JDialogCentered implements ActionListener, CaretListener {
+class StockpileShoppingListDialog extends JDialogCentered {
 
-	private static final String ACTION_CLIPBOARD_STOCKPILE = "ACTION_CLIPBOARD_STOCKPILE";
-	private static final String ACTION_CLOSE = "ACTION_CLOSE";
+	private enum StockpileShoppingListAction {
+		CLIPBOARD_STOCKPILE,
+		CLOSE
+	}
 
 	private JTextArea jText;
 	private JButton jClose;
@@ -56,19 +58,21 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 	StockpileShoppingListDialog(final Program program) {
 		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
 
+		ListenerClass listener = new ListenerClass();
+
 		JButton jCopyToClipboard = new JButton(TabsStockpile.get().clipboardStockpile(), Images.EDIT_COPY.getIcon());
-		jCopyToClipboard.setActionCommand(ACTION_CLIPBOARD_STOCKPILE);
-		jCopyToClipboard.addActionListener(this);
+		jCopyToClipboard.setActionCommand(StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name());
+		jCopyToClipboard.addActionListener(listener);
 
 		JLabel jPercentFullLabel = new JLabel(TabsStockpile.get().percentFull());
 		JLabel jPercentLabel = new JLabel(TabsStockpile.get().percent());
 
 		jPercent = new JIntegerField("");
-		jPercent.addCaretListener(this);
+		jPercent.addCaretListener(listener);
 
 		jClose = new JButton(TabsStockpile.get().close());
-		jClose.setActionCommand(ACTION_CLOSE);
-		jClose.addActionListener(this);
+		jClose.setActionCommand(StockpileShoppingListAction.CLOSE.name());
+		jClose.addActionListener(listener);
 
 		jText = new JTextArea();
 		jText.setEditable(false);
@@ -210,18 +214,20 @@ class StockpileShoppingListDialog extends JDialogCentered implements ActionListe
 	@Override
 	protected void save() { }
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_CLIPBOARD_STOCKPILE.equals(e.getActionCommand())) {
-			copyToClipboard();
+	private class ListenerClass implements ActionListener, CaretListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (StockpileShoppingListAction.CLIPBOARD_STOCKPILE.name().equals(e.getActionCommand())) {
+				copyToClipboard();
+			}
+			if (StockpileShoppingListAction.CLOSE.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
-		if (ACTION_CLOSE.equals(e.getActionCommand())) {
-			super.setVisible(false);
-		}
-	}
 
-	@Override
-	public void caretUpdate(final CaretEvent e) {
-		updateList();
+		@Override
+		public void caretUpdate(final CaretEvent e) {
+			updateList();
+		}
 	}
 }

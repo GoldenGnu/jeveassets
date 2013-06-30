@@ -54,11 +54,13 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class StockpileDialog extends JDialogCentered implements ActionListener, ItemListener, CaretListener {
+public class StockpileDialog extends JDialogCentered {
 
-	private static final String ACTION_FILTER_LOCATIONS = "ACTION_FILTER_LOCATIONS";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_OK = "ACTION_OK";
+	private enum StockpileDialogAction {
+		FILTER_LOCATIONS,
+		CANCEL,
+		OK
+	}
 
 	private static final int FIELD_WIDTH = 320;
 
@@ -92,6 +94,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	public StockpileDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
 
+		ListenerClass listener = new ListenerClass();
+
 		JLabel jNameLabel = new JLabel(TabsStockpile.get().name());
 		jName = new JTextField();
 		jName.addFocusListener(new FocusAdapter() {
@@ -100,7 +104,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 				jName.selectAll();
 			}
 		});
-		jName.addCaretListener(this);
+		jName.addCaretListener(listener);
 
 		JLabel jOwnersLabel = new JLabel(TabsStockpile.get().owner());
 		jOwner = new JComboBox();
@@ -108,28 +112,28 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		ButtonGroup group = new ButtonGroup();
 
 		jStations = new JRadioButton(TabsStockpile.get().stations());
-		jStations.setActionCommand(ACTION_FILTER_LOCATIONS);
-		jStations.addActionListener(this);
+		jStations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+		jStations.addActionListener(listener);
 		group.add(jStations);
 
 		jSystems = new JRadioButton(TabsStockpile.get().systems());
-		jSystems.setActionCommand(ACTION_FILTER_LOCATIONS);
-		jSystems.addActionListener(this);
+		jSystems.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+		jSystems.addActionListener(listener);
 		group.add(jSystems);
 
 		jRegions = new JRadioButton(TabsStockpile.get().regions());
-		jRegions.setActionCommand(ACTION_FILTER_LOCATIONS);
-		jRegions.addActionListener(this);
+		jRegions.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+		jRegions.addActionListener(listener);
 		group.add(jRegions);
 
 		jUniverse = new JRadioButton(TabsStockpile.get().allLocations());
-		jUniverse.setActionCommand(ACTION_FILTER_LOCATIONS);
-		jUniverse.addActionListener(this);
+		jUniverse.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+		jUniverse.addActionListener(listener);
 		group.add(jUniverse);
 
 		jMyLocations = new JCheckBox(TabsStockpile.get().myLocations());
-		jMyLocations.setActionCommand(ACTION_FILTER_LOCATIONS);
-		jMyLocations.addActionListener(this);
+		jMyLocations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+		jMyLocations.addActionListener(listener);
 		JLabel jIncludeLabel = new JLabel(TabsStockpile.get().include());
 
 		jInventory = new JCheckBox(TabsStockpile.get().inventory());
@@ -150,7 +154,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		locationsAutoComplete = AutoCompleteSupport.install(jLocations, locationsFilter, new LocationsFilterator());
 		locationsAutoComplete.setStrict(true);
 		locationsAutoComplete.setCorrectsCase(true);
-		jLocations.addItemListener(this); //Must be added after AutoCompleteSupport
+		jLocations.addItemListener(listener); //Must be added after AutoCompleteSupport
 
 		JLabel jFlagLabel = new JLabel(TabsStockpile.get().flag());
 		jFlag = new JComboBox();
@@ -159,13 +163,13 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jContainer = new JComboBox();
 
 		jOK = new JButton(TabsStockpile.get().ok());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(StockpileDialogAction.OK.name());
+		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
 		JButton jCancel = new JButton(TabsStockpile.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(StockpileDialogAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -528,27 +532,29 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		this.setVisible(false);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_FILTER_LOCATIONS.equals(e.getActionCommand())) {
-			refilter();
+	private class ListenerClass implements ActionListener, ItemListener, CaretListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (StockpileDialogAction.FILTER_LOCATIONS.name().equals(e.getActionCommand())) {
+				refilter();
+			}
+			if (StockpileDialogAction.OK.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (StockpileDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
-		}
-	}
 
-	@Override
-	public void itemStateChanged(final ItemEvent e) {
-		autoValidate();
-	}
+		@Override
+		public void itemStateChanged(final ItemEvent e) {
+			autoValidate();
+		}
 
-	@Override
-	public void caretUpdate(final CaretEvent e) {
-		autoValidate();
+		@Override
+		public void caretUpdate(final CaretEvent e) {
+			autoValidate();
+		}
 	}
 
 	static class OwnerFilterator implements TextFilterator<Owner> {

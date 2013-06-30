@@ -66,12 +66,14 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-public class MaterialsTab extends JMainTab implements TableMenu<Material> {
+public class MaterialsTab extends JMainTab {
 
-	private static final String ACTION_SELECTED = "ACTION_SELECTED";
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
-	private static final String ACTION_EXPORT = "ACTION_EXPORT";
+	private enum MaterialsAction {
+		SELECTED,
+		COLLAPSE,
+		EXPAND,
+		EXPORT
+	}
 
 	//GUI
 	private JComboBox jOwners;
@@ -102,11 +104,11 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		ListenerClass listener = new ListenerClass();
 
 		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
-		jPiMaterial.setActionCommand(ACTION_SELECTED);
+		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
 		jPiMaterial.addActionListener(listener);
 
 		jOwners = new JComboBox();
-		jOwners.setActionCommand(ACTION_SELECTED);
+		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
 		jOwners.addActionListener(listener);
 		
 		JToolBar jToolBarLeft = new JToolBar();
@@ -116,7 +118,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		jToolBarLeft.addSeparator();
 
 		jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(ACTION_EXPORT);
+		jExport.setActionCommand(MaterialsAction.EXPORT.name());
 		jExport.addActionListener(listener);
 		addToolButton(jToolBarLeft, jExport);
 
@@ -125,12 +127,12 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		jToolBarRight.setRollover(true);
 
 		jCollapse = new JButton(TabsMaterials.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(MaterialsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		addToolButton(jToolBarRight, jCollapse);
 
 		jExpand = new JButton(TabsMaterials.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(MaterialsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		addToolButton(jToolBarRight, jExpand);
 
@@ -156,7 +158,7 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Material.class);
+		installMenu(program, new MaterialTableMenu(), jTable, Material.class);
 
 		List<EnumTableColumn<Material>> enumColumns = new ArrayList<EnumTableColumn<Material>>();
 		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
@@ -199,29 +201,6 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
 	}
-
-	@Override
-	public MenuData<Material> getMenuData() {
-		return new MenuData<Material>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -353,20 +332,44 @@ public class MaterialsTab extends JMainTab implements TableMenu<Material> {
 		afterUpdateData();
 	}
 
-	public class ListenerClass implements ActionListener {
+	private class MaterialTableMenu implements TableMenu<Material> {
+		@Override
+		public MenuData<Material> getMenuData() {
+			return new MenuData<Material>(selectionModel.getSelected());
+		}
 
 		@Override
+		public JMenu getFilterMenu() {
+			return null;
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_SELECTED.equals(e.getActionCommand())) {
+			if (MaterialsAction.SELECTED.name().equals(e.getActionCommand())) {
 				updateTable();
 			}
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (MaterialsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (MaterialsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
-			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+			if (MaterialsAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
 			}
 		}

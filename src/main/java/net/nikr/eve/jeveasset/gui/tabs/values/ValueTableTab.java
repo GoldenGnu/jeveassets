@@ -58,7 +58,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class ValueTableTab extends JMainTab implements TableMenu<Value> {
+public class ValueTableTab extends JMainTab {
 
 	//GUI
 	private JAutoColumnTable jTable;
@@ -113,7 +113,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Value.class);
+		installMenu(program, new ValueTableMenu(), jTable, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -126,27 +126,6 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public MenuData<Value> getMenuData() {
-		return new MenuData<Value>();
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) { }
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	private Value getValue(Map<String, Value> values, String owner) {
 		Value value = values.get(owner);
@@ -209,6 +188,29 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
+	}
+
+	private class ValueTableMenu implements TableMenu<Value> {
+		@Override
+		public MenuData<Value> getMenuData() {
+			return new MenuData<Value>();
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	public static class ValueFilterControl extends FilterControl<Value> {

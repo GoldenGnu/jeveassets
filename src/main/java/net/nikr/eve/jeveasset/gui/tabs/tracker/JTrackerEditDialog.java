@@ -42,8 +42,10 @@ import net.nikr.eve.jeveasset.i18n.TabsTracker;
 
 public class JTrackerEditDialog extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum TrackerEditAction {
+		OK,
+		CANCEL
+	}
 
 	//GUI
 	private JTextField jDate;
@@ -95,11 +97,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jEscrowsToCover.addFocusListener(listener);
 
 		jOK = new JButton(TabsTracker.get().ok());
-		jOK.setActionCommand(ACTION_OK);
+		jOK.setActionCommand(TrackerEditAction.OK.name());
 		jOK.addActionListener(listener);
 
 		JButton jCancel = new JButton(TabsTracker.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
+		jCancel.setActionCommand(TrackerEditAction.CANCEL.name());
 		jCancel.addActionListener(listener);
 		
 		layout.setHorizontalGroup(
@@ -226,9 +228,9 @@ public class JTrackerEditDialog extends JDialogCentered {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (TrackerEditAction.OK.name().equals(e.getActionCommand())) {
 				save();
-			} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			} else if (TrackerEditAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
 		}

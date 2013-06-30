@@ -85,13 +85,15 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class OverviewTab extends JMainTab implements TableMenu<Overview> {
+public class OverviewTab extends JMainTab {
 
-	private static final String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
-	private static final String ACTION_LOAD_FILTER = "ACTION_LOAD_FILTER";
-	public static final String ACTION_GROUP_ASSET_FILTER = "ACTION_GROUP_ASSET_FILTER";
-	public static final String ACTION_GROUP_LOOKUP = "ACTION_GROUP_LOOKUP";
-	public static final String ACTION_EXPORT = "ACTION_EXPORT";
+	public enum OverviewAction {
+		UPDATE_LIST,
+		LOAD_FILTER,
+		GROUP_ASSET_FILTER,
+		GROUP_LOOKUP,
+		EXPORT
+	}
 
 	private JOverviewTable jTable;
 	private JToggleButton jStations;
@@ -134,26 +136,26 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
 		jStations.setToolTipText(TabsOverview.get().stations());
-		jStations.setActionCommand(ACTION_UPDATE_LIST);
+		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jStations.addActionListener(listener);
 		jStations.setSelected(true);
 		addToolButton(jToolBarLeft, jStations, 40, SwingConstants.CENTER);
 
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
-		jSystems.setActionCommand(ACTION_UPDATE_LIST);
+		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jSystems.addActionListener(listener);
 		addToolButton(jToolBarLeft, jSystems, 40, SwingConstants.CENTER);
 
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
-		jRegions.setActionCommand(ACTION_UPDATE_LIST);
+		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jRegions.addActionListener(listener);
 		addToolButton(jToolBarLeft, jRegions, 40, SwingConstants.CENTER);
 
 		jGroups = new JToggleButton(Images.LOC_GROUPS.getIcon());
 		jGroups.setToolTipText(TabsOverview.get().groups());
-		jGroups.setActionCommand(ACTION_UPDATE_LIST);
+		jGroups.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jGroups.addActionListener(listener);
 		addToolButton(jToolBarLeft, jGroups, 40, SwingConstants.CENTER);
 
@@ -173,7 +175,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
 		jOwner = new JComboBox();
-		jOwner.setActionCommand(ACTION_UPDATE_LIST);
+		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
 		jOwner.addActionListener(listener);
 
 		JToolBar jToolBarRight = new JToolBar();
@@ -181,7 +183,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		jToolBarRight.setRollover(true);
 		
 		JButton jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(ACTION_EXPORT);
+		jExport.setActionCommand(OverviewAction.EXPORT.name());
 		jExport.addActionListener(listener);
 		addToolButton(jToolBarRight, jExport);
 
@@ -210,7 +212,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Overview.class);
+		installMenu(program, new OverviewTableMenu(), jTable, Overview.class);
 
 		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
 		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
@@ -290,30 +292,8 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		jToolBar.add(jButton);
 	}
 
-	@Override
-	public MenuData<Overview> getMenuData() {
-		return new MenuData<Overview>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return null;
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, "overview", false);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.overview(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) {
-		jComponent.add(new JOverviewMenu(program, this, selectionModel.getSelected()));
-		MenuManager.addSeparator(jComponent);
+	private OverviewTab getThis() {
+		return this;
 	}
 
 	@Override
@@ -473,7 +453,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 		jMenuItem = new FilterMenuItem(TabsOverview.get().clear(), new ArrayList<Filter>());
 		jMenuItem.setIcon(Images.FILTER_CLEAR.getIcon());
-		jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
+		jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 		jMenuItem.addActionListener(listener);
 		jLoadFilter.add(jMenuItem);
 
@@ -483,7 +463,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		for (String filter : filters) {
 			List<Filter> filterList = Settings.get().getTableFilters(AssetsTab.NAME).get(filter);
 			jMenuItem = new FilterMenuItem(filter, filterList);
-			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
+			jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
 			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
@@ -577,11 +557,39 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		return Settings.get().getOverviewGroups().get(overview.getName());
 	}
 
+	private class OverviewTableMenu implements TableMenu<Overview> {
+		@Override
+		public MenuData<Overview> getMenuData() {
+			return new MenuData<Overview>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return null;
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, "overview", false);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.overview(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) {
+			jComponent.add(new JOverviewMenu(program, getThis(), selectionModel.getSelected()));
+			MenuManager.addSeparator(jComponent);
+		}
+	}
+
 	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_UPDATE_LIST.equals(e.getActionCommand())) {
+			if (OverviewAction.UPDATE_LIST.name().equals(e.getActionCommand())) {
 				if (e.getSource().equals(jStations)
 						|| e.getSource().equals(jSystems)
 						|| e.getSource().equals(jRegions)
@@ -593,7 +601,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				updateTable();
 			}
 			//Filter
-			if (ACTION_GROUP_ASSET_FILTER.equals(e.getActionCommand())) {
+			if (OverviewAction.GROUP_ASSET_FILTER.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
@@ -615,7 +623,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				program.getAssetsTab().addFilters(filters);
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			if (ACTION_GROUP_LOOKUP.equals(e.getActionCommand())) {
+			if (OverviewAction.GROUP_LOOKUP.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
@@ -635,7 +643,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				}
 				JMenuLookup.browseDotlan(program, stations, systems, regions);
 			}
-			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
+			if (OverviewAction.LOAD_FILTER.name().equals(e.getActionCommand())) {
 				Object source = e.getSource();
 				if (source instanceof FilterMenuItem) {
 					FilterMenuItem menuItem = (FilterMenuItem) source;
@@ -645,7 +653,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 					}
 				}
 			}
-			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+			if (OverviewAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
 			}
 		}

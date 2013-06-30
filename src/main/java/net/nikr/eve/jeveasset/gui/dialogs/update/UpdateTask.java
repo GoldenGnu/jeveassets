@@ -56,7 +56,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 
 	public UpdateTask(final String name) {
 		this.name = name;
-		this.addPropertyChangeListener(new Listener());
+		this.addPropertyChangeListener(new ListenerClass());
 		jText = new JLabel(name);
 		jText.setIcon(Images.UPDATE_NOT_STARTED.getIcon());
 
@@ -189,7 +189,7 @@ public abstract class UpdateTask extends SwingWorker<Void, Void> {
 		return error;
 	}
 
-	class Listener implements PropertyChangeListener {
+	private class ListenerClass implements PropertyChangeListener {
 
 		@Override
 		public void propertyChange(final PropertyChangeEvent evt) {

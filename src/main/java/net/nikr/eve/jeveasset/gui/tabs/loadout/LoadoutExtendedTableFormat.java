@@ -27,7 +27,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-enum LoadoutExtendedTableFormat  implements EnumTableColumn<Loadout> {
+enum LoadoutExtendedTableFormat implements EnumTableColumn<Loadout> {
 	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

@@ -39,10 +39,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class StockpileSelectionDialog extends JDialogCentered implements ListSelectionListener, ActionListener {
+public class StockpileSelectionDialog extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum StockpileSelection {
+		OK, CANCEL
+	}
 
 	private JMultiSelectionList jList;
 	private JButton jOK;
@@ -53,18 +54,20 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 	public StockpileSelectionDialog(final Program program) {
 		super(program, TabsStockpile.get().selectStockpiles());
 
+		ListenerClass listener = new ListenerClass();
+
 		jList = new JMultiSelectionList();
-		jList.addListSelectionListener(this);
+		jList.addListSelectionListener(listener);
 		JScrollPane jListScroll = new JScrollPane(jList);
 
 		jOK = new JButton(TabsStockpile.get().ok());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(StockpileSelection.OK.name());
+		jOK.addActionListener(listener);
 		jOK.setEnabled(false);
 
 		JButton jCancel = new JButton(TabsStockpile.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(StockpileSelection.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -116,18 +119,20 @@ public class StockpileSelectionDialog extends JDialogCentered implements ListSel
 		this.setVisible(false);
 	}
 
-	@Override
-	public void valueChanged(final ListSelectionEvent e) {
-		jOK.setEnabled(jList.getSelectedIndices().length > 0);
-	}
-
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
+	private class ListenerClass implements ListSelectionListener, ActionListener {
+		@Override
+		public void valueChanged(final ListSelectionEvent e) {
+			jOK.setEnabled(jList.getSelectedIndices().length > 0);
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (StockpileSelection.OK.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (StockpileSelection.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
 	}
 

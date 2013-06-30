@@ -48,8 +48,9 @@ import uk.me.candle.eve.pricing.options.LocationType;
 
 public class PriceDataSettingsPanel extends JSettingsPanel {
 
-	public static final String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
-	public static final String ACTION_LOCATION_SELECTED = "ACTION_LOCATION_SELECTED";
+	private enum PriceDataSettingsAction {
+		SOURCE_SELECTED, LOCATION_SELECTED
+	}
 
 	private JRadioButton jRadioRegions;
 	private JRadioButton jRadioSystems;
@@ -95,17 +96,17 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioRegions = new JRadioButton();
-		jRadioRegions.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioRegions.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioRegions.addActionListener(listener);
 		group.add(jRadioRegions);
 
 		jRadioSystems = new JRadioButton();
-		jRadioSystems.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioSystems.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioSystems.addActionListener(listener);
 		group.add(jRadioSystems);
 
 		jRadioStations = new JRadioButton();
-		jRadioStations.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioStations.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioStations.addActionListener(listener);
 		group.add(jRadioStations);
 
@@ -137,7 +138,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceSource.values());
-		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
+		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
 		jSource.addActionListener(listener);
 
 		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
@@ -373,11 +374,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())) {
+			if (PriceDataSettingsAction.SOURCE_SELECTED.name().equals(e.getActionCommand())) {
 				PriceSource priceSource = (PriceSource) jSource.getSelectedItem();
 				updateSource(priceSource);
 			}
-			if (ACTION_LOCATION_SELECTED.equals(e.getActionCommand())) {
+			if (PriceDataSettingsAction.LOCATION_SELECTED.name().equals(e.getActionCommand())) {
 				if (jRadioRegions.isSelected()) {
 					jRegions.requestFocusInWindow();
 				} else if (jRadioSystems.isSelected()) {

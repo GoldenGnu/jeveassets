@@ -32,10 +32,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 
-public class LoadoutsExportDialog extends JDialogCentered implements ActionListener {
+public class LoadoutsExportDialog extends JDialogCentered {
 
-	public static final String ACTION_EXPORT_OK = "ACTION_EXPORT_OK";
-	public static final String ACTION_EXPORT_CANCEL = "ACTION_EXPORT_CANCEL";
+	private enum LoadoutsExportAction {
+		OK, CANCEL
+	}
 
 	private JTextField jName;
 	private JTextPane jDescription;
@@ -46,6 +47,8 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 	public LoadoutsExportDialog(final Program program, final LoadoutsTab loadoutsDialog) {
 		super(program, TabsLoadout.get().export(), Images.TOOL_SHIP_LOADOUTS.getImage());
 		this.loadoutsDialog = loadoutsDialog;
+
+		ListenerClass listener = new ListenerClass();
 
 		JLabel jNameLabel = new JLabel(TabsLoadout.get().name());
 		jPanel.add(jNameLabel);
@@ -65,15 +68,14 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		jPanel.add(jDescriptionScrollPane);
 
 		jOK = new JButton(TabsLoadout.get().oK());
-		jOK.setActionCommand(ACTION_EXPORT_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(LoadoutsExportAction.OK.name());
+		jOK.addActionListener(listener);
 		jPanel.add(jOK);
 
 		JButton jCancel = new JButton(TabsLoadout.get().cancel());
-		jCancel.setActionCommand(ACTION_EXPORT_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(LoadoutsExportAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 		jPanel.add(jCancel);
-
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -141,13 +143,15 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 		super.setVisible(b);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_EXPORT_OK.equals(e.getActionCommand())) {
-			save();
-		}
-		if (ACTION_EXPORT_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (LoadoutsExportAction.OK.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (LoadoutsExportAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
 	}
 }

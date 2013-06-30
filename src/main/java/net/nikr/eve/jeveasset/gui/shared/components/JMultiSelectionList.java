@@ -29,9 +29,10 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 
-public class JMultiSelectionList extends JList implements MouseListener, KeyListener, ListDataListener, MouseMotionListener  {
+public class JMultiSelectionList extends JList {
 
 	private List<Integer> selectedList;
+	private ListenerClass listener = new ListenerClass();
 
 	public JMultiSelectionList() {
 		this(new DefaultListModel());
@@ -52,9 +53,9 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		super(model);
 		selectedList = new ArrayList<Integer>();
 
-		this.addMouseListener(this);
-		this.addKeyListener(this);
-		this.addMouseMotionListener(this);
+		this.addMouseListener(listener);
+		this.addKeyListener(listener);
+		this.addMouseMotionListener(listener);
 		this.setDragEnabled(false);
 
 		this.setSelectionModel(new DefaultListSelectionModel());
@@ -129,88 +130,90 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	@Override
 	public void setModel(final ListModel model) {
 		super.setModel(model);
-		model.addListDataListener(this);
+		model.addListDataListener(listener);
 	}
 
-	//MouseListener
-	@Override
-	public void mouseClicked(final MouseEvent e) { }
+	private class ListenerClass implements MouseListener, KeyListener, ListDataListener, MouseMotionListener {
+		//MouseListener
+		@Override
+		public void mouseClicked(final MouseEvent e) { }
 
-	@Override
-	public void mouseReleased(final MouseEvent e) { }
+		@Override
+		public void mouseReleased(final MouseEvent e) { }
 
-	@Override
-	public void mouseEntered(final MouseEvent e) { }
+		@Override
+		public void mouseEntered(final MouseEvent e) { }
 
-	@Override
-	public void mouseExited(final MouseEvent e) { }
+		@Override
+		public void mouseExited(final MouseEvent e) { }
 
-	@Override
-	public void mousePressed(final MouseEvent e) {
-		int index = this.locationToIndex(e.getPoint());
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			toggleSelectedIndex(index);
+		@Override
+		public void mousePressed(final MouseEvent e) {
+			int index = locationToIndex(e.getPoint());
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				toggleSelectedIndex(index);
+				e.consume();
+			}
+		}
+
+		//KeyListener
+		@Override
+		public void keyTyped(final KeyEvent e) { }
+
+		@Override
+		public void keyReleased(final KeyEvent e) { }
+
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_A && e.getModifiers() == KeyEvent.CTRL_MASK) {
+				toggleSelectAll();
+			}
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				setAnchor(getAnchorSelectionIndex() - 1);
+			}
+			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				setAnchor(getAnchorSelectionIndex() + 1);
+			}
+			if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+				int index = getAnchorSelectionIndex();
+				toggleSelectedIndex(index);
+			}
 			e.consume();
 		}
-	}
+		//MouseMotionListener
+		@Override
+		public void mouseMoved(final MouseEvent e) { }
 
-	//KeyListener
-	@Override
-	public void keyTyped(final KeyEvent e) { }
-
-	@Override
-	public void keyReleased(final KeyEvent e) { }
-
-	@Override
-	public void keyPressed(final KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_A && e.getModifiers() == KeyEvent.CTRL_MASK) {
-			toggleSelectAll();
+		@Override
+		public void mouseDragged(final MouseEvent e) {
+			updateSelections();
 		}
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			setAnchor(getAnchorSelectionIndex() - 1);
-		}
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			setAnchor(getAnchorSelectionIndex() + 1);
-		}
-		if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
-			int index = getAnchorSelectionIndex();
-			toggleSelectedIndex(index);
-		}
-		e.consume();
-	}
-	//MouseMotionListener
-	@Override
-	public void mouseMoved(final MouseEvent e) { }
 
-	@Override
-	public void mouseDragged(final MouseEvent e) {
-		updateSelections();
-	}
+		//ListDataListener
+		@Override
+		public void contentsChanged(final ListDataEvent e) { }
 
-	//ListDataListener
-	@Override
-	public void contentsChanged(final ListDataEvent e) { }
-
-	@Override
-	public void intervalAdded(final ListDataEvent e) {
-		int index0 = e.getIndex0();
-		int index1 = e.getIndex1();
-		if (index0 == index1) {
-			updateList(index0, 1);
+		@Override
+		public void intervalAdded(final ListDataEvent e) {
+			int index0 = e.getIndex0();
+			int index1 = e.getIndex1();
+			if (index0 == index1) {
+				updateList(index0, 1);
+			}
 		}
-	}
 
-	@Override
-	public void intervalRemoved(final ListDataEvent e) {
-		int index0 = e.getIndex0();
-		int index1 = e.getIndex1();
-		if (index0 == index1) {
-			selectedList.remove((Integer) index0);
-			updateList(index0, -1);
-		} else {
-			selectedList.clear();
+		@Override
+		public void intervalRemoved(final ListDataEvent e) {
+			int index0 = e.getIndex0();
+			int index1 = e.getIndex1();
+			if (index0 == index1) {
+				selectedList.remove((Integer) index0);
+				updateList(index0, -1);
+			} else {
+				selectedList.clear();
+			}
+			ensureIndexIsVisible(index1);
 		}
-		ensureIndexIsVisible(index1);
 	}
 	//Public Methods
 	public void addSelection(final int index, final boolean bSelected) {

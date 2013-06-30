@@ -37,11 +37,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class SettingsDialog extends JDialogCentered implements ActionListener, TreeSelectionListener {
+public class SettingsDialog extends JDialogCentered {
 
-	public static final String ACTION_OK = "ACTION_OK";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
-	public static final String ACTION_APPLY = "ACTION_APPLY";
+	private enum SettingsDialogAction {
+		OK, CANCEL, APPLY
+	}
 
 	private JTree jTree;
 	private JPanel jContent;
@@ -60,6 +60,8 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	public SettingsDialog(final Program program) {
 		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
+		ListenerClass listener = new ListenerClass();
+
 		settingsPanels = new HashMap<String, JSettingsPanel>();
 		icons = new HashMap<Object, Icon>();
 
@@ -72,7 +74,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		jTree.setExpandsSelectedPaths(true);
 		jTree.setRootVisible(false);
 		jTree.setShowsRootHandles(true);
-		jTree.addTreeSelectionListener(this);
+		jTree.addTreeSelectionListener(listener);
 
 		JScrollPane jTreeScroller = new JScrollPane(jTree);
 
@@ -83,16 +85,16 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		JSeparator jSeparator = new JSeparator();
 
 		jOK = new JButton(DialoguesSettings.get().ok());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
+		jOK.setActionCommand(SettingsDialogAction.OK.name());
+		jOK.addActionListener(listener);
 
 		JButton jApply = new JButton(DialoguesSettings.get().apply());
-		jApply.setActionCommand(ACTION_APPLY);
-		jApply.addActionListener(this);
+		jApply.setActionCommand(SettingsDialogAction.APPLY.name());
+		jApply.addActionListener(listener);
 
 		JButton jCancel = new JButton(DialoguesSettings.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(SettingsDialogAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -248,25 +250,27 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 		super.setVisible(b);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
-			setVisible(false);
+	private class ListenerClass implements ActionListener, TreeSelectionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (SettingsDialogAction.OK.name().equals(e.getActionCommand())) {
+				save();
+				setVisible(false);
+			}
+			if (SettingsDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
+			if (SettingsDialogAction.APPLY.name().equals(e.getActionCommand())) {
+				save();
+			}
 		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			setVisible(false);
-		}
-		if (ACTION_APPLY.equals(e.getActionCommand())) {
-			save();
-		}
-	}
 
-	@Override
-	public void valueChanged(final TreeSelectionEvent e) {
-		TreePath[] paths = jTree.getSelectionPaths();
-		if (paths != null && paths.length == 1) {
-			cardLayout.show(jContent, paths[0].getLastPathComponent().toString());
+		@Override
+		public void valueChanged(final TreeSelectionEvent e) {
+			TreePath[] paths = jTree.getSelectionPaths();
+			if (paths != null && paths.length == 1) {
+				cardLayout.show(jContent, paths[0].getLastPathComponent().toString());
+			}
 		}
 	}
 

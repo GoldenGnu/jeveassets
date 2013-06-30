@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class Contract extends EveContract implements LocationType{
+public class Contract extends EveContract implements LocationType {
 
 	private String acceptor;
 	private String assignee;

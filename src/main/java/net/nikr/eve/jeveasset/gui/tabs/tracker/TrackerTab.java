@@ -93,12 +93,14 @@ import org.jfree.ui.RectangleEdge;
 
 public class TrackerTab extends JMainTab {
 
-	private static final String ACTION_QUICK_DATE = "ACTION_QUICK_DATE";
-	private static final String ACTION_UPDATE_DATA = "ACTION_UPDATE_DATA";
-	private static final String ACTION_UPDATE_SHOWN = "ACTION_UPDATE_SHOWN";
-	private static final String ACTION_All = "ACTION_All";
-	private static final String ACTION_EDIT = "ACTION_EDIT";
-	private static final String ACTION_DELETE = "ACTION_DELETE";
+	private enum TrackerAction {
+		QUICK_DATE,
+		UPDATE_DATA,
+		UPDATE_SHOWN,
+		ALL,
+		EDIT,
+		DELETE
+	}
 
 	private final int PANEL_WIDTH = 140;
 
@@ -124,7 +126,7 @@ public class TrackerTab extends JMainTab {
 	private ChartPanel jChartPanel;
 	private JTextArea jHelp;
 
-	private Listener listener = new Listener();
+	private ListenerClass listener = new ListenerClass();
 
 	private TimePeriodValuesCollection dataset = new TimePeriodValuesCollection();
 	TimePeriodValues total;
@@ -142,12 +144,12 @@ public class TrackerTab extends JMainTab {
 
 		JMenuItem jMenuItem;
 		jMenuItem = new JMenuItem(TabsTracker.get().edit(), Images.EDIT_EDIT.getIcon());
-		jMenuItem.setActionCommand(ACTION_EDIT);
+		jMenuItem.setActionCommand(TrackerAction.EDIT.name());
 		jMenuItem.addActionListener(listener);
 		jPopupMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(TabsTracker.get().delete(), Images.EDIT_DELETE.getIcon());
-		jMenuItem.setActionCommand(ACTION_DELETE);
+		jMenuItem.setActionCommand(TrackerAction.DELETE.name());
 		jMenuItem.addActionListener(listener);
 		jPopupMenu.add(jMenuItem);
 
@@ -170,11 +172,11 @@ public class TrackerTab extends JMainTab {
 		jEditDialog = new JTrackerEditDialog(program);
 
 		jOwners = new JComboBox();
-		jOwners.setActionCommand(ACTION_UPDATE_DATA);
+		jOwners.setActionCommand(TrackerAction.UPDATE_DATA.name());
 		jOwners.addActionListener(listener);
 
 		jQuickDate = new JComboBox(QuickDate.values());
-		jQuickDate.setActionCommand(ACTION_QUICK_DATE);
+		jQuickDate.setActionCommand(TrackerAction.QUICK_DATE.name());
 		jQuickDate.addActionListener(listener);
 
 		jFrom = createDateChooser();
@@ -184,38 +186,38 @@ public class TrackerTab extends JMainTab {
 
 		jAll = new JCheckBox(General.get().all());
 		jAll.setSelected(true);
-		jAll.setActionCommand(ACTION_All);
+		jAll.setActionCommand(TrackerAction.ALL.name());
 		jAll.addActionListener(listener);
 		jAll.setFont(new Font(jAll.getFont().getName(), Font.ITALIC, jAll.getFont().getSize()));
 
 		jTotal = new JCheckBox(TabsTracker.get().total());
 		jTotal.setSelected(true);
-		jTotal.setActionCommand(ACTION_UPDATE_SHOWN);
+		jTotal.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jTotal.addActionListener(listener);
 
 		jWalletBalance = new JCheckBox(TabsTracker.get().walletBalance());
 		jWalletBalance.setSelected(true);
-		jWalletBalance.setActionCommand(ACTION_UPDATE_SHOWN);
+		jWalletBalance.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jWalletBalance.addActionListener(listener);
 
 		jAssets = new JCheckBox(TabsTracker.get().assets());
 		jAssets.setSelected(true);
-		jAssets.setActionCommand(ACTION_UPDATE_SHOWN);
+		jAssets.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jAssets.addActionListener(listener);
 
 		jSellOrders = new JCheckBox(TabsTracker.get().sellOrders());
 		jSellOrders.setSelected(true);
-		jSellOrders.setActionCommand(ACTION_UPDATE_SHOWN);
+		jSellOrders.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jSellOrders.addActionListener(listener);
 
 		jEscrows = new JCheckBox(TabsTracker.get().escrows());
 		jEscrows.setSelected(true);
-		jEscrows.setActionCommand(ACTION_UPDATE_SHOWN);
+		jEscrows.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrows.addActionListener(listener);
 
 		jEscrowsToCover = new JCheckBox(TabsTracker.get().escrowsToCover());
 		jEscrowsToCover.setSelected(true);
-		jEscrowsToCover.setActionCommand(ACTION_UPDATE_SHOWN);
+		jEscrowsToCover.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrowsToCover.addActionListener(listener);
 
 		jHelp = new JTextArea();
@@ -529,7 +531,7 @@ public class TrackerTab extends JMainTab {
 
 	}
 
-	private class Listener extends MouseAdapter implements 
+	private class ListenerClass extends MouseAdapter implements 
 			ActionListener, PropertyChangeListener, PopupMenuListener,
 			ChartMouseListener {
 
@@ -552,7 +554,7 @@ public class TrackerTab extends JMainTab {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (ACTION_QUICK_DATE.equals(e.getActionCommand())) {
+			if (TrackerAction.QUICK_DATE.name().equals(e.getActionCommand())) {
 				QuickDate quickDate = (QuickDate) jQuickDate.getSelectedItem();
 				Date toDate = jTo.getDate();
 				if (toDate == null) {
@@ -562,9 +564,9 @@ public class TrackerTab extends JMainTab {
 				if (fromDate != null) {
 					jFrom.setDate(fromDate);
 				}
-			} else if (ACTION_UPDATE_DATA.equals(e.getActionCommand())) {
+			} else if (TrackerAction.UPDATE_DATA.name().equals(e.getActionCommand())) {
 				createData();
-			} else if (ACTION_UPDATE_SHOWN.equals(e.getActionCommand())) {
+			} else if (TrackerAction.UPDATE_SHOWN.name().equals(e.getActionCommand())) {
 				updateShown();
 				jAll.setSelected(jTotal.isSelected()
 						&& jWalletBalance.isSelected()
@@ -572,7 +574,7 @@ public class TrackerTab extends JMainTab {
 						&& jSellOrders.isSelected()
 						&& jEscrows.isSelected()
 						&& jEscrowsToCover.isSelected());
-			} else if (ACTION_All.equals(e.getActionCommand())) {
+			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
 				jAssets.setSelected(jAll.isSelected());
@@ -580,7 +582,7 @@ public class TrackerTab extends JMainTab {
 				jEscrows.setSelected(jAll.isSelected());
 				jEscrowsToCover.setSelected(jAll.isSelected());
 				updateShown();
-			} else if (ACTION_EDIT.equals(e.getActionCommand())) {
+			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
 				TrackerData trackerData = getSelectedTrackerData();
 				if (trackerData != null) {
@@ -590,7 +592,7 @@ public class TrackerTab extends JMainTab {
 					}
 				}
 				jNextChart.getXYPlot().setDomainCrosshairVisible(false);
-			} else if (ACTION_DELETE.equals(e.getActionCommand())) {
+			} else if (TrackerAction.DELETE.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);
 				TrackerOwner owner = (TrackerOwner) jOwners.getSelectedItem();
 				TrackerData trackerData = getSelectedTrackerData();

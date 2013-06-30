@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab implements TableMenu<Item> {
+public class ItemsTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 
@@ -100,7 +100,7 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Item.class);
+		installMenu(program, new ItemTableMenu(), jTable, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -123,28 +123,30 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 	}
 
 	@Override
-	public MenuData<Item> getMenuData() {
-		return new MenuData<Item>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable, NAME);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) { }
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
+
+	private class ItemTableMenu implements TableMenu<Item> {
+		@Override
+		public MenuData<Item> getMenuData() {
+			return new MenuData<Item>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 

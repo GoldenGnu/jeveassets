@@ -35,12 +35,14 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
+public class JMenuName<T> extends JAutoMenu<T> {
 
-	private static final String ACTION_EDIT_NAME = "ACTION_EDIT_NAME";
-	private static final String ACTION_DELETE_NAME = "ACTION_DELETE_NAME";
-	private static final String ACTION_EDIT_CONTAINER = "ACTION_EDIT_CONTAINER";
-	private static final String ACTION_DELETE_CONTAINERS = "ACTION_DELETE_CONTAINERS";
+	private enum MenuNameAction {
+		EDIT_NAME,
+		DELETE_NAME,
+		EDIT_CONTAINER,
+		DELETE_CONTAINERS
+	}
 
 	private List<UserItem<Long, String>> itemNames;
 	private List<UserItem<Long, String>> containerNames;
@@ -56,32 +58,34 @@ public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 		super(GuiShared.get().itemNameTitle(), program);
 		this.setIcon(Images.SETTINGS_USER_NAME.getIcon());
 
+		ListenerClass listener = new ListenerClass();
+
 		jContainerDialog = new JContainerDialog(program);
 
 		jEditItem = new JMenuItem(GuiShared.get().itemEdit());
 		jEditItem.setIcon(Images.EDIT_EDIT.getIcon());
-		jEditItem.setActionCommand(ACTION_EDIT_NAME);
-		jEditItem.addActionListener(this);
+		jEditItem.setActionCommand(MenuNameAction.EDIT_NAME.name());
+		jEditItem.addActionListener(listener);
 		add(jEditItem);
 
 		jResetItem = new JMenuItem(GuiShared.get().itemDelete());
 		jResetItem.setIcon(Images.EDIT_DELETE.getIcon());
-		jResetItem.setActionCommand(ACTION_DELETE_NAME);
-		jResetItem.addActionListener(this);
+		jResetItem.setActionCommand(MenuNameAction.DELETE_NAME.name());
+		jResetItem.addActionListener(listener);
 		add(jResetItem);
 
 		addSeparator();
 
 		jEditContainer = new JMenuItem(GuiShared.get().containerEdit());
 		jEditContainer.setIcon(Images.EDIT_EDIT.getIcon());
-		jEditContainer.setActionCommand(ACTION_EDIT_CONTAINER);
-		jEditContainer.addActionListener(this);
+		jEditContainer.setActionCommand(MenuNameAction.EDIT_CONTAINER.name());
+		jEditContainer.addActionListener(listener);
 		add(jEditContainer);
 
 		jResetContainer = new JMenuItem(GuiShared.get().containerDelete());
 		jResetContainer.setIcon(Images.EDIT_DELETE.getIcon());
-		jResetContainer.setActionCommand(ACTION_DELETE_CONTAINERS);
-		jResetContainer.addActionListener(this);
+		jResetContainer.setActionCommand(MenuNameAction.DELETE_CONTAINERS.name());
+		jResetContainer.addActionListener(listener);
 		add(jResetContainer);
 	}
 
@@ -107,24 +111,26 @@ public class JMenuName<T> extends JAutoMenu<T> implements ActionListener {
 		}
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_EDIT_NAME.equals(e.getActionCommand())) {
-			program.getUserNameSettingsPanel().edit(itemNames.get(0));
-		}
-		if (ACTION_DELETE_NAME.equals(e.getActionCommand())) {
-			program.getUserNameSettingsPanel().delete(itemNames);
-		}
-		if (ACTION_EDIT_CONTAINER.equals(e.getActionCommand())) {
-			if (selected != null) {
-				Asset value = jContainerDialog.showDialog(selected);
-				if (value != null) {
-					program.getUserNameSettingsPanel().edit(new UserName(value));
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (MenuNameAction.EDIT_NAME.name().equals(e.getActionCommand())) {
+				program.getUserNameSettingsPanel().edit(itemNames.get(0));
+			}
+			if (MenuNameAction.DELETE_NAME.name().equals(e.getActionCommand())) {
+				program.getUserNameSettingsPanel().delete(itemNames);
+			}
+			if (MenuNameAction.EDIT_CONTAINER.name().equals(e.getActionCommand())) {
+				if (selected != null) {
+					Asset value = jContainerDialog.showDialog(selected);
+					if (value != null) {
+						program.getUserNameSettingsPanel().edit(new UserName(value));
+					}
 				}
 			}
-		}
-		if (ACTION_DELETE_CONTAINERS.equals(e.getActionCommand())) {
-			program.getUserNameSettingsPanel().delete(containerNames);
+			if (MenuNameAction.DELETE_CONTAINERS.name().equals(e.getActionCommand())) {
+				program.getUserNameSettingsPanel().delete(containerNames);
+			}
 		}
 	}
 

@@ -48,12 +48,14 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterGui<E> {
 
-	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_CLEAR = "ACTION_CLEAR";
-	private static final String ACTION_SAVE = "ACTION_SAVE";
-	private static final String ACTION_MANAGER = "ACTION_MANAGER";
-	private static final String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
-	private static final String ACTION_EXPORT = "ACTION_EXPORT";
+	private enum FilterGuiAction {
+		ADD,
+		CLEAR,
+		SAVE,
+		MANAGER,
+		SHOW_FILTERS,
+		EXPORT
+	}
 
 	private JPanel jPanel;
 	private GroupLayout layout;
@@ -93,14 +95,14 @@ class FilterGui<E> {
 		//Add
 		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
-		jAddField.setActionCommand(ACTION_ADD);
+		jAddField.setActionCommand(FilterGuiAction.ADD.name());
 		jAddField.addActionListener(listener);
 		addToolButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
-		jClearFields.setActionCommand(ACTION_CLEAR);
+		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
 		jClearFields.addActionListener(listener);
 		addToolButton(jClearFields);
 
@@ -109,7 +111,7 @@ class FilterGui<E> {
 		//Save Filter
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
-		jSaveFilter.setActionCommand(ACTION_SAVE);
+		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
 		jSaveFilter.addActionListener(listener);
 		addToolButton(jSaveFilter);
 
@@ -126,7 +128,7 @@ class FilterGui<E> {
 		//Export
 		JButton jExport = new JButton(GuiShared.get().export());
 		jExport.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(ACTION_EXPORT);
+		jExport.setActionCommand(FilterGuiAction.EXPORT.name());
 		jExport.addActionListener(listener);
 		addToolButton(jExport);
 
@@ -134,7 +136,7 @@ class FilterGui<E> {
 
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
-		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
+		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
 		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
 		addToolButton(jShowFilters, 70);
@@ -320,7 +322,7 @@ class FilterGui<E> {
 		JMenuItem jMenuItem;
 
 		jMenuItem = new JMenuItem(GuiShared.get().manageFilters(), Images.DIALOG_SETTINGS.getIcon());
-		jMenuItem.setActionCommand(ACTION_MANAGER);
+		jMenuItem.setActionCommand(FilterGuiAction.MANAGER.name());
 		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
@@ -371,27 +373,27 @@ class FilterGui<E> {
 		updateShowing();
 	}
 
-	public class ListenerClass implements ActionListener {
+	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_ADD.equals(e.getActionCommand())) {
+			if (FilterGuiAction.ADD.name().equals(e.getActionCommand())) {
 				add();
 				return;
 			}
-			if (ACTION_CLEAR.equals(e.getActionCommand())) {
+			if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
 				clear();
 				return;
 			}
-			if (ACTION_MANAGER.equals(e.getActionCommand())) {
+			if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {
 				filterManager.setVisible(true);
 				return;
 			}
-			if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())) {
+			if (FilterGuiAction.SHOW_FILTERS.name().equals(e.getActionCommand())) {
 				update();
 				return;
 			}
-			if (ACTION_SAVE.equals(e.getActionCommand())) {
+			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
 				if (getMatchers().isEmpty()) {
 					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 				} else {
@@ -403,7 +405,7 @@ class FilterGui<E> {
 				}
 				return;
 			}
-			if (ACTION_EXPORT.equals(e.getActionCommand())) {
+			if (FilterGuiAction.EXPORT.name().equals(e.getActionCommand())) {
 				exportDialog.setVisible(true);
 				return;
 			}
