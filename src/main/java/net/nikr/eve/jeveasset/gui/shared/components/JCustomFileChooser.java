@@ -40,6 +40,22 @@ public class JCustomFileChooser extends JFileChooser {
 		this.setAcceptAllFileFilterUsed(false);
 	}
 
+	@Override
+	public void setSelectedFile(File file) {
+		if (file != null) {
+			String filename = file.getAbsolutePath();
+			if (filename.matches("(?i).*\\.\\w{0,4}$")) { //Already got a extension - remove it
+				int end = filename.lastIndexOf(".");
+				filename = filename.substring(0, end);
+			}
+			filename = filename + "." +  getExtension();
+			super.setSelectedFile(new File(filename));
+		} else {
+			super.setSelectedFile(file);
+		}
+		
+	}
+
 	public final void setExtension(final String extension) {
 		this.extension = extension.toLowerCase();
 		this.resetChoosableFileFilters();
@@ -49,16 +65,6 @@ public class JCustomFileChooser extends JFileChooser {
 	@Override
 	public void approveSelection() {
 		File selectedFile = this.getSelectedFile();
-		//No or wrong extension - Add extension from file filter
-		String currentExtension = Utils.getExtension(selectedFile);
-		if (currentExtension == null || !currentExtension.toLowerCase().equals(this.extension)) {
-			if (selectedFile.getAbsolutePath().endsWith(".")) {
-				selectedFile = new File(selectedFile.getAbsolutePath() + getExtension());
-			} else {
-				selectedFile = new File(selectedFile.getAbsolutePath() + "." + getExtension());
-			}
-			this.setSelectedFile(selectedFile);
-		}
 		//Confirm Overwrite file
 		if (selectedFile != null && selectedFile.exists()) {
 			int nReturn = JOptionPane.showConfirmDialog(
@@ -133,6 +139,9 @@ public class JCustomFileChooser extends JFileChooser {
 		//public final static String XML = "xml";
 		public static String getExtension(final File file) {
 			String extension = null;
+			if (file == null) {
+				return null;
+			}
 			String filename = file.getName();
 			int i = filename.lastIndexOf('.');
 			if (i > 0 &&  i < filename.length() - 1) {
