@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,6 +179,9 @@ public final class SqlWriter {
 	private String format(final Object object) {
 		if (object == null) {
 			return "''";
+		} else if (object instanceof HierarchyColumn) {
+			HierarchyColumn column = (HierarchyColumn) object;
+			return "'" + column.getExport().replace("'", "\\'") + "'";
 		} else if (object instanceof Double) {
 			//Double
 			return DOUBLE_FORMAT.format(object);

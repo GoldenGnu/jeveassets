@@ -29,6 +29,8 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +144,7 @@ public final class HtmlWriter {
 
 	private void writeTableRows(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, String>> data, final List<EnumTableColumn<?>> header, final boolean htmlStyled, final int htmlRepeatHeader, final boolean treetable) throws IOException {
 		boolean even = false;
+		boolean wait = true;
 		int count = 0;
 		for (Map<EnumTableColumn<?>, String> map : data) {
 			boolean level0 = false;
@@ -149,25 +152,31 @@ public final class HtmlWriter {
 			boolean level2 = false;
 			if (treetable && htmlStyled) {
 				for (EnumTableColumn<?> column : header) {
-					if (map.get(column).contains("+++") && treetable) { //Level 2
-						level2 = true;
-						break;
-					} else if (map.get(column).contains("++") && treetable) { //Level 1
-						level1 = true;
-						break;
-					} else if (map.get(column).contains("+") && treetable) { //Level 0
-						level0 = true;
-						break;
+					if (HierarchyColumn.class.isAssignableFrom(column.getType())) {
+						if (map.get(column).contains(TreeAsset.SPACE + TreeAsset.SPACE + "+") && treetable) { //Level 2
+							level2 = true;
+							break;
+						} else if (map.get(column).startsWith(TreeAsset.SPACE + "+") && treetable) { //Level 1
+							level1 = true;
+							break;
+						} else if (map.get(column).startsWith("+") && treetable) { //Level 0
+							level0 = true;
+							break;
+						}
 					}
 				}
 			}
-			if (htmlRepeatHeader != 0 && htmlRepeatHeader == count) {
-				if (!level0 && !level1 && !level2) {
+			if (level0 || level1 || level2) { //Parent
+				if (!wait) {
 					writeTableHeader(writer, header);
+					wait = true;
 					count = 0;
-				} else {
-					count = count - 1; //Wait to next row
 				}
+			} else if (htmlRepeatHeader != 0 && htmlRepeatHeader == count && !wait) { //Repeat
+				writeTableHeader(writer, header);
+				count = 0;
+			} else { //item row
+				wait = false;
 			}
 			if (level0 && htmlStyled) {
 				writer.write("\t<tr class=\"level0\">");
@@ -192,7 +201,9 @@ public final class HtmlWriter {
 			}
 			writer.write("</tr>\r\n");
 			even = !even;
-			count++;
+			if (!level0 && !level1 && !level2) {
+				count++;
+			}
 		}
 	}
 }

@@ -109,13 +109,16 @@ public class TreeTab extends JMainTab {
 	//Table
 	private DefaultEventTableModel<TreeAsset> tableModel;
 	private EventList<TreeAsset> eventList;
+	private EventList<TreeAsset> exportEventList;
 	private FilterList<TreeAsset> filterList;
 	private TreeList<TreeAsset> treeList;
 	private AssetFilterControl filterControl;
 	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private AssetTreeExpansionModel expansionModel;
+	private Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private Set<TreeAsset> categories = new TreeSet<TreeAsset>(new AssetTreeComparator());
 
 	public static final String NAME = "treeassets"; //Not to be changed!
@@ -164,6 +167,7 @@ public class TreeTab extends JMainTab {
 		tableFormat = new EnumTableFormatAdaptor<TreeTableFormat, TreeAsset>(TreeTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<TreeAsset>();
+		exportEventList = new BasicEventList<TreeAsset>();
 		//Filter
 		filterList = new FilterList<TreeAsset>(eventList);
 		filterList.addListEventListener(listener);
@@ -199,7 +203,8 @@ public class TreeTab extends JMainTab {
 				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				//eventList,
+				exportEventList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
@@ -275,7 +280,7 @@ public class TreeTab extends JMainTab {
 				locationCache.put(location.getRegion(), regionAsset);
 			}
 			locationTree.add(regionAsset);
-			locations.add(regionAsset);
+			locationsExport.add(regionAsset);
 			//Update region total
 			regionAsset.add(asset);
 
@@ -287,7 +292,7 @@ public class TreeTab extends JMainTab {
 				locationCache.put(systemKey, systemAsset);
 			}
 			locationTree.add(systemAsset);
-			locations.add(systemAsset);
+			locationsExport.add(systemAsset);
 			//Update system total
 			systemAsset.add(asset);
 			
@@ -301,7 +306,7 @@ public class TreeTab extends JMainTab {
 					locationCache.put(stationKey, stationAsset);
 				}
 				locationTree.add(stationAsset);
-				locations.add(stationAsset);
+				locationsExport.add(stationAsset);
 				//Update station total
 				stationAsset.add(asset);
 				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
@@ -318,13 +323,14 @@ public class TreeTab extends JMainTab {
 						locationCache.put(parentKey, parentTreeAsset);
 					}
 					locationTree.add(parentTreeAsset);
-					locations.add(parentTreeAsset);
+					locationsExport.add(parentTreeAsset);
 					//Update parent total
 					parentTreeAsset.add(asset);
 				}
 			}
 			TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
 			locations.add(locationAsset);
+			locationsExport.add(locationAsset);
 			
 		//CATEGORY
 			List<TreeAsset> categoryTree = new ArrayList<TreeAsset>();
@@ -337,7 +343,7 @@ public class TreeTab extends JMainTab {
 				categoryCache.put(categoryKey, categoryAsset);
 			}
 			categoryTree.add(categoryAsset);
-			categories.add(categoryAsset);
+			categoriesExport.add(categoryAsset);
 			//Update category total
 			categoryAsset.add(asset);
 
@@ -349,20 +355,23 @@ public class TreeTab extends JMainTab {
 				categoryCache.put(groupKey, groupAsset);
 			}
 			categoryTree.add(groupAsset);
-			categories.add(groupAsset);
+			categoriesExport.add(groupAsset);
 			//Update group total
 			groupAsset.add(asset);
 
 			TreeAsset category = new TreeAsset(asset, TreeType.CATEGORY, categoryTree, groupKey, false);
 			categories.add(category);
+			categoriesExport.add(category);
 		}
 		updateTable();
 	}
 
 	public void updateTable() {
 		Set<TreeAsset> treeAssets = locations;
+		Set<TreeAsset> treeAssetsExport = locationsExport;
 		if (jCategories.isSelected()) {
 			treeAssets = categories;
+			treeAssetsExport = categoriesExport;
 		}
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
@@ -370,6 +379,13 @@ public class TreeTab extends JMainTab {
 			eventList.addAll(treeAssets);
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
+		}
+		exportEventList.getReadWriteLock().writeLock().lock();
+		try {
+			exportEventList.clear();
+			exportEventList.addAll(treeAssetsExport);
+		} finally {
+			exportEventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
@@ -611,9 +627,6 @@ public class TreeTab extends JMainTab {
 			TreeAsset treeAsset = tableModel.getElementAt(row);
 			JLabel jLabel = (JLabel) jPanel.getComponent(3);
 			jLabel.setIcon(treeAsset.getIcon());
-			if (value instanceof HierarchyColumn) {
-				jLabel.setText(jLabel.getText().replace("+", "").trim());
-			}
 			return jPanel;
 		}
 
@@ -652,9 +665,6 @@ public class TreeTab extends JMainTab {
 			TreeAsset treeAsset = tableModel.getElementAt(row);
 			JLabel jLabel = (JLabel) jPanel.getComponent(3);
 			jLabel.setIcon(treeAsset.getIcon());
-			if (value instanceof HierarchyColumn) {
-				jLabel.setText(jLabel.getText().replace("+", "").trim());
-			}
 			return jPanel;
 		}
 	}

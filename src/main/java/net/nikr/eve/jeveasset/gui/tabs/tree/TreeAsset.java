@@ -29,6 +29,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 
 
 public class TreeAsset extends Asset {
@@ -38,8 +39,7 @@ public class TreeAsset extends Asset {
 		LOCATION,
 	}
 
-	private final String SPACE = "    ";
-	private final String SPACE_LEVEL = "+";
+	public static final String SPACE = "    ";
 	private final Security EMPTY_SECURITY = new Security("");
 
 	private final String treeName;
@@ -50,6 +50,7 @@ public class TreeAsset extends Asset {
 	private final boolean item;
 	private final int depthOffset;
 	private final Icon icon;
+	private final HierarchyColumn hierarchyColumn;
 
 	private boolean expanded;
 
@@ -64,7 +65,7 @@ public class TreeAsset extends Asset {
 
 	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
 		super(asset);
-		this.treeName = createSpace(tree.size(), tree.size(), parent) + asset.getName();
+		this.treeName = createSpace(tree.size()) + asset.getName();
 		this.tree = tree;
 		this.compare = compare + asset.getName() + " #" + asset.getItemID();
 		this.ownerName = asset.getOwner();
@@ -82,6 +83,7 @@ public class TreeAsset extends Asset {
 		} else { //Never happens
 			this.icon = null;
 		}
+		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
 	}
 
 	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree) {
@@ -90,7 +92,7 @@ public class TreeAsset extends Asset {
 
 	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
 		super(new Item(0), location, null, 0, new ArrayList<Asset>(), "", 0, 0L, false, 0);
-		this.treeName = createSpace(tree.size(), tree.size() + depthOffset, true) + treeName;
+		this.treeName = createSpace(tree.size()) + treeName;
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare;
 		this.ownerName = "";
@@ -98,17 +100,13 @@ public class TreeAsset extends Asset {
 		this.depthOffset = depthOffset;
 		this.parent = true;
 		this.item = false;
+		this.hierarchyColumn = new HierarchyColumn(this.treeName, this.parent);
 	}
 
-	private String createSpace(int size, int depth, boolean parent) {
+	private String createSpace(int size) {
 		String space = "";
 		for (int i = 0; i < size; i++) {
 			space = space + SPACE;
-		}
-		if (parent) {
-			for (int i = 0; i <= depth; i++) {
-				space = space + SPACE_LEVEL;
-			}
 		}
 		return space;
 	}
@@ -119,6 +117,10 @@ public class TreeAsset extends Asset {
 
 	public int getDepth() {
 		return tree.size() + depthOffset;
+	}
+
+	public HierarchyColumn getHierarchyColumn() {
+		return hierarchyColumn;
 	}
 
 	public Icon getIcon() {

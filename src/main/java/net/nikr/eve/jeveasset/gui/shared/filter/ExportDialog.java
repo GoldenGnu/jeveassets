@@ -23,11 +23,11 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.Matcher;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -35,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.AbstractListModel;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -75,7 +77,9 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMultiSelectionList;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.View;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
 import net.nikr.eve.jeveasset.io.local.HtmlWriter;
@@ -492,6 +496,9 @@ public class ExportDialog<E> extends JDialogCentered {
 	private String format(final Object object, final DecimalSeparator decimalSeparator) {
 		if (object == null) {
 			return "";
+		} else if (object instanceof HierarchyColumn) {
+			HierarchyColumn column = (HierarchyColumn) object;
+			return column.getExport();
 		} else if (object instanceof Number) {
 			Number number = (Number) object;
 			if (decimalSeparator == DecimalSeparator.DOT) {
@@ -550,6 +557,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else { //CSV and Default
 			jCsv.setSelected(true);
 		}
+		jFileChooser.setExtension(exportFormat.getExtension());
 		//Columns (Shared)
 		jColumnSelection.clearSelection();
 		List<String> list = Settings.get().getExportSettings().getTableExportColumns(toolName);
@@ -703,19 +711,20 @@ public class ExportDialog<E> extends JDialogCentered {
 		if (!ok) {
 			return;
 		}
-	//Data source
+	//Filters
 		if (jNoFilter.isSelected()) {
 			for (EventList<E> eventList : eventLists) {
-				for (E e : eventList) {
-					items.add(e);
-				}
+				items.addAll(eventList);
 			}
 		} else if (jCurrentFilter.isSelected()) {
 			List<Filter> filter = exportFilterControl.getCurrentFilters();
 			for (EventList<E> eventList : eventLists) {
 				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
-				for (E e : filterList) {
-					items.add(e);
+				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+					FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+					items.addAll(treeFilterList);
+				} else {
+					items.addAll(filterList);
 				}
 			}
 		} else if (jSavedFilter.isSelected()) {
@@ -723,8 +732,11 @@ public class ExportDialog<E> extends JDialogCentered {
 			List<Filter> filter = exportFilterControl.getAllFilters().get(filterName);
 			for (EventList<E> eventList : eventLists) {
 				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filterControl, filter));
-				for (E e : filterList) {
-					items.add(e);
+				if (!filterList.isEmpty() && filterList.get(0) instanceof TreeAsset) {
+					FilterList<E> treeFilterList = new FilterList<E>(eventList, new TreeMatcher<E>(filterList));
+					items.addAll(treeFilterList);
+				} else {
+					items.addAll(filterList);
 				}
 			}
 		}
@@ -733,7 +745,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	//Save file
 		boolean saved;
 		if (jCsv.isSelected()) {
-			//CSV
+	//CSV
 			//Bad selection
 			if (Settings.get().getExportSettings().getDecimalSeparator() == DecimalSeparator.COMMA && Settings.get().getExportSettings().getFieldDelimiter() == FieldDelimiter.COMMA) {
 				int nReturn = JOptionPane.showConfirmDialog(
@@ -757,7 +769,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<String, String>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()).replace("+", ""));
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
 				}
 				rows.add(row);
 			}
@@ -768,7 +780,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					headerKeys.toArray(new String[headerKeys.size()]),
 					new CsvPreference('\"', Settings.get().getExportSettings().getFieldDelimiter().getValue(), Settings.get().getExportSettings().getLineDelimiter().getValue()));
 		} else if (jHtml.isSelected()) {
-			//HTML
+	//HTML
 			//Create data
 			List<Map<EnumTableColumn<?>, String>> rows = new ArrayList<Map<EnumTableColumn<?>, String>>();
 			for (E e : items) {
@@ -786,7 +798,7 @@ public class ExportDialog<E> extends JDialogCentered {
 					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));
 		} else if (jSql.isSelected()) {
-			//SQL
+	//SQL
 			//Create data
 			List<Map<EnumTableColumn<?>, Object>> rows = new ArrayList<Map<EnumTableColumn<?>, Object>>();
 			for (E e : items) {
@@ -891,5 +903,34 @@ public class ExportDialog<E> extends JDialogCentered {
 					//.addGap(0, 0, Integer.MAX_VALUE)
 				);
 		}
+	}
+
+	private class TreeMatcher<E> implements Matcher<E> {
+
+		private final EventList<E> eventList;
+		private final Set<TreeAsset> parentTree = new HashSet<TreeAsset>();
+
+		public TreeMatcher(EventList<E> eventList) {
+			this.eventList = eventList;
+			for (E e : eventList) {
+				if (e instanceof TreeAsset) {
+					TreeAsset tree = (TreeAsset) e;
+					parentTree.addAll(tree.getTree());
+				}
+			}
+			System.out.println("treeAssets: " + parentTree.size());
+		}
+
+		@Override
+		public boolean matches(E item) { //XXX - Expensive
+			if (item instanceof TreeAsset) {
+				TreeAsset treeAsset = (TreeAsset) item;
+				if (treeAsset.isParent()) {
+					return parentTree.contains(treeAsset);
+				}
+			}
+			return eventList.contains(item);
+		}
+		
 	}
 }

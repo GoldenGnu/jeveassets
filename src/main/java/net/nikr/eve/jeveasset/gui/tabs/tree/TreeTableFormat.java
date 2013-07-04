@@ -38,7 +38,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return new HierarchyColumn(from.getTreeName());
+			return from.getHierarchyColumn();
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {
@@ -400,25 +400,33 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final TreeAsset from);
 
-	public class HierarchyColumn implements Comparable<HierarchyColumn>{
-		String name;
+	//FIXME - - > TreeTableFormat: Move inner classes to containers
+	public static class HierarchyColumn implements Comparable<HierarchyColumn>{
+		private String export;
+		private String gui;
 
-		public HierarchyColumn(String name) {
-			this.name = name;
+		public HierarchyColumn(String text, boolean parent) {
+			this.gui = text.trim();
+			if (parent) {
+				int split = text.indexOf(gui);
+				this.export = text.substring(0, split) + "+" + text.substring(split);
+			} else {
+				this.export = text;
+			}
 		}
 
-		public String getName() {
-			return name;
+		public String getExport() {
+			return export;
 		}
 
 		@Override
 		public int compareTo(HierarchyColumn o) {
-			return this.getName().compareTo(o.getName());
+			return this.getExport().compareTo(o.getExport());
 		}
 
 		@Override
 		public String toString() {
-			return getName();
+			return gui;
 		}
 	}
 }
