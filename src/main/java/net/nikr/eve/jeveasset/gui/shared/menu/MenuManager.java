@@ -170,7 +170,7 @@ public class MenuManager<Q> {
 			jComponent.add(jAssetFilter);
 			notEmpty = true;
 			if (jAssetFilter instanceof JMenuAssetFilter) {
-				JMenuAssetFilter jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
+				JMenuAssetFilter<?> jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
 				jMenuAssetFilter.setTool(tableMenu);
 			}
 		}
@@ -186,7 +186,7 @@ public class MenuManager<Q> {
 			jComponent.add(jLookup);
 			notEmpty = true;
 			if (jLookup instanceof JMenuLookup) {
-				JMenuLookup jMenuLookup = (JMenuLookup) jLookup;
+				JMenuLookup<?> jMenuLookup = (JMenuLookup) jLookup;
 				jMenuLookup.setTool(tableMenu);
 			}
 		}

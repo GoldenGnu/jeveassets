@@ -61,7 +61,7 @@ public class JAutoColumnTable extends JTable {
 	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
 	private boolean autoResizeLock = false;
-	private final Set<Class> disableColumnResizeCache = new HashSet<Class>();
+	private final Set<Class<?>> disableColumnResizeCache = new HashSet<Class<?>>();
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
@@ -167,11 +167,11 @@ public class JAutoColumnTable extends JTable {
 		return columnsWidth;
 	}
 
-	public void disableColumnResizeCache(Class columnClass) {
+	public void disableColumnResizeCache(Class<?> columnClass) {
 		disableColumnResizeCache.add(columnClass);
 	}
 
-	public void enableColumnResizeCache(Class columnClass) {
+	public void enableColumnResizeCache(Class<?> columnClass) {
 		disableColumnResizeCache.remove(columnClass);
 	}
 

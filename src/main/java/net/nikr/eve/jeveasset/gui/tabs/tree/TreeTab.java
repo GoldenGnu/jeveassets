@@ -601,7 +601,7 @@ public class TreeTab extends JMainTab {
 		private int spacer;
 		private DefaultEventTableModel<TreeAsset> tableModel;
 
-		public AssetTreeTableCellEditor(TableCellEditor delegate, TreeList treeList, DefaultEventTableModel<TreeAsset> tableModel, int indent, int spacer) {
+		public AssetTreeTableCellEditor(TableCellEditor delegate, TreeList<TreeAsset> treeList, DefaultEventTableModel<TreeAsset> tableModel, int indent, int spacer) {
 			super(delegate, treeList);
 			if (indent == spacer) {
 				throw new IllegalArgumentException("indent and spacer may not be equal - that invalidates indent");
@@ -639,7 +639,7 @@ public class TreeTab extends JMainTab {
 		private int spacer;
 		private DefaultEventTableModel<TreeAsset> tableModel;
 
-		public AssetTreeTableCellRenderer(TableCellRenderer delegate, TreeList treeList, DefaultEventTableModel<TreeAsset> tableModel, int indent, int spacer) {
+		public AssetTreeTableCellRenderer(TableCellRenderer delegate, TreeList<TreeAsset> treeList, DefaultEventTableModel<TreeAsset> tableModel, int indent, int spacer) {
 			super(delegate, treeList);
 			if (indent == spacer) {
 				throw new IllegalArgumentException("indent and spacer may not be equal - that invalidates indent");
