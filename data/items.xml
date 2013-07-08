@@ -1566,7 +1566,7 @@
         <material id="39" portionsize="1" quantity="24"/>
         <material id="40" portionsize="1" quantity="7"/>
     </row>
-    <row category="Ship" group="Industrial" id="657" marketgroup="true" meta="0" name="Iteron Mark V" pi="false" portion="1" price="1125000" tech="Tech I" volume="275000.0">
+    <row category="Ship" group="Industrial" id="657" marketgroup="true" meta="0" name="Iteron Mark V" pi="false" portion="1" price="944496" tech="Tech I" volume="275000.0">
         <material id="34" portionsize="1" quantity="77944"/>
         <material id="35" portionsize="1" quantity="19939"/>
         <material id="36" portionsize="1" quantity="7788"/>
@@ -2447,7 +2447,7 @@
     <row category="Ship" group="Battleship" id="1914" marketgroup="false" meta="0" name="Concord Special Ops Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
     <row category="Ship" group="Battleship" id="1916" marketgroup="false" meta="0" name="Concord SWAT Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
     <row category="Ship" group="Battleship" id="1918" marketgroup="false" meta="0" name="Concord Army Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
-    <row category="Ship" group="Industrial" id="1944" marketgroup="true" meta="0" name="Bestower" pi="false" portion="1" price="497750" tech="Tech I" volume="260000.0">
+    <row category="Ship" group="Industrial" id="1944" marketgroup="true" meta="0" name="Bestower" pi="false" portion="1" price="496598" tech="Tech I" volume="260000.0">
         <material id="34" portionsize="1" quantity="32811"/>
         <material id="35" portionsize="1" quantity="8600"/>
         <material id="36" portionsize="1" quantity="3830"/>
@@ -44580,4 +44580,12 @@
     <row category="Reaction" group="Complex Reactions" id="33364" marketgroup="true" meta="0" name="Photonic Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
     <row category="Reaction" group="Complex Reactions" id="33365" marketgroup="true" meta="0" name="Plasmonic Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
     <row category="Reaction" group="Complex Reactions" id="33366" marketgroup="true" meta="0" name="Terahertz Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
+    <row category="Apparel" group="Tattoos" id="33377" marketgroup="true" meta="0" name="Sleeve - 'Drone' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33378" marketgroup="true" meta="0" name="Sleeve - 'Wreckage' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33379" marketgroup="true" meta="0" name="Sleeve - 'Prototype' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33380" marketgroup="true" meta="0" name="Sleeve - 'Nature' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33381" marketgroup="true" meta="0" name="Sleeve - 'Drone' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33382" marketgroup="true" meta="0" name="Sleeve - 'Wreckage' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33383" marketgroup="true" meta="0" name="Sleeve - 'Prototype' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Apparel" group="Tattoos" id="33384" marketgroup="true" meta="0" name="Sleeve - 'Nature' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
 </rows>
