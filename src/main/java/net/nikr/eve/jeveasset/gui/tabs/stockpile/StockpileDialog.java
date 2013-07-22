@@ -28,7 +28,14 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +43,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.*;
+import java.util.concurrent.TimeUnit;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Group;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
@@ -47,10 +70,11 @@ import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
-import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -58,45 +82,63 @@ public class StockpileDialog extends JDialogCentered {
 
 	private enum StockpileDialogAction {
 		FILTER_LOCATIONS,
+		VALIDATE,
 		CANCEL,
-		OK
+		OK,
+		ADD_STATION,
+		ADD_SYSTEM,
+		ADD_REGION,
+		ADD_UNIVERSE,
+		ADD_OWNER,
+		ADD_FLAG,
+		ADD_CONTAINER,
+		REMOVE,
+		CLONE
 	}
 
-	private static final int FIELD_WIDTH = 320;
+	private static final int FIELD_WIDTH = 480;
+	private static final int TOOL_BUTTON_WIDTH = 90;
 
-	private JTextField jName;
-	private JComboBox jOwner;
-	private JComboBox jLocations;
-	private JComboBox jFlag;
-	private JComboBox jContainer;
-	private JCheckBox jMyLocations;
-	private JRadioButton jStations;
-	private JRadioButton jSystems;
-	private JRadioButton jRegions;
-	private JRadioButton jUniverse;
-	private JCheckBox jInventory;
-	private JCheckBox jBuyOrders;
-	private JCheckBox jSellOrders;
-	private JCheckBox jJobs;
-	private JDoubleField jMultiplier;
-	private JButton jOK;
-	private EventList<Location> locations = new BasicEventList<Location>();
-	private FilterList<Location> locationsFilter;
-	private Set<String> myLocations;
-	private final Owner ownerAll = new Owner(null, General.get().all(), -1);
-	private final ItemFlag itemFlagAll = new ItemFlag(-1, General.get().all(), "");
-	public static final Location LOCATION_ALL = new Location(-1, General.get().all(), -1, "", -1, "", "");
+	private final JTextField jName;
+	private final JDoubleField jMultiplier;
+	private final JButton jOK;
+	private final List<LocationPanel> locationPanels = new ArrayList<LocationPanel>();
+	private final JPanel jFiltersPanel;
+	private final JLabel jWarning;
+
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
-	private AutoCompleteSupport<Location> locationsAutoComplete;
 	private boolean updated = false;
+
+	//Data
+	private final EventList<Location> stations;
+	private final EventList<Location> systems;
+	private final EventList<Location> regions;
+	private final Set<String> myLocations;
+	private final List<Owner> owners;
+	private final List<ItemFlag> itemFlags;
+	private final List<String> containers;
 
 	public StockpileDialog(final Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
+	//Data
+		//Flags - static
+		itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
+		Collections.sort(itemFlags);
+		//Locations - not static
+		stations = new BasicEventList<Location>();
+		systems = new BasicEventList<Location>();
+		regions = new BasicEventList<Location>();
+		//Owners - not static
+		owners = new ArrayList<Owner>();
+		//myLocations - not static
+		myLocations = new HashSet<String>();
+		//Containers - not static
+		containers = new ArrayList<String>();
 
 		ListenerClass listener = new ListenerClass();
-
-		JLabel jNameLabel = new JLabel(TabsStockpile.get().name());
+	//Name
+		BorderPanel jNamePanel = new BorderPanel(TabsStockpile.get().name());
 		jName = new JTextField();
 		jName.addFocusListener(new FocusAdapter() {
 			@Override
@@ -105,63 +147,65 @@ public class StockpileDialog extends JDialogCentered {
 			}
 		});
 		jName.addCaretListener(listener);
+		jNamePanel.add(jName);
+	//Multiplier
+		BorderPanel jMultiplierPanel = new BorderPanel(TabsStockpile.get().multiplier());
 
-		JLabel jOwnersLabel = new JLabel(TabsStockpile.get().owner());
-		jOwner = new JComboBox();
-
-		ButtonGroup group = new ButtonGroup();
-
-		jStations = new JRadioButton(TabsStockpile.get().stations());
-		jStations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
-		jStations.addActionListener(listener);
-		group.add(jStations);
-
-		jSystems = new JRadioButton(TabsStockpile.get().systems());
-		jSystems.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
-		jSystems.addActionListener(listener);
-		group.add(jSystems);
-
-		jRegions = new JRadioButton(TabsStockpile.get().regions());
-		jRegions.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
-		jRegions.addActionListener(listener);
-		group.add(jRegions);
-
-		jUniverse = new JRadioButton(TabsStockpile.get().allLocations());
-		jUniverse.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
-		jUniverse.addActionListener(listener);
-		group.add(jUniverse);
-
-		jMyLocations = new JCheckBox(TabsStockpile.get().myLocations());
-		jMyLocations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
-		jMyLocations.addActionListener(listener);
-		JLabel jIncludeLabel = new JLabel(TabsStockpile.get().include());
-
-		jInventory = new JCheckBox(TabsStockpile.get().inventory());
-
-		jBuyOrders = new JCheckBox(TabsStockpile.get().buyOrders());
-
-		jSellOrders = new JCheckBox(TabsStockpile.get().sellOrders());
-
-		jJobs = new JCheckBox(TabsStockpile.get().jobs());
-
-		JLabel jMultiplierLabel = new JLabel(TabsStockpile.get().multiplier());
 		jMultiplier = new JDoubleField("1", DocumentFactory.ValueFlag.POSITIVE_AND_NOT_ZERO);
 		jMultiplier.setAutoSelectAll(true);
+		jMultiplierPanel.add(jMultiplier);
+	//Add Filter
+		JToolBar jToolBar = new JToolBar();
+		jToolBar.setFloatable(false);
+		jToolBar.setRollover(true);
+		jToolBar.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().addFilter()));
 
-		JLabel jLocationsLabel = new JLabel(TabsStockpile.get().locations());
-		jLocations = new JComboBox();
-		locationsFilter = new FilterList<Location>(locations);
-		locationsAutoComplete = AutoCompleteSupport.install(jLocations, locationsFilter, new LocationsFilterator());
-		locationsAutoComplete.setStrict(true);
-		locationsAutoComplete.setCorrectsCase(true);
-		jLocations.addItemListener(listener); //Must be added after AutoCompleteSupport
+		GroupLayout locationLayout = new GroupLayout(jToolBar);
+		jToolBar.setLayout(locationLayout);
+		locationLayout.setAutoCreateGaps(false);
+		locationLayout.setAutoCreateContainerGaps(false);
 
-		JLabel jFlagLabel = new JLabel(TabsStockpile.get().flag());
-		jFlag = new JComboBox();
+		JButton jStation = new JButton(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
+		jStation.setHorizontalAlignment(JButton.LEFT);
+		jStation.setActionCommand(StockpileDialogAction.ADD_STATION.name());
+		jStation.addActionListener(listener);
 
-		JLabel jContainerLabel = new JLabel(TabsStockpile.get().container());
-		jContainer = new JComboBox();
+		JButton jSystem = new JButton(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
+		jSystem.setHorizontalAlignment(JButton.LEFT);
+		jSystem.setActionCommand(StockpileDialogAction.ADD_SYSTEM.name());
+		jSystem.addActionListener(listener);
 
+		JButton jRegion = new JButton(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
+		jRegion.setHorizontalAlignment(JButton.LEFT);
+		jRegion.setActionCommand(StockpileDialogAction.ADD_REGION.name());
+		jRegion.addActionListener(listener);
+
+		JButton jUniverse = new JButton(TabsStockpile.get().universe(), Images.LOC_LOCATIONS.getIcon());
+		jUniverse.setHorizontalAlignment(JButton.LEFT);
+		jUniverse.setActionCommand(StockpileDialogAction.ADD_UNIVERSE.name());
+		jUniverse.addActionListener(listener);
+
+		jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), TabsStockpile.get().addLocation());
+
+		locationLayout.setHorizontalGroup(
+			locationLayout.createSequentialGroup()
+				.addComponent(jStation, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jSystem, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jRegion, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jUniverse, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jWarning)
+		);						 
+		locationLayout.setVerticalGroup(
+			locationLayout.createParallelGroup()
+				.addComponent(jStation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jRegion, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jUniverse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+		);
+	//Filters
+		jFiltersPanel = new JPanel();
+	//OK
 		jOK = new JButton(TabsStockpile.get().ok());
 		jOK.setActionCommand(StockpileDialogAction.OK.name());
 		jOK.addActionListener(listener);
@@ -174,37 +218,11 @@ public class StockpileDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup()
-						.addComponent(jNameLabel)
-						.addComponent(jOwnersLabel)
-						.addComponent(jLocationsLabel)
-						.addComponent(jIncludeLabel)
-						.addComponent(jMultiplierLabel)
-						.addComponent(jFlagLabel)
-						.addComponent(jContainerLabel)
-					)
-					.addGroup(layout.createParallelGroup()
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(jStations)
-							.addComponent(jSystems)
-							.addComponent(jRegions)
-							.addComponent(jUniverse)
-						)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(jInventory)
-							.addComponent(jBuyOrders)
-							.addComponent(jSellOrders)
-							.addComponent(jJobs)
-						)
-						.addComponent(jName, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-						.addComponent(jMyLocations)
-						.addComponent(jLocations, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-						.addComponent(jMultiplier, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-						.addComponent(jFlag, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-						.addComponent(jContainer, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-						.addComponent(jOwner, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-					)
+					.addComponent(jNamePanel.getPanel(), FIELD_WIDTH - 120, FIELD_WIDTH - 120, FIELD_WIDTH - 120)
+					.addComponent(jMultiplierPanel.getPanel())
 				)
+				.addComponent(jToolBar, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+				.addComponent(jFiltersPanel, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
@@ -213,45 +231,12 @@ public class StockpileDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jNameLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jNamePanel.getPanel())
+					.addComponent(jMultiplierPanel.getPanel())
 				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jLocationsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jUniverse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jMyLocations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jLocations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jMultiplierLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jMultiplier, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jIncludeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jInventory, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jBuyOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jOwnersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jFlagLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jContainerLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
+				.addComponent(jToolBar)
+				.addComponent(jFiltersPanel)
+				.addGap(15)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -262,17 +247,11 @@ public class StockpileDialog extends JDialogCentered {
 	private Stockpile getStockpile() {
 		//Name
 		String name = jName.getText();
-		//Owner
-		Owner owner = (Owner) jOwner.getSelectedItem();
-		//Location
-		Location location = (Location) jLocations.getSelectedItem();
-		if (location == null) { //can not be null - better safe than sorry ;)
-			location = LOCATION_ALL;
+		//Filters
+		List<StockpileFilter> stockpileFilters = new ArrayList<StockpileFilter>();
+		for (LocationPanel locationPanel : locationPanels) {
+			stockpileFilters.add(locationPanel.getFilter());
 		}
-		//Flag
-		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
-		//Container
-		String container = (String) jContainer.getSelectedItem();
 		//Multiplier
 		double multiplier;
 		try {
@@ -281,16 +260,19 @@ public class StockpileDialog extends JDialogCentered {
 			multiplier = 1;
 		}
 		//Add
-		return new Stockpile(name, owner.getOwnerID(), owner.getName(), location, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected(), multiplier);
+		return new Stockpile(name, stockpileFilters, multiplier);
 	}
 
 	private void autoValidate() {
 		boolean b = true;
-		if (jLocations.getSelectedItem() == null) {
+		if (locationPanels.isEmpty()) {
 			b = false;
 		}
-		if (jName.getText().isEmpty()) {
-			b = false;
+		jWarning.setVisible(locationPanels.isEmpty());
+		for (LocationPanel locationPanel : locationPanels) {
+			if (!locationPanel.isValid()) {
+				b = false;
+			}
 		}
 		if (Settings.get().getStockpiles().contains(getStockpile())) {
 			if (stockpile != null && stockpile.getName().equals(getStockpile().getName())) {
@@ -299,6 +281,9 @@ public class StockpileDialog extends JDialogCentered {
 				b = false;
 				jName.setBackground(new Color(255, 200, 200));
 			}
+		} else if (jName.getText().isEmpty()) {
+			jName.setBackground(new Color(255, 200, 200));
+			b = false;
 		} else {
 			jName.setBackground(Color.WHITE);
 		}
@@ -306,7 +291,7 @@ public class StockpileDialog extends JDialogCentered {
 	}
 
 	boolean showEdit(final Stockpile stockpile) {
-		updateData();
+		clear();
 		this.stockpile = stockpile;
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileTitle());
@@ -318,13 +303,13 @@ public class StockpileDialog extends JDialogCentered {
 	}
 
 	Stockpile showAdd() {
-		updateData();
+		clear();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		show();
 		return stockpile;
 	}
 	Stockpile showAdd(final String name) {
-		updateData();
+		clear();
 		jName.setText(name);
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		show();
@@ -332,7 +317,7 @@ public class StockpileDialog extends JDialogCentered {
 	}
 
 	Stockpile showClone(final Stockpile stockpile) {
-		updateData();
+		clear();
 		cloneStockpile = stockpile.clone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
@@ -351,50 +336,34 @@ public class StockpileDialog extends JDialogCentered {
 		//Name
 		jName.setText(name);
 
-		//Include
-		jInventory.setSelected(loadStockpile.isInventory());
-		jSellOrders.setSelected(loadStockpile.isSellOrders());
-		jBuyOrders.setSelected(loadStockpile.isBuyOrders());
-		jJobs.setSelected(loadStockpile.isJobs());
-
-		//Owners
-		Owner ownerSelected = ownerAll;
-		for (Account account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				if (owner.getOwnerID() == loadStockpile.getOwnerID()) {
-					ownerSelected = owner;
-				}
-			}
-		}
-		jOwner.setSelectedItem(ownerSelected);
-
-		//Location
-		Location location = loadStockpile.getLocation();
-		if (location.getLocationID() < 0) {
-			jUniverse.setSelected(true);
-		} else if (location.isRegion()) {
-			jRegions.setSelected(true);
-		} else if (location.isSystem()) {
-			jSystems.setSelected(true);
-		} else if (location.isStation()) {
-			jStations.setSelected(true);
-		}
-		jMyLocations.setSelected(myLocations.contains(location.getLocation()) || jUniverse.isSelected());
-		refilter();
-		jLocations.setSelectedItem(location);
-
 		//Multiplier
 		jMultiplier.setText(Formater.compareFormat(loadStockpile.getMultiplier()));
-
-		//Flag
-		ItemFlag itemFlag = StaticData.get().getItemFlags().get(loadStockpile.getFlagID());
-		if (itemFlag == null) {
-			itemFlag = itemFlagAll;
+		//Filters
+		for (StockpileFilter filter : loadStockpile.getFilters()) {
+			LocationPanel locationPanel = new LocationPanel(filter);
+			locationPanels.add(locationPanel);
 		}
-		jFlag.setSelectedItem(itemFlag);
 
-		//Container
-		jContainer.setSelectedItem(loadStockpile.getContainer());
+		updatePanels();
+	}
+
+	private void updatePanels() {
+		jFiltersPanel.removeAll();
+		GroupLayout groupLayout = new GroupLayout(jFiltersPanel);
+		jFiltersPanel.setLayout(groupLayout);
+		groupLayout.setAutoCreateGaps(true);
+		groupLayout.setAutoCreateContainerGaps(false);
+		ParallelGroup horizontalGroup = groupLayout.createParallelGroup();
+		SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
+		for (LocationPanel locationPanel : locationPanels) {
+			horizontalGroup.addComponent(locationPanel.getPanel());
+			verticalGroup.addComponent(locationPanel.getPanel());
+		}
+		jFiltersPanel.setVisible(!locationPanels.isEmpty());
+		groupLayout.setHorizontalGroup(horizontalGroup);
+		groupLayout.setVerticalGroup(verticalGroup);
+		autoValidate();
+		this.getDialog().pack();
 	}
 
 	private void show() {
@@ -402,29 +371,52 @@ public class StockpileDialog extends JDialogCentered {
 		super.setVisible(true);
 	}
 
-	private void refilter() {
-		if (jUniverse.isSelected()) {
-			locationsAutoComplete.setFirstItem(LOCATION_ALL);
-			locationsFilter.setMatcher(null);
-			jLocations.setEnabled(false);
-
-		} else {
-			locationsAutoComplete.removeFirstItem();
-			locationsFilter.setMatcher(new LocationsMatcher(jRegions.isSelected(), jSystems.isSelected(), jStations.isSelected(), jMyLocations.isSelected() ? myLocations : new HashSet<String>()));
-			jLocations.setEnabled(true);
-		}
-		jLocations.setSelectedIndex(0);
-	}
-
-	private void updateData() {
+	private void clear() {
 		stockpile = null;
 		cloneStockpile = null;
 
-		//Include
-		jInventory.setSelected(true);
-		jSellOrders.setSelected(false);
-		jBuyOrders.setSelected(false);
-		jJobs.setSelected(false);
+		locationPanels.clear();
+		updatePanels();
+	}
+
+	void updateData() {
+		//Locations
+		List<Location> stationList = new ArrayList<Location>();
+		List<Location> systemList = new ArrayList<Location>();
+		List<Location> regionList = new ArrayList<Location>();
+		for (Location location : StaticData.get().getLocations().values()) {
+			if (location.isStation()) {
+				stationList.add(location);
+			} else if (location.isSystem()) {
+				systemList.add(location);
+			} else if (location.isRegion()) {
+				regionList.add(location);
+			}
+		}
+		Collections.sort(stationList);
+		Collections.sort(systemList);
+		Collections.sort(regionList);
+		try {
+			stations.getReadWriteLock().writeLock().lock();
+			stations.clear();
+			stations.addAll(stationList);
+		} finally {
+			stations.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			systems.getReadWriteLock().writeLock().lock();
+			systems.clear();
+			systems.addAll(systemList);
+		} finally {
+			systems.getReadWriteLock().writeLock().unlock();
+		}
+		try {
+			regions.getReadWriteLock().writeLock().lock();
+			regions.clear();
+			regions.addAll(regionList);
+		} finally {
+			regions.getReadWriteLock().writeLock().unlock();
+		}
 
 		//Name
 		jName.setText("");
@@ -436,39 +428,16 @@ public class StockpileDialog extends JDialogCentered {
 				ownersById.put(owner.getOwnerID(), owner);
 			}
 		}
-		List<Owner> owners = new ArrayList<Owner>(ownersById.values());
-		if (owners.isEmpty()) {
-			owners.add(ownerAll);
-			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwner.setEnabled(false);
-		} else {
-			Collections.sort(owners);
-			owners.add(0, ownerAll);
-			jOwner.setModel(new DefaultComboBoxModel(owners.toArray()));
-			jOwner.setEnabled(true);
-		}
-		//Locations
-		List<Location> locationsList = new ArrayList<Location>(StaticData.get().getLocations().values());
-		Collections.sort(locationsList);
-		try {
-			locations.getReadWriteLock().writeLock().lock();
-			locations.clear();
-			locations.addAll(locationsList);
-		} finally {
-			locations.getReadWriteLock().writeLock().unlock();
-		}
-		//Flags
-		List<ItemFlag> itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
-		Collections.sort(itemFlags);
-		itemFlags.add(0, itemFlagAll);
-		jFlag.setModel(new DefaultComboBoxModel(itemFlags.toArray()));
+		owners.clear();
+		owners.addAll(ownersById.values());
+		Collections.sort(owners);
 
-		//Containers & Locations Loop
-		Set<String> containers = new HashSet<String>();
-		myLocations = new HashSet<String>();
+		//Containers & MyLocations Loop
+		Set<String> containerSet = new HashSet<String>();
+		myLocations.clear();
 		for (Asset asset : program.getAssetEventList()) {
 			if (!asset.getContainer().isEmpty()) {
-				containers.add(asset.getContainer());
+				containerSet.add(asset.getContainer());
 			}
 			myLocations.add(asset.getLocation().getLocation());
 			myLocations.add(asset.getLocation().getSystem());
@@ -484,24 +453,10 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());
 		}
-		jMyLocations.setSelected(true);
-		jStations.setSelected(true);
-		locationsAutoComplete.removeFirstItem();
-		locationsFilter.setMatcher(new LocationsMatcher(myLocations));
-		jLocations.setEnabled(true);
-		jLocations.setSelectedIndex(0);
 		//Containers
-		List<String> containersList = new ArrayList<String>(containers);
-		if (containersList.isEmpty()) {
-			containersList.add(0, General.get().all());
-			jContainer.setModel(new DefaultComboBoxModel(containersList.toArray()));
-			jContainer.setEnabled(false);
-		} else {
-			Collections.sort(containersList, new CaseInsensitiveComparator());
-			containersList.add(0, General.get().all());
-			jContainer.setModel(new DefaultComboBoxModel(containersList.toArray()));
-			jContainer.setEnabled(true);
-		}
+		containers.clear();
+		containers.addAll(containerSet);
+		Collections.sort(containers, new CaseInsensitiveComparator());
 	}
 
 	@Override
@@ -532,23 +487,50 @@ public class StockpileDialog extends JDialogCentered {
 		this.setVisible(false);
 	}
 
-	private class ListenerClass implements ActionListener, ItemListener, CaretListener {
+	private static JLabel createToolTipLabel(Icon icon, String toolTip) {
+			JLabel jLabel = new JLabel(icon);
+			jLabel.setToolTipText(toolTip);
+			jLabel.addMouseListener(new MouseAdapter() {
+				final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+				final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+				final int dismissDelayMinutes = (int) TimeUnit.MINUTES.toMillis(10); // 10 minutes
+				@Override
+				public void mouseEntered(MouseEvent me) {
+					ToolTipManager.sharedInstance().setInitialDelay(0);
+					ToolTipManager.sharedInstance().setDismissDelay(dismissDelayMinutes);
+				}
+
+				@Override
+				public void mouseExited(MouseEvent me) {
+					ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+					ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
+				}
+
+			});
+			return jLabel;
+		
+	}
+
+	private class ListenerClass implements ActionListener, CaretListener {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (StockpileDialogAction.FILTER_LOCATIONS.name().equals(e.getActionCommand())) {
-				refilter();
-			}
 			if (StockpileDialogAction.OK.name().equals(e.getActionCommand())) {
 				save();
-			}
-			if (StockpileDialogAction.CANCEL.name().equals(e.getActionCommand())) {
+			} else if (StockpileDialogAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
+			} else if (StockpileDialogAction.ADD_STATION.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.STATION));
+				updatePanels();
+			} else if (StockpileDialogAction.ADD_SYSTEM.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.SYSTEM));
+				updatePanels();
+			} else if (StockpileDialogAction.ADD_REGION.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.REGION));
+				updatePanels();
+			} else if (StockpileDialogAction.ADD_UNIVERSE.name().equals(e.getActionCommand())) {
+				locationPanels.add(new LocationPanel(LocationType.UNIVERSE));
+				updatePanels();
 			}
-		}
-
-		@Override
-		public void itemStateChanged(final ItemEvent e) {
-			autoValidate();
 		}
 
 		@Override
@@ -578,33 +560,693 @@ public class StockpileDialog extends JDialogCentered {
 
 	static class LocationsMatcher implements Matcher<Location> {
 
-		private boolean regions;
-		private boolean systems;
-		private boolean stations;
 		private Set<String> myLocations;
 
 		public LocationsMatcher(final Set<String> myLocations) {
-			this(false, false, true, myLocations);
-		}
-
-		public LocationsMatcher(final boolean regions, final boolean systems, final boolean stations, final Set<String> myLocations) {
-			this.regions = regions;
-			this.systems = systems;
-			this.stations = stations;
 			this.myLocations = myLocations;
 		}
 
 		@Override
 		public boolean matches(final Location item) {
-			if (item.isRegion()) {
-				return regions && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
-			} else if (item.isSystem()) {
-				return systems && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
-			} else if (item.isStation()) {
-				return stations && (myLocations.contains(item.getLocation()) || myLocations.isEmpty());
-			} else {
-				return false;
+			return myLocations.contains(item.getLocation());
+		}
+	}
+
+	private enum FilterType {
+		OWNER,
+		FLAG,
+		CONTAINER
+	}
+
+	private enum LocationType {
+		STATION,
+		SYSTEM,
+		REGION,
+		UNIVERSE,
+	}
+
+	private class FilterPanel {
+		//GUI
+		private final JPanel jPanel;
+		private final GroupLayout groupLayout;
+		private final JButton jRemove;
+		private final JLabel jType;
+		private final JLabel jWarning;
+		//Owner
+		private JComboBox jOwner;
+		//Flag
+		private JComboBox jFlag;
+		//Container
+		private JComboBox jContainer;
+
+		private final ListenerClass listener = new ListenerClass();
+
+		private final LocationPanel locationPanel;
+		private final FilterType filterType;
+
+		public FilterPanel(final LocationPanel locationPanel, final String container) {
+			this(locationPanel, FilterType.CONTAINER);
+
+			jContainer.setSelectedItem(container);
+		}
+
+		public FilterPanel(final LocationPanel locationPanel, final ItemFlag itemFlag) {
+			this(locationPanel, FilterType.FLAG);
+
+			jFlag.setSelectedItem(itemFlag);
+		}
+
+		public FilterPanel(final LocationPanel locationPanel, final Owner owner) {
+			this(locationPanel, FilterType.OWNER);
+
+			jOwner.setSelectedItem(owner);
+		}
+
+		public FilterPanel(final LocationPanel locationPanel, final FilterType filterType) {
+			this.locationPanel = locationPanel;
+			this.filterType = filterType;
+			jPanel = new JPanel();
+			groupLayout = new GroupLayout(jPanel);
+			jPanel.setLayout(groupLayout);
+			groupLayout.setAutoCreateGaps(true);
+			groupLayout.setAutoCreateContainerGaps(false);
+
+			jRemove = new JButton(Images.EDIT_DELETE.getIcon());
+			jRemove.setActionCommand(StockpileDialogAction.REMOVE.name());
+			jRemove.addActionListener(listener);
+
+			jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), TabsStockpile.get().duplicate());
+
+			jType = new JLabel();
+
+			if (filterType == FilterType.CONTAINER) {
+				jType.setIcon(Images.LOC_CONTAINER_WHITE.getIcon());
+				jType.setToolTipText(TabsStockpile.get().container());
+
+				jContainer = new JComboBox(containers.toArray());
+				jContainer.setEnabled(!containers.isEmpty());
+				jContainer.setActionCommand(StockpileDialogAction.VALIDATE.name());
+				jContainer.addActionListener(listener);
+
+				groupLayout.setHorizontalGroup(
+					groupLayout.createSequentialGroup()
+						.addComponent(jType)
+						.addComponent(jWarning)
+						.addComponent(jContainer, 0, 0, FIELD_WIDTH)
+						.addComponent(jRemove, 30, 30, 30)
+				);
+				groupLayout.setVerticalGroup(
+					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				);
+			} else if (filterType == FilterType.FLAG) {
+				jType.setIcon(Images.LOC_FLAG.getIcon());
+				jType.setToolTipText(TabsStockpile.get().flag());
+
+				jFlag = new JComboBox(itemFlags.toArray());
+				jFlag.setActionCommand(StockpileDialogAction.VALIDATE.name());
+				jFlag.addActionListener(listener);
+
+				groupLayout.setHorizontalGroup(
+					groupLayout.createSequentialGroup()
+						.addComponent(jType)
+						.addComponent(jWarning)
+						.addComponent(jFlag, 0, 0, FIELD_WIDTH)
+						.addComponent(jRemove, 30, 30, 30)
+				);
+				groupLayout.setVerticalGroup(
+					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				);
+			} else if (filterType == FilterType.OWNER) {
+				jType.setIcon(Images.LOC_OWNER.getIcon());
+				jType.setToolTipText(TabsStockpile.get().owner());
+
+				jOwner = new JComboBox(owners.toArray());
+				jOwner.setActionCommand(StockpileDialogAction.VALIDATE.name());
+				jOwner.addActionListener(listener);
+				jOwner.setEnabled(!owners.isEmpty());
+
+				groupLayout.setHorizontalGroup(
+					groupLayout.createSequentialGroup()
+						.addComponent(jType)
+						.addComponent(jWarning)
+						.addComponent(jOwner, 0, 0, FIELD_WIDTH)
+						.addComponent(jRemove, 30, 30, 30)
+				);
+				groupLayout.setVerticalGroup(
+					groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addComponent(jType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				);
 			}
+		}
+
+		private void remove() {
+			if (filterType == FilterType.CONTAINER) {
+				locationPanel.removeContainer(this);
+			} else if (filterType == FilterType.FLAG) {
+				locationPanel.removeFlag(this);
+			} else if (filterType == FilterType.OWNER) {
+				locationPanel.removeOwner(this);
+			}
+			updatePanels();
+		}
+
+		public String getContainer() {
+			return getValue(jContainer, String.class);
+		}
+
+		public Integer getFlag() {
+			return getValue(jFlag, ItemFlag.class).getFlagID();
+		}
+
+		public Long getOwner() {
+			return getValue(jOwner, Owner.class).getOwnerID();
+		}
+
+		private <E> E getValue(JComboBox jComboBox, Class<E> clazz) {
+			if (jComboBox != null) {
+				Object object = jComboBox.getSelectedItem();
+				if (clazz.isInstance(object)) {
+					return clazz.cast(object);
+				}
+			}
+			return null;
+		}
+
+		public JPanel getPanel() {
+			return jPanel;
+		}
+
+		private void warning(boolean b) {
+			jWarning.setVisible(b);
+		}
+
+		private class ListenerClass implements ActionListener {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				if (StockpileDialogAction.REMOVE.name().equals(e.getActionCommand())) {
+					remove();
+				} else if (StockpileDialogAction.VALIDATE.name().equals(e.getActionCommand())) {
+					autoValidate();
+				}
+			}
+		}
+	}
+
+	private class LocationPanel {
+		private final List<FilterPanel> ownerPanels = new ArrayList<FilterPanel>();
+		private final List<FilterPanel> flagPanels = new ArrayList<FilterPanel>();
+		private final List<FilterPanel> containerPanels = new ArrayList<FilterPanel>();
+
+		private final JPanel jPanel;
+		private final JPanel jFilters;
+		//Location
+		private final JLabel jLocationType;
+		private final JComboBox jLocation;
+		private final FilterList<Location> locationsFilter;
+		private final JCheckBoxMenuItem jMyLocations;
+		//Include
+		private final JDropDownButton jInclude;
+		private final JCheckBoxMenuItem jInventory;
+		private final JCheckBoxMenuItem jBuyOrders;
+		private final JCheckBoxMenuItem jSellOrders;
+		private final JCheckBoxMenuItem jJobs;
+		//
+		private final LocationType locationType;
+
+		public LocationPanel(StockpileFilter stockpileFilter) {
+			this(stockpileFilter.getLocation() == null || stockpileFilter.getLocation().isEmpty() ? LocationType.UNIVERSE :
+					stockpileFilter.getLocation().isRegion() ? LocationType.REGION :
+					stockpileFilter.getLocation().isSystem()? LocationType.SYSTEM : LocationType.STATION, true);
+			//Location
+			if(locationType != LocationType.UNIVERSE) {
+				Location location = stockpileFilter.getLocation();
+				jMyLocations.setSelected(myLocations.contains(location.getLocation()));
+				refilter();
+				jLocation.setSelectedItem(location);
+			}
+			//Container
+			for (String container : stockpileFilter.getContainers()) {
+				containerPanels.add(new FilterPanel(this, container));
+			}
+			//Owner
+			Set<Owner> ownersFound = new HashSet<Owner>();
+			for (long ownerID : stockpileFilter.getOwnerIDs()) {
+				for (Owner owner : owners) {
+					if (owner.getOwnerID() == ownerID) {
+						ownersFound.add(owner);
+						break;
+					}
+				}
+			}
+			for (Owner owner : ownersFound) {
+				ownerPanels.add(new FilterPanel(this, owner));
+			}
+			//Flag
+			for (Integer flagID : stockpileFilter.getFlagIDs()) {
+				ItemFlag itemFlag = StaticData.get().getItemFlags().get(flagID);
+				if (itemFlag != null) {
+					flagPanels.add(new FilterPanel(this, itemFlag));
+				}
+			}
+			//Includes
+			jInventory.setSelected(stockpileFilter.isInventory());
+			jBuyOrders.setSelected(stockpileFilter.isBuyOrders());
+			jSellOrders.setSelected(stockpileFilter.isSellOrders());
+			jJobs.setSelected(stockpileFilter.isJobs());
+			doLayout();
+		}
+
+		public LocationPanel(LocationType type) {
+			this(type, true);
+			refilter();
+			doLayout();
+		}
+
+		private LocationPanel(LocationType locationType, boolean t) {
+			this.locationType = locationType;
+
+			ListenerClass listener = new ListenerClass();
+	
+			jFilters = new JPanel();
+
+			jPanel = new JPanel();
+			GroupLayout groupLayout = new GroupLayout(jPanel);
+			jPanel.setLayout(groupLayout);
+			groupLayout.setAutoCreateGaps(true);
+			groupLayout.setAutoCreateContainerGaps(false);
+
+			JToolBar jToolBar = new JToolBar();
+			jToolBar.setFloatable(false);
+			jToolBar.setRollover(true);
+
+			GroupLayout filterLayout = new GroupLayout(jToolBar);
+			jToolBar.setLayout(filterLayout);
+			filterLayout.setAutoCreateGaps(false);
+			filterLayout.setAutoCreateContainerGaps(false);
+
+			JButton jOwner = new JButton(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
+			jOwner.setHorizontalAlignment(JButton.LEFT);
+			jOwner.setActionCommand(StockpileDialogAction.ADD_OWNER.name());
+			jOwner.addActionListener(listener);
+			jOwner.setEnabled(!owners.isEmpty());
+
+			JButton jFlag = new JButton(TabsStockpile.get().flag(), Images.LOC_FLAG.getIcon());
+			jFlag.setHorizontalAlignment(JButton.LEFT);
+			jFlag.setActionCommand(StockpileDialogAction.ADD_FLAG.name());
+			jFlag.addActionListener(listener);
+
+			JButton jContainer = new JButton(TabsStockpile.get().container(), Images.LOC_CONTAINER_WHITE.getIcon());
+			jContainer.setHorizontalAlignment(JButton.LEFT);
+			jContainer.setActionCommand(StockpileDialogAction.ADD_CONTAINER.name());
+			jContainer.addActionListener(listener);
+			jContainer.setEnabled(!containers.isEmpty());
+
+			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
+			jEdit.setHorizontalAlignment(JButton.LEFT);
+
+			JMenuItem jRemove = new JMenuItem(TabsStockpile.get().remove(), Images.EDIT_DELETE.getIcon());
+			jRemove.setHorizontalAlignment(JButton.LEFT);
+			jRemove.setActionCommand(StockpileDialogAction.REMOVE.name());
+			jRemove.addActionListener(listener);
+			jEdit.add(jRemove);
+
+			JMenuItem jClone = new JMenuItem(TabsStockpile.get().cloneStockpileFilter(), Images.EDIT_COPY.getIcon());
+			jClone.setHorizontalAlignment(JButton.LEFT);
+			jClone.setActionCommand(StockpileDialogAction.CLONE.name());
+			jClone.addActionListener(listener);
+			jEdit.add(jClone);
+
+			jInclude = new JDropDownButton(TabsStockpile.get().include(), Images.LOC_INCLUDE.getIcon());
+			jInclude.setHorizontalAlignment(JButton.LEFT);
+			jInclude.setToolTipText(TabsStockpile.get().include());
+
+			filterLayout.setHorizontalGroup(
+				filterLayout.createSequentialGroup()
+					.addComponent(jOwner, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jFlag, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jContainer, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jInclude, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jEdit, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+			);						 
+			filterLayout.setVerticalGroup(
+				filterLayout.createParallelGroup()
+					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jInclude, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+			);
+
+			jInventory = new JCheckBoxMenuItem(TabsStockpile.get().inventory());
+			jInventory.setHorizontalAlignment(JButton.LEFT);
+			jInventory.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jInventory.addActionListener(listener);
+			jInventory.setSelected(true);
+			jInclude.add(jInventory, true);
+
+			jBuyOrders = new JCheckBoxMenuItem(TabsStockpile.get().buyOrders());
+			jBuyOrders.setHorizontalAlignment(JButton.LEFT);
+			jBuyOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jBuyOrders.addActionListener(listener);
+			jInclude.add(jBuyOrders, true);
+
+			jSellOrders = new JCheckBoxMenuItem(TabsStockpile.get().sellOrders());
+			jSellOrders.setHorizontalAlignment(JButton.LEFT);
+			jSellOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jSellOrders.addActionListener(listener);
+			jInclude.add(jSellOrders, true);
+
+			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().jobs());
+			jJobs.setHorizontalAlignment(JButton.LEFT);
+			jJobs.setActionCommand(StockpileDialogAction.VALIDATE.name());
+			jJobs.addActionListener(listener);
+			jInclude.add(jJobs, true);
+
+			JDropDownButton jOptions = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+			jOptions.setEnabled(locationType != LocationType.UNIVERSE);
+
+			jMyLocations = new JCheckBoxMenuItem(TabsStockpile.get().myLocations());
+			jMyLocations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
+			jMyLocations.addActionListener(listener);
+			jMyLocations.setSelected(!myLocations.isEmpty());
+			jMyLocations.setEnabled(!myLocations.isEmpty());
+			jOptions.add(jMyLocations);
+
+			jLocationType = new JLabel();
+			if (locationType == LocationType.STATION) {
+				jLocationType.setIcon(Images.LOC_STATION.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().station());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().station()));
+				locationsFilter = new FilterList<Location>(stations);
+			} else if (locationType == LocationType.SYSTEM) {
+				jLocationType.setIcon(Images.LOC_SYSTEM.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().system());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().system()));
+				locationsFilter = new FilterList<Location>(systems);
+			} else if (locationType == LocationType.REGION) {
+				jLocationType.setIcon(Images.LOC_REGION.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().region());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().region()));
+				locationsFilter = new FilterList<Location>(regions);
+			} else {
+				jLocationType.setIcon(Images.LOC_LOCATIONS.getIcon());
+				jLocationType.setToolTipText(TabsStockpile.get().universe());
+				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().universe()));
+				locationsFilter = new FilterList<Location>(new BasicEventList<Location>());
+			}
+
+			jLocation = new JComboBox();
+			if (locationType != LocationType.UNIVERSE) {
+				jLocation.setEnabled(true);
+				AutoCompleteSupport<Location> locationsAutoComplete = AutoCompleteSupport.install(jLocation, locationsFilter, new LocationsFilterator());
+				locationsAutoComplete.setStrict(true);
+				locationsAutoComplete.setCorrectsCase(true);
+				jLocation.addItemListener(listener); //Must be added after AutoCompleteSupport
+			} else {
+				jLocation.setEnabled(false);
+				jLocation.getModel().setSelectedItem(TabsStockpile.get().universe());
+			}
+
+			groupLayout.setHorizontalGroup(
+				groupLayout.createParallelGroup()
+					.addComponent(jToolBar, 0, 0, FIELD_WIDTH)
+					.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(jLocationType)
+						.addComponent(jLocation, 0, 0, FIELD_WIDTH)
+						.addComponent(jOptions, 30, 30, 30)
+					)
+					.addComponent(jFilters)
+			);
+											 
+			groupLayout.setVerticalGroup(
+				groupLayout.createSequentialGroup()
+					.addComponent(jToolBar)
+					.addGroup(groupLayout.createParallelGroup()
+						.addComponent(jLocationType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jLocation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)						.addComponent(jOptions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					)
+					.addComponent(jFilters)
+			);
+		}
+
+		private void doLayout() {
+			autoValidate();
+			jFilters.removeAll();
+			
+			GroupLayout layout = new GroupLayout(jFilters);
+			jFilters.setLayout(layout);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(false);
+
+			ParallelGroup horizontalGroup = layout.createParallelGroup();
+			SequentialGroup verticalGroup = layout.createSequentialGroup();
+			for (FilterPanel ownerPanel : ownerPanels) {
+				horizontalGroup.addComponent(ownerPanel.getPanel());
+				verticalGroup.addComponent(ownerPanel.getPanel());
+			}
+
+			for (FilterPanel flagPanel : flagPanels) {
+				horizontalGroup.addComponent(flagPanel.getPanel());
+				verticalGroup.addComponent(flagPanel.getPanel());
+			}
+
+			for (FilterPanel containerPanel : containerPanels) {
+				horizontalGroup.addComponent(containerPanel.getPanel());
+				verticalGroup.addComponent(containerPanel.getPanel());
+			}
+
+			layout.setVerticalGroup(verticalGroup);
+			layout.setHorizontalGroup(horizontalGroup);
+			getDialog().pack();
+		}
+
+		public JPanel getPanel() {
+			return jPanel;
+		}
+
+		public StockpileFilter getFilter () {
+			List<Long> ownerIDs = new ArrayList<Long>();
+			for (FilterPanel ownerPanel : ownerPanels) {
+				ownerIDs.add(ownerPanel.getOwner());
+			}
+			List<Integer> flagIDs = new ArrayList<Integer>();
+			for (FilterPanel flagPanel : flagPanels) {
+				flagIDs.add(flagPanel.getFlag());
+			}
+			List<String> containers = new ArrayList<String>();
+			for (FilterPanel containerPanel : containerPanels) {
+				String container = containerPanel.getContainer();
+				containers.add(container);
+			}
+			Object object = jLocation.getSelectedItem();
+			Location location;
+			if (object instanceof Location) {
+				location = (Location) object;
+			} else {
+				location = new Location(0);
+			}
+			return new StockpileFilter(location, flagIDs, containers, ownerIDs, 
+					jInventory.isSelected(),
+					jSellOrders.isSelected(),
+					jBuyOrders.isSelected(),
+					jJobs.isSelected());
+		}
+
+		public boolean isValid() {
+			boolean ok = true;
+			Set<Long> owners = new HashSet<Long>();
+			for (FilterPanel ownerPanel : ownerPanels) {
+				long owner = ownerPanel.getOwner();
+				boolean add = owners.add(owner);
+				ownerPanel.warning(!add);
+				if (!add) {
+					ok = false;
+				}
+			}
+			Set<Integer> flags = new HashSet<Integer>();
+			for (FilterPanel flagPanel : flagPanels) {
+				int flag = flagPanel.getFlag();
+				boolean add = flags.add(flag);
+				flagPanel.warning(!add);
+				if (!add) {
+					ok = false;
+				}
+			}
+			Set<String> containers = new HashSet<String>();
+			for (FilterPanel containerPanel : containerPanels) {
+				String container = containerPanel.getContainer();
+				boolean add = containers.add(container);
+				containerPanel.warning(!add);
+				if (!add) {
+					ok = false;
+				}
+			}
+			if (!jInventory.isSelected() && !jSellOrders.isSelected() && !jBuyOrders.isSelected() && !jJobs.isSelected()) {
+				ok = false;
+				jInclude.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
+			} else {
+				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
+			}
+			jInventory.setIcon(jInventory.isSelected() ? Images.INCLUDE_ASSET_SELECTED.getIcon() : Images.TOOL_ASSETS.getIcon());
+			jSellOrders.setIcon(jSellOrders.isSelected() ? Images.INCLUDE_SELL_SELECTED.getIcon() : Images.INCLUDE_SELL.getIcon());
+			jBuyOrders.setIcon(jBuyOrders.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());
+			jJobs.setIcon(jJobs.isSelected() ? Images.INCLUDE_JOBS_SELECTED.getIcon() : Images.INCLUDE_JOBS.getIcon());
+			return ok;
+		}
+
+		private void refilter() {
+			Object object = jLocation.getSelectedItem();
+			Location location;
+			if (object instanceof Location) {
+				location = (Location) object;
+			} else {
+				return;
+			}
+			if (jMyLocations.isSelected()) {
+				locationsFilter.setMatcher(new LocationsMatcher(myLocations));
+			} else {
+				locationsFilter.setMatcher(null);
+			}
+			if (locationsFilter.contains(location)) {
+				jLocation.setSelectedItem(location);
+			} else {
+				jLocation.setSelectedIndex(0);
+			}
+		}
+
+		public void removeOwner(FilterPanel ownerPanel) {
+			ownerPanels.remove(ownerPanel);
+			doLayout();
+		}
+		public void removeFlag(FilterPanel flagPanel) {
+			flagPanels.remove(flagPanel);
+			doLayout();
+		}
+		public void removeContainer(FilterPanel containerPanel) {
+			containerPanels.remove(containerPanel);
+			doLayout();
+		}
+
+		private void remove() {
+			locationPanels.remove(this);
+			updatePanels();
+		}
+
+		private void newClone() {
+			LocationPanel locationPanel = new LocationPanel(getFilter());
+			locationPanels.add(locationPanel);
+			updatePanels();
+		}
+
+		private void addOwner() {
+			ownerPanels.add(new FilterPanel(this, FilterType.OWNER));
+			doLayout();
+		}
+
+		private void addFlag() {
+			flagPanels.add(new FilterPanel(this, FilterType.FLAG));
+			doLayout();
+		}
+
+		private void addContainer() {
+			containerPanels.add(new FilterPanel(this, FilterType.CONTAINER));
+			doLayout();
+		}
+	
+
+		private class ListenerClass implements ActionListener, ItemListener {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				if (StockpileDialogAction.ADD_OWNER.name().equals(e.getActionCommand())) {
+					addOwner();
+				} else if (StockpileDialogAction.ADD_FLAG.name().equals(e.getActionCommand())) {
+					addFlag();
+				} else if (StockpileDialogAction.ADD_CONTAINER.name().equals(e.getActionCommand())) {
+					addContainer();
+				} else if (StockpileDialogAction.FILTER_LOCATIONS.name().equals(e.getActionCommand())) {
+					refilter();
+				} else if (StockpileDialogAction.VALIDATE.name().equals(e.getActionCommand())) {
+					autoValidate();
+				} else if (StockpileDialogAction.REMOVE.name().equals(e.getActionCommand())) {
+					remove();
+				} else if (StockpileDialogAction.CLONE.name().equals(e.getActionCommand())) {
+					newClone();
+				}
+			}
+			@Override
+			public void itemStateChanged(final ItemEvent e) {
+				autoValidate();
+			}
+		}
+	}
+
+	private static class BorderPanel {
+
+		private enum Alignment {
+			HORIZONTAL,
+			VERTICAL
+		}
+
+		private final GroupLayout layout;
+		private final JPanel jPanel;
+		private final List<JComponent> components = new ArrayList<JComponent>();
+		private final Alignment alignment;
+
+		public BorderPanel(String title) {
+			this(title, Alignment.HORIZONTAL);
+		}
+
+		public BorderPanel(String title, Alignment alignment) {
+			this.alignment = alignment;
+			jPanel = new JPanel();
+			layout = new GroupLayout(jPanel);
+			jPanel.setLayout(layout);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(false);
+			jPanel.setBorder(BorderFactory.createTitledBorder(title));
+		}
+
+		public void add(JComponent jComponent) {
+			components.add(jComponent);
+			jPanel.removeAll();
+			Group horizontalGroup;
+			Group verticalGroup;
+			if (alignment == Alignment.HORIZONTAL) {
+				horizontalGroup = layout.createSequentialGroup();
+				verticalGroup = layout.createParallelGroup();
+			} else {
+				horizontalGroup = layout.createParallelGroup();
+				verticalGroup = layout.createSequentialGroup();
+			}
+			for (JComponent component : components) {
+				horizontalGroup.addComponent(component);
+				if (alignment == Alignment.HORIZONTAL) {
+					verticalGroup.addComponent(component, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
+				} else {
+					verticalGroup.addComponent(component);
+				}
+			}
+			layout.setHorizontalGroup(horizontalGroup);
+			layout.setVerticalGroup(verticalGroup);
+		}
+
+		public void setVisible(boolean aFlag) {
+			jPanel.setVisible(aFlag);
+		}
+
+		public JPanel getPanel() {
+			return jPanel;
 		}
 	}
 }

@@ -140,24 +140,24 @@ public class ProfileData {
 						}
 					}
 				}
-				//Add StockpileItems to uniqueIds
-				for (Stockpile stockpile : Settings.get().getStockpiles()) {
-					for (StockpileItem stockpileItem : stockpile.getItems()) {
-						Item item = stockpileItem.getItem();
-						if (item.isMarketGroup()) {
-							priceTypeIDs.add(item.getTypeID());
-						}
-					}
+			}
+		}
+		//Add StockpileItems to uniqueIds
+		for (Stockpile stockpile : Settings.get().getStockpiles()) {
+			for (StockpileItem stockpileItem : stockpile.getItems()) {
+				Item item = stockpileItem.getItem();
+				if (item.isMarketGroup()) {
+					priceTypeIDs.add(item.getTypeID());
 				}
-				//Add reprocessed items to price queue
-				for (Item item : StaticData.get().getItems().values()) {
-					for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
-						int typeID = reprocessedMaterial.getTypeID();
-						Item reprocessedItem = StaticData.get().getItems().get(typeID);
-						if (reprocessedItem != null && reprocessedItem.isMarketGroup()) {
-							priceTypeIDs.add(typeID);
-						}
-					}
+			}
+		}
+		//Add reprocessed items to price queue
+		for (Item item : StaticData.get().getItems().values()) {
+			for (ReprocessedMaterial reprocessedMaterial : item.getReprocessedMaterial()) {
+				int typeID = reprocessedMaterial.getTypeID();
+				Item reprocessedItem = StaticData.get().getItems().get(typeID);
+				if (reprocessedItem != null && reprocessedItem.isMarketGroup()) {
+					priceTypeIDs.add(typeID);
 				}
 			}
 		}
@@ -306,11 +306,11 @@ public class ProfileData {
 						contractItem.setDynamicPrice(price);
 					}
 				}
-				//Update Items dynamic values
-				for (Item item : StaticData.get().getItems().values()) {
-					item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
-				}
 			}
+		}
+		//Update Items dynamic values
+		for (Item item : StaticData.get().getItems().values()) {
+			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
 		}
 		try {
 			assetsEventList.getReadWriteLock().writeLock().lock();

@@ -35,16 +35,18 @@ public abstract class TabsStockpile extends Bundle {
 		super(locale);
 	}
 
+	public abstract String addFilter();
 	public abstract String addItem();
+	public abstract String addLocation();
 	public abstract String addStockpileItem();
 	public abstract String addStockpileTitle();
 	public abstract String addToNewStockpile();
 	public abstract String addToStockpile();
-	public abstract String allLocations();
 	public abstract String buyOrders();
 	public abstract String cancel();
 	public abstract String clipboardStockpile();
 	public abstract String cloneStockpile();
+	public abstract String cloneStockpileFilter();
 	public abstract String cloneStockpileTitle();
 	public abstract String close();
 	public abstract String collapse();
@@ -56,8 +58,10 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String deleteItems(int size);
 	public abstract String deleteStockpile();
 	public abstract String deleteStockpileTitle();
+	public abstract String duplicate();
 	public abstract String editItem();
 	public abstract String editStockpile();
+	public abstract String editStockpileFilter();
 	public abstract String editStockpileItem();
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();
@@ -78,7 +82,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String item();
 	public abstract String items();
 	public abstract String jobs();
-	public abstract String locations();
+	public abstract String location();
+	public abstract String multiple();
 	public abstract String multiplier();
 	public abstract String multiplierSign();
 	public abstract String myLocations();
@@ -91,7 +96,8 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String owner();
 	public abstract String percent();
 	public abstract String percentFull();
-	public abstract String regions();
+	public abstract String region();
+	public abstract String remove();
 	public abstract String selectStockpiles();
 	public abstract String sellOrders();
 	public abstract String shoppingList();
@@ -99,14 +105,15 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String shownValueNow();
 	public abstract String shownVolumeNeeded();
 	public abstract String shownVolumeNow();
-	public abstract String stations();
+	public abstract String station();
 	public abstract String stockpile();
 	public abstract String stockpileLocation();
 	public abstract String stockpileOwner();
 	public abstract String stockpilePercent();
-	public abstract String systems();
+	public abstract String system();
 	public abstract String totalStockpile();
 	public abstract String totalToHaul();
+	public abstract String universe();
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCountNow();

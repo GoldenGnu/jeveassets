@@ -47,8 +47,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -81,6 +83,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
@@ -296,6 +299,8 @@ public class StockpileTab extends JMainTab {
 		}
 		//Restore separator expanded/collapsed state
 		jTable.loadExpandedState();
+
+		stockpileDialog.updateData();
 	}
 
 	public Stockpile addToStockpile(Stockpile stockpile, List<StockpileItem> items) {
@@ -438,14 +443,27 @@ public class StockpileTab extends JMainTab {
 
 	private void updateStockpile(Stockpile stockpile) {
 		//Update owner name
-		stockpile.setOwner(ownersName.get(stockpile.getOwnerID()));
-		//Update Item flag name
-		ItemFlag flag = StaticData.get().getItemFlags().get(stockpile.getFlagID());
-		if (flag != null) {
-			stockpile.setFlag(flag.getFlagName());
-		} else {
-			stockpile.setFlag(null);
+		Set<String> owners = new HashSet<String>();
+		for (StockpileFilter filter : stockpile.getFilters()) {
+			for (Long ownerID : filter.getOwnerIDs()) {
+				String owner = ownersName.get(ownerID);
+				if (owner != null) {
+					owners.add(owner);
+				}
+			}
 		}
+		stockpile.setOwners(new ArrayList<String>(owners));
+		//Update Item flag name
+		Set<String> flags = new HashSet<String>();
+		for (StockpileFilter filter : stockpile.getFilters()) {
+			for (Integer flagID : filter.getFlagIDs()) {
+				ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
+				if (flag != null) {
+					flags.add(flag.getFlagName());
+				}
+			}
+		}
+		stockpile.setFlags(new ArrayList<String>(flags));
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {

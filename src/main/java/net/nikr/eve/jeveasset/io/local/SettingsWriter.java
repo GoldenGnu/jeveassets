@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
@@ -230,14 +231,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		for (Stockpile strockpile : stockpiles) {
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			strockpileNode.setAttributeNS(null, "name", strockpile.getName());
-			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getOwnerID()));
-			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
-			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
-			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocation().getLocationID()));
-			strockpileNode.setAttributeNS(null, "inventory", String.valueOf(strockpile.isInventory()));
-			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
-			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
-			strockpileNode.setAttributeNS(null, "jobs", String.valueOf(strockpile.isJobs()));
 			strockpileNode.setAttributeNS(null, "multiplier", String.valueOf(strockpile.getMultiplier()));
 			for (StockpileItem item : strockpile.getItems()) {
 				if (item.getItemTypeID() != 0) { //Ignore Total
@@ -245,6 +238,31 @@ public class SettingsWriter extends AbstractXmlWriter {
 					itemNode.setAttributeNS(null, "typeid", String.valueOf(item.getItemTypeID()));
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);
+				}
+			}
+			
+			for (StockpileFilter filter : strockpile.getFilters()) {
+				Element locationNode = xmldoc.createElementNS(null, "stockpilefilter");
+				locationNode.setAttributeNS(null, "locationid", String.valueOf(filter.getLocation().getLocationID()));
+				locationNode.setAttributeNS(null, "inventory", String.valueOf(filter.isInventory()));
+				locationNode.setAttributeNS(null, "sellorders", String.valueOf(filter.isSellOrders()));
+				locationNode.setAttributeNS(null, "buyorders", String.valueOf(filter.isBuyOrders()));
+				locationNode.setAttributeNS(null, "jobs", String.valueOf(filter.isJobs()));
+				strockpileNode.appendChild(locationNode);
+				for (Long ownerID : filter.getOwnerIDs()) {
+					Element ownerNode = xmldoc.createElementNS(null, "owner");
+					ownerNode.setAttributeNS(null, "ownerid", String.valueOf(ownerID));
+					locationNode.appendChild(ownerNode);
+				}
+				for (String container : filter.getContainers()) {
+					Element containerNode = xmldoc.createElementNS(null, "container");
+					containerNode.setAttributeNS(null, "container", container);
+					locationNode.appendChild(containerNode);
+				}
+				for (Integer flagID : filter.getFlagIDs()) {
+					Element flagNode = xmldoc.createElementNS(null, "flag");
+					flagNode.setAttributeNS(null, "flagid", String.valueOf(flagID));
+					locationNode.appendChild(flagNode);
 				}
 			}
 			parentNode.appendChild(strockpileNode);

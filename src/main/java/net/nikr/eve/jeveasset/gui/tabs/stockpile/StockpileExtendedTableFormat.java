@@ -46,7 +46,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getStockpile().getOwner();
+			return from.getStockpile().getOwnerNames();
 		}
 	},
 	STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
@@ -56,7 +56,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getStockpile().getLocation().getLocation();
+			return from.getStockpile().getLocationNames();
 		}
 	},
 	STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
@@ -66,7 +66,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getStockpile().getFlag();
+			return from.getStockpile().getFlagNames();
 		}
 	},
 	STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
@@ -76,7 +76,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		}
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
-			return from.getStockpile().getContainer();
+			return from.getStockpile().getContainerNames();
 		}
 	};
 
