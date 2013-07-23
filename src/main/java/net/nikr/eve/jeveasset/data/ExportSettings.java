@@ -141,6 +141,7 @@ public class ExportSettings {
 //HTML  - shared
 	private boolean htmlStyled;
 	private int htmlRepeatHeader;
+	private boolean htmlIGB;
 //Common
 	//Shared
 	private ExportFormat exportFormat; 
@@ -157,6 +158,7 @@ public class ExportSettings {
 		dropTable = true;
 		extendedInserts = true;
 		htmlStyled = true;
+		htmlIGB = false;
 	}
 
 	public DecimalSeparator getDecimalSeparator() {
@@ -221,6 +223,14 @@ public class ExportSettings {
 
 	public void setHtmlRepeatHeader(int htmlRepeatHeader) {
 		this.htmlRepeatHeader = htmlRepeatHeader;
+	}
+
+	public boolean isHtmlIGB() {
+		return htmlIGB;
+	}
+
+	public void setHtmlIGB(boolean htmlIGB) {
+		this.htmlIGB = htmlIGB;
 	}
 
 	public ExportFormat getExportFormat() {

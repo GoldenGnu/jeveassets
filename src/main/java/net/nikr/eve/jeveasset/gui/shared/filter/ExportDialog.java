@@ -122,6 +122,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	private JComboBox jDecimalSeparator;
 	//Html
 	private JCheckBox jHtmlStyle;
+	private JCheckBox jHtmlIGB;
 	private JSlider jHtmlHeaderRepeat;
 	//SQL
 	private JTextField jTableName;
@@ -294,6 +295,9 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		jHtmlStyle = new JCheckBox(DialoguesExport.get().htmlStyled());
 		jHtmlPanel.add(jHtmlStyle);
+
+		jHtmlIGB = new JCheckBox(DialoguesExport.get().htmlIGB());
+		jHtmlPanel.add(jHtmlIGB);
 
 		JLabel jHtmlHeaderRepeatLabel = new JLabel(DialoguesExport.get().htmlHeaderRepeat());
 		jHtmlHeaderRepeat = new JSlider(JSlider.HORIZONTAL, 0, 50, 0);
@@ -525,6 +529,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().setExtendedInserts(jExtendedInserts.isSelected());
 		//HTML
 		Settings.get().getExportSettings().setHtmlStyled(jHtmlStyle.isSelected());
+		Settings.get().getExportSettings().setHtmlIGB(jHtmlIGB.isSelected());
 		Settings.get().getExportSettings().setHtmlRepeatHeader(jHtmlHeaderRepeat.getValue());
 		//Shared
 		if (jColumnSelection.getSelectedIndices().length == columns.size()) { //All is selected - nothing worth saving...
@@ -546,6 +551,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		jExtendedInserts.setSelected(Settings.get().getExportSettings().isExtendedInserts());
 		//HTML
 		jHtmlStyle.setSelected(Settings.get().getExportSettings().isHtmlStyled());
+		jHtmlIGB.setSelected(Settings.get().getExportSettings().isHtmlIGB());
 		jHtmlHeaderRepeat.setValue(Settings.get().getExportSettings().getHtmlRepeatHeader());
 		//Filename
 		ExportFormat exportFormat = Settings.get().getExportSettings().getExportFormat();
@@ -794,6 +800,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			saved = HtmlWriter.save(Settings.get().getExportSettings().getFilename(toolName),
 					rows,
 					new ArrayList<EnumTableColumn<?>>(header),
+					jHtmlIGB.isSelected() ? new ArrayList<Object>(items) : null,
 					Settings.get().getExportSettings().isHtmlStyled(),
 					Settings.get().getExportSettings().getHtmlRepeatHeader(),
 					toolName.equals(TreeTab.NAME));

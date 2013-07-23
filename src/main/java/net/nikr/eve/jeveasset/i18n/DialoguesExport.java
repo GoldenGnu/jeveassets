@@ -56,6 +56,7 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String format();
 	public abstract String html();
 	public abstract String htmlHeaderRepeat();
+	public abstract String htmlIGB();
 	public abstract String htmlStyled();
 	public abstract String lineEndingsMac();
 	public abstract String lineEndingsWindows();

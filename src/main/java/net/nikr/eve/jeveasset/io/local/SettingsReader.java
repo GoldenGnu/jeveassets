@@ -918,6 +918,10 @@ public final class SettingsReader extends AbstractXmlReader {
 			boolean htmlStyled = AttributeGetters.getBoolean(element, "htmlstyled");
 			settings.getExportSettings().setHtmlStyled(htmlStyled);
 		}
+		if (AttributeGetters.haveAttribute(element, "htmligb")) {
+			boolean htmlIGB = AttributeGetters.getBoolean(element, "htmligb");
+			settings.getExportSettings().setHtmlIGB(htmlIGB);
+		}
 		if (AttributeGetters.haveAttribute(element, "htmlrepeatheader")) {
 			int htmlRepeatHeader = AttributeGetters.getInt(element, "htmlrepeatheader");
 			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
