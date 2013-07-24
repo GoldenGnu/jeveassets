@@ -73,8 +73,8 @@ public final class ApiConverter {
 		int flagID = industryJob.getInstalledItemFlag();
 		boolean singleton  = false;
 		int rawQuantity;
-		if (industryJob.getInstalledItemCopy() == 0) {
-			rawQuantity = 0; //0 = BPO
+		if (industryJob.getInstalledItemCopy() == 0) { //0 = BPO | 1 = PBC
+			rawQuantity = -1; //-1 = BPO
 		} else {
 			rawQuantity = -2; //-2 = BPC
 		}
