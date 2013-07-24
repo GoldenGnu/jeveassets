@@ -1566,7 +1566,7 @@
         <material id="39" portionsize="1" quantity="24"/>
         <material id="40" portionsize="1" quantity="7"/>
     </row>
-    <row category="Ship" group="Industrial" id="657" marketgroup="true" meta="0" name="Iteron Mark V" pi="false" portion="1" price="944496" tech="Tech I" volume="275000.0">
+    <row category="Ship" group="Industrial" id="657" marketgroup="true" meta="0" name="Iteron Mark V" pi="false" portion="1" price="1125000" tech="Tech I" volume="275000.0">
         <material id="34" portionsize="1" quantity="77944"/>
         <material id="35" portionsize="1" quantity="19939"/>
         <material id="36" portionsize="1" quantity="7788"/>
@@ -2447,7 +2447,7 @@
     <row category="Ship" group="Battleship" id="1914" marketgroup="false" meta="0" name="Concord Special Ops Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
     <row category="Ship" group="Battleship" id="1916" marketgroup="false" meta="0" name="Concord SWAT Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
     <row category="Ship" group="Battleship" id="1918" marketgroup="false" meta="0" name="Concord Army Battleship" pi="false" portion="1" price="2959998" tech="Tech I" volume="486000.0"/>
-    <row category="Ship" group="Industrial" id="1944" marketgroup="true" meta="0" name="Bestower" pi="false" portion="1" price="496598" tech="Tech I" volume="260000.0">
+    <row category="Ship" group="Industrial" id="1944" marketgroup="true" meta="0" name="Bestower" pi="false" portion="1" price="497750" tech="Tech I" volume="260000.0">
         <material id="34" portionsize="1" quantity="32811"/>
         <material id="35" portionsize="1" quantity="8600"/>
         <material id="36" portionsize="1" quantity="3830"/>
@@ -40168,7 +40168,7 @@
     <row category="Commodity" group="Commodities" id="30906" marketgroup="false" meta="0" name="Letter of Recommendation" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="30907" marketgroup="false" meta="0" name="Smuggler's Warning About Sister Alitura" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="30951" marketgroup="false" meta="0" name="Verification Key" pi="false" portion="1" price="0" tech="Tech I" volume="3.0"/>
-    <row category="Commodity" group="Miscellaneous" id="30952" marketgroup="false" meta="0" name="Dossier â€“ Author Unknown" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="30952" marketgroup="false" meta="0" name="Dossier – Author Unknown" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="30954" marketgroup="false" meta="0" name="Hyasyoda Captain" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="30955" marketgroup="false" meta="0" name="S.I Formula Sheet" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Miscellaneous" id="30964" marketgroup="false" meta="0" name="CPF.HYA LogInt Facility POI-26: Data Cache" pi="false" portion="1" price="0" tech="Tech I" volume="3.0"/>
@@ -43621,17 +43621,17 @@
     <row category="Charge" group="Compact Citadel Torpedo" id="32363" marketgroup="false" meta="0" name="Compact Thor Torpedo I" pi="false" portion="100" price="350000" tech="Tech I" volume="0.3"/>
     <row category="Commodity" group="Miscellaneous" id="32365" marketgroup="false" meta="0" name="Proof of Discovery: Relic" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32366" marketgroup="false" meta="0" name="Proof of Discovery: Data" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
-    <row category="Commodity" group="Miscellaneous" id="32371" marketgroup="false" meta="0" name="Capital Ship Design â€“ â€œDictatorâ€" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Commodity" group="Livestock" id="32372" marketgroup="false" meta="0" name="Minedrill â€“ E518 Crew" pi="false" portion="1" price="0" tech="Tech I" volume="3.0"/>
+    <row category="Commodity" group="Miscellaneous" id="32371" marketgroup="false" meta="0" name="Capital Ship Design – “Dictator”" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Livestock" id="32372" marketgroup="false" meta="0" name="Minedrill – E518 Crew" pi="false" portion="1" price="0" tech="Tech I" volume="3.0"/>
     <row category="Commodity" group="General" id="32374" marketgroup="false" meta="0" name="Holoreel GRS-81A" pi="false" portion="1" price="250" tech="Tech I" volume="0.5"/>
     <row category="Commodity" group="Miscellaneous" id="32375" marketgroup="false" meta="0" name="Proof of Discovery: Gas Passkey" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32376" marketgroup="false" meta="0" name="Proof of Discovery: Gas" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
-    <row category="Commodity" group="Miscellaneous" id="32383" marketgroup="false" meta="0" name="Guristas â€˜Dirty' Explosive System" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
+    <row category="Commodity" group="Miscellaneous" id="32383" marketgroup="false" meta="0" name="Guristas ‘Dirty' Explosive System" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
     <row category="Commodity" group="Livestock" id="32389" marketgroup="false" meta="0" name="Dread Guristas Strike Force" pi="false" portion="1" price="0" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32393" marketgroup="false" meta="0" name="Sealed Research Cache" pi="false" portion="1" price="0" tech="Tech I" volume="2.0"/>
-    <row category="Commodity" group="Livestock" id="32398" marketgroup="false" meta="0" name="Lieutenant Kipo â€œFoxfireâ€ Tekira" pi="false" portion="1" price="100" tech="Tech I" volume="1.0"/>
+    <row category="Commodity" group="Livestock" id="32398" marketgroup="false" meta="0" name="Lieutenant Kipo “Foxfire” Tekira" pi="false" portion="1" price="100" tech="Tech I" volume="1.0"/>
     <row category="Commodity" group="Miscellaneous" id="32403" marketgroup="false" meta="0" name="Caldari Navy Overlay Transponder" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Commodity" group="Miscellaneous" id="32407" marketgroup="false" meta="0" name="Holoreel â€“ Torture Log I15B" pi="false" portion="1" price="250" tech="Tech I" volume="0.5"/>
+    <row category="Commodity" group="Miscellaneous" id="32407" marketgroup="false" meta="0" name="Holoreel – Torture Log I15B" pi="false" portion="1" price="250" tech="Tech I" volume="0.5"/>
     <row category="Commodity" group="Miscellaneous" id="32408" marketgroup="false" meta="0" name="Correspondence Log KL-513" pi="false" portion="1" price="100" tech="Tech I" volume="0.5"/>
     <row category="Module" group="Remote Sensor Damper" id="32413" marketgroup="false" meta="9" name="Shadow Serpentis Remote Sensor Dampener" pi="false" portion="1" price="13948" tech="Tech I" volume="5.0"/>
     <row category="Module" group="Target Painter" id="32414" marketgroup="true" meta="9" name="Domination Target Painter" pi="false" portion="1" price="33264" tech="Faction" volume="5.0">
@@ -44189,14 +44189,14 @@
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33038" marketgroup="true" meta="0" name="NEO YC 114: Tinkerhell and Alts" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33039" marketgroup="true" meta="0" name="NEO YC 114: Tengu Terror" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33040" marketgroup="true" meta="0" name="NEO YC 114: Oxygen Isonopes" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33041" marketgroup="true" meta="0" name="NEO YC 114: Africaâ€˜s Finest" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33041" marketgroup="true" meta="0" name="NEO YC 114: Africa‘s Finest" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33042" marketgroup="true" meta="0" name="NEO YC 114: Something Else" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33043" marketgroup="true" meta="0" name="NEO YC 114: The Exiled Gaming" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33044" marketgroup="true" meta="0" name="NEO YC 114: Perihelion Beryllium Duralumin" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33045" marketgroup="true" meta="0" name="NEO YC 114: Goggle Wearing Internet Crime Fighters" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33046" marketgroup="true" meta="0" name="NEO YC 114: ISN â€“ Incursion Shiny Network" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33046" marketgroup="true" meta="0" name="NEO YC 114: ISN – Incursion Shiny Network" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33047" marketgroup="true" meta="0" name="NEO YC 114: Baaaramu" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
-    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33048" marketgroup="true" meta="0" name="NEO YC 114: Asine Hitamaâ€˜s team" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
+    <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33048" marketgroup="true" meta="0" name="NEO YC 114: Asine Hitama‘s team" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33049" marketgroup="true" meta="0" name="NEO YC 114: EFS" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33050" marketgroup="true" meta="0" name="NEO YC 114: Much Crying Old Experts" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
     <row category="Special Edition Assets" group="Tournament Cards: New Eden Open YC 114" id="33051" marketgroup="true" meta="0" name="NEO YC 114: DeepWater" pi="false" portion="1" price="0" tech="Tech I" volume="0.01"/>
@@ -44580,12 +44580,4 @@
     <row category="Reaction" group="Complex Reactions" id="33364" marketgroup="true" meta="0" name="Photonic Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
     <row category="Reaction" group="Complex Reactions" id="33365" marketgroup="true" meta="0" name="Plasmonic Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
     <row category="Reaction" group="Complex Reactions" id="33366" marketgroup="true" meta="0" name="Terahertz Metamaterials Reaction" pi="false" portion="1" price="5000000" tech="Tech I" volume="1.0"/>
-    <row category="Apparel" group="Tattoos" id="33377" marketgroup="true" meta="0" name="Sleeve - 'Drone' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33378" marketgroup="true" meta="0" name="Sleeve - 'Wreckage' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33379" marketgroup="true" meta="0" name="Sleeve - 'Prototype' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33380" marketgroup="true" meta="0" name="Sleeve - 'Nature' (left)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33381" marketgroup="true" meta="0" name="Sleeve - 'Drone' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33382" marketgroup="true" meta="0" name="Sleeve - 'Wreckage' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33383" marketgroup="true" meta="0" name="Sleeve - 'Prototype' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
-    <row category="Apparel" group="Tattoos" id="33384" marketgroup="true" meta="0" name="Sleeve - 'Nature' (right)" pi="false" portion="1" price="0" tech="Tech I" volume="0.1"/>
 </rows>
