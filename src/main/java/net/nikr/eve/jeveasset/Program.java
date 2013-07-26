@@ -88,6 +88,8 @@ public class Program implements ActionListener {
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
+	public static final boolean PROGRAM_FORCE_PORTABLE = false;
+	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
 
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
@@ -142,6 +144,9 @@ public class Program implements ActionListener {
 	public Program() {
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
+		}
+		if (PROGRAM_FORCE_PORTABLE) {
+			portable = true;
 		}
 
 	//Data

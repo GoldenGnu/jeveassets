@@ -76,11 +76,17 @@ public class ProgramUpdateChecker {
 
 	public void showDevBuildMessage() {
 		Version version = getProgram();
-		if (version.isDevBuild() || version.isBeta()) {
+		if (Program.PROGRAM_SHOW_FEEDBACK_MSG && (version.isDevBuild() || version.isBeta())) {
 			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
-					GuiShared.get().devThankMsg(Program.PROGRAM_NAME, version.getType().toLowerCase()),
+					GuiShared.get().feedbackMsg(Program.PROGRAM_NAME, version.getType().toLowerCase()),
 					version.getType(),
 					JOptionPane.WARNING_MESSAGE);
+			if (Program.PROGRAM_FORCE_PORTABLE) {
+				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+					GuiShared.get().protableMsg(),
+					version.getType(),
+					JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 	}
 
