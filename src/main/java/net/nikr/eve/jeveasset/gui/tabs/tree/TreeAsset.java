@@ -66,7 +66,7 @@ public class TreeAsset extends Asset {
 	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
 		super(asset);
 		this.treeName = createSpace(tree.size()) + asset.getName();
-		this.tree = tree;
+		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare + asset.getName() + " #" + asset.getItemID();
 		this.ownerName = asset.getOwner();
 		this.parent = parent;
@@ -302,7 +302,7 @@ public class TreeAsset extends Asset {
 		}
 	}
 
-	public void add(Asset asset) {
+	private void add(Asset asset) {
 		this.count = this.count + asset.getCount();
 		this.value = this.value + asset.getValue();
 		this.valueBase = this.valueBase + (asset.getItem().getPriceBase() * asset.getCount());
@@ -310,6 +310,22 @@ public class TreeAsset extends Asset {
 		this.valueReprocessed = this.valueReprocessed + asset.getValueReprocessed();
 		this.valueSellMin = this.valueSellMin + (asset.getPriceSellMin() * asset.getCount());
 		this.volumnTotal = this.volumnTotal + asset.getVolumeTotal();
+	}
+
+	public void resetValues() {
+		this.count = 0;
+		this.value = 0;
+		this.valueBase = 0;
+		this.valueBuyMax = 0;
+		this.valueReprocessed = 0;
+		this.valueSellMin = 0;
+		this.volumnTotal = 0;
+	}
+
+	public void updateParents() {
+		for (TreeAsset treeAsset : tree) {
+			treeAsset.add(this);
+		}
 	}
 
 	@Override

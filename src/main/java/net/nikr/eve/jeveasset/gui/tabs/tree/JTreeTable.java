@@ -47,10 +47,12 @@ public class JTreeTable extends JAutoColumnTable {
 			if (!treeAsset.isParent()) {
 				component.setBackground(Color.WHITE);
 			} else if (treeAsset.getDepth() == 0) {
-				component.setBackground(new Color(190, 190, 190));
+				component.setBackground(new Color(170, 170, 170));
 			} else if (treeAsset.getDepth() == 1) {
+				component.setBackground(new Color(190, 190, 190));
+			} else if (treeAsset.getDepth() == 2) {
 				component.setBackground(new Color(210, 210, 210));
-			} else if (treeAsset.getDepth() >= 2) {
+			} else if (treeAsset.getDepth() > 2) {
 				component.setBackground(new Color(230, 230, 230));
 			} else {
 				component.setBackground(Color.WHITE);

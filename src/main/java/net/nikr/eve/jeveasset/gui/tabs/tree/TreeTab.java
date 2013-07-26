@@ -116,10 +116,10 @@ public class TreeTab extends JMainTab {
 	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private AssetTreeExpansionModel expansionModel;
-	private Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
-	private Set<TreeAsset> categories = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private final Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private final Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private final Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private final Set<TreeAsset> categories = new TreeSet<TreeAsset>(new AssetTreeComparator());
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
@@ -266,6 +266,8 @@ public class TreeTab extends JMainTab {
 	public void updateData() {
 		locations.clear();
 		categories.clear();
+		locationsExport.clear();
+		categoriesExport.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
 		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
 		for (Asset asset : program.getAssetEventList()) {
@@ -281,8 +283,6 @@ public class TreeTab extends JMainTab {
 			}
 			locationTree.add(regionAsset);
 			locationsExport.add(regionAsset);
-			//Update region total
-			regionAsset.add(asset);
 
 			//System
 			String systemKey = location.getRegion() + location.getSystem();
@@ -293,44 +293,41 @@ public class TreeTab extends JMainTab {
 			}
 			locationTree.add(systemAsset);
 			locationsExport.add(systemAsset);
-			//Update system total
-			systemAsset.add(asset);
-			
+
 			String fullLocation = location.getRegion()+location.getSystem();
 			//Station
 			if (location.isStation()) {
 				String stationKey = location.getRegion() + location.getSystem() + location.getLocation();
 				TreeAsset stationAsset = locationCache.get(stationKey);
 				if (stationAsset == null) {
-					stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_SYSTEM.getIcon(), locationTree);
+					stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_STATION.getIcon(), locationTree);
 					locationCache.put(stationKey, stationAsset);
 				}
 				locationTree.add(stationAsset);
 				locationsExport.add(stationAsset);
-				//Update station total
-				stationAsset.add(asset);
 				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
 			}
 
-			//Parent
+			//Add Parent(s)
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
 				for (Asset parentAsset : asset.getParents()) {
 					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					TreeAsset parentTreeAsset = locationCache.get(parentKey);
 					if (parentTreeAsset == null) {
-						parentTreeAsset = new TreeAsset(asset.getLocation(), parentAsset.getName(), parentKey, Images.LOC_SYSTEM.getIcon(), locationTree);
+						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
 						locationCache.put(parentKey, parentTreeAsset);
 					}
 					locationTree.add(parentTreeAsset);
 					locationsExport.add(parentTreeAsset);
-					//Update parent total
-					parentTreeAsset.add(asset);
 				}
 			}
-			TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
-			locations.add(locationAsset);
-			locationsExport.add(locationAsset);
+			//Add Item
+			if (asset.getAssets().isEmpty()) {
+				TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
+				locations.add(locationAsset);
+				locationsExport.add(locationAsset);
+			}
 			
 		//CATEGORY
 			List<TreeAsset> categoryTree = new ArrayList<TreeAsset>();
@@ -344,8 +341,6 @@ public class TreeTab extends JMainTab {
 			}
 			categoryTree.add(categoryAsset);
 			categoriesExport.add(categoryAsset);
-			//Update category total
-			categoryAsset.add(asset);
 
 			//Group
 			String groupKey = categoryKey + asset.getItem().getGroup();
@@ -356,9 +351,8 @@ public class TreeTab extends JMainTab {
 			}
 			categoryTree.add(groupAsset);
 			categoriesExport.add(groupAsset);
-			//Update group total
-			groupAsset.add(asset);
 
+			//Item
 			TreeAsset category = new TreeAsset(asset, TreeType.CATEGORY, categoryTree, groupKey, false);
 			categories.add(category);
 			categoriesExport.add(category);
@@ -367,6 +361,7 @@ public class TreeTab extends JMainTab {
 	}
 
 	public void updateTable() {
+		jTable.lock();
 		Set<TreeAsset> treeAssets = locations;
 		Set<TreeAsset> treeAssetsExport = locationsExport;
 		if (jCategories.isSelected()) {
@@ -387,6 +382,40 @@ public class TreeTab extends JMainTab {
 		} finally {
 			exportEventList.getReadWriteLock().writeLock().unlock();
 		}
+		updateTotals();
+	}
+
+	private void updateTotals() {
+		jTable.lock();
+		if (jCategories.isSelected()) {
+			for (TreeAsset treeAsset : categoriesExport) {
+				treeAsset.resetValues();
+			}
+			for (TreeAsset treeAsset : filterList) {
+				treeAsset.updateParents();
+			}
+		} else {
+			for (TreeAsset treeAsset : locationsExport) {
+				treeAsset.resetValues();
+			}
+			Set<TreeAsset> parentItems = new TreeSet<TreeAsset>(new AssetTreeComparator());
+			for (TreeAsset treeAsset : filterList) {
+				if (treeAsset.isItem()) {
+					treeAsset.updateParents();
+				}
+				//Add containers
+				for (TreeAsset treeParent : treeAsset.getTree()) {
+					if (treeParent.isItem()) {
+						parentItems.add(treeParent);
+					}
+				}
+			}
+			//Update containers
+			for (TreeAsset treeAsset : parentItems) {
+				treeAsset.updateParents();
+			}
+		}
+		jTable.unlock();
 	}
 
 	private void updateStatusbar() {
@@ -555,7 +584,7 @@ public class TreeTab extends JMainTab {
 		}
 	}
 
-	public static class AssetFilterControl extends FilterControl<TreeAsset> {
+	public class AssetFilterControl extends FilterControl<TreeAsset> {
 
 		private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 		private Program program;
@@ -592,6 +621,16 @@ public class TreeTab extends JMainTab {
 			if (program != null && program.getOverviewTab() != null) {
 				program.getOverviewTab().updateFilters();
 			}
+		}
+
+		@Override
+		protected void beforeFilter() {
+			jTable.lock();
+		}
+
+		@Override
+		protected void afterFilter() {
+			updateTotals();
 		}
 	}
 

@@ -57,6 +57,9 @@ public class JMenuInfo {
 		for (TreeAsset asset : list) {
 			boolean add = true;
 			for (TreeAsset tree : asset.getTree()) {
+				if (tree.isItem()) { //Container
+					continue;
+				}
 				if (list.contains(tree)) {
 					add = false;
 					break;

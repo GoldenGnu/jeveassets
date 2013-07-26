@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.AbstractListModel;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -79,6 +80,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeComparator;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import net.nikr.eve.jeveasset.i18n.DialoguesExport;
 import net.nikr.eve.jeveasset.io.local.CsvWriter;
@@ -907,7 +909,6 @@ public class ExportDialog<E> extends JDialogCentered {
 			layout.setVerticalGroup(
 				layout.createSequentialGroup()
 					.addGroup(verticalGroup)
-					//.addGap(0, 0, Integer.MAX_VALUE)
 				);
 		}
 	}
@@ -919,13 +920,23 @@ public class ExportDialog<E> extends JDialogCentered {
 
 		public TreeMatcher(EventList<E> eventList) {
 			this.eventList = eventList;
+			Set<TreeAsset> items = new TreeSet<TreeAsset>(new AssetTreeComparator());
 			for (E e : eventList) {
 				if (e instanceof TreeAsset) {
 					TreeAsset tree = (TreeAsset) e;
+					items.add(tree);
 					parentTree.addAll(tree.getTree());
 				}
 			}
-			System.out.println("treeAssets: " + parentTree.size());
+			for (TreeAsset treeAsset : parentTree) {
+				treeAsset.resetValues();
+				if (treeAsset.isItem()) {
+					items.add(treeAsset);
+				}
+			}
+			for (TreeAsset treeAsset : items) {
+				treeAsset.updateParents();
+			}
 		}
 
 		@Override

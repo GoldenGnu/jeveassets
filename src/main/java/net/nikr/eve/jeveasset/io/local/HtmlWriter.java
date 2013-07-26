@@ -109,13 +109,16 @@ public final class HtmlWriter {
 					"	}\r\n" +
 					//TreeTable
 					"	.level0 {\r\n" +
-					"		background-color: #777;\r\n" +
+					"		background-color: #888888;\r\n" +
 					"	}\r\n" +
 					"	.level1 {\r\n" +
-					"		background-color: #999;\r\n" +
+					"		background-color: #9E9E9E;\r\n" +
 					"	}\r\n" +
 					"	.level2 {\r\n" +
-					"		background-color: #bbb;\r\n" +
+					"		background-color: #B4B4B4;\r\n" +
+					"	}\r\n" +
+					"	.level3 {\r\n" +
+					"		background-color: #cccccc;\r\n" +
 					"	}\r\n" +
 					"	.number {\r\n" +
 					"		text-align: right;\r\n" +
@@ -168,10 +171,13 @@ public final class HtmlWriter {
 			boolean level0 = false;
 			boolean level1 = false;
 			boolean level2 = false;
+			boolean level3 = false;
 			if (treetable && htmlStyled) {
 				for (EnumTableColumn<?> column : header) {
 					if (HierarchyColumn.class.isAssignableFrom(column.getType())) {
-						if (map.get(column).contains(TreeAsset.SPACE + TreeAsset.SPACE + "+") && treetable) { //Level 2
+						if (map.get(column).contains(TreeAsset.SPACE + TreeAsset.SPACE + TreeAsset.SPACE + "+") && treetable) { //Level 2
+							level3 = true;
+						} else if (map.get(column).startsWith(TreeAsset.SPACE + TreeAsset.SPACE + "+") && treetable) { //Level 2
 							level2 = true;
 							break;
 						} else if (map.get(column).startsWith(TreeAsset.SPACE + "+") && treetable) { //Level 1
@@ -184,7 +190,7 @@ public final class HtmlWriter {
 					}
 				}
 			}
-			if (level0 || level1 || level2) { //Parent
+			if (level0 || level1 || level2 || level3) { //Parent
 				if (!wait) {
 					writeTableHeader(writer, header, items != null);
 					wait = true;
@@ -202,6 +208,8 @@ public final class HtmlWriter {
 				writer.write("\t<tr class=\"level1\">");
 			} else if (level2 && htmlStyled) {
 				writer.write("\t<tr class=\"level2\">");
+			} else if (level3 && htmlStyled) {
+				writer.write("\t<tr class=\"level3\">");
 			} else if (even && htmlStyled) {
 				writer.write("\t<tr class=\"even\">");
 			} else {
@@ -241,10 +249,13 @@ public final class HtmlWriter {
 				}
 				if (object instanceof Asset) {
 					Asset asset = (Asset) object;
-					writer.write("\t\tItem:\r\n");
-					writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo('" + asset.getItem().getTypeID() + "', '" + asset.getItemID() + "');\">i</button>\r\n");
-					if (asset.getItem().isMarketGroup()) {
-						writer.write("\t\t<button type=\"button\" title=\"Show Market Details\" onclick=\"CCPEVE.showMarketDetails('" + asset.getItem().getTypeID() + "');\">$</button>\r\n");
+					Item item = asset.getItem();
+					if (item != null && !item.isEmpty()) {
+						writer.write("\t\tItem:\r\n");
+						writer.write("\t\t<button type=\"button\" title=\"Show Info\" onclick=\"CCPEVE.showInfo('" + item.getTypeID() + "', '" + asset.getItemID() + "');\">i</button>\r\n");
+						if (item.isMarketGroup()) {
+							writer.write("\t\t<button type=\"button\" title=\"Show Market Details\" onclick=\"CCPEVE.showMarketDetails('" + item.getTypeID() + "');\">$</button>\r\n");
+						}
 					}
 				} else if (object instanceof ItemType) {
 					ItemType itemType = (ItemType) object;
@@ -261,7 +272,7 @@ public final class HtmlWriter {
 			}
 			writer.write("</tr>\r\n");
 			even = !even;
-			if (!level0 && !level1 && !level2) {
+			if (!level0 && !level1 && !level2 && !level3) {
 				count++;
 			}
 			index++;
