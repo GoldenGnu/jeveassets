@@ -43,19 +43,15 @@ public class JTreeTable extends JAutoColumnTable {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
 		TreeAsset treeAsset = tableModel.getElementAt(row);
-		if (!isSelected) {
-			if (!treeAsset.isParent()) {
-				component.setBackground(Color.WHITE);
-			} else if (treeAsset.getDepth() == 0) {
+		if (!isSelected && treeAsset.isParent()) {
+			if (treeAsset.getDepth() == 0) {
 				component.setBackground(new Color(170, 170, 170));
 			} else if (treeAsset.getDepth() == 1) {
 				component.setBackground(new Color(190, 190, 190));
 			} else if (treeAsset.getDepth() == 2) {
 				component.setBackground(new Color(210, 210, 210));
 			} else if (treeAsset.getDepth() > 2) {
-				component.setBackground(new Color(230, 230, 230));
-			} else {
-				component.setBackground(Color.WHITE);
+				component.setBackground(new Color(235, 235, 235));
 			}
 		}
 		return component;
