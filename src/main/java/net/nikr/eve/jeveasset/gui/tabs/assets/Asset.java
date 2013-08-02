@@ -22,7 +22,9 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
@@ -33,11 +35,13 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
+import net.nikr.eve.jeveasset.i18n.General;
 
-public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType {
+public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
 
 	//Static values (set by constructor)
 	private List<Asset> assets = new ArrayList<Asset>();
@@ -66,6 +70,8 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
+	private Set<String> tags = new HashSet<String>();
+	private String tagsString = General.get().none();
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean userPriceSet = false;
@@ -255,6 +261,21 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return rawQuantity;
 	}
 
+	@Override
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	@Override
+	public long getTagsID() {
+		return getItemID();
+	}
+
+	@Override
+	public String getTagsString() {
+		return tagsString;
+	}
+
 	public long getTypeCount() {
 		return typeCount;
 	}
@@ -355,6 +376,17 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 
 	public void setPriceReprocessed(final double priceReprocessed) {
 		this.priceReprocessed = priceReprocessed;
+	}
+
+	@Override
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+		tagsString = TagsType.Util.getTagString(tags);
+	}
+
+	@Override
+	public void setTagsString(String tagsString) {
+		this.tagsString = tagsString;
 	}
 
 	public void setTypeCount(final long typeCount) {

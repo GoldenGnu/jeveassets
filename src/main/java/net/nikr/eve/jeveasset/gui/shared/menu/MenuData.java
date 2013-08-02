@@ -32,6 +32,7 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
@@ -46,6 +47,8 @@ public class MenuData<T> {
 	private final Set<String> regions = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
+	private final Map<String, Integer> tagCount = new HashMap<String, Integer>();
+	private final List<TagsType> tags = new ArrayList<TagsType>();
 	private final List<Asset> assets = new ArrayList<Asset>();
 
 	public MenuData() { }
@@ -83,6 +86,11 @@ public class MenuData<T> {
 				price = priceType.getDynamicPrice();
 			}
 
+			TagsType tagsType = null;
+			if (t instanceof TagsType) {
+				tagsType = (TagsType) t;
+			}
+
 			if (t instanceof Item) {
 				Item item = (Item) t;
 				if (items.size() == 1) { //Always zero for multiple items
@@ -93,11 +101,11 @@ public class MenuData<T> {
 				}
 			}
 
-			add(itemType, location, price, blueprint);
+			add(itemType, location, price, blueprint, tagsType);
 		}
 	}
 
-	private void add(final Item item, final Location location, final Double price, final BlueprintType blueprintType) {
+	private void add(final Item item, final Location location, final Double price, final BlueprintType blueprintType, final TagsType tagsType) {
 		if (item != null && !item.isEmpty()) {
 			//Type Name
 			typeNames.add(item.getTypeName());
@@ -134,6 +142,27 @@ public class MenuData<T> {
 				regions.add(location.getRegion());
 			}
 		}
+		//Tags
+		if (tagsType != null) {
+			tags.add(tagsType);
+			for (String tagKey : tagsType.getTags()) {
+				Integer count = tagCount.get(tagKey);
+				if (count != null) {
+					count++;
+				} else {
+					count = 1;
+				}
+				tagCount.put(tagKey, count);
+			}
+		}
+	}
+
+	public Map<String, Integer> getTagCount() {
+		return tagCount;
+	}
+
+	public List<TagsType> getTags() {
+		return tags;
 	}
 
 	public Set<Integer> getTypeIDs() {

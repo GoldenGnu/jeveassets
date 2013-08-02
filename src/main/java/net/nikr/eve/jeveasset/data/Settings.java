@@ -129,6 +129,8 @@ public class Settings {
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
+	//Tags
+	private Map<String, Map<Long, Set<String>>> tags = new HashMap<String, Map<Long, Set<String>>>();
 
 	private Settings() {
 		SplashUpdater.setProgress(30);
@@ -365,6 +367,10 @@ public class Settings {
 			tableViews.put(name, views);
 		}
 		return views;
+	}
+
+	public Map<String, Map<Long, Set<String>>> getTags() {
+		return tags;
 	}
 
 	public int getMaximumPurchaseAge() {

@@ -39,6 +39,7 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -49,6 +50,7 @@ public class MenuManager<Q> {
 
 	public enum MenuEnum {
 		ASSET_FILTER,
+		TAGS,
 		STOCKPILE,
 		LOOKUP,
 		PRICE,
@@ -61,6 +63,7 @@ public class MenuManager<Q> {
 	private boolean locationSupported = false;
 	private boolean assets = false;
 	private boolean stockpile = false;
+	private boolean tags = false;
 
 	private final Map<MenuEnum, JAutoMenu<Q>> mainMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
 	private final Map<MenuEnum, JAutoMenu<Q>> tablePopupMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
@@ -97,9 +100,10 @@ public class MenuManager<Q> {
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
+		tags = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
-		createCashe(program, mainMenu);
-		createCashe(program, tablePopupMenu);
+		createCashe(program, mainMenu, clazz);
+		createCashe(program, tablePopupMenu, clazz);
 		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
@@ -108,7 +112,7 @@ public class MenuManager<Q> {
 		updateMainTableMenu();
 	}
 
-	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus) {
+	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus, final Class<Q> clazz) {
 	//ASSET FILTER - OK
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
@@ -127,6 +131,9 @@ public class MenuManager<Q> {
 		}
 		if (assets) {
 			menus.put(MenuEnum.NAME, new JMenuName<Q>(program));
+		}
+		if (tags) {
+			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program, clazz));
 		}
 	//REPROCESSED - OK
 		if (itemSupported) {
@@ -199,6 +206,11 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jName = menus.get(MenuEnum.NAME);
 		if (jName != null) {
 			jComponent.add(jName);
+			notEmpty = true;
+		}
+		JAutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
+		if (jTags != null) {
+			jComponent.add(jTags);
 			notEmpty = true;
 		}
 	//REPROCESSED

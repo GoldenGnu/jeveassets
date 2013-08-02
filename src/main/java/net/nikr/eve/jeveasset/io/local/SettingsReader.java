@@ -123,6 +123,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//Tags
+		NodeList tagsNodes = element.getElementsByTagName("tags");
+		if (tagsNodes.getLength() == 1) {
+			Element tagsElement = (Element) tagsNodes.item(0);
+			parseTags(tagsElement, settings);
+		}
+
 		//Owners
 		NodeList ownersNodes = element.getElementsByTagName("owners");
 		if (ownersNodes.getLength() == 1) {
@@ -449,6 +456,31 @@ public final class SettingsReader extends AbstractXmlReader {
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
 					stockpile.add(stockpileItem);
 				}
+			}
+		}
+	}
+
+	private void parseTags(Element tagsElement, Settings settings) {
+		NodeList classNodes = tagsElement.getElementsByTagName("tagsclass");
+		for (int a = 0; a < classNodes.getLength(); a++) {
+			Element classNode = (Element) classNodes.item(a);
+			String clazz = AttributeGetters.getString(classNode, "class");
+			HashMap<Long, Set<String>> map = new HashMap<Long, Set<String>>();
+			settings.getTags().put(clazz, map);
+
+			NodeList idNodes = classNode.getElementsByTagName("tagsid");
+			for (int b = 0; b < idNodes.getLength(); b++) {
+				Element idNode = (Element) idNodes.item(b);
+				Long id = AttributeGetters.getLong(idNode, "id");
+
+				Set<String> tags = new HashSet<String>();
+				NodeList tagNodes = idNode.getElementsByTagName("tag");
+				for (int c = 0; c < tagNodes.getLength(); c++) {
+					Element tagNode = (Element) tagNodes.item(c);
+					String tag = AttributeGetters.getString(tagNode, "tag");
+					tags.add(tag);
+				}
+				map.put(id, tags);
 			}
 		}
 	}

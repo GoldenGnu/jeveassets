@@ -94,6 +94,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableResizeWindow();
 	public abstract String tableResizeNone();
 	public abstract String tableSettings();
+	public abstract String tags();
+	public abstract String tagsName(String name, Integer count);
+	public abstract String tagsNew();
 
 	public abstract String today(Object arg0);
 	public abstract String whitespace37(Object arg0, Object arg1);

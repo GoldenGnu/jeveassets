@@ -26,6 +26,7 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -58,7 +59,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 	}
 
 	private boolean write(final Settings settings) {
-		Document xmldoc = null;
+		Document xmldoc;
 		try {
 			xmldoc = getXmlDocument("settings");
 		} catch (XmlException ex) {
@@ -89,6 +90,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeAssetAdded(xmldoc, settings.getAssetAdded());
 		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeOwners(xmldoc, settings.getOwners());
+		writeTags(xmldoc, settings.getTags());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -97,6 +99,26 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeTags(Document xmldoc, Map<String, Map<Long, Set<String>>> tags) {
+		Element tagsNode = xmldoc.createElementNS(null, "tags");
+		xmldoc.getDocumentElement().appendChild(tagsNode);
+		for (Map.Entry<String, Map<Long, Set<String>>> entryClass : tags.entrySet()) {
+			Element tagsClassNode = xmldoc.createElementNS(null, "tagsclass");
+			tagsClassNode.setAttributeNS(null, "class", entryClass.getKey());
+			tagsNode.appendChild(tagsClassNode);
+			for (Map.Entry<Long, Set<String>> entryId : entryClass.getValue().entrySet()) {
+				Element tagIdNode = xmldoc.createElementNS(null, "tagsid");
+				tagIdNode.setAttributeNS(null, "id", String.valueOf(entryId.getKey()));
+				tagsClassNode.appendChild(tagIdNode);
+				for (String tag : entryId.getValue()) {
+					Element tagNode = xmldoc.createElementNS(null, "tag");
+					tagNode.setAttributeNS(null, "tag", tag);
+					tagIdNode.appendChild(tagNode);
+				}
+			}
+		}
 	}
 
 	private void writeOwners(final Document xmldoc, final Map<Long, String> owners) {
