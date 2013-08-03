@@ -28,6 +28,7 @@ import java.net.Proxy.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
@@ -405,6 +406,11 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public Map<String, View> getTableViews(String name) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Map<Long, Set<String>>> getTags() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }
