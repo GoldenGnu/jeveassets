@@ -102,8 +102,8 @@ public class MenuManager<Q> {
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
 		tags = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
-		createCashe(program, mainMenu, clazz);
-		createCashe(program, tablePopupMenu, clazz);
+		createCashe(program, mainMenu);
+		createCashe(program, tablePopupMenu);
 		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
@@ -112,7 +112,7 @@ public class MenuManager<Q> {
 		updateMainTableMenu();
 	}
 
-	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus, final Class<Q> clazz) {
+	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus) {
 	//ASSET FILTER - OK
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
@@ -133,7 +133,7 @@ public class MenuManager<Q> {
 			menus.put(MenuEnum.NAME, new JMenuName<Q>(program));
 		}
 		if (tags) {
-			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program, clazz));
+			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program));
 		}
 	//REPROCESSED - OK
 		if (itemSupported) {

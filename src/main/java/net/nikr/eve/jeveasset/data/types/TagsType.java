@@ -30,6 +30,7 @@ public interface TagsType {
 	public void setTags(Set<String> tags);
 	public void setTagsString(String tagsString);
 	public long getTagsID();
+	public String getTagsTool();
 
 	public static class Util {
 		public static String getTagString(Set<String> tags) {

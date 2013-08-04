@@ -22,9 +22,9 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
@@ -70,7 +71,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
-	private Set<String> tags = new HashSet<String>();
+	private Set<String> tags = new TreeSet<String>(new CaseInsensitiveComparator());
 	private String tagsString = General.get().none();
 	//Dynamic values cache
 	private boolean userNameSet = false;
@@ -96,6 +97,8 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.added = asset.added;
 		this.container = asset.container;
 		this.price = asset.price;
+		this.tags = asset.tags;
+		this.tagsString = asset.tagsString;
 		this.marketPriceData = asset.marketPriceData;
 		this.name = asset.name;
 		this.priceData = asset.priceData;
@@ -269,6 +272,11 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	@Override
 	public long getTagsID() {
 		return getItemID();
+	}
+
+	@Override
+	public String getTagsTool() {
+		return AssetsTab.NAME;
 	}
 
 	@Override

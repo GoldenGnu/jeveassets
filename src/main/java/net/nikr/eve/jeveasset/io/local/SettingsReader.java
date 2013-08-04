@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -461,10 +462,10 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parseTags(Element tagsElement, Settings settings) {
-		NodeList classNodes = tagsElement.getElementsByTagName("tagsclass");
+		NodeList classNodes = tagsElement.getElementsByTagName("tagstool");
 		for (int a = 0; a < classNodes.getLength(); a++) {
 			Element classNode = (Element) classNodes.item(a);
-			String clazz = AttributeGetters.getString(classNode, "class");
+			String clazz = AttributeGetters.getString(classNode, "tool");
 			HashMap<Long, Set<String>> map = new HashMap<Long, Set<String>>();
 			settings.getTags().put(clazz, map);
 
@@ -473,7 +474,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				Element idNode = (Element) idNodes.item(b);
 				Long id = AttributeGetters.getLong(idNode, "id");
 
-				Set<String> tags = new HashSet<String>();
+				Set<String> tags = new TreeSet<String>(new CaseInsensitiveComparator());
 				NodeList tagNodes = idNode.getElementsByTagName("tag");
 				for (int c = 0; c < tagNodes.getLength(); c++) {
 					Element tagNode = (Element) tagNodes.item(c);

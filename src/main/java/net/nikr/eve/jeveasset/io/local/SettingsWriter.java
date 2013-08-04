@@ -105,8 +105,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		Element tagsNode = xmldoc.createElementNS(null, "tags");
 		xmldoc.getDocumentElement().appendChild(tagsNode);
 		for (Map.Entry<String, Map<Long, Set<String>>> entryClass : tags.entrySet()) {
-			Element tagsClassNode = xmldoc.createElementNS(null, "tagsclass");
-			tagsClassNode.setAttributeNS(null, "class", entryClass.getKey());
+			Element tagsClassNode = xmldoc.createElementNS(null, "tagstool");
+			tagsClassNode.setAttributeNS(null, "tool", entryClass.getKey());
 			tagsNode.appendChild(tagsClassNode);
 			for (Map.Entry<Long, Set<String>> entryId : entryClass.getValue().entrySet()) {
 				Element tagIdNode = xmldoc.createElementNS(null, "tagsid");

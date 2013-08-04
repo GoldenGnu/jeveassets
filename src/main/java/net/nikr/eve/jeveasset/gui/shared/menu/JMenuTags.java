@@ -48,11 +48,9 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 	private JMenuItem jNew;
 	private List<TagsType> tags = new ArrayList<TagsType>();
 	private ListenerClass listener = new ListenerClass();
-	private Class<T> clazz;
 
-	public JMenuTags(Program program, Class<T> clazz) {
+	public JMenuTags(Program program) {
 		super(GuiShared.get().tags(), program);
-		this.clazz = clazz;
 
 		setIcon(Images.TAG_GRAY.getIcon());
 
@@ -69,12 +67,13 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 
 		add(jNew);
 
-		if (!menuData.getTagCount().isEmpty()) {
-			addSeparator();
-		}
 		Set<String> allTags = new HashSet<String>();
 		for (Set<String> tagList : getMap().values()) {
 			allTags.addAll(tagList);
+		}
+
+		if (!allTags.isEmpty()) {
+			addSeparator();
 		}
 
 		JCheckBoxMenuItem jMenuItem;
@@ -96,8 +95,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 	}
 
 	private void addTag(String tag) {
-		System.out.println("Add");
-		if (tag != null) {
+		if (tag != null && !tag.isEmpty()) {
 			for (TagsType tagsType : tags) {
 				//Add tag
 				tagsType.getTags().add(tag);
@@ -108,12 +106,12 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				Map<Long, Set<String>> map = getMap();
 				map.put(tagsType.getTagsID(), tagsType.getTags());
 			}
+			//FIXME - - - > TAGS: Update Tags (no need to update all date - just need to update the data in tags column)
 			program.updateEventLists();
 		}
 	}
 
 	private void removeTag(String tag) {
-		System.out.println("Remove");
 		if (tag != null) {
 			for (TagsType tagsType : tags) {
 				//Remove tag
@@ -129,15 +127,21 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 					map.put(tagsType.getTagsID(), tagsType.getTags());
 				}
 			}
+			//FIXME - - - > TAGS: Update Tags (no need to update all date - just need to update the data in tags column)
 			program.updateEventLists();
 		}
 	}
 
 	private Map<Long, Set<String>> getMap() {
-		Map<Long, Set<String>> map = Settings.get().getTags().get(clazz.getName());
+		
+		if (tags.isEmpty()) {
+			return new HashMap<Long, Set<String>>(); //this should never happen
+		}
+		String key = tags.get(0).getTagsTool();
+		Map<Long, Set<String>> map = Settings.get().getTags().get(key);
 		if (map == null) {
 			map = new HashMap<Long, Set<String>>();
-			Settings.get().getTags().put(clazz.getName(), map);
+			Settings.get().getTags().put(key, map);
 		}
 		return map;
 	}
@@ -156,8 +160,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 					addTag(tag);
 				}
 			} else if (TagsAction.ACTION_NEW_TAG.name().equals(e.getActionCommand())) {
-				//FIXME - - - > TAGS: i18n
-				String tag = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), "New Tag", "Add Tag", JOptionPane.PLAIN_MESSAGE);
+				String tag = JOptionPane.showInputDialog(program.getMainWindow().getFrame(), GuiShared.get().tagsNewMsg(), GuiShared.get().tagsNewTitle(), JOptionPane.PLAIN_MESSAGE);
 				addTag(tag);
 			}
 		}

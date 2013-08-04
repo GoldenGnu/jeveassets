@@ -396,7 +396,7 @@ public class ProfileData {
 	private void addAssets(final List<Asset> assets, List<Asset> addTo) {
 		for (Asset asset : assets) {
 			//Tags
-			Map<Long, Set<String>> map = Settings.get().getTags().get(Asset.class.getName());
+			Map<Long, Set<String>> map = Settings.get().getTags().get(asset.getTagsTool());
 			if (map != null) {
 				Set<String> tags = map.get(asset.getTagsID());
 				if (tags != null) {
