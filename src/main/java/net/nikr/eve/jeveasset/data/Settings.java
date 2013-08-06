@@ -33,6 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -130,7 +133,8 @@ public class Settings {
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
 	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
 	//Tags
-	private Map<String, Map<Long, Set<String>>> tags = new HashMap<String, Map<Long, Set<String>>>();
+	private final Map<String, Tag> tags = new HashMap<String, Tag>();
+	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
 
 	private Settings() {
 		SplashUpdater.setProgress(30);
@@ -369,8 +373,17 @@ public class Settings {
 		return views;
 	}
 
-	public Map<String, Map<Long, Set<String>>> getTags() {
+	public Map<String, Tag> getTags() {
 		return tags;
+	}
+
+	public Tags getTags(TagID tagID) {
+		Tags set = tagIds.get(tagID);
+		if (set == null) {
+			set = new Tags();
+			tagIds.put(tagID, set);
+		}
+		return set;
 	}
 
 	public int getMaximumPurchaseAge() {

@@ -217,4 +217,9 @@ public abstract class FakeProgram extends Program {
 	public EventList<Journal> getJournalEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void updateTags() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

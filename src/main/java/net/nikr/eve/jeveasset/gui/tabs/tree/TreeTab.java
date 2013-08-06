@@ -262,6 +262,10 @@ public class TreeTab extends JMainTab {
 		jToolBar.add(jButton);
 	}
 
+	public void updateTags() {
+		tableModel.fireTableDataChanged();
+	}
+
 	@Override
 	public void updateData() {
 		locations.clear();

@@ -38,9 +38,11 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagColor;
+import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
-import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -462,26 +464,24 @@ public final class SettingsReader extends AbstractXmlReader {
 	}
 
 	private void parseTags(Element tagsElement, Settings settings) {
-		NodeList classNodes = tagsElement.getElementsByTagName("tagstool");
-		for (int a = 0; a < classNodes.getLength(); a++) {
-			Element classNode = (Element) classNodes.item(a);
-			String clazz = AttributeGetters.getString(classNode, "tool");
-			HashMap<Long, Set<String>> map = new HashMap<Long, Set<String>>();
-			settings.getTags().put(clazz, map);
+		NodeList tagNodes = tagsElement.getElementsByTagName("tag");
+		for (int a = 0; a < tagNodes.getLength(); a++) {
+			Element tagNode = (Element) tagNodes.item(a);
+			String name = AttributeGetters.getString(tagNode, "name");
+			TagColor color = TagColor.valueOf(AttributeGetters.getString(tagNode, "color"));
 
-			NodeList idNodes = classNode.getElementsByTagName("tagsid");
+			Tag tag = new Tag(name, color);
+			settings.getTags().put(tag.getName(), tag);
+
+			NodeList idNodes = tagNode.getElementsByTagName("tagid");
 			for (int b = 0; b < idNodes.getLength(); b++) {
 				Element idNode = (Element) idNodes.item(b);
+				String tool = AttributeGetters.getString(idNode, "tool");
 				Long id = AttributeGetters.getLong(idNode, "id");
 
-				Set<String> tags = new TreeSet<String>(new CaseInsensitiveComparator());
-				NodeList tagNodes = idNode.getElementsByTagName("tag");
-				for (int c = 0; c < tagNodes.getLength(); c++) {
-					Element tagNode = (Element) tagNodes.item(c);
-					String tag = AttributeGetters.getString(tagNode, "tag");
-					tags.add(tag);
-				}
-				map.put(id, tags);
+				TagID tagID = new TagID(tool, id);
+				tag.getIDs().add(tagID);
+				settings.getTags(tagID).add(tag);
 			}
 		}
 	}
@@ -532,12 +532,8 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseProxy(final Element proxyElement, final Settings settings) {
 		String addrName = AttributeGetters.getString(proxyElement, "address");
 		String proxyType = AttributeGetters.getString(proxyElement, "type");
-		Integer port = AttributeGetters.getInt(proxyElement, "port");
-		if (addrName.length() > 0
-						&& proxyType.length() > 0
-						&& port != null
-						&& port >= 0) { // check the proxy attributes are all there.
-
+		int port = AttributeGetters.getInt(proxyElement, "port");
+		if (addrName.length() > 0 && proxyType.length() > 0 && port >= 0) { // check the proxy attributes are all there.
 			// delegate to the utility method in the Settings.
 			try {
 				settings.setProxy(addrName, port, proxyType);

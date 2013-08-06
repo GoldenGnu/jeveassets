@@ -26,8 +26,9 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -101,22 +102,19 @@ public class SettingsWriter extends AbstractXmlWriter {
 		return true;
 	}
 
-	private void writeTags(Document xmldoc, Map<String, Map<Long, Set<String>>> tags) {
+	private void writeTags(Document xmldoc, Map<String, Tag> tags) {
 		Element tagsNode = xmldoc.createElementNS(null, "tags");
 		xmldoc.getDocumentElement().appendChild(tagsNode);
-		for (Map.Entry<String, Map<Long, Set<String>>> entryClass : tags.entrySet()) {
-			Element tagsClassNode = xmldoc.createElementNS(null, "tagstool");
-			tagsClassNode.setAttributeNS(null, "tool", entryClass.getKey());
-			tagsNode.appendChild(tagsClassNode);
-			for (Map.Entry<Long, Set<String>> entryId : entryClass.getValue().entrySet()) {
-				Element tagIdNode = xmldoc.createElementNS(null, "tagsid");
-				tagIdNode.setAttributeNS(null, "id", String.valueOf(entryId.getKey()));
-				tagsClassNode.appendChild(tagIdNode);
-				for (String tag : entryId.getValue()) {
-					Element tagNode = xmldoc.createElementNS(null, "tag");
-					tagNode.setAttributeNS(null, "tag", tag);
-					tagIdNode.appendChild(tagNode);
-				}
+		for (Tag tag : tags.values()) {
+			Element tagNode = xmldoc.createElementNS(null, "tag");
+			tagNode.setAttributeNS(null, "name", tag.getName());
+			tagNode.setAttributeNS(null, "color", tag.getColor().name());
+			tagsNode.appendChild(tagNode);
+			for (TagID tagID : tag.getIDs()) {
+				Element tagIdNode = xmldoc.createElementNS(null, "tagid");
+				tagIdNode.setAttributeNS(null, "tool", tagID.getTool());
+				tagIdNode.setAttributeNS(null, "id", String.valueOf(tagID.getID()));
+				tagNode.appendChild(tagIdNode);
 			}
 		}
 	}

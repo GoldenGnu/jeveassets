@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
@@ -396,13 +397,9 @@ public class ProfileData {
 	private void addAssets(final List<Asset> assets, List<Asset> addTo) {
 		for (Asset asset : assets) {
 			//Tags
-			Map<Long, Set<String>> map = Settings.get().getTags().get(asset.getTagsTool());
-			if (map != null) {
-				Set<String> tags = map.get(asset.getTagsID());
-				if (tags != null) {
-					asset.setTags(tags);
-				}
-			}
+			Tags tags = Settings.get().getTags(asset.getTagID());
+			asset.getTags().clear();
+			asset.getTags().addAll(tags);
 			//Date added
 			if (Settings.get().getAssetAdded().containsKey(asset.getItemID())) {
 				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));

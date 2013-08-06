@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.tree;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
@@ -41,14 +42,14 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getHierarchyColumn();
 		}
 	},
-	TAGS(String.class, GlazedLists.comparableComparator()) {
+	TAGS(Tags.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnTags();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getTagsString();
+			return from.getTags();
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {

@@ -40,6 +40,7 @@ import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
@@ -48,6 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRend
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 
 
@@ -85,6 +87,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
 
 		autoResizeColumns();
 

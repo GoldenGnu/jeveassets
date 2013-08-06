@@ -21,34 +21,11 @@
 
 package net.nikr.eve.jeveasset.data.types;
 
-import java.util.Set;
-import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
+
 
 public interface TagsType {
-	public Set<String> getTags();
-	public String getTagsString();
-	public void setTags(Set<String> tags);
-	public void setTagsString(String tagsString);
-	public long getTagsID();
-	public String getTagsTool();
-
-	public static class Util {
-		public static String getTagString(Set<String> tags) {
-			StringBuilder sb = new StringBuilder();
-			boolean first = true;
-			for (String s : tags) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(", ");
-				}
-				sb.append(s);
-			}
-			if (sb.toString().isEmpty()) {
-				return General.get().none();
-			} else {
-				return sb.toString();
-			}
-		}
-	}
+	public Tags getTags();
+	public TagID getTagID();
 }

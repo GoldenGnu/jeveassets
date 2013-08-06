@@ -468,6 +468,10 @@ public class Program implements ActionListener {
 		return portable;
 	}
 
+	public void updateTags() {
+		assetsTab.updateTags();
+		treeTab.updateTags();
+	}
 	/**
 	 * Called when Overview Groups are changed.
 	 */

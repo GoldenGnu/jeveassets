@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
@@ -47,7 +48,7 @@ public class MenuData<T> {
 	private final Set<String> regions = new HashSet<String>();
 	private final Set<Integer> marketTypeIDs = new HashSet<Integer>();
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
-	private final Map<String, Integer> tagCount = new HashMap<String, Integer>();
+	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
 	private final List<TagsType> tags = new ArrayList<TagsType>();
 	private final List<Asset> assets = new ArrayList<Asset>();
 
@@ -145,7 +146,7 @@ public class MenuData<T> {
 		//Tags
 		if (tagsType != null) {
 			tags.add(tagsType);
-			for (String tagKey : tagsType.getTags()) {
+			for (Tag tagKey : tagsType.getTags()) {
 				Integer count = tagCount.get(tagKey);
 				if (count != null) {
 					count++;
@@ -157,7 +158,7 @@ public class MenuData<T> {
 		}
 	}
 
-	public Map<String, Integer> getTagCount() {
+	public Map<Tag, Integer> getTagCount() {
 		return tagCount;
 	}
 
