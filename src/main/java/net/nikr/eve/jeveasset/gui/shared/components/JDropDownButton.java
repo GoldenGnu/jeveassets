@@ -110,15 +110,7 @@ public class JDropDownButton extends JButton {
 		jPopupMenu.addSeparator();
 	}
 
-	@Override
-	public Component add(final Component component) {
-		if (component instanceof JMenuItem) {
-			return add((JMenuItem) component);
-		}
-		return super.add(component);
-	}
-
-	public JMenuItem add(final JMenuItem jMenuItem, boolean keepOpen) {
+	public Component add(final JMenuItem jMenuItem, boolean keepOpen) {
 		if (keepOpen) {
 			//jPopupMenu.setLightWeightPopupEnabled(true);
 			jMenuItem.addMouseListener(new MouseAdapter() {
@@ -140,9 +132,10 @@ public class JDropDownButton extends JButton {
 		return add(jMenuItem);
 	}
 
-	public JMenuItem add(final JMenuItem jMenuItem) {
-		jPopupMenu.add(jMenuItem);
-		return jMenuItem;
+	@Override
+	public Component add(final Component component) {
+		jPopupMenu.add(component);
+		return component;
 	}
 
 	public int getPopupHorizontalAlignment() {
