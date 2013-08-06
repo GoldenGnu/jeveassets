@@ -165,6 +165,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 				if (save) { //Save (if not in setttings dialog)
 					boolean update = save();
 					if (update) {
+						//FIXME - - - > Price/Name: Update Price/Name (no need to update all date - just need to update the data in tags column)
 						program.updateEventLists();
 					}
 				}
