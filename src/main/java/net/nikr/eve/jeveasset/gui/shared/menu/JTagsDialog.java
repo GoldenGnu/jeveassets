@@ -120,7 +120,7 @@ public class JTagsDialog extends JDialogCentered {
 
 	public Tag show() {
 		tag = null;
-		jColor.setIcon(new ColorIcon(TagColor.values()[0]));
+		jColor.setIcon(new ColorIcon(TagColor.getValues()[0]));
 		jTextField.setText("");
 		this.setVisible(true);
 		return tag;
@@ -187,7 +187,7 @@ public class JTagsDialog extends JDialogCentered {
 			g.fillRect(x, y, getIconWidth(), getIconHeight());
 			g.setColor(Color.BLACK);
 			g.drawRect(x, y, getIconWidth(), getIconHeight());
-			g.setColor(tagColor.getForground());
+			g.setColor(tagColor.getForeground());
 			g.drawString("a", x + 5, y + 11);
 		}
 
@@ -224,7 +224,7 @@ public class JTagsDialog extends JDialogCentered {
 			jPanel.setLayout(gridLayout);
 			jWindow.add(jPanel);
 
-			for (TagColor tagColor : TagColor.values()) {
+			for (TagColor tagColor : TagColor.getValues()) {
 				final ColorIcon colorIcon = new ColorIcon(tagColor);
 				JButton button = new JButton(colorIcon);
 				button.addActionListener(new ActionListener() {

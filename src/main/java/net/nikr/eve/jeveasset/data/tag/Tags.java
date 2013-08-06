@@ -106,7 +106,7 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 			sb.append("<span style=\"background-color: #");
 			sb.append(tag.getColor().getBackgroundHtml());
 			sb.append("; color: ");
-			sb.append(tag.getColor().getForgroundHtml());
+			sb.append(tag.getColor().getForegroundHtml());
 			sb.append("\">&nbsp;");
 			sb.append(tag.getName());
 			sb.append("&nbsp;</span>");

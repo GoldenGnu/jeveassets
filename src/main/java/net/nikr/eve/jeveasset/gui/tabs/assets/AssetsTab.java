@@ -145,7 +145,9 @@ public class AssetsTab extends JMainTab {
 	}
 
 	public void updateTags() {
+		beforeUpdateData();
 		tableModel.fireTableDataChanged();
+		afterUpdateData();
 	}
 
 	@Override

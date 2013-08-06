@@ -468,8 +468,10 @@ public final class SettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < tagNodes.getLength(); a++) {
 			Element tagNode = (Element) tagNodes.item(a);
 			String name = AttributeGetters.getString(tagNode, "name");
-			TagColor color = TagColor.valueOf(AttributeGetters.getString(tagNode, "color"));
+			String background = AttributeGetters.getString(tagNode, "background");
+			String foreground = AttributeGetters.getString(tagNode, "foreground");
 
+			TagColor color = new TagColor(background, foreground);
 			Tag tag = new Tag(name, color);
 			settings.getTags().put(tag.getName(), tag);
 

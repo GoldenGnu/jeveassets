@@ -263,7 +263,9 @@ public class TreeTab extends JMainTab {
 	}
 
 	public void updateTags() {
+		beforeUpdateData();
 		tableModel.fireTableDataChanged();
+		afterUpdateData();
 	}
 
 	@Override

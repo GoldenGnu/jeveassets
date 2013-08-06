@@ -50,6 +50,7 @@ public abstract class JMainTab {
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
 	private List<?> selected;
+	private int[] selectedColumns;
 	private String toolName;
 	private Class<?> clazz;
 	protected JMainTab(final boolean load) { }
@@ -106,7 +107,10 @@ public abstract class JMainTab {
 			selected = new ArrayList<Object>(eventSelectionModel.getSelected());
 		}
 		if (jTable != null) {
+			selectedColumns = jTable.getColumnModel().getSelectedColumns();
 			jTable.lock();
+		} else {
+			selectedColumns = null;
 		}
 		if (jTable instanceof JSeparatorTable) {
 			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
@@ -125,6 +129,11 @@ public abstract class JMainTab {
 			}
 			eventSelectionModel.setValueIsAdjusting(false);
 			selected = null;
+		}
+		if (selectedColumns != null) {
+			for (int index : selectedColumns) {
+				jTable.getColumnModel().getSelectionModel().addSelectionInterval(index, index);
+			}
 		}
 		if (jTable != null) {
 			jTable.unlock();

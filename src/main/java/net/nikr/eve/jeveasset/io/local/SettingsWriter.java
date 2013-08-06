@@ -108,7 +108,8 @@ public class SettingsWriter extends AbstractXmlWriter {
 		for (Tag tag : tags.values()) {
 			Element tagNode = xmldoc.createElementNS(null, "tag");
 			tagNode.setAttributeNS(null, "name", tag.getName());
-			tagNode.setAttributeNS(null, "color", tag.getColor().name());
+			tagNode.setAttributeNS(null, "background", tag.getColor().getBackgroundHtml());
+			tagNode.setAttributeNS(null, "foreground", tag.getColor().getForegroundHtml());
 			tagsNode.appendChild(tagNode);
 			for (TagID tagID : tag.getIDs()) {
 				Element tagIdNode = xmldoc.createElementNS(null, "tagid");
