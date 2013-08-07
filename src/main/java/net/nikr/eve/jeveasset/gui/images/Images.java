@@ -136,6 +136,7 @@ public enum Images {
 	TAB_CLOSE_ACTIVE ("tab_close_active.png"),
 
 	TAG_GRAY ("tag_gray.png"),
+	TAG_TICK ("tag_tick.png"),
 
 	TABLE_COLUMN_RESIZE ("table_column_resize.png"),
 	TABLE_COLUMN_SHOW ("table_column_show.png"),

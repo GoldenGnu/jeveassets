@@ -27,5 +27,6 @@ import net.nikr.eve.jeveasset.data.tag.Tags;
 
 public interface TagsType {
 	public Tags getTags();
+	public void setTags(Tags tags);
 	public TagID getTagID();
 }

@@ -70,7 +70,7 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		updateTags();
 	}
 
-	private void updateTags() {
+	public final void updateTags() {
 		updateString();
 		updateHtml();
 	}
@@ -107,7 +107,7 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 			sb.append(tag.getColor().getBackgroundHtml());
 			sb.append("; color: ");
 			sb.append(tag.getColor().getForegroundHtml());
-			sb.append("\">&nbsp;");
+			sb.append(";\">&nbsp;");
 			sb.append(tag.getName());
 			sb.append("&nbsp;</span>");
 		}

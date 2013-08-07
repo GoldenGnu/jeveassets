@@ -69,7 +69,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private MarketPriceData marketPriceData;
 	private Date added;
 	private double price;
-	private final Tags tags = new Tags();
+	private Tags tags;
 	//Dynamic values cache
 	private boolean userNameSet = false;
 	private boolean userPriceSet = false;
@@ -373,6 +373,11 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.priceReprocessed = priceReprocessed;
 	}
 
+	@Override
+	public void setTags(Tags tags) {
+		this.tags = tags;
+	}
+
 	public void setTypeCount(final long typeCount) {
 		this.typeCount = typeCount;
 	}
@@ -397,6 +402,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
+	//FIXME - - - - > Asset equals: name is not unique
 	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;

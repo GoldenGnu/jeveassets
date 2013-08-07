@@ -25,33 +25,37 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.BorderFactory;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.RGBImageFilter;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagColor;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-/**
- *
- * @author Niklas
- */
+
 public class JTagsDialog extends JDialogCentered {
 
 	private enum TagsDialogAction {
@@ -62,7 +66,9 @@ public class JTagsDialog extends JDialogCentered {
 	private JTextField jTextField;
 	private JButton jColor;
 	private JButton jOK;
+
 	private Tag tag;
+	private Tag editTag;
 
 	public JTagsDialog(Program program) {
 		super(program, GuiShared.get().tagsNewTitle(), Images.TAG_GRAY.getImage());
@@ -73,7 +79,7 @@ public class JTagsDialog extends JDialogCentered {
 
 		jTextField = new JTextField();
 		jTextField.addFocusListener(listener);
-
+		jTextField.addCaretListener(listener);
 
 		jColor = new JButton();
 
@@ -118,9 +124,21 @@ public class JTagsDialog extends JDialogCentered {
 		);
 	}
 
-	public Tag show() {
+	public Tag show(Tag editTag){
+		//FIXME - - - - > TAG: set title to edit
+		this.editTag = editTag;
 		tag = null;
-		jColor.setIcon(new ColorIcon(TagColor.getValues()[0]));
+		jColor.setIcon(new TagIcon(editTag.getColor()));
+		jTextField.setText(editTag.getName());
+		this.setVisible(true);
+		return tag;
+	}
+
+	public Tag show() {
+		//FIXME - - - - > TAG: set title to add
+		editTag = null;
+		tag = null;
+		jColor.setIcon(new TagIcon(TagColor.getValues()[0]));
 		jTextField.setText("");
 		this.setVisible(true);
 		return tag;
@@ -143,13 +161,13 @@ public class JTagsDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		String name = jTextField.getText();
-		ColorIcon icon = (ColorIcon) jColor.getIcon();
+		TagIcon icon = (TagIcon) jColor.getIcon();
 		TagColor color = icon.getTagColor();
 		tag = new Tag(name, color);
 		setVisible(false);
 	}
 
-	private class ListenerClass implements ActionListener, FocusListener {
+	private class ListenerClass implements ActionListener, FocusListener, CaretListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -171,14 +189,35 @@ public class JTagsDialog extends JDialogCentered {
 		public void focusLost(FocusEvent e) {
 			
 		}
+
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			String name = jTextField.getText();
+			Tag settingsTag = Settings.get().getTags().get(name);
+			if (settingsTag != null && (editTag == null || !editTag.getName().equals(name))) {
+				jTextField.setBackground(new Color(255, 200, 200));
+				jOK.setEnabled(false);
+			} else {
+				jOK.setEnabled(true);
+				jTextField.setBackground(Color.WHITE);
+			}
+		}
 	}
 
-	private static class ColorIcon implements Icon {
+	public static class TagIcon implements Icon {
 
 		private TagColor tagColor;
+		private Image image = null;
 
-		public ColorIcon(TagColor tagColor) {
+		public TagIcon(TagColor tagColor) {
+			this(tagColor, false);
+		}
+
+		public TagIcon(TagColor tagColor, boolean selected) {
 			this.tagColor = tagColor;
+			if (selected) {
+				image = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(Images.TAG_TICK.getImage().getSource(), new ColorFilter(tagColor.getForeground())));
+			}
 		}
 
 		@Override
@@ -188,7 +227,11 @@ public class JTagsDialog extends JDialogCentered {
 			g.setColor(Color.BLACK);
 			g.drawRect(x, y, getIconWidth(), getIconHeight());
 			g.setColor(tagColor.getForeground());
-			g.drawString("a", x + 5, y + 11);
+			if (image != null) {
+				g.drawImage(image, x + 2, y + 1, null);
+			} else {
+				g.drawString("a", x + 5, y + 11);
+			}
 		}
 
 		@Override
@@ -206,6 +249,27 @@ public class JTagsDialog extends JDialogCentered {
 		}
 	}
 
+	private static class ColorFilter extends RGBImageFilter {
+	
+		private final int foreground;
+		private final int white;
+
+		public ColorFilter(Color foreground) {
+			this.foreground = foreground.getRGB();
+			white = Color.WHITE.getRGB();
+		}
+		
+		@Override
+		public int filterRGB(int x, int y, int rgb) {
+			if ((rgb | 0xFFFFFF00) == white) {
+				return (foreground & 0x00FFFFFF) | (rgb & 0xFF000000) ;
+			} else {
+				return rgb;
+			}
+		}
+		
+	}
+
 	private static class ColorPicker {
 
 		private JWindow jWindow;
@@ -215,17 +279,22 @@ public class JTagsDialog extends JDialogCentered {
 			this.jButton = jButton;
 
 			jWindow = new JWindow(owner);
-
+			
 			JPanel jPanel = new JPanel();
-			jPanel.setBorder(BorderFactory.createCompoundBorder(
-					new JPopupMenu().getBorder(),
-					BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-			GridLayout gridLayout = new GridLayout(0, 4, 5, 5);
-			jPanel.setLayout(gridLayout);
+
+			jPanel.setBorder(new JPopupMenu().getBorder());
+			GroupLayout groupLayout = new GroupLayout(jPanel);
+			groupLayout.setAutoCreateContainerGaps(true);
+			groupLayout.setAutoCreateGaps(true);
+			jPanel.setLayout(groupLayout);
 			jWindow.add(jPanel);
 
+			JPanel jButtonPanel = new JPanel();
+			GridLayout gridLayout = new GridLayout(0, 4, 5, 5);
+			jButtonPanel.setLayout(gridLayout);
+
 			for (TagColor tagColor : TagColor.getValues()) {
-				final ColorIcon colorIcon = new ColorIcon(tagColor);
+				final TagIcon colorIcon = new TagIcon(tagColor);
 				JButton button = new JButton(colorIcon);
 				button.addActionListener(new ActionListener() {
 					@Override
@@ -235,8 +304,38 @@ public class JTagsDialog extends JDialogCentered {
 					}
 				});
 				button.setBorder(null);
-				jPanel.add(button);
+				button.setContentAreaFilled(false);
+				jButtonPanel.add(button);
 			}
+			JButton jCustom = new JButton(GuiShared.get().custom()); //Custom...
+			jCustom.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					jWindow.setVisible(false);
+					TagIcon icon = (TagIcon)  jButton.getIcon();
+					Color background = JColorChooser.showDialog(owner, GuiShared.get().background(), icon.getTagColor().getBackground());
+					if (background == null) {
+						return;
+					}
+					Color foreground = JColorChooser.showDialog(owner, GuiShared.get().foreground(), icon.getTagColor().getForeground());
+					if (foreground == null) {
+						return;
+					}
+					icon = new TagIcon(new TagColor(background, foreground));
+					jButton.setIcon(icon);
+				}
+			});
+
+			groupLayout.setHorizontalGroup(
+				groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+					.addComponent(jButtonPanel)
+					.addComponent(jCustom)
+			);
+			groupLayout.setVerticalGroup(
+				groupLayout.createSequentialGroup()
+					.addComponent(jButtonPanel)
+					.addComponent(jCustom)
+			);
 		}
 
 		public void show() {

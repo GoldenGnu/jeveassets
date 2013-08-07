@@ -25,18 +25,22 @@ import java.awt.Color;
 
 public class TagColor {
 
-	
-	public static final TagColor GRAY = new TagColor(Color.LIGHT_GRAY, Color.BLACK);
-	public static final TagColor RED = new TagColor(Color.RED, Color.BLACK);
-	public static final TagColor GREEN = new TagColor(Color.GREEN, Color.BLACK);
-	public static final TagColor BLUE = new TagColor(Color.BLUE, Color.WHITE);
-	public static final TagColor CYAN = new TagColor(Color.CYAN, Color.BLACK);
-	public static final TagColor MAGENTA = new TagColor(Color.MAGENTA, Color.BLACK);
-	public static final TagColor ORANGE = new TagColor(Color.ORANGE, Color.BLACK);
-	public static final TagColor PINK = new TagColor(Color.PINK, Color.BLACK);
-	public static final TagColor YELLOW = new TagColor(Color.YELLOW, Color.BLACK);
-
-	private static final TagColor[] VALUES = {GRAY, RED, GREEN, BLUE, CYAN, MAGENTA, ORANGE, PINK, YELLOW};
+	private static final TagColor[] VALUES = {
+		new TagColor(Color.WHITE, Color.BLACK), //White and black
+		new TagColor(Color.WHITE, Color.RED.darker().darker()), //White and red
+		new TagColor(Color.WHITE, Color.GREEN.darker().darker()), //White and green
+		new TagColor(Color.WHITE, Color.BLUE.darker().darker()), //White and blue
+		new TagColor(Color.LIGHT_GRAY, Color.BLACK), //Gray
+		new TagColor(Color.BLACK, Color.WHITE), //Black
+		new TagColor(Color.CYAN, Color.BLACK), //Cyan
+		new TagColor(Color.BLUE, Color.WHITE), //Blue
+		new TagColor(Color.MAGENTA, Color.BLACK), //Magenta
+		new TagColor(Color.PINK, Color.BLACK), //Pink
+		new TagColor(Color.RED, Color.BLACK), //Red
+		new TagColor(Color.ORANGE, Color.BLACK), //Orange
+		new TagColor(Color.YELLOW, Color.BLACK), //Yellow
+		new TagColor(Color.GREEN, Color.BLACK), //Green
+	};
 
 	private Color backgroundColor;
 	private Color foregroundColor;

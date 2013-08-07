@@ -46,6 +46,11 @@ public class Tag implements Comparable<Tag> {
 		return ids;
 	}
 
+	public void update(Tag tag) {
+		this.name = tag.getName();
+		this.color = tag.getColor();
+	}
+
 	public void setColor(TagColor color) {
 		this.color = color;
 	}

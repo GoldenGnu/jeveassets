@@ -36,6 +36,7 @@ public abstract class GuiShared extends Bundle {
 
 	public abstract String add();
 	public abstract String addStockpileItem();
+	public abstract String background();
 	public abstract String checkAll();
 	public abstract String chruker();
 	public abstract String containerDelete();
@@ -43,6 +44,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String containerText();
 	public abstract String containerTitle();
 	public abstract String copy();
+	public abstract String custom();
 	public abstract String cut();
 	public abstract String dotlan();
 	public abstract String emptyString();
@@ -52,6 +54,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarketeer();
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
+	public abstract String foreground();
 	public abstract String item();
 	public abstract String itemDelete();
 	public abstract String itemEdit();
@@ -95,6 +98,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableResizeNone();
 	public abstract String tableSettings();
 	public abstract String tags();
+	public abstract String tagsEdit();
 	public abstract String tagsName(String name, Integer count);
 	public abstract String tagsNew();
 	public abstract String tagsNewMsg();

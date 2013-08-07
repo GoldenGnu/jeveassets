@@ -398,8 +398,7 @@ public class ProfileData {
 		for (Asset asset : assets) {
 			//Tags
 			Tags tags = Settings.get().getTags(asset.getTagID());
-			asset.getTags().clear();
-			asset.getTags().addAll(tags);
+			asset.setTags(tags);
 			//Date added
 			if (Settings.get().getAssetAdded().containsKey(asset.getItemID())) {
 				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));

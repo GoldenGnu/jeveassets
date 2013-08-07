@@ -20,20 +20,24 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.menu;
 
+import ca.odell.glazedlists.GlazedLists;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tag;
-import net.nikr.eve.jeveasset.data.tag.TagColor;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.menu.JTagsDialog.TagIcon;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -69,13 +73,23 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 
 		add(jNew);
 
-		Set<Tag> allTags = new HashSet<Tag>(Settings.get().getTags().values());
+		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
+		allTags.addAll(Settings.get().getTags().values());
 
 		if (!allTags.isEmpty()) {
+			JMenu jEdit = new JMenu(GuiShared.get().tagsEdit());
+			add(jEdit);
+
+			JMenuItem jMenuItem;
+			for (Tag tag : allTags) {
+				jMenuItem = new JTagMenuItem(tag);
+				jMenuItem.addActionListener(listener);
+				jEdit.add(jMenuItem);
+			}
 			addSeparator();
 		}
 
-		JCheckBoxMenuItem jMenuItem;
+		JCheckBoxMenuItem jCheckMenuItem;
 		for (Tag tag : allTags) {
 			Integer count = menuData.getTagCount().get(tag);
 			if (count == null) {
@@ -85,10 +99,15 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 			if (selected) {
 				count = 0;
 			}
-			jMenuItem = new JTagMenuItem(tag, count);
-			jMenuItem.addActionListener(listener);
-			jMenuItem.setSelected(selected);
-			add(jMenuItem);
+			jCheckMenuItem = new JTagCheckMenuItem(tag, count);
+			if (selected) {
+				jCheckMenuItem.setIcon(new TagIcon(tag.getColor(), true));
+			} else {
+				jCheckMenuItem.setIcon(new TagIcon(tag.getColor()));
+			}
+			jCheckMenuItem.addActionListener(listener);
+			jCheckMenuItem.setSelected(selected);
+			add(jCheckMenuItem);
 		}
 	}
 
@@ -96,9 +115,8 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		if (tag != null && !tag.getName().isEmpty()) {
 			Tag settingsTag = Settings.get().getTags().get(tag.getName());
 			if (settingsTag != null) { //Update
-				TagColor color = tag.getColor(); //Save color
+				//Load tag
 				tag = settingsTag;
-				tag.setColor(color); //Update color
 			} else { //Add new
 				Settings.get().getTags().put(tag.getName(), tag);
 			}
@@ -138,13 +156,31 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object object = e.getSource();
-			if (object instanceof JTagMenuItem){
-				JTagMenuItem jCheckBoxMenuItem = (JTagMenuItem) object;
+			if (object instanceof JTagCheckMenuItem){
+				JTagCheckMenuItem jCheckBoxMenuItem = (JTagCheckMenuItem) object;
 				Tag tag = jCheckBoxMenuItem.getTag();
 				if (!jCheckBoxMenuItem.isSelected()) { //State change before this is called
 					removeTag(tag);
 				} else {
 					addTag(tag);
+				}
+			} else if (object instanceof JTagMenuItem) {
+				JTagMenuItem jTagMenuItem = (JTagMenuItem) object;
+				Tag tag = jTagsDialog.show(jTagMenuItem.getTag());
+				if (tag != null && !tag.getName().isEmpty()) {
+					//Remove old
+					Settings.get().getTags().remove(jTagMenuItem.getTag().getName());
+					//Update tag
+					jTagMenuItem.getTag().update(tag);
+					//Add updated
+					Settings.get().getTags().put(jTagMenuItem.getTag().getName(), jTagMenuItem.getTag());
+					//Update tags
+					for (TagID ids : jTagMenuItem.getTag().getIDs()) {
+						Tags tags = Settings.get().getTags(ids);
+						tags.updateTags();
+					}
+					//Update tables
+					program.updateTags();
 				}
 			} else if (TagsAction.ACTION_NEW_TAG.name().equals(e.getActionCommand())) {
 				Tag tag = jTagsDialog.show();
@@ -153,11 +189,25 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		}
 	}
 
-	private static class JTagMenuItem extends JCheckBoxMenuItem {
+	private static class JTagMenuItem extends JMenuItem {
 
 		private Tag tag;
 
-		public JTagMenuItem(Tag tag, Integer count) {
+		public JTagMenuItem(Tag tag) {
+			super(tag.getName(), new TagIcon(tag.getColor()));
+			this.tag = tag;
+		}
+
+		public Tag getTag() {
+			return tag;
+		}
+	}
+
+	private static class JTagCheckMenuItem extends JCheckBoxMenuItem {
+
+		private Tag tag;
+
+		public JTagCheckMenuItem(Tag tag, Integer count) {
 			super(GuiShared.get().tagsName(tag.getName(), count));
 			this.tag = tag;
 		}
