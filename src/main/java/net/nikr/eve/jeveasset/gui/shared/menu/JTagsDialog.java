@@ -24,9 +24,11 @@ package net.nikr.eve.jeveasset.gui.shared.menu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -71,7 +73,7 @@ public class JTagsDialog extends JDialogCentered {
 	private Tag editTag;
 
 	public JTagsDialog(Program program) {
-		super(program, GuiShared.get().tagsNewTitle(), Images.TAG_GRAY.getImage());
+		super(program, "", Images.TAG_GRAY.getImage());
 
 		ListenerClass listener = new ListenerClass();
 
@@ -125,7 +127,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	public Tag show(Tag editTag){
-		//FIXME - - - - > TAG: set title to edit
+		getDialog().setTitle(GuiShared.get().tagsEditTitle());
 		this.editTag = editTag;
 		tag = null;
 		jColor.setIcon(new TagIcon(editTag.getColor()));
@@ -135,7 +137,7 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	public Tag show() {
-		//FIXME - - - - > TAG: set title to add
+		getDialog().setTitle(GuiShared.get().tagsNewTitle());
 		editTag = null;
 		tag = null;
 		jColor.setIcon(new TagIcon(TagColor.getValues()[0]));
@@ -222,26 +224,51 @@ public class JTagsDialog extends JDialogCentered {
 
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			g.setColor(tagColor.getBackground());
-			g.fillRect(x, y, getIconWidth(), getIconHeight());
-			g.setColor(Color.BLACK);
-			g.drawRect(x, y, getIconWidth(), getIconHeight());
-			g.setColor(tagColor.getForeground());
-			if (image != null) {
-				g.drawImage(image, x + 2, y + 1, null);
-			} else {
-				g.drawString("a", x + 5, y + 11);
+			Graphics2D g2d = (Graphics2D) g;
+			if (image != null) { //Selected
+				//Render settings
+				//g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+				//Border
+				g2d.setColor(Color.BLACK);
+				g2d.fillOval(x, y, getIconWidth() - 1, getIconHeight() - 1);
+
+				//Background
+				g2d.setColor(tagColor.getBackground());
+				g2d.fillOval(x + 1, y + 1, getIconWidth() - 3, getIconHeight() - 3);
+
+				//Image
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+				g.drawImage(image, x + 2, y + 2, null);
+			} else { //Not selected
+				//Render settings
+				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+				//Background
+				g2d.setColor(tagColor.getBackground());
+				g2d.fillRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
+
+				//Border
+				g2d.setColor(Color.BLACK);
+				g2d.drawRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
+
+				//Text
+				g2d.setFont(new JLabel().getFont());
+				g2d.setColor(tagColor.getForeground());
+				g2d.drawString("a", x + 5, y + 11);
 			}
 		}
 
 		@Override
 		public int getIconWidth() {
-			return 14;
+			return 16;
 		}
 
 		@Override
 		public int getIconHeight() {
-			return 14;
+			return 16;
 		}
 
 		public TagColor getTagColor() {
@@ -312,7 +339,7 @@ public class JTagsDialog extends JDialogCentered {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					jWindow.setVisible(false);
-					TagIcon icon = (TagIcon)  jButton.getIcon();
+					TagIcon icon = (TagIcon) jButton.getIcon();
 					Color background = JColorChooser.showDialog(owner, GuiShared.get().background(), icon.getTagColor().getBackground());
 					if (background == null) {
 						return;

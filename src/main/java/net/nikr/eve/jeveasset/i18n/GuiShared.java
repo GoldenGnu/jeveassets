@@ -99,6 +99,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableSettings();
 	public abstract String tags();
 	public abstract String tagsEdit();
+	public abstract String tagsEditTitle();
 	public abstract String tagsName(String name, Integer count);
 	public abstract String tagsNew();
 	public abstract String tagsNewMsg();
