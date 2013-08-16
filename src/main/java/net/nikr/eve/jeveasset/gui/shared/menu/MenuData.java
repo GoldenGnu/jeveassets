@@ -144,7 +144,7 @@ public class MenuData<T> {
 			}
 		}
 		//Tags
-		if (tagsType != null) {
+		if (tagsType != null && tagsType.getTags() != null) {
 			tags.add(tagsType);
 			for (Tag tagKey : tagsType.getTags()) {
 				Integer count = tagCount.get(tagKey);

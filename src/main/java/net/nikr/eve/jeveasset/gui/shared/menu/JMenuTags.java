@@ -69,13 +69,19 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 	public void setMenuData(MenuData<T> menuData) {
 		tagsTypes = menuData.getTags();
 
+		boolean valid = !tagsTypes.isEmpty();
+
 		removeAll();
 
+		//Add New
 		add(jNew);
+		jNew.setEnabled(valid);
 
+		//All Tags
 		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
 		allTags.addAll(Settings.get().getTags().values());
 
+		//Edit
 		if (!allTags.isEmpty()) {
 			JMenu jEdit = new JMenu(GuiShared.get().tagsEdit());
 			add(jEdit);
@@ -89,6 +95,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 			addSeparator();
 		}
 
+		//Add To
 		JCheckBoxMenuItem jCheckMenuItem;
 		for (Tag tag : allTags) {
 			Integer count = menuData.getTagCount().get(tag);
@@ -107,6 +114,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 			}
 			jCheckMenuItem.addActionListener(listener);
 			jCheckMenuItem.setSelected(selected);
+			jCheckMenuItem.setEnabled(valid);
 			add(jCheckMenuItem);
 		}
 	}

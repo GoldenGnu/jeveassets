@@ -94,8 +94,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.added = asset.added;
 		this.container = asset.container;
 		this.price = asset.price;
-		this.tags.clear();
-		this.tags.addAll(asset.tags);
+		this.tags = asset.tags;
 		this.marketPriceData = asset.marketPriceData;
 		this.name = asset.name;
 		this.priceData = asset.priceData;
@@ -311,7 +310,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public boolean isBPO() {
+	public final boolean isBPO() {
 		return bpo;
 	}
 

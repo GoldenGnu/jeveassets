@@ -21,18 +21,29 @@
 package net.nikr.eve.jeveasset.data.tag;
 
 import ca.odell.glazedlists.GlazedLists;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Collection;
 import java.util.TreeSet;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.i18n.General;
 
 
 public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 
 	private String tags;
-	private String tagsHtml;
+	private final JPanel jPanel;
 
 	public Tags() {
 		super(GlazedLists.comparableComparator());
+		jPanel = new JPanel();
+		BoxLayout layout = new BoxLayout(jPanel, BoxLayout.X_AXIS);
+		jPanel.setLayout(layout);
+
 		updateTags();
 	}
 
@@ -82,7 +93,7 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 			if (first) {
 				first = false;
 			} else {
-				sb.append(" ,");
+				sb.append(" ");
 			}
 			sb.append(tag.getName());
 		}
@@ -94,33 +105,32 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 	}
 
 	private void updateHtml() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
+		jPanel.removeAll();
 		boolean first = true;
 		for (Tag tag : this) {
 			if (first) {
 				first = false;
 			} else {
-				sb.append("&nbsp;");
+				jPanel.add(Box.createHorizontalStrut(3));
 			}
-			sb.append("<span style=\"background-color: #");
-			sb.append(tag.getColor().getBackgroundHtml());
-			sb.append("; color: ");
-			sb.append(tag.getColor().getForegroundHtml());
-			sb.append(";\">&nbsp;");
-			sb.append(tag.getName());
-			sb.append("&nbsp;</span>");
+			JLabel jLabel = new JLabel(tag.getName());
+			jLabel.setOpaque(true);
+			jLabel.setBackground(tag.getColor().getBackground());
+			jLabel.setForeground(tag.getColor().getForeground());
+			jLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 2));
+			jPanel.add(jLabel);
 		}
-		if (this.isEmpty()) {
-			sb.append("<span style=\"color: #999999; font-style: italic;\">");
-			sb.append(General.get().none());
-			sb.append("</span>");
+		if (isEmpty()) {
+			JLabel jLabel = new JLabel(General.get().none());
+			Font font = jLabel.getFont();
+			jLabel.setFont(new Font(font.getName(), Font.ITALIC, font.getSize()));
+			jLabel.setForeground(Color.DARK_GRAY);
+			jPanel.add(jLabel);
 		}
-		tagsHtml = sb.toString();
 	}
 
-	public String getHtml() {
-		return tagsHtml;
+	public JPanel getPanel() {
+		return jPanel;
 	}
 
 	@Override

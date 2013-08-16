@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -137,7 +138,11 @@ public class TableCellRenderers {
 			JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); //To change body of generated methods, choose Tools | Templates.
 			if (value instanceof Tags) {
 				Tags tags = (Tags) value;
-				jLabel.setText(tags.getHtml());
+				JPanel jPanel = tags.getPanel();
+				jPanel.setBackground(jLabel.getBackground());
+				jPanel.setForeground(jLabel.getForeground());
+				jPanel.setBorder(jLabel.getBorder());
+				return jPanel;
 			}
 			return jLabel;
 		}
