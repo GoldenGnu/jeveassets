@@ -63,7 +63,7 @@ public class MenuManager<Q> {
 	private boolean locationSupported = false;
 	private boolean assets = false;
 	private boolean stockpile = false;
-	private boolean tags = false;
+	private boolean tagsSupported = false;
 
 	private final Map<MenuEnum, JAutoMenu<Q>> mainMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
 	private final Map<MenuEnum, JAutoMenu<Q>> tablePopupMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
@@ -100,7 +100,7 @@ public class MenuManager<Q> {
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
-		tags = TagsType.class.isAssignableFrom(clazz);
+		tagsSupported = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 		createCashe(program, mainMenu);
 		createCashe(program, tablePopupMenu);
@@ -113,15 +113,15 @@ public class MenuManager<Q> {
 	}
 
 	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus) {
-	//ASSET FILTER - OK
+	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
 		}
-	//STOCKPILE (Add To) - OK
+	//STOCKPILE (Add To)
 		if (!stockpile && itemSupported) {
 			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<Q>(program));
 		}
-	//LOOKUP - OK
+	//LOOKUP
 		if (itemSupported || locationSupported) {
 			menus.put(MenuEnum.LOOKUP, new JMenuLookup<Q>(program));
 		}
@@ -132,10 +132,10 @@ public class MenuManager<Q> {
 		if (assets) {
 			menus.put(MenuEnum.NAME, new JMenuName<Q>(program));
 		}
-		if (tags) {
+		if (tagsSupported) {
 			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program));
 		}
-	//REPROCESSED - OK
+	//REPROCESSED
 		if (itemSupported) {
 			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<Q>(program));
 		}
