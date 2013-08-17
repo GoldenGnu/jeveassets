@@ -28,13 +28,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tag;
-import net.nikr.eve.jeveasset.data.tag.TagID;
-import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.JTagsDialog.TagIcon;
@@ -81,17 +78,8 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		Set<Tag> allTags = new TreeSet<Tag>(GlazedLists.comparableComparator());
 		allTags.addAll(Settings.get().getTags().values());
 
-		//Edit
+		//Separator
 		if (!allTags.isEmpty()) {
-			JMenu jEdit = new JMenu(GuiShared.get().tagsEdit());
-			add(jEdit);
-
-			JMenuItem jMenuItem;
-			for (Tag tag : allTags) {
-				jMenuItem = new JTagMenuItem(tag);
-				jMenuItem.addActionListener(listener);
-				jEdit.add(jMenuItem);
-			}
 			addSeparator();
 		}
 
@@ -150,11 +138,6 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				//Update settings
 				Settings.get().getTags(tagsType.getTagID()).remove(tag);
 			}
-			//Remove empty tags
-			Tag settingsTag = Settings.get().getTags().get(tag.getName());
-			if (settingsTag.getIDs().isEmpty()) {
-				Settings.get().getTags().remove(tag.getName());
-			}
 			program.updateTags();
 		}
 	}
@@ -172,42 +155,10 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				} else {
 					addTag(tag);
 				}
-			} else if (object instanceof JTagMenuItem) {
-				JTagMenuItem jTagMenuItem = (JTagMenuItem) object;
-				Tag tag = jTagsDialog.show(jTagMenuItem.getTag());
-				if (tag != null && !tag.getName().isEmpty()) {
-					//Remove old
-					Settings.get().getTags().remove(jTagMenuItem.getTag().getName());
-					//Update tag
-					jTagMenuItem.getTag().update(tag);
-					//Add updated
-					Settings.get().getTags().put(jTagMenuItem.getTag().getName(), jTagMenuItem.getTag());
-					//Update tags
-					for (TagID ids : jTagMenuItem.getTag().getIDs()) {
-						Tags tags = Settings.get().getTags(ids);
-						tags.updateTags();
-					}
-					//Update tables
-					program.updateTags();
-				}
 			} else if (TagsAction.ACTION_NEW_TAG.name().equals(e.getActionCommand())) {
 				Tag tag = jTagsDialog.show();
 				addTag(tag);
 			}
-		}
-	}
-
-	private static class JTagMenuItem extends JMenuItem {
-
-		private Tag tag;
-
-		public JTagMenuItem(Tag tag) {
-			super(tag.getName(), new TagIcon(tag.getColor()));
-			this.tag = tag;
-		}
-
-		public Tag getTag() {
-			return tag;
 		}
 	}
 

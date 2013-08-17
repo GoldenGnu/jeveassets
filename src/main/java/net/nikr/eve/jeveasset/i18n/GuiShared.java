@@ -35,6 +35,7 @@ public abstract class GuiShared extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addFilter();
 	public abstract String addStockpileItem();
 	public abstract String background();
 	public abstract String checkAll();
@@ -46,7 +47,9 @@ public abstract class GuiShared extends Bundle {
 	public abstract String copy();
 	public abstract String custom();
 	public abstract String cut();
+	public abstract String delete();
 	public abstract String dotlan();
+	public abstract String edit();
 	public abstract String emptyString();
 	public abstract String eveAddicts();
 	public abstract String eveCentral();

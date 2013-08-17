@@ -142,6 +142,8 @@ public class SettingsDialog extends JDialogCentered {
 		add(userPriceSettingsPanel, valuesNode);
 		userNameSettingsPanel = new UserNameSettingsPanel(program, this);
 		add(userNameSettingsPanel, valuesNode);
+		TagsSettingsPanel tagsSettingsPanel = new TagsSettingsPanel(program, this);
+		add(tagsSettingsPanel, valuesNode);
 
 		PriceDataSettingsPanel priceDataSettingsPanel = new PriceDataSettingsPanel(program, this);
 		add(priceDataSettingsPanel);

@@ -37,6 +37,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.RGBImageFilter;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -64,13 +66,16 @@ public class JTagsDialog extends JDialogCentered {
 		OK, CANCEL, SHOW_COLOR
 	}
 
+	//GUI
 	private ColorPicker colorPicker;
 	private JTextField jTextField;
 	private JButton jColor;
 	private JButton jOK;
 
+	//Data
 	private Tag tag;
 	private Tag editTag;
+	private Set<String> unique;
 
 	public JTagsDialog(Program program) {
 		super(program, "", Images.TAG_GRAY.getImage());
@@ -127,22 +132,32 @@ public class JTagsDialog extends JDialogCentered {
 	}
 
 	public Tag show(Tag editTag){
+		return show(editTag, new HashSet<String>(Settings.get().getTags().keySet()));
+	}
+
+	public Tag show(Tag editTag, Set<String> unique){
 		getDialog().setTitle(GuiShared.get().tagsEditTitle());
 		this.editTag = editTag;
+		this.unique = unique;
 		tag = null;
 		jColor.setIcon(new TagIcon(editTag.getColor()));
 		jTextField.setText(editTag.getName());
-		this.setVisible(true);
+		setVisible(true);
 		return tag;
 	}
 
 	public Tag show() {
+		return show(new HashSet<String>(Settings.get().getTags().keySet()));
+	}
+
+	public Tag show(Set<String> unique) {
 		getDialog().setTitle(GuiShared.get().tagsNewTitle());
+		this.unique = unique;
 		editTag = null;
 		tag = null;
 		jColor.setIcon(new TagIcon(TagColor.getValues()[0]));
 		jTextField.setText("");
-		this.setVisible(true);
+		setVisible(true);
 		return tag;
 	}
 
@@ -195,8 +210,7 @@ public class JTagsDialog extends JDialogCentered {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			String name = jTextField.getText();
-			Tag settingsTag = Settings.get().getTags().get(name);
-			if (settingsTag != null && (editTag == null || !editTag.getName().equals(name))) {
+			if (unique.contains(name) && (editTag == null || !editTag.getName().equals(name))) {
 				jTextField.setBackground(new Color(255, 200, 200));
 				jOK.setEnabled(false);
 			} else {

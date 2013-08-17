@@ -55,7 +55,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 	private final JMenuItem jLocations;
 
 	public JMenuAssetFilter(final Program program) {
-		super(GuiShared.get().add(), program);
+		super(GuiShared.get().addFilter(), program);
 
 		ListenerClass listener = new ListenerClass();
 
