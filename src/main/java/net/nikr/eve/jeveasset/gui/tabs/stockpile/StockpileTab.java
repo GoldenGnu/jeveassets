@@ -452,7 +452,7 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-		stockpile.setOwners(new ArrayList<String>(owners));
+		stockpile.setOwnerName(new ArrayList<String>(owners));
 		//Update Item flag name
 		Set<String> flags = new HashSet<String>();
 		for (StockpileFilter filter : stockpile.getFilters()) {
@@ -463,7 +463,7 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-		stockpile.setFlags(new ArrayList<String>(flags));
+		stockpile.setFlagName(new ArrayList<String>(flags));
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {

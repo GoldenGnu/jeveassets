@@ -41,8 +41,10 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private String name;
-	private String ownerNames;
-	private String flagNames;
+	private String ownerName;
+	private String flagName;
+	private String locationName;
+	private String containerName;
 	private List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
@@ -64,14 +66,49 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.filters = filters;
 		this.multiplier = multiplier;
 		items.add(totalItem);
+		createContainerName();
+		createLocationName();
 	}
 
 	final void update(final Stockpile stockpile) {
 		this.name = stockpile.getName();
-		this.ownerNames = stockpile.getOwnerNames();
+		this.ownerName = stockpile.getOwnerName();
 		this.filters = stockpile.getFilters();
-		this.flagNames = stockpile.getFlagNames();
+		this.flagName = stockpile.getFlagName();
 		this.multiplier = stockpile.getMultiplier();
+		createContainerName();
+		createLocationName();
+	}
+
+	private void createLocationName() {
+		locationName = General.get().all();
+		for (StockpileFilter filter : filters) {
+			Location location = filter.getLocation();
+			if (location != null && !location.isEmpty()) { //Not All
+				if (filters.size() > 1) {
+					locationName = TabsStockpile.get().multiple();
+				} else {
+					locationName = location.getLocation();
+				}
+				break;
+			}
+		}
+	}
+
+	private void createContainerName() {
+		Set<String> containers = new HashSet<String>();
+		for (StockpileFilter filter : getFilters()) {
+			containers.addAll(filter.getContainers());
+		}
+		if (containers.isEmpty()) {
+			containerName = General.get().all();
+		} else if (containers.size() == 1) {
+			for (String container : containers) {
+				containerName = container; //first (and only)
+			}
+		} else {
+			containerName = TabsStockpile.get().multiple();
+		}
 	}
 
 	public boolean isOK() {
@@ -164,62 +201,39 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return false;
 	}
 
-	public String getOwnerNames() {
-		return ownerNames;
+	public String getOwnerName() {
+		return ownerName;
 	}
 
 	public void setMultiplier(double multiplier) {
 		this.multiplier = multiplier;
 	}
 
-	public final void setOwners(final List<String> ownerNames) {
+	public final void setOwnerName(final List<String> ownerNames) {
 		if (ownerNames.isEmpty()) {
-			this.ownerNames = General.get().all();
+			this.ownerName = General.get().all();
 		} else if (ownerNames.size() == 1) {
-			this.ownerNames = ownerNames.get(0);
+			this.ownerName = ownerNames.get(0);
 		} else {
-			this.ownerNames = TabsStockpile.get().multiple();
+			this.ownerName = TabsStockpile.get().multiple();
 		}
 	}
 
-	public final void setOwners(final String ownerNames) {
-		this.ownerNames = ownerNames;
+	public String getContainerName() {
+		return containerName;
+	}
+	public String getFlagName() {
+		return flagName;
 	}
 
-	public String getContainerNames() {
-		Set<String> containers = new HashSet<String>();
-		for (StockpileFilter filter : getFilters()) {
-			for (String container : filter.getContainers()) {
-				containers.add(container);
-			}
-		}
-		if (containers.isEmpty()) {
-			return General.get().all();
-		} else if (containers.size() == 1) {
-			for (String container : containers) {
-				return container; //Return first
-			}
-			return ""; //Never happens...
-		} else {
-			return TabsStockpile.get().multiple();
-		}
-	}
-	public String getFlagNames() {
-		return flagNames;
-	}
-
-	public final void setFlags(final List<String> flagNames) {
+	public final void setFlagName(final List<String> flagNames) {
 		if (flagNames.isEmpty()) {
-			this.flagNames = General.get().all();
+			this.flagName = General.get().all();
 		} else if (flagNames.size() == 1) {
-			this.flagNames = flagNames.get(0);
+			this.flagName = flagNames.get(0);
 		} else {
-			this.flagNames = TabsStockpile.get().multiple();
+			this.flagName = TabsStockpile.get().multiple();
 		}
-	}
-
-	public final void setFlags(final String flagNames) {
-		this.flagNames = flagNames;
 	}
 
 	public List<StockpileItem> getItems() {
@@ -240,14 +254,8 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return filters;
 	}
 
-	public String getLocationNames() {
-		if (filters.isEmpty()) {
-			return General.get().all();
-		} else if (filters.size() == 1) {
-			return filters.get(0).getLocation().getLocation();
-		} else {
-			return TabsStockpile.get().multiple();
-		}
+	public String getLocationName() {
+		return locationName;
 	}
 
 	public double getPercentFull() {
@@ -675,9 +683,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			StringBuilder builder = new StringBuilder();
 			builder.append(getStockpile().getName());
 			builder.append("\t");
-			builder.append(getStockpile().getOwnerNames());
+			builder.append(getStockpile().getOwnerName());
 			builder.append("\t");
-			builder.append(getStockpile().getLocationNames());
+			builder.append(getStockpile().getLocationName());
 			return builder.toString();
 		}
 

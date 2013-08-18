@@ -217,11 +217,11 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		} else {
 			jColor.setBackground(new Color(255, 200, 200));
 		}
-		String location = stockpileItem.getStockpile().getLocationNames();
+		String location = stockpileItem.getStockpile().getLocationName();
 		jLocation.setText(location);
 		jLocation.setToolTipText(location);
 		jLocationLabel.setToolTipText(location);
-		String owner = stockpileItem.getStockpile().getOwnerNames();
+		String owner = stockpileItem.getStockpile().getOwnerName();
 		jOwner.setText(owner);
 		jOwner.setToolTipText(owner);
 		jOwnerLabel.setToolTipText(owner);
