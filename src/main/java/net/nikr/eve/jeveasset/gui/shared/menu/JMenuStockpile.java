@@ -71,18 +71,21 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 			updateMenu(); //Stockpiles changed...
 		}
 		boolean enabled = !menuData.getTypeIDs().isEmpty();
+
+		jAddToNew.setEnabled(enabled);
+
 		for (JMenuItem jMenuItem : jMenuItems) {
 			jMenuItem.setEnabled(enabled);
 		}
 	}
 
 	private void updateMenu() {
-		this.removeAll();
+		removeAll();
 
 		add(jAddToNew); //Add "To new Stockpile"
 
 		if (!Settings.get().getStockpiles().isEmpty()) { //Add Separator (if we have stockpiles)
-			this.addSeparator();
+			addSeparator();
 		}
 
 		Collections.sort(Settings.get().getStockpiles()); //Sort Stockpiles
