@@ -879,7 +879,7 @@ public class StockpileDialog extends JDialogCentered {
 			jToolBar.setLayout(filterLayout);
 			filterLayout.setAutoCreateGaps(false);
 			filterLayout.setAutoCreateContainerGaps(false);
-
+		//ADD
 			JButton jOwner = new JButton(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
 			jOwner.setHorizontalAlignment(JButton.LEFT);
 			jOwner.setActionCommand(StockpileDialogAction.ADD_OWNER.name());
@@ -901,38 +901,6 @@ public class StockpileDialog extends JDialogCentered {
 			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
 			jEdit.setHorizontalAlignment(JButton.LEFT);
 
-			jStation = new JRadioButtonMenuItem(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
-			jStation.setHorizontalAlignment(JButton.LEFT);
-			jStation.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
-			jStation.addActionListener(listener);
-			jEdit.add(jStation);
-
-			jSystem = new JRadioButtonMenuItem(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
-			jSystem.setHorizontalAlignment(JButton.LEFT);
-			jSystem.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
-			jSystem.addActionListener(listener);
-			jEdit.add(jSystem);
-
-			jRegion = new JRadioButtonMenuItem(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
-			jRegion.setHorizontalAlignment(JButton.LEFT);
-			jRegion.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
-			jRegion.addActionListener(listener);
-			jEdit.add(jRegion);
-
-			jUniverse = new JRadioButtonMenuItem(TabsStockpile.get().universe(), Images.LOC_LOCATIONS.getIcon());
-			jUniverse.setHorizontalAlignment(JButton.LEFT);
-			jUniverse.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
-			jUniverse.addActionListener(listener);
-			jEdit.add(jUniverse);
-
-			ButtonGroup buttonGroup = new ButtonGroup();
-			buttonGroup.add(jStation);
-			buttonGroup.add(jSystem);
-			buttonGroup.add(jRegion);
-			buttonGroup.add(jUniverse);
-
-			jEdit.addSeparator();
-
 			JMenuItem jRemove = new JMenuItem(TabsStockpile.get().remove(), Images.EDIT_DELETE.getIcon());
 			jRemove.setHorizontalAlignment(JButton.LEFT);
 			jRemove.setActionCommand(StockpileDialogAction.REMOVE.name());
@@ -944,27 +912,10 @@ public class StockpileDialog extends JDialogCentered {
 			jClone.setActionCommand(StockpileDialogAction.CLONE.name());
 			jClone.addActionListener(listener);
 			jEdit.add(jClone);
-
+		//INCLUDE
 			jInclude = new JDropDownButton(TabsStockpile.get().include(), Images.LOC_INCLUDE.getIcon());
 			jInclude.setHorizontalAlignment(JButton.LEFT);
 			jInclude.setToolTipText(TabsStockpile.get().include());
-
-			filterLayout.setHorizontalGroup(
-				filterLayout.createSequentialGroup()
-					.addComponent(jOwner, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
-					.addComponent(jFlag, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
-					.addComponent(jContainer, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
-					.addComponent(jInclude, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
-					.addComponent(jEdit, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
-			);						 
-			filterLayout.setVerticalGroup(
-				filterLayout.createParallelGroup()
-					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jInclude, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-			);
 
 			jInventory = new JCheckBoxMenuItem(TabsStockpile.get().inventory());
 			jInventory.setHorizontalAlignment(JButton.LEFT);
@@ -991,6 +942,23 @@ public class StockpileDialog extends JDialogCentered {
 			jJobs.addActionListener(listener);
 			jInclude.add(jJobs, true);
 
+			filterLayout.setHorizontalGroup(
+				filterLayout.createSequentialGroup()
+					.addComponent(jOwner, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jFlag, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jContainer, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jInclude, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jEdit, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+			);						 
+			filterLayout.setVerticalGroup(
+				filterLayout.createParallelGroup()
+					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jInclude, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+			);
+		//LOCATION OPTIONS
 			JDropDownButton jOptions = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
 			jOptions.setEnabled(locationType != LocationType.UNIVERSE);
 
@@ -1000,6 +968,38 @@ public class StockpileDialog extends JDialogCentered {
 			jMyLocations.setSelected(!myLocations.isEmpty());
 			jMyLocations.setEnabled(!myLocations.isEmpty());
 			jOptions.add(jMyLocations);
+
+			jOptions.addSeparator();
+
+			jStation = new JRadioButtonMenuItem(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
+			jStation.setHorizontalAlignment(JButton.LEFT);
+			jStation.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jStation.addActionListener(listener);
+			jOptions.add(jStation);
+
+			jSystem = new JRadioButtonMenuItem(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
+			jSystem.setHorizontalAlignment(JButton.LEFT);
+			jSystem.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jSystem.addActionListener(listener);
+			jOptions.add(jSystem);
+
+			jRegion = new JRadioButtonMenuItem(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
+			jRegion.setHorizontalAlignment(JButton.LEFT);
+			jRegion.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jRegion.addActionListener(listener);
+			jOptions.add(jRegion);
+
+			jUniverse = new JRadioButtonMenuItem(TabsStockpile.get().universe(), Images.LOC_LOCATIONS.getIcon());
+			jUniverse.setHorizontalAlignment(JButton.LEFT);
+			jUniverse.setActionCommand(StockpileDialogAction.CHANGE_LOCATION_TYPE.name());
+			jUniverse.addActionListener(listener);
+			jOptions.add(jUniverse);
+
+			ButtonGroup buttonGroup = new ButtonGroup();
+			buttonGroup.add(jStation);
+			buttonGroup.add(jSystem);
+			buttonGroup.add(jRegion);
+			buttonGroup.add(jUniverse);
 
 			jLocationType = new JLabel();
 
