@@ -222,7 +222,7 @@ public final class HtmlWriter {
 				} else {
 					writer.write("\t<td>");
 				}
-				writer.write(map.get(column).replace(" ", "&nbsp;").replace("+", "")); //.replace("-", "&#8209;")
+				writer.write(map.get(column).replace(" ", "&nbsp;").replace("+", "").replace("_", " ")); //.replace("-", "&#8209;")
 				writer.write("</td>\r\n");
 			}
 			if (items != null) {

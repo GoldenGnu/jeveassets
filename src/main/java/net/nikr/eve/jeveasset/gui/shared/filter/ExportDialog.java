@@ -67,6 +67,7 @@ import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
@@ -499,7 +500,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		}
 	}
 
-	private String format(final Object object, final DecimalSeparator decimalSeparator) {
+	private String format(final Object object, final DecimalSeparator decimalSeparator, final boolean html) {
 		if (object == null) {
 			return "";
 		} else if (object instanceof HierarchyColumn) {
@@ -512,6 +513,9 @@ public class ExportDialog<E> extends JDialogCentered {
 			} else {
 				return EU_NUMBER_FORMAT.format(number);
 			}
+		} else if (object instanceof Tags && html) {
+			Tags tags = (Tags) object;
+			return tags.getHtml();
 		} else if (object instanceof Date) {
 			return Formater.columnDate(object);
 		} else {
@@ -777,7 +781,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<String, String> row = new HashMap<String, String>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
+					row.put(column.name(), format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator(), false));
 				}
 				rows.add(row);
 			}
@@ -794,7 +798,7 @@ public class ExportDialog<E> extends JDialogCentered {
 			for (E e : items) {
 				Map<EnumTableColumn<?>, String> row = new HashMap<EnumTableColumn<?>, String>();
 				for (EnumTableColumn<E> column : header) {
-					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator()));
+					row.put(column, format(column.getColumnValue(e), Settings.get().getExportSettings().getDecimalSeparator(), Settings.get().getExportSettings().isHtmlStyled()));
 				}
 				rows.add(row);
 			}

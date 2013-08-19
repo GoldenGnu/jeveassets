@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.i18n.General;
 public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 
 	private String tags;
+	private String html;
 	private final JPanel jPanel;
 
 	public Tags() {
@@ -83,7 +84,8 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 
 	public final void updateTags() {
 		updateString();
-		updateHtml();
+		updatePanel();
+		updateHTML();
 	}
 
 	private void updateString() {
@@ -104,7 +106,7 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		}
 	}
 
-	private void updateHtml() {
+	private void updatePanel() {
 		jPanel.removeAll();
 		boolean first = true;
 		for (Tag tag : this) {
@@ -129,8 +131,38 @@ public class Tags extends TreeSet<Tag> implements Comparable<Tags>{
 		}
 	}
 
+	private void updateHTML() {
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (Tag tag : this) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append("&nbsp;");
+			}
+			builder.append("<span_style=\"");
+			builder.append("background-color:_#");
+			builder.append(tag.getColor().getBackgroundHtml());
+			builder.append(";_");
+			builder.append("color:_#");
+			builder.append(tag.getColor().getForegroundHtml());
+			builder.append(";_");
+			builder.append("\">");
+			builder.append(" ");
+			builder.append(tag.getName());
+			builder.append(" ");
+			builder.append("</span>");
+			
+		}
+		html = builder.toString();
+	}
+
 	public JPanel getPanel() {
 		return jPanel;
+	}
+
+	public String getHtml() {
+		return html;
 	}
 
 	@Override
