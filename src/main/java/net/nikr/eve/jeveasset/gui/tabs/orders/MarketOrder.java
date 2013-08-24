@@ -101,7 +101,6 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	private Quantity quantity;
 	private double price;
 
-
 	public MarketOrder(final ApiMarketOrder apiMarketOrder, final Item item, final Location location, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
@@ -222,5 +221,31 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 
 	public boolean isCorporation() {
 		return owner.isCorporation();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 97 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MarketOrder other = (MarketOrder) obj;
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
+		}
+		if (this.getOrderID() != other.getOrderID()) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -401,8 +401,15 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	//FIXME - - - - > Asset equals: name is not unique
-	public boolean equals(final Object obj) {
+	public int hashCode() {
+		int hash = 7;
+		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 97 * hash + (int) (this.itemID ^ (this.itemID >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -410,16 +417,12 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 			return false;
 		}
 		final Asset other = (Asset) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
+		}
+		if (this.itemID != other.itemID) {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
-		return hash;
 	}
 }

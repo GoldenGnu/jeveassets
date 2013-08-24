@@ -92,4 +92,30 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 	public int compareTo(ApiJournalEntry o) {
 		return o.getDate().compareTo(this.getDate());
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 53 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 53 * hash + (int) (this.getRefID() ^ (this.getRefID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Journal other = (Journal) obj;
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
+		}
+		if (this.getRefID() != other.getRefID()) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -352,4 +352,30 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	public Item getItem() {
 		return item;
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 37 * hash + (int) (this.getJobID() ^ (this.getJobID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final IndustryJob other = (IndustryJob) obj;
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
+		}
+		if (this.getJobID() != other.getJobID()) {
+			return false;
+		}
+		return true;
+	}
 }
