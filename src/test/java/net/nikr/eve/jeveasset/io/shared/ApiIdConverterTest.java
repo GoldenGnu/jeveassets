@@ -24,8 +24,8 @@ package net.nikr.eve.jeveasset.io.shared;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.StaticData;
-import static org.junit.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 public class ApiIdConverterTest {
