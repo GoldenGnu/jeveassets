@@ -420,4 +420,14 @@ public abstract class FakeSettings extends Settings {
 	public Tags getTags(TagID tagID) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public boolean isSettingsImported() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setSettingsImported(boolean settingsImported) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

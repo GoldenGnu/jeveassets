@@ -99,6 +99,7 @@ public class Settings {
 	//Mixed boolean flags
 	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
+	private boolean settingsImported;
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
@@ -168,9 +169,34 @@ public class Settings {
 	public static void load() {
 		if (settings == null) {
 			settings = new Settings();
-			settings.loadSettings();
-			settings.constructEveApiConnector();
+			boolean imported = autoImportSettings();
+			if (!imported) {
+				settings.loadSettings();
+			}
+			settings.setSettingsImported(imported);
 		}
+	}
+
+	private static boolean autoImportSettings() {
+		if (Program.PROGRAM_FORCE_PORTABLE && !new File(Settings.get().getPathSettings()).exists()) { //Need import
+			//Overwrite default
+			Program.setPortable(false);
+			//Settings import
+			if (new File(Settings.get().getPathSettings()).exists()) { //Can import
+				LOG.info("Importing settings (from default to portable)");
+				//Import
+				settings.loadSettings();
+				//Restore default
+				Program.setPortable(true);
+				//Save
+				settings.saveSettings();
+				return true;
+			} else {
+				//Restore default
+				Program.setPortable(true);
+			}
+		}
+		return false;
 	}
 
 	public ExportSettings getExportSettings() {
@@ -516,6 +542,14 @@ public class Settings {
 
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
+	}
+
+	public boolean isSettingsImported() {
+		return settingsImported;
+	}
+
+	public void setSettingsImported(boolean settingsImported) {
+		this.settingsImported = settingsImported;
 	}
 
 	public Map<String, OverviewGroup> getOverviewGroups() {

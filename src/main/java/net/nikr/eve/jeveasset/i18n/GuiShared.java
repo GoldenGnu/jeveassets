@@ -134,7 +134,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String newVersionMsg(String programName);
 	public abstract String noNewVersionTitle();
 	public abstract String noNewVersionMsg();
-	public abstract String protableMsg();
+	public abstract String protableMsg(int i);
 	public abstract String releaseCandidate();
 	public abstract String stable();
 	

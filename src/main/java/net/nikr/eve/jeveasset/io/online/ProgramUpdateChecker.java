@@ -81,12 +81,12 @@ public class ProgramUpdateChecker {
 					GuiShared.get().feedbackMsg(Program.PROGRAM_NAME, version.getType().toLowerCase()),
 					version.getType(),
 					JOptionPane.WARNING_MESSAGE);
-			if (Program.PROGRAM_FORCE_PORTABLE) {
-				JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
-					GuiShared.get().protableMsg(),
-					version.getType(),
-					JOptionPane.INFORMATION_MESSAGE);
-			}
+		}
+		if (Program.PROGRAM_FORCE_PORTABLE) {
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(),
+				GuiShared.get().protableMsg(Settings.get().isSettingsImported() ? 1 : 0),
+				version.getType(),
+				JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
