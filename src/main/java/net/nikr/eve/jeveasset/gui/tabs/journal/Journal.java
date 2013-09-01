@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
+import com.beimin.eveapi.shared.wallet.RefType;
 import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
 import net.nikr.eve.jeveasset.data.Owner;
 
@@ -43,7 +44,7 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 		setOwnerName2(apiJournalEntry.getOwnerName2());
 		setReason(apiJournalEntry.getReason());
 		setRefID(apiJournalEntry.getRefID());
-		setRefTypeID(apiJournalEntry.getRefType().getId());
+		setRefTypeID(apiJournalEntry.getRefTypeID());
 		setTaxAmount(apiJournalEntry.getTaxAmount());
 		setTaxReceiverID(apiJournalEntry.getTaxReceiverID());
 		this.owner = owner;
@@ -62,7 +63,12 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 	}
 
 	public String getRefTypeFormated() {
-		return capitalizeAll(getRefType().name().replace("_CORP_", corp).replace('_', ' '));
+		RefType refType = getRefType();
+		if (refType != null) {
+			return capitalizeAll(refType.name().replace("_CORP_", corp).replace('_', ' '));
+		} else {
+			return "!"+getRefTypeID();
+		}
 	}
 
 	public void setAccountKey(int accountKey) {

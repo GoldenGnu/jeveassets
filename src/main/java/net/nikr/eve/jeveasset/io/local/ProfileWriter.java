@@ -243,7 +243,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			childNode.setAttributeNS(null, "ownername2", journal.getOwnerName2());
 			childNode.setAttributeNS(null, "reason", journal.getReason());
 			childNode.setAttributeNS(null, "refid", String.valueOf(journal.getRefID()));
-			childNode.setAttributeNS(null, "reftypeid", String.valueOf(journal.getRefType().getId()));
+			childNode.setAttributeNS(null, "reftypeid", String.valueOf(journal.getRefTypeID()));
 			if (journal.getTaxAmount() != null) {
 				childNode.setAttributeNS(null, "taxamount", String.valueOf(journal.getTaxAmount()));
 			}
