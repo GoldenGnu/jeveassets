@@ -468,6 +468,9 @@ public class Program implements ActionListener {
 		return portable;
 	}
 
+	/**
+	 * Called when Tags are changed.
+	 */
 	public void updateTags() {
 		assetsTab.updateTags();
 		treeTab.updateTags();
