@@ -409,7 +409,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					continue;
 				}
 				if (bid != null) { //Orders include
-					if (!(bid < 1 && filter.isSellOrders()) || (bid > 0 && stockpile.isBuyOrders())) {
+					if (!(bid < 1 && filter.isSellOrders()) && !(bid > 0 && stockpile.isBuyOrders())) {
 						continue;
 					}
 				}
