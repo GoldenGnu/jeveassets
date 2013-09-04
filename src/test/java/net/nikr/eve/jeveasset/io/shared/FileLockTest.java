@@ -136,36 +136,49 @@ public class FileLockTest {
 
 	@Test
 	public void unlockAllTest() throws IOException {
-		List<File> files = new ArrayList<File>();
-		//Static data directory
-		File items = new File(Settings.getPathItems());
-		files.add(items);
-		FileLock.lock(items);
-		File flags = new File(Settings.getPathFlags());
-		files.add(flags);
-		FileLock.lock(flags);
-		File jumps = new File(Settings.getPathJumps());
-		files.add(jumps);
-		FileLock.lock(jumps);
-		File locations = new File(Settings.getPathLocations());
-		files.add(locations);
-		FileLock.lock(locations);
-		//Profile directory
 		File profile = new File(Settings.getPathProfilesDirectory() + File.separator + "some_test_profile.xml");
-		files.add(profile);
-		profile.createNewFile();
-		FileLock.lock(profile);
-		//Data directory
 		File conquerableStations = new File(Settings.getPathConquerableStations());
-		files.add(conquerableStations);
-		if (!conquerableStations.exists()) {
-			conquerableStations.createNewFile();
-		}
-		FileLock.lock(conquerableStations);
-		FileLock.unlockAll();
-		for (File file : files) {
-			if (FileLock.isLocked(file)) {
-				fail(file.getName() + " was not unlocked by unlockAll");
+		boolean emptyConquerableStations = false;
+		try {
+			List<File> files = new ArrayList<File>();
+			//Static data directory
+			File items = new File(Settings.getPathItems());
+			files.add(items);
+			FileLock.lock(items);
+			File flags = new File(Settings.getPathFlags());
+			files.add(flags);
+			FileLock.lock(flags);
+			File jumps = new File(Settings.getPathJumps());
+			files.add(jumps);
+			FileLock.lock(jumps);
+			File locations = new File(Settings.getPathLocations());
+			files.add(locations);
+			FileLock.lock(locations);
+			//Profile directory
+			files.add(profile);
+			profile.getParentFile().mkdirs();
+			profile.createNewFile();
+			FileLock.lock(profile);
+			//Data directory
+			files.add(conquerableStations);
+			if (!conquerableStations.exists()) {
+				conquerableStations.createNewFile();
+				emptyConquerableStations = true;
+			}
+			FileLock.lock(conquerableStations);
+			//Unlock All
+			FileLock.unlockAll();
+			//Test
+			for (File file : files) {
+				if (FileLock.isLocked(file)) {
+					fail(file.getName() + " was not unlocked by unlockAll");
+				}
+			}
+		} finally {
+			//Clean up
+			profile.delete();
+			if (emptyConquerableStations) {
+				conquerableStations.delete();
 			}
 		}
 	}
