@@ -137,6 +137,8 @@ public class FileLockTest {
 	@Test
 	public void unlockAllTest() throws IOException {
 		File profile = new File(Settings.getPathProfilesDirectory() + File.separator + "some_test_profile.xml");
+		File conquerableStations = new File(Settings.getPathConquerableStations());
+		boolean emptyConquerableStations = false;
 		try {
 			List<File> files = new ArrayList<File>();
 			//Static data directory
@@ -154,13 +156,14 @@ public class FileLockTest {
 			FileLock.lock(locations);
 			//Profile directory
 			files.add(profile);
+			profile.getParentFile().mkdirs();
 			profile.createNewFile();
 			FileLock.lock(profile);
 			//Data directory
-			File conquerableStations = new File(Settings.getPathConquerableStations());
 			files.add(conquerableStations);
 			if (!conquerableStations.exists()) {
 				conquerableStations.createNewFile();
+				emptyConquerableStations = true;
 			}
 			FileLock.lock(conquerableStations);
 			FileLock.unlockAll();
@@ -171,6 +174,9 @@ public class FileLockTest {
 			}
 		} finally {
 			profile.delete();
+			if (emptyConquerableStations) {
+				conquerableStations.delete();
+			}
 		}
 	}
 
