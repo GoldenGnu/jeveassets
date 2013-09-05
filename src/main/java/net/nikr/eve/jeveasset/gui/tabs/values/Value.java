@@ -32,6 +32,7 @@ public class Value implements Comparable<Value> {
 	private double escrows = 0;
 	private double escrowsToCover = 0;
 	private double balance = 0;
+	private double manufacturing;
 	private Asset bestAsset = null;
 	private Asset bestShip = null;
 	private Asset bestShipFitted = null;
@@ -65,6 +66,10 @@ public class Value implements Comparable<Value> {
 		this.balance = this.balance + balance;
 	}
 
+	public void addManufacturing(double manufacturing) {
+		this.manufacturing = this.manufacturing + manufacturing;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -87,6 +92,10 @@ public class Value implements Comparable<Value> {
 
 	public double getBalance() {
 		return balance;
+	}
+
+	public double getManufacturing() {
+		return manufacturing;
 	}
 
 	public String getBestAssetName() {
@@ -145,7 +154,7 @@ public class Value implements Comparable<Value> {
 	}
 
 	public double getTotal() {
-		return getAssets() + getBalance() + getEscrows() + getSellOrders();
+		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing();
 	}
 
 	private void setBestAsset(Asset bestAsset) {

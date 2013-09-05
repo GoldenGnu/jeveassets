@@ -65,15 +65,18 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsTracker;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -119,6 +122,7 @@ public class TrackerTab extends JMainTab {
 	private JCheckBox jSellOrders;
 	private JCheckBox jEscrows;
 	private JCheckBox jEscrowsToCover;
+	private JCheckBox jManufacturing;
 	private JPopupMenu jPopupMenu;
 	private JMenuItem jIskValue;
 	private JMenuItem jDateValue;
@@ -135,6 +139,7 @@ public class TrackerTab extends JMainTab {
 	TimePeriodValues sellOrders;
 	TimePeriodValues escrows;
 	TimePeriodValues escrowsToCover;
+	TimePeriodValues manufacturing;
 
 	public TrackerTab(Program program) {
 		super(program, TabsTracker.get().title(), Images.TOOL_TRACKER.getIcon(), true);
@@ -220,6 +225,11 @@ public class TrackerTab extends JMainTab {
 		jEscrowsToCover.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
 		jEscrowsToCover.addActionListener(listener);
 
+		jManufacturing = new JCheckBox(TabsTracker.get().manufacturing());
+		jManufacturing.setSelected(true);
+		jManufacturing.setActionCommand(TrackerAction.UPDATE_SHOWN.name());
+		jManufacturing.addActionListener(listener);
+
 		jHelp = new JTextArea();
 		jHelp.setEditable(false);
 		jHelp.setOpaque(false);
@@ -281,6 +291,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jSellOrders, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jEscrows, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jEscrowsToCover, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
+					.addComponent(jManufacturing, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 					.addComponent(jHelp, PANEL_WIDTH, PANEL_WIDTH, PANEL_WIDTH)
 				)
 		);
@@ -299,6 +310,7 @@ public class TrackerTab extends JMainTab {
 					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addGap(0, 0, Integer.MAX_VALUE)
 					.addComponent(jHelp, 35, 35, 35)
 				)
@@ -400,6 +412,17 @@ public class TrackerTab extends JMainTab {
 				}
 			}
 		}
+		//Industrys Job: Manufacturing
+		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+			TrackerData trackerData = getTrackerData(data, industryJob.getOwnerID(), industryJob.getOwner(), date);
+			//Manufacturing and not completed
+			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+				Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
+				double manufacturingTotal = output.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(output.getTypeID(), false);
+				trackerData.addManufacturing(manufacturingTotal);
+				allTracker.addManufacturing(manufacturingTotal);
+			}
+		}
 		//Add everything
 		for (Map.Entry<TrackerOwner, TrackerData> entry : data.entrySet()) {
 			TrackerOwner trackerOwner = entry.getKey();
@@ -423,6 +446,7 @@ public class TrackerTab extends JMainTab {
 		sellOrders = new TimePeriodValues(TabsTracker.get().sellOrders());
 		escrows = new TimePeriodValues(TabsTracker.get().escrows());
 		escrowsToCover = new TimePeriodValues(TabsTracker.get().escrowsToCover());
+		manufacturing = new TimePeriodValues(TabsTracker.get().manufacturing());
 		Date from = jFrom.getDate();
 		if (from != null) { //Start of day
 			Calendar calendar = Calendar.getInstance();
@@ -449,6 +473,7 @@ public class TrackerTab extends JMainTab {
 					sellOrders.add(date, data.getSellOrders());
 					escrows.add(date, data.getEscrows());
 					escrowsToCover.add(date, data.getEscrowsToCover());
+					manufacturing.add(date, data.getManufacturing());
 				}
 			}
 		}
@@ -485,6 +510,10 @@ public class TrackerTab extends JMainTab {
 		if (jEscrowsToCover.isSelected() && escrowsToCover != null) {
 			dataset.addSeries(escrowsToCover);
 			updateRender(dataset.getSeriesCount() - 1, Color.GRAY);
+		}
+		if (jManufacturing.isSelected() && manufacturing != null) {
+			dataset.addSeries(manufacturing);
+			updateRender(dataset.getSeriesCount() - 1, Color.MAGENTA);
 		}
 		//Add empty dataset
 		if (dataset.getSeriesCount() == 0) {
@@ -573,7 +602,8 @@ public class TrackerTab extends JMainTab {
 						&& jAssets.isSelected()
 						&& jSellOrders.isSelected()
 						&& jEscrows.isSelected()
-						&& jEscrowsToCover.isSelected());
+						&& jEscrowsToCover.isSelected()
+						&& jManufacturing.isSelected());
 			} else if (TrackerAction.ALL.name().equals(e.getActionCommand())) {
 				jTotal.setSelected(jAll.isSelected());
 				jWalletBalance.setSelected(jAll.isSelected());
@@ -581,6 +611,7 @@ public class TrackerTab extends JMainTab {
 				jSellOrders.setSelected(jAll.isSelected());
 				jEscrows.setSelected(jAll.isSelected());
 				jEscrowsToCover.setSelected(jAll.isSelected());
+				jManufacturing.setSelected(jAll.isSelected());
 				updateShown();
 			} else if (TrackerAction.EDIT.name().equals(e.getActionCommand())) {
 				jNextChart.getXYPlot().setDomainCrosshairVisible(true);

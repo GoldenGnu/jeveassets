@@ -53,6 +53,7 @@ public abstract class TabsTracker extends Bundle {
 	public abstract String help();
 	public abstract String invalid();
 	public abstract String isk();
+	public abstract String manufacturing();
 	public abstract String month1();
 	public abstract String months3();
 	public abstract String months6();

@@ -54,6 +54,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 	private JTextField jSellOrders;
 	private JTextField jEscrows;
 	private JTextField jEscrowsToCover;
+	private JTextField jManufacturing;
 	private JButton jOK;
 
 	//Data
@@ -96,6 +97,11 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jEscrowsToCover.setHorizontalAlignment(JTextField.RIGHT);
 		jEscrowsToCover.addFocusListener(listener);
 
+		JLabel jManufacturingLabel = new JLabel(TabsTracker.get().manufacturing());
+		jManufacturing = new JTextField();
+		jManufacturing.setHorizontalAlignment(JTextField.RIGHT);
+		jManufacturing.addFocusListener(listener);
+
 		jOK = new JButton(TabsTracker.get().ok());
 		jOK.setActionCommand(TrackerEditAction.OK.name());
 		jOK.addActionListener(listener);
@@ -114,6 +120,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jSellOrdersLabel)
 						.addComponent(jEscrowsLabel)
 						.addComponent(jEscrowsToCoverLabel)
+						.addComponent(jManufacturingLabel)
 					)
 					.addGroup(layout.createParallelGroup()
 						.addComponent(jDate, 100, 100, 100)
@@ -122,6 +129,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 						.addComponent(jSellOrders, 100, 100, 100)
 						.addComponent(jEscrows, 100, 100, 100)
 						.addComponent(jEscrowsToCover, 100, 100, 100)
+						.addComponent(jManufacturing, 100, 100, 100)
 					)
 				)
 				.addGroup(layout.createSequentialGroup()
@@ -157,6 +165,10 @@ public class JTrackerEditDialog extends JDialogCentered {
 					.addComponent(jEscrowsToCover, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
+					.addComponent(jManufacturingLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jManufacturing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup()
 					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -171,6 +183,7 @@ public class JTrackerEditDialog extends JDialogCentered {
 		jSellOrders.setText(format(trackerData.getSellOrders()));
 		jEscrows.setText(format(trackerData.getEscrows()));
 		jEscrowsToCover.setText(format(trackerData.getEscrowsToCover()));
+		jManufacturing.setText(format(trackerData.getManufacturing()));
 		jDate.setText(format(trackerData.getDate()));
 		setVisible(true);
 		return update;
@@ -212,11 +225,13 @@ public class JTrackerEditDialog extends JDialogCentered {
 			double sellOrders = parse(jSellOrders.getText());
 			double escrows = parse(jEscrows.getText());
 			double escrowsToCover = parse(jEscrowsToCover.getText());
+			double manufacturing = parse(jManufacturing.getText());
 			trackerData.setWalletBalance(walletBalanc);
 			trackerData.setAssets(assets);
 			trackerData.setSellOrders(sellOrders);
 			trackerData.setEscrows(escrows);
 			trackerData.setEscrowsToCover(escrowsToCover);
+			trackerData.setManufacturing(manufacturing);
 			update = true;
 			setVisible(false);
 		} catch (ParseException ex) {

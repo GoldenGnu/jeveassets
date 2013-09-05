@@ -330,8 +330,12 @@ public final class SettingsReader extends AbstractXmlReader {
 				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
 				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
 				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				double manufacturing = 0.0;
+				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
+					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
+				}
 				//Add data
-				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover);
+				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover, manufacturing);
 				settings.getTrackerData().get(owner).add(data);
 			}
 		}

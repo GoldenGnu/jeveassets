@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -127,9 +128,18 @@ public class ProfileData {
 				}
 				//Add Industry Job to uniqueIds
 				for (IndustryJob industryJob : owner.getIndustryJobs()) {
-					Item itemType = industryJob.getItem();
-					if (itemType.isMarketGroup()) {
-						priceTypeIDs.add(itemType.getTypeID());
+					//Blueprint
+					Item blueprint = industryJob.getItem();
+					if (blueprint.isMarketGroup()) {
+						priceTypeIDs.add(blueprint.getTypeID());
+					}
+					//Manufacturing Output
+					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+						//Output
+						Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
+						if (output.isMarketGroup()) {
+							priceTypeIDs.add(output.getTypeID());
+						}
 					}
 				}
 				//Add Contract to uniqueIds

@@ -40,6 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -53,9 +54,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ValueTableTab extends JMainTab {
@@ -179,6 +182,17 @@ public class ValueTableTab extends JMainTab {
 					total.addEscrows(marketOrder.getEscrow());
 					total.addEscrowsToCover((marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow());
 				}
+			}
+		}
+		//Industrys Job: Manufacturing
+		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+			Value value = getValue(values, industryJob.getOwner());
+			//Manufacturing and not completed
+			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+				Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
+				double manufacturingTotal = output.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(output.getTypeID(), false);
+				value.addManufacturing(manufacturingTotal);
+				total.addManufacturing(manufacturingTotal);
 			}
 		}
 		try {
