@@ -435,7 +435,7 @@ public class ProfileData {
 				assetLoop.setTypeCount(newCount);
 			}
 			//Packaged Volume
-			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), asset.isSingleton());
+			float volume = ApiIdConverter.getVolume(asset.getItem().getTypeID(), !asset.isSingleton());
 			asset.setVolume(volume);
 
 			//Add asset
