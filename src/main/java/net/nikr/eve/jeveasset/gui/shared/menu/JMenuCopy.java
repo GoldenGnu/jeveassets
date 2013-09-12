@@ -108,7 +108,7 @@ public class JMenuCopy extends JMenuItem {
 		@Override
 		public void keyReleased(KeyEvent event) {
 			if (event.isControlDown()) {
-				if (event.getKeyCode() == KeyEvent.VK_C) { // Copy                        
+				if (event.getKeyCode() == KeyEvent.VK_C) { // Copy
 					copy(jTable);
 				} else if (event.getKeyCode() == KeyEvent.VK_X) { // Cut 
 					copy(jTable);

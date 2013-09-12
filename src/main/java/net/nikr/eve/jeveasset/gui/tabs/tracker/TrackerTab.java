@@ -528,11 +528,11 @@ public class TrackerTab extends JMainTab {
 		rangeAxis.setNumberFormatOverride(Formater.LONG_FORMAT); //Default
 		if (maxNumber != null && (maxNumber instanceof Double)) {
 			double max = (Double) maxNumber;
-			if (max > 1000000000000.0) {     //Higher than 1 Trillion
+			if (max > 1000000000000.0) {	 //Higher than 1 Trillion
 				rangeAxis.setNumberFormatOverride(Formater.TRILLIONS_FORMAT);
 			} else if (max > 1000000000.0) { //Higher than 1 Billion
 				rangeAxis.setNumberFormatOverride(Formater.BILLIONS_FORMAT);
-			} else if (max > 1000000.0) {    //Higher than 1 Million
+			} else if (max > 1000000.0) {	 //Higher than 1 Million
 				rangeAxis.setNumberFormatOverride(Formater.MILLIONS_FORMAT);
 			}
 		}
