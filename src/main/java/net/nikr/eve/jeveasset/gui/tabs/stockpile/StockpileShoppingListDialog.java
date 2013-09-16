@@ -188,15 +188,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			if (asset.getFlag().equals(General.get().contractExcluded())) {
 				continue; //Ignore contracts excluded
 			}
-			add(asset.getItem().getTypeID(), asset, claims, items);
+			add(asset.getItem().getTypeID(), asset, new StockItem(asset), claims, items);
 		}
 		//Market Orders
 		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
-			add(marketOrder.getTypeID(), marketOrder, claims, items);
+			add(marketOrder.getTypeID(), marketOrder, new StockItem(marketOrder), claims, items);
 		}
 		//Industry Jobs
 		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
-			add(industryJob.getItem().getTypeID(), industryJob, claims, items);
+			add(industryJob.getOutputTypeID(), industryJob, new StockItem(industryJob), claims, items);
 		}
 
 	//Claim items
@@ -241,7 +241,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	//Add claims to item
-	private void add(final int typeID, final Object object, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
+	private void add(final int typeID, final Object object, final StockItem stockItem, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
 		//Get claims by typeID
 		List<StockClaim> minimumList = claims.get(typeID);
 		if (minimumList == null) { //if no claims for typeID: return
@@ -253,19 +253,6 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		if (itemList == null) {
 			itemList = new ArrayList<StockItem>();
 			items.put(typeID, itemList);
-		}
-
-		//Create new StockItem (from Asset/MarketOrder/IndustryJob)
-		StockItem stockItem;
-		if (object instanceof Asset) {
-			stockItem = new StockItem((Asset)object);
-		} else if (object instanceof MarketOrder) {
-			stockItem = new StockItem((MarketOrder) object);
-		} else if (object instanceof IndustryJob) {
-			IndustryJob industryJob = (IndustryJob) object;
-			stockItem = new StockItem(industryJob);
-		} else { //Should never happen!
-			return;
 		}
 
 		boolean added = false;
