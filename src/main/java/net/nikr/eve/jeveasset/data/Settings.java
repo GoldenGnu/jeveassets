@@ -115,6 +115,8 @@ public class Settings {
 	private Boolean highlightSelectedRows = null;
 	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
+	//Stockpile
+	private Boolean stockpileHalfColors = null;
 	//Overview
 	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
 	//Reprocess price
@@ -473,10 +475,15 @@ public class Settings {
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
-		return flags.get(FLAG_STOCKPILE_HALF_COLORS);
+		if (stockpileHalfColors == null) {
+			stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
+		}
+		return stockpileHalfColors;
+		//return flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
+		this.stockpileHalfColors = stockpileHalfColors;
 	}
 	public boolean isIncludeSellOrders() {
 		return flags.get(FLAG_INCLUDE_SELL_ORDERS);

@@ -41,7 +41,7 @@ public class JDefaultField extends JTextField {
 	}
 
 	private void restoreDefault() {
-		if (super.getText().length() == 0) {
+		if (super.getText().isEmpty()) {
 			super.setText(defaultValue);
 		}
 	}
@@ -54,7 +54,7 @@ public class JDefaultField extends JTextField {
 
 	@Override
 	public void setText(final String t) {
-		if (t.length() == 0) {
+		if (t.isEmpty()) {
 			super.setText(defaultValue);
 		} else {
 			super.setText(t);
