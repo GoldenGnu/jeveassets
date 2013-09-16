@@ -512,8 +512,7 @@ public class StockpileTab extends JMainTab {
 						if (industryJob.getOutputTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
-						Item itemType = StaticData.get().getItems().get(industryJob.getOutputTypeID());
-						item.updateIndustryJob(industryJob, itemType);
+						item.updateIndustryJob(industryJob);
 					}
 				}
 			}

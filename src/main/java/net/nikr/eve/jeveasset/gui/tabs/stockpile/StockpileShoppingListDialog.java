@@ -26,6 +26,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +35,19 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 class StockpileShoppingListDialog extends JDialogCentered {
@@ -54,6 +62,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	private JTextField jPercent;
 
 	private List<Stockpile> stockpiles;
+	private boolean updating = false;
 
 	StockpileShoppingListDialog(final Program program) {
 		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
@@ -115,19 +124,20 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	}
 
 	void show(final Stockpile stockpile) {
-		this.stockpiles = Collections.singletonList(stockpile);
-		jPercent.setText("100");
-		updateList();
-		super.setVisible(true);
+		show(Collections.singletonList(stockpile));
 	}
+
 	void show(final List<Stockpile> addStockpiles) {
+		updating = true;
 		this.stockpiles = addStockpiles;
 		jPercent.setText("100");
 		updateList();
+		updating = false;
 		super.setVisible(true);
 	}
 
 	private void updateList() {
+		//Multiplier
 		long percent;
 		try {
 			percent = Long.valueOf(jPercent.getText());
@@ -137,50 +147,137 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		} catch (NumberFormatException e) {
 			percent = 100;
 		}
-		String s = "";
-		double volume = 0;
-		double value = 0;
+
+	//All claims
+		Map<Integer, List<StockClaim>> claims = new HashMap<Integer, List<StockClaim>>();
 		String stockpileNames = "";
-		Map<String, Double> shoppingList = new HashMap<String, Double>();
 		for (Stockpile stockpile : stockpiles) {
+			//Stockpile names
 			if (!stockpileNames.isEmpty()) {
 				stockpileNames = stockpileNames + ", ";
 			}
 			stockpileNames = stockpileNames + stockpile.getName();
-			for (Stockpile.StockpileItem stockpileItem : stockpile.getItems()) {
-				if (stockpileItem.getItemTypeID() != 0) { //Ignore Total
-					final double minimumCount = (stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
-					double countNeeded = Math.ceil(minimumCount - stockpileItem.getCountNow());
-					if (countNeeded > 0) {
-						volume = volume + (countNeeded * stockpileItem.getVolume());
-						value = value + (countNeeded * stockpileItem.getDynamicPrice());
-						String key = stockpileItem.getName();
-
-						//Add
-						if (shoppingList.containsKey(key)) {
-							countNeeded = countNeeded + shoppingList.get(key);
-						}
-						shoppingList.put(key, countNeeded);
+			for (StockpileItem stockpileItem : stockpile.getItems()) {
+				final int TYPEID = stockpileItem.getItemTypeID();
+				if (TYPEID != 0) { //Ignore Total
+					List<StockClaim> claimList  = claims.get(TYPEID);
+					if (claimList == null) {
+						claimList = new ArrayList<StockClaim>();
+						claims.put(TYPEID, claimList);
 					}
+					claimList.add(new StockClaim(stockpileItem, percent));
 				}
 			}
 		}
-		for (Map.Entry<String, Double> entry : shoppingList.entrySet()) {
-			s = s + Formater.longFormat(entry.getValue()) + "x " + entry.getKey() + "\r\n";
+
+	//All items
+		Map<Integer, List<StockItem>> items = new HashMap<Integer, List<StockItem>>();
+		//Assets
+		for (Asset asset : program.getAssetEventList()) {
+			//Skip market orders
+			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
+				continue; //Ignore market sell orders
+			}
+			if (asset.getFlag().equals(General.get().marketOrderBuyFlag())) {
+				continue; //Ignore market buy orders
+			}
+			//Skip contracts
+			if (asset.getFlag().equals(General.get().contractIncluded())) {
+				continue; //Ignore contracts included
+			}
+			if (asset.getFlag().equals(General.get().contractExcluded())) {
+				continue; //Ignore contracts excluded
+			}
+			add(asset.getItem().getTypeID(), asset, claims, items);
 		}
-		if (s.isEmpty()) {
+		//Market Orders
+		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+			add(marketOrder.getTypeID(), marketOrder, claims, items);
+		}
+		//Industry Jobs
+		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+			add(industryJob.getItem().getTypeID(), industryJob, claims, items);
+		}
+
+	//Claim items
+		for (Map.Entry<Integer, List<StockItem>> entry : items.entrySet()) {
+			for (StockItem stockItem : entry.getValue()) {
+				stockItem.claim();
+			}
+		}
+
+	//Show missing
+		String s = "";
+		double volume = 0;
+		double value = 0;
+		for (Map.Entry<Integer, List<StockClaim>> entry : claims.entrySet()) {
+			Item item = ApiIdConverter.getItem(entry.getKey());
+			long countMinimum = 0;
+			for (StockClaim stockClaim : entry.getValue()) {
+				//Add missing
+				countMinimum = countMinimum + stockClaim.getCountMinimum();
+				//Add volume (will add zero if nothing is needed)
+				volume = volume + (stockClaim.getCountMinimum() * stockClaim.getVolume());
+				//Add value (will add zero if nothing is needed)
+				value = value + (stockClaim.getCountMinimum() * stockClaim.getDynamicPrice());
+			}
+			if (countMinimum > 0) { //Add type string (if anything is needed)
+				s = s + Formater.longFormat(countMinimum) + "x " + item.getTypeName() + "\r\n";
+			}
+		}
+		if (s.isEmpty()) { //if string is empty, nothing is needed
 			s = TabsStockpile.get().nothingNeeded();
-		} else {
+		} else { //Add total volume and value
 			s = s + "\r\n";
 			s = s + TabsStockpile.get().totalToHaul() + Formater.doubleFormat(Math.abs(volume)) + "\r\n";
 			s = s + TabsStockpile.get().estimatedMarketValue() + Formater.iskFormat(Math.abs(value)) + "\r\n";
 		}
-		if (percent != 100) {
+		if (percent != 100) { //Add stockpile names (adds percent if it's not 100%)
 			s = stockpileNames + " (" + percent + TabsStockpile.get().percent() + ")\r\n\r\n" + s;
-		} else {
+		} else { //(without percent)
 			s = stockpileNames + "\r\n\r\n" + s;
 		}
 		jText.setText(s);
+	}
+
+	//Add claims to item
+	private void add(final int typeID, final Object object, final Map<Integer, List<StockClaim>> claims, final Map<Integer, List<StockItem>> items) {
+		//Get claims by typeID
+		List<StockClaim> minimumList = claims.get(typeID);
+		if (minimumList == null) { //if no claims for typeID: return
+			return;
+		}
+
+		//Get item list by typeID
+		List<StockItem> itemList = items.get(typeID);
+		if (itemList == null) {
+			itemList = new ArrayList<StockItem>();
+			items.put(typeID, itemList);
+		}
+
+		//Create new StockItem (from Asset/MarketOrder/IndustryJob)
+		StockItem stockItem;
+		if (object instanceof Asset) {
+			stockItem = new StockItem((Asset)object);
+		} else if (object instanceof MarketOrder) {
+			stockItem = new StockItem((MarketOrder) object);
+		} else if (object instanceof IndustryJob) {
+			IndustryJob industryJob = (IndustryJob) object;
+			stockItem = new StockItem(industryJob);
+		} else { //Should never happen!
+			return;
+		}
+
+		boolean added = false;
+		for (StockClaim stockMinimum : minimumList) {
+			if (stockMinimum.matches(object)){ //if match (have claim)
+				if (!added) { //if item not added already - add to items list
+					itemList.add(stockItem);
+					added = true;
+				}
+				stockItem.addClaim(stockMinimum); //Add claim
+			}
+		}
 	}
 
 	private void copyToClipboard() {
@@ -227,7 +324,107 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 		@Override
 		public void caretUpdate(final CaretEvent e) {
-			updateList();
+			if (!updating) {
+				updateList();
+			}
+		}
+	}
+
+	private static class StockClaim implements Comparable<StockClaim>{
+		private long countMinimum;
+		private final StockpileItem stockpileItem;
+		private long available = 0;
+
+		public StockClaim(StockpileItem stockpileItem, long percent) {
+			this.stockpileItem = stockpileItem;
+			this.countMinimum = (long)(stockpileItem.getCountMinimumMultiplied() * percent / 100.0);
+		}
+
+		public double getVolume() {
+			return stockpileItem.getVolume();
+		}
+
+		public Double getDynamicPrice() {
+			return stockpileItem.getDynamicPrice();
+		}
+
+		private boolean matches(Object object) {
+			if (object instanceof Asset) {
+				return stockpileItem.matches((Asset) object);
+			} else if (object instanceof MarketOrder) {
+				return stockpileItem.matches((MarketOrder) object);
+			} else if (object instanceof IndustryJob) {
+				return stockpileItem.matches((IndustryJob) object);
+			}
+			return false;
+		}
+
+		public long getCountMinimum() {
+			return countMinimum;
+		}
+
+		public void addCount(long count) {
+			countMinimum = countMinimum - count;
+		}
+
+		public void addAvailable(long available) {
+			this.available = this.available + available;
+		}
+
+		private long getNeed() { //Claim optimization
+			return available - countMinimum;
+		}
+
+		@Override
+		public int compareTo(StockClaim o) {
+			if (this.getNeed() > o.getNeed()) {
+				return 1;
+			} else if  (this.getNeed() < o.getNeed()){
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	private static class StockItem {
+		private final List<StockClaim> claims = new ArrayList<StockClaim>();
+		private long count;
+
+		private StockItem(Asset asset) {
+			this(asset.getCount());
+		}
+
+		private StockItem(MarketOrder marketOrder) {
+			this(marketOrder.getVolRemaining());
+		}
+
+		private StockItem(IndustryJob industryJob) {
+			this((industryJob.getRuns() * industryJob.getPortion()));
+		}
+
+		public StockItem(long count) {
+			this.count = count;
+		}
+
+		public void addClaim(StockClaim stockMinimum) {
+			claims.add(stockMinimum);
+			stockMinimum.addAvailable(count);
+		}
+
+		public void claim() {
+			Collections.sort(claims); //Sort by need
+			for (StockClaim stockMinimum : claims) {
+				if (stockMinimum.getCountMinimum() >= count) { //Add all
+					stockMinimum.addCount(count);
+					count = 0;
+					break;
+				} else { //Add part of the count
+					long missing = stockMinimum.getCountMinimum();
+					stockMinimum.addCount(missing);
+					count = count - missing;
+				}
+			}
 		}
 	}
 }

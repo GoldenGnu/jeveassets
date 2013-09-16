@@ -385,6 +385,32 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.volume = updateVolume;
 		}
 
+		boolean matches(Asset asset) {
+			return asset != null //better safe then sorry
+					&& ( //Type ID
+						(typeID == asset.getItem().getTypeID() && (!asset.getItem().isBlueprint() || asset.isBPO()))
+						|| (typeID == -asset.getItem().getTypeID() && asset.getItem().isBlueprint() && !asset.isBPO()) //BPC
+						)
+					&& matches(asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null)
+					;
+		}
+
+		boolean matches(final MarketOrder marketOrder) {
+			return marketOrder != null //better safe then sorry
+					&& typeID == marketOrder.getTypeID()
+					&& matches(marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder.getBid())
+					&& marketOrder.getOrderState() == 0 //Open/Active
+					;
+		}
+		boolean matches(final IndustryJob industryJob) {
+			return industryJob != null //better safe then sorry
+					&& typeID == industryJob.getOutputTypeID() //Produced only
+					&& matches(industryJob.getOwnerID(), null, industryJob.getOutputFlag(), industryJob.getLocation(), null, null)
+					&& industryJob.getActivityID() == 1 //Manufacturing
+					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
+					;
+		}
+
 		private boolean matches(final Long ownerID, final String container, final Integer flagID, final Location location, final Asset asset, final Integer bid) {
 			if (stockpile.getFilters().isEmpty()) {
 				return true; //All
@@ -511,23 +537,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		void updateAsset(final Asset asset) {
-			if (asset != null //better safe then sorry
-					&& (
-						(typeID == asset.getItem().getTypeID() && (!asset.getItem().isBlueprint() || asset.isBPO()))
-						|| (typeID == -asset.getItem().getTypeID() && asset.getItem().isBlueprint() && !asset.isBPO()) //BPC
-						)
-					&& matches(asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null)
-					) {
+			if (matches(asset)) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();
 			}
 		}
 
 		void updateMarketOrder(final MarketOrder marketOrder) {
-			if (marketOrder != null //better safe then sorry
-					&& typeID == marketOrder.getTypeID()
-					&& matches(marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder.getBid())
-					&& marketOrder.getOrderState() == 0 //Open/Active
-					) {
+			if (matches(marketOrder)) {
 				if (marketOrder.getBid() < 1) { //Sell
 					sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
 				} else { //Buy
@@ -536,14 +552,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			}
 		}
 
-		void updateIndustryJob(final IndustryJob industryJob, final Item itemType) {
-			if (industryJob != null && itemType != null //better safe then sorry
-					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& matches(industryJob.getOwnerID(), null, industryJob.getOutputFlag(), industryJob.getLocation(), null, null)
-					&& industryJob.getActivityID() == 1 //Manufacturing
-					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
-					) {
-				jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
+		void updateIndustryJob(final IndustryJob industryJob) {
+			if (matches(industryJob)) {
+				jobsCountNow = jobsCountNow + (industryJob.getRuns() * industryJob.getPortion());
 			}
 		}
 

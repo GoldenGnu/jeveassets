@@ -196,12 +196,13 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	private IndustryActivity activity;
 	private IndustryJobState state;
-	private Item item;
-	private Owner owner;
-	private Location location;
+	private final Item item;
+	private final Owner owner;
+	private final Location location;
+	private final int portion;
 	private double price;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner) {
+	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -238,6 +239,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
+		this.portion = portion;
 
 		switch (this.getActivityID()) {
 			case 0:
@@ -315,7 +317,6 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return state;
 	}
 
-	
 	public void setDynamicPrice(double price) {
 		this.price = price;
 	}
@@ -346,6 +347,10 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	public long getOwnerID() {
 		return owner.getOwnerID();
+	}
+
+	public int getPortion() {
+		return portion;
 	}
 
 	@Override

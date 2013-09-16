@@ -65,7 +65,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -417,8 +416,7 @@ public class TrackerTab extends JMainTab {
 			TrackerData trackerData = getTrackerData(data, industryJob.getOwnerID(), industryJob.getOwner(), date);
 			//Manufacturing and not completed
 			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
-				Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
-				double manufacturingTotal = output.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(output.getTypeID(), false);
+				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
 				trackerData.addManufacturing(manufacturingTotal);
 				allTracker.addManufacturing(manufacturingTotal);
 			}

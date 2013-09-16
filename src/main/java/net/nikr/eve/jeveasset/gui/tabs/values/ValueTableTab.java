@@ -189,8 +189,7 @@ public class ValueTableTab extends JMainTab {
 			Value value = getValue(values, industryJob.getOwner());
 			//Manufacturing and not completed
 			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
-				Item output = ApiIdConverter.getItem(industryJob.getOutputTypeID());
-				double manufacturingTotal = output.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(output.getTypeID(), false);
+				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
 				value.addManufacturing(manufacturingTotal);
 				total.addManufacturing(manufacturingTotal);
 			}

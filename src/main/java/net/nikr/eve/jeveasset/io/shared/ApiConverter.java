@@ -255,7 +255,8 @@ public final class ApiConverter {
 		Item item = ApiIdConverter.getItem(apiIndustryJob.getInstalledItemTypeID());
 		long locationID = toLocationId(apiIndustryJob);
 		Location location = ApiIdConverter.getLocation(locationID);
-		return new IndustryJob(apiIndustryJob, item, location, owner);
+		Item output = ApiIdConverter.getItem(apiIndustryJob.getOutputTypeID());
+		return new IndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
 	}
 
 	private static long toLocationId(final ApiIndustryJob apiIndustryJob) {
