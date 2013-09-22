@@ -55,6 +55,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private JRadioButton jRadioRegions;
 	private JRadioButton jRadioSystems;
 	private JRadioButton jRadioStations;
+	private JCheckBox jBlueprintsTech1;
+	private JCheckBox jBlueprintsTech2;
 	private JComboBox jRegions;
 	private JComboBox jSystems;
 	private JComboBox jStations;
@@ -141,6 +143,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
 		jSource.addActionListener(listener);
 
+		JLabel jBlueprintsLabel = new JLabel(DialoguesSettings.get().priceBase());
+		jBlueprintsTech1 = new JCheckBox(DialoguesSettings.get().priceTech1());
+		jBlueprintsTech2 = new JCheckBox(DialoguesSettings.get().priceTech2());
+
 		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
 		jWarning.setFont(this.getPanel().getFont());
 		jWarning.setBackground(this.getPanel().getBackground());
@@ -156,6 +162,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jSourceLabel)
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jPriceReprocessedTypeLabel)
+						.addComponent(jBlueprintsLabel)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup()
 								.addComponent(jRegionsLabel)
@@ -177,6 +184,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jStations, 200, 200, 200)
 						.addComponent(jPriceType, 200, 200, 200)
 						.addComponent(jPriceReprocessedType, 200, 200, 200)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jBlueprintsTech1)
+							.addComponent(jBlueprintsTech2)
+						)
 					)
 				)
 				.addComponent(jWarning)
@@ -209,6 +220,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jPriceReprocessedTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceReprocessedType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jBlueprintsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsTech1, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsTech2, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jWarning, 48, 48, 48)
 		);
@@ -253,13 +269,20 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
+		//Blueprints
+		boolean blueprintsTech1 = jBlueprintsTech1.isSelected();
+		boolean blueprintsTech2 = jBlueprintsTech2.isSelected();
 
 		//Eval if table need to be updated
 		boolean updateTable = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
-								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType());
+								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType())
+								|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
+								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
 
 		//Update settings
 		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source, priceType, priceReprocessedType));
+		Settings.get().setBlueprintBasePriceTech1(blueprintsTech1);
+		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
 
 		//Update table if needed
 		return updateTable;
@@ -268,6 +291,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load() {
 		jSource.setSelectedItem(Settings.get().getPriceDataSettings().getSource());
+		jBlueprintsTech1.setSelected(Settings.get().isBlueprintBasePriceTech1());
+		jBlueprintsTech2.setSelected(Settings.get().isBlueprintBasePriceTech2());
 	}
 
 	private void updateSource(final PriceSource source) {

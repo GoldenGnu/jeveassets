@@ -81,6 +81,8 @@ public class Settings {
 	private static final String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
 	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
+	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_1 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_1";
+	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
 
 	private static Settings settings;
 
@@ -154,6 +156,8 @@ public class Settings {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 	}
 
 	/**
@@ -502,6 +506,18 @@ public class Settings {
 	}
 	public void setIncludeContracts(final boolean includeBuyOrders) {
 		flags.put(FLAG_INCLUDE_CONTRACTS, includeBuyOrders);
+	}
+	public boolean isBlueprintBasePriceTech1() {
+		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
+	}
+	public void setBlueprintBasePriceTech1(final boolean blueprintsTech1) {
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
+	}
+	public boolean isBlueprintBasePriceTech2() {
+		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
+	}
+	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;

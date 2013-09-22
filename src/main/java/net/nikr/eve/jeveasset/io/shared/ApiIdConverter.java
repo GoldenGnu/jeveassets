@@ -119,6 +119,19 @@ public final class ApiIdConverter {
 			return 0;
 		}
 
+		//Blueprints Base Price
+		Item item = getItem(typeID);
+		//Tech 1
+		if (item.isBlueprint()) {
+			if (Settings.get().isBlueprintBasePriceTech1() && !item.getTypeName().toLowerCase().contains("ii")) {
+				return item.getPriceBase();
+			}
+			//Tech 2
+			if (Settings.get().isBlueprintBasePriceTech2() && item.getTypeName().toLowerCase().contains("ii")) {
+				return item.getPriceBase();
+			}
+		}
+
 		//Price data
 		PriceData priceData = null;
 		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
