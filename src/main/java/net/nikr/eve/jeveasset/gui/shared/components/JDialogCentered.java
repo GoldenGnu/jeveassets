@@ -115,6 +115,8 @@ public abstract class JDialogCentered {
 		if (b) {
 			LOG.info("Showing: {} Dialog", dialog.getTitle());
 			dialog.pack();
+			dialog.setMinimumSize(dialog.getSize());
+
 			//Get the parent size
 			Dimension screenSize = parent.getSize();
 

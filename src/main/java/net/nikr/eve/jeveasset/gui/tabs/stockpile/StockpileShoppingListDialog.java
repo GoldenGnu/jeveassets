@@ -67,6 +67,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	StockpileShoppingListDialog(final Program program) {
 		super(program,  TabsStockpile.get().shoppingList(), Images.TOOL_STOCKPILE.getImage());
 
+		this.getDialog().setResizable(true);
+		
 		ListenerClass listener = new ListenerClass();
 
 		JButton jCopyToClipboard = new JButton(TabsStockpile.get().clipboardStockpile(), Images.EDIT_COPY.getIcon());
@@ -105,7 +107,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					.addComponent(jPercentLabel)
 				)
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addComponent(jTextScroll, 500, 500, 500)
+					.addComponent(jTextScroll, 500, 500, Integer.MAX_VALUE)
 					.addComponent(jClose)
 				)
 		);
@@ -118,7 +120,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 					.addComponent(jPercent, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPercentLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
-				.addComponent(jTextScroll, 400, 400, 400)
+				.addComponent(jTextScroll, 400, 400, Integer.MAX_VALUE)
 				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
