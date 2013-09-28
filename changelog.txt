@@ -16,6 +16,31 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.7.0_BETA_1___________________________________________________________________
+
+New Features:
+-New Tool: Wallet Journal
+-New Tool: Tree (Assets by location or category)
+-Tool Views (Save/load column presets - works with export as well)
+-Added manufacturing to Isk and Tracker tools
+-Added Export to Materials, Ship Loadouts, and Overview tools
+-Export: Html formatting and in game browser links (both optional)
+-Export: Use table sort order
+-New Assets/Tree/Overview column: isk/m3 (Contributed by Saulvin - Thanks!)
+-Stockpile: Advanced filters (Multiple locations/owners/containers/flags)
+-Added tags to the Asset and Tree tools
+-Use base price for PBOs (Optional tech 1/tech 2)
+-Stockpile: Added transactions (Items bought/sold after last asset update)
+-Stockpile: Now accepts decimals (always rounded to ceiling)
+
+Changed:
+-Export greatly improved
+
+Bug Fix:
+-Stockpile shopping list could count the same item multiple times
+-Stockpile: Editing items would leave duplicate items
+
+________________________________________________________________________________
 _2.6.3__________________________________________________________________________
 
 Bug Fixes:
