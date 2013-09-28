@@ -393,6 +393,10 @@ public class StockpileTab extends JMainTab {
 		}
 	}
 
+	protected void removeItem(StockpileItem item) {
+		removeItems(Collections.singletonList(item));
+	}
+
 	protected void removeItems(List<StockpileItem> items) {
 		for (StockpileItem item : items) {
 			item.getStockpile().updateTotal();
