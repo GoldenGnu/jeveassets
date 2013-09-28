@@ -341,7 +341,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		private Stockpile stockpile;
 		private Item item;
 		private int typeID;
-		private long countMinimum;
+		private double countMinimum;
 
 		//Updated values
 		private boolean marketGroup;
@@ -364,7 +364,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 					);
 		}
 
-		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final long countMinimum) {
+		public StockpileItem(final Stockpile stockpile, final Item item, final int typeID, final double countMinimum) {
 			this.stockpile = stockpile;
 			this.item = item;
 			this.typeID = typeID;
@@ -595,12 +595,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			}
 		}
 
-		public void setCountMinimum(final long countMinimum) {
+		public void setCountMinimum(final double countMinimum) {
 			this.countMinimum = countMinimum;
 			this.getStockpile().updateTotal();
 		}
 
-		public void addCountMinimum(final long countMinimum) {
+		public void addCountMinimum(final double countMinimum) {
 			this.countMinimum = this.countMinimum + countMinimum;
 			this.getStockpile().updateTotal();
 		}
@@ -637,12 +637,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			}
 		}
 
-		public long getCountMinimum() {
+		public double getCountMinimum() {
 			return countMinimum;
 		}
 
 		public long getCountMinimumMultiplied() {
-			return (long)(stockpile.getMultiplier() * countMinimum);
+			return (long) Math.ceil(stockpile.getMultiplier() * countMinimum);
 		}
 
 		public long getCountNow() {
@@ -797,7 +797,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		private long buyOrdersCountNow = 0;
 		private long jobsCountNow = 0;
 		private long countNeeded = 0;
-		private long countMinimum = 0;
+		private double countMinimum = 0;
 		private long countMinimumMultiplied = 0;
 		private double totalPrice;
 		private double totalPriceCount;
@@ -877,7 +877,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		}
 
 		@Override
-		public long getCountMinimum() {
+		public double getCountMinimum() {
 			return countMinimum;
 		}
 

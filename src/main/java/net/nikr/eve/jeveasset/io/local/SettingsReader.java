@@ -465,7 +465,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
-				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
+				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItem(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);

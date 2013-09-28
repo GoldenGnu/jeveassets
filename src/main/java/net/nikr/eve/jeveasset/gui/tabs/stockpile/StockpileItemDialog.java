@@ -190,9 +190,9 @@ public class StockpileItemDialog extends JDialogCentered {
 
 	private StockpileItem getStockpileItem() {
 		Item item = (Item) jItems.getSelectedItem();
-		long countMinimum;
+		double countMinimum;
 		try {
-			countMinimum = Long.valueOf(jCountMinimum.getText());
+			countMinimum = Double.valueOf(jCountMinimum.getText());
 		} catch (NumberFormatException ex) {
 			countMinimum = 0;
 		}
@@ -243,8 +243,8 @@ public class StockpileItemDialog extends JDialogCentered {
 			jCountMinimum.setBackground(new Color(255, 255, 200));
 		}
 		try {
-			long l = Long.valueOf(jCountMinimum.getText());
-			if (l <= 0) {
+			double d = Double.valueOf(jCountMinimum.getText());
+			if (d <= 0) {
 				valid = false; //Negative and zero is not valid
 				color = true;
 				jCountMinimum.setBackground(new Color(255, 200, 200));

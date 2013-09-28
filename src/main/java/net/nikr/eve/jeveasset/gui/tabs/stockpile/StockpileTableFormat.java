@@ -50,7 +50,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getGroup();
 		}
 	},
-	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountMinimum();
@@ -65,9 +65,9 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 
 		@Override public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
-			if ((editedValue instanceof Long) && (baseObject instanceof StockpileItem)) {
+			if ((editedValue instanceof Double) && (baseObject instanceof StockpileItem)) {
 				StockpileItem item = (StockpileItem) baseObject;
-				long l = (Long) editedValue;
+				double l = (Double) editedValue;
 				item.setCountMinimum(l);
 				return item;
 			}

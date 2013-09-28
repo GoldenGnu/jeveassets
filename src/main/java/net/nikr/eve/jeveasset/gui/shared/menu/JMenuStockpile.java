@@ -44,7 +44,7 @@ public class JMenuStockpile<T> extends JAutoMenu<T> {
 		ADD_TO
 	}
 
-	private static final int DEFAULT_ADD_COUNT = 1;
+	private static final double DEFAULT_ADD_COUNT = 1;
 
 	private List<Stockpile> stockpilesCashe = null;
 	private final List<JMenuItem> jMenuItems = new ArrayList<JMenuItem>();

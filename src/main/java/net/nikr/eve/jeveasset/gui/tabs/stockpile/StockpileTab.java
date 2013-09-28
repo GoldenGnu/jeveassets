@@ -621,7 +621,7 @@ public class StockpileTab extends JMainTab {
 			doSkip = (value != JOptionPane.YES_OPTION);
 		}
 		String[] lines = shoppingList.split("[\r\n]");
-		Map<String, Long> data = new HashMap<String, Long>();
+		Map<String, Double> data = new HashMap<String, Double>();
 		boolean plain = shoppingList.contains("Material - Quantity");
 		boolean csv = shoppingList.contains("Material, Quantity, ME, Meta, Cost Per Item, Total Cost");
 		if (plain || csv) {
@@ -682,9 +682,9 @@ public class StockpileTab extends JMainTab {
 					module = module + " blueprint";
 				}
 				//Convert number
-				Long count;
+				Double count;
 				try {
-					count = Long.valueOf(number.replace(",", "").trim());
+					count = Double.valueOf(number.replace(",", "").trim());
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), TabsStockpile.get().importIskPerHourHelp(), TabsStockpile.get().importIskPerHourTitle(), JOptionPane.PLAIN_MESSAGE);
 					return;
@@ -707,7 +707,7 @@ public class StockpileTab extends JMainTab {
 			return;
 		}
 		//Search for item names
-		for (Map.Entry<String, Long> entry : data.entrySet()) {
+		for (Map.Entry<String, Double> entry : data.entrySet()) {
 			for (Item item : StaticData.get().getItems().values()) {
 				if (item.getTypeName().toLowerCase().equals(entry.getKey())) { //Found item
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, item.getTypeID(), entry.getValue());
