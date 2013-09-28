@@ -55,22 +55,31 @@ public class UpdateDialog extends JDialogCentered {
 	private JCheckBox jCheckAll;
 	private JCheckBox jMarketOrders;
 	private JLabel jMarketOrdersUpdate;
+	private JLabel jMarketOrdersLeft;
 	private JCheckBox jJournal;
 	private JLabel jJournalUpdate;
+	private JLabel jJournalLeft;
 	private JCheckBox jTransactions;
 	private JLabel jTransactionsUpdate;
+	private JLabel jTransactionsLeft;
 	private JCheckBox jIndustryJobs;
 	private JLabel jIndustryJobsUpdate;
+	private JLabel jIndustryJobsLeft;
 	private JCheckBox jAccounts;
 	private JLabel jAccountsUpdate;
+	private JLabel jAccountsLeft;
 	private JCheckBox jAccountBalance;
 	private JLabel jAccountBalanceUpdate;
+	private JLabel jAccountBalanceLeft;
 	private JCheckBox jContracts;
 	private JLabel jContractsUpdate;
+	private JLabel jContractsLeft;
 	private JCheckBox jAssets;
 	private JLabel jAssetsUpdate;
+	private JLabel jAssetsLeft;
 	private JCheckBox jPriceData;
 	private JLabel jPriceDataUpdate;
+	private JLabel jPriceDataLeft;
 	private JButton jUpdate;
 	private JButton jCancel;
 	private List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
@@ -118,6 +127,16 @@ public class UpdateDialog extends JDialogCentered {
 		jAssetsUpdate = new JLabel();
 		jPriceDataUpdate = new JLabel();
 
+		jMarketOrdersLeft = new JLabel();
+		jJournalLeft = new JLabel();
+		jTransactionsLeft = new JLabel();
+		jIndustryJobsLeft = new JLabel();
+		jAccountsLeft = new JLabel();
+		jAccountBalanceLeft = new JLabel();
+		jContractsLeft = new JLabel();
+		jAssetsLeft = new JLabel();
+		jPriceDataLeft = new JLabel();
+
 		jUpdate = new JButton(DialoguesUpdate.get().update());
 		jUpdate.setActionCommand(UpdateDialogAction.UPDATE.name());
 		jUpdate.addActionListener(listener);
@@ -141,17 +160,34 @@ public class UpdateDialog extends JDialogCentered {
 						.addComponent(jAssets)
 						.addComponent(jPriceData)
 					)
+					.addGap(20)
 					.addGroup(layout.createParallelGroup()
-						.addComponent(jNextUpdateLabel, 110, 110, 110)
-						.addComponent(jMarketOrdersUpdate)
-						.addComponent(jJournalUpdate)
-						.addComponent(jTransactionsUpdate)
-						.addComponent(jIndustryJobsUpdate)
-						.addComponent(jAccountsUpdate)
-						.addComponent(jAccountBalanceUpdate)
-						.addComponent(jContractsUpdate)
-						.addComponent(jAssetsUpdate)
-						.addComponent(jPriceDataUpdate)
+						.addComponent(jNextUpdateLabel)
+						.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+								.addComponent(jMarketOrdersLeft)
+								.addComponent(jJournalLeft)
+								.addComponent(jTransactionsLeft)
+								.addComponent(jIndustryJobsLeft)
+								.addComponent(jAccountsLeft)
+								.addComponent(jAccountBalanceLeft)
+								.addComponent(jContractsLeft)
+								.addComponent(jAssetsLeft)
+								.addComponent(jPriceDataLeft)
+							)
+							.addGap(20)
+							.addGroup(layout.createParallelGroup()
+								.addComponent(jMarketOrdersUpdate)
+								.addComponent(jJournalUpdate)
+								.addComponent(jTransactionsUpdate)
+								.addComponent(jIndustryJobsUpdate)
+								.addComponent(jAccountsUpdate)
+								.addComponent(jAccountBalanceUpdate)
+								.addComponent(jContractsUpdate)
+								.addComponent(jAssetsUpdate)
+								.addComponent(jPriceDataUpdate)
+							)
+						)
 					)
 				)
 				.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
@@ -168,38 +204,47 @@ public class UpdateDialog extends JDialogCentered {
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMarketOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jMarketOrdersLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jMarketOrdersUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jJournal, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jJournalLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jJournalUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jTransactions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jTransactionsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jTransactionsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jIndustryJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jIndustryJobsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jIndustryJobsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAccounts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAccountsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAccountsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAccountBalance, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAccountBalanceLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAccountBalanceUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContractsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jContractsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jAssets, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jAssetsLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAssetsUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jPriceData, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jPriceDataLeft, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceDataUpdate, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addGap(30)
@@ -231,7 +276,7 @@ public class UpdateDialog extends JDialogCentered {
 		jCheckAll.setSelected(allChecked && !allDiabled);
 	}
 
-	public void update() {
+	private void update() {
 		Date accountsNextUpdate = null;
 		Date industryJobsNextUpdate = null;
 		Date marketOrdersNextUpdate = null;
@@ -276,15 +321,15 @@ public class UpdateDialog extends JDialogCentered {
 				}
 			}
 		}
-		setUpdateLabel(jMarketOrdersUpdate, jMarketOrders, marketOrdersNextUpdate, marketOrdersUpdateAll);
-		setUpdateLabel(jJournalUpdate, jJournal, journalNextUpdate, journalUpdateAll);
-		setUpdateLabel(jTransactionsUpdate, jTransactions, transactionsNextUpdate, transactionsUpdateAll);
-		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobs, industryJobsNextUpdate, industryJobsUpdateAll);
-		setUpdateLabel(jAccountsUpdate, jAccounts, accountsNextUpdate, accountsUpdateAll);
-		setUpdateLabel(jAccountBalanceUpdate, jAccountBalance, accountBalanceNextUpdate, accountBalanceUpdateAll);
-		setUpdateLabel(jContractsUpdate, jContracts, contractsNextUpdate, contractsUpdateAll);
-		setUpdateLabel(jAssetsUpdate, jAssets, assetsNextUpdate, assetsUpdateAll);
-		setUpdateLabel(jPriceDataUpdate, jPriceData, priceDataNextUpdate, true, false);
+		setUpdateLabel(jMarketOrdersUpdate, jMarketOrdersLeft, jMarketOrders, marketOrdersNextUpdate, marketOrdersUpdateAll);
+		setUpdateLabel(jJournalUpdate, jJournalLeft, jJournal, journalNextUpdate, journalUpdateAll);
+		setUpdateLabel(jTransactionsUpdate, jTransactionsLeft, jTransactions, transactionsNextUpdate, transactionsUpdateAll);
+		setUpdateLabel(jIndustryJobsUpdate, jIndustryJobsLeft, jIndustryJobs, industryJobsNextUpdate, industryJobsUpdateAll);
+		setUpdateLabel(jAccountsUpdate, jAccountsLeft, jAccounts, accountsNextUpdate, accountsUpdateAll);
+		setUpdateLabel(jAccountBalanceUpdate, jAccountBalanceLeft, jAccountBalance, accountBalanceNextUpdate, accountBalanceUpdateAll);
+		setUpdateLabel(jContractsUpdate, jContractsLeft, jContracts, contractsNextUpdate, contractsUpdateAll);
+		setUpdateLabel(jAssetsUpdate, jAssetsLeft, jAssets, assetsNextUpdate, assetsUpdateAll);
+		setUpdateLabel(jPriceDataUpdate, jPriceDataLeft, jPriceData, priceDataNextUpdate, true, false);
 		changed();
 		jUpdate.setEnabled(false);
 		jCheckAll.setEnabled(false);
@@ -299,24 +344,30 @@ public class UpdateDialog extends JDialogCentered {
 		setUpdatableButton(priceDataNextUpdate, false);
 	}
 
-	private void setUpdateLabel(final JLabel jLabel, final JCheckBox jCheckBox, final Date nextUpdate, final boolean updateAll) {
-		this.setUpdateLabel(jLabel, jCheckBox, nextUpdate, updateAll, true);
+	private void setUpdateLabel(final JLabel jUpdate, final JLabel jLeft, final JCheckBox jCheckBox, final Date nextUpdate, final boolean updateAll) {
+		this.setUpdateLabel(jUpdate, jLeft, jCheckBox, nextUpdate, updateAll, true);
 	}
 
-	private void setUpdateLabel(final JLabel jLabel, final JCheckBox jCheckBox, Date nextUpdate, final boolean updateAll, final boolean ignoreOnProxy) {
+	private void setUpdateLabel(final JLabel jUpdate, final JLabel jLeft, final JCheckBox jCheckBox, Date nextUpdate, final boolean updateAll, final boolean ignoreOnProxy) {
 		if (nextUpdate == null) {
 			nextUpdate = Settings.getNow();
 		}
 		if (Settings.get().isUpdatable(nextUpdate, ignoreOnProxy)) {
+			jLeft.setText("");
 			if (updateAll) {
-				jLabel.setText(DialoguesUpdate.get().nowAll());
+				jUpdate.setText(DialoguesUpdate.get().nowAll());
 			} else {
-				jLabel.setText(DialoguesUpdate.get().nowSome());
+				jUpdate.setText(DialoguesUpdate.get().nowSome());
 			}
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
-			jLabel.setText(Formater.weekdayAndTime(nextUpdate));
+			long time = nextUpdate.getTime() - Settings.getNow().getTime();
+			long minutes = time / (60 * 1000) % 60;
+			long hours = time / (60 * 60 * 1000) % 24;
+			long days = time / (24 * 60 * 60 * 1000);
+			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
+			jLeft.setText(DialoguesUpdate.get().timeLeft(days, hours, minutes));
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}
@@ -362,8 +413,17 @@ public class UpdateDialog extends JDialogCentered {
 
 	@Override
 	protected void windowShown() {
-		update();
 	}
+
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			update();
+		}
+		super.setVisible(b);
+	}
+
+	
 
 	@Override
 	protected void save() {
