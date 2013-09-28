@@ -87,6 +87,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -475,7 +476,7 @@ public class StockpileTab extends JMainTab {
 				float volume = ApiIdConverter.getVolume(TYPE_ID, true);
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
-				if (stockpile.isInventory()) {
+				if (stockpile.isAssets()) {
 					for (Asset asset : program.getAssetEventList()) {
 						if (asset.getItem().getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
@@ -513,6 +514,15 @@ public class StockpileTab extends JMainTab {
 							continue; //Ignore wrong typeID
 						}
 						item.updateIndustryJob(industryJob);
+					}
+				}
+				//Transactions
+				if (stockpile.isTransactions()) {
+					for (Transaction transaction : program.getTransactionsEventList()) {
+						if (transaction.getTypeID() != TYPE_ID) {
+							continue; //Ignore wrong typeID
+						}
+						item.updateTransactions(transaction);
 					}
 				}
 			}

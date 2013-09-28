@@ -402,7 +402,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			}
 			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
-				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, inventory, sellOrders, buyOrders, jobs);
+				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, inventory, sellOrders, buyOrders, jobs, false, false);
 				filters.add(filter);
 			}
 		//NEW
@@ -413,6 +413,14 @@ public final class SettingsReader extends AbstractXmlReader {
 				boolean filterInventory = AttributeGetters.getBoolean(filterNode, "inventory");
 				boolean filterSellOrders = AttributeGetters.getBoolean(filterNode, "sellorders");
 				boolean filterBuyOrders = AttributeGetters.getBoolean(filterNode, "buyorders");
+				boolean filterBuyTransactions = false;
+				if (AttributeGetters.haveAttribute(filterNode, "buytransactions")) {
+					filterBuyTransactions = AttributeGetters.getBoolean(filterNode, "buytransactions");
+				}
+				boolean filterSellTransactions = false;
+				if (AttributeGetters.haveAttribute(filterNode, "selltransactions")) {
+					filterSellTransactions = AttributeGetters.getBoolean(filterNode, "selltransactions");
+				}
 				boolean filterJobs = AttributeGetters.getBoolean(filterNode, "jobs");
 				//Location
 				long locationID = AttributeGetters.getLong(filterNode, "locationid");
@@ -441,7 +449,7 @@ public final class SettingsReader extends AbstractXmlReader {
 					int filterFlagID = AttributeGetters.getInt(flagNode, "flagid");
 					filterFlagIDs.add(filterFlagID);
 				}
-				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterInventory, filterSellOrders, filterBuyOrders, filterJobs);
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions);
 				filters.add(stockpileFilter);
 			}
 		//MULTIPLIER

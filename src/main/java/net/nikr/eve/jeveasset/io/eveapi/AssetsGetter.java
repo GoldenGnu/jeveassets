@@ -30,6 +30,7 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -67,6 +68,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
 		getOwner().setAssetNextUpdate(nextUpdate);
+		getOwner().setAssetLastUpdate(Settings.getNow());
 	}
 
 	@Override

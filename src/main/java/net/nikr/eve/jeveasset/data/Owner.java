@@ -40,6 +40,7 @@ public class Owner implements Comparable<Owner> {
 	private String name;
 	private long ownerID;
 	private boolean showOwner;
+	private Date assetLastUpdate;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
 	private Date marketOrdersNextUpdate;
@@ -61,6 +62,7 @@ public class Owner implements Comparable<Owner> {
 				owner.getName(),
 				owner.getOwnerID(),
 				owner.isShowOwner(),
+				owner.getAssetLastUpdate(),
 				owner.getAssetNextUpdate(),
 				owner.getBalanceNextUpdate(),
 				owner.getMarketOrdersNextUpdate(),
@@ -78,15 +80,15 @@ public class Owner implements Comparable<Owner> {
 	}
 
 	public Owner(final Account parentAccount, final String name, final long ownerID) {
-		this(parentAccount, name, ownerID, true, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
+		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
+	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
 		this.showOwner = showOwner;
-
+		this.assetLastUpdate = assetLastUpdate;
 		this.assetNextUpdate = assetNextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
@@ -110,6 +112,10 @@ public class Owner implements Comparable<Owner> {
 
 	public void setAssets(final List<Asset> assets) {
 		this.assets = assets;
+	}
+
+	public void setAssetLastUpdate(Date assetLastUpdate) {
+		this.assetLastUpdate = assetLastUpdate;
 	}
 
 	public void setAssetNextUpdate(final Date nextUpdate) {
@@ -190,6 +196,10 @@ public class Owner implements Comparable<Owner> {
 
 	public List<Asset> getAssets() {
 		return assets;
+	}
+
+	public Date getAssetLastUpdate() {
+		return assetLastUpdate;
 	}
 
 	public Date getAssetNextUpdate() {

@@ -144,6 +144,26 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getSellOrdersCountNow();
 		}
 	},
+	COUNT_NOW_BUY_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowBuyTransactions();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getBuyTransactionsCountNow();
+		}
+	},
+	COUNT_NOW_SELL_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowSellTransactions();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getSellTransactionsCountNow();
+		}
+	},
 	COUNT_NOW_JOBS(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

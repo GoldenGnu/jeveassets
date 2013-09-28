@@ -62,7 +62,7 @@ public class StockpileTest {
 				Collections.singletonList(0),
 				Collections.singletonList("Container"),
 				Collections.singletonList(0L),
-				true, true, true, true);
+				true, true, true, true, true, true);
 		Stockpile stockpile = new Stockpile("Name", Collections.singletonList(filter), 1);
 		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);
 		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);

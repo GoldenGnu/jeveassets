@@ -45,6 +45,7 @@ import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -200,6 +201,10 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
 			add(industryJob.getOutputTypeID(), industryJob, new StockItem(industryJob), claims, items);
 		}
+		//Transactions
+		for (Transaction transaction : program.getTransactionsEventList()) {
+			add(transaction.getTypeID(), transaction, new StockItem(transaction), claims, items);
+		}
 
 	//Claim items
 		for (Map.Entry<Integer, List<StockItem>> entry : items.entrySet()) {
@@ -344,6 +349,8 @@ class StockpileShoppingListDialog extends JDialogCentered {
 				return stockpileItem.matches((MarketOrder) object);
 			} else if (object instanceof IndustryJob) {
 				return stockpileItem.matches((IndustryJob) object);
+			} else if (object instanceof Transaction) {
+				return stockpileItem.matches((Transaction) object);
 			}
 			return false;
 		}
@@ -390,6 +397,9 @@ class StockpileShoppingListDialog extends JDialogCentered {
 
 		private StockItem(IndustryJob industryJob) {
 			this((industryJob.getRuns() * industryJob.getPortion()));
+		}
+		private StockItem(Transaction transaction) {
+			this(transaction.isBuy() ? transaction.getQuantity() : -transaction.getQuantity());
 		}
 
 		public StockItem(long count) {

@@ -22,6 +22,7 @@
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Owner;
@@ -110,6 +111,15 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 			return getQuantity() * getPrice();
 		} else {
 			return getQuantity() * -getPrice();
+		}
+	}
+
+	public boolean isAfterAssets() {
+		Date date = owner.getAssetLastUpdate();
+		if (date != null) {
+			return getTransactionDateTime().after(date);
+		} else {
+			return false;
 		}
 	}
 

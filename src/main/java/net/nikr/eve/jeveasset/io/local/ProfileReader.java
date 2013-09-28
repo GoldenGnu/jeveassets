@@ -164,6 +164,10 @@ public final class ProfileReader extends AbstractXmlReader {
 		int ownerID = AttributeGetters.getInt(node, "id");
 		Date assetsNextUpdate = new Date(AttributeGetters.getLong(node, "assetsnextupdate"));
 		Date balanceNextUpdate = new Date(AttributeGetters.getLong(node, "balancenextupdate"));
+		Date assetsLastUpdate = null;
+		if (AttributeGetters.haveAttribute(node, "assetslastupdate")) {
+			assetsLastUpdate = new Date(AttributeGetters.getLong(node, "assetslastupdate"));
+		}
 		boolean showAssets = true;
 		if (AttributeGetters.haveAttribute(node, "show")) {
 			showAssets = AttributeGetters.getBoolean(node, "show");
@@ -189,7 +193,7 @@ public final class ProfileReader extends AbstractXmlReader {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {

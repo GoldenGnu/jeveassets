@@ -42,7 +42,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String addStockpileTitle();
 	public abstract String addToNewStockpile();
 	public abstract String addToStockpile();
-	public abstract String buyOrders();
 	public abstract String cancel();
 	public abstract String clipboardStockpile();
 	public abstract String cloneStockpile();
@@ -78,10 +77,20 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String importIskPerHourInclude();
 	public abstract String importIskPerHourHelp();
 	public abstract String include();
-	public abstract String inventory();
+	public abstract String includeAssets();
+	public abstract String includeAssetsTip();
+	public abstract String includeBuyOrders();
+	public abstract String includeBuyOrdersTip();
+	public abstract String includeBuyTransactions();
+	public abstract String includeBuyTransactionsTip();
+	public abstract String includeJobs();
+	public abstract String includeJobsTip();
+	public abstract String includeSellOrders();
+	public abstract String includeSellOrdersTip();
+	public abstract String includeSellTransactions();
+	public abstract String includeSellTransactionsTip();
 	public abstract String item();
 	public abstract String items();
-	public abstract String jobs();
 	public abstract String location();
 	public abstract String multiple();
 	public abstract String multiplier();
@@ -99,7 +108,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String region();
 	public abstract String remove();
 	public abstract String selectStockpiles();
-	public abstract String sellOrders();
 	public abstract String shoppingList();
 	public abstract String shownValueNeeded();
 	public abstract String shownValueNow();
@@ -119,7 +127,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnCountNow();
 	public abstract String columnCountNowInventory();
 	public abstract String columnCountNowBuyOrders();
+	public abstract String columnCountNowBuyTransactions();
 	public abstract String columnCountNowSellOrders();
+	public abstract String columnCountNowSellTransactions();
 	public abstract String columnCountNowJobs();
 	public abstract String columnCountNeeded();
 	public abstract String columnCountMinimum();
