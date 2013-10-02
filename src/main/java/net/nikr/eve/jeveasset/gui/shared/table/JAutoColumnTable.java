@@ -41,6 +41,7 @@ import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
@@ -78,6 +79,8 @@ public class JAutoColumnTable extends JTable {
 		this.addPropertyChangeListener("tableHeader", listener);
 		this.getColumnModel().addColumnModelListener(listener);
 		this.addPropertyChangeListener("columnModel", listener);
+
+		CopyHandler.installCopyFormatter(this);
 
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());

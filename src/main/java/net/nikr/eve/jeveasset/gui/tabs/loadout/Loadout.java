@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.ModulePriceValue;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
