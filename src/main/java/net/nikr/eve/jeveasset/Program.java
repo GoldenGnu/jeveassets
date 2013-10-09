@@ -582,6 +582,17 @@ public class Program implements ActionListener {
 		if (MainMenuAction.CHANGELOG.name().equals(e.getActionCommand())) {
 			DesktopUtil.open(Settings.getPathChangeLog(), this);
 		}
+	//Links
+		if (MainMenuAction.LINK_BUGS.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs", this);
+		}
+		if (MainMenuAction.LINK_FEATURES.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("http://jeveassets.uservoice.com/", this);
+		}
+		if (MainMenuAction.LINK_HELP.name().equals(e.getActionCommand())) {
+			DesktopUtil.browse("https://code.google.com/p/jeveassets/wiki/ReadMe", this);
+		}
+	//Exit
 		if (MainMenuAction.EXIT_PROGRAM.name().equals(e.getActionCommand())) {
 			exit();
 		}
