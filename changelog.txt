@@ -16,7 +16,7 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
-_2.7.0_BETA_1___________________________________________________________________
+_2.7.0__________________________________________________________________________
 
 New Features:
 -New Tool: Wallet Journal
@@ -35,6 +35,7 @@ New Features:
 
 Changed:
 -Export greatly improved
+-Table Copy: Now use the shown value
 
 Bug Fix:
 -Stockpile shopping list could count the same item multiple times

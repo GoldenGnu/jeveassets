@@ -84,12 +84,12 @@ public class Program implements ActionListener {
 		TIMER
 	}
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
-	public static final String PROGRAM_VERSION = "2.7.0 BETA 1";
+	public static final String PROGRAM_VERSION = "2.7.0";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final String PROGRAM_UPDATE_URL = "http://eve.nikr.net/jeveassets/update.xml";
 	public static final String PROGRAM_HOMEPAGE = "http://eve.nikr.net/jeveasset";
-	public static final boolean PROGRAM_FORCE_PORTABLE = true;
-	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = true;
+	public static final boolean PROGRAM_FORCE_PORTABLE = false;
+	public static final boolean PROGRAM_SHOW_FEEDBACK_MSG = false;
 
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
