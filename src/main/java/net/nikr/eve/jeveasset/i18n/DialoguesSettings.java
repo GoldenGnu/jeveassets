@@ -73,8 +73,11 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeSystems();
 	public abstract String notConfigurable();
 	public abstract String price();
+	public abstract String priceBase();
 	public abstract String priceData();
 	public abstract String priceReprocessed();
+	public abstract String priceTech1();
+	public abstract String priceTech2();
 	public abstract String source();
 
 	// used in ProxySettingsPanel

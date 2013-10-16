@@ -45,9 +45,8 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 		super("Contracts", true, false);
 	}
 
-	@Override
 	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

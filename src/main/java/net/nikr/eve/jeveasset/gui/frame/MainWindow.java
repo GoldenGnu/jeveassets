@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class MainWindow implements WindowListener, ChangeListener {
+public class MainWindow {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
@@ -54,6 +54,9 @@ public class MainWindow implements WindowListener, ChangeListener {
 
 	public MainWindow(final Program program) {
 		this.program = program;
+
+		ListenerClass listener = new ListenerClass();
+
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
@@ -64,7 +67,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		icons.add(Images.MISC_ASSETS_32.getImage());
 		icons.add(Images.MISC_ASSETS_64.getImage());
 		jFrame.setIconImages(icons);
-		jFrame.addWindowListener(this);
+		jFrame.addWindowListener(listener);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JPanel jPanel = new JPanel();
@@ -78,7 +81,7 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jFrame.setJMenuBar(mainMenu);
 
 		jTabbedPane = new JTabbedPane();
-		jTabbedPane.addChangeListener(this);
+		jTabbedPane.addChangeListener(listener);
 
 		statusPanel = new StatusPanel(program);
 		layout.setHorizontalGroup(
@@ -227,32 +230,34 @@ public class MainWindow implements WindowListener, ChangeListener {
 		}
 	}
 
-	@Override
-	public void windowOpened(final WindowEvent e) { }
+	private class ListenerClass implements WindowListener, ChangeListener {
+		@Override
+		public void windowOpened(final WindowEvent e) { }
 
-	@Override
-	public void windowClosing(final WindowEvent e) {
-		program.exit();
-	}
+		@Override
+		public void windowClosing(final WindowEvent e) {
+			program.exit();
+		}
 
-	@Override
-	public void windowClosed(final WindowEvent e) { }
+		@Override
+		public void windowClosed(final WindowEvent e) { }
 
-	@Override
-	public void windowIconified(final WindowEvent e) { }
+		@Override
+		public void windowIconified(final WindowEvent e) { }
 
-	@Override
-	public void windowDeiconified(final WindowEvent e) { }
+		@Override
+		public void windowDeiconified(final WindowEvent e) { }
 
-	@Override
-	public void windowActivated(final WindowEvent e) { }
+		@Override
+		public void windowActivated(final WindowEvent e) { }
 
-	@Override
-	public void windowDeactivated(final WindowEvent e) { }
+		@Override
+		public void windowDeactivated(final WindowEvent e) { }
 
-	@Override
-	public void stateChanged(final ChangeEvent e) {
-		program.tabChanged();
+		@Override
+		public void stateChanged(final ChangeEvent e) {
+			program.tabChanged();
+		}
 	}
 
 	private class TabCloseButton extends JPanel {

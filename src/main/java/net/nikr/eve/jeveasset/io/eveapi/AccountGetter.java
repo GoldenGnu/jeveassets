@@ -44,14 +44,12 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		super("Accounts", false, true);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
-		super.load(updateTask, forceUpdate, account);
+		super.loadAccount(updateTask, forceUpdate, account);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
@@ -100,7 +98,11 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 				fails++;
 			}
 			max++;
-			if (!getAccount().isWalletTransactions()) {
+			if (!getAccount().isJournal()) {
+				fails++;
+			}
+			max++;
+			if (!getAccount().isTransactions()) {
 				fails++;
 			}
 			max++;

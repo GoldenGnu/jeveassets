@@ -39,7 +39,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return from.isShowAssets();
+			return from.isShowOwner();
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
@@ -50,7 +50,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			if ((editedValue instanceof Boolean) && (baseObject instanceof Owner)) {
 				Owner owner = (Owner) baseObject;
 				boolean value = (Boolean) editedValue;
-				owner.setShowAssets(value);
+				owner.setShowOwner(value);
 				return owner;
 			}
 			return null;
@@ -116,14 +116,24 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return new YesNo(from.getParentAccount().isMarketOrders());
 		}
 	},
-	WALLET_TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
+	TRANSACTIONS(YesNo.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return DialoguesAccount.get().tableFormatWalletTransactions();
+			return DialoguesAccount.get().tableFormatTransactions();
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return new YesNo(from.getParentAccount().isWalletTransactions());
+			return new YesNo(from.getParentAccount().isTransactions());
+		}
+	},
+	JOURNAL(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatJournal();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isJournal());
 		}
 	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
@@ -167,6 +177,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		return null;
 	}
 
+	//FIXME - - > Account Table Format: Move inner classes to containers
 	public class YesNo implements Comparable<YesNo> {
 
 		private boolean b;

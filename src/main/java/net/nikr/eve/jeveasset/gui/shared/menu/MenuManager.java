@@ -35,19 +35,22 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.data.types.TagsType;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 
 
 public class MenuManager<Q> {
 
 	public enum MenuEnum {
 		ASSET_FILTER,
+		TAGS,
 		STOCKPILE,
 		LOOKUP,
 		PRICE,
@@ -60,6 +63,7 @@ public class MenuManager<Q> {
 	private boolean locationSupported = false;
 	private boolean assets = false;
 	private boolean stockpile = false;
+	private boolean tagsSupported = false;
 
 	private final Map<MenuEnum, JAutoMenu<Q>> mainMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
 	private final Map<MenuEnum, JAutoMenu<Q>> tablePopupMenu =  new EnumMap<MenuEnum, JAutoMenu<Q>>(MenuEnum.class);
@@ -92,14 +96,15 @@ public class MenuManager<Q> {
 		this.program = program;
 		this.tableMenu = tableMenu;
 		this.jTable = jTable;
-		assets = Asset.class.isAssignableFrom(clazz);
+		assets = Asset.class.isAssignableFrom(clazz) && !TreeAsset.class.isAssignableFrom(clazz);
 		stockpile = Stockpile.StockpileItem.class.isAssignableFrom(clazz);
 		locationSupported = LocationType.class.isAssignableFrom(clazz);
 		itemSupported = ItemType.class.isAssignableFrom(clazz);
+		tagsSupported = TagsType.class.isAssignableFrom(clazz);
 		priceSupported = PriceType.class.isAssignableFrom(clazz) || Item.class.isAssignableFrom(clazz);
 		createCashe(program, mainMenu);
 		createCashe(program, tablePopupMenu);
-		TableMenuListener listener  = new TableMenuListener();
+		ListenerClass listener  = new ListenerClass();
 		jTable.addMouseListener(listener);
 		jTable.getTableHeader().addMouseListener(listener);
 		jTable.getSelectionModel().addListSelectionListener(listener);
@@ -108,15 +113,15 @@ public class MenuManager<Q> {
 	}
 
 	public final void createCashe(final Program program, final Map<MenuEnum, JAutoMenu<Q>> menus) {
-	//ASSET FILTER - OK
+	//ASSET FILTER
 		if (!assets && (itemSupported || locationSupported)) {
 			menus.put(MenuEnum.ASSET_FILTER, new JMenuAssetFilter<Q>(program));
 		}
-	//STOCKPILE (Add To) - OK
+	//STOCKPILE (Add To)
 		if (!stockpile && itemSupported) {
 			menus.put(MenuEnum.STOCKPILE, new JMenuStockpile<Q>(program));
 		}
-	//LOOKUP - OK
+	//LOOKUP
 		if (itemSupported || locationSupported) {
 			menus.put(MenuEnum.LOOKUP, new JMenuLookup<Q>(program));
 		}
@@ -127,7 +132,10 @@ public class MenuManager<Q> {
 		if (assets) {
 			menus.put(MenuEnum.NAME, new JMenuName<Q>(program));
 		}
-	//REPROCESSED - OK
+		if (tagsSupported) {
+			menus.put(MenuEnum.TAGS, new JMenuTags<Q>(program));
+		}
+	//REPROCESSED
 		if (itemSupported) {
 			menus.put(MenuEnum.REPROCESSED, new JMenuReprocessed<Q>(program));
 		}
@@ -169,7 +177,7 @@ public class MenuManager<Q> {
 			jComponent.add(jAssetFilter);
 			notEmpty = true;
 			if (jAssetFilter instanceof JMenuAssetFilter) {
-				JMenuAssetFilter jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
+				JMenuAssetFilter<?> jMenuAssetFilter = (JMenuAssetFilter) jAssetFilter;
 				jMenuAssetFilter.setTool(tableMenu);
 			}
 		}
@@ -185,7 +193,7 @@ public class MenuManager<Q> {
 			jComponent.add(jLookup);
 			notEmpty = true;
 			if (jLookup instanceof JMenuLookup) {
-				JMenuLookup jMenuLookup = (JMenuLookup) jLookup;
+				JMenuLookup<?> jMenuLookup = (JMenuLookup) jLookup;
 				jMenuLookup.setTool(tableMenu);
 			}
 		}
@@ -198,6 +206,11 @@ public class MenuManager<Q> {
 		JAutoMenu<Q> jName = menus.get(MenuEnum.NAME);
 		if (jName != null) {
 			jComponent.add(jName);
+			notEmpty = true;
+		}
+		JAutoMenu<Q> jTags = menus.get(MenuEnum.TAGS);
+		if (jTags != null) {
+			jComponent.add(jTags);
 			notEmpty = true;
 		}
 	//REPROCESSED
@@ -273,13 +286,17 @@ public class MenuManager<Q> {
 
 			//Clicked outside selection, select clicked cell
 			if (!clickInRowsSelection || !clickInColumnsSelection) {
-				jSelectTable.setRowSelectionInterval(jSelectTable.rowAtPoint(e.getPoint()), jSelectTable.rowAtPoint(e.getPoint()));
-				jSelectTable.setColumnSelectionInterval(jSelectTable.columnAtPoint(e.getPoint()), jSelectTable.columnAtPoint(e.getPoint()));
+				int row = jSelectTable.rowAtPoint(e.getPoint());
+				int column = jSelectTable.columnAtPoint(e.getPoint());
+				if (row >= 0 && column >= 0) {
+					jSelectTable.setRowSelectionInterval(row, row);
+					jSelectTable.setColumnSelectionInterval(column, column);
+				}
 			}
 		}
 	}
 
-	private class TableMenuListener implements MouseListener, ListSelectionListener {
+	private class ListenerClass implements MouseListener, ListSelectionListener {
 
 		int[] selectedColumns;
 		int[] selectedRows;

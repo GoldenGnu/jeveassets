@@ -31,7 +31,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -41,13 +40,17 @@ import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell.JSeparatorPanel;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.FloatCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 
 
@@ -61,20 +64,23 @@ public class JAutoColumnTable extends JTable {
 	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
 	private boolean autoResizeLock = false;
+	private final Set<Class<?>> disableColumnResizeCache = new HashSet<Class<?>>();
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
 		this.program = program;
 
 		//Listeners
-		ModelListener modelListener = new ModelListener();
-		this.addHierarchyListener(modelListener);
-		this.getModel().addTableModelListener(modelListener);
-		this.addPropertyChangeListener("model", modelListener);
-		this.getTableHeader().addMouseListener(modelListener);
-		this.addPropertyChangeListener("tableHeader", modelListener);
-		this.getColumnModel().addColumnModelListener(modelListener);
-		this.addPropertyChangeListener("columnModel", modelListener);
+		ListenerClass listener = new ListenerClass();
+		this.addHierarchyListener(listener);
+		this.getModel().addTableModelListener(listener);
+		this.addPropertyChangeListener("model", listener);
+		this.getTableHeader().addMouseListener(listener);
+		this.addPropertyChangeListener("tableHeader", listener);
+		this.getColumnModel().addColumnModelListener(listener);
+		this.addPropertyChangeListener("columnModel", listener);
+
+		CopyHandler.installCopyFormatter(this);
 
 		//Renders
 		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
@@ -84,6 +90,7 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
 
 		autoResizeColumns();
 
@@ -94,7 +101,7 @@ public class JAutoColumnTable extends JTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 
-		if (component instanceof JPanel) { //Ignore Separator Panels
+		if (component instanceof JSeparatorPanel) { //Ignore Separator Panels
 			return component;
 		}
 
@@ -164,6 +171,14 @@ public class JAutoColumnTable extends JTable {
 
 	public Map<String, Integer> getColumnsWidth() {
 		return columnsWidth;
+	}
+
+	public void disableColumnResizeCache(Class<?> columnClass) {
+		disableColumnResizeCache.add(columnClass);
+	}
+
+	public void enableColumnResizeCache(Class<?> columnClass) {
+		disableColumnResizeCache.remove(columnClass);
 	}
 
 	private JTable getTable() {
@@ -324,8 +339,9 @@ public class JAutoColumnTable extends JTable {
 			if (rowValue == null) { //Ignore null
 				continue;
 			}
+			boolean useCache = !disableColumnResizeCache.contains(rowValue.getClass());
 			final int key = rowValue.toString().hashCode(); //value hash
-			if (rowsWidth.containsKey(key)) { //Load row width
+			if (rowsWidth.containsKey(key) && useCache) { //Load row width
 				maxWidth = Math.max(maxWidth, rowsWidth.get(key));
 			} else { //Calculate the row width
 				renderer = jTable.getCellRenderer(i, columnIndex);
@@ -335,7 +351,9 @@ public class JAutoColumnTable extends JTable {
 				}
 				component = renderer.getTableCellRendererComponent(jTable, jTable.getValueAt(i, columnIndex), false, false, i, columnIndex);
 				int width = component.getPreferredSize().width;
-				rowsWidth.put(key, width);
+				if (useCache) {
+					rowsWidth.put(key, width);
+				}
 				maxWidth = Math.max(maxWidth, width);
 			}
 		}
@@ -361,7 +379,7 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 
-	private class ModelListener implements TableModelListener, ComponentListener,
+	private class ListenerClass implements TableModelListener, ComponentListener,
 			PropertyChangeListener, HierarchyListener, TableColumnModelListener, MouseListener {
 
 		private boolean columnMoved = false;

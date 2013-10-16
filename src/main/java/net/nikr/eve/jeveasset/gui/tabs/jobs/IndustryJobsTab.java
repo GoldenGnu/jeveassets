@@ -21,18 +21,25 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -49,10 +56,12 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab implements ListEventListener<IndustryJob>, TableMenu<IndustryJob> {
+public class IndustryJobsTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 	private JLabel jInventionSuccess;
@@ -70,17 +79,18 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	public IndustryJobsTab(final Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
 		eventList = program.getIndustryJobsEventList();
-		//Filter
-		filterList = new FilterList<IndustryJob>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
+		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(eventList);
+		//Filter
+		filterList = new FilterList<IndustryJob>(sortedList);
+		filterList.addListEventListener(listener);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -88,7 +98,7 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,14 +121,14 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
 
 		//Menu
-		installMenu(program, this, jTable, IndustryJob.class);
+		installMenu(program, new JobsTableMenu(), jTable, IndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -136,47 +146,51 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 	}
 
 	@Override
-	public MenuData<IndustryJob> getMenuData() {
-		return new MenuData<IndustryJob>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	@Override
-	public void listChanged(final ListEvent<IndustryJob> listChanges) {
-		int count = 0;
-		double success = 0;
-		for (IndustryJob industryJob : filterList) {
-			if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
-				count++;
-				if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
-					success++;
+	private class JobsTableMenu implements TableMenu<IndustryJob> {
+		@Override
+		public MenuData<IndustryJob> getMenuData() {
+			return new MenuData<IndustryJob>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.industryJob(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<IndustryJob> {
+		@Override
+		public void listChanged(final ListEvent<IndustryJob> listChanges) {
+			int count = 0;
+			double success = 0;
+			for (IndustryJob industryJob : filterList) {
+				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
+					count++;
+					if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
+						success++;
+					}
 				}
 			}
-		}
-		if (count <= 0) {
-			jInventionSuccess.setText(Formater.percentFormat(0.0));
-		} else {
-			jInventionSuccess.setText(Formater.percentFormat(success / count));
+			if (count <= 0) {
+				jInventionSuccess.setText(Formater.percentFormat(0.0));
+			} else {
+				jInventionSuccess.setText(Formater.percentFormat(success / count));
+			}
 		}
 	}
 
@@ -196,42 +210,17 @@ public class IndustryJobsTab extends JMainTab implements ListEventListener<Indus
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public Enum[] getColumns() {
-			return IndustryJobTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getEnumColumns() {
+		protected List<EnumTableColumn<IndustryJob>> getColumns() {
 			return columnsAsList(IndustryJobTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getEnumShownColumns() {
+		protected List<EnumTableColumn<IndustryJob>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<IndustryJob>>(tableFormat.getShownColumns());
 		}
 	}

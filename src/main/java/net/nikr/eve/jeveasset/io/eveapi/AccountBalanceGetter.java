@@ -43,9 +43,8 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 		super("Account Balance", true, false);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override

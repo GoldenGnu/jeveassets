@@ -26,7 +26,6 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -50,7 +49,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.i18n.TabsItems;
 
 
-public class ItemsTab extends JMainTab implements TableMenu<Item> {
+public class ItemsTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 
@@ -71,19 +70,20 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		tableFormat = new EnumTableFormatAdaptor<ItemTableFormat, Item>(ItemTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Item>();
-		//Filter
-		filterList = new FilterList<Item>(eventList);
 		//Sorting (per column)
-		SortedList<Item> sortedList = new SortedList<Item>(filterList);
+		SortedList<Item> sortedList = new SortedList<Item>(eventList);
+		//Filter
+		filterList = new FilterList<Item>(sortedList);
+		
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAutoColumnTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -94,13 +94,13 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		filterControl = new ItemsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Item.class);
+		installMenu(program, new ItemTableMenu(), jTable, Item.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -123,31 +123,30 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 	}
 
 	@Override
-	public MenuData<Item> getMenuData() {
-		return new MenuData<Item>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Items Tool
-		//JMenuInfo.items(...);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
+
+	private class ItemTableMenu implements TableMenu<Item> {
+		@Override
+		public MenuData<Item> getMenuData() {
+			return new MenuData<Item>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
 
 	public static class ItemsFilterControl extends FilterControl<Item> {
 
@@ -165,43 +164,17 @@ public class ItemsTab extends JMainTab implements TableMenu<Item> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			ItemTableFormat format = (ItemTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			ItemTableFormat format = (ItemTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return ItemTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return ItemTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumColumns() {
+		protected List<EnumTableColumn<Item>> getColumns() {
 			return columnsAsList(ItemTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Item>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Item>>(tableFormat.getShownColumns());
 		}
 	}

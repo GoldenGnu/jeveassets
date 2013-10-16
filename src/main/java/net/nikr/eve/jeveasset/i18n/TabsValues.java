@@ -41,6 +41,7 @@ public abstract class TabsValues extends Bundle {
 	public abstract String columnBestShipFitted();
 	public abstract String columnEscrows();
 	public abstract String columnEscrowsToCover();
+	public abstract String columnManufacturing();
 	public abstract String columnOwner();
 	public abstract String columnSellOrders();
 	public abstract String columnTotal();

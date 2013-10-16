@@ -27,35 +27,57 @@ import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<Material> {
+public class MaterialsTab extends JMainTab {
 
-	private static final String ACTION_SELECTED = "ACTION_SELECTED";
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private enum MaterialsAction {
+		SELECTED,
+		COLLAPSE,
+		EXPAND,
+		EXPORT
+	}
 
 	//GUI
 	private JComboBox jOwners;
+	private JButton jExport;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JCheckBox jPiMaterial;
@@ -67,36 +89,61 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 	private SeparatorList<Material> separatorList;
 	private DefaultEventSelectionModel<Material> selectionModel;
 	private DefaultEventTableModel<Material> tableModel;
+	private EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
+
+	//Dialog
+	ExportDialog<Material> exportDialog;
+
+	public static final String NAME = "materials"; //Not to be changed!
 
 	public MaterialsTab(final Program program) {
 		super(program, TabsMaterials.get().materials(), Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
 		//Category: Material
 
+		ListenerClass listener = new ListenerClass();
+
 		jPiMaterial = new JCheckBox(TabsMaterials.get().includePI());
-		jPiMaterial.setActionCommand(ACTION_SELECTED);
-		jPiMaterial.addActionListener(this);
+		jPiMaterial.setActionCommand(MaterialsAction.SELECTED.name());
+		jPiMaterial.addActionListener(listener);
 
 		jOwners = new JComboBox();
-		jOwners.setActionCommand(ACTION_SELECTED);
-		jOwners.addActionListener(this);
+		jOwners.setActionCommand(MaterialsAction.SELECTED.name());
+		jOwners.addActionListener(listener);
+		
+		JToolBar jToolBarLeft = new JToolBar();
+		jToolBarLeft.setFloatable(false);
+		jToolBarLeft.setRollover(true);
 
-		jCollapse = new JButton(TabsMaterials.get().collapse());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
-		jCollapse.addActionListener(this);
+		jToolBarLeft.addSeparator();
 
-		jExpand = new JButton(TabsMaterials.get().expand());
-		jExpand.setActionCommand(ACTION_EXPAND);
-		jExpand.addActionListener(this);
+		jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExport.setActionCommand(MaterialsAction.EXPORT.name());
+		jExport.addActionListener(listener);
+		addToolButton(jToolBarLeft, jExport);
+
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+
+		jCollapse = new JButton(TabsMaterials.get().collapse(), Images.MISC_COLLAPSED.getIcon());
+		jCollapse.setActionCommand(MaterialsAction.COLLAPSE.name());
+		jCollapse.addActionListener(listener);
+		addToolButton(jToolBarRight, jCollapse);
+
+		jExpand = new JButton(TabsMaterials.get().expand(), Images.MISC_EXPANDED.getIcon());
+		jExpand.setActionCommand(MaterialsAction.EXPAND.name());
+		jExpand.addActionListener(listener);
+		addToolButton(jToolBarRight, jExpand);
 
 		//Table Format
-		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Material>();
 		//Separator
 		separatorList = new SeparatorList<Material>(eventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
-		tableModel = EventModels.createTableModel(separatorList, materialTableFormat);
+		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JSeparatorTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
@@ -107,19 +154,26 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, null);
+		installTable(jTable, NAME);
 		//Scroll
 		jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Material.class);
+		installMenu(program, new MaterialTableMenu(), jTable, Material.class);
 
+		List<EnumTableColumn<Material>> enumColumns = new ArrayList<EnumTableColumn<Material>>();
+		enumColumns.addAll(Arrays.asList(MaterialExtenedTableFormat.values()));
+		enumColumns.addAll(Arrays.asList(MaterialTableFormat.values()));
+		exportDialog = new ExportDialog<Material>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), Collections.singletonList(eventList), enumColumns);
+
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jOwners, 200, 200, 200)
-					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addComponent(jPiMaterial)
+					.addComponent(jToolBarLeft)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
@@ -127,40 +181,31 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jOwners, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPiMaterial, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
-	@Override
-	public MenuData<Material> getMenuData() {
-		return new MenuData<Material>(selectionModel.getSelected());
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
+		addToolButton(jToolBar, jButton, 90);
 	}
 
-	@Override
-	public JMenu getFilterMenu() {
-		return null;
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width) {
+		if (width > 0) {
+			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+		}
+		jButton.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBar.add(jButton);
 	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return null;
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
 		if (!program.getOwners(false).isEmpty()) {
+			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 			jOwners.setEnabled(true);
@@ -172,6 +217,7 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 				jOwners.setSelectedIndex(0);
 			}
 		} else {
+			jExport.setEnabled(false);
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jOwners.setEnabled(false);
@@ -274,9 +320,11 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 		jTable.loadExpandedState();
 
 		if (!materials.isEmpty()) {
+			jExport.setEnabled(true);
 			jExpand.setEnabled(true);
 			jCollapse.setEnabled(true);
 		} else {
+			jExport.setEnabled(false);
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 		}
@@ -284,16 +332,69 @@ public class MaterialsTab extends JMainTab implements ActionListener, TableMenu<
 		afterUpdateData();
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_SELECTED.equals(e.getActionCommand())) {
-			updateTable();
+	private class MaterialTableMenu implements TableMenu<Material> {
+		@Override
+		public MenuData<Material> getMenuData() {
+			return new MenuData<Material>(selectionModel.getSelected());
 		}
-		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-			jTable.expandSeparators(false);
+
+		@Override
+		public JMenu getFilterMenu() {
+			return null;
 		}
-		if (ACTION_EXPAND.equals(e.getActionCommand())) {
-			jTable.expandSeparators(true);
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.material(jComponent, selectionModel.getSelected(), eventList);
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (MaterialsAction.SELECTED.name().equals(e.getActionCommand())) {
+				updateTable();
+			}
+			if (MaterialsAction.COLLAPSE.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(false);
+			}
+			if (MaterialsAction.EXPAND.name().equals(e.getActionCommand())) {
+				jTable.expandSeparators(true);
+			}
+			if (MaterialsAction.EXPORT.name().equals(e.getActionCommand())) {
+				exportDialog.setVisible(true);
+			}
+		}
+	}
+
+	class MaterialsFilterControl extends ExportFilterControl<Material> {
+
+		@Override
+		protected EnumTableColumn<?> valueOf(final String column) {
+			try {
+				return MaterialTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			try {
+				return MaterialExtenedTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			throw new RuntimeException("Fail to parse filter column: " + column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<Material>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
 		}
 	}
 }

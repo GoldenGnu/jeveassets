@@ -32,10 +32,11 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
-public class AboutDialog extends JDialogCentered implements ActionListener {
+public class AboutDialog extends JDialogCentered {
 
-	private static final String ACTION_ABOUT_CLOSE = "ACTION_ABOUT_CLOSE";
-	private static final String ACTION_UPDATE = "ACTION_UPDATE";
+	private enum AboutAction {
+		CLOSE, UPDATE
+	}
 
 	private JButton jClose;
 	private JLockWindow jLockWindow;
@@ -44,6 +45,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener {
 		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
 		jLockWindow = new JLockWindow(this.getDialog());
+		ListenerClass listener = new ListenerClass();
 
 		JLabel jIcon = new JLabel();
 		jIcon.setIcon(Images.MISC_ASSETS_64.getIcon());
@@ -64,6 +66,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener {
 				+ "&nbsp;TryfanMan<br>"
 				+ "&nbsp;Jan<br>"
 				+ "&nbsp;Ima Sohmbadi<br>"
+				+ "&nbsp;Saulvin<br>"
 				+ "<br>"
 				+ "<b>License</b><br>"
 				+ "&nbsp;<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License 2.0</a><br>"
@@ -106,12 +109,12 @@ public class AboutDialog extends JDialogCentered implements ActionListener {
 				+ "&nbsp;jEveAssets is heavily based on the user interface in <a href=\"http://wiki.heavyduck.com/EveAssetManager\">EVE Asset Manager</a>");
 
 		jClose = new JButton(DialoguesAbout.get().close());
-		jClose.setActionCommand(ACTION_ABOUT_CLOSE);
-		jClose.addActionListener(this);
+		jClose.setActionCommand(AboutAction.CLOSE.name());
+		jClose.addActionListener(listener);
 
 		JButton jCheckUpdates = new JButton(DialoguesAbout.get().updates());
-		jCheckUpdates.setActionCommand(ACTION_UPDATE);
-		jCheckUpdates.addActionListener(this);
+		jCheckUpdates.setActionCommand(AboutAction.UPDATE.name());
+		jCheckUpdates.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -185,13 +188,15 @@ public class AboutDialog extends JDialogCentered implements ActionListener {
 	@Override
 	protected void save() { }
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ABOUT_CLOSE.equals(e.getActionCommand())) {
-			super.setVisible(false);
-		}
-		if (ACTION_UPDATE.equals(e.getActionCommand())) {
-			jLockWindow.show(new CheckProgramUpdate(), DialoguesAbout.get().updatesInProgress());
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (AboutAction.CLOSE.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
+			if (AboutAction.UPDATE.name().equals(e.getActionCommand())) {
+				jLockWindow.show(new CheckProgramUpdate(), DialoguesAbout.get().updatesInProgress());
+			}
 		}
 	}
 

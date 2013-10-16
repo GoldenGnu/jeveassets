@@ -37,11 +37,13 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JDialogCentered implements ActionListener {
+public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extends JDialogCentered {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_CHECK_ALL = "ACTION_CHECK_ALL";
+	private enum EditColumnsAction {
+		OK,
+		CANCEL,
+		CHECK_ALL
+	}
 
 	private DefaultListModel listModel = new DefaultListModel();
 	private JList jList;
@@ -55,6 +57,8 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 	public EditColumnsDialog(final Program program, final EnumTableFormatAdaptor<T, Q> adaptor) {
 		super(program, GuiShared.get().tableColumnsTitle(), Images.TABLE_COLUMN_SHOW.getImage());
 		this.adaptor = adaptor;
+
+		ListenerClass listener = new ListenerClass();
 
 		jInfo = new JTextArea();
 		jInfo.setFont(jPanel.getFont());
@@ -92,16 +96,16 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		});
 
 		jCancel = new JButton(GuiShared.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(EditColumnsAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		jAll = new JCheckBox(GuiShared.get().checkAll());
-		jAll.setActionCommand(ACTION_CHECK_ALL);
-		jAll.addActionListener(this);
+		jAll.setActionCommand(EditColumnsAction.CHECK_ALL.name());
+		jAll.addActionListener(listener);
 
 		jOk = new JButton(GuiShared.get().ok());
-		jOk.setActionCommand(ACTION_OK);
-		jOk.addActionListener(this);
+		jOk.setActionCommand(EditColumnsAction.OK.name());
+		jOk.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -181,21 +185,23 @@ public class EditColumnsDialog<T extends Enum<T> & EnumTableColumn<Q>, Q> extend
 		setVisible(false);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
-		}
-		if (ACTION_CHECK_ALL.equals(e.getActionCommand())) {
-			boolean check = jAll.isSelected();
-			for (int i = 0; i < listModel.size(); i++) {
-				SimpleColumn column = (SimpleColumn) listModel.getElementAt(i);
-				column.setShown(check);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (EditColumnsAction.OK.name().equals(e.getActionCommand())) {
+				save();
 			}
-			jList.repaint();
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			setVisible(false);
+			if (EditColumnsAction.CHECK_ALL.name().equals(e.getActionCommand())) {
+				boolean check = jAll.isSelected();
+				for (int i = 0; i < listModel.size(); i++) {
+					SimpleColumn column = (SimpleColumn) listModel.getElementAt(i);
+					column.setShown(check);
+				}
+				jList.repaint();
+			}
+			if (EditColumnsAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
 	}
 

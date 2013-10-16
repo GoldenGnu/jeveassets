@@ -28,19 +28,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.IndustryJob;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -50,6 +51,26 @@ public class JMenuInfo {
 	private static Border border = null;
 
 	private JMenuInfo() {}
+
+	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
+		List<InfoItem> items = new ArrayList<InfoItem>();
+		for (TreeAsset asset : list) {
+			boolean add = true;
+			for (TreeAsset tree : asset.getTree()) {
+				if (tree.isItem()) { //Container
+					continue;
+				}
+				if (list.contains(tree)) {
+					add = false;
+					break;
+				}
+			}
+			if (add) {
+				items.add(asset);
+			}
+		}
+		infoItem(jComponent, items);
+	}
 
 	public static void asset(final JComponent jComponent, final List<Asset> list) {
 		infoItem(jComponent, new ArrayList<InfoItem>(list));
@@ -120,7 +141,7 @@ public class JMenuInfo {
 		}
 	}
 
-	public static void wallet(final JComponent jComponent, final List<WalletTransaction> list) {
+	public static void transctions(final JComponent jComponent, final List<Transaction> transactions) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -128,11 +149,11 @@ public class JMenuInfo {
 
 			double sellTxTotal = 0;
 			double buyTxTotal = 0;
-			for (WalletTransaction walletTransaction : list) {
-				if (walletTransaction.getTransactionType().equals("sell")) { //Sell
-					sellTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+			for (Transaction transaction : transactions) {
+				if (transaction.getTransactionType().equals("sell")) { //Sell
+					sellTxTotal += transaction.getPrice() * transaction.getQuantity();
 				} else { //Buy
-					buyTxTotal += walletTransaction.getPrice() * walletTransaction.getQuantity();
+					buyTxTotal += transaction.getPrice() * transaction.getQuantity();
 				}
 			}
 			createMenuItem(jPopupMenu, Formater.iskFormat(sellTxTotal), GuiShared.get().selectionOrdersSell(), Images.ORDERS_SELL.getIcon());
@@ -292,7 +313,7 @@ public class JMenuInfo {
 		return new MaterialTotal(totalCount, totalValue, averageValue);
 	}
 
-	public static void module(final JComponent jComponent, final List<Module> selected) {
+	public static void module(final JComponent jComponent, final List<Loadout> selected) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -301,13 +322,13 @@ public class JMenuInfo {
 			long totalCount = 0;
 			double totalValue = 0;
 			double averageValue = 0;
-			Module totalShip = null;
-			Module totalModule = null;
-			Module totalAll = null;
+			Loadout totalShip = null;
+			Loadout totalModule = null;
+			Loadout totalAll = null;
 			for (int i = 0; i < selected.size(); i++) {
 				Object object = selected.get(i);
-				if (object instanceof Module) {
-					Module module = (Module) object;
+				if (object instanceof Loadout) {
+					Loadout module = (Loadout) object;
 					if (module.getName().equals(TabsLoadout.get().totalShip())) {
 						totalShip = module;
 					} else if (module.getName().equals(TabsLoadout.get().totalModules())) {

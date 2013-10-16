@@ -27,24 +27,32 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 
 
 public class Owner implements Comparable<Owner> {
 	private String name;
 	private long ownerID;
-	private boolean showAssets;
+	private boolean showOwner;
+	private Date assetLastUpdate;
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
 	private Date marketOrdersNextUpdate;
-	private Date walletTransactionsNextUpdate;
+	private Date journalNextUpdate;
+	private Date transactionsNextUpdate;
 	private Date industryJobsNextUpdate;
 	private Date contractsNextUpdate;
 	private Account parentAccount;
 	private List<AccountBalance> accountBalances;
 	private List<MarketOrder> marketOrders;
-	private List<WalletTransaction> walletTransactions;
+	private List<Transaction> transactions;
+	private List<Journal> journal;
 	private List<IndustryJob> industryJobs;
 	private Map<Contract, List<ContractItem>> contracts;
 	private List<Asset> assets;
@@ -53,11 +61,13 @@ public class Owner implements Comparable<Owner> {
 		this(parentAccount,
 				owner.getName(),
 				owner.getOwnerID(),
-				owner.isShowAssets(),
+				owner.isShowOwner(),
+				owner.getAssetLastUpdate(),
 				owner.getAssetNextUpdate(),
 				owner.getBalanceNextUpdate(),
 				owner.getMarketOrdersNextUpdate(),
-				owner.getWalletTransactionsNextUpdate(),
+				owner.getJournalNextUpdate(),
+				owner.getTransactionsNextUpdate(),
 				owner.getIndustryJobsNextUpdate(),
 				owner.getContractsNextUpdate());
 		accountBalances = owner.getAccountBalances();
@@ -65,32 +75,35 @@ public class Owner implements Comparable<Owner> {
 		industryJobs = owner.getIndustryJobs();
 		assets = owner.getAssets();
 		contracts = owner.getContracts();
-		walletTransactions = owner.getWalletTransactions();
+		transactions = owner.getTransactions();
+		journal = owner.getJournal();
 	}
 
 	public Owner(final Account parentAccount, final String name, final long ownerID) {
-		this(parentAccount, name, ownerID, true, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
+		this(parentAccount, name, ownerID, true, null, Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow(), Settings.getNow());
 	}
 
-	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showAssets, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date walletTransactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
+	public Owner(final Account parentAccount, final String name, final long ownerID, final boolean showOwner, final Date assetLastUpdate, final Date assetNextUpdate, final Date balanceNextUpdate, final Date marketOrdersNextUpdate, final Date journalNextUpdate, final Date transactionsNextUpdate, final Date industryJobsNextUpdate, final Date contractsNextUpdate) {
 		this.parentAccount = parentAccount;
 		this.name = name;
 		this.ownerID = ownerID;
-		this.showAssets = showAssets;
-
+		this.showOwner = showOwner;
+		this.assetLastUpdate = assetLastUpdate;
 		this.assetNextUpdate = assetNextUpdate;
 		this.balanceNextUpdate = balanceNextUpdate;
 		this.marketOrdersNextUpdate = marketOrdersNextUpdate;
-		this.walletTransactionsNextUpdate = walletTransactionsNextUpdate;
+		this.journalNextUpdate = journalNextUpdate;
+		this.transactionsNextUpdate = transactionsNextUpdate;
 		this.industryJobsNextUpdate = industryJobsNextUpdate;
 		this.contractsNextUpdate = contractsNextUpdate;
 		//Default
 		assets = new ArrayList<Asset>();
 		accountBalances = new  ArrayList<AccountBalance>();
 		marketOrders = new  ArrayList<MarketOrder>();
-		walletTransactions = new ArrayList<WalletTransaction>();
+		transactions = new ArrayList<Transaction>();
 		industryJobs = new  ArrayList<IndustryJob>();
 		contracts = new HashMap<Contract, List<ContractItem>>();
+		journal = new ArrayList<Journal>();
 	}
 
 	public void setAccountBalances(final List<AccountBalance> accountBalances) {
@@ -99,6 +112,10 @@ public class Owner implements Comparable<Owner> {
 
 	public void setAssets(final List<Asset> assets) {
 		this.assets = assets;
+	}
+
+	public void setAssetLastUpdate(Date assetLastUpdate) {
+		this.assetLastUpdate = assetLastUpdate;
 	}
 
 	public void setAssetNextUpdate(final Date nextUpdate) {
@@ -141,21 +158,28 @@ public class Owner implements Comparable<Owner> {
 		this.ownerID = ownerID;
 	}
 
-	public void setShowAssets(final boolean showAssets) {
-		this.showAssets = showAssets;
+	public void setShowOwner(final boolean showOwner) {
+		this.showOwner = showOwner;
 	}
 
- 	public void setWalletTransactions(final List<WalletTransaction> walletTransactions) {
-		this.walletTransactions = walletTransactions;
+	public void setJournal(List<Journal> journal) {
+		this.journal = journal;
 	}
 
-	public void setWalletTransactionsNextUpdate(final Date walletTransactionsNextUpdate) {
-		this.walletTransactionsNextUpdate = walletTransactionsNextUpdate;
+	public void setJournalNextUpdate(Date journalNextUpdate) {
+		this.journalNextUpdate = journalNextUpdate;
 	}
 
-	//FIXME - isShowAssets is not a good name - should be isShowOwner
-	public boolean isShowAssets() {
-		return showAssets;
+ 	public void setTransactions(final List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	public void setTransactionsNextUpdate(final Date transactionsNextUpdate) {
+		this.transactionsNextUpdate = transactionsNextUpdate;
+	}
+
+	public boolean isShowOwner() {
+		return showOwner;
 	}
 
 	public boolean isCorporation() {
@@ -172,6 +196,10 @@ public class Owner implements Comparable<Owner> {
 
 	public List<Asset> getAssets() {
 		return assets;
+	}
+
+	public Date getAssetLastUpdate() {
+		return assetLastUpdate;
 	}
 
 	public Date getAssetNextUpdate() {
@@ -218,12 +246,20 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount;
 	}
 
-	public List<WalletTransaction> getWalletTransactions() {
- 		return walletTransactions;
+	public List<Journal> getJournal() {
+		return journal;
 	}
 
-	public Date getWalletTransactionsNextUpdate() {
-		return walletTransactionsNextUpdate;
+	public Date getJournalNextUpdate() {
+		return journalNextUpdate;
+	}
+
+	public List<Transaction> getTransactions() {
+ 		return transactions;
+	}
+
+	public Date getTransactionsNextUpdate() {
+		return transactionsNextUpdate;
 	}
 
 	@Override

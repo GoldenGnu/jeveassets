@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public enum ContractsTableFormat  implements EnumTableColumn<ContractItem> {
+public enum ContractsTableFormat implements EnumTableColumn<ContractItem> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

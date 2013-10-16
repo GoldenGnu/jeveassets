@@ -72,22 +72,22 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		this.taskName = taskName;
 	}
 
-	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final String characterName) {
+	protected void loadEve(final UpdateTask updateTask, final boolean forceUpdate, final String updateName) {
 		init(updateTask, forceUpdate, null, null);
-		load(getNextUpdate(), false, characterName);
+		load(getNextUpdate(), false, updateName);
 	}
 
-	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner) {
+	protected void loadOwner(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner) {
 		init(updateTask, forceUpdate, owner, null);
 		loadOwner();
 	}
 
-	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
+	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
 		init(updateTask, forceUpdate, null, account);
 		loadAccount();
 	}
 
-	protected void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
 		//Calc size
@@ -164,7 +164,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		boolean updatedOK = false;
 		String name = owner.getName();
 		//Ignore hidden owners && don't update the same owner twice
-		if (owner.isShowAssets() && !owners.containsKey(name)) {
+		if (owner.isShowOwner() && !owners.containsKey(name)) {
 			updatedOK = load(getNextUpdate(), owner.isCorporation(), name); //Update...
 		}
 		if (updatedOK) {
@@ -178,7 +178,11 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		load(getNextUpdate(), false, String.valueOf("Account #" + account.getKeyID()));
 	}
 
-	private boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
+	protected boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
+		return loadAPI(nextUpdate, updateCorporation, updateName);
+	}
+
+	private boolean loadAPI(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
 		//Check API key access mask
 		if ((getAccessMask() & requestMask(updateCorporation)) != requestMask(updateCorporation)) {
 			addError(updateName, "Not enough access privileges");
@@ -199,19 +203,16 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 		try {
 			T response = getResponse(updateCorporation);
-			if (response instanceof ApiResponse) {
-				ApiResponse apiResponse = (ApiResponse) response;
-				setNextUpdate(apiResponse.getCachedUntil());
-				if (!apiResponse.hasError()) {
-					LOG.info("	{} updated for: {}", taskName, updateName);
-					this.updated = true;
-					setData(response);
-					return true;
-				} else {
-					ApiError apiError = apiResponse.getError();
-					addError(updateName, apiError.getError(), apiError);
-					LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
-				}
+			setNextUpdate(response.getCachedUntil());
+			if (!response.hasError()) {
+				LOG.info("	{} updated for: {}", taskName, updateName);
+				this.updated = true;
+				setData(response);
+				return true;
+			} else {
+				ApiError apiError = response.getError();
+				addError(updateName, apiError.getError(), apiError);
+				LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 			}
 		} catch (ApiException ex) {
 			addError(updateName, ex.getMessage(), ex);

@@ -574,7 +574,6 @@ public class PriceDataSettings {
 		priceSource = getDefaultPriceSource();
 		priceType = PriceMode.getDefaultPriceType();
 		priceReprocessedType =  PriceMode.getDefaultPriceType();
-		
 	}
 
 	public PriceDataSettings(final LocationType locationType, final List<Long> locations, final PriceSource priceSource, final PriceMode priceType, final PriceMode priceReprocessedType) {

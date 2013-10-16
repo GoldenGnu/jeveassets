@@ -38,18 +38,18 @@ public final class CsvWriter {
 
 	private CsvWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
+	public static boolean save(final String filename, final List<Map<String, String>> data, final String[] header, final String[] headerKeys, final CsvPreference csvPreference) {
 		CsvWriter writer = new CsvWriter();
-		return writer.write(filename, data, header, csvPreference);
+		return writer.write(filename, data, header, headerKeys, csvPreference);
 	}
 
-	private boolean write(final String filename, final List<Map<String, String>> data, final String[] header, final CsvPreference csvPreference) {
+	private boolean write(final String filename, final List<Map<String, String>> data, final String[] header, final String[] headerKeys, final CsvPreference csvPreference) {
 		ICsvMapWriter writer;
 		try {
 			writer = new CsvMapWriter(new FileWriter(filename), csvPreference);
 			writer.writeHeader(header);
 			for (Map<String, String> map : data) {
-				writer.write(map, header);
+				writer.write(map, headerKeys);
 			}
 			writer.close();
 		} catch (IOException ex) {

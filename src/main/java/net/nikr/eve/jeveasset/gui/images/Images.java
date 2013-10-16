@@ -59,6 +59,7 @@ public enum Images {
 	EDIT_ADD ("edit_add.png"),
 	EDIT_SET ("edit_set.png"),
 	EDIT_IMPORT ("edit_import.png"),
+	EDIT_EDIT_WHITE ("edit_edit_white.png"),
 
 	FILTER_CLEAR ("filter_clear.png"),
 	FILTER_SAVE ("filter_save.png"),
@@ -96,7 +97,19 @@ public enum Images {
 	LOC_STATION ("loc_station.png"),
 	LOC_SYSTEM ("loc_system.png"),
 	LOC_REGION ("loc_region.png"),
+	LOC_CONTAINER ("loc_container.png"),
+	LOC_CONTAINER_WHITE ("loc_container_white.png"),
 	LOC_LOCATIONS ("loc_locations.png"),
+	LOC_FLAG ("loc_flag.png"),
+	LOC_OWNER ("loc_owner.png"),
+	LOC_INCLUDE ("loc_include.png"),
+
+	INCLUDE_ASSET_SELECTED ("include_asset_selected.png"),
+	INCLUDE_BUY_SELECTED ("include_buy_selected.png"),
+	INCLUDE_JOBS ("include_jobs.png"),
+	INCLUDE_JOBS_SELECTED ("include_jobs_selected.png"),
+	INCLUDE_SELL ("include_sell.png"),
+	INCLUDE_SELL_SELECTED ("include_sell_selected.png"),
 
 	MISC_EVE ("misc_eve.png"),
 	MISC_EXIT ("misc_exit.png"),
@@ -122,6 +135,9 @@ public enum Images {
 	TAB_CLOSE ("tab_close.png"),
 	TAB_CLOSE_ACTIVE ("tab_close_active.png"),
 
+	TAG_GRAY ("tag_gray.png"),
+	TAG_TICK ("tag_tick.png"),
+
 	TABLE_COLUMN_RESIZE ("table_column_resize.png"),
 	TABLE_COLUMN_SHOW ("table_column_show.png"),
 
@@ -139,7 +155,9 @@ public enum Images {
 	TOOL_TRACKER ("tool_tracker.png"),
 	TOOL_REPROCESSED ("tool_reprocessed.png"),
 	TOOL_CONTRACTS ("tool_contracts.png"),
-	TOOL_WALLET ("tool_wallet.png"),
+	TOOL_TRANSACTION ("tool_transaction.png"),
+	TOOL_JOURNAL ("tool_journal.png"),
+	TOOL_TREE ("tool_tree.png"),
 
 	UPDATE_NOT_STARTED ("update_not_started.png"),
 	UPDATE_WORKING ("update_working.png"),

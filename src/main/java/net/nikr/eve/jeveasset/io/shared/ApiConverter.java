@@ -27,6 +27,7 @@ import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +79,8 @@ public final class ApiConverter {
 		int flagID = industryJob.getInstalledItemFlag();
 		boolean singleton  = false;
 		int rawQuantity;
-		if (industryJob.getInstalledItemCopy() == 0) {
-			rawQuantity = 0; //0 = BPO
+		if (industryJob.getInstalledItemCopy() == 0) { //0 = BPO | 1 = PBC
+			rawQuantity = -1; //-1 = BPO
 		} else {
 			rawQuantity = -2; //-2 = BPC
 		}
@@ -249,7 +255,8 @@ public final class ApiConverter {
 		Item item = ApiIdConverter.getItem(apiIndustryJob.getInstalledItemTypeID());
 		long locationID = toLocationId(apiIndustryJob);
 		Location location = ApiIdConverter.getLocation(locationID);
-		return new IndustryJob(apiIndustryJob, item, location, owner);
+		Item output = ApiIdConverter.getItem(apiIndustryJob.getOutputTypeID());
+		return new IndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
 	}
 
 	private static long toLocationId(final ApiIndustryJob apiIndustryJob) {
@@ -278,17 +285,23 @@ public final class ApiConverter {
 		return new Asset(item, location, owner, count, parents, flag, flagID, itemId, singleton, rawQuantity);
 	}
 
-	public static List<WalletTransaction> convertWalletTransactions(final List<ApiWalletTransaction> apiWalletTransactions, final Owner owner) {
-		List<WalletTransaction> walletTransactions = new ArrayList<WalletTransaction>();
-		for (ApiWalletTransaction apiWalletTransaction : apiWalletTransactions) {
-			walletTransactions.add(toWalletTransaction(owner, apiWalletTransaction));
-		}
-		return walletTransactions;
+	public static Journal convertJournal(final ApiJournalEntry apiJournal, final Owner owner, final int accountKey) {
+		Journal journal = new Journal(apiJournal, owner);
+		journal.setAccountKey(accountKey);
+		return journal;
 	}
 
-	private static WalletTransaction toWalletTransaction(final Owner owner, final ApiWalletTransaction apiWalletTransaction) {
-		Item item = ApiIdConverter.getItem(apiWalletTransaction.getTypeID());
-		Location location = ApiIdConverter.getLocation(apiWalletTransaction.getStationID());
-		return new WalletTransaction(apiWalletTransaction, item, location, owner);
+	public static List<Transaction> convertTransactions(final List<ApiWalletTransaction> apiTransactions, final Owner owner) {
+		List<Transaction> transactions = new ArrayList<Transaction>();
+		for (ApiWalletTransaction apiTransaction : apiTransactions) {
+			transactions.add(toTransaction(owner, apiTransaction));
+		}
+		return transactions;
+	}
+
+	private static Transaction toTransaction(final Owner owner, final ApiWalletTransaction apiTransaction) {
+		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
+		Location location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		return new Transaction(apiTransaction, item, location, owner);
 	}
 }

@@ -31,12 +31,10 @@ import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -45,18 +43,16 @@ import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterLogicalMatcher;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.menu.*;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuName.AssetMenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public class AssetsTab extends JMainTab implements ListEventListener<Asset>, TableMenu<Asset> {
+public class AssetsTab extends JMainTab {
 
 	//GUI
 	private JAssetTable jTable;
@@ -80,17 +76,19 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
 
+		ListenerClass listener = new ListenerClass();
+
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, Asset>(AssetTableFormat.class);
 		//Backend
 		eventList = program.getAssetEventList();
-		//Filter
-		filterList = new FilterList<Asset>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
+		SortedList<Asset> sortedList = new SortedList<Asset>(eventList);
+		//Filter
+		filterList = new FilterList<Asset>(sortedList);
+		filterList.addListEventListener(listener);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JAssetTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -99,7 +97,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,13 +109,13 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Asset.class);
+		installMenu(program, new AssetTableMenu(), jTable, Asset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -146,28 +144,11 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		);
 	}
 
-	@Override
-	public MenuData<Asset> getMenuData() {
-		return new AssetMenuData(selectionModel.getSelected());
+	public void updateTags() {
+		beforeUpdateData();
+		tableModel.fireTableDataChanged();
+		afterUpdateData();
 	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.asset(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() { }
@@ -234,10 +215,38 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		return ret;
 	}
 
-	@Override
-	public void listChanged(final ListEvent<Asset> listChanges) {
-		updateStatusbar();
-		program.getOverviewTab().updateTable();
+	private class AssetTableMenu implements TableMenu<Asset> {
+		@Override
+		public MenuData<Asset> getMenuData() {
+			return new AssetMenuData(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.asset(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+
+	private class ListenerClass implements ListEventListener<Asset> {
+		@Override
+		public void listChanged(final ListEvent<Asset> listChanges) {
+			updateStatusbar();
+			program.getOverviewTab().updateTable();
+		}
 	}
 
 	public static class AssetFilterControl extends FilterControl<Asset> {
@@ -254,57 +263,21 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>, Tab
 		@Override
 		protected Object getColumnValue(final Asset item, final String column) {
 			AssetTableFormat format = AssetTableFormat.valueOf(column);
-			if (format == AssetTableFormat.ITEM_ID) {
-				LongInt longInt = (LongInt) format.getColumnValue(item);
-				return longInt.getNumber();
-			} else {
-				return format.getColumnValue(item);
-			}
+			return format.getColumnValue(item);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			AssetTableFormat format = (AssetTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else if (format.getType().getName().equals(Percent.class.getName())) {
-				return true;
-			} else if (format == AssetTableFormat.ITEM_ID) {
-				return true;
-			} else if (format == AssetTableFormat.SECURITY) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			AssetTableFormat format = (AssetTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public Enum[] getColumns() {
-			return AssetTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return AssetTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getEnumColumns() {
+		protected List<EnumTableColumn<Asset>> getColumns() {
 			return columnsAsList(AssetTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Asset>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
 		}
 

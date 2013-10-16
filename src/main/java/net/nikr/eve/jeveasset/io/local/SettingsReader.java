@@ -25,22 +25,34 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
-import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.ExportSettings.DecimalSeparator;
+import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
+import net.nikr.eve.jeveasset.data.ReprocessSettings;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagColor;
+import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTableFormat;
@@ -48,18 +60,24 @@ import net.nikr.eve.jeveasset.gui.tabs.items.ItemTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
+import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -90,7 +108,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			Update updater = new Update();
 			updater.performUpdates(SETTINGS_VERSION, settings.getPathSettings());
 
-			Element element = getDocumentElement(settings.getPathSettings());
+			Element element = getDocumentElement(settings.getPathSettings(), true);
 			parseSettings(element, settings);
 		} catch (IOException ex) {
 			LOG.info("Settings not loaded");
@@ -106,6 +124,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Tags
+		NodeList tagsNodes = element.getElementsByTagName("tags");
+		if (tagsNodes.getLength() == 1) {
+			Element tagsElement = (Element) tagsNodes.item(0);
+			parseTags(tagsElement, settings);
 		}
 
 		//Owners
@@ -237,6 +262,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			parseTableResize(tableResizeElement, settings);
 		}
 
+		//Table Views
+		NodeList tableViewsNodes = element.getElementsByTagName("tableviews");
+		if (tableViewsNodes.getLength() == 1) {
+			Element tableViewsElement = (Element) tableViewsNodes.item(0);
+			parseTableViews(tableViewsElement, settings);
+		}
+
 		//Asset added
 		NodeList assetaddedNodes = element.getElementsByTagName("assetadded");
 		if (assetaddedNodes.getLength() == 1) {
@@ -298,8 +330,12 @@ public final class SettingsReader extends AbstractXmlReader {
 				double escrowstocover = AttributeGetters.getDouble(dataNode, "escrowstocover");
 				double sellorders = AttributeGetters.getDouble(dataNode, "sellorders");
 				double walletbalance = AttributeGetters.getDouble(dataNode, "walletbalance");
+				double manufacturing = 0.0;
+				if (AttributeGetters.haveAttribute(dataNode, "manufacturing")){
+					manufacturing = AttributeGetters.getDouble(dataNode, "manufacturing");
+				}
 				//Add data
-				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover);
+				TrackerData data = new TrackerData(date, walletbalance, assets, sellorders, escrows, escrowstocover, manufacturing);
 				settings.getTrackerData().get(owner).add(data);
 			}
 		}
@@ -316,35 +352,150 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = AttributeGetters.getString(stockpileNode, "name");
 
-			long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
-			String container = AttributeGetters.getString(stockpileNode, "container");
-			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
-			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+		//LEGACY
+			//Owners
+			List<Long> ownerIDs = new ArrayList<Long>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "characterid")) {
+				long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
+				if (ownerID > 0) {
+					ownerIDs.add(ownerID);
+				}
+			}
+			//Containers
+			List<String> containers = new ArrayList<String>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "container")) {
+				String container = AttributeGetters.getString(stockpileNode, "container");
+				if (!container.equals(General.get().all())) {
+					containers.add(container);
+				}
+			}
+			//Flags
+			List<Integer> flagIDs = new ArrayList<Integer>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "flagid")) {
+				int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
+				if (flagID > 0) {
+					flagIDs.add(flagID);
+				}
+			}
+			//Locations
+			Location location = null;
+			if (AttributeGetters.haveAttribute(stockpileNode, "locationid")) {
+				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+				location = ApiIdConverter.getLocation(locationID);
+			}
+			//Include
+			Boolean inventory = null;
+			if (AttributeGetters.haveAttribute(stockpileNode, "inventory")) {
+				inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
+			}
+			Boolean sellOrders = null;
+			if (AttributeGetters.haveAttribute(stockpileNode, "sellorders")) {
+				sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
+			}
+			Boolean buyOrders = null;
+			if (AttributeGetters.haveAttribute(stockpileNode, "buyorders")) {
+				buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
+			}
+			Boolean jobs = null;
+			if (AttributeGetters.haveAttribute(stockpileNode, "jobs")) {
+				jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
+			}
+			List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
+			if (inventory != null && sellOrders != null && buyOrders != null && jobs != null) {
+				StockpileFilter filter = new StockpileFilter(location, flagIDs, containers, ownerIDs, inventory, sellOrders, buyOrders, jobs, false, false);
+				filters.add(filter);
+			}
+		//NEW
+			NodeList filterNodes = stockpileNode.getElementsByTagName("stockpilefilter");
+			for (int b = 0; b < filterNodes.getLength(); b++) {
+				Element filterNode = (Element) filterNodes.item(b);
+				//Include
+				boolean filterInventory = AttributeGetters.getBoolean(filterNode, "inventory");
+				boolean filterSellOrders = AttributeGetters.getBoolean(filterNode, "sellorders");
+				boolean filterBuyOrders = AttributeGetters.getBoolean(filterNode, "buyorders");
+				boolean filterBuyTransactions = false;
+				if (AttributeGetters.haveAttribute(filterNode, "buytransactions")) {
+					filterBuyTransactions = AttributeGetters.getBoolean(filterNode, "buytransactions");
+				}
+				boolean filterSellTransactions = false;
+				if (AttributeGetters.haveAttribute(filterNode, "selltransactions")) {
+					filterSellTransactions = AttributeGetters.getBoolean(filterNode, "selltransactions");
+				}
+				boolean filterJobs = AttributeGetters.getBoolean(filterNode, "jobs");
+				//Location
+				long locationID = AttributeGetters.getLong(filterNode, "locationid");
+				location = ApiIdConverter.getLocation(locationID);
+				//Owners
+				List<Long> filterOwnerIDs = new ArrayList<Long>();
+				NodeList ownerNodes = filterNode.getElementsByTagName("owner");
+				for (int c = 0; c < ownerNodes.getLength(); c++) {
+					Element ownerNode = (Element) ownerNodes.item(c);
+					long filterOwnerID = AttributeGetters.getLong(ownerNode, "ownerid");
+					filterOwnerIDs.add(filterOwnerID);
+				}
+				//Containers
+				List<String> filterContainers = new ArrayList<String>();
+				NodeList containerNodes = filterNode.getElementsByTagName("container");
+				for (int c = 0; c < containerNodes.getLength(); c++) {
+					Element containerNode = (Element) containerNodes.item(c);
+					String filterContainer = AttributeGetters.getString(containerNode, "container");
+					filterContainers.add(filterContainer);
+				}
+				//Flags
+				List<Integer> filterFlagIDs = new ArrayList<Integer>();
+				NodeList flagNodes = filterNode.getElementsByTagName("flag");
+				for (int c = 0; c < flagNodes.getLength(); c++) {
+					Element flagNode = (Element) flagNodes.item(c);
+					int filterFlagID = AttributeGetters.getInt(flagNode, "flagid");
+					filterFlagIDs.add(filterFlagID);
+				}
+				StockpileFilter stockpileFilter = new StockpileFilter(location, filterFlagIDs, filterContainers, filterOwnerIDs, filterInventory, filterSellOrders, filterBuyOrders, filterJobs, filterBuyTransactions, filterSellTransactions);
+				filters.add(stockpileFilter);
+			}
+		//MULTIPLIER
 			double multiplier = 1;
 			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
 				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
 			}
-			Location location = ApiIdConverter.getLocation(locationID);
-			if (location == null || location.isEmpty()) {
-				location = StockpileDialog.LOCATION_ALL;
-			}
-			boolean inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
-			boolean sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
-			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
-			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
-
-			Stockpile stockpile = new Stockpile(name, ownerID, "", location, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
+		
+			Stockpile stockpile = new Stockpile(name, filters, multiplier);
 			settings.getStockpiles().add(stockpile);
+		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);
 				int typeID = AttributeGetters.getInt(itemNode, "typeid");
-				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
+				double countMinimum = AttributeGetters.getDouble(itemNode, "minimum");
 				if (typeID != 0) { //Ignore Total
 					Item item = ApiIdConverter.getItem(Math.abs(typeID));
 					StockpileItem stockpileItem = new StockpileItem(stockpile, item, typeID, countMinimum);
 					stockpile.add(stockpileItem);
 				}
+			}
+		}
+	}
+
+	private void parseTags(Element tagsElement, Settings settings) {
+		NodeList tagNodes = tagsElement.getElementsByTagName("tag");
+		for (int a = 0; a < tagNodes.getLength(); a++) {
+			Element tagNode = (Element) tagNodes.item(a);
+			String name = AttributeGetters.getString(tagNode, "name");
+			String background = AttributeGetters.getString(tagNode, "background");
+			String foreground = AttributeGetters.getString(tagNode, "foreground");
+
+			TagColor color = new TagColor(background, foreground);
+			Tag tag = new Tag(name, color);
+			settings.getTags().put(tag.getName(), tag);
+
+			NodeList idNodes = tagNode.getElementsByTagName("tagid");
+			for (int b = 0; b < idNodes.getLength(); b++) {
+				Element idNode = (Element) idNodes.item(b);
+				String tool = AttributeGetters.getString(idNode, "tool");
+				Long id = AttributeGetters.getLong(idNode, "id");
+
+				TagID tagID = new TagID(tool, id);
+				tag.getIDs().add(tagID);
+				settings.getTags(tagID).add(tag);
 			}
 		}
 	}
@@ -395,12 +546,8 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseProxy(final Element proxyElement, final Settings settings) {
 		String addrName = AttributeGetters.getString(proxyElement, "address");
 		String proxyType = AttributeGetters.getString(proxyElement, "type");
-		Integer port = AttributeGetters.getInt(proxyElement, "port");
-		if (addrName.length() > 0
-						&& proxyType.length() > 0
-						&& port != null
-						&& port >= 0) { // check the proxy attributes are all there.
-
+		int port = AttributeGetters.getInt(proxyElement, "port");
+		if (addrName.length() > 0 && proxyType.length() > 0 && port >= 0) { // check the proxy attributes are all there.
 			// delegate to the utility method in the Settings.
 			try {
 				settings.setProxy(addrName, port, proxyType);
@@ -553,6 +700,30 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
+	private void parseTableViews(final Element element, final Settings settings) {
+		NodeList viewToolNodeList = element.getElementsByTagName("viewtool");
+		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
+			Element viewToolNode = (Element) viewToolNodeList.item(a);
+			String toolName = AttributeGetters.getString(viewToolNode, "tool");
+			Map<String, View> views = new HashMap<String, View>();
+			settings.getTableViews().put(toolName, views);
+			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
+			for (int b = 0; b < viewNodeList.getLength(); b++) {
+				Element viewNode = (Element) viewNodeList.item(b);
+				String viewName = AttributeGetters.getString(viewNode, "name");
+				View view = new View(viewName);
+				views.put(view.getName(), view);
+				NodeList viewColumnList = viewNode.getElementsByTagName("viewcolumn");
+				for (int c = 0; c < viewColumnList.getLength(); c++) {
+					Element viewColumnNode = (Element) viewColumnList.item(c);
+					String name = AttributeGetters.getString(viewColumnNode, "name");
+					boolean shown = AttributeGetters.getBoolean(viewColumnNode, "shown");
+					view.getColumns().add(new SimpleColumn(name, shown));
+				}
+			}
+		}
+	}
+
 	private void parseTableFilters(final Element element, final Settings settings) {
 		NodeList tableNodeList = element.getElementsByTagName("table");
 		for (int a = 0; a < tableNodeList.getLength(); a++) {
@@ -569,7 +740,7 @@ public final class SettingsReader extends AbstractXmlReader {
 					Element rowNode = (Element) rowNodes.item(c);
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
-					Enum<?> column =  getColumn(columnString, tableName);
+					EnumTableColumn<?> column =  getColumn(columnString, tableName);
 					String compare = AttributeGetters.getString(rowNode, "compare");
 					String logic = AttributeGetters.getString(rowNode, "logic");
 					filter.add(new Filter(logic, column, compare, text));
@@ -580,7 +751,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum<?> getColumn(final String column, final String tableName) {
+	private EnumTableColumn<?> getColumn(final String column, final String tableName) {
 		//Stockpile
 		try {
 			if (tableName.equals(StockpileTab.NAME)) {
@@ -613,7 +784,15 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//Wallet Transaction
+		//Journal
+		try {
+			if (tableName.equals(JournalTab.NAME)) {
+				return JournalTableFormat.valueOf(column);
+			}
+		} catch (IllegalArgumentException exception) {
+
+		}
+		//Transaction
 		try {
 			if (tableName.equals(TransactionTab.NAME)) {
 				return TransactionTableFormat.valueOf(column);
@@ -661,11 +840,17 @@ public final class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 
 		}
-		//All
+		//Values (Extra)
 		try {
-			return Filter.ExtraColumns.valueOf(column);
+			if (tableName.equals(TreeTab.NAME)) {
+				return TreeTableFormat.valueOf(column);
+			}
 		} catch (IllegalArgumentException exception) {
 
+		}
+		//All
+		if (column.equals("ALL")) {
+			return AllColumn.ALL;
 		}
 		throw new RuntimeException("Fail to load filter column: " + column);
 	}
@@ -682,7 +867,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			for (int b = 0; b < rowNodeList.getLength(); b++) {
 				Element rowNode = (Element) rowNodeList.item(b);
 				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and"));
-				Enum<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
+				EnumTableColumn<?> column = convertColumn(AttributeGetters.getString(rowNode, "column"));
 				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
 				String text;
 				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")) {
@@ -705,7 +890,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Enum<?> convertColumn(final String column) {
+	private EnumTableColumn<?> convertColumn(final String column) {
 		if (column.equals("Name")) { return AssetTableFormat.NAME; }
 		if (column.equals("Group")) { return AssetTableFormat.GROUP; }
 		if (column.equals("Category")) { return AssetTableFormat.CATEGORY; }
@@ -730,7 +915,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (column.equals("Reprocessed Value")) { return AssetTableFormat.VALUE_REPROCESSED; }
 		if (column.equals("Singleton")) { return AssetTableFormat.SINGLETON; }
 		if (column.equals("Total Volume")) { return AssetTableFormat.VOLUME_TOTAL; }
-		return Filter.ExtraColumns.ALL; //Fallback
+		return AllColumn.ALL; //Fallback
 	}
 
 	private CompareType convertMode(final String compareMixed) {
@@ -771,6 +956,22 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "sqlextendedinserts")) {
 			boolean extendedInserts = AttributeGetters.getBoolean(element, "sqlextendedinserts");
 			settings.getExportSettings().setExtendedInserts(extendedInserts);
+		}
+		if (AttributeGetters.haveAttribute(element, "htmlstyled")) {
+			boolean htmlStyled = AttributeGetters.getBoolean(element, "htmlstyled");
+			settings.getExportSettings().setHtmlStyled(htmlStyled);
+		}
+		if (AttributeGetters.haveAttribute(element, "htmligb")) {
+			boolean htmlIGB = AttributeGetters.getBoolean(element, "htmligb");
+			settings.getExportSettings().setHtmlIGB(htmlIGB);
+		}
+		if (AttributeGetters.haveAttribute(element, "htmlrepeatheader")) {
+			int htmlRepeatHeader = AttributeGetters.getInt(element, "htmlrepeatheader");
+			settings.getExportSettings().setHtmlRepeatHeader(htmlRepeatHeader);
+		}
+		if (AttributeGetters.haveAttribute(element, "exportformat")) {
+			ExportFormat exportFormat = ExportFormat.valueOf(AttributeGetters.getString(element, "exportformat"));
+			settings.getExportSettings().setExportFormat(exportFormat);
 		}
 		NodeList tableNamesNodeList = element.getElementsByTagName("sqltablenames");
 		for (int a = 0; a < tableNamesNodeList.getLength(); a++) {

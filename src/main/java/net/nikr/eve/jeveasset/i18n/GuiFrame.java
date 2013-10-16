@@ -47,7 +47,11 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String items();
 	public abstract String industry();
 	public abstract String industryPlot();
+	public abstract String journal();
 	public abstract String license();
+	public abstract String linkBugs();
+	public abstract String linkFeatures();
+	public abstract String linkHelp();
 	public abstract String market();
 	public abstract String materials();
 	public abstract String not();
@@ -64,6 +68,7 @@ public abstract class GuiFrame extends Bundle {
 	public abstract String tools();
 	public abstract String tracker();
 	public abstract String transaction();
+	public abstract String tree();
 	public abstract String updatable();
 	public abstract String update();
 	public abstract String update1();

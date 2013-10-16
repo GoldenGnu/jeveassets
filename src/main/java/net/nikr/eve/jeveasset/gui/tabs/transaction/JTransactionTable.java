@@ -26,15 +26,14 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 
 public class JTransactionTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<WalletTransaction> tableModel;
+	final DefaultEventTableModel<Transaction> tableModel;
 
-	public JTransactionTable(Program program, final DefaultEventTableModel<WalletTransaction> tableModel) {
+	public JTransactionTable(Program program, final DefaultEventTableModel<Transaction> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -43,12 +42,12 @@ public class JTransactionTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		WalletTransaction walletTransaction = tableModel.getElementAt(row);
+		Transaction transaction = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		//User set price
 		if (columnName.equals(TransactionTableFormat.NAME.getColumnName())) {
-			if (walletTransaction.isSell()) {
+			if (transaction.isSell()) {
 				if (!isSelected) {
 					component.setBackground(new Color(200, 255, 200));
 				} else {
@@ -62,7 +61,7 @@ public class JTransactionTable extends JAutoColumnTable {
 				}
 			}
 		}
-		if (columnName.equals(TransactionTableFormat.VALUE.getColumnName()) && walletTransaction.isBuy()) {
+		if (columnName.equals(TransactionTableFormat.VALUE.getColumnName()) && transaction.isBuy()) {
 			if (!isSelected) {
 				component.setForeground(Color.RED.darker());
 			} else {

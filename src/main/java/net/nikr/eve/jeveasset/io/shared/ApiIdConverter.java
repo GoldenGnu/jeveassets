@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
@@ -35,6 +34,7 @@ import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 
 
 public final class ApiIdConverter {
@@ -117,6 +117,19 @@ public final class ApiIdConverter {
 		//Blueprint Copy (Default Zero)
 		if (isBlueprintCopy) {
 			return 0;
+		}
+
+		//Blueprints Base Price
+		Item item = getItem(typeID);
+		//Tech 1
+		if (item.isBlueprint()) {
+			if (Settings.get().isBlueprintBasePriceTech1() && !item.getTypeName().toLowerCase().contains("ii")) {
+				return item.getPriceBase();
+			}
+			//Tech 2
+			if (Settings.get().isBlueprintBasePriceTech2() && item.getTypeName().toLowerCase().contains("ii")) {
+				return item.getPriceBase();
+			}
 		}
 
 		//Price data

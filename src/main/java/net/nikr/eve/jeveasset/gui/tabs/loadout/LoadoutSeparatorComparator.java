@@ -22,13 +22,12 @@
 package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Module;
 
 
-public class ModuleSeparatorComparator implements Comparator<Module> {
+public class LoadoutSeparatorComparator implements Comparator<Loadout> {
 
 	@Override
-	public int compare(final Module o1, final Module o2) {
+	public int compare(final Loadout o1, final Loadout o2) {
 		return o1.getSeparator().compareTo(o2.getSeparator());
 	}
 

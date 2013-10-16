@@ -37,12 +37,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class JDialogCentered implements WindowListener, WindowFocusListener {
+public abstract class JDialogCentered {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JDialogCentered.class);
 
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-	private static final String ACTION_OK = "ACTION_OK";
+	private enum DialogCenteredAction {
+		OK, CANCEL
+	}
 
 	public static final int NO_RESTRICTIONS = 0;
 	public static final int WORDS_ONLY = 1;
@@ -77,11 +78,13 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 		this.program = program;
 		this.parent = parent;
 
+		ListenerClass listener = new ListenerClass();
+
 		dialog = new JDialog(parent, JDialog.DEFAULT_MODALITY_TYPE);
 		dialog.setTitle(title);
 		dialog.setResizable(false);
-		dialog.addWindowListener(this);
-		dialog.addWindowFocusListener(this);
+		dialog.addWindowListener(listener);
+		dialog.addWindowFocusListener(listener);
 		if (image != null) {
 			dialog.setIconImage(image);
 		}
@@ -94,9 +97,9 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 		layout.setAutoCreateContainerGaps(true);
 		dialog.add(jPanel);
 
-		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), ACTION_CANCEL);
-		dialog.getRootPane().getActionMap().put(ACTION_CANCEL, new HideAction(ACTION_CANCEL));
-		dialog.getRootPane().getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(ACTION_OK));
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), DialogCenteredAction.CANCEL.name());
+		dialog.getRootPane().getActionMap().put(DialogCenteredAction.CANCEL.name(), new HideAction(DialogCenteredAction.CANCEL.name()));
+		dialog.getRootPane().getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(DialogCenteredAction.OK.name()));
 	}
 
 	protected abstract JComponent getDefaultFocus();
@@ -112,6 +115,8 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 		if (b) {
 			LOG.info("Showing: {} Dialog", dialog.getTitle());
 			dialog.pack();
+			dialog.setMinimumSize(dialog.getSize());
+
 			//Get the parent size
 			Dimension screenSize = parent.getSize();
 
@@ -131,16 +136,6 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 		dialog.setVisible(b);
 	}
 
-	@Override
-	public void windowOpened(final WindowEvent e) {
-		//Set default close button
-		if (dialog.getRootPane().getDefaultButton() == null) {
-			dialog.getRootPane().setDefaultButton(getDefaultButton());
-		}
-		//Fix none editable JTextComponent(s)
-		fixTextComponents(jPanel);
-	}
-
 	//Find JTextComponent(s) and overwrite the default enter action
 	private void fixTextComponents(final JComponent jComponent) {
 		for (int i = 0; i < jComponent.getComponentCount(); i++) {
@@ -148,7 +143,7 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 			if (c instanceof JTextComponent) {
 				JTextComponent jTextComponent = (JTextComponent) c;
 				if (!jTextComponent.isEditable()) {
-					jTextComponent.getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(ACTION_OK));
+					jTextComponent.getActionMap().put(DefaultEditorKit.insertBreakAction, new HideAction(DialogCenteredAction.OK.name()));
 				}
 			}
 			if (c instanceof JComponent) {
@@ -157,49 +152,62 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 		}
 	}
 
-	@Override
-	public void windowClosing(final WindowEvent e) {
-		LOG.info("Hiding: {} Dialog (close)", dialog.getTitle());
-	}
-
-	@Override
-	public void windowClosed(final WindowEvent e)  { }
-
-	@Override
-	public void windowIconified(final WindowEvent e) { }
-
-	@Override
-	public void windowDeiconified(final WindowEvent e) { }
-
-	@Override
-	public void windowActivated(final WindowEvent e) {
-		if (firstActivating) {
-			firstActivating = false;
-			windowShown();
+	private class ListenerClass implements WindowListener, WindowFocusListener {
+		@Override
+		public void windowOpened(final WindowEvent e) {
+			//Set default close button
+			if (dialog.getRootPane().getDefaultButton() == null) {
+				dialog.getRootPane().setDefaultButton(getDefaultButton());
+			}
+			//Fix none editable JTextComponent(s)
+			fixTextComponents(jPanel);
 		}
-	}
 
-	@Override
-	public void windowGainedFocus(final WindowEvent e) {
-		//We can not change focus before dialog have focus...
-		JComponent defaultFocus = this.getDefaultFocus();
-		if (defaultFocus == null) {
-			LOG.warn("No default focus for: {}", dialog.getTitle());
-			return;
+		@Override
+		public void windowClosing(final WindowEvent e) {
+			LOG.info("Hiding: {} Dialog (close)", dialog.getTitle());
+			setVisible(false);
 		}
-		if (firstFocus) {
-			firstFocus = false;
-			if (defaultFocus.isEnabled()) {
-				defaultFocus.requestFocusInWindow();
+
+		@Override
+		public void windowClosed(final WindowEvent e)  { }
+
+		@Override
+		public void windowIconified(final WindowEvent e) { }
+
+		@Override
+		public void windowDeiconified(final WindowEvent e) { }
+
+		@Override
+		public void windowActivated(final WindowEvent e) {
+			if (firstActivating) {
+				firstActivating = false;
+				windowShown();
 			}
 		}
+
+		@Override
+		public void windowGainedFocus(final WindowEvent e) {
+			//We can not change focus before dialog have focus...
+			JComponent defaultFocus = getDefaultFocus();
+			if (defaultFocus == null) {
+				LOG.warn("No default focus for: {}", dialog.getTitle());
+				return;
+			}
+			if (firstFocus) {
+				firstFocus = false;
+				if (defaultFocus.isEnabled()) {
+					defaultFocus.requestFocusInWindow();
+				}
+			}
+		}
+
+		@Override
+		public void windowLostFocus(final WindowEvent e) { }
+
+		@Override
+		public void windowDeactivated(final WindowEvent e) { }
 	}
-
-	@Override
-	public void windowLostFocus(final WindowEvent e) { }
-
-	@Override
-	public void windowDeactivated(final WindowEvent e) { }
 
 	private class HideAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
@@ -210,10 +218,10 @@ public abstract class JDialogCentered implements WindowListener, WindowFocusList
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			if (DialogCenteredAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-			if (ACTION_OK.equals(e.getActionCommand())) {
+			if (DialogCenteredAction.OK.name().equals(e.getActionCommand())) {
 				save();
 			}
 

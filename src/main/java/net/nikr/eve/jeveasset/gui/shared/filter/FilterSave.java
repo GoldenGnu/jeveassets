@@ -41,10 +41,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-public class FilterSave extends JDialogCentered implements ActionListener {
+public class FilterSave extends JDialogCentered {
 
-	public static final String ACTION_SAVE = "ACTION_SAVE";
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
+	private enum FilterSaveAction {
+		SAVE, CANCEL
+	}
 
 	private final EventList<String> filters;
 	private final List<String> defaultFilters = new ArrayList<String>();
@@ -56,6 +57,8 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 	public FilterSave(final JFrame jFrame) {
 		super(null, GuiShared.get().saveFilter(), jFrame);
 
+		ListenerClass listener = new ListenerClass();
+
 		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox();
@@ -63,12 +66,12 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		filters = new BasicEventList<String>();
 		AutoCompleteSupport.install(jName, filters, new Filterator());
 		jSave = new JButton(GuiShared.get().save());
-		jSave.setActionCommand(ACTION_SAVE);
-		jSave.addActionListener(this);
+		jSave.setActionCommand(FilterSaveAction.SAVE.name());
+		jSave.addActionListener(listener);
 
 		JButton jCancel = new JButton(GuiShared.get().cancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
+		jCancel.setActionCommand(FilterSaveAction.CANCEL.name());
+		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -168,13 +171,15 @@ public class FilterSave extends JDialogCentered implements ActionListener {
 		super.setVisible(b);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_SAVE.equals(e.getActionCommand())) {
-			save();
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			this.setVisible(false);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (FilterSaveAction.SAVE.name().equals(e.getActionCommand())) {
+				save();
+			}
+			if (FilterSaveAction.CANCEL.name().equals(e.getActionCommand())) {
+				setVisible(false);
+			}
 		}
 	}
 

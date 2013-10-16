@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.shared.components;
 
-import java.awt.event.FocusListener;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory.ValueFlag;
 

@@ -18,15 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import java.util.Date;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
+
 
 public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
 
@@ -191,12 +196,13 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	private IndustryActivity activity;
 	private IndustryJobState state;
-	private Item item;
-	private Owner owner;
-	private Location location;
+	private final Item item;
+	private final Owner owner;
+	private final Location location;
+	private final int portion;
 	private double price;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner) {
+	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -233,6 +239,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
+		this.portion = portion;
 
 		switch (this.getActivityID()) {
 			case 0:
@@ -310,8 +317,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return state;
 	}
 
-	
-	void setDynamicPrice(double price) {
+	public void setDynamicPrice(double price) {
 		this.price = price;
 	}
 
@@ -343,8 +349,38 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		return owner.getOwnerID();
 	}
 
+	public int getPortion() {
+		return portion;
+	}
+
 	@Override
 	public Item getItem() {
 		return item;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 37 * hash + (int) (this.getJobID() ^ (this.getJobID() >>> 32));
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final IndustryJob other = (IndustryJob) obj;
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
+		}
+		if (this.getJobID() != other.getJobID()) {
+			return false;
+		}
+		return true;
 	}
 }

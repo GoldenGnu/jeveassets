@@ -41,6 +41,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String totalValue();
 	public abstract String totalVolume();
 	public abstract String columnName();
+	public abstract String columnTags();
 	public abstract String columnGroup();
 	public abstract String columnCategory();
 	public abstract String columnOwner();
@@ -62,6 +63,7 @@ public abstract class TabsAssets extends Bundle {
 	public abstract String columnPriceReprocessedPercent();
 	public abstract String columnValueReprocessed();
 	public abstract String columnValue();
+	public abstract String columnValuePerVolume();
 	public abstract String columnCount();
 	public abstract String columnTypeCount();
 	public abstract String columnMeta();

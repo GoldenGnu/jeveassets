@@ -17,8 +17,6 @@ import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem> {
 
-	public static final String ACTION_REMOVE = "ACTION_REMOVE";
-
 	private final JLabel jName;
 	private final JLabel jType;
 

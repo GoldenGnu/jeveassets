@@ -31,7 +31,6 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,7 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -55,11 +53,15 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class ValueTableTab extends JMainTab implements TableMenu<Value> {
+public class ValueTableTab extends JMainTab {
 
 	//GUI
 	private JAutoColumnTable jTable;
@@ -80,14 +82,14 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		tableFormat = new EnumTableFormatAdaptor<ValueTableFormat, Value>(ValueTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<Value>();
-		//Filter
-		filterList = new FilterList<Value>(eventList);
 		//Sorting (per column)
-		SortedList<Value> columnSortedList = new SortedList<Value>(filterList);
+		SortedList<Value> columnSortedList = new SortedList<Value>(eventList);
 		//Sorting Total
 		SortedList<Value> totalSortedList = new SortedList<Value>(columnSortedList, new TotalComparator());
+		//Filter
+		filterList = new FilterList<Value>(totalSortedList);
 		//Table Model
-		tableModel = EventModels.createTableModel(totalSortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JValueTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -97,7 +99,7 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		//Sorting
 		TableComparatorChooser.install(jTable, columnSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(totalSortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -108,13 +110,13 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		filterControl = new ValueFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				totalSortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
-		installMenu(program, this, jTable, Value.class);
+		installMenu(program, new ValueTableMenu(), jTable, Value.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -127,30 +129,6 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public MenuData<Value> getMenuData() {
-		return new MenuData<Value>();
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Values Table Tool
-		//JMenuInfo.values(...);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	private Value getValue(Map<String, Value> values, String owner) {
 		Value value = values.get(owner);
@@ -206,6 +184,16 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 				}
 			}
 		}
+		//Industrys Job: Manufacturing
+		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+			Value value = getValue(values, industryJob.getOwner());
+			//Manufacturing and not completed
+			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
+				value.addManufacturing(manufacturingTotal);
+				total.addManufacturing(manufacturingTotal);
+			}
+		}
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
@@ -213,6 +201,29 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		} finally {
 			eventList.getReadWriteLock().writeLock().unlock();
 		}
+	}
+
+	private class ValueTableMenu implements TableMenu<Value> {
+		@Override
+		public MenuData<Value> getMenuData() {
+			return new MenuData<Value>();
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
 	}
 
 	public static class ValueFilterControl extends FilterControl<Value> {
@@ -231,43 +242,17 @@ public class ValueTableTab extends JMainTab implements TableMenu<Value> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			ValueTableFormat format = (ValueTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			ValueTableFormat format = (ValueTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return ValueTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return ValueTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<Value>> getEnumColumns() {
+		protected List<EnumTableColumn<Value>> getColumns() {
 			return columnsAsList(ValueTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Value>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Value>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Value>>(tableFormat.getShownColumns());
 		}
 	}

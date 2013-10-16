@@ -48,12 +48,15 @@ import uk.me.candle.eve.pricing.options.LocationType;
 
 public class PriceDataSettingsPanel extends JSettingsPanel {
 
-	public static final String ACTION_SOURCE_SELECTED = "ACTION_SOURCE_SELECTED";
-	public static final String ACTION_LOCATION_SELECTED = "ACTION_LOCATION_SELECTED";
+	private enum PriceDataSettingsAction {
+		SOURCE_SELECTED, LOCATION_SELECTED
+	}
 
 	private JRadioButton jRadioRegions;
 	private JRadioButton jRadioSystems;
 	private JRadioButton jRadioStations;
+	private JCheckBox jBlueprintsTech1;
+	private JCheckBox jBlueprintsTech2;
 	private JComboBox jRegions;
 	private JComboBox jSystems;
 	private JComboBox jStations;
@@ -95,17 +98,17 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		ButtonGroup group = new ButtonGroup();
 
 		jRadioRegions = new JRadioButton();
-		jRadioRegions.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioRegions.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioRegions.addActionListener(listener);
 		group.add(jRadioRegions);
 
 		jRadioSystems = new JRadioButton();
-		jRadioSystems.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioSystems.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioSystems.addActionListener(listener);
 		group.add(jRadioSystems);
 
 		jRadioStations = new JRadioButton();
-		jRadioStations.setActionCommand(ACTION_LOCATION_SELECTED);
+		jRadioStations.setActionCommand(PriceDataSettingsAction.LOCATION_SELECTED.name());
 		jRadioStations.addActionListener(listener);
 		group.add(jRadioStations);
 
@@ -137,8 +140,12 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
 		jSource = new JComboBox(PriceSource.values());
-		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
+		jSource.setActionCommand(PriceDataSettingsAction.SOURCE_SELECTED.name());
 		jSource.addActionListener(listener);
+
+		JLabel jBlueprintsLabel = new JLabel(DialoguesSettings.get().priceBase());
+		jBlueprintsTech1 = new JCheckBox(DialoguesSettings.get().priceTech1());
+		jBlueprintsTech2 = new JCheckBox(DialoguesSettings.get().priceTech2());
 
 		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
 		jWarning.setFont(this.getPanel().getFont());
@@ -155,6 +162,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jSourceLabel)
 						.addComponent(jPriceTypeLabel)
 						.addComponent(jPriceReprocessedTypeLabel)
+						.addComponent(jBlueprintsLabel)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup()
 								.addComponent(jRegionsLabel)
@@ -176,6 +184,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 						.addComponent(jStations, 200, 200, 200)
 						.addComponent(jPriceType, 200, 200, 200)
 						.addComponent(jPriceReprocessedType, 200, 200, 200)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jBlueprintsTech1)
+							.addComponent(jBlueprintsTech2)
+						)
 					)
 				)
 				.addComponent(jWarning)
@@ -208,6 +220,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 					.addComponent(jPriceReprocessedTypeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jPriceReprocessedType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(jBlueprintsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsTech1, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBlueprintsTech2, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jWarning, 48, 48, 48)
 		);
@@ -252,13 +269,20 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		//Source
 		PriceSource source = (PriceSource) jSource.getSelectedItem();
+		//Blueprints
+		boolean blueprintsTech1 = jBlueprintsTech1.isSelected();
+		boolean blueprintsTech2 = jBlueprintsTech2.isSelected();
 
 		//Eval if table need to be updated
 		boolean updateTable = !priceType.equals(Settings.get().getPriceDataSettings().getPriceType())
-								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType());
+								|| !priceReprocessedType.equals(Settings.get().getPriceDataSettings().getPriceReprocessedType())
+								|| blueprintsTech1 != Settings.get().isBlueprintBasePriceTech1()
+								|| blueprintsTech2 != Settings.get().isBlueprintBasePriceTech2();
 
 		//Update settings
 		Settings.get().setPriceDataSettings(new PriceDataSettings(locationType, locations, source, priceType, priceReprocessedType));
+		Settings.get().setBlueprintBasePriceTech1(blueprintsTech1);
+		Settings.get().setBlueprintBasePriceTech2(blueprintsTech2);
 
 		//Update table if needed
 		return updateTable;
@@ -267,6 +291,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	@Override
 	public void load() {
 		jSource.setSelectedItem(Settings.get().getPriceDataSettings().getSource());
+		jBlueprintsTech1.setSelected(Settings.get().isBlueprintBasePriceTech1());
+		jBlueprintsTech2.setSelected(Settings.get().isBlueprintBasePriceTech2());
 	}
 
 	private void updateSource(final PriceSource source) {
@@ -373,11 +399,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_SOURCE_SELECTED.equals(e.getActionCommand())) {
+			if (PriceDataSettingsAction.SOURCE_SELECTED.name().equals(e.getActionCommand())) {
 				PriceSource priceSource = (PriceSource) jSource.getSelectedItem();
 				updateSource(priceSource);
 			}
-			if (ACTION_LOCATION_SELECTED.equals(e.getActionCommand())) {
+			if (PriceDataSettingsAction.LOCATION_SELECTED.name().equals(e.getActionCommand())) {
 				if (jRadioRegions.isSelected()) {
 					jRegions.requestFocusInWindow();
 				} else if (jRadioSystems.isSelected()) {

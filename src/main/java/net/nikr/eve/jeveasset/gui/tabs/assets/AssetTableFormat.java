@@ -24,10 +24,11 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.LongInt;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -40,6 +41,16 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 		@Override
 		public Object getColumnValue(final Asset from) {
 			return from.getName();
+		}
+	},
+	TAGS(Tags.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnTags();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getTags();
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {
@@ -82,14 +93,14 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getLocation().getLocation();
 		}
 	},
-	SECURITY(String.class, GlazedLists.comparableComparator()) {
+	SECURITY(Security.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnSecurity();
 		}
 		@Override
 		public Object getColumnValue(final Asset from) {
-			return from.getLocation().getSecurity();
+			return from.getLocation().getSecurityObject();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -312,6 +323,16 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getVolumeTotal();
 		}
 	},
+	VALUE_PER_VOLUME(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnValuePerVolume();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getValuePerVolume();
+		}
+	},
 	SINGLETON(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -390,28 +411,8 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final Asset from);
+	//XXX - TableFormat.getColumnName() Workaround
+	@Override public abstract String getColumnName();
 
-	public class LongInt implements Comparable<LongInt> {
-		private final Long number;
-		private final String formatted;
 
-		public LongInt(final Long number) {
-			this.number = number;
-			this.formatted = Formater.integerFormat(number);
-		}
-
-		public Long getNumber() {
-			return number;
-		}
-
-		@Override
-		public String toString() {
-			return formatted;
-		}
-
-		@Override
-		public int compareTo(final LongInt o) {
-			return number.compareTo(o.getNumber());
-		}
-	}
 }

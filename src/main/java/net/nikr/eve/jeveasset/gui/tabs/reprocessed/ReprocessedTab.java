@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.reprocessed;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SortedList;
@@ -36,7 +37,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,15 +66,18 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedSeparatorTableCell.ReprocessedCellAction;
 import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
-public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInterface> {
+public class ReprocessedTab extends JMainTab {
 
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
-	private static final String ACTION_CLEAR = "ACTION_CLEAR";
+	private enum ReprocessedAction {
+		COLLAPSE,
+		EXPAND,
+		CLEAR
+	}
 
 	//GUI
 	private JSeparatorTable jTable;
@@ -114,7 +117,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.setRollover(true);
 
 		JButton jClear = new JButton(TabsReprocessed.get().removeAll(), Images.EDIT_DELETE.getIcon());
-		jClear.setActionCommand(ACTION_CLEAR);
+		jClear.setActionCommand(ReprocessedAction.CLEAR.name());
 		jClear.addActionListener(listener);
 		jClear.setMinimumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
 		jClear.setMaximumSize(new Dimension(100, Program.BUTTONS_HEIGHT));
@@ -122,7 +125,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.add(jClear);
 
 		JButton jCollapse = new JButton(TabsReprocessed.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(ReprocessedAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -130,7 +133,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		jToolBarRight.add(jCollapse);
 
 		JButton jExpand = new JButton(TabsReprocessed.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(ReprocessedAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -141,21 +144,20 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		tableFormat = new EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface>(ReprocessedTableFormat.class);
 		//Backend
 		eventList = new BasicEventList<ReprocessedInterface>();
-		//Filter
-		filterList = new FilterList<ReprocessedInterface>(eventList);
 		//Sorting (per column)
-		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(filterList);
+		SortedList<ReprocessedInterface> sortedListColumn = new SortedList<ReprocessedInterface>(eventList);
 		//Sorting Total (Ensure that total is always last)
 		SortedList<ReprocessedInterface> sortedListTotal = new SortedList<ReprocessedInterface>(sortedListColumn, new TotalComparator());
+		//Filter
+		filterList = new FilterList<ReprocessedInterface>(sortedListTotal);
 		//Separator
-		separatorList = new SeparatorList<ReprocessedInterface>(sortedListTotal, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<ReprocessedInterface>(filterList, new ReprocessedSeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JReprocessedTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ReprocessedSeparatorTableCell(jTable, separatorList, listener));
-		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
@@ -172,13 +174,13 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		filterControl = new ReprocessedFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedListTotal,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
-		installMenu(program, this, jTable, ReprocessedInterface.class);
+		installMenu(program, new ReprocessedTableMenu(), jTable, ReprocessedInterface.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -191,42 +193,18 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		int toolbatHeight = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarLeft, toolbatHeight, toolbatHeight, toolbatHeight)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 					.addComponent(jInfo)
-					.addComponent(jToolBarRight, toolbatHeight, toolbatHeight, toolbatHeight)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
-
-	@Override
-	public MenuData<ReprocessedInterface> getMenuData() {
-		return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Reprocessed Tool
-		//JMenuInfo.reprocessed(...);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
 
 	@Override
 	public void updateData() {
@@ -302,21 +280,43 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		program.getMainWindow().addTab(this, true);	
 	}
 
-	public class ListenerClass implements ActionListener {
+	private class ReprocessedTableMenu implements TableMenu<ReprocessedInterface> {
+		@Override
+		public MenuData<ReprocessedInterface> getMenuData() {
+			return new MenuData<ReprocessedInterface>(selectionModel.getSelected());
+		}
 
 		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (ReprocessedAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (ReprocessedAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
-			if (ACTION_CLEAR.equals(e.getActionCommand())) {
+			if (ReprocessedAction.CLEAR.name().equals(e.getActionCommand())) {
 				typeIDs.clear();
 				updateData();
 			}
-			if (ReprocessedSeparatorTableCell.ACTION_REMOVE.equals(e.getActionCommand())) {
+			if (ReprocessedCellAction.REMOVE.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Object o = tableModel.getElementAt(index);
 				if (o instanceof SeparatorList.Separator<?>) {
@@ -328,27 +328,42 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 				}
 			}
 		}
-
 	}
 
 	public static class TotalComparator implements Comparator<ReprocessedInterface> {
+
+		private final Comparator<ReprocessedInterface> comparator;
+
+		public TotalComparator() {
+			List<Comparator<ReprocessedInterface>> comparators = new ArrayList<Comparator<ReprocessedInterface>>();
+			comparators.add(new ReprocessedSeparatorComparator());
+			comparators.add(new InnerTotalComparator());
+			comparator = GlazedLists.chainComparators(comparators);
+		}
+
 		@Override
 		public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
-			if (o1.isTotal() && o2.isTotal()) {
-				return 0;  //Equal (both StockpileTotal)
-			} else if (o1.isTotal()) {
-				return 1;  //After
-			} else if (o2.isTotal()) {
-				return -1; //Before
-			} else {
-				return 0;  //Equal (not StockpileTotal)
+			return comparator.compare(o1, o2);
+		}
+
+		private static class InnerTotalComparator implements Comparator<ReprocessedInterface> {
+			@Override
+			public int compare(final ReprocessedInterface o1, final ReprocessedInterface o2) {
+				if (o1.isTotal() && o2.isTotal()) {
+					return 0;  //Equal (both StockpileTotal)
+				} else if (o1.isTotal()) {
+					return 1;  //After
+				} else if (o2.isTotal()) {
+					return -1; //Before
+				} else {
+					return 0;  //Equal (not StockpileTotal)
+				}
 			}
 		}
 	}
 
 	public class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
 
-		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ReprocessedInterface>> columns = null;
 		private EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
@@ -359,7 +374,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 
 		@Override
 		protected Object getColumnValue(final ReprocessedInterface item, final String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof ReprocessedTableFormat) {
 				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
 				return format.getColumnValue(item);
@@ -373,50 +388,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			if (column instanceof ReprocessedTableFormat) {
-				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			if (column instanceof ReprocessedExtendedTableFormat) {
-				ReprocessedExtendedTableFormat format = (ReprocessedExtendedTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			if (column instanceof ReprocessedTableFormat) {
-				ReprocessedTableFormat format = (ReprocessedTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			if (column instanceof ReprocessedExtendedTableFormat) {
-				ReprocessedExtendedTableFormat format = (ReprocessedExtendedTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			if (enumColumns == null) {
-				enumColumns = concat(ReprocessedExtendedTableFormat.values(), ReprocessedTableFormat.values());
-			}
-			return enumColumns;
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
 				return ReprocessedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -431,7 +403,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getEnumColumns() {
+		protected List<EnumTableColumn<ReprocessedInterface>> getColumns() {
 			if (columns == null) {
 				columns = new ArrayList<EnumTableColumn<ReprocessedInterface>>();
 				columns.addAll(Arrays.asList(ReprocessedExtendedTableFormat.values()));
@@ -441,7 +413,7 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		}
 
 		@Override
-		protected List<EnumTableColumn<ReprocessedInterface>> getEnumShownColumns() {
+		protected List<EnumTableColumn<ReprocessedInterface>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<ReprocessedInterface>>(tableFormat.getShownColumns());
 		}
 
@@ -453,13 +425,6 @@ public class ReprocessedTab extends JMainTab implements TableMenu<ReprocessedInt
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
-		}
-
-		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum<?>[] c = new Enum<?>[a.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(b, 0, c, a.length, b.length);
-			return c;
 		}
 	}
 

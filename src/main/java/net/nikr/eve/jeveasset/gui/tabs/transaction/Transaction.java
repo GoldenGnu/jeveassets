@@ -19,36 +19,40 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
 import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import java.util.Date;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class WalletTransaction extends ApiWalletTransaction implements LocationType, ItemType{
+public class Transaction extends ApiWalletTransaction implements LocationType, ItemType {
 
 	private Item item;
 	private Location location;
 	private Owner owner;
 	private String ownerCharacter;
 
-	public WalletTransaction(final ApiWalletTransaction apiWalletTransaction, final Item item, final Location location, final Owner owner) {		
-		this.setTransactionDateTime(apiWalletTransaction.getTransactionDateTime());
-		this.setTransactionID(apiWalletTransaction.getTransactionID());
-		this.setQuantity(apiWalletTransaction.getQuantity());
-		this.setTypeName(apiWalletTransaction.getTypeName());
-		this.setTypeID(apiWalletTransaction.getTypeID());
-		this.setPrice(apiWalletTransaction.getPrice());
-		this.setClientID(apiWalletTransaction.getClientID());
-		this.setClientName(apiWalletTransaction.getClientName());
-		this.setCharacterID(apiWalletTransaction.getCharacterID());
-		this.setCharacterName(apiWalletTransaction.getCharacterName());
-		this.setStationID(apiWalletTransaction.getStationID());
-		this.setStationName(apiWalletTransaction.getStationName());
-		this.setTransactionType(apiWalletTransaction.getTransactionType());
-		this.setTransactionFor(apiWalletTransaction.getTransactionFor());
-		//FIXME - EVEAPI Does not support WalletTransaction.JournalTransactionID
+	public Transaction(final ApiWalletTransaction apiTransaction, final Item item, final Location location, final Owner owner) {		
+		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
+		this.setTransactionID(apiTransaction.getTransactionID());
+		this.setQuantity(apiTransaction.getQuantity());
+		this.setTypeName(apiTransaction.getTypeName());
+		this.setTypeID(apiTransaction.getTypeID());
+		this.setPrice(apiTransaction.getPrice());
+		this.setClientID(apiTransaction.getClientID());
+		this.setClientName(apiTransaction.getClientName());
+		this.setCharacterID(apiTransaction.getCharacterID());
+		this.setCharacterName(apiTransaction.getCharacterName());
+		this.setStationID(apiTransaction.getStationID());
+		this.setStationName(apiTransaction.getStationName());
+		this.setTransactionType(apiTransaction.getTransactionType());
+		this.setTransactionFor(apiTransaction.getTransactionFor());
+		//FIXME - EVEAPI Does not support Transaction.JournalTransactionID
 		//this.setJournalTransactionID(apiWalletTransaction.getJournalTransactionID());
 		
 		this.item = item;
@@ -57,7 +61,7 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 		this.ownerCharacter = "";
 	}
 
-	public int compareTo(final WalletTransaction o) {
+	public int compareTo(final Transaction o) {
 		Long thisID = this.getTransactionID();
 		Long thatID = o.getTransactionID();
 		return thisID.compareTo(thatID);
@@ -110,6 +114,15 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 		}
 	}
 
+	public boolean isAfterAssets() {
+		Date date = owner.getAssetLastUpdate();
+		if (date != null) {
+			return getTransactionDateTime().after(date);
+		} else {
+			return false;
+		}
+	}
+
 	public boolean isSell() {
 		return getTransactionType().equals("sell");
 	}
@@ -146,7 +159,7 @@ public class WalletTransaction extends ApiWalletTransaction implements LocationT
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final WalletTransaction other = (WalletTransaction) obj;
+		final Transaction other = (Transaction) obj;
 		if (this.getTransactionID() != other.getTransactionID()) {
 			return false;
 		}

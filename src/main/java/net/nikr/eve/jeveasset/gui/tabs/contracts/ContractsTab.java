@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
@@ -62,10 +61,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
+public class ContractsTab extends JMainTab {
 
-	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
-	private static final String ACTION_EXPAND = "ACTION_EXPAND";
+	private enum ContractsAction {
+		COLLAPSE, EXPAND
+	}
 
 	//GUI
 	private JSeparatorTable jTable;
@@ -92,7 +92,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jToolBarRight.setRollover(true);
 
 		JButton jCollapse = new JButton(TabsContracts.get().collapse(), Images.MISC_COLLAPSED.getIcon());
-		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.setActionCommand(ContractsAction.COLLAPSE.name());
 		jCollapse.addActionListener(listener);
 		jCollapse.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jCollapse.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -100,7 +100,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		jToolBarRight.add(jCollapse);
 
 		JButton jExpand = new JButton(TabsContracts.get().expand(), Images.MISC_EXPANDED.getIcon());
-		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.setActionCommand(ContractsAction.EXPAND.name());
 		jExpand.addActionListener(listener);
 		jExpand.setMinimumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
 		jExpand.setMaximumSize(new Dimension(90, Program.BUTTONS_HEIGHT));
@@ -111,23 +111,24 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		tableFormat = new EnumTableFormatAdaptor<ContractsTableFormat, ContractItem>(ContractsTableFormat.class);
 		//Backend
 		eventList = program.getContractItemEventList();
-		//Filter
-		filterList = new FilterList<ContractItem>(eventList);
 		//Sorting (per column)
-		SortedList<ContractItem> sortedList = new SortedList<ContractItem>(filterList);
+		SortedList<ContractItem> sortedListColumn = new SortedList<ContractItem>(eventList);
+		//Sorting Separator (ensure export always has the right order)
+		SortedList<ContractItem> sortedListSeparator = new SortedList<ContractItem>(sortedListColumn, new SeparatorComparator());
+		//Filter
+		filterList = new FilterList<ContractItem>(sortedListSeparator);
 		//Separator
-		separatorList = new SeparatorList<ContractItem>(sortedList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
+		separatorList = new SeparatorList<ContractItem>(filterList, new SeparatorComparator(), 1, Integer.MAX_VALUE);
 		//Table Model
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
 		//Table
 		jTable = new JContractsTable(program, tableModel, separatorList);
 		jTable.setSeparatorRenderer(new ContractsSeparatorTableCell(jTable, separatorList, listener));
 		jTable.setSeparatorEditor(new ContractsSeparatorTableCell(jTable, separatorList, listener));
-		jTable.getTableHeader().setReorderingAllowed(true);
 		jTable.setCellSelectionEnabled(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Sorting
-		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		TableComparatorChooser.install(jTable, sortedListColumn, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -140,13 +141,13 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		filterControl = new ContractsFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedListSeparator,
 				filterList,
 				Settings.get().getTableFilters(NAME)
 				);
 
 		//Menu
-		installMenu(program, this, jTable, ContractItem.class);
+		installMenu(program, new ContractsTableMenu(), jTable, ContractItem.class);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -157,52 +158,51 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
-		int toolbatHeight = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarRight.getInsets().top + jToolBarRight.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBarRight, toolbatHeight, toolbatHeight, toolbatHeight)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
 
 	@Override
-	public MenuData<ContractItem> getMenuData() {
-		return new MenuData<ContractItem>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		//FIXME - make info menu for Contracts Tool
-		//JMenuInfo.contracts(...);
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	public class ListenerClass implements ActionListener {
+	private class ContractsTableMenu implements TableMenu<ContractItem> {
+		@Override
+		public MenuData<ContractItem> getMenuData() {
+			return new MenuData<ContractItem>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) { }
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+			if (ContractsAction.COLLAPSE.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(false);
 			}
-			if (ACTION_EXPAND.equals(e.getActionCommand())) {
+			if (ContractsAction.EXPAND.name().equals(e.getActionCommand())) {
 				jTable.expandSeparators(true);
 			}
 		}
@@ -219,7 +219,6 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 
 	public class ContractsFilterControl extends FilterControl<ContractItem> {
 
-		private Enum[] enumColumns = null;
 		private List<EnumTableColumn<ContractItem>> columns = null;
 		private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
 
@@ -229,15 +228,7 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected Enum<?>[] getColumns() {
-			if (enumColumns == null) {
-				enumColumns = concat(ContractsExtendedTableFormat.values(), ContractsTableFormat.values());
-			}
-			return enumColumns;
-		}
-
-		@Override
-		protected List<EnumTableColumn<ContractItem>> getEnumColumns() {
+		protected List<EnumTableColumn<ContractItem>> getColumns() {
 			if (columns == null) {
 				columns = new ArrayList<EnumTableColumn<ContractItem>>();
 				columns.addAll(Arrays.asList(ContractsExtendedTableFormat.values()));
@@ -247,12 +238,12 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected List<EnumTableColumn<ContractItem>> getEnumShownColumns() {
+		protected List<EnumTableColumn<ContractItem>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<ContractItem>>(tableFormat.getShownColumns());
 		}
 
 		@Override
-		protected Enum<?> valueOf(String column) {
+		protected EnumTableColumn<?> valueOf(String column) {
 			try {
 				return ContractsTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
@@ -267,30 +258,8 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		}
 
 		@Override
-		protected boolean isNumericColumn(Enum<?> column) {
-			if (column instanceof ContractsTableFormat) {
-				ContractsTableFormat format = (ContractsTableFormat) column;
-				if (Number.class.isAssignableFrom(format.getType())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(Enum<?> column) {
-			if (column instanceof ContractsTableFormat) {
-				ContractsTableFormat format = (ContractsTableFormat) column;
-				if (format.getType().getName().equals(Date.class.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
 		protected Object getColumnValue(ContractItem item, String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof ContractsTableFormat) {
 				ContractsTableFormat format = (ContractsTableFormat) column;
 				return format.getColumnValue(item);
@@ -311,13 +280,5 @@ public class ContractsTab extends JMainTab implements TableMenu<ContractItem> {
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
 		}
-
-		private Enum[] concat(final Enum[] a, final Enum[] b) {
-			Enum<?>[] c = new Enum<?>[a.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(b, 0, c, a.length, b.length);
-			return c;
-		}
-		
 	}
 }

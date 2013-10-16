@@ -34,11 +34,11 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class WindowSettingsPanel extends JSettingsPanel implements ActionListener {
+public class WindowSettingsPanel extends JSettingsPanel {
 
-	private static final String ACTION_AUTO_SAVE = "ACTION_AUTO_SAVE";
-	private static final String ACTION_FIXED = "ACTION_FIXED";
-	private static final String ACTION_DEFAULT = "ACTION_DEFAULT";
+	private enum WindowSettingsAction {
+		AUTO_SAVE, FIXED, DEFAULT
+	}
 
 	public static final int SAVE_ON_EXIT = 1;
 	public static final int FLAG_SAVE_MAXIMIZED = 2;
@@ -56,14 +56,16 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 
 	public WindowSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().windowWindow(), Images.SETTINGS_WINDOW.getIcon());
+	
+		ListenerClass listener = new ListenerClass();
 
 		jAutoSave = new JRadioButton(DialoguesSettings.get().windowSaveOnExit());
-		jAutoSave.setActionCommand(ACTION_AUTO_SAVE);
-		jAutoSave.addActionListener(this);
+		jAutoSave.setActionCommand(WindowSettingsAction.AUTO_SAVE.name());
+		jAutoSave.addActionListener(listener);
 
 		jFixed = new JRadioButton(DialoguesSettings.get().windowFixed());
-		jFixed.setActionCommand(ACTION_FIXED);
-		jFixed.addActionListener(this);
+		jFixed.setActionCommand(WindowSettingsAction.FIXED.name());
+		jFixed.addActionListener(listener);
 
 		JLabel jWidthLabel = new JLabel(DialoguesSettings.get().windowWidth());
 		jWidth = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
@@ -85,11 +87,9 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		group.add(jAutoSave);
 		group.add(jFixed);
 
-
 		jDefault = new JButton("Default");
-		jDefault.setActionCommand(ACTION_DEFAULT);
-		jDefault.addActionListener(this);
-
+		jDefault.setActionCommand(WindowSettingsAction.DEFAULT.name());
+		jDefault.addActionListener(listener);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -228,20 +228,21 @@ public class WindowSettingsPanel extends JSettingsPanel implements ActionListene
 		jAlwaysOnTop.setSelected(Settings.get().isWindowAlwaysOnTop());
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_AUTO_SAVE.equals(e.getActionCommand())) {
-			setInputEnabled(false);
-		}
-		if (ACTION_FIXED.equals(e.getActionCommand())) {
-			setInputEnabled(true);
-		}
-		if (ACTION_DEFAULT.equals(e.getActionCommand())) {
-			jWidth.setText("800");
-			jHeight.setText("600");
-			jX.setText("0");
-			jY.setText("0");
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (WindowSettingsAction.AUTO_SAVE.name().equals(e.getActionCommand())) {
+				setInputEnabled(false);
+			}
+			if (WindowSettingsAction.FIXED.name().equals(e.getActionCommand())) {
+				setInputEnabled(true);
+			}
+			if (WindowSettingsAction.DEFAULT.name().equals(e.getActionCommand())) {
+				jWidth.setText("800");
+				jHeight.setText("600");
+				jX.setText("0");
+				jY.setText("0");
+			}
 		}
 	}
-
 }

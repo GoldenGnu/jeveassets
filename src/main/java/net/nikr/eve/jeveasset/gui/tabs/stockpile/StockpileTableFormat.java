@@ -22,8 +22,8 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
@@ -50,7 +50,7 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getItem().getGroup();
 		}
 	},
-	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
+	COUNT_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnCountMinimum();
@@ -65,9 +65,9 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		}
 
 		@Override public StockpileItem setColumnValue(final Object baseObject, final Object editedValue) {
-			if ((editedValue instanceof Long) && (baseObject instanceof StockpileItem)) {
+			if ((editedValue instanceof Double) && (baseObject instanceof StockpileItem)) {
 				StockpileItem item = (StockpileItem) baseObject;
-				long l = (Long) editedValue;
+				double l = (Double) editedValue;
 				item.setCountMinimum(l);
 				return item;
 			}
@@ -142,6 +142,26 @@ public enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 		@Override
 		public Object getColumnValue(final StockpileItem from) {
 			return from.getSellOrdersCountNow();
+		}
+	},
+	COUNT_NOW_BUY_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowBuyTransactions();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getBuyTransactionsCountNow();
+		}
+	},
+	COUNT_NOW_SELL_TRANSACTIONS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowSellTransactions();
+		}
+		@Override
+		public Object getColumnValue(final StockpileItem from) {
+			return from.getSellTransactionsCountNow();
 		}
 	},
 	COUNT_NOW_JOBS(Long.class, GlazedLists.comparableComparator()) {

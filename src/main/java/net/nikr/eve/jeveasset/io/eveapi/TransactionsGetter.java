@@ -30,21 +30,20 @@ import java.util.List;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class WalletTransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
+public class TransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
 
-	public WalletTransactionsGetter() {
-		super("WalletTransaction", true, false);
+	public TransactionsGetter() {
+		super("Transaction", true, false);
 	}
 
-	@Override
 	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
-		super.load(updateTask, forceUpdate, accounts);
+		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
@@ -62,32 +61,32 @@ public class WalletTransactionsGetter extends AbstractApiGetter<WalletTransactio
 
 	@Override
 	protected Date getNextUpdate() {
-		return getOwner().getWalletTransactionsNextUpdate();
+		return getOwner().getTransactionsNextUpdate();
 	}
 
 	@Override
 	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setWalletTransactionsNextUpdate(nextUpdate);
+		getOwner().setTransactionsNextUpdate(nextUpdate);
 	}
 
 	@Override
 	protected void setData(final WalletTransactionsResponse response) {
-		List<WalletTransaction> walletTransaction = ApiConverter.convertWalletTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner());
-		getOwner().setWalletTransactions(walletTransaction);
+		List<Transaction> transactions = ApiConverter.convertTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner());
+		getOwner().setTransactions(transactions);
 	}
 
 	@Override
 	protected void updateFailed(final Owner ownerFrom, final Owner ownerTo) {
-		ownerTo.setWalletTransactions(ownerFrom.getWalletTransactions());
-		ownerTo.setWalletTransactionsNextUpdate(ownerFrom.getWalletTransactionsNextUpdate());
+		ownerTo.setTransactions(ownerFrom.getTransactions());
+		ownerTo.setTransactionsNextUpdate(ownerFrom.getTransactionsNextUpdate());
 	}
 
 	@Override
 	protected long requestMask(boolean bCorp) {
 		if (bCorp) {
-			return AccessMask.WALLET_TRANSACTIONS_CORP.getAccessMask();
+			return AccessMask.TRANSACTIONS_CORP.getAccessMask();
 		} else {
-			return AccessMask.WALLET_TRANSACTIONS_CHAR.getAccessMask();
+			return AccessMask.TRANSACTIONS_CHAR.getAccessMask();
 		}
 	}
 }

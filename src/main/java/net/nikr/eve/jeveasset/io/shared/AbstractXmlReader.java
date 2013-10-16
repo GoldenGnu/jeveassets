@@ -38,18 +38,20 @@ public abstract class AbstractXmlReader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlReader.class);
 
-	protected Element getDocumentElement(final String filename) throws XmlException, IOException {
-		return getDocumentElement(filename, false);
+	protected Element getDocumentElement(final String filename, final boolean fileLock) throws XmlException, IOException {
+		return getDocumentElement(filename, fileLock, false);
 	}
 
-	private Element getDocumentElement(final String filename, final boolean usingBackupFile) throws XmlException, IOException {
+	private Element getDocumentElement(final String filename, final boolean fileLock, final boolean usingBackupFile) throws XmlException, IOException {
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
 		Document doc;
 		FileInputStream is = null;
 		File file = new File(filename);
 		try {
-			FileLock.lock(file);
+			if (fileLock) {
+				FileLock.lock(file);
+			}
 			is = new FileInputStream(file);
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
@@ -60,14 +62,18 @@ public abstract class AbstractXmlReader {
 				is.close();
 			}
 			if (!usingBackupFile && restoreBackupFile(filename)) {
-				FileLock.unlock(file);
-				return getDocumentElement(filename, true);
+				if (fileLock) {
+					FileLock.unlock(file);
+				}
+				return getDocumentElement(filename, fileLock, true);
 			}
 			throw new XmlException(ex.getMessage(), ex);
 		} catch (ParserConfigurationException ex) {
 			throw new XmlException(ex.getMessage(), ex);
 		} finally {
-			FileLock.unlock(file);
+			if (fileLock) {
+				FileLock.unlock(file);
+			}
 			if (is != null) {
 				is.close();
 			}

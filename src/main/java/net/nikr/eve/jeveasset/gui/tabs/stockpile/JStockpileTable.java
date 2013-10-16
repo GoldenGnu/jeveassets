@@ -71,7 +71,7 @@ public class JStockpileTable extends JSeparatorTable {
 				}
 			}
 			//Foreground
-			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isInventory()) {
+			if (columnName.equals(StockpileTableFormat.COUNT_NOW_INVENTORY.getColumnName()) && !stockpileItem.getStockpile().isAssets()) {
 				component.setForeground(Color.GRAY);
 			}
 			if (columnName.equals(StockpileTableFormat.COUNT_NOW_BUY_ORDERS.getColumnName()) && !stockpileItem.getStockpile().isBuyOrders()) {

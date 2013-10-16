@@ -29,6 +29,8 @@ import java.util.Locale;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
 
 public class FilterMatcher<E> implements Matcher<E> {
@@ -41,7 +43,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	private final FilterControl<E> filterControl;
 	private final Filter.LogicType logic;
-	private final Enum<?> enumColumn;
+	private final EnumTableColumn<?> enumColumn;
 	private final CompareType compare;
 	private final String text;
 	private final boolean enabled;
@@ -50,7 +52,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 		this(filterControl, filter.getLogic(), filter.getColumn(), filter.getCompareType(), filter.getText(), true);
 	}
 
-	FilterMatcher(final FilterControl<E> filterControl, final LogicType logic, final Enum<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
+	FilterMatcher(final FilterControl<E> filterControl, final LogicType logic, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final boolean enabled) {
 		this.filterControl = filterControl;
 		this.logic = logic;
 		this.enumColumn = enumColumn;
@@ -73,7 +75,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	@Override
 	public boolean matches(final E item) {
-		if (enumColumn instanceof Filter.ExtraColumns) {
+		if (enumColumn instanceof Filter.AllColumn) {
 			return matchesAll(item, compare, text);
 		}
 		Object column = filterControl.getColumnValue(item, enumColumn.name());
@@ -119,7 +121,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 
 	private boolean matchesAll(final E item, final Filter.CompareType compareType, final String formatedText) {
 		String haystack = "";
-		for (Enum<?> testColumn : filterControl.getColumns()) {
+		for (EnumTableColumn<E> testColumn : filterControl.getColumns()) {
 			Object columnValue = filterControl.getColumnValue(item, testColumn.name());
 			if (columnValue != null) {
 				haystack = haystack + "\n" + format(columnValue) + "\r";
@@ -172,14 +174,6 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Double double1 = getDouble(object1);
 		Double double2 = getDouble(object2);
 
-		//Percent
-		if (double1 == null) {
-			double1 = getPercent(object1, false);
-		}
-		if (double2 == null) {
-			double2 = getPercent(object2, false);
-		}
-
 		//Long / Integer
 		Long long1 = getLong(object1);
 		Long long2 = getLong(object2);
@@ -224,6 +218,8 @@ public class FilterMatcher<E> implements Matcher<E> {
 		if ((obj instanceof Long) || (obj instanceof Integer)
 				|| (obj instanceof Double) || (obj instanceof Float)) {
 			return (Number) obj;
+		} else if (obj instanceof NumberValue) {
+			return ((NumberValue) obj).getNumber();
 		} else if (userInput) {
 			return createNumber(obj);
 		} else {
@@ -235,8 +231,10 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return (Double) obj;
 		} else if (obj instanceof Float) {
 			return Double.valueOf((Float) obj);
+		} else if (obj instanceof NumberValue) {
+			return ((NumberValue) obj).getDouble();
 		} else {
-			return createNumber(obj);
+			return createDouble(obj);
 		}
 	}
 	private Long getLong(final Object obj) {
@@ -244,33 +242,41 @@ public class FilterMatcher<E> implements Matcher<E> {
 			return (Long) obj;
 		} else if (obj instanceof Integer) {
 			return Long.valueOf((Integer) obj);
+		} else if (obj instanceof NumberValue) {
+			return ((NumberValue) obj).getLong();
 		} else {
 			return null;
 		}
 	}
-	private static Double getPercent(final Object obj, final boolean userInput) {
-		if (obj instanceof Percent) {
-			Percent percent = (Percent) obj;
-			return percent.getPercent();
-		} else if (userInput){
-			return createPercent(obj);
+
+	private static Double createDouble(final Object object) {
+		Number number = parse(object, NUMBER_FORMAT);
+		if (number != null) {
+			return number.doubleValue();
 		} else {
 			return null;
 		}
 	}
-	private static Double createNumber(final Object object) {
-		return parse(object, NUMBER_FORMAT);
+
+	private static Number createNumber(final Object object) {
+		Number number = parse(object, NUMBER_FORMAT);
+		if (number != null) {
+			return number;
+		} else {
+			return createPercent(object);
+		}
 	}
+
 	private static Double createPercent(final Object object) {
-		Double d = parse(object, PERCENT_FORMAT);
+		Number d = parse(object, PERCENT_FORMAT);
 		if (d != null) {
-			return d * 100;
+			return d.doubleValue() * 100;
 		} else {
-			return d;
+			return null;
 		}
-		//return parse(object, PERCENT_FORMAT);
 	}
-	private static Double parse(final Object object, final NumberFormat numberFormat) {
+
+	private static Number parse(final Object object, final NumberFormat numberFormat) {
 		if (object instanceof String) {
 			String filterValue = (String) object;
 			//Used to check if parsing was successful
@@ -278,7 +284,7 @@ public class FilterMatcher<E> implements Matcher<E> {
 			//Parse number using the Locale
 			Number n = numberFormat.parse(filterValue, position);
 			if (n != null && position.getIndex() == filterValue.length()) { //Numeric
-				return n.doubleValue();
+				return n;
 			}
 		}
 		return null;
@@ -317,12 +323,6 @@ public class FilterMatcher<E> implements Matcher<E> {
 		Date date = getDate(object, userInput);
 		if (date != null) {
 			return toLowerCase(Formater.columnDate(date), toLowerCase);
-		}
-
-		//Percent
-		Double percent = getPercent(object, userInput);
-		if (percent != null) {
-			return toLowerCase(Formater.compareFormat(percent), toLowerCase);
 		}
 
 		//String

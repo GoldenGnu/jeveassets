@@ -25,7 +25,9 @@ import net.nikr.eve.jeveasset.i18n.TabsReprocessed;
  */
 public class ReprocessedSeparatorTableCell extends SeparatorTableCell<ReprocessedInterface> {
 
-	public static final String ACTION_REMOVE = "ACTION_REMOVE";
+	public enum ReprocessedCellAction {
+		REMOVE
+	}
 
 	private final JLabel jColor;
 	private final JButton jRemove;
@@ -45,7 +47,7 @@ public class ReprocessedSeparatorTableCell extends SeparatorTableCell<Reprocesse
 
 		jRemove = new JButton(TabsReprocessed.get().remove());
 		jRemove.setOpaque(false);
-		jRemove.setActionCommand(ACTION_REMOVE);
+		jRemove.setActionCommand(ReprocessedCellAction.REMOVE.name());
 		jRemove.addActionListener(actionListener);
 
 		jName = new JLabel();

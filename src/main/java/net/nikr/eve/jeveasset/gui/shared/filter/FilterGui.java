@@ -29,21 +29,33 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-class FilterGui<E> implements ActionListener {
+class FilterGui<E> {
 
-	private static final String ACTION_ADD = "ACTION_ADD";
-	private static final String ACTION_CLEAR = "ACTION_CLEAR";
-	private static final String ACTION_SAVE = "ACTION_SAVE";
-	private static final String ACTION_MANAGER = "ACTION_MANAGER";
-	private static final String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
-	private static final String ACTION_EXPORT = "ACTION_EXPORT";
+	private enum FilterGuiAction {
+		ADD,
+		CLEAR,
+		SAVE,
+		MANAGER,
+		SHOW_FILTERS,
+		EXPORT
+	}
 
 	private JPanel jPanel;
 	private GroupLayout layout;
@@ -53,19 +65,21 @@ class FilterGui<E> implements ActionListener {
 	private JLabel jShowing;
 	private JFrame jFrame;
 
-	private FilterControl<E> matcherControl;
+	private FilterControl<E> filterControl;
 
 	private List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
 	private FilterSave filterSave;
 	private FilterManager<E> filterManager;
 
-	private CsvExportDialog<E> export;
+	private ExportDialog<E> exportDialog;
 
-	FilterGui(final JFrame jFrame, final FilterControl<E> matcherControl) {
+	ListenerClass listener = new ListenerClass();
+
+	FilterGui(final JFrame jFrame, final FilterControl<E> filterControl) {
 		this.jFrame = jFrame;
-		this.matcherControl = matcherControl;
+		this.filterControl = filterControl;
 
-		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getEventLists(), matcherControl.getEnumColumns());
+		exportDialog = new ExportDialog<E>(jFrame, filterControl.getName(), filterControl, filterControl, filterControl.getEventLists(), filterControl.getColumns());
 
 		jPanel = new JPanel();
 
@@ -81,15 +95,15 @@ class FilterGui<E> implements ActionListener {
 		//Add
 		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
-		jAddField.setActionCommand(ACTION_ADD);
-		jAddField.addActionListener(this);
+		jAddField.setActionCommand(FilterGuiAction.ADD.name());
+		jAddField.addActionListener(listener);
 		addToolButton(jAddField);
 
 		//Reset
 		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.FILTER_CLEAR.getIcon());
-		jClearFields.setActionCommand(ACTION_CLEAR);
-		jClearFields.addActionListener(this);
+		jClearFields.setActionCommand(FilterGuiAction.CLEAR.name());
+		jClearFields.addActionListener(listener);
 		addToolButton(jClearFields);
 
 		addToolSeparator();
@@ -97,8 +111,8 @@ class FilterGui<E> implements ActionListener {
 		//Save Filter
 		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.FILTER_SAVE.getIcon());
-		jSaveFilter.setActionCommand(ACTION_SAVE);
-		jSaveFilter.addActionListener(this);
+		jSaveFilter.setActionCommand(FilterGuiAction.SAVE.name());
+		jSaveFilter.addActionListener(listener);
 		addToolButton(jSaveFilter);
 
 		//Load Filter
@@ -114,16 +128,16 @@ class FilterGui<E> implements ActionListener {
 		//Export
 		JButton jExport = new JButton(GuiShared.get().export());
 		jExport.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
-		jExport.setActionCommand(ACTION_EXPORT);
-		jExport.addActionListener(this);
+		jExport.setActionCommand(FilterGuiAction.EXPORT.name());
+		jExport.addActionListener(listener);
 		addToolButton(jExport);
 
 		addToolSeparator();
 
 		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
-		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
-		jShowFilters.addActionListener(this);
+		jShowFilters.setActionCommand(FilterGuiAction.SHOW_FILTERS.name());
+		jShowFilters.addActionListener(listener);
 		jShowFilters.setSelected(true);
 		addToolButton(jShowFilters, 70);
 
@@ -136,7 +150,7 @@ class FilterGui<E> implements ActionListener {
 		add();
 
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<E>(jFrame, this, matcherControl.getFilters(), matcherControl.getDefaultFilters());
+		filterManager = new FilterManager<E>(jFrame, this, filterControl.getFilters(), filterControl.getDefaultFilters());
 	}
 
 	JPanel getPanel() {
@@ -160,10 +174,10 @@ class FilterGui<E> implements ActionListener {
 
 	void updateShowing() {
 		int showing = 0;
-		for (FilterList<E> filterList : matcherControl.getFilterLists()) {
+		for (FilterList<E> filterList : filterControl.getFilterLists()) {
 			showing = showing + filterList.size();
 		}
-		jShowing.setText(GuiShared.get().filterShowing(showing, matcherControl.getTotalSize(), getCurrentFilterName()));
+		jShowing.setText(GuiShared.get().filterShowing(showing, filterControl.getTotalSize(), getCurrentFilterName()));
 	}
 
 	String getCurrentFilterName() {
@@ -171,8 +185,8 @@ class FilterGui<E> implements ActionListener {
 		if (getFilters().isEmpty()) {
 			filterName = GuiShared.get().filterEmpty();
 		} else {
-			if (matcherControl.getAllFilters().containsValue(getFilters())) {
-				for (Map.Entry<String, List<Filter>> entry : matcherControl.getAllFilters().entrySet()) {
+			if (filterControl.getAllFilters().containsValue(getFilters())) {
+				for (Map.Entry<String, List<Filter>> entry : filterControl.getAllFilters().entrySet()) {
 					if (entry.getValue().equals(getFilters())) {
 						filterName = entry.getKey();
 						break;
@@ -216,10 +230,10 @@ class FilterGui<E> implements ActionListener {
 		);
 
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
-		int toolbatHeight = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		verticalGroup
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jToolBar, toolbatHeight, toolbatHeight, toolbatHeight)
+					.addComponent(jToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 		if (jShowFilters.isSelected()) {
@@ -239,7 +253,7 @@ class FilterGui<E> implements ActionListener {
 	}
 
 	private void add() {
-		add(new FilterPanel<E>(this, matcherControl));
+		add(new FilterPanel<E>(this, filterControl));
 	}
 
 	private void add(final FilterPanel<E> filterPanel) {
@@ -271,8 +285,8 @@ class FilterGui<E> implements ActionListener {
 		if (filterName == null) {
 			return;
 		}
-		if (matcherControl.getAllFilters().containsKey(filterName)) {
-			List<Filter> filters = matcherControl.getAllFilters().get(filterName);
+		if (filterControl.getAllFilters().containsKey(filterName)) {
+			List<Filter> filters = filterControl.getAllFilters().get(filterName);
 			if (add) {
 				addFilters(filters);
 			} else {
@@ -295,7 +309,7 @@ class FilterGui<E> implements ActionListener {
 	void addFilters(final List<Filter> filters) {
 		clearEmpty(); //Remove single empty filter...
 		for (Filter filter : filters) {
-			FilterPanel<E> filterPanel = new FilterPanel<E>(this, matcherControl);
+			FilterPanel<E> filterPanel = new FilterPanel<E>(this, filterControl);
 			filterPanel.setFilter(filter);
 			add(filterPanel);
 		}
@@ -308,15 +322,15 @@ class FilterGui<E> implements ActionListener {
 		JMenuItem jMenuItem;
 
 		jMenuItem = new JMenuItem(GuiShared.get().manageFilters(), Images.DIALOG_SETTINGS.getIcon());
-		jMenuItem.setActionCommand(ACTION_MANAGER);
-		jMenuItem.addActionListener(this);
+		jMenuItem.setActionCommand(FilterGuiAction.MANAGER.name());
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 
-		List<String> filters = new ArrayList<String>(matcherControl.getFilters().keySet());
+		List<String> filters = new ArrayList<String>(filterControl.getFilters().keySet());
 		Collections.sort(filters, new CaseInsensitiveComparator());
 
-		List<String> defaultFilters = new ArrayList<String>(matcherControl.getDefaultFilters().keySet());
+		List<String> defaultFilters = new ArrayList<String>(filterControl.getDefaultFilters().keySet());
 		Collections.sort(defaultFilters, new CaseInsensitiveComparator());
 
 		if (!filters.isEmpty() || !defaultFilters.isEmpty()) {
@@ -327,7 +341,7 @@ class FilterGui<E> implements ActionListener {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD_DEFAULT.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(this);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 
@@ -335,64 +349,67 @@ class FilterGui<E> implements ActionListener {
 			jMenuItem = new JMenuItem(s, Images.FILTER_LOAD.getIcon());
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(this);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 		updateShowing();
-		matcherControl.updateFilters();
+		filterControl.updateFilters();
 	}
 
 	void refilter() {
-		matcherControl.beforeFilter();
+		filterControl.beforeFilter();
 		List<FilterMatcher<E>> matchers = getMatchers();
 		if (matchers.isEmpty()) {
-			for (FilterList<E> filterList : matcherControl.getFilterLists()) {
+			for (FilterList<E> filterList : filterControl.getFilterLists()) {
 				filterList.setMatcher(null);
 			}
 		} else {
-			for (FilterList<E> filterList : matcherControl.getFilterLists()) {
+			for (FilterList<E> filterList : filterControl.getFilterLists()) {
 				filterList.setMatcher(new FilterLogicalMatcher<E>(matchers));
 			}
 		}
 
-		matcherControl.afterFilter();
+		filterControl.afterFilter();
 		updateShowing();
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ADD.equals(e.getActionCommand())) {
-			add();
-			return;
-		}
-		if (ACTION_CLEAR.equals(e.getActionCommand())) {
-			clear();
-			return;
-		}
-		if (ACTION_MANAGER.equals(e.getActionCommand())) {
-			filterManager.setVisible(true);
-			return;
-		}
-		if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())) {
-			update();
-			return;
-		}
-		if (ACTION_SAVE.equals(e.getActionCommand())) {
-			if (getMatchers().isEmpty()) {
-				JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
-			} else {
-				String name = filterSave.show(new ArrayList<String>(matcherControl.getFilters().keySet()), new ArrayList<String>(matcherControl.getDefaultFilters().keySet()));
-				if (name != null && !name.isEmpty()) {
-					matcherControl.getFilters().put(name, getFilters());
-					updateFilters();
-				}
+	private class ListenerClass implements ActionListener {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (FilterGuiAction.ADD.name().equals(e.getActionCommand())) {
+				add();
+				return;
 			}
-			return;
+			if (FilterGuiAction.CLEAR.name().equals(e.getActionCommand())) {
+				clear();
+				return;
+			}
+			if (FilterGuiAction.MANAGER.name().equals(e.getActionCommand())) {
+				filterManager.setVisible(true);
+				return;
+			}
+			if (FilterGuiAction.SHOW_FILTERS.name().equals(e.getActionCommand())) {
+				update();
+				return;
+			}
+			if (FilterGuiAction.SAVE.name().equals(e.getActionCommand())) {
+				if (getMatchers().isEmpty()) {
+					JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
+				} else {
+					String name = filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
+					if (name != null && !name.isEmpty()) {
+						filterControl.getFilters().put(name, getFilters());
+						updateFilters();
+					}
+				}
+				return;
+			}
+			if (FilterGuiAction.EXPORT.name().equals(e.getActionCommand())) {
+				exportDialog.setVisible(true);
+				return;
+			}
+			loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
 		}
-		if (ACTION_EXPORT.equals(e.getActionCommand())) {
-			export.setVisible(true);
-			return;
-		}
-		loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
 	}
 }

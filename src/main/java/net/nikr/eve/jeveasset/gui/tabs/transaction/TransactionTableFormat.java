@@ -24,19 +24,18 @@ package net.nikr.eve.jeveasset.gui.tabs.transaction;
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.WalletTransaction;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 
-public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction> {
+public enum TransactionTableFormat implements EnumTableColumn<Transaction> {
 	DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsTransaction.get().columnTransactionDate();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getTransactionDateTime();
 		}
 	},
@@ -46,7 +45,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getItem().getTypeName();
 		}
 	},
@@ -56,7 +55,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnQuantity();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getQuantity();
 		}
 	},
@@ -66,7 +65,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getPrice();
 		}
 	},
@@ -76,7 +75,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getValue();
 		}
 	},
@@ -86,7 +85,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getOwnerName();
 		}
 	},
@@ -96,7 +95,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnStationName();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getStationName();
 		}
 	},
@@ -106,7 +105,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getLocation().getRegion();
 		}
 	},
@@ -116,7 +115,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnClientName();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getClientName();
 		}
 	},
@@ -126,7 +125,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnTransactionType();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getTransactionTypeFormatted();
 		}
 	},
@@ -136,7 +135,7 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 			return TabsTransaction.get().columnTransactionFor();
 		}
 		@Override
-		public Object getColumnValue(final WalletTransaction from) {
+		public Object getColumnValue(final Transaction from) {
 			return from.getTransactionForFormatted();
 		}
 	};
@@ -167,11 +166,11 @@ public enum TransactionTableFormat implements EnumTableColumn<WalletTransaction>
 		return true;
 	}
 	@Override
-	public WalletTransaction setColumnValue(final Object baseObject, final Object editedValue) {
+	public Transaction setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final WalletTransaction from);
+	@Override public abstract Object getColumnValue(final Transaction from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

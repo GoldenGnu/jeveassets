@@ -49,7 +49,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 
 	private boolean read() {
 		try {
-			Element element = getDocumentElement(Settings.getPathConquerableStations());
+			Element element = getDocumentElement(Settings.getPathConquerableStations(), true);
 			Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
 			parseConquerableStations(element, conquerableStations);
 			StaticData.get().setConquerableStations(conquerableStations);

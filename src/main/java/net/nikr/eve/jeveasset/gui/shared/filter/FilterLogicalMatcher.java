@@ -34,10 +34,10 @@ public class FilterLogicalMatcher<E> implements Matcher<E> {
 		this.matchers = matchers;
 	}
 
-	public FilterLogicalMatcher(final FilterControl<E> matcherControl, final List<Filter> filters) {
+	public FilterLogicalMatcher(final FilterControl<E> filterControl, final List<Filter> filters) {
 		this.matchers = new ArrayList<FilterMatcher<E>>();
 		for (Filter filter : filters) {
-			this.matchers.add(new FilterMatcher<E>(matcherControl, filter));
+			this.matchers.add(new FilterMatcher<E>(filterControl, filter));
 		}
 	}
 

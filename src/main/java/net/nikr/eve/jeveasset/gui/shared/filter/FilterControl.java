@@ -26,17 +26,23 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.TableModel;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
 
-
-public abstract class FilterControl<E> implements ListEventListener<E> {
+public abstract class FilterControl<E> extends ExportFilterControl<E> {
 
 	private final String name;
 	private final List<EventList<E>> eventLists;
@@ -73,12 +79,14 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		this.filterLists = filterLists;
 		this.filters = filters;
 		this.defaultFilters = defaultFilters;
+		ListenerClass listener = new ListenerClass();
 		for (FilterList<E> filterList : filterLists) {
-			filterList.addListEventListener(this);
+			filterList.addListEventListener(listener);
 		}
 		gui = new FilterGui<E>(jFrame, this);
 	}
 
+	@Override
 	public List<Filter> getCurrentFilters() {
 		return gui.getFilters();
 	}
@@ -114,32 +122,21 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 	}
 
 	public JMenu getMenu(final JTable jTable, final List<E> items) {
-		//FIXME Add support for adding filters from more than one cell...
 		String text = null;
-		Enum<?> column = null;
+		EnumTableColumn<?> column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
-		TableModel model = jTable.getModel();
 		int columnIndex = jTable.getSelectedColumn();
-		if (jTable.getSelectedColumnCount() == 1
-				&& jTable.getSelectedRowCount() == 1
-				&& items.size() == 1
-				&& !(items.get(0) instanceof SeparatorList.Separator)
-				&& model instanceof DefaultEventTableModel) {
-			DefaultEventTableModel<?> tableModel = (DefaultEventTableModel<?>) model;
-			TableFormat<?> tableFormat = tableModel.getTableFormat();
-			if (tableFormat instanceof EnumTableFormatAdaptor) {
-				EnumTableFormatAdaptor<?, ?> adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()) {
-					Object object = adaptor.getShownColumns().get(columnIndex);
-					if (object instanceof Enum) {
-						column = (Enum) object;
-						isNumeric = isNumeric(column);
-						isDate = isDate(column);
-						text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
-					}
-				}
-			}
+		if (jTable.getSelectedColumnCount() == 1 //Single cell (column)
+				&& jTable.getSelectedRowCount() == 1 //Single cell (row)
+				&& items.size() == 1 //Single element
+				&& !(items.get(0) instanceof SeparatorList.Separator) //Not Separator
+				&& columnIndex >= 0 //Shown column
+				&& columnIndex < getShownColumns().size()) { //Shown column
+			column = getShownColumns().get(columnIndex);
+			isNumeric = isNumeric(column);
+			isDate = isDate(column);
+			text = FilterMatcher.format(getColumnValue(items.get(0), column.name()), false, false);
 		}
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
 	}
@@ -160,6 +157,7 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return filters;
 	}
 
+	@Override
 	public Map<String, List<Filter>> getAllFilters() {
 		//Need to be updated each time something has changed....
 		Map<String, List<Filter>> allFilters = new HashMap<String, List<Filter>>();
@@ -180,18 +178,8 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return totalSize;
 	}
 
-	protected abstract Enum<?>[] getColumns();
-	protected abstract List<EnumTableColumn<E>> getEnumColumns();
-	protected abstract List<EnumTableColumn<E>> getEnumShownColumns();
-	protected abstract Enum<?> valueOf(String column);
-	/**
-	 * Use isNumeric(Enum column) instead.
-	 */
-	protected abstract boolean isNumericColumn(Enum<?> column);
-	/**
-	 * Use isDate(Enum column) instead.
-	 */
-	protected abstract boolean isDateColumn(Enum<?> column);
+	protected abstract List<EnumTableColumn<E>> getColumns();
+
 	protected abstract Object getColumnValue(E item, String column);
 
 	/**
@@ -215,27 +203,36 @@ public abstract class FilterControl<E> implements ListEventListener<E> {
 		return columns;
 	}
 
-	boolean isNumeric(final Enum<?> column) {
-		if (column instanceof ExtraColumns) {
+	boolean isNumeric(final EnumTableColumn<?> column) {
+		if (column instanceof AllColumn) {
 			return false;
+		} else if (Number.class.isAssignableFrom(column.getType())) {
+			return true;
+		} else if (NumberValue.class.isAssignableFrom(column.getType())) {
+			return true;
 		} else {
-			return isNumericColumn(column);
+			return false;
 		}
 	}
 
-	boolean isDate(final Enum<?> column) {
-		if (column instanceof ExtraColumns) {
+	boolean isDate(final EnumTableColumn<?> column) {
+		if (column instanceof AllColumn) {
 			return false;
+		} else if (column.getType().getName().equals(Date.class.getName())) {
+			return true;
 		} else {
-			return isDateColumn(column);
+			return false;
 		}
 	}
-	boolean isAll(final Enum<?> column) {
-		return (column instanceof ExtraColumns);
+
+	boolean isAll(final EnumTableColumn<?> column) {
+		return (column instanceof AllColumn);
 	}
 
-	@Override
-	public void listChanged(final ListEvent<E> listChanges) {
-		gui.updateShowing();
+	private class ListenerClass implements ListEventListener<E> {
+		@Override
+		public void listChanged(final ListEvent<E> listChanges) {
+			gui.updateShowing();
+		}
 	}
 }

@@ -20,7 +20,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
+public abstract class SeparatorTableCell<E> extends AbstractCellEditor
 		implements TableCellRenderer, TableCellEditor {
 
 	protected static final Border EMPTY_TWO_PIXEL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
@@ -30,7 +30,7 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 	protected SeparatorList.Separator<?> currentSeparator;
 	protected int currentRow;
 
-	protected final JPanel jPanel;
+	protected final JSeparatorPanel jPanel;
 	protected final JButton jExpand;
 	protected final GroupLayout layout;
 	protected final JTable jTable;
@@ -42,7 +42,7 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 		this.jTable = jTable;
 		this.separatorList = separatorList;
 
-		jPanel = new JPanel(new BorderLayout());
+		jPanel = new JSeparatorPanel(new BorderLayout());
 		jPanel.setBackground(Color.LIGHT_GRAY);
 		jPanel.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(final MouseEvent e) {
@@ -131,5 +131,24 @@ public abstract class SeparatorTableCell<E>  extends AbstractCellEditor
 
 		// Scroll the area into view
 		viewport.scrollRectToVisible(rect);
+	}
+
+	public class JSeparatorPanel extends JPanel {
+
+		public JSeparatorPanel(LayoutManager layout, boolean isDoubleBuffered) {
+			super(layout, isDoubleBuffered);
+		}
+
+		public JSeparatorPanel(LayoutManager layout) {
+			super(layout);
+		}
+
+		public JSeparatorPanel(boolean isDoubleBuffered) {
+			super(isDoubleBuffered);
+		}
+
+		public JSeparatorPanel() {
+			super();
+		}
 	}
 }

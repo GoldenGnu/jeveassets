@@ -21,19 +21,23 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import static org.junit.Assert.assertEquals;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
 import org.junit.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class FilterMatcherTest {
 
-	public enum TestEnum {
+	public enum TestEnum implements EnumTableColumn<Item> {
 		TEXT(false, false),
 		LONG(true, false),
 		INTEGER(true, false),
@@ -60,6 +64,41 @@ public class FilterMatcherTest {
 
 		public boolean isNumber() {
 			return number;
+		}
+
+		@Override
+		public Class<?> getType() {
+			return null;
+		}
+
+		@Override
+		public Comparator<?> getComparator() {
+			return null;
+		}
+
+		@Override
+		public String getColumnName() {
+			return null;
+		}
+
+		@Override
+		public Object getColumnValue(Item from) {
+			return null;
+		}
+
+		@Override
+		public boolean isColumnEditable(Object baseObject) {
+			return false;
+		}
+
+		@Override
+		public boolean isShowDefault() {
+			return false;
+		}
+
+		@Override
+		public Item setColumnValue(Object baseObject, Object editedValue) {
+			return null;
 		}
 	}
 
@@ -131,25 +170,25 @@ public class FilterMatcherTest {
 		allTest();
 	}
 
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text) {
 		matches(expected, item, enumColumn, compare, text, null, null, null, null);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final String textColumn) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final String textColumn) {
 		matches(expected, item, enumColumn, compare, text, textColumn, null, null, null);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Number numberColumn) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final Number numberColumn) {
 		matches(expected, item, enumColumn, compare, text, null, numberColumn, null, null);
 	}
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Date dateColumn) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final Date dateColumn) {
 		matches(expected, item, enumColumn, compare, text, null, null, dateColumn, null);
 	}
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final Percent percentColumn) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final Percent percentColumn) {
 		matches(expected, item, enumColumn, compare, text, null, null, null, percentColumn);
 	}
 
-	private void matches(final Object expected, final Item item, final Enum<?> enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn, final Percent percentColumn) {
+	private void matches(final Object expected, final Item item, final EnumTableColumn<?> enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn, final Percent percentColumn) {
 		//Test matches
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
@@ -462,71 +501,71 @@ public class FilterMatcherTest {
 	private void allTest() {
 	//Text
 		//Equals
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT_PART);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT_NOT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS, TEXT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, TEXT_PART);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, TEXT_NOT);
 		//Equals not
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT_PART);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT_NOT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, TEXT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, TEXT_PART);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, TEXT_NOT);
 		//Contains
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT_PART);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT_NOT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, TEXT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, TEXT_PART);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS, TEXT_NOT);
 		//Contains not
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_PART);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_NOT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_PART);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_NOT);
 	//Number
 		//Equals
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222.0");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "223");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "223.1");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222.1");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS, "222");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS, "222.0");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, "223");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, "223.1");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, "222.1");
 		//Equals not
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "223");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "223.1");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222.1");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222.0");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, "223");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, "223.1");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, "222.1");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, "222");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, "222.0");
 		//Contains
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222.0");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "223");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "223.1");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222.1");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, "222");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, "222.0");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS, "223");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS, "223.1");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS, "222.1");
 		//Contains not
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "223");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "223.1");
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222.1");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222");
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222.0");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "223");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "223.1");
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222.1");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222");
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, "222.0");
 	//Date
 		//Equals
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE_PART);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE_NOT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS, DATE);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, DATE_PART);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS, DATE_NOT);
 		//Equals not
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE_PART);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE_NOT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE_PART);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT, DATE_NOT);
 		//Equals date
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE_PART);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE_NOT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE_PART);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_DATE, DATE_NOT);
 		//Equals not date
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_PART);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_NOT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_PART);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_NOT);
 		//Contains
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE_PART);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE_NOT);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, DATE);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS, DATE_PART);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS, DATE_NOT);
 		//Contains not
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
-		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
-		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
+		matches(false, item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
+		matches(true,  item, AllColumn.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
 	}
 
 	public static class Item { }
@@ -534,36 +573,13 @@ public class FilterMatcherTest {
 	public class TestFilterControl extends FilterControl<Item> {
 
 		@Override
-		protected Enum[] getColumns() {
-			return TestEnum.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return TestEnum.valueOf(column);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			if (column instanceof TestEnum) {
-				TestEnum testEnum = (TestEnum) column;
-				return testEnum.isNumber();
-			}
-			return false;
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			if (column instanceof TestEnum) {
-				TestEnum testEnum = (TestEnum) column;
-				return testEnum.isDate();
-			}
-			return false;
-		}
-
-		@Override
 		protected Object getColumnValue(final Item item, final String columnString) {
-			Enum<?> column = valueOf(columnString);
+			EnumTableColumn<?> column = valueOf(columnString);
 			if (column instanceof TestEnum) {
 				TestEnum format = (TestEnum) column;
 				if (format.equals(TestEnum.TEXT)) {
@@ -594,12 +610,12 @@ public class FilterMatcherTest {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumColumns() {
-			return null; //Only used by the GUI
+		protected List<EnumTableColumn<Item>> getColumns() {
+			return new ArrayList<EnumTableColumn<Item>>(Arrays.asList(TestEnum.values()));
 		}
 
 		@Override
-		protected List<EnumTableColumn<Item>> getEnumShownColumns() {
+		protected List<EnumTableColumn<Item>> getShownColumns() {
 			return null; //Only used by the GUI
 		}
 	}

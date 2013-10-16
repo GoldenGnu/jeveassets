@@ -19,44 +19,39 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.loadout;
+package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.data.Module;
-import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
-import net.nikr.eve.jeveasset.i18n.TabsLoadout;
+import net.nikr.eve.jeveasset.i18n.TabsMaterials;
 
-/**
- *
- * @author Candle
- */
-enum ModuleTableFormat implements EnumTableColumn<Module> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+
+enum MaterialExtenedTableFormat implements EnumTableColumn<Material> {
+	LOCATION(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsLoadout.get().columnName();
+			return TabsMaterials.get().columnLocation();
 		}
 		@Override
-		public Object getColumnValue(final Module from) {
-			return from.getName();
+		public Object getColumnValue(final Material from) {
+			return from.getHeader();
 		}
 	},
-	VALUE(ModulePriceValue.class, GlazedLists.comparableComparator()) {
+	GROUP(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsLoadout.get().columnValue();
+			return TabsMaterials.get().columnGroup();
 		}
 		@Override
-		public Object getColumnValue(final Module from) {
-			return from.getModulePriceValue();
+		public Object getColumnValue(final Material from) {
+			return from.getGroup();
 		}
 	};
 
 	private Class<?> type;
 	private Comparator<?> comparator;
-	private ModuleTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private MaterialExtenedTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -76,7 +71,11 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public Module setColumnValue(final Object baseObject, final Object editedValue) {
+	@Override public Material setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 }

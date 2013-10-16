@@ -28,7 +28,7 @@ import net.nikr.eve.jeveasset.data.types.BlueprintType;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
-import net.nikr.eve.jeveasset.gui.shared.menu.JMenuCopy.CopySeparator;
+import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 

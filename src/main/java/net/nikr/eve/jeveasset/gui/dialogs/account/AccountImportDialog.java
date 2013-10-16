@@ -50,15 +50,17 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
-	// TODO action enum - more string enum pattern, to be converted to an enum
-	public static final String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
-	public static final String ACTION_NEXT = "ACTION_NEXT";
-	public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
+	private enum AccountImportAction {
+		ADD_KEY_CANCEL,
+		NEXT,
+		PREVIOUS
+	}
 
-	// TODO tab enum - more string enum pattern, to be converted to an enum
-	public static final String TAB_ADD = "TAB_ADD";
-	public static final String TAB_VALIDATE = "TAB_VALIDATE";
-	public static final String TAB_DONE = "TAB_DONE";
+	private enum AccountImportCard {
+		ADD,
+		VALIDATE,
+		DONE
+	}
 
 	private AccountManagerDialog apiManager;
 
@@ -98,20 +100,20 @@ public class AccountImportDialog extends JDialogCentered {
 
 		cardLayout = new CardLayout();
 		jContent = new JPanel(cardLayout);
-		jContent.add(new InputPanel(), TAB_ADD);
-		jContent.add(new ValidatePanel(), TAB_VALIDATE);
-		jContent.add(donePanel, TAB_DONE);
+		jContent.add(new InputPanel(), AccountImportCard.ADD.name());
+		jContent.add(new ValidatePanel(), AccountImportCard.VALIDATE.name());
+		jContent.add(donePanel, AccountImportCard.DONE.name());
 
 		jPrevious = new JButton(DialoguesAccount.get().previousArrow());
-		jPrevious.setActionCommand(ACTION_PREVIOUS);
+		jPrevious.setActionCommand(AccountImportAction.PREVIOUS.name());
 		jPrevious.addActionListener(listener);
 
 		jNext = new JButton(DialoguesAccount.get().nextArrow());
-		jNext.setActionCommand(ACTION_NEXT);
+		jNext.setActionCommand(AccountImportAction.NEXT.name());
 		jNext.addActionListener(listener);
 
 		jCancel = new JButton(DialoguesAccount.get().cancel());
-		jCancel.setActionCommand(ACTION_ADD_KEY_CANCEL);
+		jCancel.setActionCommand(AccountImportAction.ADD_KEY_CANCEL.name());
 		jCancel.addActionListener(listener);
 
 		layout.setHorizontalGroup(
@@ -197,7 +199,7 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void showAddTap() {
-		cardLayout.show(jContent, TAB_ADD);
+		cardLayout.show(jContent, AccountImportCard.ADD.name());
 		jPrevious.setEnabled(false);
 		jNext.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().nextArrow());
@@ -205,7 +207,7 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private void showValidateTab() {
-		cardLayout.show(jContent, TAB_VALIDATE);
+		cardLayout.show(jContent, AccountImportCard.VALIDATE.name());
 		jPrevious.setEnabled(true);
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
@@ -224,7 +226,7 @@ public class AccountImportDialog extends JDialogCentered {
 	private void showDoneTab() {
 		jPrevious.setEnabled(true);
 		jNext.setText(DialoguesAccount.get().ok());
-		cardLayout.show(jContent, TAB_DONE);
+		cardLayout.show(jContent, AccountImportCard.DONE.name());
 	}
 
 	private void done() {
@@ -259,15 +261,15 @@ public class AccountImportDialog extends JDialogCentered {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_ADD_KEY_CANCEL.equals(e.getActionCommand())) {
+			if (AccountImportAction.ADD_KEY_CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-			if (ACTION_PREVIOUS.equals(e.getActionCommand())) {
+			if (AccountImportAction.PREVIOUS.name().equals(e.getActionCommand())) {
 				nTabIndex = 0;
 				updateTab();
 			}
 
-			if (ACTION_NEXT.equals(e.getActionCommand())) {
+			if (AccountImportAction.NEXT.name().equals(e.getActionCommand())) {
 				nTabIndex++;
 				updateTab();
 			}

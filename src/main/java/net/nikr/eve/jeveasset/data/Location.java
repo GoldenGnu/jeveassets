@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.data;
 
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
+
 
 public class Location implements Comparable<Location> {
 	private long locationID; //LocationID : long
@@ -32,6 +34,7 @@ public class Location implements Comparable<Location> {
 	private long regionID; //LocationID : long
 	private String region;
 	private String security;
+	private Security securityObject;
 
 	public Location(long locationID) {
 		this(0, "", 0, "", 0, "", "0.0");
@@ -46,6 +49,7 @@ public class Location implements Comparable<Location> {
 		this.regionID = regionID;
 		this.region = region;
 		this.security = security;
+		this.securityObject = new Security(security);
 		if (isStation()) {
 			this.locationID = stationID;
 			this.location = station;
@@ -95,6 +99,10 @@ public class Location implements Comparable<Location> {
 
 	public String getSecurity() {
 		return security;
+	}
+
+	public Security getSecurityObject() {
+		return securityObject;
 	}
 
 	public final boolean isStation() {

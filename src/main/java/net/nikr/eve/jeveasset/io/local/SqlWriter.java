@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,20 +42,21 @@ import org.slf4j.LoggerFactory;
 public final class SqlWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SqlWriter.class);
-	private static final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
-	private static final int MAX_LENGTH = 944000; //a little less than 1MB
-	private static final DateFormat SQL_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+
+	private final DecimalFormat DOUBLE_FORMAT  = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final DecimalFormat LONG_FORMAT  = new DecimalFormat("0", new DecimalFormatSymbols(Locale.ENGLISH));
+	private final int MAX_LENGTH = 944000; //a little less than 1MB
+	private final DateFormat SQL_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
 	private SqlWriter() { }
 
-	public static boolean save(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	public static boolean save(final String filename, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		SqlWriter writer = new SqlWriter();
 		return writer.write(filename, rows, header, tableName, dropTable, createTable, extendedInserts);
 	}
 
-	private boolean write(final String filename, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
+	private boolean write(final String filename, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable, final boolean extendedInserts) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			writeComment(writer);
@@ -91,38 +94,38 @@ public final class SqlWriter {
 			return "text";
 		}
 	}
-	private void writeTable(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
+	private void writeTable(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean dropTable, final boolean createTable) throws IOException {
 		if (dropTable) {
 			writer.write("DROP TABLE IF EXISTS `" + tableName + "`;\r\n");
 		}
 		if (createTable && !rows.isEmpty()) {
 			writer.write("CREATE TABLE IF NOT EXISTS `" + tableName + "` (\r\n");
 			boolean first = true;
-			for (String column : header) {
+			for (EnumTableColumn<?> column : header) {
 				if (first) {
 					first = false;
 				} else {
 					writer.write(",\r\n");
 				}
-				writer.write("`" + column + "` " + getType(rows.get(0).get(column)));
+				writer.write("`" + column.name() + "` " + getType(rows.get(0).get(column)));
 			}
 			writer.write("\r\n");
 			writer.write(") ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;\r\n");
 		}
 	}
 
-	private void writeRows(final BufferedWriter writer, final List<Map<String, Object>> rows, final List<String> header, final String tableName, final boolean extendedInserts) throws IOException {
+	private void writeRows(final BufferedWriter writer, final List<Map<EnumTableColumn<?>, Object>> rows, final List<EnumTableColumn<?>> header, final String tableName, final boolean extendedInserts) throws IOException {
 		if (!rows.isEmpty()) {
 			//Create INSERT statement
 			String insert = "INSERT INTO `" + tableName + "` (";
 			boolean firstInsert = true;
-			for (String column : header) {
+			for (EnumTableColumn<?> column : header) {
 				if (firstInsert) {
 					firstInsert = false;
 				} else {
 					insert = insert + ", ";
 				}
-				insert = insert + "`" + column + "`";
+				insert = insert + "`" + column.name() + "`";
 			}
 			insert = insert + ") VALUES\r\n";
 			if (extendedInserts) {
@@ -133,7 +136,7 @@ public final class SqlWriter {
 			//Add values
 			String values;
 			int length = insert.getBytes("UTF-8").length;
-			for (Map<String, Object> map : rows) {
+			for (Map<EnumTableColumn<?>, Object> map : rows) {
 				values = "";
 				if (extendedInserts && length > MAX_LENGTH) {
 					length = insert.getBytes("UTF-8").length;
@@ -154,7 +157,7 @@ public final class SqlWriter {
 				//Values
 				values = values + "	(";
 				firstCell = true;
-				for (String column : header) {
+				for (EnumTableColumn<?> column : header) {
 					if (firstCell) {
 						firstCell = false;
 					} else {
@@ -176,6 +179,9 @@ public final class SqlWriter {
 	private String format(final Object object) {
 		if (object == null) {
 			return "''";
+		} else if (object instanceof HierarchyColumn) {
+			HierarchyColumn column = (HierarchyColumn) object;
+			return "'" + column.getExport().replace("'", "\\'") + "'";
 		} else if (object instanceof Double) {
 			//Double
 			return DOUBLE_FORMAT.format(object);

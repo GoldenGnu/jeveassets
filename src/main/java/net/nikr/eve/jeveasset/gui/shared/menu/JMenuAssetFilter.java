@@ -32,16 +32,19 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
-public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener {
+public class JMenuAssetFilter<T> extends JAutoMenu<T> {
 
-	private static final String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
-	private static final String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";
-	private static final String ACTION_ADD_REGION_FILTER = "ACTION_ADD_REGION_FILTER";
-	private static final String ACTION_ADD_ITEM_TYPE_FILTER = "ACTION_ADD_ITEM_TYPE_FILTER";
+	private enum MenuAssetFilterAction {
+		STATION_FILTER,
+		SYSTEM_FILTER,
+		REGION_FILTER,
+		ITEM_TYPE_FILTER
+	}
 
 	private MenuData<T> menuData;
 
@@ -52,34 +55,36 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 	private final JMenuItem jLocations;
 
 	public JMenuAssetFilter(final Program program) {
-		super(GuiShared.get().add(), program);
+		super(GuiShared.get().addFilter(), program);
+
+		ListenerClass listener = new ListenerClass();
 
 		this.setIcon(Images.TOOL_ASSETS.getIcon());
 
 		jTypeID = new JMenuItem(GuiShared.get().item());
 		jTypeID.setIcon(Images.EDIT_ADD.getIcon());
-		jTypeID.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
-		jTypeID.addActionListener(this);
+		jTypeID.setActionCommand(MenuAssetFilterAction.ITEM_TYPE_FILTER.name());
+		jTypeID.addActionListener(listener);
 		add(jTypeID);
 
 		addSeparator();
 
 		jStation = new JMenuItem(GuiShared.get().station());
 		jStation.setIcon(Images.LOC_STATION.getIcon());
-		jStation.setActionCommand(ACTION_ADD_STATION_FILTER);
-		jStation.addActionListener(this);
+		jStation.setActionCommand(MenuAssetFilterAction.STATION_FILTER.name());
+		jStation.addActionListener(listener);
 		add(jStation);
 
 		jSystem = new JMenuItem(GuiShared.get().system());
 		jSystem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jSystem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
-		jSystem.addActionListener(this);
+		jSystem.setActionCommand(MenuAssetFilterAction.SYSTEM_FILTER.name());
+		jSystem.addActionListener(listener);
 		add(jSystem);
 
 		jRegion = new JMenuItem(GuiShared.get().region());
 		jRegion.setIcon(Images.LOC_REGION.getIcon());
-		jRegion.setActionCommand(ACTION_ADD_REGION_FILTER);
-		jRegion.addActionListener(this);
+		jRegion.setActionCommand(MenuAssetFilterAction.REGION_FILTER.name());
+		jRegion.addActionListener(listener);
 		add(jRegion);
 
 		jLocations = new JMenuItem(TabsOverview.get().locations());
@@ -102,7 +107,7 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 			for (ActionListener listener : jLocations.getActionListeners()) {
 				jLocations.removeActionListener(listener);
 			}
-			jLocations.setActionCommand(OverviewTab.ACTION_GROUP_ASSET_FILTER);
+			jLocations.setActionCommand(OverviewAction.GROUP_ASSET_FILTER.name());
 			jLocations.addActionListener(overviewTab.getListenerClass());
 			jLocations.setEnabled(overviewTab.isGroupAndNotEmpty());
 			this.add(jLocations);
@@ -111,35 +116,37 @@ public class JMenuAssetFilter<T> extends JAutoMenu<T> implements ActionListener 
 		}
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_ADD_STATION_FILTER.equals(e.getActionCommand())) {
-			for (String station : menuData.getStations()) {
-				Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, station);
-				program.getAssetsTab().addFilter(filter);
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (MenuAssetFilterAction.STATION_FILTER.name().equals(e.getActionCommand())) {
+				for (String station : menuData.getStations()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.EQUALS, station);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		if (ACTION_ADD_SYSTEM_FILTER.equals(e.getActionCommand())) {
-			for (String system : menuData.getSystems()) {
-				Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
-				program.getAssetsTab().addFilter(filter);
+			if (MenuAssetFilterAction.SYSTEM_FILTER.name().equals(e.getActionCommand())) {
+				for (String system : menuData.getSystems()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.LOCATION, CompareType.CONTAINS, system);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		if (ACTION_ADD_REGION_FILTER.equals(e.getActionCommand())) {
-			for (String region : menuData.getRegions()) {
-				Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
-				program.getAssetsTab().addFilter(filter);
+			if (MenuAssetFilterAction.REGION_FILTER.name().equals(e.getActionCommand())) {
+				for (String region : menuData.getRegions()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.REGION, CompareType.EQUALS, region);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			program.getMainWindow().addTab(program.getAssetsTab());
-		}
-		if (ACTION_ADD_ITEM_TYPE_FILTER.equals(e.getActionCommand())) {
-			for (String typeName : menuData.getTypeNames()) {
-				Filter filter = new Filter(LogicType.AND, AssetTableFormat.NAME, CompareType.CONTAINS, typeName);
-				program.getAssetsTab().addFilter(filter);
+			if (MenuAssetFilterAction.ITEM_TYPE_FILTER.name().equals(e.getActionCommand())) {
+				for (String typeName : menuData.getTypeNames()) {
+					Filter filter = new Filter(LogicType.AND, AssetTableFormat.NAME, CompareType.CONTAINS, typeName);
+					program.getAssetsTab().addFilter(filter);
+				}
+				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			program.getMainWindow().addTab(program.getAssetsTab());
 		}
 	}
 }

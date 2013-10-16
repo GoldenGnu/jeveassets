@@ -32,23 +32,26 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab.OverviewAction;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 
 
-public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
+public class JMenuLookup<T> extends JAutoMenu<T> {
 
-	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";
-	private static final String ACTION_BROWSE_EVE_MARKETDATA = "ACTION_BROWSE_EVE_MARKETDATA";
-	private static final String ACTION_BROWSE_EVE_MARKETS = "ACTION_BROWSE_EVE_MARKETS";
-	private static final String ACTION_BROWSE_GAMES_CHRUKER = "ACTION_BROWSE_GAMES_CHRUKER";
-	private static final String ACTION_BROWSE_EVE_ITEM_DATABASE = "ACTION_BROWSE_EVE_ITEM_DATABASE";
-	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_STATION = "ACTION_BROWSE_EVEMAPS_DOTLAN_STATION";
-	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM = "ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM";
-	private static final String ACTION_BROWSE_EVEMAPS_DOTLAN_REGION = "ACTION_BROWSE_EVEMAPS_DOTLAN_REGION";
-	private static final String ACTION_BROWSE_EVEMARKETEER = "ACTION_BROWSE_EVEMARKETEER";
-	private static final String ACTION_BROWSE_EVE_ADDICTS = "ACTION_BROWSE_EVE_ADDICTS";
+	private enum MenuLookupAction {
+		EVE_CENTRAL,
+		EVE_MARKETDATA,
+		EVE_MARKETS,
+		GAMES_CHRUKER,
+		EVE_ITEM_DATABASE,
+		EVEMAPS_DOTLAN_STATION,
+		EVEMAPS_DOTLAN_SYSTEM,
+		EVEMAPS_DOTLAN_REGION,
+		EVEMARKETEER,
+		EVE_ADDICTS
+	}
 
 	private final JMenu jDotlan;
 	private final JMenuItem jDotlanStation;
@@ -68,6 +71,8 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 	public JMenuLookup(final Program program) {
 		super(GuiShared.get().lookup(), program);
 
+		ListenerClass listener = new ListenerClass();
+
 		this.setIcon(Images.LINK_LOOKUP.getIcon());
 
 		jDotlan = new JMenu(GuiShared.get().dotlan());
@@ -76,20 +81,20 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 
 		jDotlanStation = new JMenuItem(GuiShared.get().station());
 		jDotlanStation.setIcon(Images.LOC_STATION.getIcon());
-		jDotlanStation.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_STATION);
-		jDotlanStation.addActionListener(this);
+		jDotlanStation.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_STATION.name());
+		jDotlanStation.addActionListener(listener);
 		jDotlan.add(jDotlanStation);
 
 		jDotlanSystem = new JMenuItem(GuiShared.get().system());
 		jDotlanSystem.setIcon(Images.LOC_SYSTEM.getIcon());
-		jDotlanSystem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM);
-		jDotlanSystem.addActionListener(this);
+		jDotlanSystem.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name());
+		jDotlanSystem.addActionListener(listener);
 		jDotlan.add(jDotlanSystem);
 
 		jDotlanRegion = new JMenuItem(GuiShared.get().region());
 		jDotlanRegion.setIcon(Images.LOC_REGION.getIcon());
-		jDotlanRegion.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_REGION);
-		jDotlanRegion.addActionListener(this);
+		jDotlanRegion.setActionCommand(MenuLookupAction.EVEMAPS_DOTLAN_REGION.name());
+		jDotlanRegion.addActionListener(listener);
 		jDotlan.add(jDotlanRegion);
 
 		jDotlanLocations = new JMenuItem(TabsOverview.get().locations());
@@ -99,46 +104,46 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 
 		jEveCentral = new JMenuItem(GuiShared.get().eveCentral());
 		jEveCentral.setIcon(Images.LINK_EVE_CENTRAL.getIcon());
-		jEveCentral.setActionCommand(ACTION_BROWSE_EVE_CENTRAL);
-		jEveCentral.addActionListener(this);
+		jEveCentral.setActionCommand(MenuLookupAction.EVE_CENTRAL.name());
+		jEveCentral.addActionListener(listener);
 		add(jEveCentral);
 
 		jEveMarketdata = new JMenuItem(GuiShared.get().eveMarketdata());
 		jEveMarketdata.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
-		jEveMarketdata.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
-		jEveMarketdata.addActionListener(this);
+		jEveMarketdata.setActionCommand(MenuLookupAction.EVE_MARKETDATA.name());
+		jEveMarketdata.addActionListener(listener);
 		add(jEveMarketdata);
 
 		jEveMarketeer = new JMenuItem(GuiShared.get().eveMarketeer());
 		jEveMarketeer.setIcon(Images.LINK_EVEMARKETEER.getIcon());
-		jEveMarketeer.setActionCommand(ACTION_BROWSE_EVEMARKETEER);
-		jEveMarketeer.addActionListener(this);
+		jEveMarketeer.setActionCommand(MenuLookupAction.EVEMARKETEER.name());
+		jEveMarketeer.addActionListener(listener);
 		add(jEveMarketeer);
 
 		jEveMarkets = new JMenuItem(GuiShared.get().eveMarkets());
 		jEveMarkets.setIcon(Images.LINK_EVE_MARKETS.getIcon());
-		jEveMarkets.setActionCommand(ACTION_BROWSE_EVE_MARKETS);
-		jEveMarkets.addActionListener(this);
+		jEveMarkets.setActionCommand(MenuLookupAction.EVE_MARKETS.name());
+		jEveMarkets.addActionListener(listener);
 		add(jEveMarkets);
 
 		jEveAddicts = new JMenuItem(GuiShared.get().eveAddicts());
 		jEveAddicts.setIcon(Images.LINK_EVE_ADDICTS.getIcon());
-		jEveAddicts.setActionCommand(ACTION_BROWSE_EVE_ADDICTS);
-		jEveAddicts.addActionListener(this);
+		jEveAddicts.setActionCommand(MenuLookupAction.EVE_ADDICTS.name());
+		jEveAddicts.addActionListener(listener);
 		add(jEveAddicts);
 
 		addSeparator();
 
 		jChruker = new JMenuItem(GuiShared.get().chruker());
 		jChruker.setIcon(Images.LINK_CHRUKER.getIcon());
-		jChruker.setActionCommand(ACTION_BROWSE_GAMES_CHRUKER);
-		jChruker.addActionListener(this);
+		jChruker.setActionCommand(MenuLookupAction.GAMES_CHRUKER.name());
+		jChruker.addActionListener(listener);
 		add(jChruker);
 
 		jEveOnline = new JMenuItem(GuiShared.get().eveOnline());
 		jEveOnline.setIcon(Images.MISC_EVE.getIcon());
-		jEveOnline.setActionCommand(ACTION_BROWSE_EVE_ITEM_DATABASE);
-		jEveOnline.addActionListener(this);
+		jEveOnline.setActionCommand(MenuLookupAction.EVE_ITEM_DATABASE.name());
+		jEveOnline.addActionListener(listener);
 		add(jEveOnline);
 	}
 
@@ -166,7 +171,7 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 				jDotlanLocations.removeActionListener(listener);
 			}
 			boolean enabled = overviewTab.isGroupAndNotEmpty();
-			jDotlanLocations.setActionCommand(OverviewTab.ACTION_GROUP_LOOKUP);
+			jDotlanLocations.setActionCommand(OverviewAction.GROUP_LOOKUP.name());
 			jDotlanLocations.addActionListener(overviewTab.getListenerClass());
 			jDotlanLocations.setEnabled(enabled);
 			jDotlan.add(jDotlanLocations);
@@ -208,71 +213,73 @@ public class JMenuLookup<T> extends JAutoMenu<T> implements ActionListener {
 		}
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_STATION.equals(e.getActionCommand())) {
-			browseDotlan(program, menuData.getStations(), null, null);
-		}
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM.equals(e.getActionCommand())) {
-			browseDotlan(program, null, menuData.getSystems(), null);
-		}
-		if (ACTION_BROWSE_EVEMAPS_DOTLAN_REGION.equals(e.getActionCommand())) {
-			browseDotlan(program, null, null, menuData.getRegions());
-		}
-		if (ACTION_BROWSE_EVE_CENTRAL.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-				return;
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (MenuLookupAction.EVEMAPS_DOTLAN_STATION.name().equals(e.getActionCommand())) {
+				browseDotlan(program, menuData.getStations(), null, null);
 			}
-			for (int marketTypeID : menuData.getMarketTypeIDs()) {
-				DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID, program);
+			if (MenuLookupAction.EVEMAPS_DOTLAN_SYSTEM.name().equals(e.getActionCommand())) {
+				browseDotlan(program, null, menuData.getSystems(), null);
 			}
-		}
-		if (ACTION_BROWSE_EVE_MARKETDATA.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-				return;
+			if (MenuLookupAction.EVEMAPS_DOTLAN_REGION.name().equals(e.getActionCommand())) {
+				browseDotlan(program, null, null, menuData.getRegions());
 			}
-			for (int marketTypeID : menuData.getMarketTypeIDs()) {
-				DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID, program);
+			if (MenuLookupAction.EVE_CENTRAL.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
+					return;
+				}
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					DesktopUtil.browse("http://www.eve-central.com/home/quicklook.html?typeid=" + marketTypeID, program);
+				}
 			}
-		}
-		if (ACTION_BROWSE_EVEMARKETEER.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-				return;
+			if (MenuLookupAction.EVE_MARKETDATA.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
+					return;
+				}
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					DesktopUtil.browse("http://eve-marketdata.com/price_check.php?type_id=" + marketTypeID, program);
+				}
 			}
-			for (int marketTypeID : menuData.getMarketTypeIDs()) {
-				DesktopUtil.browse("http://www.evemarketeer.com/item/info/" + marketTypeID, program);
+			if (MenuLookupAction.EVEMARKETEER.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
+					return;
+				}
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					DesktopUtil.browse("http://www.evemarketeer.com/item/info/" + marketTypeID, program);
+				}
 			}
-		}
-		if (ACTION_BROWSE_EVE_MARKETS.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-				return;
+			if (MenuLookupAction.EVE_MARKETS.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
+					return;
+				}
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID, program);
+				}
 			}
-			for (int marketTypeID : menuData.getMarketTypeIDs()) {
-				DesktopUtil.browse("http://www.eve-markets.net/detail.php?typeid=" + marketTypeID, program);
+			if (MenuLookupAction.EVE_ADDICTS.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
+					return;
+				}
+				for (int marketTypeID : menuData.getMarketTypeIDs()) {
+					DesktopUtil.browse("http://eve.addicts.nl/?typeID=" + marketTypeID, program);
+				}
 			}
-		}
-		if (ACTION_BROWSE_EVE_ADDICTS.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getMarketTypeIDs().size())) {
-				return;
+			if (MenuLookupAction.GAMES_CHRUKER.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getTypeIDs().size())) {
+					return;
+				}
+				for (int typeID : menuData.getTypeIDs()) {
+					DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID, program);
+				}
 			}
-			for (int marketTypeID : menuData.getMarketTypeIDs()) {
-				DesktopUtil.browse("http://eve.addicts.nl/?typeID=" + marketTypeID, program);
-			}
-		}
-		if (ACTION_BROWSE_GAMES_CHRUKER.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getTypeIDs().size())) {
-				return;
-			}
-			for (int typeID : menuData.getTypeIDs()) {
-				DesktopUtil.browse("http://games.chruker.dk/eve_online/item.php?type_id=" + typeID, program);
-			}
-		}
-		if (ACTION_BROWSE_EVE_ITEM_DATABASE.equals(e.getActionCommand())) {
-			if (!confirmOpenLinks(program, menuData.getTypeNames().size())) {
-				return;
-			}
-			for (String typeName : menuData.getTypeNames()) {
-				DesktopUtil.browse("http://wiki.eveonline.com/wiki/" + typeName.replace(" ", "_"), program);
+			if (MenuLookupAction.EVE_ITEM_DATABASE.name().equals(e.getActionCommand())) {
+				if (!confirmOpenLinks(program, menuData.getTypeNames().size())) {
+					return;
+				}
+				for (String typeName : menuData.getTypeNames()) {
+					DesktopUtil.browse("http://wiki.eveonline.com/wiki/" + typeName.replace(" ", "_"), program);
+				}
 			}
 		}
 	}

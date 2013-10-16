@@ -21,17 +21,25 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.MarketOrder;
-import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -41,7 +49,8 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.menu.*;
+import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
+import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -51,7 +60,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MarketOrdersTab extends JMainTab implements ListEventListener<MarketOrder>, TableMenu<MarketOrder> {
+public class MarketOrdersTab extends JMainTab {
 
 	private JAutoColumnTable jTable;
 	private JLabel jSellOrdersTotal;
@@ -72,17 +81,18 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	public MarketOrdersTab(final Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
 		//Backend
 		eventList = program.getMarketOrdersEventList();
-		//Filter
-		filterList = new FilterList<MarketOrder>(eventList);
-		filterList.addListEventListener(this);
 		//Sorting (per column)
-		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(filterList);
+		SortedList<MarketOrder> sortedList = new SortedList<MarketOrder>(eventList);
+		//Filter
+		filterList = new FilterList<MarketOrder>(sortedList);
+		filterList.addListEventListener(listener);
 		//Table Model
-		tableModel = EventModels.createTableModel(sortedList, tableFormat);
+		tableModel = EventModels.createTableModel(filterList, tableFormat);
 		//Table
 		jTable = new JMarketOrdersTable(program, tableModel);
 		jTable.setCellSelectionEnabled(true);
@@ -90,7 +100,7 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		//Sorting
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
 		//Selection Model
-		selectionModel = EventModels.createSelectionModel(sortedList);
+		selectionModel = EventModels.createSelectionModel(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -111,14 +121,14 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
 				tableFormat,
-				eventList,
+				sortedList,
 				filterList,
 				Settings.get().getTableFilters(NAME),
 				defaultFilters
 				);
 
 		//Menu
-		installMenu(program, this, jTable, MarketOrder.class);
+		installMenu(program, new OrdersTableMenu(), jTable, MarketOrder.class);
 
 		jSellOrdersTotal = StatusPanel.createLabel(TabsOrders.get().totalSellOrders(), Images.ORDERS_SELL.getIcon());
 		this.addStatusbarLabel(jSellOrdersTotal);
@@ -145,50 +155,54 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 	}
 
 	@Override
-	public MenuData<MarketOrder> getMenuData() {
-		return new MenuData<MarketOrder>(selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getFilterMenu() {
-		return filterControl.getMenu(jTable, selectionModel.getSelected());
-	}
-
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) { }
-
-	@Override
 	public void updateData() { }
 
-	@Override
-	public void listChanged(ListEvent<MarketOrder> listChanges) {
-		double sellOrdersTotal = 0;
-		double buyOrdersTotal = 0;
-		double toCoverTotal = 0;
-		double escrowTotal = 0;
-		for (MarketOrder marketOrder : filterList) {
-			if (marketOrder.getBid() < 1) { //Sell
-				sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
-			} else { //Buy
-				buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
-				escrowTotal += marketOrder.getEscrow();
-				toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow();
-			}
+	private class OrdersTableMenu implements TableMenu<MarketOrder> {
+		@Override
+		public MenuData<MarketOrder> getMenuData() {
+			return new MenuData<MarketOrder>(selectionModel.getSelected());
 		}
-		jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
-		jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
-		jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
-		jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+
+		@Override
+		public JMenu getFilterMenu() {
+			return filterControl.getMenu(jTable, selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, NAME);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.marketOrder(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) { }
+	}
+
+	private class ListenerClass implements ListEventListener<MarketOrder> {
+		@Override
+		public void listChanged(ListEvent<MarketOrder> listChanges) {
+			double sellOrdersTotal = 0;
+			double buyOrdersTotal = 0;
+			double toCoverTotal = 0;
+			double escrowTotal = 0;
+			for (MarketOrder marketOrder : filterList) {
+				if (marketOrder.getBid() < 1) { //Sell
+					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+				} else { //Buy
+					buyOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
+					escrowTotal += marketOrder.getEscrow();
+					toCoverTotal += (marketOrder.getPrice() * marketOrder.getVolRemaining()) - marketOrder.getEscrow();
+				}
+			}
+			jSellOrdersTotal.setText(Formater.iskFormat(sellOrdersTotal));
+			jBuyOrdersTotal.setText(Formater.iskFormat(buyOrdersTotal));
+			jToCoverTotal.setText(Formater.iskFormat(toCoverTotal));
+			jEscrowTotal.setText(Formater.iskFormat(escrowTotal));
+		}
 	}
 
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder> {
@@ -203,54 +217,21 @@ public class MarketOrdersTab extends JMainTab implements ListEventListener<Marke
 		@Override
 		protected Object getColumnValue(final MarketOrder item, final String column) {
 			MarketTableFormat format = MarketTableFormat.valueOf(column);
-			if (format == MarketTableFormat.QUANTITY) {
-				Quantity quantity = (Quantity) format.getColumnValue(item);
-				return quantity.getQuantityRemaining();
-			} else {
-				return format.getColumnValue(item);
-			}
+			return format.getColumnValue(item);
 		}
 
 		@Override
-		protected boolean isNumericColumn(final Enum<?> column) {
-			MarketTableFormat format = (MarketTableFormat) column;
-			if (Number.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else if (Quantity.class.isAssignableFrom(format.getType())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		protected boolean isDateColumn(final Enum<?> column) {
-			MarketTableFormat format = (MarketTableFormat) column;
-			if (format.getType().getName().equals(Date.class.getName())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-		@Override
-		public Enum[] getColumns() {
-			return MarketTableFormat.values();
-		}
-
-		@Override
-		protected Enum<?> valueOf(final String column) {
+		protected EnumTableColumn<?> valueOf(final String column) {
 			return MarketTableFormat.valueOf(column);
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getEnumColumns() {
+		protected List<EnumTableColumn<MarketOrder>> getColumns() {
 			return columnsAsList(MarketTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<MarketOrder>> getEnumShownColumns() {
+		protected List<EnumTableColumn<MarketOrder>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<MarketOrder>>(tableFormat.getShownColumns());
 		}
 	}

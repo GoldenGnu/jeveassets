@@ -39,8 +39,6 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
  */
 public class ProxySettingsPanel extends JSettingsPanel {
 
-	public static final String ACTION_CANCEL = "ACTION_CANCEL";
-	public static final String ACTION_SAVE = "ACTION_SAVE";
 	private JComboBox proxyTypeField;
 	private JTextField proxyAddressField;
 	private JSpinner proxyPortField;
@@ -62,7 +60,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
 		proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);
 		proxyTypeField.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				boolean enabled = !proxyTypeField.getSelectedItem().equals(Proxy.Type.DIRECT);
@@ -80,7 +77,6 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		enableApiProxy = new JCheckBox();
 		enableApiProxy.setSelected(false);
 		enableApiProxy.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				apiProxyField.setEnabled(enableApiProxy.isSelected());

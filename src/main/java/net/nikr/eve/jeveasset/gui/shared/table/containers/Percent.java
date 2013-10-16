@@ -19,12 +19,12 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.filter;
+package net.nikr.eve.jeveasset.gui.shared.table.containers;
 
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
 
-public class Percent implements Comparable<Percent> {
+public class Percent extends NumberValue implements Comparable<Percent> {
 	private final double percent;
 	private final String formatted;
 
@@ -37,8 +37,14 @@ public class Percent implements Comparable<Percent> {
 		}
 	}
 
-	public double getPercent() {
+	@Override
+	public Double getDouble() {
 		return round(percent * 100.0, 2);
+	}
+
+	@Override
+	public Number getNumber() {
+		return getDouble();
 	}
 
 	private static double round(final double value, int decimals) {

@@ -29,9 +29,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
@@ -394,6 +398,56 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public boolean isFilterOnEnter() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Map<String ,View>> getTableViews() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, View> getTableViews(String name) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<String, Tag> getTags() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Tags getTags(TagID tagID) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isSettingsImported() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setSettingsImported(boolean settingsImported) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isBlueprintBasePriceTech1() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setBlueprintBasePriceTech1(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isBlueprintBasePriceTech2() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setBlueprintBasePriceTech2(boolean includeBuyOrders) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

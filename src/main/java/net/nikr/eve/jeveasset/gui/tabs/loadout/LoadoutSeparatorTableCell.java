@@ -10,7 +10,6 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
@@ -18,13 +17,13 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
  *
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
-public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
+public class LoadoutSeparatorTableCell extends SeparatorTableCell<Loadout> {
 
 	private final JLabel jOwner;
 	private final JLabel jLocation;
 	private final JLabel jFlag;
 
-	public ModuleSeparatorTableCell(final JTable jTable, final SeparatorList<Module> separatorList) {
+	public LoadoutSeparatorTableCell(final JTable jTable, final SeparatorList<Loadout> separatorList) {
 		super(jTable, separatorList);
 
 		jOwner = new JLabel();
@@ -83,7 +82,7 @@ public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
 
 	@Override
 	protected void configure(final SeparatorList.Separator<?> separator) {
-		Module module = (Module) separator.first();
+		Loadout module = (Loadout) separator.first();
 		if (module == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}

@@ -50,7 +50,7 @@ public final class ItemsReader extends AbstractXmlReader {
 
 	private void read() {
 		try {
-			Element element = getDocumentElement(Settings.getPathItems());
+			Element element = getDocumentElement(Settings.getPathItems(), false);
 			parseItems(element, StaticData.get().getItems());
 		} catch (IOException ex) {
 			LOG.error("Items not loaded: " + ex.getMessage(), ex);

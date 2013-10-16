@@ -39,11 +39,13 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-public class JStockpileItemMenu extends JMenu implements ActionListener{
+public class JStockpileItemMenu extends JMenu {
 
-	private static final String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
-	private static final String ACTION_ADD_TO = "ACTION_ADD_TO";
-	private static final String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
+	private enum StockpileItemMenuAction {
+		EDIT_ITEM,
+		ADD_TO, 
+		DELETE_ITEM
+	}
 
 	//private StockpileTab stockpileTab;
 	private Program program;
@@ -51,8 +53,9 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 	public JStockpileItemMenu(final Program program, final List<StockpileItem> items) {
 		super(TabsStockpile.get().stockpile());
 		this.program = program;
-		
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
+
+		ListenerClass listener = new ListenerClass();
 		
 		JMenuItem jMenuItem;
 
@@ -61,8 +64,8 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 		this.add(jSubMenu);
 		if (!items.isEmpty()) {
 			jMenuItem = new JStockpileMenuItem(TabsStockpile.get().addToNewStockpile(), Images.EDIT_ADD.getIcon(), items);
-			jMenuItem.setActionCommand(ACTION_ADD_TO);
-			jMenuItem.addActionListener(this);
+			jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
+			jMenuItem.addActionListener(listener);
 			jSubMenu.add(jMenuItem);
 
 			jSubMenu.addSeparator();
@@ -71,64 +74,66 @@ public class JStockpileItemMenu extends JMenu implements ActionListener{
 
 			for (Stockpile stockpile : stockpiles) {
 				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
-				jMenuItem.setActionCommand(ACTION_ADD_TO);
-				jMenuItem.addActionListener(this);
+				jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
+				jMenuItem.addActionListener(listener);
 				jSubMenu.add(jMenuItem);
 			}
 		}
 
 		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().editItem(), Images.EDIT_EDIT.getIcon(), items);
-		jMenuItem.setActionCommand(ACTION_EDIT_ITEM);
-		jMenuItem.addActionListener(this);
+		jMenuItem.setActionCommand(StockpileItemMenuAction.EDIT_ITEM.name());
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setEnabled(items.size() == 1);
 		this.add(jMenuItem);
 
 		jMenuItem = new JStockpileMenuItem(TabsStockpile.get().deleteItem(), Images.EDIT_DELETE.getIcon(), items);
-		jMenuItem.setActionCommand(ACTION_DELETE_ITEM);
-		jMenuItem.addActionListener(this);
+		jMenuItem.setActionCommand(StockpileItemMenuAction.DELETE_ITEM.name());
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setEnabled(!items.isEmpty());
 		this.add(jMenuItem);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		//Add item to
-		if (ACTION_ADD_TO.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
-			}
-		}
-		//Edit item
-		if (ACTION_EDIT_ITEM.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				List<Stockpile.StockpileItem> items = jMenuItem.getItems();
-				if (items.size() == 1) {
-					program.getStockpileTool().editItem(items.get(0));
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//Add item to
+			if (StockpileItemMenuAction.ADD_TO.name().equals(e.getActionCommand())) {
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					program.getStockpileTool().addToStockpile(jMenuItem.getStockpile(), jMenuItem.getItems(), true);
 				}
 			}
-		}
-		//Delete item
-		if (ACTION_DELETE_ITEM.equals(e.getActionCommand())) {
-			Object source = e.getSource();
-			if (source instanceof JStockpileMenuItem) {
-				JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
-				List<Stockpile.StockpileItem> items = jMenuItem.getItems();
-				if (!items.isEmpty()) {
-					int value;
+			//Edit item
+			if (StockpileItemMenuAction.EDIT_ITEM.name().equals(e.getActionCommand())) {
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					List<Stockpile.StockpileItem> items = jMenuItem.getItems();
 					if (items.size() == 1) {
-						value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), items.get(0).getName(), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-					} else {
-						value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						program.getStockpileTool().editItem(items.get(0));
 					}
-					if (value == JOptionPane.OK_OPTION) {
-						for (Stockpile.StockpileItem item : items) {
-							item.getStockpile().remove(item);
+				}
+			}
+			//Delete item
+			if (StockpileItemMenuAction.DELETE_ITEM.name().equals(e.getActionCommand())) {
+				Object source = e.getSource();
+				if (source instanceof JStockpileMenuItem) {
+					JStockpileMenuItem jMenuItem = (JStockpileMenuItem) source;
+					List<Stockpile.StockpileItem> items = jMenuItem.getItems();
+					if (!items.isEmpty()) {
+						int value;
+						if (items.size() == 1) {
+							value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), items.get(0).getName(), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						} else {
+							value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), TabsStockpile.get().deleteItems(items.size()), TabsStockpile.get().deleteItemTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 						}
-						program.getStockpileTool().removeItems(items);
+						if (value == JOptionPane.OK_OPTION) {
+							for (Stockpile.StockpileItem item : items) {
+								item.getStockpile().remove(item);
+							}
+							program.getStockpileTool().removeItems(items);
+						}
 					}
 				}
 			}

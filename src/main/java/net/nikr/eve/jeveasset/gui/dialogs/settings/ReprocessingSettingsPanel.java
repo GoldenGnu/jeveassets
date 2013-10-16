@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionListener {
+public class ReprocessingSettingsPanel extends JSettingsPanel {
 
 	private static final int LEVEL0 = 0;
 	private static final int LEVEL1 = 1;
@@ -52,13 +52,15 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 	public ReprocessingSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().reprocessing(), Images.SETTINGS_REPROCESSING.getIcon());
 
+		ListenerClass listener = new ListenerClass();
+
 		JLabel jNotes = new JLabel(DialoguesSettings.get().reprocessingWarning());
 
 		JLabel jStationLabel = new JLabel(DialoguesSettings.get().stationEquipment());
 		jStation50 = new JRadioButton(DialoguesSettings.get().fiftyPercent());
-		jStation50.addActionListener(this);
+		jStation50.addActionListener(listener);
 		jStationOther = new JRadioButton(DialoguesSettings.get().customPercent());
-		jStationOther.addActionListener(this);
+		jStationOther.addActionListener(listener);
 		jStation = new JIntegerField(DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jStationPercentLabel = new JLabel(DialoguesSettings.get().percentSymbol());
 
@@ -76,17 +78,17 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		JLabel jRefiningLabel = new JLabel(DialoguesSettings.get().refiningLevel());
 		jRefining = new JRadioButton[6];
 		jRefining[LEVEL0] = new JRadioButton();
-		jRefining[LEVEL0].addActionListener(this);
+		jRefining[LEVEL0].addActionListener(listener);
 		jRefining[LEVEL1] = new JRadioButton();
-		jRefining[LEVEL1].addActionListener(this);
+		jRefining[LEVEL1].addActionListener(listener);
 		jRefining[LEVEL2] = new JRadioButton();
-		jRefining[LEVEL2].addActionListener(this);
+		jRefining[LEVEL2].addActionListener(listener);
 		jRefining[LEVEL3] = new JRadioButton();
-		jRefining[LEVEL3].addActionListener(this);
+		jRefining[LEVEL3].addActionListener(listener);
 		jRefining[LEVEL4] = new JRadioButton();
-		jRefining[LEVEL4].addActionListener(this);
+		jRefining[LEVEL4].addActionListener(listener);
 		jRefining[LEVEL5] = new JRadioButton();
-		jRefining[LEVEL5].addActionListener(this);
+		jRefining[LEVEL5].addActionListener(listener);
 
 		ButtonGroup jRefiningButtonGroup = new ButtonGroup();
 		jRefiningButtonGroup.add(jRefining[LEVEL0]);
@@ -99,17 +101,17 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		JLabel jRefineryEfficiencyLabel = new JLabel(DialoguesSettings.get().refiningEfficiencyLevel());
 		jRefineryEfficiency = new JRadioButton[6];
 		jRefineryEfficiency[LEVEL0] = new JRadioButton();
-		jRefineryEfficiency[LEVEL0].addActionListener(this);
+		jRefineryEfficiency[LEVEL0].addActionListener(listener);
 		jRefineryEfficiency[LEVEL1] = new JRadioButton();
-		jRefineryEfficiency[LEVEL1].addActionListener(this);
+		jRefineryEfficiency[LEVEL1].addActionListener(listener);
 		jRefineryEfficiency[LEVEL2] = new JRadioButton();
-		jRefineryEfficiency[LEVEL2].addActionListener(this);
+		jRefineryEfficiency[LEVEL2].addActionListener(listener);
 		jRefineryEfficiency[LEVEL3] = new JRadioButton();
-		jRefineryEfficiency[LEVEL3].addActionListener(this);
+		jRefineryEfficiency[LEVEL3].addActionListener(listener);
 		jRefineryEfficiency[LEVEL4] = new JRadioButton();
-		jRefineryEfficiency[LEVEL4].addActionListener(this);
+		jRefineryEfficiency[LEVEL4].addActionListener(listener);
 		jRefineryEfficiency[LEVEL5] = new JRadioButton();
-		jRefineryEfficiency[LEVEL5].addActionListener(this);
+		jRefineryEfficiency[LEVEL5].addActionListener(listener);
 
 		ButtonGroup jEfficiencyButtonGroup = new ButtonGroup();
 		jEfficiencyButtonGroup.add(jRefineryEfficiency[LEVEL0]);
@@ -312,10 +314,11 @@ public class ReprocessingSettingsPanel extends JSettingsPanel implements ActionL
 		}
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		validateSkills();
-		validateStation();
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			validateSkills();
+			validateStation();
+		}
 	}
-
 }

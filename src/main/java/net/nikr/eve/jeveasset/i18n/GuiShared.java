@@ -35,7 +35,9 @@ public abstract class GuiShared extends Bundle {
 	}
 
 	public abstract String add();
+	public abstract String addFilter();
 	public abstract String addStockpileItem();
+	public abstract String background();
 	public abstract String checkAll();
 	public abstract String chruker();
 	public abstract String containerDelete();
@@ -43,8 +45,11 @@ public abstract class GuiShared extends Bundle {
 	public abstract String containerText();
 	public abstract String containerTitle();
 	public abstract String copy();
+	public abstract String custom();
 	public abstract String cut();
+	public abstract String delete();
 	public abstract String dotlan();
+	public abstract String edit();
 	public abstract String emptyString();
 	public abstract String eveAddicts();
 	public abstract String eveCentral();
@@ -52,6 +57,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveMarketeer();
 	public abstract String eveMarkets();
 	public abstract String eveOnline();
+	public abstract String foreground();
 	public abstract String item();
 	public abstract String itemDelete();
 	public abstract String itemEdit();
@@ -94,10 +100,44 @@ public abstract class GuiShared extends Bundle {
 	public abstract String tableResizeWindow();
 	public abstract String tableResizeNone();
 	public abstract String tableSettings();
+	public abstract String tags();
+	public abstract String tagsEdit();
+	public abstract String tagsEditTitle();
+	public abstract String tagsName(String name, Integer count);
+	public abstract String tagsNew();
+	public abstract String tagsNewMsg();
+	public abstract String tagsNewTitle();
 
 	public abstract String today(Object arg0);
 	public abstract String whitespace37(Object arg0, Object arg1);
 	public abstract String files(Object arg0);
+	//ViewsdeleteFilter=Delete Filter
+	public abstract String deleteView();
+	public abstract String deleteViews(int size);
+	public abstract String editViews();
+	public abstract String enterViewName();
+	public abstract String loadView();
+	public abstract String manageViews();
+	public abstract String noViewName();
+	public abstract String overwriteView();
+	public abstract String renameView();
+	public abstract String saveView();
+	public abstract String saveViewMsg();
+	
+	//Update
+	public abstract String beta();
+	public abstract String devBuild();
+	public abstract String feedbackMsg(String programName, String versionType);
+	public abstract String newBuildMsg(String buildType, String programName);
+	public abstract String newBuildTitle();
+	public abstract String newVersionTitle();
+	public abstract String newVersionMsg(String programName);
+	public abstract String noNewVersionTitle();
+	public abstract String noNewVersionMsg();
+	public abstract String protableMsg(int i);
+	public abstract String releaseCandidate();
+	public abstract String stable();
+	
 	//Filters
 	public abstract String saveFilter();
 	public abstract String enterFilterName();

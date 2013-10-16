@@ -21,16 +21,40 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
@@ -39,6 +63,8 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportDialog;
+import net.nikr.eve.jeveasset.gui.shared.filter.ExportFilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
@@ -48,20 +74,26 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuData;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
-public class OverviewTab extends JMainTab implements TableMenu<Overview> {
+public class OverviewTab extends JMainTab {
 
-	private static final String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
-	private static final String ACTION_LOAD_FILTER = "ACTION_LOAD_FILTER";
-	public static final String ACTION_GROUP_ASSET_FILTER = "ACTION_GROUP_ASSET_FILTER";
-	public static final String ACTION_GROUP_LOOKUP = "ACTION_GROUP_LOOKUP";
+	public enum OverviewAction {
+		UPDATE_LIST,
+		LOAD_FILTER,
+		GROUP_ASSET_FILTER,
+		GROUP_LOOKUP,
+		EXPORT
+	}
 
 	private JOverviewTable jTable;
 	private JToggleButton jStations;
@@ -76,7 +108,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 	private JLabel jAverage;
 	private JLabel jVolume;
 	private JLabel jShowing;
-	private ListenerClass listenerClass = new ListenerClass();
+	private ListenerClass listener = new ListenerClass();
 
 	//Table
 	private EventList<Overview> eventList;
@@ -88,32 +120,44 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 	//Data
 	private int rowCount;
 
+	//Dialog
+	ExportDialog<Overview> exportDialog;
+
+	public static final String NAME = "overview"; //Not to be changed!
+
 	public OverviewTab(final Program program) {
 		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
 
 		JLabel jViewsLabel = new JLabel(TabsOverview.get().view());
 
+		JToolBar jToolBarLeft = new JToolBar();
+		jToolBarLeft.setFloatable(false);
+		jToolBarLeft.setRollover(true);
+
 		jStations = new JToggleButton(Images.LOC_STATION.getIcon());
 		jStations.setToolTipText(TabsOverview.get().stations());
-		jStations.setActionCommand(ACTION_UPDATE_LIST);
-		jStations.addActionListener(listenerClass);
+		jStations.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jStations.addActionListener(listener);
 		jStations.setSelected(true);
+		addToolButton(jToolBarLeft, jStations, 40, SwingConstants.CENTER);
 
 		jSystems = new JToggleButton(Images.LOC_SYSTEM.getIcon());
 		jSystems.setToolTipText(TabsOverview.get().systems());
-		jSystems.setActionCommand(ACTION_UPDATE_LIST);
-		jSystems.addActionListener(listenerClass);
+		jSystems.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jSystems.addActionListener(listener);
+		addToolButton(jToolBarLeft, jSystems, 40, SwingConstants.CENTER);
 
 		jRegions = new JToggleButton(Images.LOC_REGION.getIcon());
 		jRegions.setToolTipText(TabsOverview.get().regions());
-		jRegions.setActionCommand(ACTION_UPDATE_LIST);
-		jRegions.addActionListener(listenerClass);
+		jRegions.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jRegions.addActionListener(listener);
+		addToolButton(jToolBarLeft, jRegions, 40, SwingConstants.CENTER);
 
 		jGroups = new JToggleButton(Images.LOC_GROUPS.getIcon());
-		//jGroups = new JToggleButton(Images.LOC_LOCATIONS.getIcon());
 		jGroups.setToolTipText(TabsOverview.get().groups());
-		jGroups.setActionCommand(ACTION_UPDATE_LIST);
-		jGroups.addActionListener(listenerClass);
+		jGroups.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jGroups.addActionListener(listener);
+		addToolButton(jToolBarLeft, jGroups, 40, SwingConstants.CENTER);
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(jStations);
@@ -121,17 +165,27 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		group.add(jRegions);
 		group.add(jGroups);
 
-		JSeparator jSeparatorView = new JSeparator(SwingConstants.VERTICAL);
+		jToolBarLeft.addSeparator();
 
 		jLoadFilter = new JDropDownButton(TabsOverview.get().loadFilter());
 		jLoadFilter.setIcon(Images.FILTER_LOAD.getIcon());
+		addToolButton(jToolBarLeft, jLoadFilter);
 
-		JSeparator jSeparatorFilter = new JSeparator(SwingConstants.VERTICAL);
+		jToolBarLeft.addSeparator();
 
 		JLabel jOwnerLabel = new JLabel(TabsOverview.get().owner());
 		jOwner = new JComboBox();
-		jOwner.setActionCommand(ACTION_UPDATE_LIST);
-		jOwner.addActionListener(listenerClass);
+		jOwner.setActionCommand(OverviewAction.UPDATE_LIST.name());
+		jOwner.addActionListener(listener);
+
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+		
+		JButton jExport = new JButton(GuiShared.get().export(), Images.DIALOG_CSV_EXPORT.getIcon());
+		jExport.setActionCommand(OverviewAction.EXPORT.name());
+		jExport.addActionListener(listener);
+		addToolButton(jToolBarRight, jExport);
 
 		jShowing = new JLabel();
 
@@ -154,11 +208,17 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		installTable(jTable, null);
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Menu
-		installMenu(program, this, jTable, Overview.class);
+		installMenu(program, new OverviewTableMenu(), jTable, Overview.class);
+
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
+		enumColumns.addAll(Arrays.asList(OverviewTableFormat.values()));
+		List<EventList<Overview>> eventLists = new ArrayList<EventList<Overview>>();
+		eventLists.add(sortedList);
+		exportDialog = new ExportDialog<Overview>(program.getMainWindow().getFrame(), NAME, null, new MaterialsFilterControl(), eventLists, enumColumns);
 
 		jVolume = StatusPanel.createLabel(TabsOverview.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -175,19 +235,23 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		jValue = StatusPanel.createLabel(TabsOverview.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jViewsLabel)
-					.addComponent(jStations)
-					.addComponent(jSystems)
-					.addComponent(jRegions)
-					.addComponent(jGroups)
-					.addComponent(jSeparatorView, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(jLoadFilter)
-					.addComponent(jSeparatorFilter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(jToolBarLeft)
+					//.addComponent(jStations)
+					//.addComponent(jSystems)
+					//.addComponent(jRegions)
+					//.addComponent(jGroups)
+					//.addComponent(jSeparatorView, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					//.addComponent(jLoadFilter)
+					//.addComponent(jSeparatorFilter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(jOwnerLabel)
 					.addComponent(jOwner, 150, 150, 150)
+					//.addComponent(jExport)
+					.addComponent(jToolBarRight)
 					.addGap(0, 0, Short.MAX_VALUE)
 					.addComponent(jShowing, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				)
@@ -197,45 +261,39 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jViewsLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSeparatorView, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jLoadFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jSeparatorFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					//.addComponent(jStations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jSystems, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jRegions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jGroups, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jSeparatorView, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jLoadFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jSeparatorFilter, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jOwnerLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					//.addComponent(jExport, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
 
-	@Override
-	public MenuData<Overview> getMenuData() {
-		return new MenuData<Overview>(selectionModel.getSelected());
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
+		addToolButton(jToolBar, jButton, 90, SwingConstants.LEFT);
 	}
 
-	@Override
-	public JMenu getFilterMenu() {
-		return null;
+	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width, final int alignment) {
+		if (width > 0) {
+			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
+		}
+		jButton.setHorizontalAlignment(alignment);
+		jToolBar.add(jButton);
 	}
 
-	@Override
-	public JMenu getColumnMenu() {
-		return tableFormat.getMenu(program, tableModel, jTable);
-	}
-
-	@Override
-	public void addInfoMenu(JComponent jComponent) {
-		JMenuInfo.overview(jComponent, selectionModel.getSelected());
-	}
-
-	@Override
-	public void addToolMenu(JComponent jComponent) {
-		jComponent.add(new JOverviewMenu(program, this, selectionModel.getSelected()));
-		MenuManager.addSeparator(jComponent);
+	private OverviewTab getThis() {
+		return this;
 	}
 
 	@Override
@@ -245,7 +303,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 	}
 
 	public ActionListener getListenerClass() {
-		return listenerClass;
+		return listener;
 	}
 
 	public boolean isGroup() {
@@ -325,12 +383,6 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			}
 		}
 		for (Asset asset : input) {
-			String name;
-			if (asset.isCorporation()) {
-				name = TabsOverview.get().whitespace4(asset.getOwner());
-			} else {
-				name = asset.getOwner();
-			}
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
@@ -338,7 +390,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				continue;
 			}
 			//Filters
-			if (!owner.equals(name) && !owner.equals(General.get().all())) {
+			if (!owner.equals(asset.getOwner()) && !owner.equals(General.get().all())) {
 				continue;
 			}
 
@@ -401,8 +453,8 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 		jMenuItem = new FilterMenuItem(TabsOverview.get().clear(), new ArrayList<Filter>());
 		jMenuItem.setIcon(Images.FILTER_CLEAR.getIcon());
-		jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
-		jMenuItem.addActionListener(listenerClass);
+		jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
+		jMenuItem.addActionListener(listener);
 		jLoadFilter.add(jMenuItem);
 
 		jLoadFilter.addSeparator();
@@ -411,8 +463,8 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		for (String filter : filters) {
 			List<Filter> filterList = Settings.get().getTableFilters(AssetsTab.NAME).get(filter);
 			jMenuItem = new FilterMenuItem(filter, filterList);
-			jMenuItem.setActionCommand(ACTION_LOAD_FILTER);
-			jMenuItem.addActionListener(listenerClass);
+			jMenuItem.setActionCommand(OverviewAction.LOAD_FILTER.name());
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 	}
@@ -449,6 +501,10 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 			tableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			tableModel.fireTableStructureChanged();
 		}
+		//Update Export Columns
+		List<EnumTableColumn<Overview>> enumColumns = new ArrayList<EnumTableColumn<Overview>>();
+		enumColumns.addAll(tableFormat.getShownColumns());
+		exportDialog.setColumns(enumColumns);
 		try {
 			eventList.getReadWriteLock().writeLock().lock();
 			eventList.clear();
@@ -501,11 +557,39 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 		return Settings.get().getOverviewGroups().get(overview.getName());
 	}
 
+	private class OverviewTableMenu implements TableMenu<Overview> {
+		@Override
+		public MenuData<Overview> getMenuData() {
+			return new MenuData<Overview>(selectionModel.getSelected());
+		}
+
+		@Override
+		public JMenu getFilterMenu() {
+			return null;
+		}
+
+		@Override
+		public JMenu getColumnMenu() {
+			return tableFormat.getMenu(program, tableModel, jTable, "overview", false);
+		}
+
+		@Override
+		public void addInfoMenu(JComponent jComponent) {
+			JMenuInfo.overview(jComponent, selectionModel.getSelected());
+		}
+
+		@Override
+		public void addToolMenu(JComponent jComponent) {
+			jComponent.add(new JOverviewMenu(program, getThis(), selectionModel.getSelected()));
+			MenuManager.addSeparator(jComponent);
+		}
+	}
+
 	private class ListenerClass implements ActionListener {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (ACTION_UPDATE_LIST.equals(e.getActionCommand())) {
+			if (OverviewAction.UPDATE_LIST.name().equals(e.getActionCommand())) {
 				if (e.getSource().equals(jStations)
 						|| e.getSource().equals(jSystems)
 						|| e.getSource().equals(jRegions)
@@ -517,7 +601,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				updateTable();
 			}
 			//Filter
-			if (ACTION_GROUP_ASSET_FILTER.equals(e.getActionCommand())) {
+			if (OverviewAction.GROUP_ASSET_FILTER.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
@@ -539,7 +623,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				program.getAssetsTab().addFilters(filters);
 				program.getMainWindow().addTab(program.getAssetsTab());
 			}
-			if (ACTION_GROUP_LOOKUP.equals(e.getActionCommand())) {
+			if (OverviewAction.GROUP_LOOKUP.name().equals(e.getActionCommand())) {
 				int index = jTable.getSelectedRow();
 				Overview overview = tableModel.getElementAt(index);
 				OverviewGroup overviewGroup = Settings.get().getOverviewGroups().get(overview.getName());
@@ -559,7 +643,7 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 				}
 				JMenuLookup.browseDotlan(program, stations, systems, regions);
 			}
-			if (ACTION_LOAD_FILTER.equals(e.getActionCommand())) {
+			if (OverviewAction.LOAD_FILTER.name().equals(e.getActionCommand())) {
 				Object source = e.getSource();
 				if (source instanceof FilterMenuItem) {
 					FilterMenuItem menuItem = (FilterMenuItem) source;
@@ -568,6 +652,9 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 						program.getAssetsTab().addFilters(menuItem.getFilters());
 					}
 				}
+			}
+			if (OverviewAction.EXPORT.name().equals(e.getActionCommand())) {
+				exportDialog.setVisible(true);
 			}
 		}
 	}
@@ -583,6 +670,24 @@ public class OverviewTab extends JMainTab implements TableMenu<Overview> {
 
 		public List<Filter> getFilters() {
 			return filters;
+		}
+	}
+
+	class MaterialsFilterControl extends ExportFilterControl<Overview> {
+
+		@Override
+		protected EnumTableColumn<?> valueOf(final String column) {
+			try {
+				return OverviewTableFormat.valueOf(column);
+			} catch (IllegalArgumentException exception) {
+
+			}
+			throw new RuntimeException("Fail to parse filter column: " + column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<Overview>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<Overview>>(tableFormat.getShownColumns());
 		}
 	}
 }

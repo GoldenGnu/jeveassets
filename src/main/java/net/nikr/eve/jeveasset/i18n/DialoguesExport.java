@@ -53,6 +53,11 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String failedToSave();
 	public abstract String fieldTerminated();
 	public abstract String filters();
+	public abstract String format();
+	public abstract String html();
+	public abstract String htmlHeaderRepeat();
+	public abstract String htmlIGB();
+	public abstract String htmlStyled();
 	public abstract String lineEndingsMac();
 	public abstract String lineEndingsWindows();
 	public abstract String lineEndingsUnix();
@@ -60,10 +65,14 @@ public abstract class DialoguesExport extends Bundle {
 	public abstract String noFilter();
 	public abstract String noSavedFilter();
 	public abstract String ok();
+	public abstract String options();
 	public abstract String savedFilter();
 	public abstract String selectOne();
 	public abstract String semicolon();
 	public abstract String sql();
 	public abstract String tableName();
-	public abstract String toolColumns();
+	public abstract String viewCurrent();
+	public abstract String viewSaved();
+	public abstract String viewSelect();
+	public abstract String viewNoSaved();
 }

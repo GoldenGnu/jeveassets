@@ -50,6 +50,7 @@ public abstract class JMainTab {
 	private DefaultEventSelectionModel<?> eventSelectionModel;
 	private DefaultEventTableModel<?> eventTableModel;
 	private List<?> selected;
+	private int[] selectedColumns;
 	private String toolName;
 	private Class<?> clazz;
 	protected JMainTab(final boolean load) { }
@@ -106,7 +107,10 @@ public abstract class JMainTab {
 			selected = new ArrayList<Object>(eventSelectionModel.getSelected());
 		}
 		if (jTable != null) {
+			selectedColumns = jTable.getColumnModel().getSelectedColumns();
 			jTable.lock();
+		} else {
+			selectedColumns = null;
 		}
 		if (jTable instanceof JSeparatorTable) {
 			JSeparatorTable jSeparatorTable = (JSeparatorTable) jTable;
@@ -115,7 +119,6 @@ public abstract class JMainTab {
 	}
 
 	public final void afterUpdateData() {
-		//FIXME JMainTab.afterUpdateData() is too slow
 		if (eventSelectionModel != null && eventTableModel != null && selected != null) {
 			eventSelectionModel.setValueIsAdjusting(true);
 			for (int i = 0; i < eventTableModel.getRowCount(); i++) {
@@ -126,6 +129,11 @@ public abstract class JMainTab {
 			}
 			eventSelectionModel.setValueIsAdjusting(false);
 			selected = null;
+		}
+		if (selectedColumns != null) {
+			for (int index : selectedColumns) {
+				jTable.getColumnModel().getSelectionModel().addSelectionInterval(index, index);
+			}
 		}
 		if (jTable != null) {
 			jTable.unlock();
@@ -176,6 +184,16 @@ public abstract class JMainTab {
 		}
 	}
 
+	/**
+	 * Table automation
+	 * 1. Saving table settings (TableColumns, TableResize, TableColumnsWidth)
+	 * 2. Restore table selection after update
+	 * 3. Restore expanded state for JSeparatorTable after update
+	 * 4. Lock/unlock table doing update
+	 * 
+	 * @param jTable
+	 * @param toolName unique tool name
+	 */
 	protected void installTable(final JAutoColumnTable jTable, String toolName) {
 		this.toolName = toolName;
 

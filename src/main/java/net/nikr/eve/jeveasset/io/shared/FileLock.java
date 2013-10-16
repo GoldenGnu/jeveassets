@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.io.shared;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;

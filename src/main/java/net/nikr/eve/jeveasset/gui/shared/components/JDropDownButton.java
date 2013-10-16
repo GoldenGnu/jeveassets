@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.Icon;
@@ -37,7 +38,7 @@ import net.nikr.eve.jeveasset.gui.shared.MenuScroller;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JDropDownButton extends JButton implements PopupMenuListener, MouseListener, KeyListener {
+public class JDropDownButton extends JButton {
 
 	private boolean showPopupMenuMouse = true;
 	private boolean showPopupMenuKey = true;
@@ -51,6 +52,10 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 
 	public JDropDownButton() {
 		this(GuiShared.get().emptyString(), null, LEFT, BOTTOM);
+	}
+
+	public JDropDownButton(final Icon icon) {
+		this("", icon, LEFT, BOTTOM);
 	}
 
 	public JDropDownButton(final String text) {
@@ -83,13 +88,16 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		if (popupVerticalAlignment != TOP && popupVerticalAlignment != BOTTOM && popupVerticalAlignment != CENTER) {
 			throw new IllegalArgumentException("Must be SwingConstants.TOP, SwingConstants.BOTTOM, or SwingConstants.CENTER");
 		}
+
+		ListenerClass listener = new ListenerClass();
+
 		this.popupHorizontalAlignment = popupHorizontalAlignment;
 		this.popupVerticalAlignment = popupVerticalAlignment;
 		this.setText(text);
-		this.addMouseListener(this);
-		this.addKeyListener(this);
+		this.addMouseListener(listener);
+		this.addKeyListener(listener);
 		jPopupMenu = new JPopupMenu();
-		jPopupMenu.addPopupMenuListener(this);
+		jPopupMenu.addPopupMenuListener(listener);
 		menuScroller = new MenuScroller(jPopupMenu);
 	}
 
@@ -102,17 +110,32 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		jPopupMenu.addSeparator();
 	}
 
-	@Override
-	public Component add(final Component component) {
-		if (component instanceof JMenuItem) {
-			return add((JMenuItem) component);
+	public Component add(final JMenuItem jMenuItem, boolean keepOpen) {
+		if (keepOpen) {
+			//jPopupMenu.setLightWeightPopupEnabled(true);
+			jMenuItem.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					showPopupMenu();
+					jMenuItem.setArmed(true);
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					jMenuItem.setArmed(true);
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					jMenuItem.setArmed(false);
+				}
+			});
 		}
-		return super.add(component);
+		return add(jMenuItem);
 	}
 
-	public JMenuItem add(final JMenuItem jMenuItem) {
-		jPopupMenu.add(jMenuItem);
-		return jMenuItem;
+	@Override
+	public Component add(final Component component) {
+		jPopupMenu.add(component);
+		return component;
 	}
 
 	public int getPopupHorizontalAlignment() {
@@ -182,77 +205,75 @@ public class JDropDownButton extends JButton implements PopupMenuListener, Mouse
 		this.getModel().setRollover(true);
 	}
 
-	@Override
-	public void popupMenuWillBecomeVisible(final PopupMenuEvent e) { }
+	private class ListenerClass implements PopupMenuListener, MouseListener, KeyListener {
+		@Override
+		public void popupMenuWillBecomeVisible(final PopupMenuEvent e) { }
 
-	@Override
-	public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) { }
+		@Override
+		public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) { }
 
-	@Override
-	public void popupMenuCanceled(final PopupMenuEvent e) {
-		if (mouseOverThis) {
-			showPopupMenuMouse = false;
-		} else {
-			showPopupMenuMouse = true;
-		}
-		this.getModel().setRollover(false);
-	}
-
-	@Override
-	public void mouseClicked(final MouseEvent e) { }
-
-	@Override
-	public void mousePressed(final MouseEvent e) {
-		mousePressedThis = true;
-	}
-
-	@Override
-	public void mouseReleased(final MouseEvent e) {
-		if (mousePressedThis) {
-			if (showPopupMenuMouse) {
-				showPopupMenu();
+		@Override
+		public void popupMenuCanceled(final PopupMenuEvent e) {
+			if (mouseOverThis) {
+				showPopupMenuMouse = false;
 			} else {
 				showPopupMenuMouse = true;
 			}
-			return;
+			getModel().setRollover(false);
 		}
-		mousePressedThis = false;
-	}
 
-	@Override
-	public void mouseEntered(final MouseEvent e) {
-		if (e.getSource().equals(this)) {
+		@Override
+		public void mouseClicked(final MouseEvent e) { }
+
+		@Override
+		public void mousePressed(final MouseEvent e) {
+			mousePressedThis = true;
+		}
+
+		@Override
+		public void mouseReleased(final MouseEvent e) {
+			if (mousePressedThis) {
+				if (showPopupMenuMouse) {
+					showPopupMenu();
+				} else {
+					showPopupMenuMouse = true;
+				}
+				return;
+			}
+			mousePressedThis = false;
+		}
+
+		@Override
+		public void mouseEntered(final MouseEvent e) {
 			mouseOverThis = true;
+
 		}
 
-	}
-
-	@Override
-	public void mouseExited(final MouseEvent e) {
-		if (e.getSource().equals(this)) {
+		@Override
+		public void mouseExited(final MouseEvent e) {
 			mouseOverThis = false;
+			if (jPopupMenu.isShowing()) {
+				getModel().setRollover(true);
+			}
 		}
-		if (jPopupMenu.isShowing()) {
-			this.getModel().setRollover(true);
-		}
-	}
 
-	@Override
-	public void keyTyped(final KeyEvent e) {
-		if (showPopupMenuKey) {
-			showPopupMenu();
+		@Override
+		public void keyTyped(final KeyEvent e) {
+			if (showPopupMenuKey) {
+				showPopupMenu();
+			}
 		}
-	}
 
-	@Override
-	public void keyPressed(final KeyEvent e) {
-		if (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
-			showPopupMenuKey = true;
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			if (e.getKeyCode()  == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+				showPopupMenuKey = true;
+			}
 		}
-	}
 
-	@Override
-	public void keyReleased(final KeyEvent e) {
-		showPopupMenuKey = false;
+		@Override
+		public void keyReleased(final KeyEvent e) {
+			showPopupMenuKey = false;
+		}
 	}
 }

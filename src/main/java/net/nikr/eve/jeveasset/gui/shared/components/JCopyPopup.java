@@ -34,14 +34,19 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public final class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner {
+public final class JCopyPopup {
 
-	public static final String ACTION_CUT = "ACTION_CUT";
-	public static final String ACTION_COPY = "ACTION_COPY";
-	public static final String ACTION_PASTE = "ACTION_PASTE";
+	//FIXME - - - > JTextComponent: need to use JCopyPopup
+	private enum CopyPopupAction {
+		CUT, COPY, PASTE
+	}
 
 	private JTextComponent component;
 	private JPopupMenu jPopupMenu;
+	private JMenuItem jCut;
+	private JMenuItem jCopy;
+	private JMenuItem jPaste;
+
 	private Clipboard clipboard;
 
 	public static void install(final JTextComponent component) {
@@ -50,7 +55,28 @@ public final class JCopyPopup implements MouseListener, ActionListener, Clipboar
 
 	private JCopyPopup(final JTextComponent component) {
 		this.component = component;
-		component.addMouseListener(this);
+
+		ListenerClass listener = new ListenerClass();
+
+		component.addMouseListener(listener);
+
+		jPopupMenu = new JPopupMenu();
+
+		jCut = new JMenuItem(GuiShared.get().cut());
+		jCut.setIcon(Images.EDIT_CUT.getIcon());
+		jCut.setActionCommand(CopyPopupAction.CUT.name());
+		jCut.addActionListener(listener);
+
+		jCopy = new JMenuItem(GuiShared.get().copy());
+		jCopy.setIcon(Images.EDIT_COPY.getIcon());
+		jCopy.setActionCommand(CopyPopupAction.COPY.name());
+		jCopy.addActionListener(listener);
+
+		jPaste = new JMenuItem(GuiShared.get().paste());
+		jPaste.setIcon(Images.EDIT_PASTE.getIcon());
+		jPaste.setActionCommand(CopyPopupAction.PASTE.name());
+		jPaste.addActionListener(listener);
+
 		clipboard = component.getToolkit().getSystemClipboard();
 	}
 
@@ -59,8 +85,7 @@ public final class JCopyPopup implements MouseListener, ActionListener, Clipboar
 			component.requestFocus();
 		}
 
-		jPopupMenu = new JPopupMenu();
-		JMenuItem jMenuItem;
+		jPopupMenu.removeAll();
 
 		String s = component.getSelectedText();
 		boolean canCopy = true;
@@ -71,134 +96,119 @@ public final class JCopyPopup implements MouseListener, ActionListener, Clipboar
 		}
 
 		if (component.isEditable()) {
-			jMenuItem = new JMenuItem(GuiShared.get().cut());
-			jMenuItem.setIcon(Images.EDIT_CUT.getIcon());
-			jMenuItem.setActionCommand(ACTION_CUT);
-			jMenuItem.addActionListener(this);
-			jMenuItem.setEnabled(canCopy);
-			jPopupMenu.add(jMenuItem);
+			jCut.setEnabled(canCopy);
+			jPopupMenu.add(jCut);
 		}
 
-		jMenuItem = new JMenuItem(GuiShared.get().copy());
-		jMenuItem.setIcon(Images.EDIT_COPY.getIcon());
-		jMenuItem.setActionCommand(ACTION_COPY);
-		jMenuItem.addActionListener(this);
-		jMenuItem.setEnabled(canCopy);
-		jPopupMenu.add(jMenuItem);
+		jCopy.setEnabled(canCopy);
+		jPopupMenu.add(jCopy);
 
 		if (component.isEditable()) {
-			jMenuItem = new JMenuItem(GuiShared.get().paste());
-			jMenuItem.setIcon(Images.EDIT_PASTE.getIcon());
-			jMenuItem.setActionCommand(ACTION_PASTE);
-			jMenuItem.addActionListener(this);
-			jPopupMenu.add(jMenuItem);
+			jPopupMenu.add(jPaste);
 		}
 
 		jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 
-	@Override
-	public void mouseClicked(final MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			showPopupMenu(e);
+	private class ListenerClass implements MouseListener, ActionListener {
+		@Override
+		public void mouseClicked(final MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				showPopupMenu(e);
+			}
 		}
-	}
 
-	@Override
-	public void mousePressed(final MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			showPopupMenu(e);
+		@Override
+		public void mousePressed(final MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				showPopupMenu(e);
+			}
 		}
-	}
 
-	@Override
-	public void mouseReleased(final MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			showPopupMenu(e);
+		@Override
+		public void mouseReleased(final MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				showPopupMenu(e);
+			}
 		}
-	}
 
-	@Override
-	public void mouseEntered(final MouseEvent e) { }
+		@Override
+		public void mouseEntered(final MouseEvent e) { }
 
-	@Override
-	public void mouseExited(final MouseEvent e) { }
+		@Override
+		public void mouseExited(final MouseEvent e) { }
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_CUT.equals(e.getActionCommand())) {
-			SecurityManager sm = System.getSecurityManager();
-			if (sm != null) {
-				try {
-					sm.checkSystemClipboardAccess();
-				} catch (Exception ex) {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (CopyPopupAction.CUT.name().equals(e.getActionCommand())) {
+				SecurityManager sm = System.getSecurityManager();
+				if (sm != null) {
+					try {
+						sm.checkSystemClipboardAccess();
+					} catch (Exception ex) {
+						return;
+					}
+				}
+
+				String s = component.getSelectedText();
+				if (s == null) {
 					return;
 				}
-			}
-
-			String s = component.getSelectedText();
-			if (s == null) {
-				return;
-			}
-			if (s.length() == 0) {
-				return;
-			}
-			String text = component.getText();
-			String before = text.substring(0, component.getSelectionStart());
-			String after = text.substring(component.getSelectionEnd(), text.length());
-			component.setText(before + after);
-			StringSelection st = new StringSelection(s);
-			clipboard.setContents(st, this);
-		}
-
-
-		if (ACTION_COPY.equals(e.getActionCommand())) {
-			SecurityManager sm = System.getSecurityManager();
-			if (sm != null) {
-				try {
-					sm.checkSystemClipboardAccess();
-				} catch (Exception ex) {
+				if (s.length() == 0) {
 					return;
 				}
-			}
-			String s = component.getSelectedText();
-			if (s == null) {
-				return;
-			}
-			if (s.length() == 0) {
-				return;
-			}
-			StringSelection st = new StringSelection(s);
-			clipboard.setContents(st, this);
-		}
-		if (ACTION_PASTE.equals(e.getActionCommand())) {
-			SecurityManager sm = System.getSecurityManager();
-			if (sm != null) {
-				try {
-					sm.checkSystemClipboardAccess();
-				} catch (Exception ex) {
-					return;
-				}
-			}
-			Transferable transferable = clipboard.getContents(this);
-			try {
-				String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
 				String text = component.getText();
 				String before = text.substring(0, component.getSelectionStart());
 				String after = text.substring(component.getSelectionEnd(), text.length());
-				component.setText(before + s + after);
-				int caretPosition = before.length() + s.length();
-				if (caretPosition <= component.getText().length()) {
-					component.setCaretPosition(before.length() + s.length());
+				component.setText(before + after);
+				StringSelection st = new StringSelection(s);
+				clipboard.setContents(st, null);
+			}
+			if (CopyPopupAction.COPY.name().equals(e.getActionCommand())) {
+				SecurityManager sm = System.getSecurityManager();
+				if (sm != null) {
+					try {
+						sm.checkSystemClipboardAccess();
+					} catch (Exception ex) {
+						return;
+					}
 				}
-			} catch (UnsupportedFlavorException ex) {
+				String s = component.getSelectedText();
+				if (s == null) {
+					return;
+				}
+				if (s.length() == 0) {
+					return;
+				}
+				StringSelection st = new StringSelection(s);
+				clipboard.setContents(st, null);
+			}
+			if (CopyPopupAction.PASTE.name().equals(e.getActionCommand())) {
+				SecurityManager sm = System.getSecurityManager();
+				if (sm != null) {
+					try {
+						sm.checkSystemClipboardAccess();
+					} catch (Exception ex) {
+						return;
+					}
+				}
+				Transferable transferable = clipboard.getContents(this);
+				try {
+					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+					String text = component.getText();
+					String before = text.substring(0, component.getSelectionStart());
+					String after = text.substring(component.getSelectionEnd(), text.length());
+					component.setText(before + s + after);
+					int caretPosition = before.length() + s.length();
+					if (caretPosition <= component.getText().length()) {
+						component.setCaretPosition(before.length() + s.length());
+					}
+				} catch (UnsupportedFlavorException ex) {
 
-			} catch (IOException ex) {
+				} catch (IOException ex) {
 
+				}
 			}
 		}
 	}
-
-	@Override
-	public void lostOwnership(final Clipboard clipboard, final Transferable contents) { }
 }

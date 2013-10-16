@@ -30,24 +30,30 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
-public class ValueRetroTab extends JMainTab implements ActionListener {
+public class ValueRetroTab extends JMainTab {
 
-	public static final String ACTION_OWNER_SELECTED = "ACTION_OWNER_SELECTED";
-	public static final String ACTION_CORP_SELECTED = "ACTION_CORP_SELECTED";
+	private enum ValueRetroAction {
+		OWNER_SELECTED,
+		CORP_SELECTED
+	}
 
 	//GUI
 	private JComboBox jCharacters;
@@ -66,6 +72,8 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 	public ValueRetroTab(final Program program) {
 		super(program, TabsValues.get().oldTitle(), Images.TOOL_VALUES.getIcon(), true);
 
+		ListenerClass listener = new ListenerClass();
+
 		backgroundHexColor = Integer.toHexString(jPanel.getBackground().getRGB());
 		backgroundHexColor = backgroundHexColor.substring(2, backgroundHexColor.length());
 
@@ -73,8 +81,8 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
 		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_OWNER_SELECTED);
-		jCharacters.addActionListener(this);
+		jCharacters.setActionCommand(ValueRetroAction.OWNER_SELECTED.name());
+		jCharacters.addActionListener(listener);
 
 		jCharacter = new JEditorPane("text/html", "<html>");
 		JCopyPopup.install(jCharacter);
@@ -85,8 +93,8 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		jCharacterScroll.setBorder(null);
 
 		jCorporations = new JComboBox();
-		jCorporations.setActionCommand(ACTION_CORP_SELECTED);
-		jCorporations.addActionListener(this);
+		jCorporations.setActionCommand(ValueRetroAction.CORP_SELECTED.name());
+		jCorporations.addActionListener(listener);
 
 		jCorporation = new JEditorPane("text/html", "<html>");
 		JCopyPopup.install(jCorporation);
@@ -296,17 +304,19 @@ public class ValueRetroTab extends JMainTab implements ActionListener {
 		jEditorPane.setCaretPosition(0);
 	}
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OWNER_SELECTED.equals(e.getActionCommand())) {
-			String s = (String) jCharacters.getSelectedItem();
-			setData(jCharacter, characters.get(s));
-			
-		}
-		if (ACTION_CORP_SELECTED.equals(e.getActionCommand())) {
-			//String output = "";
-			String s = (String) jCorporations.getSelectedItem();
-			setData(jCorporation, corporations.get(s));
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (ValueRetroAction.OWNER_SELECTED.name().equals(e.getActionCommand())) {
+				String s = (String) jCharacters.getSelectedItem();
+				setData(jCharacter, characters.get(s));
+
+			}
+			if (ValueRetroAction.CORP_SELECTED.name().equals(e.getActionCommand())) {
+				//String output = "";
+				String s = (String) jCorporations.getSelectedItem();
+				setData(jCorporation, corporations.get(s));
+			}
 		}
 	}
 

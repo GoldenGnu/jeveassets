@@ -35,31 +35,38 @@ public class MainMenu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String ACTION_OPEN_VALUES = "ACTION_OPEN_VALUES";
-	public static final String ACTION_OPEN_VALUE_TABLE = "ACTION_OPEN_VALUE_TABLE";
-	public static final String ACTION_OPEN_LOADOUTS = "ACTION_OPEN_LOADOUTS";
-	public static final String ACTION_OPEN_MARKET_ORDERS = "ACTION_OPEN_MARKET_ORDERS";
-	public static final String ACTION_OPEN_TRANSACTION = "ACTION_OPEN_TRANSACTION";
-	public static final String ACTION_OPEN_INDUSTRY_JOBS = "ACTION_OPEN_INDUSTRY_JOBS";
-	public static final String ACTION_OPEN_INDUSTRY_PLOT = "ACTION_OPEN_INDUSTRY_PLOT";
-	public static final String ACTION_OPEN_OVERVIEW = "ACTION_OPEN_OVERVIEW";
-	public static final String ACTION_OPEN_MATERIALS = "ACTION_OPEN_METERIALS";
-	public static final String ACTION_OPEN_ACCOUNT_MANAGER = "ACTION_OPEN_API_MANAGER";
-	public static final String ACTION_OPEN_PROFILES = "ACTION_OPEN_PROFILES";
-	public static final String ACTION_OPEN_OPTIONS = "ACTION_OPEN_SETTINGS";
-	public static final String ACTION_OPEN_ABOUT = "ACTION_OPEN_ABOUT";
-	public static final String ACTION_OPEN_LICENSE = "ACTION_OPEN_LICENSE";
-	public static final String ACTION_OPEN_CREDITS = "ACTION_OPEN_COPYRIGHT_NOTICES";
-	public static final String ACTION_OPEN_README = "ACTION_OPEN_README";
-	public static final String ACTION_OPEN_CHANGELOG = "ACTION_OPEN_CHANGELOG";
-	public static final String ACTION_OPEN_ROUTING = "ACTION_OPEN_ROUTING";
-	public static final String ACTION_OPEN_STOCKPILE = "ACTION_OPEN_STOCKPILE";
-	public static final String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
-	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
-	public static final String ACTION_OPEN_TRACKER = "ACTION_OPEN_TRACKER";
-	public static final String ACTION_OPEN_REPROCESSED = "ACTION_OPEN_REPROCESSED";
-	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
-	public static final String ACTION_EXIT_PROGRAM = "ACTION_EXIT_PROGRAM";
+	public enum MainMenuAction {
+		VALUES,
+		VALUE_TABLE,
+		LOADOUTS,
+		MARKET_ORDERS,
+		TRANSACTION,
+		JOURNAL,
+		INDUSTRY_JOBS,
+		INDUSTRY_PLOT,
+		OVERVIEW,
+		MATERIALS,
+		ACCOUNT_MANAGER,
+		PROFILES,
+		OPTIONS,
+		ABOUT,
+		LICENSE,
+		CREDITS,
+		README,
+		CHANGELOG,
+		LINK_BUGS,
+		LINK_FEATURES,
+		LINK_HELP,
+		ROUTING,
+		STOCKPILE,
+		UPDATE,
+		ITEMS,
+		TREE,
+		TRACKER,
+		REPROCESSED,
+		CONTRACTS,
+		EXIT_PROGRAM
+	}
 
 	private JMenuItem jUpdateMenu;
 	private JMenu jTableMenu;
@@ -68,93 +75,108 @@ public class MainMenu extends JMenuBar {
 		JMenu menu;
 		JMenuItem menuItem;
 
+//FILE
 		menu = new JMenu(GuiFrame.get().file());
-		//menu.setActionCommand("Something");
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().exit());
 		menuItem.setIcon(Images.MISC_EXIT.getIcon());
-		menuItem.setActionCommand(ACTION_EXIT_PROGRAM);
+		menuItem.setActionCommand(MainMenuAction.EXIT_PROGRAM.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+//TOOLS
 		menu = new JMenu(GuiFrame.get().tools());
 		this.add(menu);
+
+		menuItem = new JMenuItem(GuiFrame.get().tree());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_TREE.getIcon());
+		menuItem.setActionCommand(MainMenuAction.TREE.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().values());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_VALUES);
+		menuItem.setActionCommand(MainMenuAction.VALUES.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().valueTable());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_VALUE_TABLE.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_VALUE_TABLE);
+		menuItem.setActionCommand(MainMenuAction.VALUE_TABLE.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().tracker());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_TRACKER.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_TRACKER);
+		menuItem.setActionCommand(MainMenuAction.TRACKER.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().items());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_ITEMS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_ITEMS);
+		menuItem.setActionCommand(MainMenuAction.ITEMS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().materials());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_MATERIALS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_MATERIALS);
+		menuItem.setActionCommand(MainMenuAction.MATERIALS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().reprocessed());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_REPROCESSED.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_REPROCESSED);
+		menuItem.setActionCommand(MainMenuAction.REPROCESSED.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().ship());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_SHIP_LOADOUTS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_LOADOUTS);
+		menuItem.setActionCommand(MainMenuAction.LOADOUTS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().market());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_MARKET_ORDERS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_MARKET_ORDERS);
+		menuItem.setActionCommand(MainMenuAction.MARKET_ORDERS.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+ 		menuItem = new JMenuItem(GuiFrame.get().journal());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_JOURNAL.getIcon());
+		menuItem.setActionCommand(MainMenuAction.JOURNAL.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
  		menuItem = new JMenuItem(GuiFrame.get().transaction());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.setIcon(Images.TOOL_WALLET.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_TRANSACTION);
+		menuItem.setIcon(Images.TOOL_TRANSACTION.getIcon());
+		menuItem.setActionCommand(MainMenuAction.TRANSACTION.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().industry());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_JOBS);
+		menuItem.setActionCommand(MainMenuAction.INDUSTRY_JOBS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().contracts());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_CONTRACTS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_CONTRACTS);
+		menuItem.setActionCommand(MainMenuAction.CONTRACTS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
@@ -163,55 +185,55 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().industryPlot());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_INDUSTRY_JOBS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_INDUSTRY_PLOT);
+		menuItem.setActionCommand(MainMenuAction.INDUSTRY_PLOT.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
-		 */
+		*/
 
 		menuItem = new JMenuItem(GuiFrame.get().overview());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_OVERVIEW);
+		menuItem.setActionCommand(MainMenuAction.OVERVIEW.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().routing());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_ROUTING.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_ROUTING);
+		menuItem.setActionCommand(MainMenuAction.ROUTING.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().stockpile());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_STOCKPILE);
+		menuItem.setActionCommand(MainMenuAction.STOCKPILE.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+//UPDATE
 		menu = new JMenu(GuiFrame.get().update());
-		//menu.setActionCommand("Something");
 		this.add(menu);
 
 		jUpdateMenu = new JMenuItem(GuiFrame.get().update1());
+		//jUpdateMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		jUpdateMenu.setIcon(Images.DIALOG_UPDATE.getIcon());
-		jUpdateMenu.setActionCommand(ACTION_OPEN_UPDATE);
+		jUpdateMenu.setActionCommand(MainMenuAction.UPDATE.name());
 		jUpdateMenu.addActionListener(program);
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menu.add(jUpdateMenu);
 
+//TABLE
 		jTableMenu = new JMenu(GuiFrame.get().table());
-		//menu.setActionCommand("Something");
 		this.add(jTableMenu);
 
+//OPTIONS
 		menu = new JMenu(GuiFrame.get().options());
-		//menu.setActionCommand("Something");
 		this.add(menu);
 
 		menuItem = new JMenuItem(GuiFrame.get().accounts());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_ACCOUNTS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_ACCOUNT_MANAGER);
+		menuItem.setActionCommand(MainMenuAction.ACCOUNT_MANAGER.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
@@ -219,7 +241,7 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().profiles());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_PROFILES.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_PROFILES);
+		menuItem.setActionCommand(MainMenuAction.PROFILES.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
@@ -228,53 +250,72 @@ public class MainMenu extends JMenuBar {
 		menuItem = new JMenuItem(GuiFrame.get().options1());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.DIALOG_SETTINGS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_OPTIONS);
+		menuItem.setActionCommand(MainMenuAction.OPTIONS.name());
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+//HELP
 		menu = new JMenu(GuiFrame.get().help());
-		//menu.setActionCommand("Something");
 		this.add(menu);
 
-		menuItem = new JMenuItem(GuiFrame.get().readme());
-		menuItem.setIcon(Images.MISC_HELP.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_README);
-		menuItem.addActionListener(program);
+		menuItem = new JMenuItem(GuiFrame.get().linkHelp());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.MISC_HELP.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_HELP.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().linkFeatures());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.JOBS_INVENTION_SUCCESS.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_FEATURES.name());
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(GuiFrame.get().linkBugs());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.MISC_DEBUG.getIcon());
+		menuItem.setActionCommand(MainMenuAction.LINK_BUGS.name());
+		menuItem.addActionListener(program);
+		
+		menu.add(menuItem);
+
+		menu.addSeparator();
+
+		menuItem = new JMenuItem(GuiFrame.get().readme());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setActionCommand(MainMenuAction.README.name());
+		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().credits());
-		//menuItem.setIcon( ImageGetter.getIcon(".png") );
-		menuItem.setActionCommand(ACTION_OPEN_CREDITS);
-		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setActionCommand(MainMenuAction.CREDITS.name());
+		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().license());
-		//menuItem.setIcon( ImageGetter.getIcon(".png") );
-		menuItem.setActionCommand(ACTION_OPEN_LICENSE);
-		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setActionCommand(MainMenuAction.LICENSE.name());
+		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
 		menuItem = new JMenuItem(GuiFrame.get().change());
-		//menuItem.setIcon( ImageGetter.getIcon(".png") );
-		menuItem.setActionCommand(ACTION_OPEN_CHANGELOG);
-		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setActionCommand(MainMenuAction.CHANGELOG.name());
+		menuItem.addActionListener(program);
 		menu.add(menuItem);
-
-
 
 		menu.addSeparator();
 
 		menuItem = new JMenuItem(GuiFrame.get().about());
-		menuItem.setIcon(Images.DIALOG_ABOUT.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_ABOUT);
-		menuItem.addActionListener(program);
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.DIALOG_ABOUT.getIcon());
+		menuItem.setActionCommand(MainMenuAction.ABOUT.name());
+		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
+//DEBUG
 		if (Program.isDebug()) {
 			menu = new JMenu("Debug");
 			//FIXME - - > Remove for production

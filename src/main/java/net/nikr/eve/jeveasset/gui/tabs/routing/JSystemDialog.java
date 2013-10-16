@@ -21,142 +21,53 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.routing;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TextFilterator;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
+import java.util.Set;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
+import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
 import net.nikr.eve.jeveasset.i18n.TabsRouting;
 import uk.me.candle.eve.graph.Node;
 
 
-public class JSystemDialog extends JDialogCentered implements ActionListener {
+public class JSystemDialog extends JAutoCompleteDialog<SolarSystem> {
 
-	private static final String ACTION_OK = "ACTION_OK";
-	private static final String ACTION_CANCEL = "ACTION_CANCEL";
-
-	private final EventList<SolarSystem> systems;
-	private final AutoCompleteSupport<SolarSystem> autoComplete;
-	private final JComboBox jSystem;
-	private final JButton jOK;
-	private final RoutingTab routingTab;
-
-	private SolarSystem system;
-
-	public JSystemDialog(Program program, RoutingTab routingTab) {
-		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage());
-		this.routingTab = routingTab;
-
-		JLabel jText = new JLabel(TabsRouting.get().addSystemSelect());
-
-		jSystem = new JComboBox();
-		systems = new BasicEventList<SolarSystem>();
-		SortedList<SolarSystem> sortedSystems = new SortedList<SolarSystem>(systems, new SystemComparator());
-		autoComplete = AutoCompleteSupport.install(jSystem, sortedSystems, new Filterator());
-
-		jOK = new JButton(TabsRouting.get().addSystemOK());
-		jOK.setActionCommand(ACTION_OK);
-		jOK.addActionListener(this);
-
-		JButton jCancel = new JButton(TabsRouting.get().addSystemCancel());
-		jCancel.setActionCommand(ACTION_CANCEL);
-		jCancel.addActionListener(this);
-
-		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jText)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(jSystem, 220, 220, 220)
-					.addGroup(layout.createSequentialGroup()
-						.addComponent(jOK, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-						.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					)
-				)
-		);
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jOK, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
-		);
+	public JSystemDialog(Program program) {
+		super(program, TabsRouting.get().addSystemTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().addSystemSelect());
+		this.setStrict(true);
 	}
 
-	protected final void buildData() {
-		if (!systems.isEmpty()) {
-			return;
-		}
-		systems.getReadWriteLock().writeLock().lock();
-		try {
-			for (Node node : routingTab.getGraph().getNodes()) {
-				if (node instanceof SolarSystem) {
-					systems.add((SolarSystem) node);
-				}
+	public void updateData(Set<Node> nodes) {
+		List<SolarSystem> systems = new ArrayList<SolarSystem>();
+		for (Node node : nodes) {
+			if (node instanceof SolarSystem) {
+				systems.add((SolarSystem) node);
 			}
-		} finally {
-			systems.getReadWriteLock().writeLock().unlock();
 		}
-		//Can not set strict on empty EventList - so we do it now
-		autoComplete.setStrict(true);
-	}
-
-	public SolarSystem show() {
-		buildData();
-		autoComplete.removeFirstItem();
-		jSystem.setSelectedIndex(0);
-		system = null;
-		setVisible(true);
-		return system;
-	}
-
-	
-	@Override
-	protected JComponent getDefaultFocus() {
-		return jSystem;
+		super.updateData(systems);
 	}
 
 	@Override
-	protected JButton getDefaultButton() {
-		return jOK;
-	}
-
-	@Override
-	protected void windowShown() { }
-
-	@Override
-	protected void save() {
-		Object object = jSystem.getSelectedItem();
+	protected SolarSystem getValue(Object object) {
 		if (object instanceof SolarSystem) {
-			system = (SolarSystem) object;
+			return (SolarSystem) object;
 		} else {
-			system = null;
+			return null;
 		}
-		setVisible(false);
 	}
 
 	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_OK.equals(e.getActionCommand())) {
-			save();
-		}
-		if (ACTION_CANCEL.equals(e.getActionCommand())) {
-			setVisible(false);
-		}
+	protected Comparator<SolarSystem> getComparator() {
+		return new SystemComparator();
+	}
+
+	@Override
+	protected TextFilterator<SolarSystem> getFilterator() {
+		return new Filterator();
 	}
 
 	private static class Filterator implements TextFilterator<SolarSystem> {
@@ -166,7 +77,7 @@ public class JSystemDialog extends JDialogCentered implements ActionListener {
 		}
 	}
 
-	private class SystemComparator implements Comparator<SolarSystem> {
+	private static class SystemComparator implements Comparator<SolarSystem> {
 		@Override
 		public int compare(SolarSystem o1, SolarSystem o2) {
 			return o1.getName().compareToIgnoreCase(o2.getName());

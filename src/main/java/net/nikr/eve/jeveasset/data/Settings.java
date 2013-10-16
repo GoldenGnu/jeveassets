@@ -33,9 +33,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
+import net.nikr.eve.jeveasset.data.tag.Tag;
+import net.nikr.eve.jeveasset.data.tag.TagID;
+import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.View;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerData;
@@ -65,6 +69,7 @@ public class Settings {
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
+	//FIXME - - > Settings: create flag enum
 	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
 	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
 	private static final String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
@@ -76,38 +81,65 @@ public class Settings {
 	private static final String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
 	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
+	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_1 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_1";
+	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
 
 	private static Settings settings;
 
+	//Price
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
+	//Custom Price
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
+	//Custom Item Name
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
+	//Assets
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
+	//Stockpile
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+	//API
 	private Date conquerableStationsNextUpdate = Settings.getNow();;
+	//Mixed boolean flags
 	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
+	private boolean settingsImported;
+	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
+	//Proxy (API)
 	private Proxy proxy;
 	private String apiProxy;
+	//FIXME - - > Settings: Create windows settings
 	private Point windowLocation = new Point(0, 0);;
 	private Dimension windowSize = new Dimension(800, 600);;
 	private boolean windowMaximized = false;
 	private boolean windowAutoSave = true;;
 	private boolean windowAlwaysOnTop = false;
+	//Assets
 	private Boolean highlightSelectedRows = null;
 	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
+	//Stockpile
+	private Boolean stockpileHalfColors = null;
+	//Overview
 	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
+	//Export
 	private ExportSettings exportSettings = new ExportSettings();
+	//Filter tools
 	private boolean filterOnEnter = false;
+	//Tracker
 	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+	//Api id to owner name
 	private Map<Long, String> owners = new HashMap<Long, String>();
+	//Table settings
 	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
 	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
+	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
+	//Tags
+	private final Map<String, Tag> tags = new HashMap<String, Tag>();
+	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
 
 	private Settings() {
 		SplashUpdater.setProgress(30);
@@ -124,6 +156,8 @@ public class Settings {
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
 	}
 
 	/**
@@ -141,9 +175,34 @@ public class Settings {
 	public static void load() {
 		if (settings == null) {
 			settings = new Settings();
-			settings.loadSettings();
-			settings.constructEveApiConnector();
+			boolean imported = autoImportSettings();
+			if (!imported) {
+				settings.loadSettings();
+			}
+			settings.setSettingsImported(imported);
 		}
+	}
+
+	private static boolean autoImportSettings() {
+		if (Program.PROGRAM_FORCE_PORTABLE && !new File(Settings.get().getPathSettings()).exists()) { //Need import
+			//Overwrite default
+			Program.setPortable(false);
+			//Settings import
+			if (new File(Settings.get().getPathSettings()).exists()) { //Can import
+				LOG.info("Importing settings (from default to portable)");
+				//Import
+				settings.loadSettings();
+				//Restore default
+				Program.setPortable(true);
+				//Save
+				settings.saveSettings();
+				return true;
+			} else {
+				//Restore default
+				Program.setPortable(true);
+			}
+		}
+		return false;
 	}
 
 	public ExportSettings getExportSettings() {
@@ -333,6 +392,32 @@ public class Settings {
 		return tableResize;
 	}
 
+	public Map<String, Map<String ,View>> getTableViews() {
+		return tableViews;
+	}
+
+	public Map<String ,View> getTableViews(String name) {
+		Map<String, View> views = tableViews.get(name);
+		if (views == null) {
+			views = new HashMap<String, View>();
+			tableViews.put(name, views);
+		}
+		return views;
+	}
+
+	public Map<String, Tag> getTags() {
+		return tags;
+	}
+
+	public Tags getTags(TagID tagID) {
+		Tags set = tagIds.get(tagID);
+		if (set == null) {
+			set = new Tags();
+			tagIds.put(tagID, set);
+		}
+		return set;
+	}
+
 	public int getMaximumPurchaseAge() {
 		return maximumPurchaseAge;
 	}
@@ -394,10 +479,15 @@ public class Settings {
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
-		return flags.get(FLAG_STOCKPILE_HALF_COLORS);
+		if (stockpileHalfColors == null) {
+			stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
+		}
+		return stockpileHalfColors;
+		//return flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
+		this.stockpileHalfColors = stockpileHalfColors;
 	}
 	public boolean isIncludeSellOrders() {
 		return flags.get(FLAG_INCLUDE_SELL_ORDERS);
@@ -416,6 +506,18 @@ public class Settings {
 	}
 	public void setIncludeContracts(final boolean includeBuyOrders) {
 		flags.put(FLAG_INCLUDE_CONTRACTS, includeBuyOrders);
+	}
+	public boolean isBlueprintBasePriceTech1() {
+		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
+	}
+	public void setBlueprintBasePriceTech1(final boolean blueprintsTech1) {
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
+	}
+	public boolean isBlueprintBasePriceTech2() {
+		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
+	}
+	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
+		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
@@ -463,6 +565,14 @@ public class Settings {
 
 	public boolean isSettingsLoaded() {
 		return settingsLoaded;
+	}
+
+	public boolean isSettingsImported() {
+		return settingsImported;
+	}
+
+	public void setSettingsImported(boolean settingsImported) {
+		this.settingsImported = settingsImported;
 	}
 
 	public Map<String, OverviewGroup> getOverviewGroups() {

@@ -19,14 +19,18 @@
  *
  */
 
-package net.nikr.eve.jeveasset.data;
+package net.nikr.eve.jeveasset.gui.tabs.orders;
 
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
@@ -96,7 +100,6 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	private Owner owner;
 	private Quantity quantity;
 	private double price;
-
 
 	public MarketOrder(final ApiMarketOrder apiMarketOrder, final Item item, final Location location, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
@@ -220,40 +223,29 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return owner.isCorporation();
 	}
 
-	public class Quantity implements Comparable<Quantity> {
-		private int quantityEntered;
-		private int quantityRemaining;
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 97 * hash + (this.owner != null ? this.owner.hashCode() : 0);
+		hash = 97 * hash + (int) (this.getOrderID() ^ (this.getOrderID() >>> 32));
+		return hash;
+	}
 
-		public Quantity(final int quantityEntered, final int quantityRemaining) {
-			this.quantityEntered = quantityEntered;
-			this.quantityRemaining = quantityRemaining;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
 		}
-
-		@Override
-		public String toString() {
-			return quantityRemaining + "/" + quantityEntered;
+		if (getClass() != obj.getClass()) {
+			return false;
 		}
-
-		public int getQuantityEntered() {
-			return quantityEntered;
+		final MarketOrder other = (MarketOrder) obj;
+		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
+			return false;
 		}
-
-		public int getQuantityRemaining() {
-			return quantityRemaining;
+		if (this.getOrderID() != other.getOrderID()) {
+			return false;
 		}
-
-		@Override
-		public int compareTo(final Quantity o) {
-			Integer thatQuantityRemaining = o.getQuantityRemaining();
-			Integer thisQuantityRemaining = quantityRemaining;
-			int result = thatQuantityRemaining.compareTo(thisQuantityRemaining);
-			if (result != 0) {
-				return result;
-			}
-			Integer thatQuantityEntered = o.getQuantityEntered();
-			Integer thisQuantityEntered = quantityEntered;
-			return thatQuantityEntered.compareTo(thisQuantityEntered);
-		}
-
+		return true;
 	}
 }

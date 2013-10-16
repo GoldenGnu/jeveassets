@@ -37,10 +37,11 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
+public class JMenuPrice<T> extends JAutoMenu<T> {
 
-	public static final String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
-	public static final String ACTION_USER_PRICE_DELETE = "ACTION_USER_PRICE_DELETE";
+	private enum MenuPriceAction {
+		EDIT, DELETE
+	}
 
 	private final JMenuItem jEdit;
 	private final JMenuItem jReset;
@@ -51,16 +52,18 @@ public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
 		super(GuiShared.get().itemPriceTitle(), program); //
 		this.setIcon(Images.SETTINGS_USER_PRICE.getIcon());
 
+		ListenerClass listener =new ListenerClass();
+
 		jEdit = new JMenuItem(GuiShared.get().itemEdit());
 		jEdit.setIcon(Images.EDIT_EDIT.getIcon());
-		jEdit.setActionCommand(ACTION_USER_PRICE_EDIT);
-		jEdit.addActionListener(this);
+		jEdit.setActionCommand(MenuPriceAction.EDIT.name());
+		jEdit.addActionListener(listener);
 		add(jEdit);
 
 		jReset = new JMenuItem(GuiShared.get().itemDelete());
 		jReset.setIcon(Images.EDIT_DELETE.getIcon());
-		jReset.setActionCommand(ACTION_USER_PRICE_DELETE);
-		jReset.addActionListener(this);
+		jReset.setActionCommand(MenuPriceAction.DELETE.name());
+		jReset.addActionListener(listener);
 		add(jReset);
 	}
 
@@ -70,20 +73,6 @@ public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
 		this.menuData = menuData;
 		jEdit.setEnabled(!menuData.getPrices().isEmpty());
 		jReset.setEnabled(!menuData.getPrices().isEmpty() && program.getUserPriceSettingsPanel().containsKey(menuData.getPrices().keySet()));
-	}
-
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if (ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
-			if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
-				program.getUserPriceSettingsPanel().edit(createList());
-			}
-		}
-		if (ACTION_USER_PRICE_DELETE.equals(e.getActionCommand())) {
-			if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
-				program.getUserPriceSettingsPanel().delete(createList());
-			}
-		}
 	}
 
 	private List<UserItem<Integer, Double>> createList() {
@@ -109,5 +98,21 @@ public class JMenuPrice<T> extends JAutoMenu<T> implements ActionListener {
 			itemPrices.add(new UserPrice(entry.getValue(), entry.getKey(), name));
 		}
 		return itemPrices;
+	}
+
+	private class ListenerClass implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (MenuPriceAction.EDIT.name().equals(e.getActionCommand())) {
+				if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+					program.getUserPriceSettingsPanel().edit(createList());
+				}
+			}
+			if (MenuPriceAction.DELETE.name().equals(e.getActionCommand())) {
+				if (!menuData.getBlueprintTypeIDs().isEmpty() && !menuData.getPrices().isEmpty() && !menuData.getTypeNames().isEmpty()) {
+					program.getUserPriceSettingsPanel().delete(createList());
+				}
+			}
+		}
 	}
 }

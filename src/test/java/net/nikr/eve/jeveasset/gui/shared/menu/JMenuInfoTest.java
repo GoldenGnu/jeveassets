@@ -30,8 +30,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MaterialTotal;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialSeparatorComparator;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
-import static org.junit.Assert.assertEquals;
 import org.junit.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class JMenuInfoTest {
