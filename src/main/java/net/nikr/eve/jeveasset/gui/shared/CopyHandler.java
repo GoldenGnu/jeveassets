@@ -54,11 +54,34 @@ public class CopyHandler {
 		StringBuilder tableText = new StringBuilder(); //Table text buffer
 		String separatorText = ""; //Separator text buffer (is never added to, only set for each separator)
 		int rowCount = 0; //used to find last row
-		for (int row : jTable.getSelectedRows()) {
+
+		//Rows
+		int[] rows;
+		if (jTable.getRowSelectionAllowed()) { //Selected rows
+			rows = jTable.getSelectedRows();
+		} else { //All rows (if row selection is not allowed)
+			rows = new int[jTable.getRowCount()];
+			for (int i = 0; i < jTable.getRowCount(); i++) {
+				rows[i] = i;
+			}
+		}
+
+		//Columns
+		int[] columns;
+		if (jTable.getColumnSelectionAllowed()) { //Selected columns
+			columns = jTable.getSelectedColumns();
+		} else { //All columns (if column selection is not allowed)
+			columns = new int[jTable.getColumnCount()];
+			for (int i = 0; i < jTable.getColumnCount(); i++) {
+				columns[i] = i;
+			}
+		}
+
+		for (int row : rows) {
 			rowCount++; //count rows
 			StringBuilder rowText = new StringBuilder(); //Row text buffer
 			boolean firstColumn = true; //used to find first column
-			for (int column : jTable.getSelectedColumns()) {
+			for (int column : columns) {
 				//Get value
 				Object value = jTable.getValueAt(row, column);
 
