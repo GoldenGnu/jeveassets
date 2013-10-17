@@ -505,25 +505,22 @@ public class AccountImportDialog extends JDialogCentered {
 			accountGetter.load(null, true, account); //Update account
 			if (accountGetter.hasError() || accountGetter.isFail()) { //Failed to add new account
 				Object object = accountGetter.getError();
-				if (object instanceof Exception) {
-					//Exception exception = (Exception) object;
+				if (accountGetter.isInvalidAccount()) { //invalid account
+					result = Result.FAIL_NOT_VALID;
+				} else if (object instanceof Exception) { //Real error
 					result = Result.FAIL_API_EXCEPTION;
-				} else if (object instanceof ApiError) {
+				} else if (object instanceof ApiError) { //API error
 					ApiError apiError = (ApiError) object;
-					if (apiError.getCode() == 203) {
-						result = Result.FAIL_NOT_VALID;
-					} else {
-						result = Result.FAIL_API_ERROR;
-						error = apiError.getError() + " (Code: " + apiError.getCode() + ")";
-					}
-				} else if (object instanceof String) {
+					result = Result.FAIL_API_ERROR;
+					error = apiError.getError() + " (Code: " + apiError.getCode() + ")";
+				} else if (object instanceof String) { //String error
 					String string = (String) object;
 					error = string;
 					result = Result.FAIL_API_GENERIC;
-				} else if (accountGetter.isFail()) {
+				} else if (accountGetter.isFail()) { // Not enough privileges
 					result = Result.FAIL_NOT_ENOUGH_PRIVILEGES;
-				} else {
-					result = Result.FAIL_API_GENERIC; //Fallback...
+				} else { //Fallback - should never happen
+					result = Result.FAIL_API_GENERIC;
 					error = "Unknown Error";
 				}
 			} else { //Successfully added new account
