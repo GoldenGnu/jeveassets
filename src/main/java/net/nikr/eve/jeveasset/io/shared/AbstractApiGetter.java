@@ -38,6 +38,8 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractApiGetter.class);
 
+	private static final String INVALID_ACCOUNT = "HTTP response code: 403";
+
 	private String taskName;
 	private Account account;
 	private Owner owner;
@@ -149,6 +151,13 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
+	/**
+	 * Init all values
+	 * @param updateTask	UpdateTask from the UpdateDialog (can be null)
+	 * @param forceUpdate	Ignore cachedUntil
+	 * @param owner			Single char/corp (can be null)
+	 * @param account		Single account (can be null)
+	 */
 	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final Account account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
@@ -260,15 +269,30 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error;
 	}
 
+	public boolean isInvalidAccount() {
+		if (error instanceof Exception) {
+			Exception exception = (Exception) error;
+			return exception.getMessage().contains(INVALID_ACCOUNT);
+		} else if (error instanceof ApiError) {
+			ApiError apiError = (ApiError) error;
+			return apiError.getCode() == 203;
+		}
+		return false;
+	}
+
 	protected void addError(final String owner, final String errorText) {
 		addError(owner, errorText, errorText);
 	}
 
 	protected void addError(final String owner, final String errorText, final Object errorObject) {
-		if (updateTask != null) {
-			updateTask.addError(owner, errorText);
-		}
 		error = errorObject;
+		if (updateTask != null) {
+			if (isInvalidAccount()) {
+				updateTask.addError(owner, "API Key is invalid or expired");
+			} else {
+				updateTask.addError(owner, errorText);
+			}
+		}
 	}
 
 	protected abstract T getResponse(boolean bCorp) throws ApiException;
