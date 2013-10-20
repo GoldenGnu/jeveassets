@@ -137,7 +137,11 @@ public final class ProfileReader extends AbstractXmlReader {
 				expires = new Date(i);
 			}
 		}
-		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires);
+		boolean invalid = false;
+		if (AttributeGetters.haveAttribute(node, "invalid")) {
+			invalid = AttributeGetters.getBoolean(node, "invalid");
+		}
+		return new Account(keyID, vCode, name, nextUpdate, accessMask, type, expires, invalid);
 	}
 
 	private void parseOwners(final Element element, final Account account) {

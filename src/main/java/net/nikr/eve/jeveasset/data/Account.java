@@ -60,6 +60,7 @@ public class Account {
 	private long accessMask;
 	private KeyType type;
 	private Date expires;
+	private boolean invalid;
 
 	private List<Owner> owners = new ArrayList<Owner>();
 
@@ -70,17 +71,18 @@ public class Account {
 				account.getAccountNextUpdate(),
 				account.getAccessMask(),
 				account.getType(),
-				account.getExpires());
+				account.getExpires(),
+				account.isInvalid());
 		for (Owner owner : account.getOwners()) {
 			owners.add(new Owner(this, owner));
 		}
 	}
 
 	public Account(final int keyID, final String vCode) {
-		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null);
+		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null, false);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires) {
+	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -88,6 +90,7 @@ public class Account {
 		this.accessMask = accessMask;
 		this.type = type;
 		this.expires = expires;
+		this.invalid = invalid;
 	}
 
 	public String getVCode() {
@@ -132,6 +135,14 @@ public class Account {
 		} else {
 			return Settings.getNow().after(getExpires());
 		}
+	}
+
+	public boolean isInvalid() {
+		return invalid;
+	}
+
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
 	}
 
 	public void setExpires(final Date expires) {
