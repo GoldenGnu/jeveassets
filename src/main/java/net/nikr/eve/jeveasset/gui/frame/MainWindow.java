@@ -235,12 +235,12 @@ public class MainWindow {
 		public void windowOpened(final WindowEvent e) { }
 
 		@Override
-		public void windowClosing(final WindowEvent e) {
-			program.exit();
-		}
+		public void windowClosing(final WindowEvent e) { }
 
 		@Override
-		public void windowClosed(final WindowEvent e) { }
+		public void windowClosed(final WindowEvent e) {
+			program.exit();
+		}
 
 		@Override
 		public void windowIconified(final WindowEvent e) { }
