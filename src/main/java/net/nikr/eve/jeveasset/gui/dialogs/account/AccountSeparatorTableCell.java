@@ -6,11 +6,13 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.SeparatorList.Separator;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
@@ -28,16 +30,23 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 	public enum AccountCellAction {
 		ACCOUNT_NAME,
 		EDIT,
-		DELETE,
-		
+		DELETE
 	}
 
 	private final JTextField jAccountName;
 	private final JButton jEdit;
 	private final JButton jDelete;
+	private final JLabel jInvalidLabel;
+	private final JLabel jExpiredLabel;
+	private final JLabel jSpaceLabel;
+
+	private final Color defaultColor;
+	private final Color errorColor = new Color(255, 200, 200);
 
 	public AccountSeparatorTableCell(final ActionListener actionListener, final JTable jTable, final SeparatorList<Owner> separatorList) {
 		super(jTable, separatorList);
+
+		defaultColor = jPanel.getBackground();
 
 		ListenerClass listener = new ListenerClass();
 		jAccountName = new JTextField();
@@ -57,14 +66,23 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		jDelete.setActionCommand(AccountCellAction.DELETE.name());
 		jDelete.addActionListener(actionListener);
 
+		jInvalidLabel = new JLabel(DialoguesAccount.get().accountInvalid());
+
+		jExpiredLabel = new JLabel(DialoguesAccount.get().accountExpired());
+
+		jSpaceLabel = new JLabel();
+
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jExpand)
 				.addGap(1)
-				.addComponent(jAccountName)
-				.addGap(1)
-				.addComponent(jEdit)
-				.addComponent(jDelete)
+				.addComponent(jAccountName, 20, 20, Integer.MAX_VALUE)
+				.addGap(10)
+				.addComponent(jExpiredLabel)
+				.addComponent(jInvalidLabel)
+				.addComponent(jSpaceLabel, 20, 20, Integer.MAX_VALUE)
+				.addComponent(jEdit, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addComponent(jDelete, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -72,6 +90,9 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jAccountName, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jInvalidLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jExpiredLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSpaceLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jDelete, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
@@ -91,6 +112,15 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		} else {
 			jAccountName.setText(account.getName());
 		}
+		//Expired
+		jExpiredLabel.setVisible(account.isExpired());
+
+		//Invalid
+		jInvalidLabel.setVisible(account.isInvalid());
+
+		//Invalid / Expired
+		jSpaceLabel.setVisible(account.isInvalid() || account.isExpired());
+		jPanel.setBackground(account.isInvalid() || account.isExpired() ? errorColor : defaultColor);
 	}
 
 	private class ListenerClass implements FocusListener, ActionListener {

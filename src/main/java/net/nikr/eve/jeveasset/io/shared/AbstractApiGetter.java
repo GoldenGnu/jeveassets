@@ -184,7 +184,13 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	}
 
 	private void loadAccount() {
-		load(getNextUpdate(), false, String.valueOf("Account #" + account.getKeyID()));
+		String name;
+		if (account.getName().equals(Integer.toString(account.getKeyID()))) {
+			name = "Account #" + Integer.toString(account.getKeyID());
+		} else {
+			name = "Account " +  account.getName() + " (#" + Integer.toString(account.getKeyID()) + ")";
+		}
+		load(getNextUpdate(), false, name);
 	}
 
 	protected boolean load(final Date nextUpdate, final boolean updateCorporation, final String updateName) {
@@ -204,28 +210,42 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 			LOG.info("	{} failed to update for: {} (NOT ALLOWED YET)", taskName, updateName);
 			return false;
 		}
-		//Check if API key is expired (not to check the account...)
+		//Check if API key is expired (still update account)
 		if (isExpired() && !updateAccount) {
-			addError(updateName, "API Key expired");
-			LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+			expired(updateName);
+			return false;
+		}
+		//Check if API key is invalid (still update account)
+		if (isInvalid() && !updateAccount) {
+			invalid(updateName);
 			return false;
 		}
 		try {
 			T response = getResponse(updateCorporation);
 			setNextUpdate(response.getCachedUntil());
-			if (!response.hasError()) {
+			if (!response.hasError()) { //OK
 				LOG.info("	{} updated for: {}", taskName, updateName);
 				this.updated = true;
 				setData(response);
+				notInvalid();
 				return true;
-			} else {
+			} else { //API Error
 				ApiError apiError = response.getError();
+				if (apiError.getCode() == 203) {
+					invalid(updateName);
+				}
 				addError(updateName, apiError.getError(), apiError);
 				LOG.info("	{} failed to update for: {} (API ERROR: code: {} :: {})", new Object[]{taskName, updateName, apiError.getCode(), apiError.getError()});
 			}
-		} catch (ApiException ex) {
-			addError(updateName, ex.getMessage(), ex);
-			LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
+		} catch (ApiException ex) { //Real Error
+			if (ex.getMessage().contains(INVALID_ACCOUNT) && !isExpired()) { //Invalid
+				invalid(updateName);
+			} else if (isExpired()) { //Expired
+				expired(updateName);
+			} else {
+				addError(updateName, ex.getMessage(), ex); //Real Error
+				LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
+			}
 		}
 		return false;
 	}
@@ -245,7 +265,40 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		} else if (owner != null) {
 			return owner.getParentAccount().isExpired();
 		} else {
-			return false;
+			return false; //Eve
+		}
+	}
+
+	private void expired(String updateName) {
+		addError(updateName, "API Key expired");
+		LOG.info("	{} failed to update for: {} (API KEY EXPIRED)", taskName, updateName);
+	}
+
+	public boolean isInvalid() {
+		if (account != null) {
+			return account.isInvalid();
+		} else if (owner != null) {
+			return owner.getParentAccount().isInvalid();
+		} else {
+			return false; //Eve
+		}
+	}
+
+	private void invalid(String updateName) {
+		if (account != null) {
+			account.setInvalid(true);
+		} else if (owner != null) {
+			owner.getParentAccount().setInvalid(true);
+		}
+		addError(updateName, "API Key invalid");
+		LOG.info("	{} failed to update for: {} (API KEY INVALID)", taskName, updateName);
+	}
+
+	private void notInvalid() {
+		if (account != null) {
+			account.setInvalid(false);
+		} else if (owner != null) {
+			owner.getParentAccount().setInvalid(false);
 		}
 	}
 
@@ -269,17 +322,6 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		return error;
 	}
 
-	public boolean isInvalidAccount() {
-		if (error instanceof Exception) {
-			Exception exception = (Exception) error;
-			return exception.getMessage().contains(INVALID_ACCOUNT);
-		} else if (error instanceof ApiError) {
-			ApiError apiError = (ApiError) error;
-			return apiError.getCode() == 203;
-		}
-		return false;
-	}
-
 	protected void addError(final String owner, final String errorText) {
 		addError(owner, errorText, errorText);
 	}
@@ -287,11 +329,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	protected void addError(final String owner, final String errorText, final Object errorObject) {
 		error = errorObject;
 		if (updateTask != null) {
-			if (isInvalidAccount()) {
-				updateTask.addError(owner, "API Key is invalid or expired");
-			} else {
-				updateTask.addError(owner, errorText);
-			}
+			updateTask.addError(owner, errorText);
 		}
 	}
 

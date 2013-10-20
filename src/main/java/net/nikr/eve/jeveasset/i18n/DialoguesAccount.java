@@ -70,6 +70,8 @@ public abstract class DialoguesAccount extends Bundle {
 
 	public abstract String dialogueNameAccountManagement();
 
+	public abstract String accountExpired();
+	public abstract String accountInvalid();
 	public abstract String add();
 	public abstract String collapse();
 	public abstract String expand();

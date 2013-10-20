@@ -86,6 +86,7 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "accessmask", String.valueOf(account.getAccessMask()));
 			node.setAttributeNS(null, "type", account.getType().name());
 			node.setAttributeNS(null, "expires", account.getExpires() == null ? "0" : String.valueOf(account.getExpires().getTime()));
+			node.setAttributeNS(null, "invalid", String.valueOf(account.isInvalid()));
 			parentNode.appendChild(node);
 			writeOwners(xmldoc, node, account.getOwners());
 

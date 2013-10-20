@@ -505,7 +505,7 @@ public class AccountImportDialog extends JDialogCentered {
 			accountGetter.load(null, true, account); //Update account
 			if (accountGetter.hasError() || accountGetter.isFail()) { //Failed to add new account
 				Object object = accountGetter.getError();
-				if (accountGetter.isInvalidAccount()) { //invalid account
+				if (accountGetter.isInvalid()) { //invalid account
 					result = Result.FAIL_NOT_VALID;
 				} else if (object instanceof Exception) { //Real error
 					result = Result.FAIL_API_EXCEPTION;
