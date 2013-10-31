@@ -51,10 +51,6 @@ public class CopyHandler {
 	}
 
 	private static void copy(JTable jTable) {
-		StringBuilder tableText = new StringBuilder(); //Table text buffer
-		String separatorText = ""; //Separator text buffer (is never added to, only set for each separator)
-		int rowCount = 0; //used to find last row
-
 		//Rows
 		int[] rows;
 		if (jTable.getRowSelectionAllowed()) { //Selected rows
@@ -76,6 +72,9 @@ public class CopyHandler {
 				columns[i] = i;
 			}
 		}
+		StringBuilder tableText = new StringBuilder(); //Table text buffer
+		String separatorText = ""; //Separator text buffer (is never added to, only set for each separator)
+		int rowCount = 0; //used to find last row
 
 		for (int row : rows) {
 			rowCount++; //count rows
@@ -126,13 +125,15 @@ public class CopyHandler {
 			}
 
 			//Add
-			if (rowText.length() > 0 || (!separatorText.isEmpty() && rowCount == jTable.getSelectedRows().length)) {
+			if (rowText.length() > 0 || (!separatorText.isEmpty() && rowCount == rows.length)) {
 				tableText.append(separatorText); //Add separator text (will be empty for normal tables)
 				if (rowText.length() > 0 && !separatorText.isEmpty()) { //Add tab separator (if needed)
 					tableText.append("\t");
 				}
 				tableText.append(rowText.toString()); //Add row text (will be empty if only copying sinlge separator)
-				tableText.append("\r\n"); //Add end line
+				if (rowCount != rows.length) {
+					tableText.append("\r\n");
+				} //Add end line
 			}
 		}
 		copyToClipboard(tableText.toString()); //Send it all to the clipboard
