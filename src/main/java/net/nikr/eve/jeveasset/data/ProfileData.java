@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ProfileData {
-	private ProfileManager profileManager;
+	private final ProfileManager profileManager;
 	
 	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
 	private final EventList<IndustryJob> industryJobsEventList = new BasicEventList<IndustryJob>();
@@ -61,6 +61,7 @@ public class ProfileData {
 	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
+	private boolean saveSettings = false;
 
 	public ProfileData(ProfileManager profileManager) {
 		this.profileManager = profileManager;
@@ -185,7 +186,8 @@ public class ProfileData {
 		}
 	}
 
-	public void updateEventLists() {
+	public boolean updateEventLists() {
+		saveSettings = false;
 		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
 		Set<String> uniqueOwners = new HashSet<String>();
 		List<String> ownersOrders = new ArrayList<String>();
@@ -376,6 +378,7 @@ public class ProfileData {
 		owners.clear();
 		owners.addAll(uniqueOwners);
 		Collections.sort(owners, new CaseInsensitiveComparator());
+		return saveSettings;
 	}
 
 	private void maximumPurchaseAge() {
@@ -414,7 +417,10 @@ public class ProfileData {
 				asset.setAdded(Settings.get().getAssetAdded().get(asset.getItemID()));
 			} else {
 				Date date = new Date();
+				Settings.lock(); //Lock for Asset Added
 				Settings.get().getAssetAdded().put(asset.getItemID(), date);
+				Settings.unlock(); //Unlock for Asset Added
+				saveSettings = true;
 				asset.setAdded(date);
 			}
 			//User price

@@ -99,7 +99,7 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void saveSettings() {
+	public void saveSettingsAndProfile() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -220,6 +220,11 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void updateTags() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void saveSettings(String msg) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 }

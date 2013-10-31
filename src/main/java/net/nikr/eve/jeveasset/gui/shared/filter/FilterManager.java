@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.shared.components.JManageDialog;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -44,18 +45,24 @@ public class FilterManager<E> extends JManageDialog {
 	@Override
 	protected void rename(final String name, final String oldName) {
 		List<Filter> filter = filters.get(oldName);
+		Settings.lock(); //Lock for Filter (Rename)
 		filters.remove(oldName); //Remove renamed filter (with old name)
 		filters.remove(name); //Remove overwritten filter
 		filters.put(name, filter); //Add renamed filter (with new name)
 		updateFilters();
+		Settings.unlock(); //Unlock for Filter (Rename)
+		gui.saveSettings("Filter (Rename)"); //Save Filter (Rename)
 	}
 
 	@Override
 	protected void delete(final List<String> list) {
+		Settings.lock(); //Lock for Filter (Delete)
 		for (String filterName : list) {
 			filters.remove(filterName);
 		}
 		updateFilters();
+		Settings.unlock(); //Unlock for Filter (Delete)
+		gui.saveSettings("Filter (Delete)"); //Save Filter (Delete)
 	}
 
 	@Override
@@ -68,6 +75,7 @@ public class FilterManager<E> extends JManageDialog {
 	@Override
 	protected void merge(final String name, final Object[] objects) {
 		//Get filters to merge
+		Settings.lock(); //Lock for Filter (Merge)
 		List<Filter> filter = new ArrayList<Filter>();
 		for (Object obj : objects) {
 			for (Filter currentFilter : filters.get((String) obj)) {
@@ -78,6 +86,8 @@ public class FilterManager<E> extends JManageDialog {
 		}
 		filters.put(name, filter);
 		updateFilters();
+		Settings.unlock(); //Unlock for Filter (Merge)
+		gui.saveSettings("Filter (Merge)"); //Save Filter (Merge)
 	}
 
 	@Override

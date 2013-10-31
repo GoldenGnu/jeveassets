@@ -36,6 +36,7 @@ import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.data.tag.Tags;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.ResizeMode;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -85,59 +86,89 @@ public class Settings {
 	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
 
 	private static Settings settings;
+	private static final SettingsLock LOCK = new SettingsLock();
 
-	//Price
+//External
+	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
 	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
-	//Custom Price
+//API Data
+	//Api id to owner name		Saved by TaskDialog.update() (on API update)
+	private final Map<Long, String> owners = new HashMap<Long, String>();
+	//Stations Next Update		Saved by TaskDialog.update() (on API update)
+	private Date conquerableStationsNextUpdate = Settings.getNow();
+//!! - Values
+	//OK - Custom Price			Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
-	//Custom Item Name
+	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
+	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
-	//Assets
+	//!! - Assets				Saved by Program.updateEventLists() if needed
+	//Lock OK
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
-	//Stockpile
+//!! - Stockpile				Saved by StockpileTab.removeItems() / addStockpile() / removeStockpile()
+	//							Could be more selective...
+	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
-	//API
-	private Date conquerableStationsNextUpdate = Settings.getNow();;
-	//Mixed boolean flags
-	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
+//Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
+	//Lock OK
+	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
+//Export						Saved in ExportDialog.saveSettings()
+	//Lock OK
+	private final ExportSettings exportSettings = new ExportSettings();
+//Tracker						Saved by TaskDialog.update() (on API update)
+	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
+//Runtime flags					Is not saved to file
 	private boolean settingsLoaded;
 	private boolean settingsImported;
+//!! - Settings Dialog:			Saved by SettingsDialog.save()
+	//Lock OK
+	//Mixed boolean flags
+	private final Map<String, Boolean> flags = new HashMap<String, Boolean>();
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
 	private Proxy proxy;
 	private String apiProxy;
 	//FIXME - - > Settings: Create windows settings
+	//!! Window					-!- Not saved on change - !-
 	private Point windowLocation = new Point(0, 0);;
 	private Dimension windowSize = new Dimension(800, 600);;
 	private boolean windowMaximized = false;
 	private boolean windowAutoSave = true;;
 	private boolean windowAlwaysOnTop = false;
 	//Assets
-	private Boolean highlightSelectedRows = null;
-	private Boolean reprocessColors = null;
 	private int maximumPurchaseAge = 0;
-	//Stockpile
-	private Boolean stockpileHalfColors = null;
-	//Overview
-	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
 	//Reprocess price
 	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
-	//Export
-	private ExportSettings exportSettings = new ExportSettings();
-	//Filter tools
-	private boolean filterOnEnter = false;
-	//Tracker
-	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>(); //ownerID :: long
-	//Api id to owner name
-	private Map<Long, String> owners = new HashMap<Long, String>();
-	//Table settings
-	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
-	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
-	private Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
-	private Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
-	private Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
-	//Tags
+	//Cache
+	private Boolean filterOnEnter = null; //Filter tools
+	private Boolean highlightSelectedRows = null;  //Assets
+	private Boolean reprocessColors = null;  //Assets
+	private Boolean stockpileHalfColors = null; //Stockpile
+//Table settings
+	//Filters					Saved by ExportFilterControl.saveSettings()
+	//Lock OK
+	private final Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
+	//Columns					Saved by EnumTableFormatAdaptor.getMenu() - Reset
+	//									 EditColumnsDialog.save() - Edit Columns
+	//									 JAutoColumnTable.ListenerClass.mouseReleased() - Moved
+	//									 ViewManager.loadView() - Load View
+	//Lock OK
+	private final Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
+	//Column Width				Saved by JAutoColumnTable.saveColumnsWidth()
+	//Lock OK
+	private final Map<String, Map<String, Integer>> tableColumnsWidth = new HashMap<String, Map<String, Integer>>();
+	//Resize Mode				Saved by EnumTableFormatAdaptor.getMenu()
+	//Lock OK
+	private final Map<String, ResizeMode> tableResize = new HashMap<String, ResizeMode>();
+	//Views						Saved by EnumTableFormatAdaptor.getMenu() - New
+	//									 ViewManager.rename() - Rename
+	//									 ViewManager.delete() - Delete
+	//Lock OK
+	private final Map<String, Map<String, View>> tableViews = new HashMap<String, Map<String, View>>();
+//Tags						Saved by JMenuTags.addTag()/removeTag() + SettingsDialog.save()
+	//Lock OK
 	private final Map<String, Tag> tags = new HashMap<String, Tag>();
 	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
 
@@ -166,10 +197,31 @@ public class Settings {
 	 */
 	protected Settings(final boolean load) { }
 
-
 	public static Settings get() {
 		load();
 		return settings;
+	}
+
+	public static void setLockVerbose(boolean verbose) {
+		SettingsLock.setVerbose(verbose);
+	}
+	public static void lock() {
+		LOCK.lock();
+	}
+	public static void unlock() {
+		LOCK.unlock();
+	}
+
+	public static boolean ignoreSave() {
+		return LOCK.ignoreSave();
+	}
+
+	public static void saveStart() {
+		LOCK.saveStart();
+	}
+
+	public static void saveEnd() {
+		LOCK.saveEnd();
 	}
 
 	public static void load() {
@@ -195,7 +247,7 @@ public class Settings {
 				//Restore default
 				Program.setPortable(true);
 				//Save
-				settings.saveSettings();
+				Settings.saveSettings();
 				return true;
 			} else {
 				//Restore default
@@ -209,8 +261,13 @@ public class Settings {
 		return exportSettings;
 	}
 
-	public void saveSettings() {
-		SettingsWriter.save(this);
+	public static void saveSettings() {
+		LOCK.lock();
+		try {
+			SettingsWriter.save(settings);
+		} finally {
+			LOCK.unlock();
+		}
 	}
 
 	private void loadSettings() {
@@ -399,7 +456,7 @@ public class Settings {
 	public Map<String ,View> getTableViews(String name) {
 		Map<String, View> views = tableViews.get(name);
 		if (views == null) {
-			views = new HashMap<String, View>();
+			views = new TreeMap<String, View>(new CaseInsensitiveComparator());
 			tableViews.put(name, views);
 		}
 		return views;
@@ -427,11 +484,14 @@ public class Settings {
 	}
 
 	public boolean isFilterOnEnter() {
+		if (filterOnEnter == null) {
+			filterOnEnter = flags.get(FLAG_FILTER_ON_ENTER);
+		}
 		return filterOnEnter;
 	}
 	public void setFilterOnEnter(final boolean filterOnEnter) {
-		this.filterOnEnter = filterOnEnter;
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
+		this.filterOnEnter = filterOnEnter;
 	}
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
 		if (highlightSelectedRows == null) {
@@ -687,5 +747,52 @@ public class Settings {
 				|| Program.isForceUpdate()
 				|| (getApiProxy() != null && ignoreOnProxy))
 				&& !Program.isForceNoUpdate());
+	}
+
+	private static class SettingsLock {
+		private boolean locked = false;
+		private static boolean verbose = false;
+		private short savesQueue = 0;
+
+		public synchronized boolean ignoreSave() {
+			if (verbose) {
+				System.out.println("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
+			}
+			return savesQueue > 1;
+		}
+
+		public synchronized void saveStart() {
+			this.savesQueue++;
+		}
+
+		public synchronized void saveEnd() {
+			this.savesQueue--;
+		}
+
+		public synchronized static void setVerbose(boolean verbose) {
+			SettingsLock.verbose = verbose;
+		}
+
+		public synchronized void lock() {
+			while(locked){
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+
+				}
+			}
+			locked = true;
+			if (verbose) {
+				System.out.println("Settings Locked");
+			}
+		}
+
+		public synchronized void unlock(){
+			locked = false;
+			if (verbose) {
+				System.out.println("Settings Unlocked");
+			}
+			notify();
+		}
 	}
 }

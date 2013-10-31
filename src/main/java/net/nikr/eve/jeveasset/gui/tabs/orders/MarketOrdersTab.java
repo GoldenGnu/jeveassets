@@ -62,19 +62,19 @@ import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 public class MarketOrdersTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jSellOrdersTotal;
-	private JLabel jBuyOrdersTotal;
-	private JLabel jEscrowTotal;
-	private JLabel jToCoverTotal;
+	private final JAutoColumnTable jTable;
+	private final JLabel jSellOrdersTotal;
+	private final JLabel jBuyOrdersTotal;
+	private final JLabel jEscrowTotal;
+	private final JLabel jToCoverTotal;
 
 	//Table
-	private MarketOrdersFilterControl filterControl;
-	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
-	private DefaultEventTableModel<MarketOrder> tableModel;
-	private FilterList<MarketOrder> filterList;
-	private EventList<MarketOrder> eventList;
-	private DefaultEventSelectionModel<MarketOrder> selectionModel;
+	private final MarketOrdersFilterControl filterControl;
+	private final EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
+	private final DefaultEventTableModel<MarketOrder> tableModel;
+	private final FilterList<MarketOrder> filterList;
+	private final EventList<MarketOrder> eventList;
+	private final DefaultEventSelectionModel<MarketOrder> selectionModel;
 
 	public static final String NAME = "marketorders"; //Not to be changed!
 
@@ -205,9 +205,9 @@ public class MarketOrdersTab extends JMainTab {
 		}
 	}
 
-	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder> {
+	private class MarketOrdersFilterControl extends FilterControl<MarketOrder> {
 
-		private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
+		private final EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat;
 
 		public MarketOrdersFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> tableFormat, final EventList<MarketOrder> eventList, final FilterList<MarketOrder> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
@@ -233,6 +233,11 @@ public class MarketOrdersTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<MarketOrder>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<MarketOrder>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Market Order " + msg); //Save Market Order Filters and Export Setttings
 		}
 	}
 }

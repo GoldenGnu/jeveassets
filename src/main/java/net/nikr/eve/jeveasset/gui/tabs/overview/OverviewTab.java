@@ -95,27 +95,27 @@ public class OverviewTab extends JMainTab {
 		EXPORT
 	}
 
-	private JOverviewTable jTable;
-	private JToggleButton jStations;
-	private JToggleButton jSystems;
-	private JToggleButton jRegions;
-	private JToggleButton jGroups;
-	private JDropDownButton jLoadFilter;
-	private JComboBox jOwner;
-	private JLabel jValue;
-	private JLabel jReprocessed;
-	private JLabel jCount;
-	private JLabel jAverage;
-	private JLabel jVolume;
-	private JLabel jShowing;
-	private ListenerClass listener = new ListenerClass();
+	private final JOverviewTable jTable;
+	private final JToggleButton jStations;
+	private final JToggleButton jSystems;
+	private final JToggleButton jRegions;
+	private final JToggleButton jGroups;
+	private final JDropDownButton jLoadFilter;
+	private final JComboBox jOwner;
+	private final JLabel jValue;
+	private final JLabel jReprocessed;
+	private final JLabel jCount;
+	private final JLabel jAverage;
+	private final JLabel jVolume;
+	private final JLabel jShowing;
+	private final ListenerClass listener = new ListenerClass();
 
 	//Table
-	private EventList<Overview> eventList;
-	private DefaultEventTableModel<Overview> tableModel;
-	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
-	private SortedList<Overview> sortedList;
-	private DefaultEventSelectionModel<Overview> selectionModel;
+	private final EventList<Overview> eventList;
+	private final DefaultEventTableModel<Overview> tableModel;
+	private final EnumTableFormatAdaptor<OverviewTableFormat, Overview> tableFormat;
+	private final SortedList<Overview> sortedList;
+	private final DefaultEventSelectionModel<Overview> selectionModel;
 
 	//Data
 	private int rowCount;
@@ -673,7 +673,7 @@ public class OverviewTab extends JMainTab {
 		}
 	}
 
-	class MaterialsFilterControl extends ExportFilterControl<Overview> {
+	private class MaterialsFilterControl extends ExportFilterControl<Overview> {
 
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
@@ -688,6 +688,11 @@ public class OverviewTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Overview>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Overview>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Overview " + msg); //Save Overview Export Setttings (Filters not used)
 		}
 	}
 }

@@ -51,8 +51,9 @@ public class FilterMatcherTest {
 		COLUMN_DATE(false, true)
 		;
 
-		private boolean number;
-		private boolean date;
+		private final boolean number;
+		private final boolean date;
+
 		private TestEnum(final boolean number, final boolean date) {
 			this.number = number;
 			this.date = date;
@@ -617,6 +618,11 @@ public class FilterMatcherTest {
 		@Override
 		protected List<EnumTableColumn<Item>> getShownColumns() {
 			return null; //Only used by the GUI
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			//Only used by the GUI
 		}
 	}
 }

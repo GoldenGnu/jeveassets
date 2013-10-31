@@ -102,38 +102,38 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	//Filter
-	private JRadioButton jNoFilter;
-	private JRadioButton jSavedFilter;
-	private JRadioButton jCurrentFilter;
-	private JComboBox jFilters;
+	private final JRadioButton jNoFilter;
+	private final JRadioButton jSavedFilter;
+	private final JRadioButton jCurrentFilter;
+	private final JComboBox jFilters;
 	//Columns
-	private JRadioButton jViewCurrent;
-	private JRadioButton jViewSelect;
-	private JRadioButton jViewSaved;
-	private JComboBox jViews;
-	private JMultiSelectionList jColumnSelection;
+	private final JRadioButton jViewCurrent;
+	private final JRadioButton jViewSelect;
+	private final JRadioButton jViewSaved;
+	private final JComboBox jViews;
+	private final JMultiSelectionList jColumnSelection;
 	//Format
-	private JRadioButton jCsv;
-	private JRadioButton jHtml;
-	private JRadioButton jSql;
+	private final JRadioButton jCsv;
+	private final JRadioButton jHtml;
+	private final JRadioButton jSql;
 	//Options
-	private CardLayout cardLayout;
-	private JPanel jCardPanel;
+	private final CardLayout cardLayout;
+	private final JPanel jCardPanel;
 	//CSV
-	private JComboBox jFieldDelimiter;
-	private JComboBox jLineDelimiter;
-	private JComboBox jDecimalSeparator;
+	private final JComboBox jFieldDelimiter;
+	private final JComboBox jLineDelimiter;
+	private final JComboBox jDecimalSeparator;
 	//Html
-	private JCheckBox jHtmlStyle;
-	private JCheckBox jHtmlIGB;
-	private JSlider jHtmlHeaderRepeat;
+	private final JCheckBox jHtmlStyle;
+	private final JCheckBox jHtmlIGB;
+	private final JSlider jHtmlHeaderRepeat;
 	//SQL
-	private JTextField jTableName;
-	private JCheckBox jDropTable;
-	private JCheckBox jCreateTable;
-	private JCheckBox jExtendedInserts;
+	private final JTextField jTableName;
+	private final JCheckBox jDropTable;
+	private final JCheckBox jCreateTable;
+	private final JCheckBox jExtendedInserts;
 
-	private JButton jOK;
+	private final JButton jOK;
 
 	private static final DecimalFormat EN_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("en")));
 	private static final DecimalFormat EU_NUMBER_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(new Locale("da")));
@@ -524,6 +524,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void saveSettings() {
+		Settings.lock(); //Lock for Export Settings (Save)
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter((FieldDelimiter) jFieldDelimiter.getSelectedItem());
 		Settings.get().getExportSettings().setLineDelimiter((LineDelimiter) jLineDelimiter.getSelectedItem());
@@ -543,6 +544,8 @@ public class ExportDialog<E> extends JDialogCentered {
 		} else {
 			Settings.get().getExportSettings().putTableExportColumns(toolName, getExportColumns());
 		}
+		Settings.unlock(); //Unlock for Export Settings (Save)
+		exportFilterControl.saveSettings("Export Settings");
 	}
 
 	private void loadSettings() {
@@ -591,6 +594,7 @@ public class ExportDialog<E> extends JDialogCentered {
 	}
 
 	private void resetSettings() {
+		Settings.lock(); //Lock for Export Settings (Reset)
 		//CSV
 		Settings.get().getExportSettings().setFieldDelimiter(FieldDelimiter.COMMA);
 		Settings.get().getExportSettings().setLineDelimiter(LineDelimiter.DOS);
@@ -607,6 +611,7 @@ public class ExportDialog<E> extends JDialogCentered {
 		Settings.get().getExportSettings().putFilename(toolName, Settings.get().getExportSettings().getDefaultFilename(toolName));
 		Settings.get().getExportSettings().putTableExportColumns(toolName, null);
 		Settings.get().getExportSettings().setExportFormat(ExportFormat.CSV);
+		Settings.unlock(); //Unlock for Export Settings (Reset)
 		loadSettings();
 	}
 
@@ -664,8 +669,6 @@ public class ExportDialog<E> extends JDialogCentered {
 					jViews.setSelectedItem(selectedItem);
 				}
 			}
-		} else {
-			saveSettings();
 		}
 		super.setVisible(b);
 	}
@@ -852,6 +855,7 @@ public class ExportDialog<E> extends JDialogCentered {
 				resetSettings();
 			} else if (ExportAction.CANCEL.name().equals(e.getActionCommand())) {
 				setVisible(false);
+				saveSettings();
 			} else if (ExportAction.FORMAT_CHANGED.name().equals(e.getActionCommand())) {
 				ExportFormat exportFormat = ExportFormat.CSV;
 				if (jCsv.isSelected()) {

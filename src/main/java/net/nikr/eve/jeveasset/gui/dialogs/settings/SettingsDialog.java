@@ -32,6 +32,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
@@ -221,14 +222,17 @@ public class SettingsDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		boolean update = false;
+		Settings.lock(); //Lock for Settings Dialog
 		for (Map.Entry<String, JSettingsPanel> entry : settingsPanels.entrySet()) {
 			if (entry.getValue().save()) {
 				update = true;
 			}
 		}
-		if (update) {
+		Settings.unlock(); //Unlock for Settings Dialog
+		if (update) { //Update
 			program.updateEventLists();
 		}
+		program.saveSettings("Save Settings Dialog"); //Save Settings Dialog
 	}
 
 	public void setVisible(final JSettingsPanel c) {

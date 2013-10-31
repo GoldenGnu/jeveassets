@@ -55,20 +55,20 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 public class AssetsTab extends JMainTab {
 
 	//GUI
-	private JAssetTable jTable;
-	private JLabel jValue;
-	private JLabel jReprocessed;
-	private JLabel jCount;
-	private JLabel jAverage;
-	private JLabel jVolume;
+	private final JAssetTable jTable;
+	private final JLabel jValue;
+	private final JLabel jReprocessed;
+	private final JLabel jCount;
+	private final JLabel jAverage;
+	private final JLabel jVolume;
 
 	//Table
-	private DefaultEventTableModel<Asset> tableModel;
-	private EventList<Asset> eventList;
-	private FilterList<Asset> filterList;
-	private AssetFilterControl filterControl;
-	private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
-	private DefaultEventSelectionModel<Asset> selectionModel;
+	private final DefaultEventTableModel<Asset> tableModel;
+	private final EventList<Asset> eventList;
+	private final FilterList<Asset> filterList;
+	private final AssetFilterControl filterControl;
+	private final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
+	private final DefaultEventSelectionModel<Asset> selectionModel;
 
 	public static final String NAME = "assets"; //Not to be changed!
 
@@ -106,7 +106,6 @@ public class AssetsTab extends JMainTab {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new AssetFilterControl(
-				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
 				sortedList,
@@ -249,15 +248,13 @@ public class AssetsTab extends JMainTab {
 		}
 	}
 
-	public static class AssetFilterControl extends FilterControl<Asset> {
+	private class AssetFilterControl extends FilterControl<Asset> {
 
-		private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
-		private Program program;
+		private final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
 
-		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
-			this.program = program;
 		}
 
 		@Override
@@ -286,6 +283,11 @@ public class AssetsTab extends JMainTab {
 			if (program != null && program.getOverviewTab() != null) {
 				program.getOverviewTab().updateFilters();
 			}
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Asset " + msg); //Save Asset Filters and Export Setttings
 		}
 	}
 }

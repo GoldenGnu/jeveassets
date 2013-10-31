@@ -76,6 +76,7 @@ public final class Main {
 		boolean portable = false;
 		boolean forceNoUpdate = false;
 		boolean forceUpdate = false;
+		boolean lazySave = false;
 
 		for (String arg : args) {
 			if (arg.toLowerCase().equals("-debug")) {
@@ -89,6 +90,9 @@ public final class Main {
 			}
 			if (arg.toLowerCase().equals("-update")) {
 				forceUpdate = true;
+			}
+			if (arg.toLowerCase().equals("-lazysave")) {
+				lazySave = true;
 			}
 		}
 
@@ -133,6 +137,7 @@ public final class Main {
 		Program.setPortable(portable);
 		Program.setForceNoUpdate(forceNoUpdate && debug);
 		Program.setForceUpdate(forceUpdate && debug);
+		Program.setLazySave(lazySave);
 
 		// fix the uncaught exception handlers
 		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");

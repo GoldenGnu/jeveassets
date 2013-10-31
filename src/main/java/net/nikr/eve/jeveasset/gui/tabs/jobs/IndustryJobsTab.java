@@ -63,16 +63,16 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 public class IndustryJobsTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jInventionSuccess;
+	private final JAutoColumnTable jTable;
+	private final JLabel jInventionSuccess;
 
 	//Table
-	private EventList<IndustryJob> eventList;
-	private FilterList<IndustryJob> filterList;
-	private DefaultEventTableModel<IndustryJob> tableModel;
-	private DefaultEventSelectionModel<IndustryJob> selectionModel;
-	private IndustryJobsFilterControl filterControl;
-	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+	private final EventList<IndustryJob> eventList;
+	private final FilterList<IndustryJob> filterList;
+	private final DefaultEventTableModel<IndustryJob> tableModel;
+	private final DefaultEventSelectionModel<IndustryJob> selectionModel;
+	private final IndustryJobsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
@@ -194,9 +194,9 @@ public class IndustryJobsTab extends JMainTab {
 		}
 	}
 
-	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
+	private class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
 
-		private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+		private final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
 		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
@@ -222,6 +222,11 @@ public class IndustryJobsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<IndustryJob>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<IndustryJob>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Industry Job " + msg); //Save Industry Job Filters and Export Setttings
 		}
 	}
 }

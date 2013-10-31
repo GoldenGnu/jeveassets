@@ -152,11 +152,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public void saveSettings() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public void setApiProxy(final String apiProxy) {
 		throw new UnsupportedOperationException("not implemented");
 	}

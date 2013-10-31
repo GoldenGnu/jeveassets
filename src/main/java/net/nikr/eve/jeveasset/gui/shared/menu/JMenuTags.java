@@ -45,10 +45,10 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 		ACTION_NEW_TAG,
 	}
 
-	private JMenuItem jNew;
+	private final JMenuItem jNew;
+	private final ListenerClass listener = new ListenerClass();
+	private final JTagsDialog jTagsDialog;
 	private List<TagsType> tagsTypes = new ArrayList<TagsType>();
-	private ListenerClass listener = new ListenerClass();
-	private JTagsDialog jTagsDialog;
 
 	public JMenuTags(Program program) {
 		super(GuiShared.get().tags(), program);
@@ -109,6 +109,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 
 	private void addTag(Tag tag) {
 		if (tag != null && !tag.getName().isEmpty()) {
+			Settings.lock(); //Lock for Tags (New)
 			Tag settingsTag = Settings.get().getTags().get(tag.getName());
 			if (settingsTag != null) { //Update
 				//Load tag
@@ -124,12 +125,15 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				//Update settings
 				Settings.get().getTags(tagsType.getTagID()).add(tag);
 			}
+			Settings.unlock(); //Unlock for Tags (New)
 			program.updateTags();
+			program.saveSettings("Save Tags (New)"); //Save Tags (New)
 		}
 	}
 
 	private void removeTag(Tag tag) {
 		if (tag != null) {
+			Settings.lock(); //Lock for Tags (Delete)
 			for (TagsType tagsType : tagsTypes) {
 				//Remove tag form item
 				tagsType.getTags().remove(tag);
@@ -138,7 +142,9 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 				//Update settings
 				Settings.get().getTags(tagsType.getTagID()).remove(tag);
 			}
+			Settings.unlock(); //Unlock for Tags (Delete)
 			program.updateTags();
+			program.saveSettings("Save Tags (Delete)"); //Save Tags (Delete)
 		}
 	}
 
@@ -164,7 +170,7 @@ public class JMenuTags<T> extends JAutoMenu<T> {
 
 	private static class JTagCheckMenuItem extends JCheckBoxMenuItem {
 
-		private Tag tag;
+		private final Tag tag;
 
 		public JTagCheckMenuItem(Tag tag, Integer count) {
 			super(GuiShared.get().tagsName(tag.getName(), count));

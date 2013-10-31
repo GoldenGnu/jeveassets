@@ -165,7 +165,7 @@ public class TaskDialog {
 			//Create value tracker point
 			program.createTrackerDataPoint();
 			//Save settings after updating (if we crash later)
-			program.saveSettings();
+			program.saveSettingsAndProfile();
 			jOK.setEnabled(true);
 			jCancel.setEnabled(false);
 		}

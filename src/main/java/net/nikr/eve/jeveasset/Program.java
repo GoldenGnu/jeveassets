@@ -98,6 +98,7 @@ public class Program implements ActionListener {
 	private static boolean forceUpdate = false;
 	private static boolean forceNoUpdate = false;
 	private static boolean portable = false;
+	private static boolean lazySave = false;
 
 	//GUI
 	private MainWindow mainWindow;
@@ -134,7 +135,7 @@ public class Program implements ActionListener {
 	private Timer timer;
 	private Updatable updatable;
 
-	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
+	private final List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private final ProfileData profileData;
@@ -297,7 +298,7 @@ public class Program implements ActionListener {
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
 			jMainTab.beforeUpdateData();
 		}
-		profileData.updateEventLists();
+		boolean saveSettings = profileData.updateEventLists();
 		System.gc(); //clean post-update mess :)
 		
 		for (JMainTab jMainTab : mainWindow.getTabs()) {
@@ -308,21 +309,63 @@ public class Program implements ActionListener {
 		}
 		timerTicked();
 		updateTableMenu();
+		if (saveSettings) {
+			saveSettings("Save Asset Added Date"); //Save Asset Added Date
+		}
 	}
 
-	public void saveSettings() {
-		LOG.info("Saving...");
+	/**
+	 * Save Settings ASAP
+	 * @param msg Who is saving what?
+	 */
+	public void saveSettings(final String msg) {
+		if (!lazySave) {
+			if (!Settings.ignoreSave()) {
+				Settings.saveStart();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						long before = System.currentTimeMillis();
+
+						LOG.info(msg);
+
+						doSaveSettings();
+
+						Settings.saveEnd();
+
+						long after = System.currentTimeMillis();
+						System.out.println("Settings saved in: " + (after - before) + "ms");
+					}
+				}).start();
+			}
+		}
+	}
+
+	private void doSaveSettings() {
+		LOG.info("Saving Settings...");
+		Settings.lock(); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
 			jMainTab.saveSettings();
 		}
-		Settings.get().saveSettings();
+		Settings.unlock(); //Unlock for Table (Column/Width/Resize) and Window Settings
+		Settings.saveSettings();
+	}
+
+	private void doSaveProfile() {
+		LOG.info("Saving Profile...");
 		profileManager.saveProfile();
 	}
 
+	public void saveSettingsAndProfile() {
+		doSaveSettings();
+		doSaveProfile();
+	}
+
 	public void exit() {
-		saveSettings();
 		LOG.info("Exiting...");
+		saveSettingsAndProfile();
+		LOG.info("Exit!");
 		System.exit(0);
 	}
 
@@ -462,6 +505,10 @@ public class Program implements ActionListener {
 
 	public static void setPortable(final boolean portable) {
 		Program.portable = portable;
+	}
+
+	public static void setLazySave(final boolean lazySave) {
+		Program.lazySave = lazySave;
 	}
 
 	public static boolean isPortable() {

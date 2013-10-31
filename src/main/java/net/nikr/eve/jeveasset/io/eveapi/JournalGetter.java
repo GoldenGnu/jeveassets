@@ -75,11 +75,11 @@ public class JournalGetter extends AbstractApiGetter<WalletJournalResponse> {
 		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.wallet.journal.WalletJournalParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey);
+					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, 2560);
 		} else {
 			return com.beimin.eveapi.character
 					.wallet.journal.WalletJournalParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()), 0);
+					.getResponse(Owner.getApiAuthorization(getOwner()), 0, 2560);
 		}
 	}
 

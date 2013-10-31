@@ -45,15 +45,15 @@ import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 public class JournalTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
+	private final JAutoColumnTable jTable;
 
 	//Table
-	private JournalFilterControl filterControl;
-	private EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
-	private DefaultEventTableModel<Journal> tableModel;
-	private FilterList<Journal> filterList;
-	private EventList<Journal> eventList;
-	private DefaultEventSelectionModel<Journal> selectionModel;
+	private final JournalFilterControl filterControl;
+	private final EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
+	private final DefaultEventTableModel<Journal> tableModel;
+	private final FilterList<Journal> filterList;
+	private final EventList<Journal> eventList;
+	private final DefaultEventSelectionModel<Journal> selectionModel;
 
 	public static final String NAME = "journal"; //Not to be changed!
 
@@ -137,9 +137,9 @@ public class JournalTab extends JMainTab {
 		}
 	}
 
-	public static class JournalFilterControl extends FilterControl<Journal> {
+	private class JournalFilterControl extends FilterControl<Journal> {
 
-		private EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
+		private final EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat;
 
 		public JournalFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<JournalTableFormat, Journal> tableFormat, final EventList<Journal> eventList, final FilterList<Journal> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -165,6 +165,11 @@ public class JournalTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Journal>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Journal>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Journal " + msg); //Save Journal Filters and Export Setttings
 		}
 	}
 }

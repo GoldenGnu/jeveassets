@@ -97,25 +97,25 @@ public class TreeTab extends JMainTab {
 	private final int INDENT = 10;
 
 	//GUI
-	private JTreeTable jTable;
-	private JLabel jValue;
-	private JLabel jReprocessed;
-	private JLabel jCount;
-	private JLabel jAverage;
-	private JLabel jVolume;
-	private JToggleButton jCategories;
-	private JToggleButton jLocation;
+	private final JTreeTable jTable;
+	private final JLabel jValue;
+	private final JLabel jReprocessed;
+	private final JLabel jCount;
+	private final JLabel jAverage;
+	private final JLabel jVolume;
+	private final JToggleButton jCategories;
+	private final JToggleButton jLocation;
 
 	//Table
-	private DefaultEventTableModel<TreeAsset> tableModel;
-	private EventList<TreeAsset> eventList;
-	private EventList<TreeAsset> exportEventList;
-	private FilterList<TreeAsset> filterList;
-	private TreeList<TreeAsset> treeList;
-	private AssetFilterControl filterControl;
-	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
-	private DefaultEventSelectionModel<TreeAsset> selectionModel;
-	private AssetTreeExpansionModel expansionModel;
+	private final DefaultEventTableModel<TreeAsset> tableModel;
+	private final EventList<TreeAsset> eventList;
+	private final EventList<TreeAsset> exportEventList;
+	private final FilterList<TreeAsset> filterList;
+	private final TreeList<TreeAsset> treeList;
+	private final AssetFilterControl filterControl;
+	private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
+	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
+	private final AssetTreeExpansionModel expansionModel;
 	private final Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private final Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private final Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
@@ -200,7 +200,6 @@ public class TreeTab extends JMainTab {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
 		filterControl = new AssetFilterControl(
-				program,
 				program.getMainWindow().getFrame(),
 				tableFormat,
 				//eventList,
@@ -590,15 +589,13 @@ public class TreeTab extends JMainTab {
 		}
 	}
 
-	public class AssetFilterControl extends FilterControl<TreeAsset> {
+	private class AssetFilterControl extends FilterControl<TreeAsset> {
 
-		private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
-		private Program program;
+		private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 
-		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat, final EventList<TreeAsset> eventList, final FilterList<TreeAsset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat, final EventList<TreeAsset> eventList, final FilterList<TreeAsset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
-			this.program = program;
 		}
 
 		@Override
@@ -637,6 +634,11 @@ public class TreeTab extends JMainTab {
 		@Override
 		protected void afterFilter() {
 			updateTotals();
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Tree " + msg); //Save Tree Filters and Export Setttings
 		}
 	}
 

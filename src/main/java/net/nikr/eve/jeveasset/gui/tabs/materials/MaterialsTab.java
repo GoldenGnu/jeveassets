@@ -76,20 +76,20 @@ public class MaterialsTab extends JMainTab {
 	}
 
 	//GUI
-	private JComboBox jOwners;
-	private JButton jExport;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JCheckBox jPiMaterial;
-	private JSeparatorTable jTable;
-	private JScrollPane jTableScroll;
+	private final JComboBox jOwners;
+	private final JButton jExport;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JCheckBox jPiMaterial;
+	private final JSeparatorTable jTable;
+	private final JScrollPane jTableScroll;
 
 	//Table
-	private EventList<Material> eventList;
-	private SeparatorList<Material> separatorList;
-	private DefaultEventSelectionModel<Material> selectionModel;
-	private DefaultEventTableModel<Material> tableModel;
-	private EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
+	private final EventList<Material> eventList;
+	private final SeparatorList<Material> separatorList;
+	private final DefaultEventSelectionModel<Material> selectionModel;
+	private final DefaultEventTableModel<Material> tableModel;
+	private final EnumTableFormatAdaptor<MaterialTableFormat, Material> tableFormat;
 
 	//Dialog
 	ExportDialog<Material> exportDialog;
@@ -375,7 +375,7 @@ public class MaterialsTab extends JMainTab {
 		}
 	}
 
-	class MaterialsFilterControl extends ExportFilterControl<Material> {
+	private class MaterialsFilterControl extends ExportFilterControl<Material> {
 
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
@@ -395,6 +395,11 @@ public class MaterialsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Material>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Material>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Material " + msg); //Save Material Export Setttings (Filters not used)
 		}
 	}
 }

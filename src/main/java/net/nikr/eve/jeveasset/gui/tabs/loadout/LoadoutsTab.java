@@ -95,22 +95,22 @@ public class LoadoutsTab extends JMainTab {
 	private static final String SHIP_CATEGORY = "Ship";
 
 	//GUI
-	private JComboBox jOwners;
-	private JComboBox jShips;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JSeparatorTable jTable;
-	private JDropDownButton jExport;
-	private LoadoutsExportDialog loadoutsExportDialog;
+	private final JComboBox jOwners;
+	private final JComboBox jShips;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JSeparatorTable jTable;
+	private final JDropDownButton jExport;
+	private final LoadoutsExportDialog loadoutsExportDialog;
 	private JCustomFileChooser jXmlFileChooser;
 
 	//Table
-	private EventList<Loadout> eventList;
-	private FilterList<Loadout> filterList;
-	private SeparatorList<Loadout> separatorList;
-	private DefaultEventSelectionModel<Loadout> selectionModel;
-	private DefaultEventTableModel<Loadout> tableModel;
-	private EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
+	private final EventList<Loadout> eventList;
+	private final FilterList<Loadout> filterList;
+	private final SeparatorList<Loadout> separatorList;
+	private final DefaultEventSelectionModel<Loadout> selectionModel;
+	private final DefaultEventTableModel<Loadout> tableModel;
+	private final EnumTableFormatAdaptor<LoadoutTableFormat, Loadout> tableFormat;
 
 	//Dialog
 	ExportDialog<Loadout> exportDialog;
@@ -502,7 +502,7 @@ public class LoadoutsTab extends JMainTab {
 		}
 	}
 
-	public class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
+	private class LoadoutsFilterControl extends ExportFilterControl<Loadout> {
 		@Override
 		protected EnumTableColumn<?> valueOf(final String column) {
 			try {
@@ -521,6 +521,11 @@ public class LoadoutsTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Loadout>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Loadout>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Ship Loudout " + msg); //Save Ship Loudout Export Setttings (Filters not used)
 		}
 	}
 }

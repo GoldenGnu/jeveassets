@@ -486,6 +486,7 @@ public class StockpileDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
+		Settings.lock(); //Lock for Stockpile (Stockpile dialog)
 		if (stockpile != null) { //Edit
 			stockpile.update(getStockpile());
 		} else if (cloneStockpile != null) { //Clone
@@ -496,6 +497,8 @@ public class StockpileDialog extends JDialogCentered {
 			Settings.get().getStockpiles().add(stockpile);
 		}
 		updated = true;
+		Settings.unlock(); //Unlock for Stockpile (Stockpile dialog)
+		program.saveSettings("Save Stockpile (Stockpile dialog)"); //Save Stockpile (Stockpile dialog)
 		this.setVisible(false);
 	}
 

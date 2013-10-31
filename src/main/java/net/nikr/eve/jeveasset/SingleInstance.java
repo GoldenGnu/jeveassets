@@ -37,8 +37,8 @@ public class SingleInstance {
 
 	private final String HOST = "127.0.0.1";
 	private final int PORT = 2222;
+	private final DetectForNew thread;
 	private boolean msgShown = false;
-	private DetectForNew thread;
 
 	public SingleInstance() {
 		// try to connect to server
@@ -101,7 +101,7 @@ public class SingleInstance {
 				} catch (IOException ex) {
 					//Ignore IO error
 				} catch (InterruptedException ex) {
-					//Ignore interrupt error
+					return; //We are done (exiting program)
 				}
 			}
 		}

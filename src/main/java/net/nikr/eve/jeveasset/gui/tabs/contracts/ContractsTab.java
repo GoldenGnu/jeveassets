@@ -68,19 +68,19 @@ public class ContractsTab extends JMainTab {
 	}
 
 	//GUI
-	private JSeparatorTable jTable;
+	private final JSeparatorTable jTable;
 
 	//Table
-	private EventList<ContractItem> eventList;
-	private FilterList<ContractItem> filterList;
-	private SeparatorList<ContractItem> separatorList;
-	private DefaultEventSelectionModel<ContractItem> selectionModel;
-	private DefaultEventTableModel<ContractItem> tableModel;
-	private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
-	private ContractsFilterControl filterControl;
+	private final EventList<ContractItem> eventList;
+	private final FilterList<ContractItem> filterList;
+	private final SeparatorList<ContractItem> separatorList;
+	private final DefaultEventSelectionModel<ContractItem> selectionModel;
+	private final DefaultEventTableModel<ContractItem> tableModel;
+	private final EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
+	private final ContractsFilterControl filterControl;
 
 	//Listener
-	private ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
 	public static final String NAME = "contracts"; //Not to be changed!
 
@@ -217,10 +217,10 @@ public class ContractsTab extends JMainTab {
 		}
 	}
 
-	public class ContractsFilterControl extends FilterControl<ContractItem> {
+	private class ContractsFilterControl extends FilterControl<ContractItem> {
 
 		private List<EnumTableColumn<ContractItem>> columns = null;
-		private EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
+		private final EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat;
 
 		public ContractsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ContractsTableFormat, ContractItem> tableFormat, final EventList<ContractItem> eventList, final FilterList<ContractItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -279,6 +279,11 @@ public class ContractsTab extends JMainTab {
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Contract " + msg); //Save Contract Filters and Export Setttings
 		}
 	}
 }

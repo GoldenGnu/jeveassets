@@ -40,7 +40,6 @@ import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AccountBalance;
-import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -64,15 +63,15 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class ValueTableTab extends JMainTab {
 
 	//GUI
-	private JAutoColumnTable jTable;
+	private final JAutoColumnTable jTable;
 
 	//Table
-	private ValueFilterControl filterControl;
-	private DefaultEventTableModel<Value> tableModel;
-	private EventList<Value> eventList;
-	private FilterList<Value> filterList;
-	private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
-	private DefaultEventSelectionModel<Value> selectionModel;
+	private final ValueFilterControl filterControl;
+	private final DefaultEventTableModel<Value> tableModel;
+	private final EventList<Value> eventList;
+	private final FilterList<Value> filterList;
+	private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
+	private final DefaultEventSelectionModel<Value> selectionModel;
 
 	public static final String NAME = "value"; //Not to be changed!
 
@@ -226,9 +225,9 @@ public class ValueTableTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	public static class ValueFilterControl extends FilterControl<Value> {
+	private class ValueFilterControl extends FilterControl<Value> {
 
-		private EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
+		private final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat;
 
 		public ValueFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ValueTableFormat, Value> tableFormat, final EventList<Value> eventList, final FilterList<Value> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -254,6 +253,11 @@ public class ValueTableTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Value>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Value>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save ISK " + msg); //Save ISK Filters and Export Setttings
 		}
 	}
 

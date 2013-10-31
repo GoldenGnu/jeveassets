@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
@@ -57,21 +58,21 @@ class FilterGui<E> {
 		EXPORT
 	}
 
-	private JPanel jPanel;
-	private GroupLayout layout;
-	private JToolBar jToolBar;
-	private JDropDownButton jLoadFilter;
-	private JCheckBox jShowFilters;
-	private JLabel jShowing;
-	private JFrame jFrame;
+	private final JPanel jPanel;
+	private final GroupLayout layout;
+	private final JToolBar jToolBar;
+	private final JDropDownButton jLoadFilter;
+	private final JCheckBox jShowFilters;
+	private final JLabel jShowing;
+	private final JFrame jFrame;
 
-	private FilterControl<E> filterControl;
+	private final FilterControl<E> filterControl;
 
-	private List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
-	private FilterSave filterSave;
-	private FilterManager<E> filterManager;
+	private final List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
+	private final FilterSave filterSave;
+	private final FilterManager<E> filterManager;
 
-	private ExportDialog<E> exportDialog;
+	private final ExportDialog<E> exportDialog;
 
 	ListenerClass listener = new ListenerClass();
 
@@ -356,6 +357,10 @@ class FilterGui<E> {
 		filterControl.updateFilters();
 	}
 
+	void saveSettings(String msg) {
+		filterControl.saveSettings(msg);
+	}
+
 	void refilter() {
 		filterControl.beforeFilter();
 		List<FilterMatcher<E>> matchers = getMatchers();
@@ -399,7 +404,10 @@ class FilterGui<E> {
 				} else {
 					String name = filterSave.show(new ArrayList<String>(filterControl.getFilters().keySet()), new ArrayList<String>(filterControl.getDefaultFilters().keySet()));
 					if (name != null && !name.isEmpty()) {
+						Settings.lock(); //Lock for Filter (New)
 						filterControl.getFilters().put(name, getFilters());
+						Settings.unlock(); //Unlock for Filter (New)
+						saveSettings("Filter (New)"); //Save Filter (New)
 						updateFilters();
 					}
 				}

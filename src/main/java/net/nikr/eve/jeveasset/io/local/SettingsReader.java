@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.data.tag.TagColor;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
@@ -705,7 +706,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < viewToolNodeList.getLength(); a++) {
 			Element viewToolNode = (Element) viewToolNodeList.item(a);
 			String toolName = AttributeGetters.getString(viewToolNode, "tool");
-			Map<String, View> views = new HashMap<String, View>();
+			Map<String, View> views = new TreeMap<String, View>(new CaseInsensitiveComparator());
 			settings.getTableViews().put(toolName, views);
 			NodeList viewNodeList = viewToolNode.getElementsByTagName("view");
 			for (int b = 0; b < viewNodeList.getLength(); b++) {

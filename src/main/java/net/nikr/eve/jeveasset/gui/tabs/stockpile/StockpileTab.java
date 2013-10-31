@@ -104,25 +104,25 @@ public class StockpileTab extends JMainTab {
 		EXPAND
 	}
 
-	private JSeparatorTable jTable;
-	private JLabel jVolumeNow;
-	private JLabel jVolumeNeeded;
-	private JLabel jValueNow;
-	private JLabel jValueNeeded;
+	private final JSeparatorTable jTable;
+	private final JLabel jVolumeNow;
+	private final JLabel jVolumeNeeded;
+	private final JLabel jValueNow;
+	private final JLabel jValueNeeded;
 
-	private StockpileDialog stockpileDialog;
-	private StockpileItemDialog stockpileItemDialog;
-	private StockpileShoppingListDialog stockpileShoppingListDialog;
-	private StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileDialog stockpileDialog;
+	private final StockpileItemDialog stockpileItemDialog;
+	private final StockpileShoppingListDialog stockpileShoppingListDialog;
+	private final StockpileSelectionDialog stockpileSelectionDialog;
 
 	//Table
-	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
-	private DefaultEventTableModel<StockpileItem> tableModel;
-	private EventList<StockpileItem> eventList;
-	private FilterList<StockpileItem> filterList;
-	private SeparatorList<StockpileItem> separatorList;
-	private DefaultEventSelectionModel<StockpileItem> selectionModel;
-	private StockpileFilterControl filterControl;
+	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+	private final DefaultEventTableModel<StockpileItem> tableModel;
+	private final EventList<StockpileItem> eventList;
+	private final FilterList<StockpileItem> filterList;
+	private final SeparatorList<StockpileItem> separatorList;
+	private final DefaultEventSelectionModel<StockpileItem> selectionModel;
+	private final StockpileFilterControl filterControl;
 
 	//Data
 	Map<Long, String> ownersName;
@@ -331,11 +331,17 @@ public class StockpileTab extends JMainTab {
 				}
 				if (toItem != null) { //Update existing (add counts)
 					if (merge) {
+						Settings.lock(); //Lock for Stockpile (addTo - Merge)
 						toItem.addCountMinimum(fromItem.getCountMinimum());
+						Settings.unlock(); //Unlock for Stockpile (addTo - Merge)
+						program.saveSettings("Save Stockpile (addTo - Merge)"); //Save Stockpile (addTo - Merge)
 					}
 				} else { //Add new
+					Settings.lock(); //Lock for Stockpile (addTo - New)
 					StockpileItem item = new StockpileItem(stockpile, fromItem);
 					stockpile.add(item);
+					Settings.unlock(); //Unlock for Stockpile (addTo - New)
+					program.saveSettings("Save Stockpile (addTo - New)"); //Save Stockpile (addTo - New)
 				}
 			}
 			addStockpile(stockpile);
@@ -576,6 +582,7 @@ public class StockpileTab extends JMainTab {
 			return;
 		}
 
+		Settings.lock(); //Lock for Stockpile (EFT import)
 		//Add modules
 		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
 		for (String module : modules) {
@@ -599,7 +606,8 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-
+		Settings.unlock(); //Unlock for Stockpile (EFT import)
+		program.saveSettings("Save Stockpile (EFT import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -706,6 +714,7 @@ public class StockpileTab extends JMainTab {
 		if (stockpile == null) { //Dialog cancelled
 			return;
 		}
+		Settings.lock(); //Lock for Stockpile (IskPerHour import)
 		//Search for item names
 		for (Map.Entry<String, Double> entry : data.entrySet()) {
 			for (Item item : StaticData.get().getItems().values()) {
@@ -716,7 +725,8 @@ public class StockpileTab extends JMainTab {
 				}
 			}
 		}
-
+		Settings.unlock(); //Unlock for Stockpile (IskPerHour import)
+		program.saveSettings("Save Stockpile (IskPerHour import)"); //Save Stockpile (EFT import)
 		//Update stockpile data
 		addStockpile(stockpile);
 		scrollToSctockpile(stockpile);
@@ -947,7 +957,7 @@ public class StockpileTab extends JMainTab {
 	public class StockpileFilterControl extends FilterControl<StockpileItem> {
 
 		private List<EnumTableColumn<StockpileItem>> columns = null;
-		private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+		private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
 		public StockpileFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -1007,6 +1017,11 @@ public class StockpileTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<StockpileItem>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<StockpileItem>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Stockpile " + msg); //Save Stockpile Filters and Export Setttings
 		}
 	}
 

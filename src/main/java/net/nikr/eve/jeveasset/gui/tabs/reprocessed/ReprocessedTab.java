@@ -80,19 +80,19 @@ public class ReprocessedTab extends JMainTab {
 	}
 
 	//GUI
-	private JSeparatorTable jTable;
+	private final JSeparatorTable jTable;
 
 	//Table
-	private ReprocessedFilterControl filterControl;
-	private EventList<ReprocessedInterface> eventList;
-	private FilterList<ReprocessedInterface> filterList;
-	private SeparatorList<ReprocessedInterface> separatorList;
-	private DefaultEventSelectionModel<ReprocessedInterface> selectionModel;
-	private DefaultEventTableModel<ReprocessedInterface> tableModel;
-	private EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
+	private final ReprocessedFilterControl filterControl;
+	private final EventList<ReprocessedInterface> eventList;
+	private final FilterList<ReprocessedInterface> filterList;
+	private final SeparatorList<ReprocessedInterface> separatorList;
+	private final DefaultEventSelectionModel<ReprocessedInterface> selectionModel;
+	private final DefaultEventTableModel<ReprocessedInterface> tableModel;
+	private final EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
 	//Listener
-	private ListenerClass listener = new ListenerClass();
+	private final ListenerClass listener = new ListenerClass();
 
 	//Data
 	private final Set<Integer> typeIDs = new HashSet<Integer>();
@@ -362,10 +362,10 @@ public class ReprocessedTab extends JMainTab {
 		}
 	}
 
-	public class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
+	private class ReprocessedFilterControl extends FilterControl<ReprocessedInterface> {
 
 		private List<EnumTableColumn<ReprocessedInterface>> columns = null;
-		private EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
+		private final EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat;
 
 		public ReprocessedFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<ReprocessedTableFormat, ReprocessedInterface> tableFormat, final EventList<ReprocessedInterface> eventList, final FilterList<ReprocessedInterface> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
@@ -425,6 +425,11 @@ public class ReprocessedTab extends JMainTab {
 		@Override
 		protected void beforeFilter() {
 			jTable.saveExpandedState();
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Reprocessed " + msg); //Save Reprocessed Filters and Export Setttings
 		}
 	}
 

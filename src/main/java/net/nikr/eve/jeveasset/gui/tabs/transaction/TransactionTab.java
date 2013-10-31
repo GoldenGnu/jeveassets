@@ -61,17 +61,17 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 public class TransactionTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jSellOrdersTotal;
-	private JLabel jBuyOrdersTotal;
+	private final JAutoColumnTable jTable;
+	private final JLabel jSellOrdersTotal;
+	private final JLabel jBuyOrdersTotal;
 
 	//Table
-	private TransactionsFilterControl filterControl;
-	private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
-	private DefaultEventTableModel<Transaction> tableModel;
-	private FilterList<Transaction> filterList;
-	private EventList<Transaction> eventList;
-	private DefaultEventSelectionModel<Transaction> selectionModel;
+	private final TransactionsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
+	private final DefaultEventTableModel<Transaction> tableModel;
+	private final FilterList<Transaction> filterList;
+	private final EventList<Transaction> eventList;
+	private final DefaultEventSelectionModel<Transaction> selectionModel;
 
 	public static final String NAME = "transaction"; //Not to be changed!
 
@@ -188,9 +188,9 @@ public class TransactionTab extends JMainTab {
 		}
 	}
 
-	public static class TransactionsFilterControl extends FilterControl<Transaction> {
+	private class TransactionsFilterControl extends FilterControl<Transaction> {
 
-		private EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
+		private final EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat;
 
 		public TransactionsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<TransactionTableFormat, Transaction> tableFormat, final EventList<Transaction> eventList, final FilterList<Transaction> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
@@ -216,6 +216,11 @@ public class TransactionTab extends JMainTab {
 		@Override
 		protected List<EnumTableColumn<Transaction>> getShownColumns() {
 			return new ArrayList<EnumTableColumn<Transaction>>(tableFormat.getShownColumns());
+		}
+
+		@Override
+		protected void saveSettings(final String msg) {
+			program.saveSettings("Save Transaction " + msg); //Save Transaction Filters and Export Setttings
 		}
 	}
 }
