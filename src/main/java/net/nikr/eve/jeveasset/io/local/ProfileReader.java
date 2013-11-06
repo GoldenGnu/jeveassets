@@ -41,6 +41,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -381,16 +382,17 @@ public final class ProfileReader extends AbstractXmlReader {
 
 	private void parseJournals(final Element element, final Owner owner) {
 		NodeList journalsNodes = element.getElementsByTagName("journals");
-		List<Journal> journal = new ArrayList<Journal>();
+		Map<Long, Journal> journals = new HashMap<Long, Journal>();
 		for (int a = 0; a < journalsNodes.getLength(); a++) {
 			Element currentAalletJournalsNode = (Element) journalsNodes.item(a);
 			NodeList journalNodes = currentAalletJournalsNode.getElementsByTagName("journal");
 			for (int b = 0; b < journalNodes.getLength(); b++) {
 				Element currentNode = (Element) journalNodes.item(b);
-				journal.add(parseJournal(currentNode, owner));
+				Journal journal = parseJournal(currentNode, owner);
+				journals.put(journal.getRefID(), journal);
 			}
 		}
-		owner.setJournal(journal);
+		owner.setJournal(journals);
 	}
 
 	private Journal parseJournal(final Element element, final Owner owner) {
@@ -416,6 +418,15 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(element, "taxreceiverid")) {
 			taxReceiverID = AttributeGetters.getLong(element, "taxreceiverid");
 		}
+		//New
+		int owner1TypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "owner1typeid")) {
+			owner1TypeID = AttributeGetters.getInt(element, "owner1typeid");
+		}
+		int owner2TypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "owner2typeid")) {
+			owner2TypeID = AttributeGetters.getInt(element, "owner2typeid");
+		}
 		//Extra
 		int accountKey = AttributeGetters.getInt(element, "accountkey");
 
@@ -433,25 +444,27 @@ public final class ProfileReader extends AbstractXmlReader {
 		apiJournalEntry.setRefTypeID(refTypeId);
 		apiJournalEntry.setTaxAmount(taxAmount);
 		apiJournalEntry.setTaxReceiverID(taxReceiverID);
+		apiJournalEntry.setOwner1TypeID(owner1TypeID);
+		apiJournalEntry.setOwner2TypeID(owner2TypeID);
 		return ApiConverter.convertJournal(apiJournalEntry, owner, accountKey);
 	}
 
 	private void parseTransactions(final Element element, final Owner owner) {
 		NodeList transactionsNodes = element.getElementsByTagName("wallettransactions");
-		List<ApiWalletTransaction> transactions = new ArrayList<ApiWalletTransaction>();
+		Map<Long, Transaction> transactions = new HashMap<Long, Transaction>();
 		for (int a = 0; a < transactionsNodes.getLength(); a++) {
 			Element currentTransactionsNode = (Element) transactionsNodes.item(a);
 			NodeList transactionNodes = currentTransactionsNode.getElementsByTagName("wallettransaction");
 			for (int b = 0; b < transactionNodes.getLength(); b++) {
 				Element currentNode = (Element) transactionNodes.item(b);
-				ApiWalletTransaction apiTransaction = parseTransaction(currentNode);
-				transactions.add(apiTransaction);
+				Transaction transaction = parseTransaction(currentNode, owner);
+				transactions.put(transaction.getTransactionID(), transaction);
 			}
 		}
-		owner.setTransactions(ApiConverter.convertTransactions(transactions, owner));
+		owner.setTransactions(transactions);
 	}
 
-	private ApiWalletTransaction parseTransaction(final Element element) {
+	private Transaction parseTransaction(final Element element, final Owner owner) {
 		ApiWalletTransaction apiTransaction = new ApiWalletTransaction();
 		Date transactionDateTime = AttributeGetters.getDate(element, "transactiondatetime");
 		Long transactionID = AttributeGetters.getLong(element, "transactionid");
@@ -473,6 +486,21 @@ public final class ProfileReader extends AbstractXmlReader {
 		String stationName = AttributeGetters.getString(element, "stationname");
 		String transactionType = AttributeGetters.getString(element, "transactiontype");
 		String transactionFor = AttributeGetters.getString(element, "transactionfor");
+
+		//New
+		long journalTransactionID = 0;
+		if (AttributeGetters.haveAttribute(element, "journaltransactionid")) {
+			journalTransactionID = AttributeGetters.getLong(element, "journaltransactionid");
+		}
+		int clientTypeID = 0;
+		if (AttributeGetters.haveAttribute(element, "clienttypeid")) {
+			clientTypeID = AttributeGetters.getInt(element, "clienttypeid");
+		}
+		//Extra
+		int accountKey = 1000;
+		if (AttributeGetters.haveAttribute(element, "accountkey")) {
+			accountKey = AttributeGetters.getInt(element, "accountkey");
+		}
 		
 		apiTransaction.setTransactionDateTime(transactionDateTime);
 		apiTransaction.setTransactionID(transactionID);
@@ -488,7 +516,9 @@ public final class ProfileReader extends AbstractXmlReader {
 		apiTransaction.setStationName(stationName);
 		apiTransaction.setTransactionType(transactionType);
 		apiTransaction.setTransactionFor(transactionFor);
-		return apiTransaction;
+		apiTransaction.setJournalTransactionID(journalTransactionID);
+		apiTransaction.setClientTypeID(clientTypeID);
+		return ApiConverter.convertTransaction(apiTransaction, owner, accountKey);
 	}
 
 	private void parseIndustryJobs(final Element element, final Owner owner) {

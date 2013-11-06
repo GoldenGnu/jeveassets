@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
@@ -116,8 +116,8 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			writeContractItems(xmldoc, node, owner.getContracts());
 			writeAccountBalances(xmldoc, node, owner.getAccountBalances(), owner.isCorporation());
 			writeMarketOrders(xmldoc, node, owner.getMarketOrders(), owner.isCorporation());
-			writeJournals(xmldoc, node, owner.getJournal(), owner.isCorporation());
-			writeTransactions(xmldoc, node, owner.getTransactions(), owner.isCorporation());
+			writeJournals(xmldoc, node, new ArrayList<Journal>(owner.getJournal().values()), owner.isCorporation());
+			writeTransactions(xmldoc, node, new ArrayList<Transaction>(owner.getTransactions().values()), owner.isCorporation());
 			writeIndustryJobs(xmldoc, node, owner.getIndustryJobs(), owner.isCorporation());
 		}
 	}
@@ -254,6 +254,10 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			if (journal.getTaxReceiverID() != null) {
 				childNode.setAttributeNS(null, "taxreceiverid", String.valueOf(journal.getTaxReceiverID()));
 			}
+			//New
+			childNode.setAttributeNS(null, "owner1typeid", String.valueOf(journal.getOwner1TypeID()));
+			childNode.setAttributeNS(null, "owner2typeid", String.valueOf(journal.getOwner2TypeID()));
+			
 			//Extra
 			childNode.setAttributeNS(null, "accountkey", String.valueOf(journal.getAccountKey()));
 			node.appendChild(childNode);
@@ -266,26 +270,31 @@ public final class ProfileWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
-		for (ApiWalletTransaction apiTransaction : transactions) {
+		for (Transaction transaction : transactions) {
 			Element childNode = xmldoc.createElementNS(null, "wallettransaction");
-			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(apiTransaction.getTransactionDateTime().getTime()));
-			childNode.setAttributeNS(null, "transactionid", String.valueOf(apiTransaction.getTransactionID()));
-			childNode.setAttributeNS(null, "quantity", String.valueOf(apiTransaction.getQuantity()));
-			childNode.setAttributeNS(null, "typename", String.valueOf(apiTransaction.getTypeName()));
-			childNode.setAttributeNS(null, "typeid", String.valueOf(apiTransaction.getTypeID()));
-			childNode.setAttributeNS(null, "price", String.valueOf(apiTransaction.getPrice()));
-			childNode.setAttributeNS(null, "clientid", String.valueOf(apiTransaction.getClientID()));
-			childNode.setAttributeNS(null, "clientname", String.valueOf(apiTransaction.getClientName()));
-			if (apiTransaction.getCharacterID() != null) {
-				childNode.setAttributeNS(null, "characterid", String.valueOf(apiTransaction.getCharacterID()));
+			childNode.setAttributeNS(null, "transactiondatetime", String.valueOf(transaction.getTransactionDateTime().getTime()));
+			childNode.setAttributeNS(null, "transactionid", String.valueOf(transaction.getTransactionID()));
+			childNode.setAttributeNS(null, "quantity", String.valueOf(transaction.getQuantity()));
+			childNode.setAttributeNS(null, "typename", String.valueOf(transaction.getTypeName()));
+			childNode.setAttributeNS(null, "typeid", String.valueOf(transaction.getTypeID()));
+			childNode.setAttributeNS(null, "price", String.valueOf(transaction.getPrice()));
+			childNode.setAttributeNS(null, "clientid", String.valueOf(transaction.getClientID()));
+			childNode.setAttributeNS(null, "clientname", String.valueOf(transaction.getClientName()));
+			if (transaction.getCharacterID() != null) {
+				childNode.setAttributeNS(null, "characterid", String.valueOf(transaction.getCharacterID()));
 			}
-			if (apiTransaction.getCharacterName() != null) {
-				childNode.setAttributeNS(null, "charactername", String.valueOf(apiTransaction.getCharacterName()));
+			if (transaction.getCharacterName() != null) {
+				childNode.setAttributeNS(null, "charactername", String.valueOf(transaction.getCharacterName()));
 			}
-			childNode.setAttributeNS(null, "stationid", String.valueOf(apiTransaction.getStationID()));
-			childNode.setAttributeNS(null, "stationname", String.valueOf(apiTransaction.getStationName()));
-			childNode.setAttributeNS(null, "transactiontype", String.valueOf(apiTransaction.getTransactionType()));
-			childNode.setAttributeNS(null, "transactionfor", String.valueOf(apiTransaction.getTransactionFor()));
+			childNode.setAttributeNS(null, "stationid", String.valueOf(transaction.getStationID()));
+			childNode.setAttributeNS(null, "stationname", String.valueOf(transaction.getStationName()));
+			childNode.setAttributeNS(null, "transactiontype", String.valueOf(transaction.getTransactionType()));
+			childNode.setAttributeNS(null, "transactionfor", String.valueOf(transaction.getTransactionFor()));
+			//New
+			childNode.setAttributeNS(null, "journaltransactionid", String.valueOf(transaction.getJournalTransactionID()));
+			childNode.setAttributeNS(null, "clienttypeid", String.valueOf(transaction.getClientTypeID()));
+			//Extra
+			childNode.setAttributeNS(null, "accountkey", String.valueOf(transaction.getAccountKey()));
 			node.appendChild(childNode);
 		}
 	}

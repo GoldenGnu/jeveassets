@@ -35,7 +35,7 @@ public class FileLockSettings extends Settings {
 	
 
 	public FileLockSettings() {
-		super(false);
+		super();
 	}
 
 	@Override

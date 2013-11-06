@@ -37,6 +37,14 @@ public abstract class DialoguesSettings extends Bundle {
 	public DialoguesSettings(final Locale locale) {
 		super(locale);
 	}
+
+	// used in GeneralSettingsPanel
+	public abstract String general();
+	public abstract String searchForNewVersion(String programName);
+	public abstract String searchForNewVersionBeta();
+	public abstract String enterFilter();
+	public abstract String highlightSelectedRow();
+
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String showSellOrReprocessColours();
@@ -45,13 +53,6 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String includeBuyOrders();
 	public abstract String maximumPurchaseAge();
 	public abstract String days();
-
-	// used in GeneralSettingsPanel
-	public abstract String general();
-	public abstract String searchForNewVersion(String programName);
-	public abstract String searchForNewVersionBeta();
-	public abstract String enterFilter();
-	public abstract String highlightSelectedRow();
 
 	// used in OverviewToolSettingsPanel
 	public abstract String overview();
@@ -65,6 +66,16 @@ public abstract class DialoguesSettings extends Bundle {
 	public abstract String stockpile0_50();
 	public abstract String stockpile50_100();
 	public abstract String stockpile100();
+
+	public abstract String saveHistoryWarning(); //Transactions & Journal
+
+	// used in TransactionsToolSettingsPanel
+	public abstract String transactions();
+	public abstract String transactionsSaveHistory();
+
+	// used in TransactionsToolSettingsPanel
+	public abstract String journal();
+	public abstract String journalSaveHistory();
 
 	// used in PriceDataSettingsPanel
 	public abstract String changeSourceWarning();

@@ -83,6 +83,8 @@ public class Settings {
 	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
 	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_1 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_1";
 	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
+	private static final String FLAG_TRANSACTION_HISTORY = "FLAG_TRANSACTION_HISTORY";
+	private static final String FLAG_JOURNAL_HISTORY = "FLAG_JOURNAL_HISTORY";
 
 	private static Settings settings;
 
@@ -99,7 +101,7 @@ public class Settings {
 	//API
 	private Date conquerableStationsNextUpdate = Settings.getNow();;
 	//Mixed boolean flags
-	private Map<String, Boolean> flags = new HashMap<String, Boolean>();;
+	private final Map<String, Boolean> flags = new HashMap<String, Boolean>();;
 	private boolean settingsLoaded;
 	private boolean settingsImported;
 	//Price
@@ -114,11 +116,11 @@ public class Settings {
 	private boolean windowAutoSave = true;;
 	private boolean windowAlwaysOnTop = false;
 	//Assets
-	private Boolean highlightSelectedRows = null;
-	private Boolean reprocessColors = null;
+	private boolean highlightSelectedRows = true;
+	private boolean reprocessColors = false;
 	private int maximumPurchaseAge = 0;
 	//Stockpile
-	private Boolean stockpileHalfColors = null;
+	private boolean stockpileHalfColors = false;
 	//Overview
 	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
 	//Reprocess price
@@ -141,31 +143,27 @@ public class Settings {
 	private final Map<String, Tag> tags = new HashMap<String, Tag>();
 	private final Map<TagID, Tags> tagIds = new HashMap<TagID, Tags>();
 
-	private Settings() {
+	protected Settings() {
 		SplashUpdater.setProgress(30);
 
 		//Settings
-		flags.put(FLAG_FILTER_ON_ENTER, false);
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
+		flags.put(FLAG_FILTER_ON_ENTER, false); //Cached
+		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
 		flags.put(FLAG_AUTO_UPDATE, true);
 		flags.put(FLAG_UPDATE_DEV, false);
-		flags.put(FLAG_REPROCESS_COLORS, false);
+		flags.put(FLAG_REPROCESS_COLORS, false); //Cached
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
-		flags.put(FLAG_STOCKPILE_HALF_COLORS, false);
+		flags.put(FLAG_STOCKPILE_HALF_COLORS, false); //Cached
 		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
 		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
 		flags.put(FLAG_INCLUDE_CONTRACTS, false);
 		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
 		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
+		flags.put(FLAG_TRANSACTION_HISTORY, true);
+		flags.put(FLAG_JOURNAL_HISTORY, true);
+		cacheFlags();
 	}
-
-	/**
-	 *
-	 * @param load does nothing except change the method signature.
-	 */
-	protected Settings(final boolean load) { }
-
 
 	public static Settings get() {
 		load();
@@ -259,6 +257,13 @@ public class Settings {
 
 	public Map<String, Boolean> getFlags() {
 		return flags;
+	}
+
+	public final void cacheFlags() {
+		highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
+		filterOnEnter = flags.get(FLAG_FILTER_ON_ENTER);
+		reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
+		stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -434,9 +439,6 @@ public class Settings {
 		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 	}
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
-		if (highlightSelectedRows == null) {
-			highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
-		}
 		return highlightSelectedRows;
 	}
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
@@ -463,9 +465,6 @@ public class Settings {
 		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
-		if (reprocessColors == null) {
-			reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
-		}
 		return reprocessColors;
 	}
 	public void setReprocessColors(final boolean reprocessColors) {
@@ -479,11 +478,7 @@ public class Settings {
 		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
-		if (stockpileHalfColors == null) {
-			stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
-		}
 		return stockpileHalfColors;
-		//return flags.get(FLAG_STOCKPILE_HALF_COLORS);
 	}
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
 		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
@@ -519,6 +514,19 @@ public class Settings {
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
 		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
+	public boolean isTransactionHistory() {
+		return flags.get(FLAG_TRANSACTION_HISTORY);
+	}
+	public void setTransactionHistory(final boolean transactionHistory) {
+		flags.put(FLAG_TRANSACTION_HISTORY, transactionHistory);
+	}
+	public boolean isJournalHistory() {
+		return flags.get(FLAG_JOURNAL_HISTORY);
+	}
+	public void setJournalHistory(final boolean blueprintsTech2) {
+		flags.put(FLAG_JOURNAL_HISTORY, blueprintsTech2);
+	}
+	
 	public List<Stockpile> getStockpiles() {
 		return stockpiles;
 	}

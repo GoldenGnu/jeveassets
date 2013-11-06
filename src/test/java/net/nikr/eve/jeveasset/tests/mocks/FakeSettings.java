@@ -47,9 +47,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerOwner;
  */
 public abstract class FakeSettings extends Settings {
 
-	public FakeSettings() {
-		super(false);
-	}
+	public FakeSettings() { }
 
 	@Override
 	public String getApiProxy() {
@@ -450,4 +448,26 @@ public abstract class FakeSettings extends Settings {
 	public void setBlueprintBasePriceTech2(boolean includeBuyOrders) {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public void setJournalHistory(boolean blueprintsTech2) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isJournalHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setTransactionHistory(boolean transactionHistory) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isTransactionHistory() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	
 }

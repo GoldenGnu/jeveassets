@@ -635,6 +635,7 @@ public final class SettingsReader extends AbstractXmlReader {
 			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
 			settings.getFlags().put(key, enabled);
 		}
+		settings.cacheFlags();
 	}
 
 	private void parseUpdates(final Element element, final Settings settings) {

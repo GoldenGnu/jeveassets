@@ -32,12 +32,13 @@ import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
 public class Transaction extends ApiWalletTransaction implements LocationType, ItemType {
 
-	private Item item;
-	private Location location;
-	private Owner owner;
+	private final Item item;
+	private final Location location;
+	private final Owner owner;
+	private final int accountKey;
 	private String ownerCharacter;
 
-	public Transaction(final ApiWalletTransaction apiTransaction, final Item item, final Location location, final Owner owner) {		
+	public Transaction(final ApiWalletTransaction apiTransaction, final Item item, final Location location, final Owner owner, final int accountKey) {		
 		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
 		this.setTransactionID(apiTransaction.getTransactionID());
 		this.setQuantity(apiTransaction.getQuantity());
@@ -53,11 +54,13 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 		this.setTransactionType(apiTransaction.getTransactionType());
 		this.setTransactionFor(apiTransaction.getTransactionFor());
 		//FIXME - EVEAPI Does not support Transaction.JournalTransactionID
-		//this.setJournalTransactionID(apiWalletTransaction.getJournalTransactionID());
+		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
+		this.setClientTypeID(apiTransaction.getClientTypeID());
 		
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
+		this.accountKey = accountKey;
 		this.ownerCharacter = "";
 	}
 
@@ -65,6 +68,14 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 		Long thisID = this.getTransactionID();
 		Long thatID = o.getTransactionID();
 		return thisID.compareTo(thatID);
+	}
+
+	public int getAccountKey() {
+		return accountKey;
+	}
+
+	public int getAccountKeyFormated() {
+		return accountKey - 999;
 	}
 
 	public String getTransactionTypeFormatted() {

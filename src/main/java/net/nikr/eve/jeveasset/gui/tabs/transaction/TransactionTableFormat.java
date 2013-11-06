@@ -138,6 +138,16 @@ public enum TransactionTableFormat implements EnumTableColumn<Transaction> {
 		public Object getColumnValue(final Transaction from) {
 			return from.getTransactionForFormatted();
 		}
+	},
+	ACCOUNT_KEY(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsTransaction.get().columnAccountKey();
+		}
+		@Override
+		public Object getColumnValue(final Transaction from) {
+			return from.getAccountKeyFormated();
+		}
 	};
 	private Class<?> type;
 	private Comparator<?> comparator;

@@ -112,7 +112,7 @@ public class SettingsDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
-					.addComponent(jTreeScroller, 200, 200, 220)
+					.addComponent(jTreeScroller, 250, 250, 250)
 					.addComponent(jContent)
 				)
 				.addComponent(jSeparator, 5, 5, 5)
@@ -136,6 +136,12 @@ public class SettingsDialog extends JDialogCentered {
 
 		StockpileToolSettingsPanel stockpileToolSettingsPanel = new StockpileToolSettingsPanel(program, this);
 		add(stockpileToolSettingsPanel, toolNode);
+
+		TransactionsToolSettingsPanel transactionsToolSettingsPanel = new TransactionsToolSettingsPanel(program, this);
+		add(transactionsToolSettingsPanel, toolNode);
+
+		JournalToolSettingsPanel journalToolSettingsPanel = new JournalToolSettingsPanel(program, this);
+		add(journalToolSettingsPanel, toolNode);
 		
 		DefaultMutableTreeNode valuesNode = addGroup("Values", Images.EDIT_RENAME.getIcon());
 		userPriceSettingsPanel = new UserPriceSettingsPanel(program, this);

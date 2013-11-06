@@ -49,7 +49,7 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class ProfileData {
-	private ProfileManager profileManager;
+	private final ProfileManager profileManager;
 	
 	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
 	private final EventList<IndustryJob> industryJobsEventList = new BasicEventList<IndustryJob>();
@@ -120,7 +120,7 @@ public class ProfileData {
 					}
 				}
 				//Add Transaction to uniqueIds
-				for (Transaction transaction : owner.getTransactions()) {
+				for (Transaction transaction : owner.getTransactions().values()) {
 					Item item = transaction.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
@@ -223,13 +223,13 @@ public class ProfileData {
 				//Journal
 				if (!owner.getJournal().isEmpty() && !ownersJournal.contains(owner.getName())) {
 					//Journal
-					journal.addAll(owner.getJournal());
+					journal.addAll(owner.getJournal().values());
 					ownersJournal.add(owner.getName());
 				}
 				//Transactions
 				if (!owner.getTransactions().isEmpty() && !ownersTransactions.contains(owner.getName())) {
 					//Transactions
-					for (Transaction transaction : owner.getTransactions()) {
+					for (Transaction transaction : owner.getTransactions().values()) {
 						int index = transactions.indexOf(transaction);
 						if (index >= 0) { //Dublicate
 							if (owner.isCorporation()) {
