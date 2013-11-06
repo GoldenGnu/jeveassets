@@ -51,8 +51,8 @@ public class Owner implements Comparable<Owner> {
 	private Account parentAccount;
 	private List<AccountBalance> accountBalances;
 	private List<MarketOrder> marketOrders;
-	private List<Transaction> transactions;
-	private List<Journal> journal;
+	private Map<Long, Transaction> transactions;
+	private Map<Long, Journal> journal;
 	private List<IndustryJob> industryJobs;
 	private Map<Contract, List<ContractItem>> contracts;
 	private List<Asset> assets;
@@ -100,10 +100,10 @@ public class Owner implements Comparable<Owner> {
 		assets = new ArrayList<Asset>();
 		accountBalances = new  ArrayList<AccountBalance>();
 		marketOrders = new  ArrayList<MarketOrder>();
-		transactions = new ArrayList<Transaction>();
+		transactions = new HashMap<Long, Transaction>();
 		industryJobs = new  ArrayList<IndustryJob>();
 		contracts = new HashMap<Contract, List<ContractItem>>();
-		journal = new ArrayList<Journal>();
+		journal = new HashMap<Long, Journal>();
 	}
 
 	public void setAccountBalances(final List<AccountBalance> accountBalances) {
@@ -114,7 +114,7 @@ public class Owner implements Comparable<Owner> {
 		this.assets = assets;
 	}
 
-	public void setAssetLastUpdate(Date assetLastUpdate) {
+	public void setAssetLastUpdate(final Date assetLastUpdate) {
 		this.assetLastUpdate = assetLastUpdate;
 	}
 
@@ -126,11 +126,11 @@ public class Owner implements Comparable<Owner> {
 		this.balanceNextUpdate = balanceNextUpdate;
 	}
 
-	public void setContracts(Map<Contract, List<ContractItem>> contracts) {
+	public void setContracts(final Map<Contract, List<ContractItem>> contracts) {
 		this.contracts = contracts;
 	}
 
-	public void setContractsNextUpdate(Date contractsNextUpdate) {
+	public void setContractsNextUpdate(final Date contractsNextUpdate) {
 		this.contractsNextUpdate = contractsNextUpdate;
 	}
 
@@ -162,7 +162,7 @@ public class Owner implements Comparable<Owner> {
 		this.showOwner = showOwner;
 	}
 
-	public void setJournal(List<Journal> journal) {
+	public void setJournal(final Map<Long, Journal> journal) {
 		this.journal = journal;
 	}
 
@@ -170,7 +170,7 @@ public class Owner implements Comparable<Owner> {
 		this.journalNextUpdate = journalNextUpdate;
 	}
 
- 	public void setTransactions(final List<Transaction> transactions) {
+ 	public void setTransactions(final Map<Long, Transaction> transactions) {
 		this.transactions = transactions;
 	}
 
@@ -246,7 +246,7 @@ public class Owner implements Comparable<Owner> {
 		return parentAccount;
 	}
 
-	public List<Journal> getJournal() {
+	public Map<Long, Journal> getJournal() {
 		return journal;
 	}
 
@@ -254,7 +254,7 @@ public class Owner implements Comparable<Owner> {
 		return journalNextUpdate;
 	}
 
-	public List<Transaction> getTransactions() {
+	public Map<Long, Transaction> getTransactions() {
  		return transactions;
 	}
 

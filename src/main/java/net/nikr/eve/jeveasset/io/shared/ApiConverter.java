@@ -285,23 +285,33 @@ public final class ApiConverter {
 		return new Asset(item, location, owner, count, parents, flag, flagID, itemId, singleton, rawQuantity);
 	}
 
+	public static Map<Long, Journal> convertJournals(final List<ApiJournalEntry> apiJournals, final Owner owner, final int accountKey) {
+		Map<Long, Journal> journals = new HashMap<Long, Journal>();
+		for (ApiJournalEntry apiJournal : apiJournals) {
+			Journal journal = convertJournal(apiJournal, owner, accountKey);
+			journals.put(journal.getRefID(), journal);
+		}
+		return journals;
+	}
+
 	public static Journal convertJournal(final ApiJournalEntry apiJournal, final Owner owner, final int accountKey) {
-		Journal journal = new Journal(apiJournal, owner);
-		journal.setAccountKey(accountKey);
+		Journal journal = new Journal(apiJournal, owner, accountKey);
 		return journal;
 	}
 
-	public static List<Transaction> convertTransactions(final List<ApiWalletTransaction> apiTransactions, final Owner owner) {
-		List<Transaction> transactions = new ArrayList<Transaction>();
-		for (ApiWalletTransaction apiTransaction : apiTransactions) {
-			transactions.add(toTransaction(owner, apiTransaction));
+	public static Map<Long, Transaction> convertTransactions(final List<ApiWalletTransaction> apiJournals, final Owner owner, final int accountKey) {
+		Map<Long, Transaction> transactions = new HashMap<Long, Transaction>();
+		for (ApiWalletTransaction apiTransaction : apiJournals) {
+			Transaction transaction = convertTransaction(apiTransaction, owner, accountKey);
+			transactions.put(transaction.getTransactionID(), transaction);
 		}
 		return transactions;
 	}
 
-	private static Transaction toTransaction(final Owner owner, final ApiWalletTransaction apiTransaction) {
+	public static Transaction convertTransaction(final ApiWalletTransaction apiTransaction, final Owner owner, final int accountKey) {
 		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
 		Location location = ApiIdConverter.getLocation(apiTransaction.getStationID());
-		return new Transaction(apiTransaction, item, location, owner);
+		Transaction transaction = new Transaction(apiTransaction, item, location, owner, accountKey);
+		return transaction;
 	}
 }

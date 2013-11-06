@@ -26,53 +26,68 @@ import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
 import com.beimin.eveapi.shared.wallet.transactions.WalletTransactionsResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Account.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
-import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
+import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class TransactionsGetter extends AbstractApiGetter<WalletTransactionsResponse> {
+public class TransactionsGetter extends AbstractApiAccountKeyGetter<WalletTransactionsResponse, Transaction> {
+
+	private boolean saveHistory;
 
 	public TransactionsGetter() {
-		super("Transaction", true, false);
+		super("Transaction");
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts, final boolean saveHistory) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
+		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected WalletTransactionsResponse getResponse(final boolean bCorp) throws ApiException {
+	protected Map<Long, Transaction> get() {
+		if (saveHistory) {
+			return getOwner().getTransactions();
+		} else {
+			return new HashMap<Long, Transaction>();
+		}
+	}
+
+	@Override
+	protected void set(Map<Long, Transaction> values, Date nextUpdate) {
+		getOwner().setTransactions(values);
+		getOwner().setTransactionsNextUpdate(nextUpdate);
+	}
+
+	@Override
+	protected WalletTransactionsResponse getResponse(boolean bCorp, int accountKey, long fromID, int rowCount) throws ApiException {
 		if (bCorp) {
 			return com.beimin.eveapi.corporation
 					.wallet.transactions.WalletTransactionsParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()),0);
+					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
 			return com.beimin.eveapi.character
 					.wallet.transactions.WalletTransactionsParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()),0);
+					.getResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
+	}
+
+	@Override
+	protected Map<Long, Transaction> convertData(WalletTransactionsResponse response, int accountKey) {
+		List<ApiWalletTransaction> api = new ArrayList<ApiWalletTransaction>(response.getAll());
+		return ApiConverter.convertTransactions(api, getOwner(), accountKey);
 	}
 
 	@Override
 	protected Date getNextUpdate() {
 		return getOwner().getTransactionsNextUpdate();
-	}
-
-	@Override
-	protected void setNextUpdate(final Date nextUpdate) {
-		getOwner().setTransactionsNextUpdate(nextUpdate);
-	}
-
-	@Override
-	protected void setData(final WalletTransactionsResponse response) {
-		List<Transaction> transactions = ApiConverter.convertTransactions(new ArrayList<ApiWalletTransaction>(response.getAll()), getOwner());
-		getOwner().setTransactions(transactions);
 	}
 
 	@Override

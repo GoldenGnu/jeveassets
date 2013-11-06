@@ -29,10 +29,10 @@ import net.nikr.eve.jeveasset.data.Owner;
 public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEntry> {
 
 	private final String corp = "(Corporation)";
-	private Owner owner;
-	private int accountKey = 1000;
+	private final Owner owner;
+	private final int accountKey;
 
-	public Journal(ApiJournalEntry apiJournalEntry, Owner owner) {
+	public Journal(ApiJournalEntry apiJournalEntry, Owner owner, int accountKey) {
 		setAmount(apiJournalEntry.getAmount());
 		setArgID1(apiJournalEntry.getArgID1());
 		setArgName1(apiJournalEntry.getArgName1());
@@ -47,7 +47,10 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 		setRefTypeID(apiJournalEntry.getRefTypeID());
 		setTaxAmount(apiJournalEntry.getTaxAmount());
 		setTaxReceiverID(apiJournalEntry.getTaxReceiverID());
+		setOwner1TypeID(apiJournalEntry.getOwner1TypeID());
+		setOwner2TypeID(apiJournalEntry.getOwner2TypeID());
 		this.owner = owner;
+		this.accountKey = accountKey;
 	}
 
 	public int getAccountKey() {
@@ -69,10 +72,6 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 		} else {
 			return "!"+getRefTypeID();
 		}
-	}
-
-	public void setAccountKey(int accountKey) {
-		this.accountKey = accountKey;
 	}
 
 	private String capitalize(String s) {

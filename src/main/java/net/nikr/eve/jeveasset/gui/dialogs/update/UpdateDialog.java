@@ -581,7 +581,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			JournalGetter journalGetter = new JournalGetter();
-			journalGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			journalGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isJournalHistory());
 		}
 	}
 
@@ -594,7 +594,7 @@ public class UpdateDialog extends JDialogCentered {
 		@Override
 		public void update() {
 			TransactionsGetter transactionsGetter = new TransactionsGetter();
-			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			transactionsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts(), Settings.get().isTransactionHistory());
 		}
 	}
 
