@@ -40,8 +40,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +53,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -104,25 +108,25 @@ public class StockpileTab extends JMainTab {
 		EXPAND
 	}
 
-	private JSeparatorTable jTable;
-	private JLabel jVolumeNow;
-	private JLabel jVolumeNeeded;
-	private JLabel jValueNow;
-	private JLabel jValueNeeded;
+	private final JSeparatorTable jTable;
+	private final JLabel jVolumeNow;
+	private final JLabel jVolumeNeeded;
+	private final JLabel jValueNow;
+	private final JLabel jValueNeeded;
 
-	private StockpileDialog stockpileDialog;
-	private StockpileItemDialog stockpileItemDialog;
-	private StockpileShoppingListDialog stockpileShoppingListDialog;
-	private StockpileSelectionDialog stockpileSelectionDialog;
+	private final StockpileDialog stockpileDialog;
+	private final StockpileItemDialog stockpileItemDialog;
+	private final StockpileShoppingListDialog stockpileShoppingListDialog;
+	private final StockpileSelectionDialog stockpileSelectionDialog;
 
 	//Table
-	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
-	private DefaultEventTableModel<StockpileItem> tableModel;
-	private EventList<StockpileItem> eventList;
-	private FilterList<StockpileItem> filterList;
-	private SeparatorList<StockpileItem> separatorList;
-	private DefaultEventSelectionModel<StockpileItem> selectionModel;
-	private StockpileFilterControl filterControl;
+	private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
+	private final DefaultEventTableModel<StockpileItem> tableModel;
+	private final EventList<StockpileItem> eventList;
+	private final FilterList<StockpileItem> filterList;
+	private final SeparatorList<StockpileItem> separatorList;
+	private final DefaultEventSelectionModel<StockpileItem> selectionModel;
+	private final StockpileFilterControl filterControl;
 
 	//Data
 	Map<Long, String> ownersName;
@@ -580,6 +584,18 @@ public class StockpileTab extends JMainTab {
 		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
 		for (String module : modules) {
 			module = module.trim().toLowerCase(); //Format line
+			//Find x[Number] - used for drones and cargo
+			Pattern p = Pattern.compile("x\\d+$");
+			Matcher m = p.matcher(module);
+			long count = 0;
+			while (m.find()) {
+				String group = m.group().replace("x", "");
+				count = count + Long.valueOf(group);
+			}
+			if (count == 0) {
+				count = 1;
+			}
+			module = module.replaceAll("x\\d+$", "").trim();
 			if (module.isEmpty()) { //Skip empty lines
 				continue;
 			}
@@ -594,7 +610,7 @@ public class StockpileTab extends JMainTab {
 					}
 					//Update item count
 					StockpileItem stockpileItem = items.get(typeID);
-					stockpileItem.addCountMinimum(1);
+					stockpileItem.addCountMinimum(count);
 					break; //search done
 				}
 			}
@@ -739,7 +755,9 @@ public class StockpileTab extends JMainTab {
 		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				return (String) contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (Exception ex) {
+			} catch (UnsupportedFlavorException ex) {
+				return "";
+			} catch (IOException ex) {
 				return "";
 			}
 		}
@@ -946,8 +964,8 @@ public class StockpileTab extends JMainTab {
 
 	public class StockpileFilterControl extends FilterControl<StockpileItem> {
 
+		private final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 		private List<EnumTableColumn<StockpileItem>> columns = null;
-		private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat;
 
 		public StockpileFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> tableFormat, final EventList<StockpileItem> eventList, final FilterList<StockpileItem> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
