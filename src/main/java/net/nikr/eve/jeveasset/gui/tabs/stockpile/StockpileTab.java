@@ -40,8 +40,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +53,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -587,6 +591,18 @@ public class StockpileTab extends JMainTab {
 		Map<Integer, StockpileItem> items = new HashMap<Integer, StockpileItem>();
 		for (String module : modules) {
 			module = module.trim().toLowerCase(); //Format line
+			//Find x[Number] - used for drones and cargo
+			Pattern p = Pattern.compile("x\\d+$");
+			Matcher m = p.matcher(module);
+			long count = 0;
+			while (m.find()) {
+				String group = m.group().replace("x", "");
+				count = count + Long.valueOf(group);
+			}
+			if (count == 0) {
+				count = 1;
+			}
+			module = module.replaceAll("x\\d+$", "").trim();
 			if (module.isEmpty()) { //Skip empty lines
 				continue;
 			}
@@ -601,7 +617,7 @@ public class StockpileTab extends JMainTab {
 					}
 					//Update item count
 					StockpileItem stockpileItem = items.get(typeID);
-					stockpileItem.addCountMinimum(1);
+					stockpileItem.addCountMinimum(count);
 					break; //search done
 				}
 			}
@@ -749,7 +765,9 @@ public class StockpileTab extends JMainTab {
 		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				return (String) contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (Exception ex) {
+			} catch (UnsupportedFlavorException ex) {
+				return "";
+			} catch (IOException ex) {
 				return "";
 			}
 		}
