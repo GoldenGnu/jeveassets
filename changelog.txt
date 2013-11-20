@@ -16,6 +16,21 @@
                   #### #  # #  # #  # #### #### #### #### ####
 
 ________________________________________________________________________________
+_2.7.1__________________________________________________________________________
+
+Changed:
+-Save history for Transactions and Journal (Optional - on by default)
+-Support for EVE API HTTP errors (Invalid accounts)
+-Updated static data to Rubicon 1.0.93082
+
+Bug Fixes:
+-Java 6 could prevent jEveAssets from exiting
+-Copying from Materials/Loadouts/Overview tables now include all columns
+-Copying from tables added an extra newline at the end
+-Stockpile EFT Import could not import drones
+-Transaction and Journal now supports API walking (Thanks Yinmatook)
+
+________________________________________________________________________________
 _2.7.0__________________________________________________________________________
 
 New Features:
