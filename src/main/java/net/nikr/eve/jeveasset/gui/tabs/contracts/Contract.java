@@ -30,12 +30,12 @@ import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 public class Contract extends EveContract implements LocationType {
 
-	private String acceptor;
-	private String assignee;
-	private String issuerCorp;
-	private String issuer;
-	private Location endStation;
-	private Location startStation;
+	private final String acceptor;
+	private final String assignee;
+	private final String issuerCorp;
+	private final String issuer;
+	private final Location endStation;
+	private final Location startStation;
 
 	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, Location startStation, Location endStation) {
 		this.acceptor = acceptor;
@@ -117,6 +117,22 @@ public class Contract extends EveContract implements LocationType {
 
 	public boolean isCourier() {
 		return (getType() == ContractType.COURIER);
+	}
+
+	public String getStatusFormated() {
+		switch(super.getStatus()) {
+			case CANCELLED: return TabsContracts.get().statusCancelled();
+			case COMPLETED: return TabsContracts.get().statusCompleted();
+			case COMPLETEDBYCONTRACTOR: return TabsContracts.get().statusCompletedByContractor();
+			case COMPLETEDBYISSUER: return TabsContracts.get().statusCompletedByIssuer();
+			case DELETED: return TabsContracts.get().statusDeleted();
+			case FAILED: return TabsContracts.get().statusFailed();
+			case INPROGRESS: return TabsContracts.get().statusInProgress();
+			case OUTSTANDING: return TabsContracts.get().statusOutstanding();
+			case REJECTED: return TabsContracts.get().statusRejected();
+			case REVERSED: return TabsContracts.get().statusReversed();
+			default: return TabsContracts.get().statusUnknown();
+		}
 	}
 
 	@Override

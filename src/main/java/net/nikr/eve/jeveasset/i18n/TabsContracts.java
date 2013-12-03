@@ -57,6 +57,7 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String columnReward();
 	public abstract String columnSingleton();
 	public abstract String columnStartStation();
+	public abstract String columnStatus();
 	public abstract String columnTitle();
 	public abstract String columnType();
 	public abstract String columnTypeID();
@@ -70,6 +71,17 @@ public abstract class TabsContracts extends Bundle {
 	public abstract String notAccepted();
 	public abstract String packaged();
 	public abstract String publicContract();
+	public abstract String statusCancelled();
+	public abstract String statusCompleted();
+	public abstract String statusCompletedByContractor();
+	public abstract String statusCompletedByIssuer();
+	public abstract String statusDeleted();
+	public abstract String statusFailed();
+	public abstract String statusInProgress();
+	public abstract String statusOutstanding();
+	public abstract String statusRejected();
+	public abstract String statusReversed();
+	public abstract String statusUnknown();
 	public abstract String title();
 	public abstract String type();
 	public abstract String unknown();
