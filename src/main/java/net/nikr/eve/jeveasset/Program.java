@@ -134,7 +134,7 @@ public class Program implements ActionListener {
 	private Timer timer;
 	private Updatable updatable;
 
-	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
+	private final List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private final ProfileData profileData;

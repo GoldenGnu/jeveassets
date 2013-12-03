@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse, V> extends AbstractApiGetter<T> {
+public abstract class AbstractApiAccountKeyGetter<T extends ApiListResponse<?>, V> extends AbstractApiGetter<T> {
 
 	private static final int ROW_COUNT = 1000;
 
