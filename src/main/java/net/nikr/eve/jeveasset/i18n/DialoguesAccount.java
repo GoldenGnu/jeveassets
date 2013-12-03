@@ -82,6 +82,7 @@ public abstract class DialoguesAccount extends Bundle {
 	public abstract String uncheckSelected();
 	public abstract String showCorp();
 	public abstract String close();
+	public abstract String noOwners();
 
 
 	public abstract String deleteAccountQuestion();
