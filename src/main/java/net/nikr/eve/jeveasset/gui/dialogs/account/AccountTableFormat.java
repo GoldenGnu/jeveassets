@@ -39,10 +39,14 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 		@Override
 		public Object getColumnValue(final Owner from) {
-			return from.isShowOwner();
+			return from.isShowOwner() && !from.getName().equals(DialoguesAccount.get().noOwners());
 		}
 		@Override
 		public boolean isColumnEditable(final Object baseObject) {
+			if (baseObject instanceof Owner) {
+				Owner owner = (Owner) baseObject;
+				return !owner.getName().equals(DialoguesAccount.get().noOwners());
+			}
 			return true;
 		}
 		@Override

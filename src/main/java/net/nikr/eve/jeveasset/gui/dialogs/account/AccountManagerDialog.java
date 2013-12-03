@@ -64,17 +64,17 @@ public class AccountManagerDialog extends JDialogCentered {
 	}
 
 	//GUI
-	private AccountImportDialog accountImportDialog;
-	private JSeparatorTable jTable;
-	private JButton jAdd;
-	private JButton jExpand;
-	private JButton jCollapse;
-	private JDropDownButton jAssets;
-	private JButton jClose;
-	private EventList<Owner> eventList;
-	private DefaultEventTableModel<Owner> tableModel;
-	private SeparatorList<Owner> separatorList;
-	private DefaultEventSelectionModel<Owner> selectionModel;
+	private final AccountImportDialog accountImportDialog;
+	private final JSeparatorTable jTable;
+	private final JButton jAdd;
+	private final JButton jExpand;
+	private final JButton jCollapse;
+	private final JDropDownButton jAssets;
+	private final JButton jClose;
+	private final EventList<Owner> eventList;
+	private final DefaultEventTableModel<Owner> tableModel;
+	private final SeparatorList<Owner> separatorList;
+	private final DefaultEventSelectionModel<Owner> selectionModel;
 
 	private Map<Owner, Boolean> shownAssets;
 	private boolean forceUpdate = false;
@@ -90,7 +90,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		separatorList = new SeparatorList<Owner>(eventList, new SeparatorListComparator(), 1, 3);
 		EnumTableFormatAdaptor<AccountTableFormat, Owner> tableFormat = new EnumTableFormatAdaptor<AccountTableFormat, Owner>(AccountTableFormat.class);
 		tableModel = EventModels.createTableModel(separatorList, tableFormat);
-		jTable = new JSeparatorTable(program, tableModel, separatorList);
+		jTable = new JAccountTable(program, tableModel, separatorList);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(listener, jTable, separatorList));
 		jTable.setSeparatorEditor(new AccountSeparatorTableCell(listener, jTable, separatorList));
@@ -188,8 +188,12 @@ public class AccountManagerDialog extends JDialogCentered {
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
 		for (Account account : program.getAccounts()) {
-			for (Owner owner : account.getOwners()) {
-				eventList.add(owner);
+			if (account.getOwners().isEmpty()) {
+				eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
+			} else {
+				for (Owner owner : account.getOwners()) {
+					eventList.add(owner);
+				}
 			}
 		}
 		eventList.getReadWriteLock().writeLock().unlock();
@@ -212,13 +216,17 @@ public class AccountManagerDialog extends JDialogCentered {
 				Object o = tableModel.getElementAt(selectedRows[i]);
 				if (o instanceof Owner) {
 					Owner owner = (Owner) o;
-					owner.setShowOwner(check);
+					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
+						owner.setShowOwner(check);
+					}
 				}
 			}
 		} else { //Set all the check value
 			for (Account account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
-					owner.setShowOwner(check);
+					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
+						owner.setShowOwner(check);
+					}
 				}
 			}
 		}
