@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
 import com.beimin.eveapi.shared.assetlist.EveAsset;
+import com.beimin.eveapi.shared.contract.ContractStatus;
 import com.beimin.eveapi.shared.contract.EveContract;
 import com.beimin.eveapi.shared.contract.items.EveContractItem;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
@@ -210,8 +211,11 @@ public final class ApiConverter {
 			return list;
 		}
 		for (ContractItem contractItem : contractItems) {
-			Asset asset = toAssetContract(contractItem, owner);
-			list.add(asset);
+			if ((contractItem.getContract().getStatus() == ContractStatus.INPROGRESS
+					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)) {
+				Asset asset = toAssetContract(contractItem, owner);
+				list.add(asset);
+			}
 		}
 		return list;
 	}
