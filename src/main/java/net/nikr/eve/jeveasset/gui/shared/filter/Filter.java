@@ -78,6 +78,24 @@ public class Filter {
 		public String toString() {
 			return GuiShared.get().filterAll();
 		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final AllColumn<?> other = (AllColumn<?>) obj;
+			return this.name().equals(other.name());
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			return hash;
+		}
 	}
 
 	public enum CompareType {
@@ -183,7 +201,7 @@ public class Filter {
 			AFTER_COLUMN,
 		};
 
-		private Icon icon;
+		private final Icon icon;
 		private CompareType(final Icon icon) {
 			this.icon = icon;
 		}
@@ -320,16 +338,13 @@ public class Filter {
 		if (this.logic != other.logic) {
 			return false;
 		}
-		if (this.column != other.column) {
+		if (!this.column.equals(other.column)) {
 			return false;
 		}
 		if (this.compare != other.compare) {
 			return false;
 		}
-		if ((this.text == null) ? (other.text != null) : !this.text.equals(other.text)) {
-			return false;
-		}
-		return true;
+		return !((this.text == null) ? (other.text != null) : !this.text.equals(other.text));
 	}
 
 	@Override
