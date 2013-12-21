@@ -377,8 +377,8 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 
 	private TreeTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
@@ -413,8 +413,9 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 
 	//FIXME - - > TreeTableFormat: Move inner classes to containers
 	public static class HierarchyColumn implements Comparable<HierarchyColumn>{
-		private String export;
-		private String gui;
+		private final String export;
+		private final String gui;
+		//private final String compare;
 
 		public HierarchyColumn(String text, boolean parent) {
 			this.gui = text.trim();
@@ -432,7 +433,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 
 		@Override
 		public int compareTo(HierarchyColumn o) {
-			return this.getExport().compareTo(o.getExport());
+			return this.toString().compareTo(o.toString());
 		}
 
 		@Override

@@ -25,11 +25,13 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.ListSelection;
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.TreeList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 import ca.odell.glazedlists.swing.TreeNodeData;
 import ca.odell.glazedlists.swing.TreeTableCellEditor;
 import ca.odell.glazedlists.swing.TreeTableCellRenderer;
@@ -60,6 +62,7 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -116,6 +119,7 @@ public class TreeTab extends JMainTab {
 	private final EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private final DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private final AssetTreeExpansionModel expansionModel;
+	private final SortedList<TreeAsset> sortedList;
 	private final Set<TreeAsset> locationsExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private final Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
 	private final Set<TreeAsset> categoriesExport = new TreeSet<TreeAsset>(new AssetTreeComparator());
@@ -123,6 +127,7 @@ public class TreeTab extends JMainTab {
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
+	//FIXME - - - - > Sorted export not tested/working
 	public TreeTab(final Program program) {
 		super(program, TabsTree.get().title(), Images.TOOL_TREE.getIcon(), true);
 		layout.setAutoCreateGaps(true);
@@ -168,12 +173,14 @@ public class TreeTab extends JMainTab {
 		//Backend
 		eventList = new BasicEventList<TreeAsset>();
 		exportEventList = new BasicEventList<TreeAsset>();
+		//Sorting (per column)
+		sortedList = new SortedList<TreeAsset>(new BasicEventList<TreeAsset>());
 		//Filter
 		filterList = new FilterList<TreeAsset>(eventList);
 		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
-		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(), expansionModel);
+		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(sortedList), expansionModel);
 		//Table Model
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
@@ -182,6 +189,9 @@ public class TreeTab extends JMainTab {
 		jTable.disableColumnResizeCache(HierarchyColumn.class);
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
+		//Sorting
+		TableComparatorChooser<TreeAsset> tableComparatorChooser = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, tableFormat);
+		tableComparatorChooser.addSortActionListener(new ListenerSorter());
 		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
 		TreeTableCellEditor editor = new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6);
@@ -281,10 +291,11 @@ public class TreeTab extends JMainTab {
 			Location location = asset.getLocation();
 
 			//Region
+			String regionKey = location.getRegion();
 			TreeAsset regionAsset = locationCache.get(location.getRegion());
 			if (regionAsset == null) {
-				regionAsset = new TreeAsset(ApiIdConverter.getLocation(location.getRegionID()), location.getRegion(), location.getRegion(), Images.LOC_REGION.getIcon(), locationTree);
-				locationCache.put(location.getRegion(), regionAsset);
+				regionAsset = new TreeAsset(ApiIdConverter.getLocation(location.getRegionID()), location.getRegion(), regionKey, Images.LOC_REGION.getIcon(), locationTree);
+				locationCache.put(regionKey, regionAsset);
 			}
 			locationTree.add(regionAsset);
 			locationsExport.add(regionAsset);
@@ -317,12 +328,13 @@ public class TreeTab extends JMainTab {
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
 				for (Asset parentAsset : asset.getParents()) {
-					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
-					TreeAsset parentTreeAsset = locationCache.get(parentKey);
+					String cacheKey = parentAsset.getName() + " #" + parentAsset.getItemID();
+					TreeAsset parentTreeAsset = locationCache.get(cacheKey);
 					if (parentTreeAsset == null) {
 						parentTreeAsset = new TreeAsset(parentAsset, TreeType.LOCATION, locationTree, parentKey, !parentAsset.getAssets().isEmpty());
-						locationCache.put(parentKey, parentTreeAsset);
+						locationCache.put(cacheKey, parentTreeAsset);
 					}
+					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					locationTree.add(parentTreeAsset);
 					locationsExport.add(parentTreeAsset);
 				}
@@ -524,6 +536,28 @@ public class TreeTab extends JMainTab {
 		}
 	}
 
+	private class ListenerSorter implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					//Full list update
+					expansionModel.setState(ExpandeState.LOAD);
+					List<TreeAsset> treeAssets = new ArrayList<TreeAsset>(eventList);
+					eventList.getReadWriteLock().writeLock().lock();
+					try {
+						eventList.clear();
+						eventList.addAll(treeAssets);
+					} finally {
+						eventList.getReadWriteLock().writeLock().unlock();
+					}
+				}
+			});
+		}
+	}
+
 	public static class AssetTreeExpansionModel implements TreeList.ExpansionModel<TreeAsset> {
 
 		public enum ExpandeState {
@@ -567,10 +601,56 @@ public class TreeTab extends JMainTab {
 		public int compare(TreeAsset o1, TreeAsset o2) {
 			return o1.getCompare().compareTo(o2.getCompare());
 		}
-		
+	}
+
+	public static class AssetTreeSortedComparator implements Comparator<TreeAsset> {
+
+		private final SortedList<TreeAsset> sortedList;
+
+		public AssetTreeSortedComparator(SortedList<TreeAsset> sortedList) {
+			this.sortedList = sortedList;
+		}
+
+		@Override
+		public int compare(TreeAsset o1, TreeAsset o2) {
+			if (o1.getCompare().equals(o2.getCompare())) {
+				return 0; //Equal item
+			} else {
+				if (o1.getTree().size() == o2.getTree().size()) { //Compare equal depth
+					for (int i = 0; i < o1.getTree().size(); i++) {
+						TreeAsset tree1 = o1.getTree().get(i);
+						TreeAsset tree2 = o2.getTree().get(i);
+						int result = tree1.getCompare().compareTo(tree2.getCompare());
+						if (result != 0) {
+							return result; //Parent not equal
+						}
+					}
+					//Parents equal - compare items
+
+					//Use sorted comparator
+					Comparator<? super TreeAsset> comparator = sortedList.getComparator();
+					if (comparator != null) { 
+						int result = comparator.compare(o1, o2);
+						if (result != 0) { //Not equal
+							return result;
+						}
+					}
+					//Fallback (Sorted comparator equal or null)
+					return o1.getCompare().compareTo(o2.getCompare());
+				} else { //Should never happen (depth not equal)
+					return -1;
+				}
+			}
+		}
 	}
 
 	public static class AssetTreeFormat implements TreeList.Format<TreeAsset> {
+
+		private final AssetTreeSortedComparator comparator;
+
+		public AssetTreeFormat(SortedList<TreeAsset> sortedList) {
+			this.comparator = new AssetTreeSortedComparator(sortedList);
+		}
 
 		@Override
 		public void getPath(List<TreeAsset> path, TreeAsset element) {
@@ -585,7 +665,7 @@ public class TreeTab extends JMainTab {
 
 		@Override
 		public Comparator<? super TreeAsset> getComparator(int depth) {
-			return new AssetTreeComparator();
+			return comparator;
 		}
 	}
 

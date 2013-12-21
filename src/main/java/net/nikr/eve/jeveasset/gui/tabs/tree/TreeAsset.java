@@ -63,7 +63,7 @@ public class TreeAsset extends Asset {
 	private double volumnTotal = 0;
 	
 
-	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
+	public TreeAsset(final Asset asset, final TreeType treeType, final List<TreeAsset> tree, final String compare, final boolean parent) {
 		super(asset);
 		this.treeName = createSpace(tree.size()) + asset.getName();
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
@@ -354,9 +354,6 @@ public class TreeAsset extends Asset {
 			return false;
 		}
 		final TreeAsset other = (TreeAsset) obj;
-		if ((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare)) {
-			return false;
-		}
-		return true;
+		return !((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare));
 	}
 }
