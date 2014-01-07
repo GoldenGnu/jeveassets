@@ -48,6 +48,11 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	}
 
 	@Override
+	protected int getProgressEnd() {
+		return 80;
+	}
+
+	@Override
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
 			return com.beimin.eveapi.corporation

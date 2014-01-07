@@ -110,6 +110,10 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 				fails++;
 			}
 			max++;
+			if (!getAccount().isLocations()) {
+				fails++;
+			}
+			max++;
 			if (!getAccount().isAssetList()) { //Can not work without it...
 				fails = max;
 			}

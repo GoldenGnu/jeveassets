@@ -464,5 +464,13 @@ public abstract class FakeSettings extends Settings {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	
+	@Override
+	public void setEveNames(Map<Long, String> eveNames) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public Map<Long, String> getEveNames() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

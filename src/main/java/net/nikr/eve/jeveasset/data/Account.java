@@ -40,7 +40,9 @@ public class Account {
 		JOURNAL_CHAR(2097152L),
 		JOURNAL_CORP(1048576L),
 		CONTRACTS_CORP(8388608L),
-		CONTRACTS_CHAR(67108864L);
+		CONTRACTS_CHAR(67108864L),
+		LOCATIONS_CHAR(134217728L),
+		LOCATIONS_CORP(16777216L);
 
 		private final long accessMask;
 
@@ -224,6 +226,14 @@ public class Account {
 			return ((getAccessMask() & AccessMask.TRANSACTIONS_CORP.getAccessMask()) == AccessMask.TRANSACTIONS_CORP.getAccessMask());
 		} else {
 			return ((getAccessMask() & AccessMask.TRANSACTIONS_CHAR.getAccessMask()) == AccessMask.TRANSACTIONS_CHAR.getAccessMask());
+		}
+	}
+
+	public boolean isLocations() {
+		if (isCorporation()) {
+			return ((getAccessMask() & AccessMask.LOCATIONS_CORP.getAccessMask()) == AccessMask.LOCATIONS_CORP.getAccessMask());
+		} else {
+			return ((getAccessMask() & AccessMask.LOCATIONS_CHAR.getAccessMask()) == AccessMask.LOCATIONS_CHAR.getAccessMask());
 		}
 	}
 

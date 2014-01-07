@@ -436,9 +436,12 @@ public class ProfileData {
 			asset.setMarketPriceData(marketPriceData.get(asset.getItem().getTypeID()));
 			//User Item Names
 			if (Settings.get().getUserItemNames().containsKey(asset.getItemID())) {
-				asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue());
+				asset.setName(Settings.get().getUserItemNames().get(asset.getItemID()).getValue(), true, false);
+			} else if (Settings.get().getEveNames().containsKey(asset.getItemID())){
+				String eveName = Settings.get().getEveNames().get(asset.getItemID());
+				asset.setName(eveName + " (" + asset.getTypeName() + ")", false, true);
 			} else {
-				asset.setName(asset.getTypeName());
+				asset.setName(asset.getTypeName(), false, false);
 			}
 			//Contaioner
 			String sContainer = "";

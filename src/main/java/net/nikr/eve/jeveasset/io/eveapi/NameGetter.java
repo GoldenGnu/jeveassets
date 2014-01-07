@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
 
-public class NameGetter  extends AbstractApiGetter<CharacterLookupResponse> {
+public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 
 	private final int MAX_SIZE = 200;
 	private long[][] ownerIDs;

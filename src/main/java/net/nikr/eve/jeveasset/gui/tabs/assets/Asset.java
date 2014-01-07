@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
 
 	//Static values (set by constructor)
-	private List<Asset> assets = new ArrayList<Asset>();
+	private final List<Asset> assets = new ArrayList<Asset>();
 	private Item item;
 	private Location location;
 	private Owner owner;
@@ -72,6 +72,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	private Tags tags;
 	//Dynamic values cache
 	private boolean userNameSet = false;
+	private boolean eveNameSet = false;
 	private boolean userPriceSet = false;
 
 	/**
@@ -104,6 +105,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.volume = asset.volume;
 		this.userNameSet = asset.userNameSet;
 		this.userPriceSet = asset.userPriceSet;
+		this.eveNameSet = asset.eveNameSet;
 	}
 
 	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
@@ -323,6 +325,10 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return owner.isCorporation();
 	}
 
+	public boolean isEveName() {
+		return eveNameSet;
+	}
+
 	/**
 	 * Singleton: Unpackaged.
 	 *
@@ -359,9 +365,10 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.marketPriceData = marketPriceData;
 	}
 
-	public void setName(final String name) {
+	public void setName(final String name, final boolean userNameSet, final boolean eveNameSet) {
 		this.name = name;
-		userNameSet = !getName().equals(getTypeName());
+		this.userNameSet = userNameSet;
+		this.eveNameSet = eveNameSet;
 	}
 
 	public void setPriceData(final PriceData priceData) {
@@ -420,9 +427,6 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}
-		if (this.itemID != other.itemID) {
-			return false;
-		}
-		return true;
+		return this.itemID == other.itemID;
 	}
 }

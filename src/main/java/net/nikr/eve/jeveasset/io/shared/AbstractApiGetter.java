@@ -244,7 +244,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 				expired(updateName);
 			} else {
 				addError(updateName, ex.getMessage(), ex); //Real Error
-				LOG.info("	{} failed to update for: {} (ApiException: {})", new Object[]{taskName, updateName, ex.getMessage()});
+				LOG.error(taskName + " failed to update for: " + updateName + " (ApiException: " + ex.getMessage() + ")", ex);
 			}
 		}
 		return false;

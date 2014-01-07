@@ -140,6 +140,26 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 			return new YesNo(from.getParentAccount().isJournal());
 		}
 	},
+	CONTRACTS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatContracts();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isContracts());
+		}
+	},
+	LOCATIONS(YesNo.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return DialoguesAccount.get().tableFormatLocations();
+		}
+		@Override
+		public Object getColumnValue(final Owner from) {
+			return new YesNo(from.getParentAccount().isLocations());
+		}
+	},
 	EXPIRES(ExpirerDate.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -151,8 +171,8 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private AccountTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
@@ -184,7 +204,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 	//FIXME - - > Account Table Format: Move inner classes to containers
 	public class YesNo implements Comparable<YesNo> {
 
-		private boolean b;
+		private final boolean b;
 
 		public YesNo(final boolean b) {
 			this.b = b;
@@ -206,7 +226,7 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 	}
 
 	public class ExpirerDate implements Comparable<ExpirerDate> {
-		private Date expirer;
+		private final Date expirer;
 
 		public ExpirerDate(final Date expirer) {
 			this.expirer = expirer;

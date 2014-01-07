@@ -105,6 +105,9 @@ public class Settings {
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
+	//!! - Eve Item Name
+	//
+	private Map<Long, String> eveNames = new HashMap<Long, String>();
 	//!! - Assets				Saved by Program.updateEventLists() if needed
 	//Lock OK
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
@@ -307,6 +310,14 @@ public class Settings {
 
 	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
+	}
+
+	public Map<Long, String> getEveNames() {
+		return eveNames;
+	}
+
+	public void setEveNames(Map<Long, String> eveNames) {
+		this.eveNames = eveNames;
 	}
 
 	public Map<Integer, PriceData> getPriceData() {

@@ -205,6 +205,13 @@ public final class SettingsReader extends AbstractXmlReader {
 			parseUserItemNames(userItemNameElement, settings);
 		}
 
+		//Eve Item Names
+		NodeList eveNameNodes = element.getElementsByTagName("evenames");
+		if (eveNameNodes.getLength() == 1) {
+			Element eveNameElement = (Element) eveNameNodes.item(0);
+			parseEveNames(eveNameElement, settings);
+		}
+
 		//PriceDataSettings
 		NodeList priceDataSettingsNodes = element.getElementsByTagName("marketstat");
 		if (priceDataSettingsNodes.getLength() == 1) {
@@ -579,6 +586,16 @@ public final class SettingsReader extends AbstractXmlReader {
 			long itemId = AttributeGetters.getLong(currentNode, "itemid");
 			UserItem<Long, String> userItemName = new UserName(name, itemId, typeName);
 			settings.getUserItemNames().put(itemId, userItemName);
+		}
+	}
+
+	private void parseEveNames(final Element element, final Settings settings) {
+		NodeList eveNameNodes = element.getElementsByTagName("evename");
+		for (int i = 0; i < eveNameNodes.getLength(); i++) {
+			Element currentNode = (Element) eveNameNodes.item(i);
+			String name = AttributeGetters.getString(currentNode, "name");
+			long itemId = AttributeGetters.getLong(currentNode, "itemid");
+			settings.getEveNames().put(itemId, name);
 		}
 	}
 

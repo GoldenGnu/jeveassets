@@ -511,6 +511,8 @@ public class UpdateDialog extends JDialogCentered {
 		public void update() {
 			AssetsGetter assetsGetter = new AssetsGetter();
 			assetsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
+			LocationsGetter locationsGetter = new LocationsGetter();
+			locationsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
 		}
 	}
 

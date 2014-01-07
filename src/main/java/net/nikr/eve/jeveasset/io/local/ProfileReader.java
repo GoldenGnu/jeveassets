@@ -197,8 +197,12 @@ public final class ProfileReader extends AbstractXmlReader {
 		if (AttributeGetters.haveAttribute(node, "contractsnextupdate")) {
 			contractsNextUpdate = new Date(AttributeGetters.getLong(node, "contractsnextupdate"));
 		}
+		Date locationsNextUpdate = Settings.getNow();
+		if (AttributeGetters.haveAttribute(node, "locationsnextupdate")) {
+			locationsNextUpdate = new Date(AttributeGetters.getLong(node, "locationsnextupdate"));
+		}
 
-		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate);
+		return new Owner(account, name, ownerID, showAssets, assetsLastUpdate, assetsNextUpdate, balanceNextUpdate, marketOrdersNextUpdate, journalNextUpdate, transactionsNextUpdate, industryJobsNextUpdate, contractsNextUpdate, locationsNextUpdate);
 	}
 
 	private void parseContracts(final Element element, final Owner owner) {

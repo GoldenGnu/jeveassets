@@ -81,6 +81,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
+		writeEveNames(xmldoc, settings.getEveNames());
 		writeUpdates(xmldoc, settings);
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTableColumns(xmldoc, settings.getTableColumns());
@@ -319,6 +320,17 @@ public class SettingsWriter extends AbstractXmlWriter {
 			node.setAttributeNS(null, "name", userItemName.getValue());
 			node.setAttributeNS(null, "typename", userItemName.getName());
 			node.setAttributeNS(null, "itemid", String.valueOf(userItemName.getKey()));
+			parentNode.appendChild(node);
+		}
+	}
+
+	private void writeEveNames(final Document xmldoc, final Map<Long, String> eveNames) {
+		Element parentNode = xmldoc.createElementNS(null, "evenames");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<Long, String> entry : eveNames.entrySet()) {
+			Element node = xmldoc.createElementNS(null, "evename");
+			node.setAttributeNS(null, "name", entry.getValue());
+			node.setAttributeNS(null, "itemid", String.valueOf(entry.getKey()));
 			parentNode.appendChild(node);
 		}
 	}
