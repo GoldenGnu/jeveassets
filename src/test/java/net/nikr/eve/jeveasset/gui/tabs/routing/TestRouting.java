@@ -26,7 +26,11 @@ import java.util.List;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.FakeRoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.mocks.RoutingMockProgram;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgress;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.BruteForce;
@@ -38,6 +42,16 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
  * @author Candle
  */
 public class TestRouting {
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		Logger.getRootLogger().setLevel(Level.OFF);
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		Logger.getRootLogger().setLevel(Level.INFO);
+	}
 
 	@Test
 	public void empty() { }

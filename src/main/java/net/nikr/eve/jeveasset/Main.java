@@ -49,11 +49,11 @@ public final class Main {
 	/**
 	 * JEveAssets main launcher.
 	 */
-	private Program program;
+	private final Program program;
 	/**
 	 * Ensure only one instance is running...
 	 */
-	private SingleInstance instance;
+	private final SingleInstance instance;
 
 	/** Creates a new instance of Main. */
 	private Main() {
