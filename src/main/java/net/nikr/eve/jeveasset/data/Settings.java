@@ -207,10 +207,6 @@ public class Settings {
 		load();
 		return settings;
 	}
-
-	public static void setLockVerbose(boolean verbose) {
-		SettingsLock.setVerbose(verbose);
-	}
 	public static void lock() {
 		LOCK.lock();
 	}
@@ -779,7 +775,6 @@ public class Settings {
 
 	private static class SettingsLock {
 		private boolean locked = false;
-		private static boolean verbose = false;
 		private final SettingsQueue settingsQueue = new SettingsQueue();
 
 		public boolean ignoreSave() {
@@ -798,11 +793,6 @@ public class Settings {
 			settingsQueue.waitForEmptySaveQueue();
 		}
 
-		public synchronized static void setVerbose(boolean verbose) {
-			SettingsLock.verbose = verbose;
-			SettingsQueue.setVerbose(verbose);
-		}
-
 		public synchronized void lock() {
 			while(locked){
 				try {
@@ -812,28 +802,21 @@ public class Settings {
 				}
 			}
 			locked = true;
-			if (verbose) {
-				System.out.println("Settings Locked");
-			}
+			LOG.debug("Settings Locked");
 		}
 
 		public synchronized void unlock(){
 			locked = false;
-			if (verbose) {
-				System.out.println("Settings Unlocked");
-			}
+			LOG.debug("Settings Unlocked");
 			notify();
 		}
 	}
 
 	private static class SettingsQueue {
-		private static boolean verbose = false;
 		private short savesQueue = 0;
 
 		public synchronized boolean ignoreSave() {
-			if (verbose) {
-				System.out.println("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
-			}
+			LOG.debug("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
 			return savesQueue > 1;
 		}
 
@@ -855,10 +838,6 @@ public class Settings {
 					
 				}
 			}
-		}
-
-		public synchronized static void setVerbose(boolean verbose) {
-			SettingsQueue.verbose = verbose;
 		}
 	}
 }
