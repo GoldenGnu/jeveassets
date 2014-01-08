@@ -326,10 +326,8 @@ public class Program implements ActionListener {
 					@Override
 					public void run() {
 						long before = System.currentTimeMillis();
-
-						LOG.info(msg);
-
-						doSaveSettings();
+						
+						doSaveSettings(msg);
 
 						Settings.saveEnd();
 
@@ -341,8 +339,8 @@ public class Program implements ActionListener {
 		}
 	}
 
-	private void doSaveSettings() {
-		LOG.info("Saving Settings...");
+	private void doSaveSettings(final String msg) {
+		LOG.info("Saving Settings: " + msg);
 		Settings.lock(); //Lock for Table (Column/Width/Resize) and Window Settings
 		mainWindow.updateSettings();
 		for (JMainTab jMainTab : jMainTabs) {
@@ -352,20 +350,24 @@ public class Program implements ActionListener {
 		Settings.saveSettings();
 	}
 
-	private void doSaveProfile() {
-		LOG.info("Saving Profile...");
+	public void saveSettingsAndProfile() {
+		if (lazySave) {
+			doSaveSettings("API Update");
+		} else {
+			saveSettings("API Update");
+			Settings.waitForEmptySaveQueue();
+		}
 		profileManager.saveProfile();
 	}
 
-	public void saveSettingsAndProfile() {
-		doSaveSettings();
-		doSaveProfile();
-	}
-
 	public void exit() {
-		LOG.info("Exiting...");
-		saveSettingsAndProfile();
-		LOG.info("Exit!");
+		if (lazySave) {
+			doSaveSettings("Exit");
+		} else {
+			LOG.info("Waiting for save queue to finish...");
+			Settings.waitForEmptySaveQueue();
+		}
+		LOG.info("Running shutdown hook(s) and exiting...");
 		System.exit(0);
 	}
 

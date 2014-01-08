@@ -92,7 +92,7 @@ public class Settings {
 
 //External
 	//Price						Saved by PriceDataGetter.process() in pricedata.dat (on api update)
-	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>();; //TypeID : int
+	private Map<Integer, PriceData> priceDatas = new HashMap<Integer, PriceData>(); //TypeID : int
 //API Data
 	//Api id to owner name		Saved by TaskDialog.update() (on API update)
 	private final Map<Long, String> owners = new HashMap<Long, String>();
@@ -105,8 +105,8 @@ public class Settings {
 	//OK - Custom Item Name		Saved by JUserListPanel.edit()/delete() + SettingsDialog.save()
 	//Lock OK
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
-	//!! - Eve Item Name
-	//
+	//Eve Item Name				Saved by TaskDialog.update() (on API update)
+	//Lock ???
 	private Map<Long, String> eveNames = new HashMap<Long, String>();
 	//!! - Assets				Saved by Program.updateEventLists() if needed
 	//Lock OK
@@ -126,7 +126,7 @@ public class Settings {
 //Runtime flags					Is not saved to file
 	private boolean settingsLoaded;
 	private boolean settingsImported;
-//!! - Settings Dialog:			Saved by SettingsDialog.save()
+//Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
 	//Mixed boolean flags
 	private final Map<String, Boolean> flags = new HashMap<String, Boolean>();
@@ -136,11 +136,15 @@ public class Settings {
 	private Proxy proxy;
 	private String apiProxy;
 	//FIXME - - > Settings: Create windows settings
-	//!! Window					-!- Not saved on change - !-
+	//Window
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private Point windowLocation = new Point(0, 0);;
+	//							Saved by MainWindow.ListenerClass.componentResized() (on change)
 	private Dimension windowSize = new Dimension(800, 600);;
+	//							Saved by MainWindow.ListenerClass.componentMoved() (on change)
 	private boolean windowMaximized = false;
-	private boolean windowAutoSave = true;;
+	//							Saved by SettingsDialog.save()
+	private boolean windowAutoSave = true;
 	private boolean windowAlwaysOnTop = false;
 	//Assets
 	private int maximumPurchaseAge = 0;
@@ -216,6 +220,10 @@ public class Settings {
 
 	public static boolean ignoreSave() {
 		return LOCK.ignoreSave();
+	}
+
+	public static void waitForEmptySaveQueue() {
+		LOCK.waitForEmptySaveQueue();
 	}
 
 	public static void saveStart() {
@@ -772,25 +780,27 @@ public class Settings {
 	private static class SettingsLock {
 		private boolean locked = false;
 		private static boolean verbose = false;
-		private short savesQueue = 0;
+		private final SettingsQueue settingsQueue = new SettingsQueue();
 
-		public synchronized boolean ignoreSave() {
-			if (verbose) {
-				System.out.println("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
-			}
-			return savesQueue > 1;
+		public boolean ignoreSave() {
+			return settingsQueue.ignoreSave();
+		}
+		
+		public void saveStart() {
+			settingsQueue.saveStart();
 		}
 
-		public synchronized void saveStart() {
-			this.savesQueue++;
+		public void saveEnd() {
+			settingsQueue.saveEnd();
 		}
 
-		public synchronized void saveEnd() {
-			this.savesQueue--;
+		public void waitForEmptySaveQueue() {
+			settingsQueue.waitForEmptySaveQueue();
 		}
 
 		public synchronized static void setVerbose(boolean verbose) {
 			SettingsLock.verbose = verbose;
+			SettingsQueue.setVerbose(verbose);
 		}
 
 		public synchronized void lock() {
@@ -813,6 +823,42 @@ public class Settings {
 				System.out.println("Settings Unlocked");
 			}
 			notify();
+		}
+	}
+
+	private static class SettingsQueue {
+		private static boolean verbose = false;
+		private short savesQueue = 0;
+
+		public synchronized boolean ignoreSave() {
+			if (verbose) {
+				System.out.println("Save Queue: " + savesQueue + " ignore: " + (savesQueue > 1));
+			}
+			return savesQueue > 1;
+		}
+
+		public synchronized void saveStart() {
+			this.savesQueue++;
+			notifyAll();
+		}
+
+		public synchronized void saveEnd() {
+			this.savesQueue--;
+			notifyAll();
+		}
+
+		public synchronized void waitForEmptySaveQueue() {
+			while (savesQueue > 0) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					
+				}
+			}
+		}
+
+		public synchronized static void setVerbose(boolean verbose) {
+			SettingsQueue.verbose = verbose;
 		}
 	}
 }
