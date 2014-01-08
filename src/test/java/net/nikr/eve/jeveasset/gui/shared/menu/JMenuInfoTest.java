@@ -30,6 +30,8 @@ import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.MaterialTotal;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialSeparatorComparator;
 import net.nikr.eve.jeveasset.i18n.TabsMaterials;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.*;
 import static org.junit.Assert.assertEquals;
 
@@ -72,6 +74,7 @@ public class JMenuInfoTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		Logger.getRootLogger().setLevel(Level.OFF);
 		summaryAll = new Material(Material.MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), "", "");
 		summaryAll.updateValue(1, 400);
 		ALL.add(summaryAll);
@@ -135,6 +138,7 @@ public class JMenuInfoTest {
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
+		Logger.getRootLogger().setLevel(Level.INFO);
 	}
 
 	@Before
