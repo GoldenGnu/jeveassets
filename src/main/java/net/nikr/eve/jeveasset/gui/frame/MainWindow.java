@@ -43,19 +43,23 @@ public class MainWindow {
 	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
 	//GUI
-	private MainMenu mainMenu;
-	private JFrame jFrame;
-	private JTabbedPane jTabbedPane;
-	private StatusPanel statusPanel;
+	private final MainMenu mainMenu;
+	private final JFrame jFrame;
+	private final JTabbedPane jTabbedPane;
+	private final StatusPanel statusPanel;
+
+	private final Timer timer;
 
 	//Data
-	private Program program;
-	private List<JMainTab> tabs = new ArrayList<JMainTab>();
+	private final Program program;
+	private final List<JMainTab> tabs = new ArrayList<JMainTab>();
 
 	public MainWindow(final Program program) {
 		this.program = program;
 
 		ListenerClass listener = new ListenerClass();
+
+		timer = new Timer(1000, listener);
 
 		//Frame
 		jFrame = new JFrame();
@@ -68,6 +72,7 @@ public class MainWindow {
 		icons.add(Images.MISC_ASSETS_64.getImage());
 		jFrame.setIconImages(icons);
 		jFrame.addWindowListener(listener);
+		jFrame.addComponentListener(listener);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JPanel jPanel = new JPanel();
@@ -222,15 +227,22 @@ public class MainWindow {
 
 	public void updateSettings() {
 		if (Settings.get().isWindowAutoSave()) {
-			Settings.get().setWindowMaximized(jFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH);
-			if (jFrame.getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+			Settings.get().setWindowMaximized(isMaximized());
+			if (!isMaximized()) {
 				Settings.get().setWindowSize(jFrame.getSize());
 				Settings.get().setWindowLocation(jFrame.getLocation());
 			}
 		}
 	}
 
-	private class ListenerClass implements WindowListener, ChangeListener {
+	private boolean isMaximized() {
+		return ((jFrame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
+	}
+
+	private class ListenerClass implements WindowListener, ChangeListener, ComponentListener, ActionListener {
+		private short move = 0;
+		private short resize = 0;
+
 		@Override
 		public void windowOpened(final WindowEvent e) { }
 
@@ -257,6 +269,45 @@ public class MainWindow {
 		@Override
 		public void stateChanged(final ChangeEvent e) {
 			program.tabChanged();
+		}
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			if (Settings.get().isWindowAutoSave() && !isMaximized()) {
+				if (move > 1) { //Ignore the two first updates
+					program.saveSettings("Window Resized");
+				} else {
+					move++;
+				}
+			}
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			if (Settings.get().isWindowAutoSave()) {
+				if (resize > 1) { //Ignore the two first updates
+					timer.stop();
+					timer.start();
+				} else {
+					resize++;
+				}
+			}
+		}
+
+		@Override
+		public void componentShown(ComponentEvent e) { }
+
+		@Override
+		public void componentHidden(ComponentEvent e) { }
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			timer.stop();
+			if (isMaximized()) {
+				program.saveSettings("Window Maximized");
+			} else {
+				program.saveSettings("Window Moved");
+			}
 		}
 	}
 
