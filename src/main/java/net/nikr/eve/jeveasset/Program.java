@@ -326,13 +326,14 @@ public class Program implements ActionListener {
 					@Override
 					public void run() {
 						long before = System.currentTimeMillis();
-						
+
 						doSaveSettings(msg);
 
 						Settings.saveEnd();
 
 						long after = System.currentTimeMillis();
-						System.out.println("Settings saved in: " + (after - before) + "ms");
+
+						LOG.debug("Settings saved in: " + (after - before) + "ms");
 					}
 				}).start();
 			}
