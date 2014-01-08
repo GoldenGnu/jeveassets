@@ -160,6 +160,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		if (stockpilesNodes.getLength() == 1) {
 			Element stockpilesElement = (Element) stockpilesNodes.item(0);
 			parseStockpiles(stockpilesElement, settings);
+			Collections.sort(Settings.get().getStockpiles());
 		}
 
 		//Export Settings

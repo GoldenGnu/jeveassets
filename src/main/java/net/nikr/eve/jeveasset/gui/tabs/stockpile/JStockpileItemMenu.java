@@ -25,7 +25,6 @@ import ca.odell.glazedlists.SeparatorList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JMenu;
@@ -69,10 +68,8 @@ public class JStockpileItemMenu extends JMenu {
 			jSubMenu.add(jMenuItem);
 
 			jSubMenu.addSeparator();
-			List<Stockpile> stockpiles = Settings.get().getStockpiles();
-			Collections.sort(stockpiles);
 
-			for (Stockpile stockpile : stockpiles) {
+			for (Stockpile stockpile : Settings.get().getStockpiles()) {
 				jMenuItem = new JStockpileMenuItem(stockpile, Images.TOOL_STOCKPILE.getIcon(), items);
 				jMenuItem.setActionCommand(StockpileItemMenuAction.ADD_TO.name());
 				jMenuItem.addActionListener(listener);

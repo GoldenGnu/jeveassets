@@ -496,6 +496,7 @@ public class StockpileDialog extends JDialogCentered {
 			stockpile = getStockpile();
 			Settings.get().getStockpiles().add(stockpile);
 		}
+		Collections.sort(Settings.get().getStockpiles());
 		updated = true;
 		Settings.unlock(); //Unlock for Stockpile (Stockpile dialog)
 		program.saveSettings("Save Stockpile (Stockpile dialog)"); //Save Stockpile (Stockpile dialog)
