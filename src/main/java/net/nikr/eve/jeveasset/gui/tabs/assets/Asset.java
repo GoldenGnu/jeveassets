@@ -122,14 +122,19 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.rawQuantity = rawQuantity;
 		//The order matter!
 		//1st
-		this.bpo = (item.isBlueprint() && rawQuantity == -1);
+		//rawQuantity: -1 = BPO. Only BPOs can be packaged (singleton == false). Only packaged items can be stacked (count > 1)
+		this.bpo = (item.isBlueprint() && (rawQuantity == -1 || !singleton || count > 1));
+		//rawQuantity: -2 = BPC
 		this.bpc = (item.isBlueprint() && rawQuantity == -2);
 		//2nd
 		if (item.isBlueprint()) {
 			if (isBPO()) {
 				this.typeName = item.getTypeName() + " (BPO)";
-			} else {
+			} else if (isBPC()){
 				this.typeName = item.getTypeName() + " (BPC)";
+			} else {
+				this.bpc = true;
+				this.typeName = item.getTypeName() + " (BP)";
 			}
 		} else {
 			this.typeName = item.getTypeName();
@@ -317,7 +322,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public boolean isBPC() {
+	public final boolean isBPC() {
 		return bpc;
 	}
 

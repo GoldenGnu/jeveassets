@@ -74,9 +74,9 @@ public final class ApiConverter {
 
 	private static Asset toAssetIndustryJob(final IndustryJob industryJob, final Owner owner) {
 		int typeID = industryJob.getInstalledItemTypeID();
-		long locationID = toLocationId(industryJob);
+		long locationID = toLocationID(industryJob);
 		long count = industryJob.getInstalledItemQuantity();
-		long id = industryJob.getInstalledItemID();
+		long itemID = industryJob.getInstalledItemID();
 		int flagID = industryJob.getInstalledItemFlag();
 		boolean singleton  = false;
 		int rawQuantity;
@@ -86,7 +86,7 @@ public final class ApiConverter {
 			rawQuantity = -2; //-2 = BPC
 		}
 
-		return createAsset(null, owner, count, flagID, id, typeID, locationID, singleton, rawQuantity, null);
+		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, null);
 	}
 
 	public static List<Asset> convertAsset(final List<EveAsset<?>> eveAssets, final Owner owner) {
@@ -109,7 +109,7 @@ public final class ApiConverter {
 	private static Asset toAsset(final Owner owner, final EveAsset<?> eveAsset, final Asset parentAsset) {
 		long count = eveAsset.getQuantity();
 		int flagID = eveAsset.getFlag();
-		long itemId = eveAsset.getItemID();
+		long itemID = eveAsset.getItemID();
 		int typeID = eveAsset.getTypeID();
 		long locationID;
 		if (eveAsset.getLocationID() != null) { //Top level
@@ -122,7 +122,7 @@ public final class ApiConverter {
 		boolean singleton  = eveAsset.getSingleton();
 		int rawQuantity = eveAsset.getRawQuantity();
 
-		return createAsset(parentAsset, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, null);
+		return createAsset(parentAsset, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, null);
 
 	}
 	public static List<MarketOrder> convertMarketOrders(final List<ApiMarketOrder> apiMarketOrders, final Owner owner) {
@@ -157,7 +157,7 @@ public final class ApiConverter {
 		int typeID = marketOrder.getTypeID();
 		long locationID = marketOrder.getStationID();
 		long count = marketOrder.getVolRemaining();
-		long itemId = marketOrder.getOrderID();
+		long itemID = marketOrder.getOrderID();
 		String flag;
 		if (marketOrder.getBid() < 1) { //Sell
 			flag = General.get().marketOrderSellFlag();
@@ -165,10 +165,10 @@ public final class ApiConverter {
 			flag = General.get().marketOrderBuyFlag();
 		}
 		int flagID = 0;
-		boolean singleton  = true;
+		boolean singleton = false;
 		int rawQuantity = 0;
 
-		return createAsset(null, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static Map<Contract, List<ContractItem>> convertContracts(final Map<EveContract, List<EveContractItem>> eveContracts) {
@@ -229,10 +229,14 @@ public final class ApiConverter {
 		} else { //Buy
 			flag = General.get().contractExcluded();
 		}
-		long itemId = 0;
+		long itemID = contractItem.getRecordID();
 		int typeID = contractItem.getTypeID();
 		long locationID = contractItem.getContract().getStartStationID();
 		boolean singleton  = contractItem.isSingleton();
+		//XXX - Workaround invalid singleton values in ContractItems
+		if (contractItem.getItem().isBlueprint() && !singleton) {
+			singleton = true;
+		}
 		int rawQuantity;
 		if (contractItem.getRawQuantity() == null) {
 			rawQuantity = 0;
@@ -244,7 +248,7 @@ public final class ApiConverter {
 			rawQuantity = 0;
 		}
 
-		return createAsset(null, owner, count, flagID, itemId, typeID, locationID, singleton, rawQuantity, flag);
+		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
 	public static List<IndustryJob> convertIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final Owner owner) {
@@ -257,13 +261,13 @@ public final class ApiConverter {
 
 	private static IndustryJob toIndustryJob(final ApiIndustryJob apiIndustryJob, final Owner owner) {
 		Item item = ApiIdConverter.getItem(apiIndustryJob.getInstalledItemTypeID());
-		long locationID = toLocationId(apiIndustryJob);
+		long locationID = toLocationID(apiIndustryJob);
 		Location location = ApiIdConverter.getLocation(locationID);
 		Item output = ApiIdConverter.getItem(apiIndustryJob.getOutputTypeID());
 		return new IndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
 	}
 
-	private static long toLocationId(final ApiIndustryJob apiIndustryJob) {
+	private static long toLocationID(final ApiIndustryJob apiIndustryJob) {
 		boolean location = ApiIdConverter.isLocationOK(apiIndustryJob.getInstalledItemLocationID());
 		if (location) {
 			return apiIndustryJob.getInstalledItemLocationID();
@@ -277,7 +281,7 @@ public final class ApiConverter {
 	}
 
 	public static Asset createAsset(final Asset parentEveAsset,
-			Owner owner, long count, int flagID, long itemId,
+			Owner owner, long count, int flagID, long itemID,
 			int typeID, long locationID, boolean singleton, int rawQuantity, String flag) {
 		//Calculated:
 		Item item = ApiIdConverter.getItem(typeID);
@@ -286,7 +290,7 @@ public final class ApiConverter {
 		if (flag == null) {
 			flag = ApiIdConverter.flag(flagID, parentEveAsset);
 		}
-		return new Asset(item, location, owner, count, parents, flag, flagID, itemId, singleton, rawQuantity);
+		return new Asset(item, location, owner, count, parents, flag, flagID, itemID, singleton, rawQuantity);
 	}
 
 	public static Map<Long, Journal> convertJournals(final List<ApiJournalEntry> apiJournals, final Owner owner, final int accountKey) {
