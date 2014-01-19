@@ -344,6 +344,9 @@ public class UpdateDialog extends JDialogCentered {
 			long minutes = time / (60 * 1000) % 60;
 			long hours = time / (60 * 60 * 1000) % 24;
 			long days = time / (24 * 60 * 60 * 1000);
+			if (days == 0 && hours == 0 && minutes == 0) {
+				minutes = -1;
+			}
 			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
 			jLeft.setText(DialoguesUpdate.get().timeLeft(days, hours, minutes));
 			jCheckBox.setSelected(false);
