@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -52,7 +52,7 @@ public class AboutDialog extends JDialogCentered {
 
 		JEditorPane jProgram = createEditorPane(false,
 				"<div style=\"font-size: 30pt;\"><b>" + Program.PROGRAM_NAME + "</b></div>"
-				+ "Copyright &copy; 2009-2013 Contributors<br>"
+				+ "Copyright &copy; 2009-2014 Contributors<br>"
 				);
 
 		JEditorPane jInfo = createEditorPane(

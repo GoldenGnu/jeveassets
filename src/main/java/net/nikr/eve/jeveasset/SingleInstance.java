@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  * 
  * Original code from: http://ganeshtiwaridotcomdotnp.blogspot.dk/2012/01/java-single-instance-of-application.html
  *
