@@ -54,8 +54,11 @@ jEveAssets use EVE-Online API and toolkit
 
 Link:
   Main site: http://www.eveonline.com/
-  Toolkit: http://www.eveonline.com/community/toolkit.asp
+  Toolkit: http://community.eveonline.com/community/fansites/toolkit/
   API: http://api.eve-online.com/
+
+Toolkit License:
+  ©CCP hf. All rights reserved. Used with permission.
 
 ________________________________________________________________________________
 _EVE-CENTRAL____________________________________________________________________
@@ -243,7 +246,7 @@ License:
 ________________________________________________________________________________
 _COPYRIGHT______________________________________________________________________
 
-Copyright 2009-2013 Contributors (see above)
+Copyright 2009-2014 Contributors (see above)
 
 jEveAssets is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
