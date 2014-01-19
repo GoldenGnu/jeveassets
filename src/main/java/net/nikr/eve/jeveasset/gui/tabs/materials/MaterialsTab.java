@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Contributors (see credits.txt)
+ * Copyright 2009-2014 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
