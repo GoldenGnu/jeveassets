@@ -322,20 +322,8 @@ public class Program implements ActionListener {
 		if (!lazySave) {
 			if (!Settings.ignoreSave()) {
 				Settings.saveStart();
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						long before = System.currentTimeMillis();
-
-						doSaveSettings(msg);
-
-						Settings.saveEnd();
-
-						long after = System.currentTimeMillis();
-
-						LOG.debug("Settings saved in: " + (after - before) + "ms");
-					}
-				}).start();
+				Thread thread = new SaveSettings(msg, this);
+				thread.start();
 			}
 		}
 	}
@@ -361,21 +349,37 @@ public class Program implements ActionListener {
 		profileManager.saveProfile();
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be changed
+	 */
 	public void exit() {
+		saveExit();
+		LOG.info("Running shutdown hook(s) and exiting...");
+		System.exit(0);
+	}
+
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
+	public void saveExit() {
 		if (lazySave) {
 			doSaveSettings("Exit");
 		} else {
 			LOG.info("Waiting for save queue to finish...");
 			Settings.waitForEmptySaveQueue();
 		}
-		LOG.info("Running shutdown hook(s) and exiting...");
-		System.exit(0);
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
 	public void showAbout() {
 		aboutDialog.setVisible(true);
 	}
 
+	/**
+	 * Used by macOsxCode() - should not be renamed
+	 */
 	public void showSettings() {
 		settingsDialog.setVisible(true);
 	}
@@ -391,7 +395,7 @@ public class Program implements ActionListener {
 	private void macOsxCode() {
 		if (onMac()) {
 			try {
-				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveSettings", (Class[]) null));
+				OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("saveExit", (Class[]) null));
 				OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("showAbout", (Class[]) null));
 				OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("showSettings", (Class[]) null));
 			} catch (NoSuchMethodException ex) {
@@ -649,6 +653,54 @@ public class Program implements ActionListener {
 	//Ticker
 		if (ProgramAction.TIMER.name().equals(e.getActionCommand())) {
 			timerTicked();
+		}
+	}
+
+	private static class SaveSettings extends Thread {
+
+		private static int counter = 0;
+
+		private final String msg;
+		private final Program program;
+		private final int id;
+
+		public SaveSettings(String msg, Program program) {
+			super("Save Settings " + counter++ + ": " + msg);
+			this.msg = msg;
+			this.program = program;
+			this.id = counter;
+		}
+
+		@Override
+		public void run() {
+			long before = System.currentTimeMillis();
+
+			program.doSaveSettings(msg);
+
+			Settings.saveEnd();
+
+			long after = System.currentTimeMillis();
+
+			LOG.debug("Settings saved in: " + (after - before) + "ms");
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 67 * hash + this.id;
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final SaveSettings other = (SaveSettings) obj;
+			return this.id == other.id;
 		}
 	}
 }

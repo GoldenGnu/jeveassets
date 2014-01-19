@@ -227,4 +227,9 @@ public abstract class FakeProgram extends Program {
 	public void saveSettings(String msg) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void saveExit() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }
