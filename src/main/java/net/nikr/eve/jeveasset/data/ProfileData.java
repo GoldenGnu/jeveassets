@@ -309,6 +309,8 @@ public class ProfileData {
 					//Price
 					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC());
 					job.setDynamicPrice(price);
+					double outputPrice = ApiIdConverter.getPrice(job.getOutputTypeID(), false);
+					job.setOutputPrice(outputPrice);
 				}
 				//Update Contracts dynamic values
 				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {

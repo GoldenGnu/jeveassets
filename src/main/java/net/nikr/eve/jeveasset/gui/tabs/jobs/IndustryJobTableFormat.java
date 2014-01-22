@@ -138,10 +138,30 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		public Object getColumnValue(final IndustryJob from) {
 			return from.getInstalledItemProductivityLevel();
 		}
+	},
+	OUTPUT_COUNT(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputCount();
+		}
+		@Override
+		public Object getColumnValue(final IndustryJob from) {
+			return from.getOutputCount();
+		}
+	},
+	OUTPUT_VALUE(Double.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsJobs.get().columnOutputValue();
+		}
+		@Override
+		public Object getColumnValue(final IndustryJob from) {
+			return from.getOutputValue();
+		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 	private IndustryJobTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;

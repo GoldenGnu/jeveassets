@@ -201,6 +201,8 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private final Location location;
 	private final int portion;
 	private double price;
+	private double outputValue;
+	private int outputCount;
 
 	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
@@ -302,6 +304,17 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				state = IndustryJobState.STATE_DESTROYED;
 				break;
 		}
+		switch(activity) {
+			case ACTIVITY_MANUFACTURING:
+				outputCount = getRuns() * portion;
+				break;
+			case ACTIVITY_COPYING:
+				outputCount = getRuns();
+				break;
+			default:
+				outputCount = 1;
+				break;
+		}
 	}
 
 	@Override
@@ -324,6 +337,22 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	@Override
 	public Double getDynamicPrice() {
 		return price;
+	}
+
+	public double getOutputValue() {
+		return outputValue;
+	}
+
+	public void setOutputPrice(double outputPrice) {
+		if (getState() == IndustryJobState.STATE_ACTIVE && getActivity() == IndustryActivity.ACTIVITY_MANUFACTURING){
+			this.outputValue = outputPrice * (double) getRuns() * getPortion();
+		} else {
+			this.outputValue = 0;
+		}
+	}
+
+	public int getOutputCount() {
+		return outputCount;
 	}
 
 	@Override
@@ -378,9 +407,6 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}
-		if (this.getJobID() != other.getJobID()) {
-			return false;
-		}
-		return true;
+		return this.getJobID() == other.getJobID();
 	}
 }

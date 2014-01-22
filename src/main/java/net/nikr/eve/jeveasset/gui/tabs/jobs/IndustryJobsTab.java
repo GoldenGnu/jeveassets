@@ -65,6 +65,7 @@ public class IndustryJobsTab extends JMainTab {
 
 	private final JAutoColumnTable jTable;
 	private final JLabel jInventionSuccess;
+	private final JLabel jManufactureOutputValue;
 
 	//Table
 	private final EventList<IndustryJob> eventList;
@@ -133,6 +134,9 @@ public class IndustryJobsTab extends JMainTab {
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
 
+		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon());
+		this.addStatusbarLabel(jManufactureOutputValue);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -178,6 +182,7 @@ public class IndustryJobsTab extends JMainTab {
 		public void listChanged(final ListEvent<IndustryJob> listChanges) {
 			int count = 0;
 			double success = 0;
+			double outputValue = 0;
 			for (IndustryJob industryJob : filterList) {
 				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
 					count++;
@@ -185,16 +190,18 @@ public class IndustryJobsTab extends JMainTab {
 						success++;
 					}
 				}
+				outputValue += industryJob.getOutputValue();
 			}
 			if (count <= 0) {
 				jInventionSuccess.setText(Formater.percentFormat(0.0));
 			} else {
 				jInventionSuccess.setText(Formater.percentFormat(success / count));
 			}
+			jManufactureOutputValue.setText(Formater.iskFormat(outputValue));
 		}
 	}
 
-	private class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
+	public class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
 
 		private final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
