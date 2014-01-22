@@ -357,6 +357,26 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return false;
 		}
 	},
+	BP_ME(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpME();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getBpME();
+		}
+	},
+	BP_PE(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpPE();
+		}
+		@Override
+		public Object getColumnValue(final Asset from) {
+			return from.getBpPE();
+		}
+	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -378,8 +398,8 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 		}
 	};
 
-	private Class<?> type;
-	private Comparator<?> comparator;
+	private final Class<?> type;
+	private final Comparator<?> comparator;
 
 	private AssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;

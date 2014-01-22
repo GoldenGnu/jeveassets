@@ -23,11 +23,10 @@ package net.nikr.eve.jeveasset.gui.dialogs.account;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import java.util.Date;
 import net.nikr.eve.jeveasset.data.Owner;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -199,53 +198,5 @@ enum AccountTableFormat implements EnumTableColumn<Owner> {
 	}
 	@Override public Owner setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
-	}
-
-	//FIXME - - > Account Table Format: Move inner classes to containers
-	public class YesNo implements Comparable<YesNo> {
-
-		private final boolean b;
-
-		public YesNo(final boolean b) {
-			this.b = b;
-		}
-
-		@Override
-		public String toString() {
-			if (b) {
-				return DialoguesAccount.get().tableFormatYes();
-			} else {
-				return DialoguesAccount.get().tableFormatNo();
-			}
-		}
-
-		@Override
-		public int compareTo(final YesNo o) {
-			return this.toString().compareToIgnoreCase(o.toString());
-		}
-	}
-
-	public class ExpirerDate implements Comparable<ExpirerDate> {
-		private final Date expirer;
-
-		public ExpirerDate(final Date expirer) {
-			this.expirer = expirer;
-		}
-
-		@Override
-		public String toString() {
-			if (expirer == null) {
-				return "Never";
-			} else if (Settings.getNow().after(expirer)) {
-				return "Expired";
-			} else {
-				return Formater.dateOnly(expirer);
-			}
-		}
-
-		@Override
-		public int compareTo(final ExpirerDate o) {
-			return this.expirer.compareTo(o.expirer);
-		}
 	}
 }

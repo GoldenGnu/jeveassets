@@ -200,6 +200,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private final Owner owner;
 	private final Location location;
 	private final int portion;
+	private final String name;
 	private double price;
 	private double outputValue;
 	private int outputCount;
@@ -315,6 +316,11 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				outputCount = 1;
 				break;
 		}
+		if (getInstalledItemCopy() > 0) {
+			this.name = item.getTypeName() + " (BPC)";
+		} else {
+			this.name = item.getTypeName() + " (BPO)";
+		}
 	}
 
 	@Override
@@ -341,6 +347,10 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 
 	public double getOutputValue() {
 		return outputValue;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public void setOutputPrice(double outputPrice) {

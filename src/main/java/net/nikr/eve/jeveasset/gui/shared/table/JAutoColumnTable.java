@@ -52,6 +52,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.IntegerCellRen
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.TagsCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.ExpirerDate;
+import net.nikr.eve.jeveasset.gui.shared.table.containers.YesNo;
 
 
 public class JAutoColumnTable extends JTable {
@@ -91,6 +93,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
 		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 		this.setDefaultRenderer(Tags.class, new TagsCellRenderer());
+		this.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
+		this.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		autoResizeColumns();
 

@@ -356,6 +356,26 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return false;
 		}
 	},
+	BP_ME(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpME();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getBpME();
+		}
+	},
+	BP_PE(Integer.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsAssets.get().columnBpPE();
+		}
+		@Override
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getBpPE();
+		}
+	},
 	ITEM_ID(LongInt.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

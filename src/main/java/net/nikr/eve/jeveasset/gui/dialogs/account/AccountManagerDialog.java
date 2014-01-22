@@ -38,15 +38,12 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
-import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.ExpirerDate;
-import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.YesNo;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
-import net.nikr.eve.jeveasset.gui.shared.table.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 
@@ -94,8 +91,6 @@ public class AccountManagerDialog extends JDialogCentered {
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new AccountSeparatorTableCell(listener, jTable, separatorList));
 		jTable.setSeparatorEditor(new AccountSeparatorTableCell(listener, jTable, separatorList));
-		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
-		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 

@@ -323,6 +323,32 @@ public class ProfileData {
 				}
 			}
 		}
+		//Add blueprint ME/PE
+		Map<Long, IndustryJob> industryJobsMap = new HashMap<Long, IndustryJob>();
+		for (IndustryJob industryJob : industryJobs) {
+			IndustryJob old = industryJobsMap.put(industryJob.getInstalledItemID(), industryJob);
+			if (old != null && old.getInstallTime().after(industryJob.getInstallTime())) {
+				industryJobsMap.put(old.getInstalledItemID(), old);
+			}
+		}
+		for (Asset asset : assets) {
+			IndustryJob industryJob = industryJobsMap.get(asset.getItemID());
+			if (industryJob != null) {
+				int bpME = industryJob.getInstalledItemMaterialLevel();
+				int bpPE = industryJob.getInstalledItemProductivityLevel();
+				//If the last job was to research ME or PE; add it to the total
+				if (industryJob.isCompleted()) {
+					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY) {
+						bpME = bpME + industryJob.getRuns();
+					}
+					if (industryJob.getActivity() == IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY) {
+						bpPE = bpPE + industryJob.getRuns();
+					}
+				}
+				asset.setBpME(bpME);
+				asset.setBpPE(bpPE);
+			}
+		}
 		//Update Items dynamic values
 		for (Item item : StaticData.get().getItems().values()) {
 			item.setPriceReprocessed(ApiIdConverter.getPriceReprocessed(item));
