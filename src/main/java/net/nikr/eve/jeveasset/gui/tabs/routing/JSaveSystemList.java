@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.shared.table;
+package net.nikr.eve.jeveasset.gui.tabs.routing;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.TextFilterator;
@@ -28,40 +28,34 @@ import java.util.List;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JAutoCompleteDialog;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
+import net.nikr.eve.jeveasset.i18n.TabsRouting;
 
 
-public class ViewSave extends JAutoCompleteDialog<View> {
+public class JSaveSystemList extends JAutoCompleteDialog<String> {
 
-	public ViewSave(Program program) {
-		super(program, GuiShared.get().saveView(), Images.FILTER_SAVE.getImage(), GuiShared.get().saveViewMsg(), false, false);
+	public JSaveSystemList(Program program) {
+		super(program, TabsRouting.get().saveFilterTitle(), Images.TOOL_ROUTING.getImage(), TabsRouting.get().saveFilterMsg(), false, false);
 	}
 
 	@Override
-	protected Comparator<View> getComparator() {
+	protected Comparator<String> getComparator() {
 		return GlazedLists.comparableComparator();
 	}
 
 	@Override
-	protected TextFilterator<View> getFilterator() {
+	protected TextFilterator<String> getFilterator() {
 		return new Filterator();
 	}
 
 	@Override
-	protected View getValue(Object object) {
-		if (object instanceof View) {
-			return (View) object;
-		} else if (object instanceof String) {
-			return new View((String) object);
-		} else {
-			return null;
-		}
+	protected String getValue(Object object) {
+		return String.valueOf(object);
 	}
 
-	private static class Filterator implements TextFilterator<View> {
+	private static class Filterator implements TextFilterator<String> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final View element) {
-			baseList.add(element.getName());
+		public void getFilterStrings(final List<String> baseList, final String element) {
+			baseList.add(element);
 		}
 	}
 	

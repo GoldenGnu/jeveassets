@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagColor;
@@ -125,6 +126,13 @@ public final class SettingsReader extends AbstractXmlReader {
 	private void parseSettings(final Element element, final Settings settings) throws XmlException {
 		if (!element.getNodeName().equals("settings")) {
 			throw new XmlException("Wrong root element name.");
+		}
+
+		//Tags
+		NodeList routingNodes = element.getElementsByTagName("routingsettings");
+		if (routingNodes.getLength() == 1) {
+			Element routingElement = (Element) routingNodes.item(0);
+			parseRoutingSettings(routingElement, settings);
 		}
 
 		//Tags
@@ -481,6 +489,33 @@ public final class SettingsReader extends AbstractXmlReader {
 					stockpile.add(stockpileItem);
 				}
 			}
+		}
+	}
+
+	private void parseRoutingSettings(Element routingElement, Settings settings) {
+		double secMax = AttributeGetters.getDouble(routingElement, "securitymaximum");
+		double secMin = AttributeGetters.getDouble(routingElement, "securityminimum");
+		settings.getRoutingSettings().setSecMax(secMax);
+		settings.getRoutingSettings().setSecMin(secMin);
+		NodeList systemNodes = routingElement.getElementsByTagName("routingsystem");
+		for (int a = 0; a < systemNodes.getLength(); a++) {
+			Element systemNode = (Element) systemNodes.item(a);
+			Long systemID = AttributeGetters.getLong(systemNode, "id");
+			Location location = ApiIdConverter.getLocation(systemID);
+			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
+		}
+		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");
+		for (int a = 0; a < presetNodes.getLength(); a++) {
+			Element presetNode = (Element) presetNodes.item(a);
+			String name = AttributeGetters.getString(presetNode, "name");
+			Set<Long> systemIDs = new HashSet<Long>();
+			NodeList presetSystemNodes = presetNode.getElementsByTagName("presetsystem");
+			for (int b = 0; b < presetSystemNodes.getLength(); b++) {
+				Element systemNode = (Element) presetSystemNodes.item(b);
+				Long systemID = AttributeGetters.getLong(systemNode, "id");
+				systemIDs.add(systemID);
+			}
+			Settings.get().getRoutingSettings().getPresets().put(name, systemIDs);
 		}
 	}
 

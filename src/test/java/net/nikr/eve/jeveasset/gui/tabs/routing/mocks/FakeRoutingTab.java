@@ -45,7 +45,7 @@ public class FakeRoutingTab extends RoutingTab {
 	}
 
 	public void buildTestGraph() {
-		super.buildGraph();
+		super.buildGraph(true);
 	}
 
 	public List<Node> getNodesFromNames(final List<String> names) {

@@ -26,6 +26,7 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
@@ -93,6 +94,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTrackerData(xmldoc, settings.getTrackerData());
 		writeOwners(xmldoc, settings.getOwners());
 		writeTags(xmldoc, settings.getTags());
+		writeRoutingSettings(xmldoc, settings.getRoutingSettings());
 		try {
 			writeXmlFile(xmldoc, settings.getPathSettings(), true);
 		} catch (XmlException ex) {
@@ -101,6 +103,28 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 		return true;
+	}
+
+	private void writeRoutingSettings(Document xmldoc, RoutingSettings routingSettings) {
+		Element routingNode = xmldoc.createElementNS(null, "routingsettings");
+		xmldoc.getDocumentElement().appendChild(routingNode);
+		routingNode.setAttribute("securitymaximum", String.valueOf(routingSettings.getSecMax()));
+		routingNode.setAttribute("securityminimum", String.valueOf(routingSettings.getSecMin()));
+		for (long systemID : routingSettings.getAvoid().keySet()) {
+			Element systemNode = xmldoc.createElementNS(null, "routingsystem");
+			systemNode.setAttributeNS(null, "id", String.valueOf(systemID));
+			routingNode.appendChild(systemNode);
+		}
+		for (Map.Entry<String, Set<Long>> entry : routingSettings.getPresets().entrySet()) {
+			Element presetNode = xmldoc.createElementNS(null, "routingpreset");
+			presetNode.setAttributeNS(null, "name", entry.getKey());
+			routingNode.appendChild(presetNode);
+			for (Long systemID : entry.getValue()) {
+				Element systemNode = xmldoc.createElementNS(null, "presetsystem");
+				systemNode.setAttributeNS(null, "id", String.valueOf(systemID));
+				presetNode.appendChild(systemNode);
+			}
+		}
 	}
 
 	private void writeTags(Document xmldoc, Map<String, Tag> tags) {

@@ -115,6 +115,9 @@ public class Settings {
 	//							Could be more selective...
 	//Lock FAIL!!!
 	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
+//Routing						Saved by ???
+	//Lock ???
+	private final RoutingSettings routingSettings = new RoutingSettings();
 //Overview						Saved by JOverviewMenu.ListenerClass.NEW/DELETE/RENAME
 	//Lock OK
 	private final Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
@@ -345,6 +348,10 @@ public class Settings {
 
 	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
 		this.reprocessSettings = reprocessSettings;
+	}
+
+	public RoutingSettings getRoutingSettings() {
+		return routingSettings;
 	}
 
 	//@NotNull

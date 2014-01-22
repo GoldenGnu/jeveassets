@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
@@ -51,12 +52,16 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	private final JComboBox jItems;
 	private final JButton jOK;
 
-	private boolean strict = false;
+	private final boolean strict;
+	private final boolean allowOverwrite;
 
 	private T value;
 
-	public JAutoCompleteDialog(Program program, String title, Image image, String msg) {
+	public JAutoCompleteDialog(Program program, String title, Image image, String msg, boolean strict, boolean allowOverwrite) {
 		super(program, title, image);
+
+		this.strict = strict;
+		this.allowOverwrite = allowOverwrite;
 
 		ListenerClass listener = new ListenerClass();
 
@@ -101,14 +106,6 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	protected abstract TextFilterator<T> getFilterator();
 	protected abstract T getValue(Object object);
 
-	public boolean isStrict() {
-		return strict;
-	}
-
-	public void setStrict(boolean strict) {
-		this.strict = strict;
-	}
-
 	public final void updateData(List<T> list) {
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
@@ -119,21 +116,39 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 		}
 		//Can not set strict on empty EventList - so we do it now (if possible)
 		if (!eventList.isEmpty()) {
-			autoComplete.setStrict(isStrict());
+			autoComplete.setStrict(strict);
 		}
+	}
+
+	public EventList<T> getEventList() {
+		return eventList;
 	}
 
 	public T show() {
 		autoComplete.removeFirstItem();
-		if (!eventList.isEmpty()) {
+		if (jItems.getModel().getSize() > 0) {
 			jItems.setSelectedIndex(0);
 		}
-		if (!isStrict()) { //No effect when strict (except a beep)
+		if (!strict) { //No effect when strict (except a beep)
 			jItems.getModel().setSelectedItem("");
 		}
 		value = null;
 		setVisible(true);
 		return value;
+	}
+
+	protected boolean valied(T value) {
+		if (allowOverwrite) {
+			return true;
+		} else {
+			if (eventList.contains(value)) {
+				int nReturn = JOptionPane.showConfirmDialog(getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteView(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (nReturn == JOptionPane.NO_OPTION) { //Overwrite cancelled
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	@Override
@@ -152,7 +167,9 @@ public abstract class JAutoCompleteDialog<T> extends JDialogCentered {
 	@Override
 	protected void save() {
 		value = getValue(jItems.getSelectedItem());
-		setVisible(false);
+		if (valied(value)) {
+			setVisible(false);
+		}
 	}
 
 	private class ListenerClass implements ActionListener {

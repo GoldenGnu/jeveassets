@@ -42,11 +42,22 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String addSystemTitle();
 	public abstract String algorithm();
 	public abstract String allowed(Object arg0, Object arg1);
+	public abstract String avoid();
+	public abstract String avoidAdd();
+	public abstract String avoidClear();
+	public abstract String avoidLoad();
+	public abstract String avoidManage();
+	public abstract String avoidNone();
+	public abstract String avoidRemove();
+	public abstract String avoidSave();
 	public abstract String calculate();
 	public abstract String cancel();
 	public abstract String emptyResult();
 	public abstract String error();
 	public abstract String filteredAssets();
+	public abstract String filters();
+	public abstract String filtersTab();
+	public abstract String manageFiltersTitle();
 	public abstract String noSystems();
 	public abstract String noSystemsTitle();
 	public abstract String ok();
@@ -57,14 +68,18 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultTabFull();
 	public abstract String resultTabInfo();
 	public abstract String resultTabShort();
-	public abstract String resultText(String name, int jumps, int waypoints, int time);
+	public abstract String resultText(String name, int jumps, int waypoints, String security, String avoid, String time);
+	public abstract String routingTab();
 	public abstract String routingThread();
 	public abstract String routingTitle();
-	public abstract String total(Object arg0, Object arg1);
+	public abstract String saveFilterMsg();
+	public abstract String saveFilterTitle();
+	public abstract String security();
 	public abstract String source();
 	public abstract String startEmptyAuto(Object arg0);
 	public abstract String startEmpty();
 	public abstract String startSystem();
+	public abstract String total(Object arg0, Object arg1);
 	
 	
 	

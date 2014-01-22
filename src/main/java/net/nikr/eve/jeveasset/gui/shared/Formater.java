@@ -44,6 +44,7 @@ public final class Formater {
 	private static final DecimalFormat DECIMAL_FORMAT  = new DecimalFormat("#,##0.00");
 	private static final DecimalFormat FLOAT_FORMAT  = new DecimalFormat("#,##0.####");
 	private static final DecimalFormat COMPARE_FORMAT  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterMatcher.LOCALE));
+	private static final DecimalFormat SECURITY_FORMAT  = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
 	public static final NumberFormat MILLIONS_FORMAT  = new FixedFormat(1000000.0, "M");
 	public static final NumberFormat BILLIONS_FORMAT  = new FixedFormat(1000000000.0, "B");
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
@@ -107,6 +108,9 @@ public final class Formater {
 	}
 	public static String compareFormat(final Object obj) {
 		return COMPARE_FORMAT.format(obj);
+	}
+	public static String securityFormat(final Object obj) {
+		return SECURITY_FORMAT.format(obj);
 	}
 	/**
 	 * WARNING: This is not an good format for columns
