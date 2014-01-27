@@ -828,42 +828,7 @@ public class RoutingTab extends JMainTab  {
 			//algorithm name
 			String name = algorithm.getName();
 			//generation time
-			final StringBuilder timeString = new StringBuilder();
-			long time = algorithm.getLastTimeTaken();
-			System.out.println("time: " + time);
-			long days = time / (24 * 60 * 60 * 1000);
-			if (days > 0) {
-				timeString.append(days);
-				timeString.append("d");
-			}
-			long hours = time / (60 * 60 * 1000) % 24;
-			if (hours > 0) {
-				if (days > 0) {
-					timeString.append(" ");
-				}
-				timeString.append(hours);
-				timeString.append("h");
-			}
-			long minutes = time / (60 * 1000) % 60;
-			if (minutes > 0) {
-				if (hours > 0) {
-					timeString.append(" ");
-				}
-				timeString.append(minutes);
-				timeString.append("m");
-			}
-			long seconds = time / (1000) % 60;
-			if (seconds > 0) {
-				if (minutes > 0) {
-					timeString.append(" ");
-				}
-				timeString.append(seconds);
-				timeString.append("s");
-			}
-			if (days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
-				timeString.append(time);
-				timeString.append("ms");
-			}
+			String time = Formater.milliseconds(algorithm.getLastTimeTaken());
 			//jumps
 			int jumps = algorithm.getLastDistance();
 			//avoding systems
@@ -888,7 +853,7 @@ public class RoutingTab extends JMainTab  {
 					inputWaypoints.size(),
 					securityString.toString(),
 					avoidingString.toString(),
-					timeString.toString()));
+					time));
 		//Route Result
 			Node lastNode = null;
 			final StringBuilder fullRouteString = new StringBuilder();

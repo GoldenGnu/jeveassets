@@ -196,6 +196,44 @@ public final class Formater {
 		return columnDate;
 	}
 
+	public static String milliseconds(long time) {
+		final StringBuilder timeString = new StringBuilder();
+		long days = time / (24 * 60 * 60 * 1000);
+		if (days > 0) {
+			timeString.append(days);
+			timeString.append("d");
+		}
+		long hours = time / (60 * 60 * 1000) % 24;
+		if (hours > 0) {
+			if (days > 0) {
+				timeString.append(" ");
+			}
+			timeString.append(hours);
+			timeString.append("h");
+		}
+		long minutes = time / (60 * 1000) % 60;
+		if (minutes > 0) {
+			if (hours > 0) {
+				timeString.append(" ");
+			}
+			timeString.append(minutes);
+			timeString.append("m");
+		}
+		long seconds = time / (1000) % 60;
+		if (seconds > 0) {
+			if (minutes > 0) {
+				timeString.append(" ");
+			}
+			timeString.append(seconds);
+			timeString.append("s");
+		}
+		if (days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+			timeString.append(time);
+			timeString.append("ms");
+		}
+		return timeString.toString();
+	}
+
 	public static class AutoFormat extends NumberFormat {
 
 		private NumberFormat format;

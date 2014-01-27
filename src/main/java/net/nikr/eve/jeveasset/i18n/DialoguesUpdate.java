@@ -60,7 +60,6 @@ public abstract class DialoguesUpdate extends Bundle {
 	public abstract String balance();
 	public abstract String journal();
 	public abstract String transactions();
-	public abstract String timeLeft(long days, long hours, long minutes);
 
 	public abstract String clickToShow(String name);
 	public abstract String clickToHide(String name);

@@ -133,9 +133,9 @@ public final class ApiIdConverter {
 		}
 
 		//Price data
-		PriceData priceData = null;
-		if (Settings.get().getPriceData().containsKey(typeID) && !Settings.get().getPriceData().get(typeID).isEmpty()) { //Market Price
-			priceData = Settings.get().getPriceData().get(typeID);
+		PriceData priceData = Settings.get().getPriceData().get(typeID);
+		if (priceData != null && priceData.isEmpty()) {
+			priceData = null;
 		}
 		if (reprocessed) {
 			return Settings.get().getPriceDataSettings().getDefaultPriceReprocessed(priceData);
@@ -180,11 +180,7 @@ public final class ApiIdConverter {
 
 	public static boolean isLocationOK(final long locationID, final Asset parentAsset) {
 		Location location = getLocation(locationID, parentAsset);
-		if (location != null && !location.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return location != null && !location.isEmpty();
 	}
 
 	public static Item getItem(final int typeID) {
