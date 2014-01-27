@@ -25,11 +25,14 @@ import java.io.*;
 import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -39,6 +42,7 @@ import uk.me.candle.eve.pricing.Pricing;
 import uk.me.candle.eve.pricing.PricingFactory;
 import uk.me.candle.eve.pricing.PricingListener;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.PricingFetch;
 import uk.me.candle.eve.pricing.options.PricingNumber;
 import uk.me.candle.eve.pricing.options.PricingOptions;
 import uk.me.candle.eve.pricing.options.PricingType;
@@ -48,15 +52,16 @@ public class PriceDataGetter implements PricingListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PriceDataGetter.class);
 
-	private ProfileData profileData;
-	private UpdateTask updateTask;
-	private long nextUpdate = 0;
-	private long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
-	private Map<Integer, PriceData> priceDataList;
+	private final ProfileData profileData;
+	private final long priceCacheTimer = 1 * 60 * 60 * 1000L; // 1 hour (hours*min*sec*ms)
 	private final int attemptCount = 5;
+	private final Set<Integer> failed = new HashSet<Integer>();
+
+	private UpdateTask updateTask;
+	private Map<Integer, PriceData> priceDataList;
+	private Set<Integer> typeIDs;
 	private boolean update;
-	private boolean failed;
-	private Set<Integer> ids;
+	private long nextUpdate = 0;
 
 	public PriceDataGetter(final ProfileData profileData) {
 		this.profileData = profileData;
@@ -86,79 +91,109 @@ public class PriceDataGetter implements PricingListener {
 		return process(task, true);
 	}
 
-	private boolean process(final UpdateTask task, final boolean processUpdate) {
+	private boolean process(final UpdateTask task, final boolean processUpdates) {
+		Map<Integer, PriceData> priceData = process(task, processUpdates, new DefaultPricingOptions(), profileData.getPriceTypeIDs(), Settings.get().getPriceDataSettings().getSource());
+		if (priceData != null) {
+			Settings.get().setPriceData(priceData);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected Map<Integer, PriceData> process(final UpdateTask task, final boolean processUpdate, final PricingOptions pricingOptions, final Set<Integer> typeIDs, final PriceSource priceSource) {
 		this.updateTask = task;
 		this.update = processUpdate;
-
-		if (processUpdate) {
-			LOG.info("Price data update (" + Settings.get().getPriceDataSettings().getSource() + "):");
-		} else {
-			LOG.info("Price data loading (" + Settings.get().getPriceDataSettings().getSource() + "):");
-		}
+		this.typeIDs = new HashSet<Integer>(typeIDs);
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
-		failed = false;
 
-		//Get all price ids
-		ids = profileData.getPriceTypeIDs();
+		if (processUpdate) {
+			LOG.info("Price data update (" + priceSource + "):");
+		} else {
+			LOG.info("Price data loading (" + priceSource + "):");
+		}
 
-		PricingFactory.setPricingOptions(new DefaultPricingOptions());
-		Pricing pricing = PricingFactory.getPricing();
-		pricing.addPricingListener(this);
+		Pricing pricing = PricingFactory.getPricing(pricingOptions);
 		pricing.resetAllAttemptCounters();
+		pricing.addPricingListener(this);
+
 		//Reset cache timers...
 		if (processUpdate) {
-			for (int id : ids) {
+			for (int id : typeIDs) {
 				pricing.setPrice(id, -1.0);
 			}
 		}
 
 		//Load price data (Update as needed)
-		for (int id : ids) {
+		for (int id : typeIDs) {
 			createPriceData(id, pricing);
 		}
 		//Wait to complete
-		while (ids.size() > priceDataList.size() && !failed) {
-			try {
-				synchronized (this) {
-					wait();
+		failed.clear();
+		try {
+			while (typeIDs.size() > (priceDataList.size() + failed.size())) {
+				try {
+					synchronized (this) {
+						wait();
+						//System.out.println(priceDataList.size() + " of " + ids.size() + " done - " + fail.size() + " failed");
+					}
+				} catch (InterruptedException ex) {
+					LOG.info("Failed to update price");
+					pricing.cancelAll();
+					if (updateTask != null) {
+						updateTask.addError("Price data", "Cancelled");
+						updateTask.setTaskProgress(100, 100, 0, 100);
+						updateTask = null;
+					}
+					return null;
 				}
-			} catch (InterruptedException ex) {
-				LOG.info("Failed to update price");
-				pricing.cancelAll();
+			}
+			if (!failed.isEmpty()) {
+				StringBuilder errorString = new StringBuilder();
+				for (int typeID : failed) {
+					if (!errorString.toString().isEmpty()) {
+						errorString.append(", ");
+					}
+					errorString.append(typeID);
+				}
+				LOG.error("Failed to update price data for the following typeIDs: " + errorString.toString());
 				if (updateTask != null) {
-					updateTask.addError("Price data", "Cancelled");
-					updateTask.setTaskProgress(100, 100, 0, 100);
-					updateTask = null;
+					updateTask.addError("Price data", "Failed to update price data for " + failed.size() + " item types");
 				}
-
-				return false;
 			}
+			boolean updated = (!priceDataList.isEmpty() && (typeIDs.size() * 5 / 100) > failed.size()); //
+			if (updated) { //All Updated
+				if (processUpdate) {
+					LOG.info("	Price data updated");
+				} else {
+					LOG.info("	Price data loaded");
+				}
+				try {
+					pricing.writeCache();
+					LOG.info("	Price data cached saved");
+				} catch (IOException ex) {
+					LOG.error("Failed to write price data cache", ex);
+				}
+				//We only set the price data if everthing worked (AKA all updated)
+				return new HashMap<Integer, PriceData>(priceDataList);
+			} else { //None or some updated
+				LOG.info("	Failed to update price data");
+				if (updateTask != null) {
+					updateTask.addError("Price data", "Failed to update price data");
+					updateTask.setTaskProgress(100, 100, 0, 100);
+				}
+				return null;
+			}
+		} finally {
+			//Memory
+			this.updateTask = null;
+			this.typeIDs.clear();
+			this.typeIDs = null;
+			this.priceDataList.clear();
+			this.priceDataList = null;
+			this.failed.clear();
 		}
-		boolean updated = (!priceDataList.isEmpty() && !failed);
-		if (updated) { //All Updated
-			if (processUpdate) {
-				LOG.info("	Price data updated");
-			} else {
-				LOG.info("	Price data loaded");
-			}
-			//We only set the price data if everthing worked (AKA all updated)
-			Settings.get().setPriceData(priceDataList);
-			try {
-				pricing.writeCache();
-				LOG.info("	Price data cached saved");
-			} catch (IOException ex) {
-				LOG.error("Failed to write price data cache", ex);
-			}
-		} else { //None or some updated
-			LOG.info("	Failed to update price data");
-			if (updateTask != null) {
-				updateTask.addError("Price data", "Failed to update price data");
-				updateTask.setTaskProgress(100, 100, 0, 100);
-			}
-		}
-		updateTask = null; //Memory
-		return updated;
 	}
 
 	public Date getNextUpdate() {
@@ -175,50 +210,44 @@ public class PriceDataGetter implements PricingListener {
 
 	@Override
 	public void priceUpdateFailed(final int typeID, final Pricing pricing) {
-		pricing.cancelAll();
-		failed = true;
+		failed.add(typeID);
 		synchronized (this) {
 			notify();
 		}
 	}
 
 	private void createPriceData(final int typeID, final Pricing pricing) {
-		Double sellMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.SELL);
-		Double sellAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.SELL);
-		Double sellMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.SELL);
-		Double sellPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.SELL);
-		Double sellMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.SELL);
-		Double buyMax = pricing.getPrice(typeID, PricingType.HIGH, PricingNumber.BUY);
-		Double buyAvg = pricing.getPrice(typeID, PricingType.MEAN, PricingNumber.BUY);
-		Double buyMedian = pricing.getPrice(typeID, PricingType.MEDIAN, PricingNumber.BUY);
-		Double buyPercentile = pricing.getPrice(typeID, PricingType.PERCENTILE, PricingNumber.BUY);
-		Double buyMin = pricing.getPrice(typeID, PricingType.LOW, PricingNumber.BUY);
-
-		if (sellMax != null && sellAvg != null && sellMedian != null && sellPercentile != null && sellMin != null
-			&& buyMax != null && buyAvg != null && buyMedian != null && buyPercentile != null && buyMin != null
-				) {
-			PriceData priceData = new PriceData();
-			priceData.setSellMax(sellMax);
-			priceData.setSellAvg(sellAvg);
-			priceData.setSellMedian(sellMedian);
-			priceData.setSellPercentile(sellPercentile);
-			priceData.setSellMin(sellMin);
-			priceData.setBuyMax(buyMax);
-			priceData.setBuyAvg(buyAvg);
-			priceData.setBuyMedian(buyMedian);
-			priceData.setBuyPercentile(buyPercentile);
-			priceData.setBuyMin(buyMin);
+		PriceData priceData = new PriceData();
+		boolean ok = false;
+		for (PriceMode priceMode : PriceMode.values()) {
+			PricingType pricingType = priceMode.getPricingType();
+			PricingNumber pricingNumber = priceMode.getPricingNumber();
+			if (pricingNumber == null || pricingType == null) {
+				continue; //Ignore calculated prices - f.ex. PriceMode.PRICE_MIDPOINT
+			}
+			Double price = pricing.getPrice(typeID, pricingType, pricingNumber);
+			if (price != null) {
+				ok = true;
+			} else {
+				price = 0.0;
+			}
+			PriceMode.setDefaultPrice(priceData, priceMode, price);
+		}
+		if (ok) {
+			failed.remove(typeID);
 			priceDataList.put(typeID, priceData);
+		} else {
+			failed.add(typeID);
 		}
 		long nextUpdateTemp = pricing.getNextUpdateTime(typeID);
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate) {
 			nextUpdate = nextUpdateTemp;
 		}
 		if (updateTask != null) {
-			updateTask.setTaskProgress(ids.size(), priceDataList.size(), 0, 100);
+			updateTask.setTaskProgress(typeIDs.size(), priceDataList.size(), 0, 100);
 		}
-		if (!priceDataList.isEmpty() && !ids.isEmpty()) {
-			SplashUpdater.setSubProgress((int) (priceDataList.size() * 100.0 / ids.size()));
+		if (!priceDataList.isEmpty() && !typeIDs.isEmpty()) {
+			SplashUpdater.setSubProgress((int) (priceDataList.size() * 100.0 / typeIDs.size()));
 		}
 	}
 
@@ -230,8 +259,8 @@ public class PriceDataGetter implements PricingListener {
 		}
 
 		@Override
-		public String getPricingFetchImplementation() {
-			return Settings.get().getPriceDataSettings().getSource().getName();
+		public PricingFetch getPricingFetchImplementation() {
+			return Settings.get().getPriceDataSettings().getSource().getPricingFetch();
 		}
 
 		@Override

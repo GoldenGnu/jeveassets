@@ -26,11 +26,15 @@ import java.util.List;
 import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 import uk.me.candle.eve.pricing.options.LocationType;
+import uk.me.candle.eve.pricing.options.PricingFetch;
+import uk.me.candle.eve.pricing.options.PricingNumber;
+import uk.me.candle.eve.pricing.options.PricingType;
+
 
 public class PriceDataSettings {
 
 	public enum PriceSource {
-		EVE_CENTRAL("eve-central", true, false, true, false) {
+		EVE_CENTRAL(PricingFetch.EVE_CENTRAL, true, false, true, false) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
@@ -38,7 +42,7 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveCentral();
 			}
 		},
-		EVE_MARKETDATA("eve-marketdata", false, true, false, false) {
+		EVE_MARKETDATA(PricingFetch.EVE_MARKETDATA, false, true, false, false) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE};
 			}
@@ -46,7 +50,8 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketdata();
 			}
 		},
-		EVEMARKETEER("evemarketeer", false, true, true, true) {
+		/*
+		EVEMARKETEER(PricingFetch.EVEMARKETEER, false, true, true, true) {
 			@Override public PriceMode[] getPriceTypes() {
 				return PriceMode.values();
 			}
@@ -54,7 +59,8 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveMarketeer();
 			}
 		},
-		EVE_ADDICTS("eveaddicts", false, true, false, true) {
+		*/
+		EVE_ADDICTS(PricingFetch.EVE_ADDICTS, false, true, false, true) {
 			@Override public PriceMode[] getPriceTypes() {
 				return new PriceMode[]{PriceMode.PRICE_SELL_AVG, PriceMode.PRICE_SELL_PERCENTILE, PriceMode.PRICE_MIDPOINT, PriceMode.PRICE_BUY_PERCENTILE, PriceMode.PRICE_BUY_AVG};
 			}
@@ -62,18 +68,18 @@ public class PriceDataSettings {
 				return DataModelPriceDataSettings.get().sourceEveAddicts();
 			}
 		};
-		private String name;
+		private final PricingFetch pricingFetch;
 		private final boolean supportsMultipleRegions;
 		private final boolean supportsSingleRegion;
 		private final boolean supportsSystem;
 		private final boolean supportsStation;
 
-		private PriceSource(final String name,
+		private PriceSource(final PricingFetch pricingFetch,
 				final boolean supportsMultipleRegions,
 				final boolean supportsSingleRegion,
 				final boolean supportsSystem,
 				final boolean supportsStation) {
-			this.name = name;
+			this.pricingFetch = pricingFetch;
 			this.supportsMultipleRegions = supportsMultipleRegions;
 			this.supportsSingleRegion = supportsSingleRegion;
 			this.supportsSystem = supportsSystem;
@@ -87,8 +93,8 @@ public class PriceDataSettings {
 			return getI18N();
 		}
 
-		public String getName() {
-			return name;
+		public PricingFetch getPricingFetch() {
+			return pricingFetch;
 		}
 
 		public boolean supportsMultipleRegions() {
@@ -445,67 +451,67 @@ public class PriceDataSettings {
 	}
 
 	public enum PriceMode {
-		PRICE_SELL_MAX() {
+		PRICE_SELL_MAX(PricingType.HIGH, PricingNumber.SELL) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMax();
 			}
 		},
-		PRICE_SELL_AVG {
+		PRICE_SELL_AVG(PricingType.MEAN, PricingNumber.SELL) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellAvg();
 			}
 		},
-		PRICE_SELL_MEDIAN {
+		PRICE_SELL_MEDIAN(PricingType.MEDIAN, PricingNumber.SELL) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMedian();
 			}
 		},
-		PRICE_SELL_PERCENTILE {
+		PRICE_SELL_PERCENTILE(PricingType.PERCENTILE, PricingNumber.SELL) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellPercentile();
 			}
 		},
-		PRICE_SELL_MIN {
+		PRICE_SELL_MIN(PricingType.LOW, PricingNumber.SELL) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceSellMin();
 			}
 		},
-		PRICE_MIDPOINT {
+		PRICE_MIDPOINT(null, null) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceMidpoint();
 			}
 		},
-		PRICE_BUY_MAX {
+		PRICE_BUY_MAX(PricingType.HIGH, PricingNumber.BUY) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMax();
 			}
 		},
-		PRICE_BUY_PERCENTILE {
+		PRICE_BUY_PERCENTILE(PricingType.PERCENTILE, PricingNumber.BUY) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyPercentile();
 			}
 		},
-		PRICE_BUY_AVG {
+		PRICE_BUY_AVG(PricingType.MEAN, PricingNumber.BUY) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyAvg();
 			}
 		},
-		PRICE_BUY_MEDIAN {
+		PRICE_BUY_MEDIAN(PricingType.MEDIAN, PricingNumber.BUY) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMedian();
 			}
 		},
-		PRICE_BUY_MIN {
+		PRICE_BUY_MIN(PricingType.LOW, PricingNumber.BUY) {
 			@Override
 			String getI18N() {
 				return DataModelPriceDataSettings.get().priceBuyMin();
@@ -517,39 +523,93 @@ public class PriceDataSettings {
 			return getI18N();
 		}
 
+		PricingType pricingType;
+		PricingNumber pricingNumber;
+
+		private PriceMode(PricingType pricingType, PricingNumber pricingNumber) {
+			this.pricingType = pricingType;
+			this.pricingNumber = pricingNumber;
+		}
+
+		public PricingType getPricingType() {
+			return pricingType;
+		}
+
+		public PricingNumber getPricingNumber() {
+			return pricingNumber;
+		}
+
+		public static void setDefaultPrice(final PriceData priceData, final PriceMode priceMode, final double price) {
+			if (priceData != null) {
+				if (priceMode == PriceMode.PRICE_SELL_MAX) {
+					priceData.setSellMax(price);
+				}
+				if (priceMode == PriceMode.PRICE_SELL_AVG) {
+					priceData.setSellAvg(price);
+				}
+				if (priceMode == PriceMode.PRICE_SELL_MEDIAN) {
+					priceData.setSellMedian(price);
+				}
+				if (priceMode == PriceMode.PRICE_SELL_PERCENTILE) {
+					priceData.setSellPercentile(price);
+				}
+				if (priceMode == PriceMode.PRICE_SELL_MIN) {
+					priceData.setSellMin(price);
+				}
+				if (priceMode == PriceMode.PRICE_MIDPOINT) {
+					//Ignore calculated prices
+				}
+				if (priceMode == PriceMode.PRICE_BUY_MAX) {
+					priceData.setBuyMax(price);
+				}
+				if (priceMode == PriceMode.PRICE_BUY_AVG) {
+					priceData.setBuyAvg(price);
+				}
+				if (priceMode == PriceMode.PRICE_BUY_MEDIAN) {
+					priceData.setBuyMedian(price);
+				}
+				if (priceMode == PriceMode.PRICE_BUY_PERCENTILE) {
+					priceData.setBuyPercentile(price);
+				}
+				if (priceMode == PriceMode.PRICE_BUY_MIN) {
+					priceData.setBuyMin(price);
+				}
+			} 
+		}
+
 		private static double getDefaultPrice(final PriceData priceData, final PriceMode priceMode) {
 			if (priceData != null) {
-				if (priceMode.equals(PriceMode.PRICE_SELL_MAX)) {
+				if (priceMode == PriceMode.PRICE_SELL_MAX) {
 					return priceData.getSellMax();
 				}
-				if (priceMode.equals(PriceMode.PRICE_SELL_AVG)) {
+				if (priceMode == PriceMode.PRICE_SELL_AVG) {
 					return priceData.getSellAvg();
 				}
-				if (priceMode.equals(PriceMode.PRICE_SELL_MEDIAN)) {
+				if (priceMode == PriceMode.PRICE_SELL_MEDIAN) {
 					return priceData.getSellMedian();
 				}
-				if (priceMode.equals(PriceMode.PRICE_SELL_PERCENTILE)) {
+				if (priceMode == PriceMode.PRICE_SELL_PERCENTILE) {
 					return priceData.getSellPercentile();
 				}
-				if (priceMode.equals(PriceMode.PRICE_SELL_MIN)) {
+				if (priceMode == PriceMode.PRICE_SELL_MIN) {
 					return priceData.getSellMin();
 				}
-				if (priceMode.equals(PriceMode.PRICE_MIDPOINT)) {
+				if (priceMode == PriceMode.PRICE_MIDPOINT) {
 					return (priceData.getSellMin() + priceData.getBuyMax()) / 2;
 				}
-				if (priceMode.equals(PriceMode.PRICE_BUY_MAX)) {
+				if (priceMode == PriceMode.PRICE_BUY_MAX) {
 					return priceData.getBuyMax();
 				}
-				if (priceMode.equals(PriceMode.PRICE_BUY_AVG)) {
+				if (priceMode == PriceMode.PRICE_BUY_AVG) {
 					return priceData.getBuyAvg();
 				}
-				if (priceMode.equals(PriceMode.PRICE_BUY_MEDIAN)) {
+				if (priceMode == PriceMode.PRICE_BUY_MEDIAN) {
 					return priceData.getBuyMedian();
 				}
-				if (priceMode.equals(PriceMode.PRICE_BUY_PERCENTILE)) {
+				if (priceMode == PriceMode.PRICE_BUY_PERCENTILE) {
 					return priceData.getBuyPercentile();
 				}
-				if (priceMode.equals(PriceMode.PRICE_BUY_MIN)) {
+				if (priceMode == PriceMode.PRICE_BUY_MIN) {
 					return priceData.getBuyMin();
 				}
 			}

@@ -129,4 +129,18 @@ public class PriceData {
 				|| buyMin > 0
 				);
 	}
+
+	@Override
+	public String toString() {
+		return "sellMax : " + sellMax
+				+ " sellAvg: " + sellAvg
+				+ " sellMedian: " + sellMedian
+				+ " sellPercentile: " + sellPercentile
+				+ " sellMin: " + sellMin
+				+ " buyMax: " + buyMax
+				+ " buyAvg: " + buyAvg
+				+ " buyMedian: " + buyMedian
+				+ " buyPercentile: " + buyPercentile
+				+ " buyMin: " + buyMin;
+	}
 }
