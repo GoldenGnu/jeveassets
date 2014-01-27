@@ -489,8 +489,9 @@ public class ProfileData {
 			asset.setContainer(sContainer);
 
 			//Price data
-			if (asset.getItem().isMarketGroup() && Settings.get().getPriceData().containsKey(asset.getItem().getTypeID()) && !Settings.get().getPriceData().get(asset.getItem().getTypeID()).isEmpty()) { //Market Price
-				asset.setPriceData(Settings.get().getPriceData().get(asset.getItem().getTypeID()));
+			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
+			if (asset.getItem().isMarketGroup() && priceData != null && !priceData.isEmpty()) { //Market Price
+				asset.setPriceData(priceData);
 			} else { //No Price :(
 				asset.setPriceData(null);
 			}
