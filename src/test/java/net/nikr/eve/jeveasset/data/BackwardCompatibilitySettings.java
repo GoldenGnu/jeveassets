@@ -74,12 +74,12 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 		SET_WINDOW_SIZE,
 	}
 
-	private Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
+	private final Map<TrackerOwner, List<TrackerData>> trackerData = new HashMap<TrackerOwner, List<TrackerData>>();
 
-	private String settingsPath;
-	private String name;
-	private Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
-	private List<Function> tested = new ArrayList<Function>();
+	private final String settingsPath;
+	private final String name;
+	private final Map<Function, Boolean> ok = new EnumMap<Function, Boolean>(Function.class);
+	private final List<Function> tested = new ArrayList<Function>();
 
 	public BackwardCompatibilitySettings(final String name) throws URISyntaxException {
 		this.name = name;
@@ -151,9 +151,9 @@ public class BackwardCompatibilitySettings extends FakeSettings {
 	}
 
 	@Override
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		ok.put(Function.GET_FLAGS, true);
-		return new HashMap<String, Boolean>();
+		return new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
 	}
 
 	@Override

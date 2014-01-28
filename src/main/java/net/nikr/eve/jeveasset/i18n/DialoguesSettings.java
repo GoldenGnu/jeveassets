@@ -48,8 +48,9 @@ public abstract class DialoguesSettings extends Bundle {
 	// used in AssetsToolSettingsPanel
 	public abstract String assets();
 	public abstract String showSellOrReprocessColours();
-	public abstract String includeContracts();
+	public abstract String includeSellContracts();
 	public abstract String includeSellOrders();
+	public abstract String includeBuyContracts();
 	public abstract String includeBuyOrders();
 	public abstract String maximumPurchaseAge();
 	public abstract String days();

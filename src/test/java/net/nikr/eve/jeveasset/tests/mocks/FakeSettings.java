@@ -60,7 +60,7 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -370,16 +370,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isIncludeContracts() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setIncludeContracts(boolean includeBuyOrders) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public Map<Integer, PriceData> getPriceData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -476,6 +466,26 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public RoutingSettings getRoutingSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeSellContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeSellContracts() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setIncludeBuyContracts(boolean includeBuyOrders) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public boolean isIncludeBuyContracts() {
 		throw new UnsupportedOperationException("not implemented");
 	}
 }

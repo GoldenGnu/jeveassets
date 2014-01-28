@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.*;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.tag.Tag;
 import net.nikr.eve.jeveasset.data.tag.TagID;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -409,12 +410,12 @@ public class SettingsWriter extends AbstractXmlWriter {
 		xmldoc.getDocumentElement().appendChild(parentNode);
 	}
 
-	private void writeFlags(final Document xmldoc, final Map<String, Boolean> flags) {
+	private void writeFlags(final Document xmldoc, final Map<SettingFlag, Boolean> flags) {
 		Element parentNode = xmldoc.createElementNS(null, "flags");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<String, Boolean> entry : flags.entrySet()) {
+		for (Map.Entry<SettingFlag, Boolean> entry : flags.entrySet()) {
 			Element node = xmldoc.createElementNS(null, "flag");
-			node.setAttributeNS(null, "key", entry.getKey());
+			node.setAttributeNS(null, "key", entry.getKey().name());
 			node.setAttributeNS(null, "enabled", String.valueOf(entry.getValue()));
 			parentNode.appendChild(node);
 		}

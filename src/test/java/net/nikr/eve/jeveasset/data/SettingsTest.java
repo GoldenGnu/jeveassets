@@ -23,6 +23,7 @@ package net.nikr.eve.jeveasset.data;
 import java.net.URISyntaxException;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.BackwardCompatibilitySettings.Function;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -49,6 +50,14 @@ public class SettingsTest {
 	private void test(BackwardCompatibilitySettings settings){
 		List<Function> test = settings.test();
 		assertEquals(settings.getName()+" is missing tests for: "+test.toString(), 0, test.size());
+	}
+
+	@Test
+	public void flagsTest() throws URISyntaxException {
+		Settings settings = new Settings();
+		for (SettingFlag settingFlag : SettingFlag.values()) {
+			assertTrue(settingFlag.name() + " is missing from default settings", settings.getFlags().containsKey(settingFlag));
+		}
 	}
 
 	

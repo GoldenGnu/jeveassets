@@ -207,12 +207,17 @@ public final class ApiConverter {
 	
 	public static List<Asset> assetContracts(final List<ContractItem> contractItems, final Owner owner) {
 		List<Asset> list = new ArrayList<Asset>();
-		if (!Settings.get().isIncludeContracts()) {
-			return list;
-		}
 		for (ContractItem contractItem : contractItems) {
-			if ((contractItem.getContract().getStatus() == ContractStatus.INPROGRESS
-					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)) {
+			if (	//Not completed
+					(contractItem.getContract().getStatus() == ContractStatus.INPROGRESS 
+					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
+					//Owned
+					&& contractItem.getContract().getIssuerID() == owner.getOwnerID()
+					//Sell
+					&& ((contractItem.isIncluded() && Settings.get().isIncludeSellContracts())
+					//Buy
+					|| (!contractItem.isIncluded() && Settings.get().isIncludeBuyContracts()))
+					) { 
 				Asset asset = toAssetContract(contractItem, owner);
 				list.add(asset);
 			}

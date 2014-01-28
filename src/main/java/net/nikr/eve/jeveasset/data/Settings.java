@@ -70,22 +70,24 @@ public class Settings {
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
-	//FIXME - - > Settings: create flag enum
-	private static final String FLAG_IGNORE_SECURE_CONTAINERS = "FLAG_IGNORE_SECURE_CONTAINERS";
-	private static final String FLAG_FILTER_ON_ENTER = "FLAG_FILTER_ON_ENTER";
-	private static final String FLAG_REPROCESS_COLORS = "FLAG_REPROCESS_COLORS";
-	private static final String FLAG_INCLUDE_SELL_ORDERS = "FLAG_INCLUDE_SELL_ORDERS";
-	private static final String FLAG_INCLUDE_BUY_ORDERS = "FLAG_INCLUDE_BUY_ORDERS";
-	private static final String FLAG_INCLUDE_CONTRACTS = "FLAG_INCLUDE_CONTRACTS";
-	private static final String FLAG_HIGHLIGHT_SELECTED_ROWS = "FLAG_HIGHLIGHT_SELECTED_ROWS";
-	private static final String FLAG_AUTO_UPDATE = "FLAG_AUTO_UPDATE";
-	private static final String FLAG_UPDATE_DEV = "FLAG_UPDATE_DEV";
-	private static final String FLAG_STOCKPILE_FOCUS_TAB = "FLAG_STOCKPILE_FOCUS_TAB";
-	private static final String FLAG_STOCKPILE_HALF_COLORS = "FLAG_STOCKPILE_HALF_COLORS";
-	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_1 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_1";
-	private static final String FLAG_BLUEPRINT_BASE_PRICE_TECH_2 = "FLAG_BLUEPRINT_BASE_PRICE_TECH_2";
-	private static final String FLAG_TRANSACTION_HISTORY = "FLAG_TRANSACTION_HISTORY";
-	private static final String FLAG_JOURNAL_HISTORY = "FLAG_JOURNAL_HISTORY";
+	public static enum SettingFlag {
+		FLAG_IGNORE_SECURE_CONTAINERS,
+		FLAG_FILTER_ON_ENTER,
+		FLAG_REPROCESS_COLORS,
+		FLAG_INCLUDE_SELL_ORDERS,
+		FLAG_INCLUDE_BUY_ORDERS,
+		FLAG_INCLUDE_SELL_CONTRACTS,
+		FLAG_INCLUDE_BUY_CONTRACTS,
+		FLAG_HIGHLIGHT_SELECTED_ROWS,
+		FLAG_AUTO_UPDATE,
+		FLAG_UPDATE_DEV,
+		FLAG_STOCKPILE_FOCUS_TAB,
+		FLAG_STOCKPILE_HALF_COLORS,
+		FLAG_BLUEPRINT_BASE_PRICE_TECH_1,
+		FLAG_BLUEPRINT_BASE_PRICE_TECH_2,
+		FLAG_TRANSACTION_HISTORY,
+		FLAG_JOURNAL_HISTORY
+	}
 
 	private static Settings settings;
 	private static final SettingsLock LOCK = new SettingsLock();
@@ -132,7 +134,7 @@ public class Settings {
 //Settings Dialog:				Saved by SettingsDialog.save()
 	//Lock OK
 	//Mixed boolean flags
-	private final Map<String, Boolean> flags = new HashMap<String, Boolean>();
+	private final Map<SettingFlag, Boolean> flags = new EnumMap<SettingFlag, Boolean>(SettingFlag.class);
 	//Price
 	private PriceDataSettings priceDataSettings = new PriceDataSettings();
 	//Proxy (API)
@@ -188,21 +190,22 @@ public class Settings {
 		SplashUpdater.setProgress(30);
 
 		//Settings
-		flags.put(FLAG_FILTER_ON_ENTER, false); //Cached
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
-		flags.put(FLAG_AUTO_UPDATE, true);
-		flags.put(FLAG_UPDATE_DEV, false);
-		flags.put(FLAG_REPROCESS_COLORS, false); //Cached
-		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, true);
-		flags.put(FLAG_STOCKPILE_FOCUS_TAB, true);
-		flags.put(FLAG_STOCKPILE_HALF_COLORS, false); //Cached
-		flags.put(FLAG_INCLUDE_SELL_ORDERS, true);
-		flags.put(FLAG_INCLUDE_BUY_ORDERS, false);
-		flags.put(FLAG_INCLUDE_CONTRACTS, false);
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
-		flags.put(FLAG_TRANSACTION_HISTORY, true);
-		flags.put(FLAG_JOURNAL_HISTORY, true);
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); //Cached
+		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
+		flags.put(SettingFlag.FLAG_AUTO_UPDATE, true);
+		flags.put(SettingFlag.FLAG_UPDATE_DEV, false);
+		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, false); //Cached
+		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
+		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
+		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, false); //Cached
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, true);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, false);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, false);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, true);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, false);
+		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, true);
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, true);
 		cacheFlags();
 	}
 
@@ -331,15 +334,15 @@ public class Settings {
 		return priceDatas;
 	}
 
-	public Map<String, Boolean> getFlags() {
+	public Map<SettingFlag, Boolean> getFlags() {
 		return flags;
 	}
 
 	public final void cacheFlags() {
-		highlightSelectedRows = flags.get(FLAG_HIGHLIGHT_SELECTED_ROWS);
-		filterOnEnter = flags.get(FLAG_FILTER_ON_ENTER);
-		reprocessColors = flags.get(FLAG_REPROCESS_COLORS);
-		stockpileHalfColors = flags.get(FLAG_STOCKPILE_HALF_COLORS);
+		highlightSelectedRows = flags.get(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS);
+		filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
+		reprocessColors = flags.get(SettingFlag.FLAG_REPROCESS_COLORS);
+		stockpileHalfColors = flags.get(SettingFlag.FLAG_STOCKPILE_HALF_COLORS);
 	}
 
 	public ReprocessSettings getReprocessSettings() {
@@ -513,101 +516,107 @@ public class Settings {
 
 	public boolean isFilterOnEnter() {
 		if (filterOnEnter == null) {
-			filterOnEnter = flags.get(FLAG_FILTER_ON_ENTER);
+			filterOnEnter = flags.get(SettingFlag.FLAG_FILTER_ON_ENTER);
 		}
 		return filterOnEnter;
 	}
 	public void setFilterOnEnter(final boolean filterOnEnter) {
-		flags.put(FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
+		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, filterOnEnter); //Save & Load
 		this.filterOnEnter = filterOnEnter;
 	}
 	public boolean isHighlightSelectedRows() { //High volume call - Map.get is too slow, use cache
 		return highlightSelectedRows;
 	}
 	public void setHighlightSelectedRows(final boolean highlightSelectedRows) {
-		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
+		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
 		this.highlightSelectedRows = highlightSelectedRows;
 	}
 
 	public boolean isAutoUpdate() {
-		return flags.get(FLAG_AUTO_UPDATE);
+		return flags.get(SettingFlag.FLAG_AUTO_UPDATE);
 	}
 	public void setAutoUpdate(final boolean updateStable) {
-		flags.put(FLAG_AUTO_UPDATE, updateStable);
+		flags.put(SettingFlag.FLAG_AUTO_UPDATE, updateStable);
 	}
 	public boolean isUpdateDev() {
-		return flags.get(FLAG_UPDATE_DEV);
+		return flags.get(SettingFlag.FLAG_UPDATE_DEV);
 	}
 	public void setUpdateDev(final boolean updateDev) {
-		flags.put(FLAG_UPDATE_DEV, updateDev);
+		flags.put(SettingFlag.FLAG_UPDATE_DEV, updateDev);
 	}
 	public boolean isIgnoreSecureContainers() {
-		return flags.get(FLAG_IGNORE_SECURE_CONTAINERS);
+		return flags.get(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS);
 	}
 	public void setIgnoreSecureContainers(final boolean ignoreSecureContainers) {
-		flags.put(FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
+		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, ignoreSecureContainers);
 	}
 	public boolean isReprocessColors() { //High volume call - Map.get is too slow, use cache
 		return reprocessColors;
 	}
 	public void setReprocessColors(final boolean reprocessColors) {
-		flags.put(FLAG_REPROCESS_COLORS, reprocessColors);
+		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, reprocessColors);
 		this.reprocessColors = reprocessColors;
 	}
 	public boolean isStockpileFocusTab() {
-		return flags.get(FLAG_STOCKPILE_FOCUS_TAB);
+		return flags.get(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB);
 	}
 	public void setStockpileFocusTab(final boolean stockpileFocusOnAdd) {
-		flags.put(FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
+		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, stockpileFocusOnAdd);
 	}
 	public boolean isStockpileHalfColors() {
 		return stockpileHalfColors;
 	}
 	public void setStockpileHalfColors(final boolean stockpileHalfColors) {
-		flags.put(FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
+		flags.put(SettingFlag.FLAG_STOCKPILE_HALF_COLORS, stockpileHalfColors);
 		this.stockpileHalfColors = stockpileHalfColors;
 	}
 	public boolean isIncludeSellOrders() {
-		return flags.get(FLAG_INCLUDE_SELL_ORDERS);
+		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_ORDERS);
 	}
 	public void setIncludeSellOrders(final boolean includeSellOrders) {
-		flags.put(FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_ORDERS, includeSellOrders);
 	}
 	public boolean isIncludeBuyOrders() {
-		return flags.get(FLAG_INCLUDE_BUY_ORDERS);
+		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_ORDERS);
 	}
 	public void setIncludeBuyOrders(final boolean includeBuyOrders) {
-		flags.put(FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_ORDERS, includeBuyOrders);
 	}
-	public boolean isIncludeContracts() {
-		return flags.get(FLAG_INCLUDE_CONTRACTS);
+	public boolean isIncludeBuyContracts() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS);
 	}
-	public void setIncludeContracts(final boolean includeBuyOrders) {
-		flags.put(FLAG_INCLUDE_CONTRACTS, includeBuyOrders);
+	public void setIncludeBuyContracts(final boolean includeBuyOrders) {
+		flags.put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, includeBuyOrders);
+ 	}
+	public boolean isIncludeSellContracts() {
+		return flags.get(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS);
+	}
+	public void setIncludeSellContracts(final boolean includeBuyOrders) {
+		flags.put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, includeBuyOrders);
 	}
 	public boolean isBlueprintBasePriceTech1() {
-		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
+		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1);
 	}
 	public void setBlueprintBasePriceTech1(final boolean blueprintsTech1) {
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_1, blueprintsTech1);
 	}
 	public boolean isBlueprintBasePriceTech2() {
-		return flags.get(FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
+		return flags.get(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2);
 	}
 	public void setBlueprintBasePriceTech2(final boolean blueprintsTech2) {
-		flags.put(FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
+		flags.put(SettingFlag.FLAG_BLUEPRINT_BASE_PRICE_TECH_2, blueprintsTech2);
 	}
 	public boolean isTransactionHistory() {
-		return flags.get(FLAG_TRANSACTION_HISTORY);
+		return flags.get(SettingFlag.FLAG_TRANSACTION_HISTORY);
 	}
 	public void setTransactionHistory(final boolean transactionHistory) {
-		flags.put(FLAG_TRANSACTION_HISTORY, transactionHistory);
+		flags.put(SettingFlag.FLAG_TRANSACTION_HISTORY, transactionHistory);
 	}
 	public boolean isJournalHistory() {
-		return flags.get(FLAG_JOURNAL_HISTORY);
+		return flags.get(SettingFlag.FLAG_JOURNAL_HISTORY);
 	}
 	public void setJournalHistory(final boolean blueprintsTech2) {
-		flags.put(FLAG_JOURNAL_HISTORY, blueprintsTech2);
+		flags.put(SettingFlag.FLAG_JOURNAL_HISTORY, blueprintsTech2);
 	}
 	
 	public List<Stockpile> getStockpiles() {

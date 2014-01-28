@@ -35,11 +35,12 @@ import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 public class AssetsToolSettingsPanel extends JSettingsPanel {
 
-	private JCheckBox jReprocessColors;
-	private JCheckBox jSellOrders;
-	private JCheckBox jBuyOrders;
-	private JCheckBox jContracts;
-	private JTextField jMaxOrderAge;
+	private final JCheckBox jReprocessColors;
+	private final JCheckBox jSellOrders;
+	private final JCheckBox jBuyOrders;
+	private final JCheckBox jSellContracts;
+	private final JCheckBox jBuyContracts;
+	private final JTextField jMaxOrderAge;
 
 	public AssetsToolSettingsPanel(final Program program, final SettingsDialog settingsDialog) {
 		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon());
@@ -47,7 +48,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jReprocessColors = new JCheckBox(DialoguesSettings.get().showSellOrReprocessColours());
 		jSellOrders = new JCheckBox(DialoguesSettings.get().includeSellOrders());
 		jBuyOrders = new JCheckBox(DialoguesSettings.get().includeBuyOrders());
-		jContracts = new JCheckBox(DialoguesSettings.get().includeContracts());
+		jSellContracts = new JCheckBox(DialoguesSettings.get().includeSellContracts());
+		jBuyContracts = new JCheckBox(DialoguesSettings.get().includeBuyContracts());
 		jMaxOrderAge = new JIntegerField("0", DocumentFactory.ValueFlag.POSITIVE_AND_ZERO);
 		JLabel jMaxOrderAgeLabel = new JLabel(DialoguesSettings.get().maximumPurchaseAge());
 		JLabel jDaysLabel = new JLabel(DialoguesSettings.get().days());
@@ -57,7 +59,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jReprocessColors)
 				.addComponent(jSellOrders)
 				.addComponent(jBuyOrders)
-				.addComponent(jContracts)
+				.addComponent(jSellContracts)
+				.addComponent(jBuyContracts)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jMaxOrderAgeLabel)
 					.addComponent(jMaxOrderAge, 75, 75, 75)
@@ -69,7 +72,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 				.addComponent(jReprocessColors, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jBuyOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jSellContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jBuyContracts, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addGap(20)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jMaxOrderAgeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -90,13 +94,15 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		boolean update = jReprocessColors.isSelected() != Settings.get().isReprocessColors()
 						|| jSellOrders.isSelected() != Settings.get().isIncludeSellOrders()
 						|| jBuyOrders.isSelected() != Settings.get().isIncludeBuyOrders()
-						|| jContracts.isSelected() != Settings.get().isIncludeContracts()
+						|| jSellContracts.isSelected() != Settings.get().isIncludeSellContracts()
+						|| jBuyContracts.isSelected() != Settings.get().isIncludeBuyContracts()
 						|| maximumPurchaseAge != Settings.get().getMaximumPurchaseAge()
 						;
 		Settings.get().setReprocessColors(jReprocessColors.isSelected());
 		Settings.get().setIncludeSellOrders(jSellOrders.isSelected());
 		Settings.get().setIncludeBuyOrders(jBuyOrders.isSelected());
-		Settings.get().setIncludeContracts(jContracts.isSelected());
+		Settings.get().setIncludeSellContracts(jSellContracts.isSelected());
+		Settings.get().setIncludeBuyContracts(jBuyContracts.isSelected());
 		Settings.get().setMaximumPurchaseAge(maximumPurchaseAge);
 		return update;
 	}
@@ -106,7 +112,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		jReprocessColors.setSelected(Settings.get().isReprocessColors());
 		jSellOrders.setSelected(Settings.get().isIncludeSellOrders());
 		jBuyOrders.setSelected(Settings.get().isIncludeBuyOrders());
-		jContracts.setSelected(Settings.get().isIncludeContracts());
+		jSellContracts.setSelected(Settings.get().isIncludeSellContracts());
+		jBuyContracts.setSelected(Settings.get().isIncludeBuyContracts());
 		jMaxOrderAge.setText(String.valueOf(Settings.get().getMaximumPurchaseAge()));
 	}
 }

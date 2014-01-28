@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.data.Settings.SettingFlag;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.tag.Tag;
@@ -687,7 +688,16 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element currentNode = (Element) flagNodes.item(i);
 			String key = AttributeGetters.getString(currentNode, "key");
 			boolean enabled = AttributeGetters.getBoolean(currentNode, "enabled");
-			settings.getFlags().put(key, enabled);
+			try {
+				if (key.equals("FLAG_INCLUDE_CONTRACTS")) {
+					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_SELL_CONTRACTS, enabled);
+					settings.getFlags().put(SettingFlag.FLAG_INCLUDE_BUY_CONTRACTS, enabled);
+				}
+				SettingFlag settingFlag = SettingFlag.valueOf(key);
+				settings.getFlags().put(settingFlag, enabled);
+			} catch (IllegalArgumentException ex) {
+				LOG.warn("Removing Setting Flag:" + key);
+			}
 		}
 		settings.cacheFlags();
 	}
