@@ -21,12 +21,12 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.eve.character.ApiCharacterLookup;
-import com.beimin.eveapi.eve.character.CharacterLookupResponse;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.eve.CharacterLookup;
+import com.beimin.eveapi.response.eve.CharacterLookupResponse;
 import java.util.Date;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -66,8 +66,8 @@ public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 
 	@Override
 	protected CharacterLookupResponse getResponse(boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.eve.character
-				.CharacterLookupParser.getId2NameInstance().getResponse(ownerIDs[group]);
+		return com.beimin.eveapi.parser.eve.CharacterLookupParser.getId2NameInstance()
+				.getResponse(ownerIDs[group]);
 	}
 
 	@Override
@@ -82,8 +82,8 @@ public class NameGetter extends AbstractApiGetter<CharacterLookupResponse> {
 
 	@Override
 	protected void setData(CharacterLookupResponse response) {
-		Set<ApiCharacterLookup> lookups = response.getAll();
-		for (ApiCharacterLookup lookup : lookups) {
+		Set<CharacterLookup> lookups = response.getAll();
+		for (CharacterLookup lookup : lookups) {
 			Settings.get().getOwners().put(lookup.getCharacterID(), lookup.getName());
 		}
 	}

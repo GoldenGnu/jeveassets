@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
 public class OverviewLocation {
@@ -61,7 +61,7 @@ public class OverviewLocation {
 		return type.equals(LocationType.TYPE_REGION);
 	}
 
-	public boolean equalsLocation(final Asset asset) {
+	public boolean equalsLocation(final MyAsset asset) {
 		return (name.equals(asset.getLocation().getLocation()) || name.equals(asset.getLocation().getSystem()) || name.equals(asset.getLocation().getRegion()));
 	}
 

@@ -34,7 +34,7 @@ public class ProfileManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProfileManager.class);
 
-	private List<Account> accounts = new ArrayList<Account>();
+	private List<MyAccount> accounts = new ArrayList<MyAccount>();
 	private Profile activeProfile;
 	private List<Profile> profiles = new ArrayList<Profile>();
 
@@ -68,18 +68,18 @@ public class ProfileManager {
 		ProfileWriter.save(this, activeProfile.getFilename());
 	}
 
-	public List<Account> getAccounts() {
+	public List<MyAccount> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(final List<Account> accounts) {
+	public void setAccounts(final List<MyAccount> accounts) {
 		this.accounts = accounts;
 	}
 
 	public void loadActiveProfile() {
 	//Load Profile
 		LOG.info("Loading profile: {}", activeProfile.getName());
-		accounts = new ArrayList<Account>();
+		accounts = new ArrayList<MyAccount>();
 		ProfileReader.load(this, activeProfile.getFilename()); //Assets (Must be loaded before the price data)
 		SplashUpdater.setProgress(40);
 	//Price data (update as needed)

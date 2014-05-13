@@ -67,7 +67,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -80,7 +80,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandeState;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
@@ -285,10 +285,10 @@ public class TreeTab extends JMainTab {
 		categoriesExport.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
 		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
-			Location location = asset.getLocation();
+			MyLocation location = asset.getLocation();
 
 			//Region
 			String regionKey = location.getRegion();
@@ -327,7 +327,7 @@ public class TreeTab extends JMainTab {
 			//Add Parent(s)
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
-				for (Asset parentAsset : asset.getParents()) {
+				for (MyAsset parentAsset : asset.getParents()) {
 					String cacheKey = parentAsset.getName() + " #" + parentAsset.getItemID();
 					TreeAsset parentTreeAsset = locationCache.get(cacheKey);
 					if (parentTreeAsset == null) {
@@ -353,7 +353,7 @@ public class TreeTab extends JMainTab {
 			String categoryKey = asset.getItem().getCategory();
 			TreeAsset categoryAsset = categoryCache.get(categoryKey);
 			if (categoryAsset == null) {
-				categoryAsset = new TreeAsset(new Location(0), asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
+				categoryAsset = new TreeAsset(new MyLocation(0), asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
 				categoryCache.put(categoryKey, categoryAsset);
 			}
 			categoryTree.add(categoryAsset);
@@ -363,7 +363,7 @@ public class TreeTab extends JMainTab {
 			String groupKey = categoryKey + asset.getItem().getGroup();
 			TreeAsset groupAsset = categoryCache.get(groupKey);
 			if (groupAsset == null) {
-				groupAsset = new TreeAsset(new Location(0), asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
+				groupAsset = new TreeAsset(new MyLocation(0), asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
 				categoryCache.put(groupKey, groupAsset);
 			}
 			categoryTree.add(groupAsset);

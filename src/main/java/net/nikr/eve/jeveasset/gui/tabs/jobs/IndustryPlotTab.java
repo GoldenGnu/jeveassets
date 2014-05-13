@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -87,19 +87,19 @@ public class IndustryPlotTab extends JMainTab {
 	private JPanel panel;
 	private JPanel infoPanel;
 
-	private final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
+	private final Map<MyIndustryJob.IndustryActivity, List<Color>> jobColours;
 
 	public IndustryPlotTab(final Program program) {
 		super(program, "Industry Plot", Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
-		jobColours = new EnumMap<IndustryJob.IndustryActivity, List<Color>>(IndustryJob.IndustryActivity.class);
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(180, 180, 0)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_DUPLICATING, Arrays.asList(Color.LIGHT_GRAY));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING, Arrays.asList(Color.GREEN, new Color(0, 180, 0)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY, Arrays.asList(Color.BLUE, new Color(0, 0, 180)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TECHNOLOGY, Arrays.asList(Color.CYAN, new Color(0, 180, 180)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY, Arrays.asList(Color.MAGENTA, new Color(180, 0, 180)));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_REVERSE_ENGINEERING, Arrays.asList(Color.DARK_GRAY));
-		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION, Arrays.asList(Color.RED, new Color(180, 0, 0)));
+		jobColours = new EnumMap<MyIndustryJob.IndustryActivity, List<Color>>(MyIndustryJob.IndustryActivity.class);
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(180, 180, 0)));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_DUPLICATING, Arrays.asList(Color.LIGHT_GRAY));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING, Arrays.asList(Color.GREEN, new Color(0, 180, 0)));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_METERIAL_PRODUCTIVITY, Arrays.asList(Color.BLUE, new Color(0, 0, 180)));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TECHNOLOGY, Arrays.asList(Color.CYAN, new Color(0, 180, 180)));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_RESEARCHING_TIME_PRODUCTIVITY, Arrays.asList(Color.MAGENTA, new Color(180, 0, 180)));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_REVERSE_ENGINEERING, Arrays.asList(Color.DARK_GRAY));
+		jobColours.put(MyIndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION, Arrays.asList(Color.RED, new Color(180, 0, 0)));
 
 		infoPanel = new JPanel();
 		panel = new JPanel(new BorderLayout());
@@ -214,7 +214,7 @@ public class IndustryPlotTab extends JMainTab {
 				LOG.info(cme.getEntity().toString());
 				if (cme.getEntity() instanceof XYItemEntity) {
 					XYItemEntity entity = (XYItemEntity) cme.getEntity();
-					IndustryJob job = chartDataInformation.rowColJobMap.get(entity.getItem()).get(entity.getSeriesIndex());
+					MyIndustryJob job = chartDataInformation.rowColJobMap.get(entity.getItem()).get(entity.getSeriesIndex());
 					updateInformationTable(job);
 				}
 			}
@@ -225,7 +225,7 @@ public class IndustryPlotTab extends JMainTab {
 		return chartPanel;
 	}
 
-	private void updateInformationTable(final IndustryJob job) {
+	private void updateInformationTable(final MyIndustryJob job) {
 		infoPanel.removeAll();
 		infoPanel.add(JobInformationPanel.getPanelForJob(job));
 		doLayout();
@@ -250,16 +250,16 @@ public class IndustryPlotTab extends JMainTab {
 		// count how many we have added to each series.
 		Map<Integer, AtomicInteger> seriesCounters = new HashMap<Integer, AtomicInteger>();
 
-		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(program.getIndustryJobsEventList());
-		Collections.sort(jobsSorted, new Comparator<IndustryJob>() {
+		List<MyIndustryJob> jobsSorted = new ArrayList<MyIndustryJob>(program.getIndustryJobsEventList());
+		Collections.sort(jobsSorted, new Comparator<MyIndustryJob>() {
 			@Override
-			public int compare(final IndustryJob o1, final IndustryJob o2) {
+			public int compare(final MyIndustryJob o1, final MyIndustryJob o2) {
 				return (int) Math.signum(o2.getEndProductionTime().getTime()
 						- o1.getEndProductionTime().getTime());
 			}
 		});
 		int seriesCounter = 0;
-		for (IndustryJob job : jobsSorted) {
+		for (MyIndustryJob job : jobsSorted) {
 			Long id = job.getAssemblyLineID();
 			if (!seriesMap.containsKey(id)) {
 				// build the new series and make sure that the maps are up-to-date.
@@ -289,20 +289,20 @@ public class IndustryPlotTab extends JMainTab {
 	}
 
 	static class ChartDataInformation {
-		private final Map<Integer, Map<Integer, IndustryJob>> rowColJobMap;
-		private final Map<Long, IndustryJob.IndustryActivity> assemblyLineActivities;
-		private final Map<IndustryJob.IndustryActivity, List<Color>> jobColours;
+		private final Map<Integer, Map<Integer, MyIndustryJob>> rowColJobMap;
+		private final Map<Long, MyIndustryJob.IndustryActivity> assemblyLineActivities;
+		private final Map<MyIndustryJob.IndustryActivity, List<Color>> jobColours;
 
 		ChartDataInformation(final Map<IndustryActivity, List<Color>> jobColours) {
 			this.jobColours = jobColours;
 			assemblyLineActivities = new HashMap<Long, IndustryActivity>();
-			rowColJobMap = new HashMap<Integer, Map<Integer, IndustryJob>>();
+			rowColJobMap = new HashMap<Integer, Map<Integer, MyIndustryJob>>();
 		}
 
-		public void addIndustryJob(final IndustryJob job, final int x, final int y) {
+		public void addIndustryJob(final MyIndustryJob job, final int x, final int y) {
 			assemblyLineActivities.put(job.getAssemblyLineID(), job.getActivity());
 			if (!rowColJobMap.containsKey(x)) {
-				rowColJobMap.put(x, new HashMap<Integer, IndustryJob>());
+				rowColJobMap.put(x, new HashMap<Integer, MyIndustryJob>());
 			}
 			rowColJobMap.get(x).put(y, job);
 		}
@@ -329,7 +329,7 @@ public class IndustryPlotTab extends JMainTab {
 		private static final long serialVersionUID = 1L;
 
 		private static Map<IndustryActivity, JobInformationPanel> panels = new EnumMap<IndustryActivity, JobInformationPanel>(IndustryActivity.class);
-		private static JobInformationPanel getPanelForJob(final IndustryJob job) {
+		private static JobInformationPanel getPanelForJob(final MyIndustryJob job) {
 			IndustryActivity activity;
 			if (job == null) {
 				activity = IndustryActivity.ACTIVITY_COPYING;
@@ -362,7 +362,7 @@ public class IndustryPlotTab extends JMainTab {
 			}
 		}
 
-		private IndustryJob job;
+		private MyIndustryJob job;
 		private JLabel state;
 		private JLabel activity;
 		private JLabel name;
@@ -398,7 +398,7 @@ public class IndustryPlotTab extends JMainTab {
 		 * @param job
 		 * @return 'this'
 		 */
-		JobInformationPanel updateTo(final IndustryJob job) {
+		JobInformationPanel updateTo(final MyIndustryJob job) {
 			setJob(job);
 			state.setText(job.getState().toString());
 			activity.setText(job.getActivity().toString());
@@ -410,7 +410,7 @@ public class IndustryPlotTab extends JMainTab {
 			endDate.setText(String.valueOf(job.getEndProductionTime()));
 			return this;
 		}
-		void setJob(final IndustryJob job) {
+		void setJob(final MyIndustryJob job) {
 			this.job = job;
 		}
 	}

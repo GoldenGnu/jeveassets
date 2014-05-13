@@ -21,13 +21,13 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.shared.KeyType;
+import com.beimin.eveapi.model.shared.KeyType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class Account {
+public class MyAccount {
 
 	public enum AccessMask {
 		OPEN(0L),
@@ -66,7 +66,7 @@ public class Account {
 
 	private List<Owner> owners = new ArrayList<Owner>();
 
-	public Account(final Account account) {
+	public MyAccount(final MyAccount account) {
 		this(account.getKeyID(),
 				account.getVCode(),
 				account.getName(),
@@ -80,11 +80,11 @@ public class Account {
 		}
 	}
 
-	public Account(final int keyID, final String vCode) {
+	public MyAccount(final int keyID, final String vCode) {
 		this(keyID, vCode, Integer.toString(keyID), Settings.getNow(), 0, null, null, false);
 	}
 
-	public Account(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
+	public MyAccount(final int keyID, final String vCode, final String name, final Date accountNextUpdate, final long accessMask, final KeyType type, final Date expires, final boolean invalid) {
 		this.keyID = keyID;
 		this.vCode = vCode;
 		this.name = name;
@@ -250,7 +250,7 @@ public class Account {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Account other = (Account) obj;
+		final MyAccount other = (MyAccount) obj;
 		if (this.keyID != other.keyID) {
 			return false;
 		}

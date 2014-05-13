@@ -39,7 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
@@ -52,9 +52,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -143,7 +143,7 @@ public class ValueTableTab extends JMainTab {
 		Map<String, Value> values = new HashMap<String, Value>();
 		Value total = new Value(TabsValues.get().grandTotal());
 		values.put(total.getName(), total);
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -163,13 +163,13 @@ public class ValueTableTab extends JMainTab {
 			total.addAssets(asset);
 		}
 		//Account Balance
-		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
 			Value value = getValue(values, accountBalance.getOwner());
 			value.addBalance(accountBalance.getBalance());
 			total.addBalance(accountBalance.getBalance());
 		}
 		//Market Orders
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			Value value = getValue(values, marketOrder.getOwner());
 			if (marketOrder.getOrderState() == 0) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
@@ -184,10 +184,10 @@ public class ValueTableTab extends JMainTab {
 			}
 		}
 		//Industrys Job: Manufacturing
-		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 			Value value = getValue(values, industryJob.getOwner());
 			//Manufacturing and not completed
-			if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
+			if (industryJob.getActivity() == MyIndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING && !industryJob.isCompleted()) {
 				double manufacturingTotal = industryJob.getPortion() * industryJob.getRuns() * ApiIdConverter.getPrice(industryJob.getOutputTypeID(), false);
 				value.addManufacturing(manufacturingTotal);
 				total.addManufacturing(manufacturingTotal);

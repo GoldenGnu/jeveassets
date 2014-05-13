@@ -55,7 +55,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -77,7 +77,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -358,7 +358,7 @@ public class OverviewTab extends JMainTab {
 		return "";
 	}
 
-	private List<Overview> getList(final List<Asset> input, final String owner, final String view) {
+	private List<Overview> getList(final List<MyAsset> input, final String owner, final String view) {
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -367,7 +367,7 @@ public class OverviewTab extends JMainTab {
 			for (Map.Entry<String, OverviewGroup> entry : Settings.get().getOverviewGroups().entrySet()) {
 				OverviewGroup overviewGroup = entry.getValue();
 				if (!locationsMap.containsKey(overviewGroup.getName())) { //Create new overview
-					Overview overview = new Overview(overviewGroup.getName(), new Location(0), 0, 0, 0, 0);
+					Overview overview = new Overview(overviewGroup.getName(), new MyLocation(0), 0, 0, 0, 0);
 					locationsMap.put(overviewGroup.getName(), overview);
 					locations.add(overview);
 				}
@@ -382,7 +382,7 @@ public class OverviewTab extends JMainTab {
 				}
 			}
 		}
-		for (Asset asset : input) {
+		for (MyAsset asset : input) {
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}
@@ -402,7 +402,7 @@ public class OverviewTab extends JMainTab {
 			double volume = asset.getVolumeTotal();
 			if (!view.equals(TabsOverview.get().groups())) { //Locations
 				String locationName = TabsOverview.get().whitespace();
-				Location location = asset.getLocation();
+				MyLocation location = asset.getLocation();
 				if (view.equals(TabsOverview.get().regions())) {
 					locationName = asset.getLocation().getRegion();
 					location = ApiIdConverter.getLocation(asset.getLocation().getRegionID());

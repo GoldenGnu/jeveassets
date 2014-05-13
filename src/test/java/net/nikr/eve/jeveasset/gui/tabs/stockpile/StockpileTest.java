@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.Collections;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -58,7 +58,7 @@ public class StockpileTest {
 
 	@Test
 	public void testSomeMethod() {
-		StockpileFilter filter = new StockpileFilter(new Location(0), 
+		StockpileFilter filter = new StockpileFilter(new MyLocation(0), 
 				Collections.singletonList(0),
 				Collections.singletonList("Container"),
 				Collections.singletonList(0L),

@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
@@ -106,7 +106,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		if (owner == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}
-		Account account = owner.getParentAccount();
+		MyAccount account = owner.getParentAccount();
 		if (account.getName().isEmpty()) {
 			jAccountName.setText(String.valueOf(account.getKeyID()));
 		} else {
@@ -128,7 +128,7 @@ public class AccountSeparatorTableCell extends SeparatorTableCell<Owner> {
 		public void actionPerformed(final ActionEvent e) {
 			if (AccountCellAction.ACCOUNT_NAME.name().equals(e.getActionCommand())) {
 				Owner owner = (Owner) currentSeparator.first();
-				Account account = owner.getParentAccount();
+				MyAccount account = owner.getParentAccount();
 				if (jAccountName.getText().isEmpty()) {
 					jAccountName.setText(String.valueOf(account.getKeyID()));
 				}

@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.JAutoMenu;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -46,7 +46,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 
 	private List<UserItem<Long, String>> itemNames;
 	private List<UserItem<Long, String>> containerNames;
-	private Asset selected;
+	private MyAsset selected;
 
 	private JMenuItem jEditItem;
 	private JMenuItem jResetItem;
@@ -93,9 +93,9 @@ public class JMenuName<T> extends JAutoMenu<T> {
 	public void setMenuData(MenuData<T> menuData) {
 		itemNames = new ArrayList<UserItem<Long, String>>();
 		containerNames = new ArrayList<UserItem<Long, String>>();
-		for (Asset asset : menuData.getAssets()) {
+		for (MyAsset asset : menuData.getAssets()) {
 			itemNames.add(new UserName(asset));
-			for (Asset parent : asset.getParents()) {
+			for (MyAsset parent : asset.getParents()) {
 				containerNames.add(new UserName(parent));
 			}
 				
@@ -122,7 +122,7 @@ public class JMenuName<T> extends JAutoMenu<T> {
 			}
 			if (MenuNameAction.EDIT_CONTAINER.name().equals(e.getActionCommand())) {
 				if (selected != null) {
-					Asset value = jContainerDialog.showDialog(selected);
+					MyAsset value = jContainerDialog.showDialog(selected);
 					if (value != null) {
 						program.getUserNameSettingsPanel().edit(new UserName(value));
 					}
@@ -134,9 +134,9 @@ public class JMenuName<T> extends JAutoMenu<T> {
 		}
 	}
 
-	public static class AssetMenuData extends MenuData<Asset> {
+	public static class AssetMenuData extends MenuData<MyAsset> {
 
-		public AssetMenuData(List<Asset> items) {
+		public AssetMenuData(List<MyAsset> items) {
 			super(items);
 			setAssets(items);
 		}

@@ -31,9 +31,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JJournalTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<Journal> tableModel;
+	final DefaultEventTableModel<MyJournal> tableModel;
 
-	public JJournalTable(Program program, final DefaultEventTableModel<Journal> tableModel) {
+	public JJournalTable(Program program, final DefaultEventTableModel<MyJournal> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -42,7 +42,7 @@ public class JJournalTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		Journal journal = tableModel.getElementAt(row);
+		MyJournal journal = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		if (columnName.equals(JournalTableFormat.AMOUNT.getColumnName()) && journal.getAmount() < 0) {

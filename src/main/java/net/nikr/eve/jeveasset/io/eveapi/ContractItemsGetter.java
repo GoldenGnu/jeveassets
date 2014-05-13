@@ -22,47 +22,47 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.items.ContractItemsResponse;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
+import com.beimin.eveapi.model.shared.ContractItem;
+import com.beimin.eveapi.model.shared.ContractType;
+import com.beimin.eveapi.response.shared.ContractItemsResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
 public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse> {
 
-	private Contract currentContract;
-	private Map<Long, List<EveContractItem>> savedItems = new HashMap<Long, List<EveContractItem>>();
+	private MyContract currentContract;
+	private Map<Long, List<ContractItem>> savedItems = new HashMap<Long, List<ContractItem>>();
 
 	public ContractItemsGetter() {
 		super("Contract Items", false, false);
 	}
 
 	//FIXME - - > Move to overwrite load (See: JournalGetter)
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
 		//Calc size
 		int size = 0;
-		for (Account account : accounts) {
+		for (MyAccount account : accounts) {
 			for (Owner owner : account.getOwners()) {
 				size = size + owner.getContracts().size();
 			}
 		}
 		int count = 0;
-		for (Account account : accounts) {
+		for (MyAccount account : accounts) {
 			for (Owner owner : account.getOwners()) {
-				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
-					Contract contract = entry.getKey();
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+					MyContract contract = entry.getKey();
 					if (updateTask != null && updateTask.isCancelled()) {
 						return; //We are done here...
 					}
@@ -88,7 +88,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 							) {
 						continue; //Only IssuerCorpID match and is not for corp
 					}
-					List<EveContractItem> items = savedItems.get(contract.getContractID());
+					List<ContractItem> items = savedItems.get(contract.getContractID());
 					if (items != null) { //Set already updated
 						owner.getContracts().put(contract, ApiConverter.convertContractItems(items, contract));
 						continue; //Ignore already updated
@@ -117,9 +117,11 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 	@Override
 	protected ContractItemsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.contract.ContractItemsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
+			return new com.beimin.eveapi.parser.corporation.ContractItemsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		} else {
-			return com.beimin.eveapi.character.contract.ContractItemsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
+			return new com.beimin.eveapi.parser.pilot.ContractItemsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), currentContract.getContractID());
 		}
 	}
 
@@ -135,7 +137,7 @@ public class ContractItemsGetter extends AbstractApiGetter<ContractItemsResponse
 
 	@Override
 	protected void setData(ContractItemsResponse response) {
-		List<EveContractItem> contractItems = new ArrayList<EveContractItem>(response.getAll());
+		List<ContractItem> contractItems = new ArrayList<ContractItem>(response.getAll());
 		getOwner().getContracts().put(currentContract, ApiConverter.convertContractItems(contractItems, currentContract));
 		savedItems.put(currentContract.getContractID(), contractItems);
 	}

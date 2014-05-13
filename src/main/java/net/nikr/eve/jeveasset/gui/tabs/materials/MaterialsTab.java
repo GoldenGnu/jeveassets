@@ -59,7 +59,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -237,7 +237,7 @@ public class MaterialsTab extends JMainTab {
 		Map<String, Material> total = new HashMap<String, Material>();
 		//Summary Total All
 		Material summaryTotalAllMaterial = new Material(MaterialType.SUMMARY_ALL, null, TabsMaterials.get().summary(), TabsMaterials.get().grandTotal(), General.get().all());
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip none-material + none Pi Material (if not enabled)
 			if (!asset.getItem().getCategory().equals("Material") && (!asset.getItem().isPiMaterial() || !jPiMaterial.isSelected())) {
 				continue;

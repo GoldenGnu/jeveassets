@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Jump;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -61,7 +61,7 @@ public final class JumpsReader extends AbstractXmlReader {
 		LOG.info("Jumps loaded");
 	}
 
-	private void parseJumps(final Element element, final Map<Long, Location> locations, final List<Jump> jumps) {
+	private void parseJumps(final Element element, final Map<Long, MyLocation> locations, final List<Jump> jumps) {
 		NodeList nodes = element.getElementsByTagName("row");
 		Jump jump;
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -70,7 +70,7 @@ public final class JumpsReader extends AbstractXmlReader {
 		}
 	}
 
-	private Jump parseEdge(final Node node, final Map<Long, Location> locations) {
+	private Jump parseEdge(final Node node, final Map<Long, MyLocation> locations) {
 		long from = AttributeGetters.getLong(node, "from");
 		long to = AttributeGetters.getLong(node, "to");
 		Jump j = new Jump(locations.get(from), locations.get(to));

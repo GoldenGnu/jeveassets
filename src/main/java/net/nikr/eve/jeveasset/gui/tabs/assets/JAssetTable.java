@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JAssetTable extends JAutoColumnTable {
 
-	private DefaultEventTableModel<Asset> tableModel;
+	private DefaultEventTableModel<MyAsset> tableModel;
 
-	public JAssetTable(final Program program, final DefaultEventTableModel<Asset> tableModel) {
+	public JAssetTable(final Program program, final DefaultEventTableModel<MyAsset> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -43,7 +43,7 @@ public class JAssetTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		Asset asset = tableModel.getElementAt(row);
+		MyAsset asset = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		//User set price

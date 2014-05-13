@@ -22,23 +22,23 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
-import com.beimin.eveapi.shared.wallet.journal.WalletJournalResponse;
+import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.response.shared.WalletJournalResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiAccountKeyGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 
-public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResponse, Journal> {
+public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResponse, MyJournal> {
 
 	private boolean saveHistory;
 
@@ -46,36 +46,34 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 		super("Journal");
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts, final boolean saveHistory) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts, final boolean saveHistory) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 		this.saveHistory = saveHistory;
 	}
 
 	@Override
-	protected void set(Map<Long, Journal> values, Date nextUpdate) {
+	protected void set(Map<Long, MyJournal> values, Date nextUpdate) {
 		getOwner().setJournal(values);
 		getOwner().setJournalNextUpdate(nextUpdate);
 	}
 
 	@Override
-	protected Map<Long, Journal> get() {
+	protected Map<Long, MyJournal> get() {
 		if (saveHistory) {
 			return getOwner().getJournal();
 		} else {
-			return new HashMap<Long, Journal>();
+			return new HashMap<Long, MyJournal>();
 		}
 	}
 
 	@Override
 	protected WalletJournalResponse getResponse(final boolean bCorp, final int accountKey, final long fromID, final int rowCount) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.wallet.journal.WalletJournalParser.getInstance()
+			return new com.beimin.eveapi.parser.corporation.WalletJournalParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()), accountKey, fromID, rowCount);
 		} else {
-			return com.beimin.eveapi.character
-					.wallet.journal.WalletJournalParser.getInstance()
-					.getResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
+			return new com.beimin.eveapi.parser.pilot.WalletJournalParser()
+					.getWalletJournalResponse(Owner.getApiAuthorization(getOwner()), fromID, rowCount);
 		}
 	}
 
@@ -85,8 +83,8 @@ public class JournalGetter extends AbstractApiAccountKeyGetter<WalletJournalResp
 	}
 
 	@Override
-	protected Map<Long, Journal> convertData(final WalletJournalResponse response, final int accountKey) {
-		List<ApiJournalEntry> api = new ArrayList<ApiJournalEntry>(response.getAll());
+	protected Map<Long, MyJournal> convertData(final WalletJournalResponse response, final int accountKey) {
+		List<JournalEntry> api = new ArrayList<JournalEntry>(response.getAll());
 		return ApiConverter.convertJournals(api, getOwner(), accountKey);
 	}
 

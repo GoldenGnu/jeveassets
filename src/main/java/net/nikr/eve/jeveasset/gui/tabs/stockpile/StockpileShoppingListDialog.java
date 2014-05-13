@@ -41,11 +41,11 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JIntegerField;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -176,7 +176,7 @@ class StockpileShoppingListDialog extends JDialogCentered {
 	//All items
 		Map<Integer, List<StockItem>> items = new HashMap<Integer, List<StockItem>>();
 		//Assets
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -194,15 +194,15 @@ class StockpileShoppingListDialog extends JDialogCentered {
 			add(asset.getItem().getTypeID(), asset, new StockItem(asset), claims, items);
 		}
 		//Market Orders
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			add(marketOrder.getTypeID(), marketOrder, new StockItem(marketOrder), claims, items);
 		}
 		//Industry Jobs
-		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 			add(industryJob.getOutputTypeID(), industryJob, new StockItem(industryJob), claims, items);
 		}
 		//Transactions
-		for (Transaction transaction : program.getTransactionsEventList()) {
+		for (MyTransaction transaction : program.getTransactionsEventList()) {
 			add(transaction.getTypeID(), transaction, new StockItem(transaction), claims, items);
 		}
 
@@ -343,14 +343,14 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		}
 
 		private boolean matches(Object object) {
-			if (object instanceof Asset) {
-				return stockpileItem.matches((Asset) object);
-			} else if (object instanceof MarketOrder) {
-				return stockpileItem.matches((MarketOrder) object);
-			} else if (object instanceof IndustryJob) {
-				return stockpileItem.matches((IndustryJob) object);
-			} else if (object instanceof Transaction) {
-				return stockpileItem.matches((Transaction) object);
+			if (object instanceof MyAsset) {
+				return stockpileItem.matches((MyAsset) object);
+			} else if (object instanceof MyMarketOrder) {
+				return stockpileItem.matches((MyMarketOrder) object);
+			} else if (object instanceof MyIndustryJob) {
+				return stockpileItem.matches((MyIndustryJob) object);
+			} else if (object instanceof MyTransaction) {
+				return stockpileItem.matches((MyTransaction) object);
 			}
 			return false;
 		}
@@ -387,18 +387,18 @@ class StockpileShoppingListDialog extends JDialogCentered {
 		private final List<StockClaim> claims = new ArrayList<StockClaim>();
 		private long count;
 
-		private StockItem(Asset asset) {
+		private StockItem(MyAsset asset) {
 			this(asset.getCount());
 		}
 
-		private StockItem(MarketOrder marketOrder) {
+		private StockItem(MyMarketOrder marketOrder) {
 			this(marketOrder.getVolRemaining());
 		}
 
-		private StockItem(IndustryJob industryJob) {
+		private StockItem(MyIndustryJob industryJob) {
 			this((industryJob.getRuns() * industryJob.getPortion()));
 		}
-		private StockItem(Transaction transaction) {
+		private StockItem(MyTransaction transaction) {
 			this(transaction.isBuy() ? transaction.getQuantity() : -transaction.getQuantity());
 		}
 

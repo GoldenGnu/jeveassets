@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Profile;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -160,7 +160,7 @@ public class ProfileDialog extends JDialogCentered {
 			//Save old profile
 			program.getProfileManager().saveProfile();
 			//Clear accounts
-			program.getProfileManager().setAccounts(new ArrayList<Account>());
+			program.getProfileManager().setAccounts(new ArrayList<MyAccount>());
 			//Clear data
 			program.updateEventLists();
 			//Set active profile

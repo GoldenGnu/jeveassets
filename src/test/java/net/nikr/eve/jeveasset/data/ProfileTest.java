@@ -75,7 +75,7 @@ public class ProfileTest {
 		boolean contracts = false;
 		boolean transactions = false;
 		boolean journal = false;
-		for (Account account : profileManager.getAccounts()) {
+		for (MyAccount account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name is not safe expected:<[]> but was:<[" + account.getName() + "]>");
 			}

@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.util.Date;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 
@@ -40,7 +40,7 @@ public class Updatable {
 		if (isUpdatable(program.getPriceDataGetter().getNextUpdate(), false)) {
 			return true;
 		}
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			//Account
 			if (isUpdatable(account.getAccountNextUpdate())) {
 				return true;

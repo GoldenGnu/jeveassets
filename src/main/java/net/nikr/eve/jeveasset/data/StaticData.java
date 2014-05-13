@@ -20,7 +20,7 @@
  */
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.model.eve.Station;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,10 +38,10 @@ public class StaticData {
 	//Data
 	private final Map<Integer, Item> items = new HashMap<Integer, Item>(); //TypeID : int
 	private final Map<Integer, ItemFlag> itemFlags = new HashMap<Integer, ItemFlag>(); //FlagID : int
-	private final Map<Long, Location> locations = new HashMap<Long, Location>(); //LocationID : long
+	private final Map<Long, MyLocation> locations = new HashMap<Long, MyLocation>(); //LocationID : long
 	private final List<Jump> jumps = new ArrayList<Jump>(); //LocationID : long
 	//XXX - Integer locationID
-	private final Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>(); //LocationID : long
+	private final Map<Integer, Station> conquerableStations = new HashMap<Integer, Station>(); //LocationID : long
 
 	private static StaticData staticData = null;
 
@@ -84,18 +84,18 @@ public class StaticData {
 		return jumps;
 	}
 
-	public Map<Long, Location> getLocations() {
+	public Map<Long, MyLocation> getLocations() {
 		return locations;
 	}
 
-	public Map<Integer, ApiStation> getConquerableStations() {
+	public Map<Integer, Station> getConquerableStations() {
 		return conquerableStations;
 	}
 
-	public void setConquerableStations(final Map<Integer, ApiStation> conquerableStations) {
+	public void setConquerableStations(final Map<Integer, Station> conquerableStations) {
 		this.conquerableStations.clear();
 		this.conquerableStations.putAll(conquerableStations);
-		for (ApiStation station : conquerableStations.values()) {
+		for (Station station : conquerableStations.values()) {
 			ApiIdConverter.addLocation(station);
 		}
 	}

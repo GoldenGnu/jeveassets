@@ -68,7 +68,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout.FlagType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -324,8 +324,8 @@ public class LoadoutsTab extends JMainTab {
 		String fitDescription = loadoutsExportDialog.getFittingDescription();
 		if (!fitName.isEmpty()) {
 			String selectedShip = (String) jShips.getSelectedItem();
-			Asset exportAsset = null;
-			for (Asset asset : program.getAssetEventList()) {
+			MyAsset exportAsset = null;
+			for (MyAsset asset : program.getAssetEventList()) {
 				String key = asset.getName() + " #" + asset.getItemID();
 				if (!selectedShip.equals(key)) {
 					continue;
@@ -352,7 +352,7 @@ public class LoadoutsTab extends JMainTab {
 
 	private void updateTable() {
 		List<Loadout> ship = new ArrayList<Loadout>();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			String key = asset.getName() + " #" + asset.getItemID();
 			if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 				continue;
@@ -363,7 +363,7 @@ public class LoadoutsTab extends JMainTab {
 			ship.add(moduleShip);
 			ship.add(moduleModules);
 			ship.add(moduleTotal);
-			for (Asset assetModule : asset.getAssets()) {
+			for (MyAsset assetModule : asset.getAssets()) {
 				Loadout module = new Loadout(assetModule.getItem(), assetModule.getLocation(), assetModule.getOwner(), assetModule.getName(), key, assetModule.getFlag(), assetModule.getDynamicPrice(), (assetModule.getDynamicPrice() * assetModule.getCount()), assetModule.getCount());
 				if (!ship.contains(module)
 						|| assetModule.getFlag().contains(FlagType.HIGH_SLOT.getFlag())
@@ -437,7 +437,7 @@ public class LoadoutsTab extends JMainTab {
 			if (LoadoutsAction.OWNERS.name().equals(e.getActionCommand())) {
 				String owner = (String) jOwners.getSelectedItem();
 				List<String> charShips = new ArrayList<String>();
-				for (Asset asset : program.getAssetEventList()) {
+				for (MyAsset asset : program.getAssetEventList()) {
 					String key = asset.getName() + " #" + asset.getItemID();
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
@@ -485,15 +485,15 @@ public class LoadoutsTab extends JMainTab {
 			}
 			if (LoadoutsAction.EXPORT_LOADOUT_ALL.name().equals(e.getActionCommand())) {
 				String filename = browse();
-				List<Asset> ships = new ArrayList<Asset>();
-				for (Asset asset : program.getAssetEventList()) {
+				List<MyAsset> ships = new ArrayList<MyAsset>();
+				for (MyAsset asset : program.getAssetEventList()) {
 					if (!asset.getItem().getCategory().equals(SHIP_CATEGORY) || !asset.isSingleton()) {
 						continue;
 					}
 					ships.add(asset);
 				}
 				if (filename != null) {
-					EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
+					EveFittingWriter.save(new ArrayList<MyAsset>(ships), filename);
 				}
 			}
 			if (LoadoutsAction.EXPORT.name().equals(e.getActionCommand())) {

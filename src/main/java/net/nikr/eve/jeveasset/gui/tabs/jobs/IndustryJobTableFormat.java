@@ -28,14 +28,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
+public enum IndustryJobTableFormat implements EnumTableColumn<MyIndustryJob> {
 	STATE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsJobs.get().columnState();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getState();
 		}
 	},
@@ -45,7 +45,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnActivity();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getActivity();
 		}
 	},
@@ -55,7 +55,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnName();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getName();
 		}
 	},
@@ -65,7 +65,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getOwner();
 		}
 	},
@@ -75,7 +75,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnLocation();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getLocation().getLocation();
 		}
 	},
@@ -85,7 +85,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getLocation().getRegion();
 		}
 	},
@@ -95,7 +95,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnInstallDate();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getInstallTime();
 		}
 	},
@@ -105,7 +105,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnStartDate();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getBeginProductionTime();
 		}
 	},
@@ -115,7 +115,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnEndDate();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getEndProductionTime();
 		}
 	},
@@ -125,7 +125,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnRuns();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getRuns();
 		}
 	},
@@ -135,7 +135,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnBpMe();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getInstalledItemMaterialLevel();
 		}
 	},
@@ -145,7 +145,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnBpPe();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getInstalledItemProductivityLevel();
 		}
 	},
@@ -155,7 +155,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnOutputCount();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getOutputCount();
 		}
 	},
@@ -165,7 +165,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 			return TabsJobs.get().columnOutputValue();
 		}
 		@Override
-		public Object getColumnValue(final IndustryJob from) {
+		public Object getColumnValue(final MyIndustryJob from) {
 			return from.getOutputValue();
 		}
 	};
@@ -197,9 +197,9 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 		return true;
 	}
 	@Override
-	public IndustryJob setColumnValue(final Object baseObject, final Object editedValue) {
+	public MyIndustryJob setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final IndustryJob from);
+	@Override public abstract Object getColumnValue(final MyIndustryJob from);
 }

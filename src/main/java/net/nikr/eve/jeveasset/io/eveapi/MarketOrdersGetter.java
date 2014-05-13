@@ -22,16 +22,16 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import com.beimin.eveapi.shared.marketorders.MarketOrdersResponse;
+import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -42,19 +42,17 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 		super("Market Orders", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected MarketOrdersResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.marketorders.MarketOrdersParser.getInstance()
+			return new com.beimin.eveapi.parser.corporation.MarketOrdersParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return com.beimin.eveapi.character
-					.marketorders.MarketOrdersParser.getInstance()
+			return new com.beimin.eveapi.parser.pilot.MarketOrdersParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -71,7 +69,7 @@ public class MarketOrdersGetter extends AbstractApiGetter<MarketOrdersResponse> 
 
 	@Override
 	protected void setData(final MarketOrdersResponse response) {
-		List<MarketOrder> marketOrders = ApiConverter.convertMarketOrders(new ArrayList<ApiMarketOrder>(response.getAll()), getOwner());
+		List<MyMarketOrder> marketOrders = ApiConverter.convertMarketOrders(new ArrayList<MarketOrder>(response.getAll()), getOwner());
 		getOwner().setMarketOrders(marketOrders);
 	}
 

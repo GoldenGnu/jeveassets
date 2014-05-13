@@ -22,7 +22,7 @@ package net.nikr.eve.jeveasset.data;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import com.beimin.eveapi.shared.contract.ContractType;
+import com.beimin.eveapi.model.shared.ContractType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -33,16 +33,16 @@ import java.util.Map;
 import java.util.Set;
 import net.nikr.eve.jeveasset.data.tag.Tags;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -51,14 +51,14 @@ import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 public class ProfileData {
 	private final ProfileManager profileManager;
 	
-	private final EventList<ContractItem> contractItemEventList = new BasicEventList<ContractItem>();
-	private final EventList<IndustryJob> industryJobsEventList = new BasicEventList<IndustryJob>();
-	private final EventList<MarketOrder> marketOrdersEventList = new BasicEventList<MarketOrder>();
-	private final EventList<Journal> journalEventList = new BasicEventList<Journal>();
-	private final EventList<Transaction> transactionsEventList = new BasicEventList<Transaction>();
-	private final EventList<Asset> assetsEventList = new BasicEventList<Asset>();
-	private final EventList<AccountBalance> accountBalanceEventList = new BasicEventList<AccountBalance>();
-	private Map<Integer, List<Asset>> uniqueAssetsDuplicates = null; //TypeID : int
+	private final EventList<MyContractItem> contractItemEventList = new BasicEventList<MyContractItem>();
+	private final EventList<MyIndustryJob> industryJobsEventList = new BasicEventList<MyIndustryJob>();
+	private final EventList<MyMarketOrder> marketOrdersEventList = new BasicEventList<MyMarketOrder>();
+	private final EventList<MyJournal> journalEventList = new BasicEventList<MyJournal>();
+	private final EventList<MyTransaction> transactionsEventList = new BasicEventList<MyTransaction>();
+	private final EventList<MyAsset> assetsEventList = new BasicEventList<MyAsset>();
+	private final EventList<MyAccountBalance> accountBalanceEventList = new BasicEventList<MyAccountBalance>();
+	private Map<Integer, List<MyAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, MarketPriceData> marketPriceData; //TypeID : int
 	private final List<String> owners = new ArrayList<String>();
 	private boolean saveSettings = false;
@@ -71,31 +71,31 @@ public class ProfileData {
 		return createPriceTypeIDs(); //always needs to be fresh :)
 	}
 
-	public EventList<AccountBalance> getAccountBalanceEventList() {
+	public EventList<MyAccountBalance> getAccountBalanceEventList() {
 		return accountBalanceEventList;
 	}
 
-	public EventList<Asset> getAssetsEventList() {
+	public EventList<MyAsset> getAssetsEventList() {
 		return assetsEventList;
 	}
 
-	public EventList<IndustryJob> getIndustryJobsEventList() {
+	public EventList<MyIndustryJob> getIndustryJobsEventList() {
 		return industryJobsEventList;
 	}
 
-	public EventList<MarketOrder> getMarketOrdersEventList() {
+	public EventList<MyMarketOrder> getMarketOrdersEventList() {
 		return marketOrdersEventList;
 	}
 
-	public EventList<Journal> getJournalEventList() {
+	public EventList<MyJournal> getJournalEventList() {
 		return journalEventList;
 	}
 
-	public EventList<Transaction> getTransactionsEventList() {
+	public EventList<MyTransaction> getTransactionsEventList() {
 		return transactionsEventList;
 	}
 
-	public EventList<ContractItem> getContractItemEventList() {
+	public EventList<MyContractItem> getContractItemEventList() {
 		return contractItemEventList;
 	}
 
@@ -109,26 +109,26 @@ public class ProfileData {
 
 	private Set<Integer> createPriceTypeIDs() {
 		Set<Integer> priceTypeIDs = new HashSet<Integer>();
-		for (Account account : profileManager.getAccounts()) {
+		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				//Add Assets to uniqueIds
 				deepAssets(owner.getAssets(), priceTypeIDs);
 				//Add Market Orders to uniqueIds
-				for (MarketOrder marketOrder : owner.getMarketOrders()) {
+				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 					Item item = marketOrder.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
 					}
 				}
 				//Add Transaction to uniqueIds
-				for (Transaction transaction : owner.getTransactions().values()) {
+				for (MyTransaction transaction : owner.getTransactions().values()) {
 					Item item = transaction.getItem();
 					if (item.isMarketGroup()) {
 						priceTypeIDs.add(item.getTypeID());
 					}
 				}
 				//Add Industry Job to uniqueIds
-				for (IndustryJob industryJob : owner.getIndustryJobs()) {
+				for (MyIndustryJob industryJob : owner.getIndustryJobs()) {
 					//Blueprint
 					Item blueprint = industryJob.getItem();
 					if (blueprint.isMarketGroup()) {
@@ -144,8 +144,8 @@ public class ProfileData {
 					}
 				}
 				//Add Contract to uniqueIds
-				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
-					for (ContractItem contractItem : entry.getValue()) {
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+					for (MyContractItem contractItem : entry.getValue()) {
 						Item item = contractItem.getItem();
 						if (item.isMarketGroup()) {
 							priceTypeIDs.add(item.getTypeID());
@@ -176,8 +176,8 @@ public class ProfileData {
 		return priceTypeIDs;
 	}
 
-	private void deepAssets(List<Asset> assets, Set<Integer> priceTypeIDs) {
-		for (Asset asset : assets) {
+	private void deepAssets(List<MyAsset> assets, Set<Integer> priceTypeIDs) {
+		for (MyAsset asset : assets) {
 			//Unique Ids
 			if (asset.getItem().isMarketGroup()) {
 				priceTypeIDs.add(asset.getItem().getTypeID());
@@ -188,7 +188,7 @@ public class ProfileData {
 
 	public boolean updateEventLists() {
 		saveSettings = false;
-		uniqueAssetsDuplicates = new HashMap<Integer, List<Asset>>();
+		uniqueAssetsDuplicates = new HashMap<Integer, List<MyAsset>>();
 		Set<String> uniqueOwners = new HashSet<String>();
 		List<String> ownersOrders = new ArrayList<String>();
 		List<String> ownersJournal = new ArrayList<String>();
@@ -198,16 +198,16 @@ public class ProfileData {
 		List<String> ownersAccountBalance = new ArrayList<String>();
 		List<Long> contractIDs = new ArrayList<Long>();
 		//Temp
-		List<Asset> assets = new ArrayList<Asset>();
-		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		List<Journal> journal = new ArrayList<Journal>();
-		List<Transaction> transactions = new ArrayList<Transaction>();
-		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
-		List<ContractItem> contractItems = new ArrayList<ContractItem>();
-		List<AccountBalance> accountBalance = new ArrayList<AccountBalance>();
+		List<MyAsset> assets = new ArrayList<MyAsset>();
+		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
+		List<MyJournal> journal = new ArrayList<MyJournal>();
+		List<MyTransaction> transactions = new ArrayList<MyTransaction>();
+		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
+		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+		List<MyAccountBalance> accountBalance = new ArrayList<MyAccountBalance>();
 		maximumPurchaseAge();
 		//Add assets
-		for (Account account : profileManager.getAccounts()) {
+		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowOwner()) {
 					uniqueOwners.add(owner.getName());
@@ -231,11 +231,11 @@ public class ProfileData {
 				//Transactions
 				if (!owner.getTransactions().isEmpty() && !ownersTransactions.contains(owner.getName())) {
 					//Transactions
-					for (Transaction transaction : owner.getTransactions().values()) {
+					for (MyTransaction transaction : owner.getTransactions().values()) {
 						int index = transactions.indexOf(transaction);
 						if (index >= 0) { //Dublicate
 							if (owner.isCorporation()) {
-								Transaction remove = transactions.remove(index);
+								MyTransaction remove = transactions.remove(index);
 								transaction.setOwnerCharacter(remove.getOwnerName());
 								transactions.add(transaction);
 							} else {
@@ -261,9 +261,9 @@ public class ProfileData {
 					ownersJobs.add(owner.getName());
 				}
 				//Contracts
-				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
 					//Contracts
-					Contract contract = entry.getKey();
+					MyContract contract = entry.getKey();
 					if (contractIDs.contains(contract.getContractID())) {
 						continue;
 					}
@@ -277,13 +277,13 @@ public class ProfileData {
 						)
 						) {
 						contractIDs.add(contract.getContractID());
-						contractItems.add(new ContractItem(contract));
+						contractItems.add(new MyContractItem(contract));
 					} else if (!entry.getValue().isEmpty()) {
 						contractIDs.add(contract.getContractID());
 						contractItems.addAll(entry.getValue());
 					}
 					//Assets
-					List<Asset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
+					List<MyAsset> contractAssets = ApiConverter.assetContracts(entry.getValue(), owner);
 					addAssets(contractAssets, assets);
 				}
 				//Assets
@@ -297,14 +297,14 @@ public class ProfileData {
 					ownersAccountBalance.add(owner.getName());
 				}
 				//Update MarketOrders dynamic values
-				for (MarketOrder order : owner.getMarketOrders()) {
+				for (MyMarketOrder order : owner.getMarketOrders()) {
 					Item item = order.getItem();
 					//Price
 					double price = ApiIdConverter.getPrice(item.getTypeID(), false);
 					order.setDynamicPrice(price);
 				}
 				//Update IndustryJobs dynamic values
-				for (IndustryJob job : owner.getIndustryJobs()) {
+				for (MyIndustryJob job : owner.getIndustryJobs()) {
 					Item itemType = job.getItem();
 					//Price
 					double price = ApiIdConverter.getPrice(itemType.getTypeID(), job.isBPC());
@@ -313,8 +313,8 @@ public class ProfileData {
 					job.setOutputPrice(outputPrice);
 				}
 				//Update Contracts dynamic values
-				for (Map.Entry<Contract, List<ContractItem>> entry : owner.getContracts().entrySet()) {
-					for (ContractItem contractItem : entry.getValue()) {
+				for (Map.Entry<MyContract, List<MyContractItem>> entry : owner.getContracts().entrySet()) {
+					for (MyContractItem contractItem : entry.getValue()) {
 						Item item = contractItem.getItem();
 						//Price
 						double price = ApiIdConverter.getPrice(item.getTypeID(), contractItem.isBPC());
@@ -324,15 +324,15 @@ public class ProfileData {
 			}
 		}
 		//Add blueprint ME/PE
-		Map<Long, IndustryJob> industryJobsMap = new HashMap<Long, IndustryJob>();
-		for (IndustryJob industryJob : industryJobs) {
-			IndustryJob old = industryJobsMap.put(industryJob.getInstalledItemID(), industryJob);
+		Map<Long, MyIndustryJob> industryJobsMap = new HashMap<Long, MyIndustryJob>();
+		for (MyIndustryJob industryJob : industryJobs) {
+			MyIndustryJob old = industryJobsMap.put(industryJob.getInstalledItemID(), industryJob);
 			if (old != null && old.getInstallTime().after(industryJob.getInstallTime())) {
 				industryJobsMap.put(old.getInstalledItemID(), old);
 			}
 		}
-		for (Asset asset : assets) {
-			IndustryJob industryJob = industryJobsMap.get(asset.getItemID());
+		for (MyAsset asset : assets) {
+			MyIndustryJob industryJob = industryJobsMap.get(asset.getItemID());
 			if (industryJob != null) {
 				int bpME = industryJob.getInstalledItemMaterialLevel();
 				int bpPE = industryJob.getInstalledItemProductivityLevel();
@@ -414,9 +414,9 @@ public class ProfileData {
 		marketPriceData = new HashMap<Integer, MarketPriceData>();
 		//Date - maximumPurchaseAge in days
 		Date maxAge = new Date(System.currentTimeMillis() - (Settings.get().getMaximumPurchaseAge() * 24 * 60 * 60 * 1000L));
-		for (Account account : profileManager.getAccounts()) {
+		for (MyAccount account : profileManager.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
-				for (MarketOrder marketOrder : owner.getMarketOrders()) {
+				for (MyMarketOrder marketOrder : owner.getMarketOrders()) {
 					if (marketOrder.getBid() > 0 //Buy orders only
 							//at least one bought
 							&& marketOrder.getVolRemaining() != marketOrder.getVolEntered()
@@ -435,8 +435,8 @@ public class ProfileData {
 		}
 	}
 
-	private void addAssets(final List<Asset> assets, List<Asset> addTo) {
-		for (Asset asset : assets) {
+	private void addAssets(final List<MyAsset> assets, List<MyAsset> addTo) {
+		for (MyAsset asset : assets) {
 			//Tags
 			Tags tags = Settings.get().getTags(asset.getTagID());
 			asset.setTags(tags);
@@ -473,7 +473,7 @@ public class ProfileData {
 			}
 			//Contaioner
 			String sContainer = "";
-			for (Asset parentAsset : asset.getParents()) {
+			for (MyAsset parentAsset : asset.getParents()) {
 				if (!sContainer.isEmpty()) {
 					sContainer = sContainer + " > ";
 				}
@@ -501,15 +501,15 @@ public class ProfileData {
 
 			//Type Count
 			if (!uniqueAssetsDuplicates.containsKey(asset.getItem().getTypeID())) {
-				uniqueAssetsDuplicates.put(asset.getItem().getTypeID(), new ArrayList<Asset>());
+				uniqueAssetsDuplicates.put(asset.getItem().getTypeID(), new ArrayList<MyAsset>());
 			}
-			List<Asset> dup = uniqueAssetsDuplicates.get(asset.getItem().getTypeID());
+			List<MyAsset> dup = uniqueAssetsDuplicates.get(asset.getItem().getTypeID());
 			long newCount = asset.getCount();
 			if (!dup.isEmpty()) {
 				newCount = newCount + dup.get(0).getTypeCount();
 			}
 			dup.add(asset);
-			for (Asset assetLoop : dup) {
+			for (MyAsset assetLoop : dup) {
 				assetLoop.setTypeCount(newCount);
 			}
 			//Packaged Volume

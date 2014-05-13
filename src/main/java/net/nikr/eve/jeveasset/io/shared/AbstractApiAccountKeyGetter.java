@@ -21,8 +21,8 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.core.ApiListResponse;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.response.ApiListResponse;
 import java.util.Date;
 import java.util.Map;
 

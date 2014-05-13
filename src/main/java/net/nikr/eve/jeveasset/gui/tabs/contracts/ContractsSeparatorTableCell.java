@@ -15,12 +15,12 @@ import net.nikr.eve.jeveasset.gui.shared.table.SeparatorTableCell;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem> {
+public class ContractsSeparatorTableCell extends SeparatorTableCell<MyContractItem> {
 
 	private final JLabel jName;
 	private final JLabel jType;
 
-	public ContractsSeparatorTableCell(final JTable jTable, final SeparatorList<ContractItem> separatorList, final ActionListener actionListener) {
+	public ContractsSeparatorTableCell(final JTable jTable, final SeparatorList<MyContractItem> separatorList, final ActionListener actionListener) {
 		super(jTable, separatorList);
 
 		jName = new JLabel();
@@ -58,7 +58,7 @@ public class ContractsSeparatorTableCell extends SeparatorTableCell<ContractItem
 
 	@Override
 	protected void configure(SeparatorList.Separator<?> separator) {
-		ContractItem item = (ContractItem) separator.first();
+		MyContractItem item = (MyContractItem) separator.first();
 		if (item == null) { // handle 'late' rendering calls after this separator is invalid
 			return;
 		}

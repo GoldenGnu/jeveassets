@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
@@ -66,19 +66,19 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	private EventList<RegionType> regions = new BasicEventList<RegionType>();
 	private AutoCompleteSupport<RegionType> regionsAutoComplete;
-	private AutoCompleteSupport<Location> systemsAutoComplete;
-	private AutoCompleteSupport<Location> stationsAutoComplete;
+	private AutoCompleteSupport<MyLocation> systemsAutoComplete;
+	private AutoCompleteSupport<MyLocation> stationsAutoComplete;
 
 	public PriceDataSettingsPanel(final Program program, final SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
 
 		ListenerClass listener = new ListenerClass();
 
-		EventList<Location> systemsEventList = new BasicEventList<Location>();
-		EventList<Location> stationsEventList = new BasicEventList<Location>();
+		EventList<MyLocation> systemsEventList = new BasicEventList<MyLocation>();
+		EventList<MyLocation> stationsEventList = new BasicEventList<MyLocation>();
 		String system = "";
 		String station = "";
-		for (Location location : StaticData.get().getLocations().values()) {
+		for (MyLocation location : StaticData.get().getLocations().values()) {
 			if (location.isStation()) {
 				stationsEventList.add(location);
 				if (station.length() < location.getLocation().length()) {
@@ -92,8 +92,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 				}
 			}
 		}
-		SortedList<Location> systemsSortedList = new SortedList<Location>(systemsEventList);
-		SortedList<Location> stationsSortedList = new SortedList<Location>(stationsEventList);
+		SortedList<MyLocation> systemsSortedList = new SortedList<MyLocation>(systemsEventList);
+		SortedList<MyLocation> stationsSortedList = new SortedList<MyLocation>(stationsEventList);
 
 		ButtonGroup group = new ButtonGroup();
 
@@ -241,11 +241,11 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 			locations = regionType.getRegions();
 		} else if (jRadioSystems.isSelected()) {
 			locationType = LocationType.SYSTEM;
-			Location location = (Location) jSystems.getSelectedItem();
+			MyLocation location = (MyLocation) jSystems.getSelectedItem();
 			locations = Collections.singletonList(location.getLocationID());
 		} else if (jRadioStations.isSelected()) {
 			locationType = LocationType.STATION;
-			Location location = (Location) jStations.getSelectedItem();
+			MyLocation location = (MyLocation) jStations.getSelectedItem();
 			locations = Collections.singletonList(location.getLocationID());
 		}
 
@@ -365,7 +365,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioSystems.setEnabled(false);
 			jSystems.setEnabled(false);
-			systemsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
+			systemsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.SYSTEM && jRadioSystems.isEnabled()) {
 			if (!locations.isEmpty()) {
@@ -383,7 +383,7 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		} else {
 			jRadioStations.setEnabled(false);
 			jStations.setEnabled(false);
-			stationsAutoComplete.setFirstItem(new Location(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
+			stationsAutoComplete.setFirstItem(new MyLocation(-1, DialoguesSettings.get().notConfigurable(), -1, "", -1, "", ""));
 		}
 		if (locationType == LocationType.STATION && jRadioStations.isEnabled()) {
 			if (!locations.isEmpty()) {
@@ -431,9 +431,9 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		public void focusLost(final FocusEvent e) { }
 	}
 
-	static class LocationsFilterator implements TextFilterator<Location> {
+	static class LocationsFilterator implements TextFilterator<MyLocation> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final Location element) {
+		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
 			baseList.add(element.getLocation());
 		}
 	}

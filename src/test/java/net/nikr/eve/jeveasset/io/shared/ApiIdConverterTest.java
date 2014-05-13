@@ -21,11 +21,17 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
-import net.nikr.eve.jeveasset.data.Location;
+import com.beimin.eveapi.model.eve.Station;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.StaticData;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 public class ApiIdConverterTest {
@@ -54,8 +60,8 @@ public class ApiIdConverterTest {
 	 */
 	@Test
 	public void testLocation() {
-		for (Location o1 : StaticData.get().getLocations().values()) {
-			Location location = ApiIdConverter.getLocation(o1.getLocationID());
+		for (MyLocation o1 : StaticData.get().getLocations().values()) {
+			MyLocation location = ApiIdConverter.getLocation(o1.getLocationID());
 			assertEquals(o1.getLocation(), location.getLocation());
 			assertEquals(o1.getLocationID(), location.getLocationID());
 			if (o1.isRegion()) {
@@ -99,7 +105,7 @@ public class ApiIdConverterTest {
 				assertFalse(o1.getRegionID() == 0);
 			}
 		}
-		for (ApiStation apiStation : StaticData.get().getConquerableStations().values()) {
+		for (Station apiStation : StaticData.get().getConquerableStations().values()) {
 			String system = ApiIdConverter.getLocation(apiStation.getSolarSystemID()).getSystem();
 			assertTrue("Station name: " + apiStation.getStationName() + " System name: " + system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
 		}

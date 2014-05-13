@@ -21,28 +21,32 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
-import com.beimin.eveapi.shared.assetlist.EveAsset;
-import com.beimin.eveapi.shared.contract.ContractStatus;
-import com.beimin.eveapi.shared.contract.EveContract;
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
-import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.model.shared.Contract;
+import com.beimin.eveapi.model.shared.ContractItem;
+import com.beimin.eveapi.model.shared.ContractStatus;
+import com.beimin.eveapi.model.shared.IndustryJob;
+import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.nikr.eve.jeveasset.data.*;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
+import net.nikr.eve.jeveasset.data.MyLocation;
+import net.nikr.eve.jeveasset.data.Owner;
+import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,26 +57,26 @@ public final class ApiConverter {
 
 	private ApiConverter() { }
 
-	public static List<AccountBalance> convertAccountBalance(final List<EveAccountBalance> eveAccountBalances, final Owner owner) {
-		List<AccountBalance> accountBalances = new ArrayList<AccountBalance>();
-		for (EveAccountBalance eveAccountBalance : eveAccountBalances) {
-			accountBalances.add( new AccountBalance(eveAccountBalance, owner));
+	public static List<MyAccountBalance> convertAccountBalance(final List<AccountBalance> eveAccountBalances, final Owner owner) {
+		List<MyAccountBalance> accountBalances = new ArrayList<MyAccountBalance>();
+		for (AccountBalance eveAccountBalance : eveAccountBalances) {
+			accountBalances.add( new MyAccountBalance(eveAccountBalance, owner));
 		}
 		return accountBalances;
 	}
 
-	public static List<Asset> assetIndustryJob(final List<IndustryJob> industryJobs, final Owner owner) {
-		List<Asset> assets = new ArrayList<Asset>();
-		for (IndustryJob industryJob : industryJobs) {
+	public static List<MyAsset> assetIndustryJob(final List<MyIndustryJob> industryJobs, final Owner owner) {
+		List<MyAsset> assets = new ArrayList<MyAsset>();
+		for (MyIndustryJob industryJob : industryJobs) {
 			if (!industryJob.isCompleted()) {
-				Asset asset = toAssetIndustryJob(industryJob, owner);
+				MyAsset asset = toAssetIndustryJob(industryJob, owner);
 				assets.add(asset);
 			}
 		}
 		return assets;
 	}
 
-	private static Asset toAssetIndustryJob(final IndustryJob industryJob, final Owner owner) {
+	private static MyAsset toAssetIndustryJob(final MyIndustryJob industryJob, final Owner owner) {
 		int typeID = industryJob.getInstalledItemTypeID();
 		long locationID = toLocationID(industryJob);
 		long count = industryJob.getInstalledItemQuantity();
@@ -89,24 +93,24 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, null);
 	}
 
-	public static List<Asset> convertAsset(final List<EveAsset<?>> eveAssets, final Owner owner) {
-		List<Asset> assets = new ArrayList<Asset>();
+	public static List<MyAsset> convertAsset(final List<Asset<?>> eveAssets, final Owner owner) {
+		List<MyAsset> assets = new ArrayList<MyAsset>();
 		toDeepAsset(eveAssets, assets, null, owner);
 		return assets;
 	}
-	private static void toDeepAsset(final List<EveAsset<?>> eveAssets, final List<Asset> assets, final Asset parentAsset, final Owner owner) {
-		for (EveAsset<?> eveAsset : eveAssets) {
-			Asset asset = toAsset(owner, eveAsset, parentAsset);
+	private static void toDeepAsset(final List<Asset<?>> eveAssets, final List<MyAsset> assets, final MyAsset parentAsset, final Owner owner) {
+		for (Asset<?> eveAsset : eveAssets) {
+			MyAsset asset = toAsset(owner, eveAsset, parentAsset);
 			if (parentAsset == null) {
 				assets.add(asset);
 			} else {
 				parentAsset.addAsset(asset);
 			}
-			toDeepAsset(new ArrayList<EveAsset<?>>(eveAsset.getAssets()), assets, asset, owner);
+			toDeepAsset(new ArrayList<Asset<?>>(eveAsset.getAssets()), assets, asset, owner);
 		}
 	}
 
-	private static Asset toAsset(final Owner owner, final EveAsset<?> eveAsset, final Asset parentAsset) {
+	private static MyAsset toAsset(final Owner owner, final Asset<?> eveAsset, final MyAsset parentAsset) {
 		long count = eveAsset.getQuantity();
 		int flagID = eveAsset.getFlag();
 		long itemID = eveAsset.getItemID();
@@ -125,35 +129,35 @@ public final class ApiConverter {
 		return createAsset(parentAsset, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, null);
 
 	}
-	public static List<MarketOrder> convertMarketOrders(final List<ApiMarketOrder> apiMarketOrders, final Owner owner) {
-		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
-		for (ApiMarketOrder apiMarketOrder : apiMarketOrders) {
+	public static List<MyMarketOrder> convertMarketOrders(final List<MarketOrder> apiMarketOrders, final Owner owner) {
+		List<MyMarketOrder> marketOrders = new ArrayList<MyMarketOrder>();
+		for (MarketOrder apiMarketOrder : apiMarketOrders) {
 			marketOrders.add(toMarketOrder(apiMarketOrder, owner));
 		}
 		return marketOrders;
 	}
 
-	private static MarketOrder toMarketOrder(final ApiMarketOrder apiMarketOrder, final Owner owner) {
+	private static MyMarketOrder toMarketOrder(final MarketOrder apiMarketOrder, final Owner owner) {
 		Item item = ApiIdConverter.getItem(apiMarketOrder.getTypeID());
-		Location location = ApiIdConverter.getLocation(apiMarketOrder.getStationID(), null);
-		return new MarketOrder(apiMarketOrder, item, location, owner);
+		MyLocation location = ApiIdConverter.getLocation(apiMarketOrder.getStationID(), null);
+		return new MyMarketOrder(apiMarketOrder, item, location, owner);
 	}
 
-	public static List<Asset> assetMarketOrder(final List<MarketOrder> marketOrders, final Owner owner) {
-		List<Asset> assets = new ArrayList<Asset>();
-		for (MarketOrder marketOrder : marketOrders) {
+	public static List<MyAsset> assetMarketOrder(final List<MyMarketOrder> marketOrders, final Owner owner) {
+		List<MyAsset> assets = new ArrayList<MyAsset>();
+		for (MyMarketOrder marketOrder : marketOrders) {
 			if (marketOrder.getOrderState() == 0 && marketOrder.getVolRemaining() > 0
 					&& ((marketOrder.getBid() < 1 && Settings.get().isIncludeSellOrders())
 					|| (marketOrder.getBid() > 0 && Settings.get().isIncludeBuyOrders()))
 					) {
-				Asset asset = toAssetMarketOrder(marketOrder, owner);
+				MyAsset asset = toAssetMarketOrder(marketOrder, owner);
 				assets.add(asset);
 			}
 		}
 		return assets;
 	}
 
-	private static Asset toAssetMarketOrder(final MarketOrder marketOrder, final Owner owner) {
+	private static MyAsset toAssetMarketOrder(final MyMarketOrder marketOrder, final Owner owner) {
 		int typeID = marketOrder.getTypeID();
 		long locationID = marketOrder.getStationID();
 		long count = marketOrder.getVolRemaining();
@@ -171,43 +175,43 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static Map<Contract, List<ContractItem>> convertContracts(final Map<EveContract, List<EveContractItem>> eveContracts) {
-		Map<Contract, List<ContractItem>> contracts = new HashMap<Contract, List<ContractItem>>();
-		for (Entry<EveContract, List<EveContractItem>> entry : eveContracts.entrySet()) {
-			Contract contract = toContract(entry.getKey());
-			List<ContractItem> contractItems = convertContractItems(entry.getValue(), contract);
+	public static Map<MyContract, List<MyContractItem>> convertContracts(final Map<Contract, List<ContractItem>> eveContracts) {
+		Map<MyContract, List<MyContractItem>> contracts = new HashMap<MyContract, List<MyContractItem>>();
+		for (Entry<Contract, List<ContractItem>> entry : eveContracts.entrySet()) {
+			MyContract contract = toContract(entry.getKey());
+			List<MyContractItem> contractItems = convertContractItems(entry.getValue(), contract);
 			contracts.put(contract, contractItems);
 		}
 		return contracts;
 	}
 
-	public static List<ContractItem> convertContractItems(final List<EveContractItem> eveContractItems, Contract contract) {
-		List<ContractItem> contractItems = new ArrayList<ContractItem>();
-		for (EveContractItem eveContractItem : eveContractItems) {
+	public static List<MyContractItem> convertContractItems(final List<ContractItem> eveContractItems, MyContract contract) {
+		List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+		for (ContractItem eveContractItem : eveContractItems) {
 			contractItems.add(toContractItem(eveContractItem, contract));
 		}
 		return contractItems;
 	}
 
-	public static Contract toContract(final EveContract eveContract) {
+	public static MyContract toContract(final Contract eveContract) {
 		String acceptor = ApiIdConverter.getOwnerName(eveContract.getAcceptorID());
 		String assignee = ApiIdConverter.getOwnerName(eveContract.getAssigneeID());
 		String issuerCorp = ApiIdConverter.getOwnerName(eveContract.getIssuerCorpID());
 		String issuer = ApiIdConverter.getOwnerName(eveContract.getIssuerID());
-		Location endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
-		Location startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
-		return new Contract(eveContract, acceptor, assignee, issuerCorp, issuer, startStation, endStation);
+		MyLocation endStation = ApiIdConverter.getLocation(eveContract.getEndStationID());
+		MyLocation startStation = ApiIdConverter.getLocation(eveContract.getStartStationID());
+		return new MyContract(eveContract, acceptor, assignee, issuerCorp, issuer, startStation, endStation);
 	}
 
-	private static ContractItem toContractItem(final EveContractItem eveContractItem, Contract contract) {
+	private static MyContractItem toContractItem(final ContractItem eveContractItem, MyContract contract) {
 		Item item = ApiIdConverter.getItem(eveContractItem.getTypeID());
-		return new ContractItem(eveContractItem, contract, item);
+		return new MyContractItem(eveContractItem, contract, item);
 	}
 
 	
-	public static List<Asset> assetContracts(final List<ContractItem> contractItems, final Owner owner) {
-		List<Asset> list = new ArrayList<Asset>();
-		for (ContractItem contractItem : contractItems) {
+	public static List<MyAsset> assetContracts(final List<MyContractItem> contractItems, final Owner owner) {
+		List<MyAsset> list = new ArrayList<MyAsset>();
+		for (MyContractItem contractItem : contractItems) {
 			if (	//Not completed
 					(contractItem.getContract().getStatus() == ContractStatus.INPROGRESS 
 					|| contractItem.getContract().getStatus() == ContractStatus.OUTSTANDING)
@@ -218,14 +222,14 @@ public final class ApiConverter {
 					//Buy
 					|| (!contractItem.isIncluded() && Settings.get().isIncludeBuyContracts()))
 					) { 
-				Asset asset = toAssetContract(contractItem, owner);
+				MyAsset asset = toAssetContract(contractItem, owner);
 				list.add(asset);
 			}
 		}
 		return list;
 	}
 
-	private static Asset toAssetContract(final ContractItem contractItem, final Owner owner) {
+	private static MyAsset toAssetContract(final MyContractItem contractItem, final Owner owner) {
 		long count = contractItem.getQuantity();
 		int flagID = 0;
 		String flag;
@@ -256,23 +260,23 @@ public final class ApiConverter {
 		return createAsset(null, owner, count, flagID, itemID, typeID, locationID, singleton, rawQuantity, flag);
 	}
 
-	public static List<IndustryJob> convertIndustryJobs(final List<ApiIndustryJob> apiIndustryJobs, final Owner owner) {
-		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
-		for (ApiIndustryJob apiIndustryJob : apiIndustryJobs) {
+	public static List<MyIndustryJob> convertIndustryJobs(final List<IndustryJob> apiIndustryJobs, final Owner owner) {
+		List<MyIndustryJob> industryJobs = new ArrayList<MyIndustryJob>();
+		for (IndustryJob apiIndustryJob : apiIndustryJobs) {
 			industryJobs.add(toIndustryJob(apiIndustryJob, owner));
 		}
 		return industryJobs;
 	}
 
-	private static IndustryJob toIndustryJob(final ApiIndustryJob apiIndustryJob, final Owner owner) {
+	private static MyIndustryJob toIndustryJob(final IndustryJob apiIndustryJob, final Owner owner) {
 		Item item = ApiIdConverter.getItem(apiIndustryJob.getInstalledItemTypeID());
 		long locationID = toLocationID(apiIndustryJob);
-		Location location = ApiIdConverter.getLocation(locationID);
+		MyLocation location = ApiIdConverter.getLocation(locationID);
 		Item output = ApiIdConverter.getItem(apiIndustryJob.getOutputTypeID());
-		return new IndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
+		return new MyIndustryJob(apiIndustryJob, item, location, owner, output.getPortion());
 	}
 
-	private static long toLocationID(final ApiIndustryJob apiIndustryJob) {
+	private static long toLocationID(final IndustryJob apiIndustryJob) {
 		boolean location = ApiIdConverter.isLocationOK(apiIndustryJob.getInstalledItemLocationID());
 		if (location) {
 			return apiIndustryJob.getInstalledItemLocationID();
@@ -285,46 +289,46 @@ public final class ApiConverter {
 		return -1;
 	}
 
-	public static Asset createAsset(final Asset parentEveAsset,
+	public static MyAsset createAsset(final MyAsset parentEveAsset,
 			Owner owner, long count, int flagID, long itemID,
 			int typeID, long locationID, boolean singleton, int rawQuantity, String flag) {
 		//Calculated:
 		Item item = ApiIdConverter.getItem(typeID);
-		Location location = ApiIdConverter.getLocation(locationID, parentEveAsset);
-		List<Asset> parents = ApiIdConverter.getParents(parentEveAsset);
+		MyLocation location = ApiIdConverter.getLocation(locationID, parentEveAsset);
+		List<MyAsset> parents = ApiIdConverter.getParents(parentEveAsset);
 		if (flag == null) {
 			flag = ApiIdConverter.flag(flagID, parentEveAsset);
 		}
-		return new Asset(item, location, owner, count, parents, flag, flagID, itemID, singleton, rawQuantity);
+		return new MyAsset(item, location, owner, count, parents, flag, flagID, itemID, singleton, rawQuantity);
 	}
 
-	public static Map<Long, Journal> convertJournals(final List<ApiJournalEntry> apiJournals, final Owner owner, final int accountKey) {
-		Map<Long, Journal> journals = new HashMap<Long, Journal>();
-		for (ApiJournalEntry apiJournal : apiJournals) {
-			Journal journal = convertJournal(apiJournal, owner, accountKey);
+	public static Map<Long, MyJournal> convertJournals(final List<JournalEntry> apiJournals, final Owner owner, final int accountKey) {
+		Map<Long, MyJournal> journals = new HashMap<Long, MyJournal>();
+		for (JournalEntry apiJournal : apiJournals) {
+			MyJournal journal = convertJournal(apiJournal, owner, accountKey);
 			journals.put(journal.getRefID(), journal);
 		}
 		return journals;
 	}
 
-	public static Journal convertJournal(final ApiJournalEntry apiJournal, final Owner owner, final int accountKey) {
-		Journal journal = new Journal(apiJournal, owner, accountKey);
+	public static MyJournal convertJournal(final JournalEntry apiJournal, final Owner owner, final int accountKey) {
+		MyJournal journal = new MyJournal(apiJournal, owner, accountKey);
 		return journal;
 	}
 
-	public static Map<Long, Transaction> convertTransactions(final List<ApiWalletTransaction> apiJournals, final Owner owner, final int accountKey) {
-		Map<Long, Transaction> transactions = new HashMap<Long, Transaction>();
-		for (ApiWalletTransaction apiTransaction : apiJournals) {
-			Transaction transaction = convertTransaction(apiTransaction, owner, accountKey);
+	public static Map<Long, MyTransaction> convertTransactions(final List<WalletTransaction> apiJournals, final Owner owner, final int accountKey) {
+		Map<Long, MyTransaction> transactions = new HashMap<Long, MyTransaction>();
+		for (WalletTransaction apiTransaction : apiJournals) {
+			MyTransaction transaction = convertTransaction(apiTransaction, owner, accountKey);
 			transactions.put(transaction.getTransactionID(), transaction);
 		}
 		return transactions;
 	}
 
-	public static Transaction convertTransaction(final ApiWalletTransaction apiTransaction, final Owner owner, final int accountKey) {
+	public static MyTransaction convertTransaction(final WalletTransaction apiTransaction, final Owner owner, final int accountKey) {
 		Item item = ApiIdConverter.getItem(apiTransaction.getTypeID());
-		Location location = ApiIdConverter.getLocation(apiTransaction.getStationID());
-		Transaction transaction = new Transaction(apiTransaction, item, location, owner, accountKey);
+		MyLocation location = ApiIdConverter.getLocation(apiTransaction.getStationID());
+		MyTransaction transaction = new MyTransaction(apiTransaction, item, location, owner, accountKey);
 		return transaction;
 	}
 }

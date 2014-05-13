@@ -21,20 +21,20 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo;
 
 
 public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem, LocationType {
 	private String name;
-	private Location location;
+	private MyLocation location;
 	private double valueReprocessed;
 	private double volume;
 	private long count;
 	private double value;
 
-	public Overview(final String name, final Location location, final double valueReprocessed, final double volume, final long count, final double value) {
+	public Overview(final String name, final MyLocation location, final double valueReprocessed, final double volume, final long count, final double value) {
 		this.name = name;
 		this.location = location;
 		this.valueReprocessed = valueReprocessed;
@@ -57,7 +57,7 @@ public class Overview implements Comparable<Overview>, JMenuInfo.InfoItem, Locat
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 

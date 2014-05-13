@@ -34,13 +34,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.eveapi.*;
@@ -279,7 +279,7 @@ public class UpdateDialog extends JDialogCentered {
 		boolean accountBalanceUpdateAll = true;
 
 		Date priceDataNextUpdate = program.getPriceDataGetter().getNextUpdate();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (owner.isShowOwner()) {
 					industryJobsNextUpdate = nextUpdate(industryJobsNextUpdate, owner.getIndustryJobsNextUpdate());
@@ -605,10 +605,10 @@ public class UpdateDialog extends JDialogCentered {
 			ContractItemsGetter itemsGetter = new ContractItemsGetter();
 			itemsGetter.load(this, Settings.get().isForceUpdate(), program.getAccounts());
 			Set<Long> list = new HashSet<Long>();
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					list.add(owner.getOwnerID()); //Just to be sure
-					for (Contract contract : owner.getContracts().keySet()) {
+					for (MyContract contract : owner.getContracts().keySet()) {
 						list.add(contract.getAcceptorID());
 						list.add(contract.getAssigneeID());
 						list.add(contract.getIssuerCorpID());

@@ -31,7 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -43,7 +43,7 @@ public class JContainerDialog extends JDialogCentered {
 
 	private JComboBox jContainers;
 	private JButton jOK;
-	private Asset selected = null;
+	private MyAsset selected = null;
 
 	public JContainerDialog(Program program) {
 		super(program, GuiShared.get().containerTitle());
@@ -84,7 +84,7 @@ public class JContainerDialog extends JDialogCentered {
 		);
 	}
 
-	public Asset showDialog(Asset asset) {
+	public MyAsset showDialog(MyAsset asset) {
 		if (asset.getParents().size() == 1) {
 			return asset.getParents().get(0);
 		}
@@ -111,7 +111,7 @@ public class JContainerDialog extends JDialogCentered {
 
 	@Override
 	protected void save() {
-		selected = (Asset) jContainers.getSelectedItem();
+		selected = (MyAsset) jContainers.getSelectedItem();
 		setVisible(false);
 	}
 

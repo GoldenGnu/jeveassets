@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.ProfileData;
 import net.nikr.eve.jeveasset.data.ProfileManager;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -47,26 +47,26 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Updatable;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractsTab;
 import net.nikr.eve.jeveasset.gui.tabs.items.ItemsTab;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryPlotTab;
-import net.nikr.eve.jeveasset.gui.tabs.journal.Journal;
+import net.nikr.eve.jeveasset.gui.tabs.journal.MyJournal;
 import net.nikr.eve.jeveasset.gui.tabs.journal.JournalTab;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.materials.MaterialsTab;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.reprocessed.ReprocessedTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
@@ -445,31 +445,31 @@ public class Program implements ActionListener {
 	public RoutingTab getRoutingTab() {
 		return routingTab;
 	}
-	public EventList<Asset> getAssetEventList() {
+	public EventList<MyAsset> getAssetEventList() {
 		return profileData.getAssetsEventList();
 	}
-	public EventList<ContractItem> getContractItemEventList() {
+	public EventList<MyContractItem> getContractItemEventList() {
 		return profileData.getContractItemEventList();
 	}
-	public EventList<IndustryJob> getIndustryJobsEventList() {
+	public EventList<MyIndustryJob> getIndustryJobsEventList() {
 		return profileData.getIndustryJobsEventList();
 	}
-	public EventList<MarketOrder> getMarketOrdersEventList() {
+	public EventList<MyMarketOrder> getMarketOrdersEventList() {
 		return profileData.getMarketOrdersEventList();
 	}
-	public EventList<Journal> getJournalEventList() {
+	public EventList<MyJournal> getJournalEventList() {
 		return profileData.getJournalEventList();
 	}
-	public EventList<Transaction> getTransactionsEventList() {
+	public EventList<MyTransaction> getTransactionsEventList() {
 		return profileData.getTransactionsEventList();
 	}
-	public EventList<AccountBalance> getAccountBalanceEventList() {
+	public EventList<MyAccountBalance> getAccountBalanceEventList() {
 		return profileData.getAccountBalanceEventList();
 	}
 	public List<String> getOwners(boolean all) {
 		return profileData.getOwners(all);
 	}
-	public List<Account> getAccounts() {
+	public List<MyAccount> getAccounts() {
 		return profileManager.getAccounts();
 	}
 	public ProfileManager getProfileManager() {

@@ -21,18 +21,18 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.journal;
 
-import com.beimin.eveapi.shared.wallet.RefType;
-import com.beimin.eveapi.shared.wallet.journal.ApiJournalEntry;
+import com.beimin.eveapi.model.shared.JournalEntry;
+import com.beimin.eveapi.model.shared.RefType;
 import net.nikr.eve.jeveasset.data.Owner;
 
 
-public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEntry> {
+public class MyJournal extends JournalEntry implements Comparable<JournalEntry> {
 
 	private final String corp = "(Corporation)";
 	private final Owner owner;
 	private final int accountKey;
 
-	public Journal(ApiJournalEntry apiJournalEntry, Owner owner, int accountKey) {
+	public MyJournal(JournalEntry apiJournalEntry, Owner owner, int accountKey) {
 		setAmount(apiJournalEntry.getAmount());
 		setArgID1(apiJournalEntry.getArgID1());
 		setArgName1(apiJournalEntry.getArgName1());
@@ -47,8 +47,6 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 		setRefTypeID(apiJournalEntry.getRefTypeID());
 		setTaxAmount(apiJournalEntry.getTaxAmount());
 		setTaxReceiverID(apiJournalEntry.getTaxReceiverID());
-		setOwner1TypeID(apiJournalEntry.getOwner1TypeID());
-		setOwner2TypeID(apiJournalEntry.getOwner2TypeID());
 		this.owner = owner;
 		this.accountKey = accountKey;
 	}
@@ -94,7 +92,7 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 	}
 
 	@Override
-	public int compareTo(ApiJournalEntry o) {
+	public int compareTo(JournalEntry o) {
 		return o.getDate().compareTo(this.getDate());
 	}
 
@@ -114,7 +112,7 @@ public class Journal extends ApiJournalEntry implements Comparable<ApiJournalEnt
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Journal other = (Journal) obj;
+		final MyJournal other = (MyJournal) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}

@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.values;
 
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
 
@@ -33,16 +33,16 @@ public class Value implements Comparable<Value> {
 	private double escrowsToCover = 0;
 	private double balance = 0;
 	private double manufacturing;
-	private Asset bestAsset = null;
-	private Asset bestShip = null;
-	private Asset bestShipFitted = null;
-	private Asset bestModule = null;
+	private MyAsset bestAsset = null;
+	private MyAsset bestShip = null;
+	private MyAsset bestShipFitted = null;
+	private MyAsset bestModule = null;
 
 	public Value(String name) {
 		this.name = name;
 	}
 
-	public void addAssets(Asset asset) {
+	public void addAssets(MyAsset asset) {
 		this.assets = this.assets + (asset.getDynamicPrice() * asset.getCount());
 		setBestAsset(asset);
 		setBestShip(asset);
@@ -134,14 +134,14 @@ public class Value implements Comparable<Value> {
 		return getValue(bestModule);
 	}
 
-	private String getName(Asset asset) {
+	private String getName(MyAsset asset) {
 		if (asset != null) {
 			return asset.getName();
 		} else {
 			return TabsValues.get().none();
 		}
 	}
-	private double getValue(Asset asset) {
+	private double getValue(MyAsset asset) {
 		if (asset != null) {
 			return asset.getValue();
 		} else {
@@ -157,7 +157,7 @@ public class Value implements Comparable<Value> {
 		return getAssets() + getBalance() + getEscrows() + getSellOrders() + getManufacturing();
 	}
 
-	private void setBestAsset(Asset bestAsset) {
+	private void setBestAsset(MyAsset bestAsset) {
 		if (this.bestAsset == null) { //First
 			this.bestAsset = bestAsset;
 		} else if (bestAsset.getDynamicPrice() > this.bestAsset.getDynamicPrice()) { //Higher
@@ -165,7 +165,7 @@ public class Value implements Comparable<Value> {
 		}
 	}
 
-	private void setBestShip(Asset bestShip) {
+	private void setBestShip(MyAsset bestShip) {
 		if (!bestShip.getItem().getCategory().equals("Ship")) {
 			return; //Not a ship
 		}
@@ -176,7 +176,7 @@ public class Value implements Comparable<Value> {
 		}
 	}
 
-	private void setBestShipFitted(Asset bestShipFitted) {
+	private void setBestShipFitted(MyAsset bestShipFitted) {
 		if (!bestShipFitted.getItem().getCategory().equals("Ship")) {
 			return; //Not a ship
 		}
@@ -187,7 +187,7 @@ public class Value implements Comparable<Value> {
 		}
 	}
 
-	private void setBestModule(Asset bestModule) {
+	private void setBestModule(MyAsset bestModule) {
 		if (!bestModule.getItem().getCategory().equals("Module")) {
 			return; //Not a Module
 		}
@@ -198,9 +198,9 @@ public class Value implements Comparable<Value> {
 		}
 	}
 
-	private double getShipFittedValue(Asset patentAsset) {
+	private double getShipFittedValue(MyAsset patentAsset) {
 		double value = (patentAsset.getDynamicPrice() * patentAsset.getCount());
-		for (Asset asset : patentAsset.getAssets()) {
+		for (MyAsset asset : patentAsset.getAssets()) {
 			value = value + getShipFittedValue(asset);
 		}
 		return value;

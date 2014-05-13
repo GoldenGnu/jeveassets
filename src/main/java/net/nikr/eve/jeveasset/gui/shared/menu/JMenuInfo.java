@@ -31,16 +31,16 @@ import javax.swing.border.Border;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.loadout.Loadout;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material;
 import net.nikr.eve.jeveasset.gui.tabs.materials.Material.MaterialType;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.overview.Overview;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
@@ -72,7 +72,7 @@ public class JMenuInfo {
 		infoItem(jComponent, items);
 	}
 
-	public static void asset(final JComponent jComponent, final List<Asset> list) {
+	public static void asset(final JComponent jComponent, final List<MyAsset> list) {
 		infoItem(jComponent, new ArrayList<InfoItem>(list));
 	}
 
@@ -112,7 +112,7 @@ public class JMenuInfo {
 		}
 	}
 
-	public static void marketOrder(final JComponent jComponent, final List<MarketOrder> list) {
+	public static void marketOrder(final JComponent jComponent, final List<MyMarketOrder> list) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -122,7 +122,7 @@ public class JMenuInfo {
 			double buyOrdersTotal = 0;
 			double toCoverTotal = 0;
 			double escrowTotal = 0;
-			for (MarketOrder marketOrder : list) {
+			for (MyMarketOrder marketOrder : list) {
 				if (marketOrder.getBid() < 1) { //Sell
 					sellOrdersTotal += marketOrder.getPrice() * marketOrder.getVolRemaining();
 				} else { //Buy
@@ -141,7 +141,7 @@ public class JMenuInfo {
 		}
 	}
 
-	public static void transctions(final JComponent jComponent, final List<Transaction> transactions) {
+	public static void transctions(final JComponent jComponent, final List<MyTransaction> transactions) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -149,7 +149,7 @@ public class JMenuInfo {
 
 			double sellTxTotal = 0;
 			double buyTxTotal = 0;
-			for (Transaction transaction : transactions) {
+			for (MyTransaction transaction : transactions) {
 				if (transaction.getTransactionType().equals("sell")) { //Sell
 					sellTxTotal += transaction.getPrice() * transaction.getQuantity();
 				} else { //Buy
@@ -162,7 +162,7 @@ public class JMenuInfo {
 		}
 	}
 
-	public static void industryJob(final JComponent jComponent, final List<IndustryJob> list) {
+	public static void industryJob(final JComponent jComponent, final List<MyIndustryJob> list) {
 		if (jComponent instanceof JPopupMenu) {
 			JPopupMenu jPopupMenu = (JPopupMenu) jComponent;
 
@@ -171,10 +171,10 @@ public class JMenuInfo {
 			int count = 0;
 			double success = 0;
 			double total = 0.0;
-			for (IndustryJob industryJob : list) {
-				if (industryJob.getActivity() == IndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
+			for (MyIndustryJob industryJob : list) {
+				if (industryJob.getActivity() == MyIndustryJob.IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
 					count++;
-					if (industryJob.getState() == IndustryJob.IndustryJobState.STATE_DELIVERED) {
+					if (industryJob.getState() == MyIndustryJob.IndustryJobState.STATE_DELIVERED) {
 						success++;
 					}
 				}

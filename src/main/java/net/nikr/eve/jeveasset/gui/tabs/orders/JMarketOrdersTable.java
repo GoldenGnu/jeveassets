@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JMarketOrdersTable extends JAutoColumnTable {
 
-	private DefaultEventTableModel<MarketOrder> tableModel;
+	private DefaultEventTableModel<MyMarketOrder> tableModel;
 
-	public JMarketOrdersTable(final Program program, final DefaultEventTableModel<MarketOrder> tableModel) {
+	public JMarketOrdersTable(final Program program, final DefaultEventTableModel<MyMarketOrder> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -43,7 +43,7 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		MarketOrder marketOrder = tableModel.getElementAt(row);
+		MyMarketOrder marketOrder = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())) {

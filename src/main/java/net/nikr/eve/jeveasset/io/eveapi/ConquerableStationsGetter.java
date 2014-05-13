@@ -21,10 +21,10 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.response.eve.StationListResponse;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
@@ -45,8 +45,8 @@ public class ConquerableStationsGetter extends AbstractApiGetter<StationListResp
 
 	@Override
 	protected StationListResponse getResponse(final boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.eve.conquerablestationlist
-				.ConquerableStationListParser.getInstance().getResponse();
+		return new com.beimin.eveapi.parser.eve.ConquerableStationListParser()
+				.getResponse();
 	}
 
 	@Override

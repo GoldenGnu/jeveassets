@@ -1,32 +1,44 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2009-2014 Contributors (see credits.txt)
+ *
+ * This file is part of jEveAssets.
+ *
+ * jEveAssets is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * jEveAssets is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jEveAssets; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.locations.ApiLocation;
-import com.beimin.eveapi.shared.locations.LocationsResponse;
+import com.beimin.eveapi.model.shared.Location;
+import com.beimin.eveapi.response.shared.LocationsResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 
-/**
- *
- * @author Niklas
- */
+
 public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 
 	private final int MAX_SIZE = 50;
@@ -39,7 +51,7 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 		super("Locations", true, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
 		eveNames = new HashMap<Long, String>();
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 		if (!hasError()) {
@@ -56,8 +68,8 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 		return itemIDs;
 	}
 
-	private void getItemID(Map<Long, String> itemIDs, List<Asset> assets) {
-		for (Asset asset : assets) {
+	private void getItemID(Map<Long, String> itemIDs, List<MyAsset> assets) {
+		for (MyAsset asset : assets) {
 			if ((asset.getItem().getGroup().equals("Audit Log Secure Container")
 					|| asset.getItem().getCategory().equals("Ship"))
 					&& asset.isSingleton()) {
@@ -86,9 +98,11 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 	@Override
 	protected LocationsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.locations.LocationsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), getItems());
+			return new com.beimin.eveapi.parser.corporation.LocationsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
 		} else {
-			return com.beimin.eveapi.character.locations.LocationsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()), getItems());
+			return new com.beimin.eveapi.parser.pilot.LocationsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()), getItems());
 		}
 	}
 
@@ -104,8 +118,8 @@ public class LocationsGetter extends AbstractApiGetter<LocationsResponse> {
 
 	@Override
 	protected void setData(LocationsResponse response) {
-		Set<ApiLocation> all = response.getAll();
-		for (ApiLocation apiLocation : all) {
+		Set<Location> all = response.getAll();
+		for (Location apiLocation : all) {
 			final long itemID = apiLocation.getItemID();
 			final String eveName = apiLocation.getItemName();
 			final String typeName = itemMap.get(itemID);

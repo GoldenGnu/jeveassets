@@ -36,14 +36,14 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsValues;
 
@@ -214,7 +214,7 @@ public class ValueRetroTab extends JMainTab {
 		characters = new HashMap<String, Value>();
 		corporations = new HashMap<String, Value>();
 		total = new Value(TabsValues.get().grandTotal());
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			//Skip market orders
 			if (asset.getFlag().equals(General.get().marketOrderSellFlag())) {
 				continue; //Ignore market sell orders
@@ -233,7 +233,7 @@ public class ValueRetroTab extends JMainTab {
 			value.addAssets(asset);
 			total.addAssets(asset);
 		}
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			Value value = getValue(marketOrder.getOwner(), marketOrder.isCorporation());
 			if (marketOrder.getOrderState() == 0) {
 				if (marketOrder.getBid() < 1) { //Sell Orders
@@ -247,7 +247,7 @@ public class ValueRetroTab extends JMainTab {
 				}
 			}
 		}
-		for (AccountBalance accountBalance : program.getAccountBalanceEventList()) {
+		for (MyAccountBalance accountBalance : program.getAccountBalanceEventList()) {
 			Value value = getValue(accountBalance.getOwner(), accountBalance.isCorporation());
 			value.addBalance(accountBalance.getBalance());
 			total.addBalance(accountBalance.getBalance());

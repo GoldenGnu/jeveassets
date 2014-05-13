@@ -21,11 +21,11 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.orders;
 
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import com.beimin.eveapi.model.shared.MarketOrder;
 import java.util.Date;
 import javax.management.timer.Timer;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.containers.Quantity;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 
 
-public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrder>, LocationType, ItemType, PriceType  {
+public class MyMarketOrder extends MarketOrder implements Comparable<MyMarketOrder>, LocationType, ItemType, PriceType  {
 
 	public enum OrderStatus {
 		ACTIVE() {
@@ -94,14 +94,14 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	private Item item;
-	private Location location;
+	private MyLocation location;
 	private String rangeFormated;
 	private OrderStatus status;
 	private Owner owner;
 	private Quantity quantity;
 	private double price;
 
-	public MarketOrder(final ApiMarketOrder apiMarketOrder, final Item item, final Location location, final Owner owner) {
+	public MyMarketOrder(final MarketOrder apiMarketOrder, final Item item, final MyLocation location, final Owner owner) {
 		this.setAccountKey(apiMarketOrder.getAccountKey());
 		this.setBid(apiMarketOrder.getBid());
 		this.setCharID(apiMarketOrder.getCharID());
@@ -168,7 +168,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	@Override
-	public int compareTo(final MarketOrder o) {
+	public int compareTo(final MyMarketOrder o) {
 		Long thisID = this.getOrderID();
 		Long thatID = o.getOrderID();
 		return thisID.compareTo(thatID);
@@ -195,7 +195,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 
@@ -239,7 +239,7 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final MarketOrder other = (MarketOrder) obj;
+		final MyMarketOrder other = (MyMarketOrder) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}

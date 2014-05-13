@@ -22,19 +22,19 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.contract.ContractsResponse;
-import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.model.shared.Contract;
+import com.beimin.eveapi.response.shared.ContractsResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.Contract;
-import net.nikr.eve.jeveasset.gui.tabs.contracts.ContractItem;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContract;
+import net.nikr.eve.jeveasset.gui.tabs.contracts.MyContractItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -45,7 +45,7 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 		super("Contracts", true, false);
 	}
 
-	public void load(UpdateTask updateTask, boolean forceUpdate, List<Account> accounts) {
+	public void load(UpdateTask updateTask, boolean forceUpdate, List<MyAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -62,9 +62,11 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 	@Override
 	protected ContractsResponse getResponse(boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation.contract.ContractsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()));
+			return new com.beimin.eveapi.parser.corporation.ContractsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return com.beimin.eveapi.character.contract.ContractsParser.getInstance().getResponse(Owner.getApiAuthorization(getOwner()));
+			return new com.beimin.eveapi.parser.pilot.ContractsParser()
+					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
 
@@ -80,15 +82,15 @@ public class ContractsGetter extends AbstractApiGetter<ContractsResponse>{
 
 	@Override
 	protected void setData(ContractsResponse response) {
-		List<EveContract> contracts = new ArrayList<EveContract>(response.getAll());
+		List<Contract> contracts = new ArrayList<Contract>(response.getAll());
 		//Create backup of existin contracts
-		Map<Contract, List<ContractItem>> existingContract= new HashMap<Contract, List<ContractItem>>(getOwner().getContracts());
+		Map<MyContract, List<MyContractItem>> existingContract= new HashMap<MyContract, List<MyContractItem>>(getOwner().getContracts());
 		//Remove existin contracts
 		getOwner().getContracts().clear();
-		for (EveContract contract : contracts) {
+		for (Contract contract : contracts) {
 			//Find existing contract
-			List<ContractItem> contractItems = new ArrayList<ContractItem>();
-			for (Map.Entry<Contract, List<ContractItem>> entry : existingContract.entrySet()) {
+			List<MyContractItem> contractItems = new ArrayList<MyContractItem>();
+			for (Map.Entry<MyContract, List<MyContractItem>> entry : existingContract.entrySet()) {
 				if (entry.getKey().getContractID() == contract.getContractID()) {
 					contractItems = entry.getValue();
 					break;

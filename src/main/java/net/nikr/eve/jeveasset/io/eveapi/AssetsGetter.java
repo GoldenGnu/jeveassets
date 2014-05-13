@@ -22,17 +22,17 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.assetlist.AssetListResponse;
-import com.beimin.eveapi.shared.assetlist.EveAsset;
+import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.response.shared.AssetListResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
@@ -43,7 +43,7 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 		super("Assets", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, List<MyAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
@@ -55,12 +55,10 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 	@Override
 	protected AssetListResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.assetlist.AssetListParser.getInstance()
+			return new com.beimin.eveapi.parser.corporation.AssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return com.beimin.eveapi.character
-					.assetlist.AssetListParser.getInstance()
+			return new com.beimin.eveapi.parser.pilot.AssetListParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -78,8 +76,8 @@ public class AssetsGetter extends AbstractApiGetter<AssetListResponse> {
 
 	@Override
 	protected void setData(final AssetListResponse response) {
-		List<EveAsset<?>> eveAssets = new ArrayList<EveAsset<?>>(response.getAll());
-		List<Asset> assets = ApiConverter.convertAsset(eveAssets, getOwner());
+		List<Asset<?>> eveAssets = new ArrayList<Asset<?>>(response.getAll());
+		List<MyAsset> assets = ApiConverter.convertAsset(eveAssets, getOwner());
 		getOwner().setAssets(assets);
 	}
 

@@ -23,13 +23,13 @@
 package net.nikr.eve.jeveasset.gui.tabs.materials;
 
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
 public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
@@ -67,7 +67,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final String header;
 	private final String group;
 	private final String name;
-	private final Location location;
+	private final MyLocation location;
 	private final Item item;
 
 	private double value = 0;
@@ -76,7 +76,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final Double price;
 	private final MaterialType type;
 
-	public Material(final MaterialType type, final Asset asset, final String header, final String group, final String name) {
+	public Material(final MaterialType type, final MyAsset asset, final String header, final String group, final String name) {
 		this.type = type;
 		this.header = header;
 		this.group = group;
@@ -96,10 +96,10 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 			if (type == MaterialType.LOCATIONS || type == MaterialType.LOCATIONS_TOTAL || type == MaterialType.LOCATIONS_ALL) {
 				location = asset.getLocation();
 			} else {
-				location = new Location(0);
+				location = new MyLocation(0);
 			}
 		} else {
-			location = new Location(0);
+			location = new MyLocation(0);
 			this.item = new Item(0);
 			this.price = null;
 		}
@@ -124,7 +124,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 

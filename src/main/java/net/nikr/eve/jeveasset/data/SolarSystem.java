@@ -28,9 +28,9 @@ import uk.me.candle.eve.graph.Node;
  * @author Candle
  */
 public class SolarSystem extends Node {
-	private Location location;
+	private MyLocation location;
 
-	public SolarSystem(final Location location) {
+	public SolarSystem(final MyLocation location) {
 		super(location.getLocation());
 		this.location = location;
 	}

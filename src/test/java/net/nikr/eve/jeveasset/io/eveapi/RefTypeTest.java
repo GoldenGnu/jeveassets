@@ -21,13 +21,14 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.eve.reftypes.ApiRefType;
-import com.beimin.eveapi.eve.reftypes.RefTypesResponse;
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.wallet.RefType;
+import com.beimin.eveapi.model.shared.RefType;
+import com.beimin.eveapi.response.eve.RefTypesResponse;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,8 +55,8 @@ public class RefTypeTest {
 	@Test
 	public void testEnum() {
 		try {
-			RefTypesResponse response = com.beimin.eveapi.eve.reftypes.RefTypesParser.getInstance().getResponse();
-			for (ApiRefType apiRefType : response.getAll()) {
+			RefTypesResponse response = new com.beimin.eveapi.parser.eve.RefTypesParser().getResponse();
+			for (com.beimin.eveapi.model.eve.RefType apiRefType : response.getAll()) {
 				RefType refType = RefType.forID(apiRefType.getRefTypeID());
 				assertNotNull("RefType missing - ID: " + apiRefType.getRefTypeID() + " (" + apiRefType.getRefTypeName() + ")", refType);
 				assertEquals("RefType ID: " + refType.getId() + " wrong name", apiRefType.getRefTypeName(), refType.getName());

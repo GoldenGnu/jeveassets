@@ -26,19 +26,19 @@ package net.nikr.eve.jeveasset.data;
  * @author Candle
  */
 public class Jump {
-	private Location from;
-	private Location to;
+	private MyLocation from;
+	private MyLocation to;
 
-	public Jump(final Location from, final Location to) {
+	public Jump(final MyLocation from, final MyLocation to) {
 		this.from = from;
 		this.to = to;
 	}
 
-	public Location getFrom() {
+	public MyLocation getFrom() {
 		return from;
 	}
 
-	public Location getTo() {
+	public MyLocation getTo() {
 		return to;
 	}
 }

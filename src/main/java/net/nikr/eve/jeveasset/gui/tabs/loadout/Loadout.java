@@ -24,7 +24,7 @@ package net.nikr.eve.jeveasset.gui.tabs.loadout;
 
 import ca.odell.glazedlists.matchers.Matcher;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
@@ -106,7 +106,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	}
 
 	private Item item;
-	private Location location;
+	private MyLocation location;
 	private String name;
 	private String key;
 	private FlagType flag;
@@ -116,7 +116,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	private long count;
 	private boolean first = false;
 
-	public Loadout(final Item item, final Location location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
+	public Loadout(final Item item, final MyLocation location, final String owner, final String name, final String key, final String flag, final Double price, final double value, final long count) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -187,7 +187,7 @@ public class Loadout implements Comparable<Loadout>, LocationType, ItemType, Pri
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 

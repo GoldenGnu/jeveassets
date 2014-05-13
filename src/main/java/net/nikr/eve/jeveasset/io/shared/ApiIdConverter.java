@@ -21,20 +21,20 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.model.eve.Station;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.ReprocessedMaterial;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.data.UserItem;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
 public final class ApiIdConverter {
@@ -83,7 +83,7 @@ public final class ApiIdConverter {
 		packagedVolume.put("Transport Ship", 20000f);
 	}
 
-	public static String flag(final int flag, final Asset parentAsset) {
+	public static String flag(final int flag, final MyAsset parentAsset) {
 		ItemFlag itemFlag = StaticData.get().getItemFlags().get(flag);
 		if (itemFlag != null) {
 			if (parentAsset != null && !parentAsset.getFlag().isEmpty()) {
@@ -178,8 +178,8 @@ public final class ApiIdConverter {
 		return isLocationOK(locationID, null);
 	}
 
-	public static boolean isLocationOK(final long locationID, final Asset parentAsset) {
-		Location location = getLocation(locationID, parentAsset);
+	public static boolean isLocationOK(final long locationID, final MyAsset parentAsset) {
+		MyLocation location = getLocation(locationID, parentAsset);
 		return location != null && !location.isEmpty();
 	}
 
@@ -203,23 +203,23 @@ public final class ApiIdConverter {
 		return "!" + String.valueOf(ownerID);
 	}
 
-	public static List<Asset> getParents(final Asset parentAsset) {
-		List<Asset> parents;
+	public static List<MyAsset> getParents(final MyAsset parentAsset) {
+		List<MyAsset> parents;
 		if (parentAsset != null) {
-			parents = new ArrayList<Asset>(parentAsset.getParents());
+			parents = new ArrayList<MyAsset>(parentAsset.getParents());
 			parents.add(parentAsset);
 		} else {
-			parents = new ArrayList<Asset>();
+			parents = new ArrayList<MyAsset>();
 		}
 		
 		return parents;
 	}
 
-	public static Location getLocation(long locationID) {
+	public static MyLocation getLocation(long locationID) {
 		return getLocation(locationID, null);
 	}
 
-	public static Location getLocation(long locationID, final Asset parentAsset) {
+	public static MyLocation getLocation(long locationID, final MyAsset parentAsset) {
 		//Offices
 		if (locationID >= 66000000) {
 			if (locationID < 66014933) {
@@ -228,7 +228,7 @@ public final class ApiIdConverter {
 				locationID = locationID - 6000000;
 			}
 		}
-		Location location = StaticData.get().getLocations().get(locationID);
+		MyLocation location = StaticData.get().getLocations().get(locationID);
 		if (location != null) {
 			return location;
 		}
@@ -238,12 +238,12 @@ public final class ApiIdConverter {
 				return location;
 			}
 		}
-		return new Location(locationID);
+		return new MyLocation(locationID);
 	}
 
-	public static void addLocation(final ApiStation station) {
-		Location system = getLocation(station.getSolarSystemID());
-		Location location = new Location(station.getStationID(),
+	public static void addLocation(final Station station) {
+		MyLocation system = getLocation(station.getSolarSystemID());
+		MyLocation location = new MyLocation(station.getStationID(),
 				station.getStationName(),
 				system.getSystemID(),
 				system.getSystem(),

@@ -74,9 +74,9 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -115,9 +115,9 @@ public class StockpileDialog extends JDialogCentered {
 	private boolean updated = false;
 
 	//Data
-	private final EventList<Location> stations;
-	private final EventList<Location> systems;
-	private final EventList<Location> regions;
+	private final EventList<MyLocation> stations;
+	private final EventList<MyLocation> systems;
+	private final EventList<MyLocation> regions;
 	private final Set<String> myLocations;
 	private final List<Owner> owners;
 	private final List<ItemFlag> itemFlags;
@@ -130,9 +130,9 @@ public class StockpileDialog extends JDialogCentered {
 		itemFlags = new ArrayList<ItemFlag>(StaticData.get().getItemFlags().values());
 		Collections.sort(itemFlags);
 		//Locations - not static
-		stations = new BasicEventList<Location>();
-		systems = new BasicEventList<Location>();
-		regions = new BasicEventList<Location>();
+		stations = new BasicEventList<MyLocation>();
+		systems = new BasicEventList<MyLocation>();
+		regions = new BasicEventList<MyLocation>();
 		//Owners - not static
 		owners = new ArrayList<Owner>();
 		//myLocations - not static
@@ -393,10 +393,10 @@ public class StockpileDialog extends JDialogCentered {
 
 	void updateData() {
 		//Locations
-		List<Location> stationList = new ArrayList<Location>();
-		List<Location> systemList = new ArrayList<Location>();
-		List<Location> regionList = new ArrayList<Location>();
-		for (Location location : StaticData.get().getLocations().values()) {
+		List<MyLocation> stationList = new ArrayList<MyLocation>();
+		List<MyLocation> systemList = new ArrayList<MyLocation>();
+		List<MyLocation> regionList = new ArrayList<MyLocation>();
+		for (MyLocation location : StaticData.get().getLocations().values()) {
 			if (location.isStation()) {
 				stationList.add(location);
 			} else if (location.isSystem()) {
@@ -435,7 +435,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		//Owners
 		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersById.put(owner.getOwnerID(), owner);
 			}
@@ -447,7 +447,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Containers & MyLocations Loop
 		Set<String> containerSet = new HashSet<String>();
 		myLocations.clear();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			if (!asset.getContainer().isEmpty()) {
 				containerSet.add(asset.getContainer());
 			}
@@ -455,12 +455,12 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(asset.getLocation().getSystem());
 			myLocations.add(asset.getLocation().getRegion());
 		}
-		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 			myLocations.add(industryJob.getLocation().getLocation());
 			myLocations.add(industryJob.getLocation().getSystem());
 			myLocations.add(industryJob.getLocation().getRegion());
 		}
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			myLocations.add(marketOrder.getLocation().getLocation());
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());
@@ -567,14 +567,14 @@ public class StockpileDialog extends JDialogCentered {
 			baseList.add(element.getFlagName());
 		}
 	}
-	static class LocationsFilterator implements TextFilterator<Location> {
+	static class LocationsFilterator implements TextFilterator<MyLocation> {
 		@Override
-		public void getFilterStrings(final List<String> baseList, final Location element) {
+		public void getFilterStrings(final List<String> baseList, final MyLocation element) {
 			baseList.add(element.getLocation());
 		}
 	}
 
-	static class LocationsMatcher implements Matcher<Location> {
+	static class LocationsMatcher implements Matcher<MyLocation> {
 
 		private Set<String> myLocations;
 
@@ -583,7 +583,7 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		@Override
-		public boolean matches(final Location item) {
+		public boolean matches(final MyLocation item) {
 			return myLocations.contains(item.getLocation());
 		}
 	}
@@ -791,8 +791,8 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jLocationType;
 		private final JComboBox jLocation;
 		private final JCheckBoxMenuItem jMyLocations;
-		private FilterList<Location> filterList;
-		private AutoCompleteSupport<Location> autoComplete;
+		private FilterList<MyLocation> filterList;
+		private AutoCompleteSupport<MyLocation> autoComplete;
 		//Include
 		private final JDropDownButton jInclude;
 		private final JCheckBoxMenuItem jAssets;
@@ -824,7 +824,7 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			//Location
 			if(locationType != LocationType.UNIVERSE) {
-				Location location = stockpileFilter.getLocation();
+				MyLocation location = stockpileFilter.getLocation();
 				jMyLocations.setSelected(myLocations.contains(location.getLocation()));
 				refilter();
 				jLocation.setSelectedItem(location);
@@ -1090,25 +1090,25 @@ public class StockpileDialog extends JDialogCentered {
 				jLocationType.setIcon(Images.LOC_STATION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().station());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().station()));
-				filterList = new FilterList<Location>(stations);
+				filterList = new FilterList<MyLocation>(stations);
 				jStation.setSelected(true);
 			} else if (locationType == LocationType.SYSTEM) {
 				jLocationType.setIcon(Images.LOC_SYSTEM.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().system());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().system()));
-				filterList = new FilterList<Location>(systems);
+				filterList = new FilterList<MyLocation>(systems);
 				jSystem.setSelected(true);
 			} else if (locationType == LocationType.REGION) {
 				jLocationType.setIcon(Images.LOC_REGION.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().region());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().region()));
-				filterList = new FilterList<Location>(regions);
+				filterList = new FilterList<MyLocation>(regions);
 				jRegion.setSelected(true);
 			} else {
 				jLocationType.setIcon(Images.LOC_LOCATIONS.getIcon());
 				jLocationType.setToolTipText(TabsStockpile.get().universe());
 				jPanel.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().universe()));
-				filterList = new FilterList<Location>(new BasicEventList<Location>());
+				filterList = new FilterList<MyLocation>(new BasicEventList<MyLocation>());
 				jUniverse.setSelected(true);
 			}
 			if (autoComplete != null) { //Remove old
@@ -1146,11 +1146,11 @@ public class StockpileDialog extends JDialogCentered {
 				containers.add(containerPanel.getContainer());
 			}
 			Object object = jLocation.getSelectedItem();
-			Location location;
-			if (object instanceof Location) {
-				location = (Location) object;
+			MyLocation location;
+			if (object instanceof MyLocation) {
+				location = (MyLocation) object;
 			} else {
-				location = new Location(0);
+				location = new MyLocation(0);
 			}
 			return new StockpileFilter(location, flagIDs, containers, ownerIDs, 
 					jAssets.isSelected(),
@@ -1210,9 +1210,9 @@ public class StockpileDialog extends JDialogCentered {
 
 		private void refilter() {
 			Object object = jLocation.getSelectedItem();
-			Location location;
-			if (object instanceof Location) {
-				location = (Location) object;
+			MyLocation location;
+			if (object instanceof MyLocation) {
+				location = (MyLocation) object;
 			} else {
 				return;
 			}

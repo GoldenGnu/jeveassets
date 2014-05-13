@@ -28,14 +28,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJournal;
 
 
-public enum JournalTableFormat implements EnumTableColumn<Journal> {
+public enum JournalTableFormat implements EnumTableColumn<MyJournal> {
 	DATE(Date.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsJournal.get().columnDate();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getDate();
 		}
 	},
@@ -45,7 +45,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnRefType();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getRefTypeFormated();
 		}
 	},
@@ -55,7 +55,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnAmount();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getAmount();
 		}
 	},
@@ -65,7 +65,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnBalance();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getBalance();
 		}
 	},
@@ -75,7 +75,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getOwnerName();
 		}
 	},
@@ -85,7 +85,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnOwnerName1();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getOwnerName1();
 		}
 	},
@@ -95,7 +95,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnOwnerName2();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getOwnerName2();
 		}
 	},
@@ -105,7 +105,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnAccountKey();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getAccountKeyFormated();
 		}
 	},
@@ -115,7 +115,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnTaxAmount();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getTaxAmount();
 		}
 	},
@@ -125,7 +125,7 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 			return TabsJournal.get().columnReason();
 		}
 		@Override
-		public Object getColumnValue(final Journal from) {
+		public Object getColumnValue(final MyJournal from) {
 			return from.getReason();
 		}
 	};
@@ -178,11 +178,11 @@ public enum JournalTableFormat implements EnumTableColumn<Journal> {
 		return true;
 	}
 	@Override
-	public Journal setColumnValue(final Object baseObject, final Object editedValue) {
+	public MyJournal setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final Journal from);
+	@Override public abstract Object getColumnValue(final MyJournal from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

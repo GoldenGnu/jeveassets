@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.data.ExportSettings.ExportFormat;
 import net.nikr.eve.jeveasset.data.ExportSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.ExportSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.PriceSource;
@@ -396,7 +396,7 @@ public final class SettingsReader extends AbstractXmlReader {
 				}
 			}
 			//Locations
-			Location location = null;
+			MyLocation location = null;
 			if (AttributeGetters.haveAttribute(stockpileNode, "locationid")) {
 				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
 				location = ApiIdConverter.getLocation(locationID);
@@ -502,7 +502,7 @@ public final class SettingsReader extends AbstractXmlReader {
 		for (int a = 0; a < systemNodes.getLength(); a++) {
 			Element systemNode = (Element) systemNodes.item(a);
 			Long systemID = AttributeGetters.getLong(systemNode, "id");
-			Location location = ApiIdConverter.getLocation(systemID);
+			MyLocation location = ApiIdConverter.getLocation(systemID);
 			settings.getRoutingSettings().getAvoid().put(systemID, new SolarSystem(location));
 		}
 		NodeList presetNodes = routingElement.getElementsByTagName("routingpreset");

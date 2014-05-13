@@ -23,14 +23,14 @@ package net.nikr.eve.jeveasset.io.eveapi;
 
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.accountbalance.AccountBalanceResponse;
-import com.beimin.eveapi.shared.accountbalance.EveAccountBalance;
+import com.beimin.eveapi.model.shared.AccountBalance;
+import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
-import net.nikr.eve.jeveasset.data.AccountBalance;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccountBalance;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -43,21 +43,17 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 		super("Account Balance", true, false);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected AccountBalanceResponse getResponse(final boolean bCorp) throws ApiException {
 		if (bCorp) {
-			return com.beimin.eveapi.corporation
-					.accountbalance
-					.AccountBalanceParser.getInstance()
+			return new com.beimin.eveapi.parser.corporation.AccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		} else {
-			return com.beimin.eveapi.character
-					.accountbalance
-					.AccountBalanceParser.getInstance()
+			return new com.beimin.eveapi.parser.pilot.AccountBalanceParser()
 					.getResponse(Owner.getApiAuthorization(getOwner()));
 		}
 	}
@@ -74,7 +70,7 @@ public class AccountBalanceGetter extends AbstractApiGetter<AccountBalanceRespon
 
 	@Override
 	protected void setData(final AccountBalanceResponse response) {
-		List<AccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<EveAccountBalance>(response.getAll()), getOwner());
+		List<MyAccountBalance> accountBalances = ApiConverter.convertAccountBalance(new ArrayList<AccountBalance>(response.getAll()), getOwner());
 		getOwner().setAccountBalances(accountBalances);
 	}
 

@@ -22,18 +22,18 @@ package net.nikr.eve.jeveasset.data.model;
 
 import java.util.*;
 import net.nikr.eve.jeveasset.data.Jump;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 
 public class Galaxy {
 
 	private Set<Region> regions;
 
-	public Galaxy(final Map<Long, Location> locations, final List<Jump> jumps) {
+	public Galaxy(final Map<Long, MyLocation> locations, final List<Jump> jumps) {
 		this.regions = new TreeSet<Region>();
 
-		Collection<Location> loc = locations.values();
+		Collection<MyLocation> loc = locations.values();
 		// Add the regions first...
-		for (Location l : loc) {
+		for (MyLocation l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '1') { // a region
 				String name = l.getLocation();
@@ -41,7 +41,7 @@ public class Galaxy {
 			}
 		}
 		// ...then systems...
-		for (Location l : loc) {
+		for (MyLocation l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '3') { // a solar system
 				String name = l.getLocation();
@@ -51,7 +51,7 @@ public class Galaxy {
 			}
 		}
 		//... and finally the stations.
-		for (Location l : loc) {
+		for (MyLocation l : loc) {
 			String id = Long.toString(l.getLocationID());
 			if (id.charAt(0) == '6') { // a station
 				String name = l.getLocation();

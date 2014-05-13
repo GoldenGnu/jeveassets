@@ -21,12 +21,16 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.core.ApiError;
-import com.beimin.eveapi.core.ApiResponse;
 import com.beimin.eveapi.exception.ApiException;
-import java.util.*;
+import com.beimin.eveapi.handler.ApiError;
+import com.beimin.eveapi.response.ApiResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -41,7 +45,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	private static final String INVALID_ACCOUNT = "HTTP response code: 403";
 
 	private String taskName;
-	private Account account;
+	private MyAccount account;
 	private Owner owner;
 	private boolean forceUpdate;
 	private boolean updated;
@@ -84,24 +88,24 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		loadOwner();
 	}
 
-	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
+	protected void loadAccount(final UpdateTask updateTask, final boolean forceUpdate, final MyAccount account) {
 		init(updateTask, forceUpdate, null, account);
 		loadAccount();
 	}
 
-	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	protected void loadAccounts(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
 		init(updateTask, forceUpdate, null, null);
 		LOG.info("{} updating:", taskName);
 		//Calc size
 		int ownerSize = 0;
 		if (updateTask != null) { //Only relevant when tracking progress
-			for (Account countAccount : accounts) {
+			for (MyAccount countAccount : accounts) {
 				ownerSize = ownerSize + countAccount.getOwners().size();
 			}
 		}
 		int ownerCount = 0;
 		int accountCount = 0;
-		for (Account accountLoop : accounts) {
+		for (MyAccount accountLoop : accounts) {
 			this.account = accountLoop;
 			if (updateAccount) {
 				if (updateTask != null) {
@@ -158,7 +162,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 	 * @param owner			Single char/corp (can be null)
 	 * @param account		Single account (can be null)
 	 */
-	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final Account account) {
+	private void init(final UpdateTask updateTask, final boolean forceUpdate, final Owner owner, final MyAccount account) {
 		this.forceUpdate = forceUpdate;
 		this.updateTask = updateTask;
 		this.owner = owner;
@@ -302,7 +306,7 @@ public abstract class AbstractApiGetter<T extends ApiResponse> {
 		}
 	}
 
-	protected Account getAccount() {
+	protected MyAccount getAccount() {
 		return account;
 	}
 

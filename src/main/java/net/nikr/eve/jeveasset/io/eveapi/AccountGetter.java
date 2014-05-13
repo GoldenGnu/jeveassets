@@ -21,14 +21,15 @@
 
 package net.nikr.eve.jeveasset.io.eveapi;
 
-import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
-import com.beimin.eveapi.account.characters.EveCharacter;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.account.ApiKeyInfo;
+import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Account.AccessMask;
+import net.nikr.eve.jeveasset.data.MyAccount;
+import net.nikr.eve.jeveasset.data.MyAccount.AccessMask;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
 import net.nikr.eve.jeveasset.io.shared.AbstractApiGetter;
@@ -44,18 +45,17 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		super("Accounts", false, true);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final Account account) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final MyAccount account) {
 		super.loadAccount(updateTask, forceUpdate, account);
 	}
 
-	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<Account> accounts) {
+	public void load(final UpdateTask updateTask, final boolean forceUpdate, final List<MyAccount> accounts) {
 		super.loadAccounts(updateTask, forceUpdate, accounts);
 	}
 
 	@Override
 	protected ApiKeyInfoResponse getResponse(final boolean bCorp) throws ApiException {
-		return com.beimin.eveapi.account.apikeyinfo
-				.ApiKeyInfoParser.getInstance()
+		return new com.beimin.eveapi.parser.account.ApiKeyInfoParser()
 				.getResponse(Owner.getApiAuthorization(getAccount()));
 	}
 
@@ -72,14 +72,15 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 	@Override
 	protected void setData(final ApiKeyInfoResponse response) {
 		//Changed between Char and Corp AKA should be treated as a new api
-		boolean typeChanged = !getAccount().compareTypes(response.getType());
+		ApiKeyInfo apiKeyInfo = response.getApiKeyInfo();
+		boolean typeChanged = !getAccount().compareTypes(apiKeyInfo.getType());
 
 		//Update account
-		getAccount().setAccessMask(response.getAccessMask());
-		getAccount().setExpires(response.getExpires());
-		getAccount().setType(response.getType());
+		getAccount().setAccessMask(apiKeyInfo.getAccessMask());
+		getAccount().setExpires(apiKeyInfo.getExpires());
+		getAccount().setType(apiKeyInfo.getType());
 
-		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
+		List<Character> characters = new ArrayList<Character>(apiKeyInfo.getEveCharacters());
 		List<Owner> owners = new ArrayList<Owner>();
 
 		int fails = 0;
@@ -123,7 +124,7 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		full = (fails == 0);
 		fail = (fails >= max);
 
-		for (EveCharacter apiCharacter : characters) {
+		for (Character apiCharacter : characters) {
 			boolean found = false;
 			for (Owner owner : getAccount().getOwners()) {
 				if ((owner.getOwnerID() == apiCharacter.getCharacterID() || owner.getOwnerID() == apiCharacter.getCorporationID()) && !typeChanged) {
@@ -149,14 +150,14 @@ public class AccountGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		return AccessMask.OPEN.getAccessMask();
 	}
 
-	private String getName(final EveCharacter apiCharacter) {
+	private String getName(final Character apiCharacter) {
 		if (getAccount().isCharacter()) {
 			return apiCharacter.getName();
 		} else {
 			return apiCharacter.getCorporationName();
 		}
 	}
-	private long getID(final EveCharacter apiCharacter) {
+	private long getID(final Character apiCharacter) {
 		if (getAccount().isCharacter()) {
 			return apiCharacter.getCharacterID();
 		} else {

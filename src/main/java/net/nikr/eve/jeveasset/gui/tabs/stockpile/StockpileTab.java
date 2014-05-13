@@ -84,14 +84,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.StockpileCellAction;
-import net.nikr.eve.jeveasset.gui.tabs.transaction.Transaction;
+import net.nikr.eve.jeveasset.gui.tabs.transaction.MyTransaction;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -491,7 +491,7 @@ public class StockpileTab extends JMainTab {
 				item.updateValues(price, volume);
 				//Inventory AKA Assets
 				if (stockpile.isAssets()) {
-					for (Asset asset : program.getAssetEventList()) {
+					for (MyAsset asset : program.getAssetEventList()) {
 						if (asset.getItem().getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -514,7 +514,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Market Orders
 				if (stockpile.isBuyOrders() || stockpile.isSellOrders()) {
-					for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+					for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 						if (marketOrder.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -523,7 +523,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Industry Job
 				if (stockpile.isJobs()) {
-					for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+					for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 						if (industryJob.getOutputTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -532,7 +532,7 @@ public class StockpileTab extends JMainTab {
 				}
 				//Transactions
 				if (stockpile.isTransactions()) {
-					for (Transaction transaction : program.getTransactionsEventList()) {
+					for (MyTransaction transaction : program.getTransactionsEventList()) {
 						if (transaction.getTypeID() != TYPE_ID) {
 							continue; //Ignore wrong typeID
 						}
@@ -751,7 +751,7 @@ public class StockpileTab extends JMainTab {
 	private void updateOwners() {
 		//Owners Look-Up
 		ownersName = new HashMap<Long, String>();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersName.put(owner.getOwnerID(), owner.getName());
 			}

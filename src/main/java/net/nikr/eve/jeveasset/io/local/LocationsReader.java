@@ -23,7 +23,7 @@ package net.nikr.eve.jeveasset.io.local;
 
 import java.io.IOException;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -59,16 +59,16 @@ public final class LocationsReader extends AbstractXmlReader {
 		LOG.info("Locations loaded");
 	}
 
-	private void parseLocations(final Element element, final Map<Long, Location> locations) {
+	private void parseLocations(final Element element, final Map<Long, MyLocation> locations) {
 		NodeList nodes = element.getElementsByTagName("row");
-		Location location;
+		MyLocation location;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			location = parseLocation(nodes.item(i));
 			locations.put(location.getLocationID(), location);
 		}
 	}
 
-	private Location parseLocation(final Node node) {
+	private MyLocation parseLocation(final Node node) {
 		long stationID = AttributeGetters.getLong(node, "si");
 		String station = AttributeGetters.getString(node, "s");
 		long systemID = AttributeGetters.getLong(node, "syi");
@@ -76,6 +76,6 @@ public final class LocationsReader extends AbstractXmlReader {
 		long regionID = AttributeGetters.getLong(node, "ri");
 		String region = AttributeGetters.getString(node, "r");
 		String security = AttributeGetters.getString(node, "se");
-		return new Location(stationID, station, systemID, system, regionID, region, security);
+		return new MyLocation(stationID, station, systemID, system, regionID, region, security);
 	}
 }

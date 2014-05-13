@@ -27,14 +27,14 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem> {
+public enum ContractsExtendedTableFormat implements EnumTableColumn<MyContractItem> {
 	TITLE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsContracts.get().columnTitle();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getTitle();
 		}
 	},
@@ -44,7 +44,7 @@ public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem
 			return TabsContracts.get().columnType();
 		}
 		@Override
-		public Object getColumnValue(final ContractItem from) {
+		public Object getColumnValue(final MyContractItem from) {
 			return from.getContract().getTypeName();
 		}
 	};
@@ -71,7 +71,7 @@ public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem
 	public boolean isShowDefault() {
 		return true;
 	}
-	@Override public ContractItem setColumnValue(final Object baseObject, final Object editedValue) {
+	@Override public MyContractItem setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	@Override
@@ -79,7 +79,7 @@ public enum ContractsExtendedTableFormat implements EnumTableColumn<ContractItem
 		return getColumnName();
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final ContractItem from);
+	@Override public abstract Object getColumnValue(final MyContractItem from);
 	//XXX - TableFormat.getColumnName() Workaround
 	@Override public abstract String getColumnName();
 }

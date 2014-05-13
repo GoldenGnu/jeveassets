@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MyLocation;
 import net.nikr.eve.jeveasset.data.MarketPriceData;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.data.PriceData;
@@ -40,15 +40,15 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.menu.JMenuInfo.InfoItem;
 import net.nikr.eve.jeveasset.i18n.DataModelAsset;
 
-public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
+public class MyAsset implements Comparable<MyAsset>, InfoItem, LocationType, ItemType, BlueprintType, PriceType, TagsType {
 
 	//Static values (set by constructor)
-	private final List<Asset> assets = new ArrayList<Asset>();
+	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 	private Item item;
-	private Location location;
+	private MyLocation location;
 	private Owner owner;
 	private long count;
-	private List<Asset> parents;
+	private List<MyAsset> parents;
 	private String flag;
 	private int flagID; //FlagID : int
 	private long itemID; //ItemID : long
@@ -80,9 +80,9 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	/**
 	 * For mockups...
 	 */
-	protected Asset() { }
+	protected MyAsset() { }
 
-	protected Asset(Asset asset) {
+	protected MyAsset(MyAsset asset) {
 		this(asset.item,
 				asset.location,
 				asset.owner,
@@ -112,7 +112,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.bpPE = asset.bpPE;
 	}
 
-	public Asset(final Item item, final Location location, final Owner owner, final long count, final List<Asset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
+	public MyAsset(final Item item, final MyLocation location, final Owner owner, final long count, final List<MyAsset> parents, final String flag, final int flagID, final long itemID, final boolean singleton, final int rawQuantity) {
 		this.item = item;
 		this.location = location;
 		this.owner = owner;
@@ -149,7 +149,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		this.name = getTypeName();
 	}
 
-	public void addAsset(final Asset asset) {
+	public void addAsset(final MyAsset asset) {
 		assets.add(asset);
 	}
 
@@ -157,7 +157,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return added;
 	}
 
-	public List<Asset> getAssets() {
+	public List<MyAsset> getAssets() {
 		return assets;
 	}
 
@@ -196,7 +196,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public Location getLocation() {
+	public MyLocation getLocation() {
 		return location;
 	}
 
@@ -220,7 +220,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		return owner.getOwnerID();
 	}
 
-	public List<Asset> getParents() {
+	public List<MyAsset> getParents() {
 		return parents;
 	}
 
@@ -430,7 +430,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 	}
 
 	@Override
-	public int compareTo(final Asset o) {
+	public int compareTo(final MyAsset o) {
 		return this.getName().compareToIgnoreCase(o.getName());
 	}
 
@@ -450,7 +450,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Asset other = (Asset) obj;
+		final MyAsset other = (MyAsset) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}

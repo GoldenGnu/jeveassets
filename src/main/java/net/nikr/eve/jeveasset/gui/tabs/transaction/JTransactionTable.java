@@ -31,9 +31,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 
 public class JTransactionTable extends JAutoColumnTable {
 
-	final DefaultEventTableModel<Transaction> tableModel;
+	final DefaultEventTableModel<MyTransaction> tableModel;
 
-	public JTransactionTable(Program program, final DefaultEventTableModel<Transaction> tableModel) {
+	public JTransactionTable(Program program, final DefaultEventTableModel<MyTransaction> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
 	}
@@ -42,7 +42,7 @@ public class JTransactionTable extends JAutoColumnTable {
 	public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
 		Component component = super.prepareRenderer(renderer, row, column);
 		boolean isSelected = isCellSelected(row, column);
-		Transaction transaction = tableModel.getElementAt(row);
+		MyTransaction transaction = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
 		//User set price

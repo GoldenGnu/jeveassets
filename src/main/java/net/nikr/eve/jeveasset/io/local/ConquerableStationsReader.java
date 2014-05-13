@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io.local;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.model.eve.Station;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +50,7 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 	private boolean read() {
 		try {
 			Element element = getDocumentElement(Settings.getPathConquerableStations(), true);
-			Map<Integer, ApiStation> conquerableStations = new HashMap<Integer, ApiStation>();
+			Map<Integer, Station> conquerableStations = new HashMap<Integer, Station>();
 			parseConquerableStations(element, conquerableStations);
 			StaticData.get().setConquerableStations(conquerableStations);
 		} catch (IOException ex) {
@@ -63,24 +63,24 @@ public final class ConquerableStationsReader extends AbstractXmlReader {
 		return true;
 	}
 
-	private void parseConquerableStations(final Element element, final Map<Integer, ApiStation> conquerableStations) throws XmlException {
+	private void parseConquerableStations(final Element element, final Map<Integer, Station> conquerableStations) throws XmlException {
 		if (!element.getNodeName().equals("stations")) {
 			throw new XmlException("Wrong root element name.");
 		}
 		parseStations(element, conquerableStations);
 	}
 
-	private void parseStations(final Element element, final Map<Integer, ApiStation> conquerableStations) {
+	private void parseStations(final Element element, final Map<Integer, Station> conquerableStations) {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
 			Element currentNode = (Element) filterNodes.item(i);
-			ApiStation station = parseStation(currentNode);
+			Station station = parseStation(currentNode);
 			conquerableStations.put(station.getStationID(), station);
 		}
 	}
 
-	private ApiStation parseStation(final Element element) {
-		ApiStation station = new ApiStation();
+	private Station parseStation(final Element element) {
+		Station station = new Station();
 		station.setCorporationID(AttributeGetters.getInt(element, "corporationid"));
 		station.setCorporationName(AttributeGetters.getString(element, "corporationname"));
 		station.setSolarSystemID(AttributeGetters.getInt(element, "solarsystemid"));

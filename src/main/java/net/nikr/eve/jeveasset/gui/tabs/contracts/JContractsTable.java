@@ -32,9 +32,9 @@ import net.nikr.eve.jeveasset.gui.shared.table.JSeparatorTable;
 
 public class JContractsTable extends JSeparatorTable {
 
-	private DefaultEventTableModel<ContractItem> tableModel;
+	private DefaultEventTableModel<MyContractItem> tableModel;
 
-	public JContractsTable(final Program program, final DefaultEventTableModel<ContractItem> tableModel, SeparatorList<?> separatorList) {
+	public JContractsTable(final Program program, final DefaultEventTableModel<MyContractItem> tableModel, SeparatorList<?> separatorList) {
 		super(program, tableModel, separatorList);
 		this.tableModel = tableModel;
 	}
@@ -46,8 +46,8 @@ public class JContractsTable extends JSeparatorTable {
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
 
-		if (object instanceof ContractItem) {
-			ContractItem item = (ContractItem) object;
+		if (object instanceof MyContractItem) {
+			MyContractItem item = (MyContractItem) object;
 			if (columnName.equals(ContractsTableFormat.NAME.getColumnName())) {
 				if (isSelected) {
 					component.setBackground(this.getSelectionBackground().darker());
