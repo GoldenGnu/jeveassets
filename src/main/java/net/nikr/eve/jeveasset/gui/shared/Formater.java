@@ -21,7 +21,14 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.text.*;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -33,7 +40,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 public final class Formater {
 
 	//Must not be changed! please see: FilterControl
-	public static final String COLUMN_FORMAT = "dd-MM-yyyy";
+	public static final String COLUMN_DATETIME = "yyyy-MM-dd HH:mm";
+	public static final String COLUMN_DATE = "yyyy-MM-dd";
 
 	private static final DecimalFormat ISK_FORMAT  = new DecimalFormat("#,##0.00 isk");
 	private static final DecimalFormat ITEMS_FORMAT  = new DecimalFormat("#,##0 items");
@@ -50,6 +58,7 @@ public final class Formater {
 	public static final NumberFormat TRILLIONS_FORMAT  = new FixedFormat(1000000000000.0, "T");
 
 	private static DateFormat columnDate = null;
+	private static DateFormat columnDatetime = null;
 	private static DateFormat todaysDate = null;
 	private static DateFormat timeOnly = null;
 	private static DateFormat eveTime = null;
@@ -67,7 +76,10 @@ public final class Formater {
 			//TODO - consider using local time in GUI
 			TimeZone timeZone = TimeZone.getTimeZone("GMT");
 
-			columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
+			columnDatetime = new SimpleDateFormat(COLUMN_DATETIME, new Locale("en")); //Must not be changed! please see: FilterControl
+			columnDatetime.setTimeZone(timeZone);
+
+			columnDate = new SimpleDateFormat(COLUMN_DATE, new Locale("en"));
 			columnDate.setTimeZone(timeZone);
 
 			todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
@@ -151,19 +163,22 @@ public final class Formater {
 
 	public static String columnDate(final Object date) {
 		initDate();
-		return columnDate.format(date);
+		return columnDatetime.format(date);
 	}
 
 	public static Date columnStringToDate(final String date) {
 		initDate();
-		if (!date.matches("\\d{2}-\\d{2}-\\d{4}")) {
-			return null;
+		try {
+			return columnDatetime.parse(date);
+		} catch (ParseException ex) {
+			
 		}
 		try {
 			return columnDate.parse(date);
 		} catch (ParseException ex) {
-			return null;
+			
 		}
+		return null;
 	}
 	public static String timeOnly(final Date date) {
 		initDate();
@@ -193,7 +208,7 @@ public final class Formater {
 	}
 
 	public static DateFormat getDefaultDate() {
-		return columnDate;
+		return columnDatetime;
 	}
 
 	public static String milliseconds(long time) {
@@ -236,7 +251,7 @@ public final class Formater {
 
 	public static class AutoFormat extends NumberFormat {
 
-		private NumberFormat format;
+		private final NumberFormat format;
 
 		public AutoFormat() {
 			format = new DecimalFormat("#,##0.#");
@@ -280,8 +295,8 @@ public final class Formater {
 
 	public static class FixedFormat extends NumberFormat {
 
-		private NumberFormat format;
-		private double fix;
+		private final NumberFormat format;
+		private final double fix;
 
 		public FixedFormat(final double fix, final String name) {
 			this.fix = fix;

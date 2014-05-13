@@ -59,24 +59,24 @@ class FilterPanel<E> {
 		FILTER, FILTER_TIMER, REMOVE
 	}
 
-	private JPanel jPanel;
-	private GroupLayout layout;
+	private final JPanel jPanel;
+	private final GroupLayout layout;
 
-	private JCheckBox jEnabled;
-	private JComboBox jLogic;
-	private JComboBox jColumn;
-	private JComboBox jCompare;
-	private JTextField jText;
-	private JComboBox jCompareColumn;
-	private JDateChooser jDate;
+	private final JCheckBox jEnabled;
+	private final JComboBox jLogic;
+	private final JComboBox jColumn;
+	private final JComboBox jCompare;
+	private final JTextField jText;
+	private final JComboBox jCompareColumn;
+	private final JDateChooser jDate;
 
-	private JLabel jSpacing;
-	private JButton jRemove;
+	private final JLabel jSpacing;
+	private final JButton jRemove;
 
-	private Timer timer;
+	private final Timer timer;
 
-	private FilterGui<E> gui;
-	private FilterControl<E> filterControl;
+	private final FilterGui<E> gui;
+	private final FilterControl<E> filterControl;
 	private final List<EnumTableColumn<E>> allColumns;
 	private final List<EnumTableColumn<E>> numericColumns;
 	private final List<EnumTableColumn<E>> dateColumns;
@@ -133,7 +133,7 @@ class FilterPanel<E> {
 		jCompareColumn.setActionCommand(FilterPanelAction.FILTER.name());
 
 		jDate = new JDateChooser(Settings.getNow());
-		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
+		jDate.setDateFormatString(Formater.COLUMN_DATE);
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText("Today");
 		jCalendar.setTodayButtonVisible(true);

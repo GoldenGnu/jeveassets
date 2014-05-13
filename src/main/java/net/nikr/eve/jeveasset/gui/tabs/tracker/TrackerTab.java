@@ -338,7 +338,7 @@ public class TrackerTab extends JMainTab {
 
 	private JDateChooser createDateChooser() {
 		JDateChooser jDate = new JDateChooser(Settings.getNow());
-		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
+		jDate.setDateFormatString(Formater.COLUMN_DATE);
 		jDate.setCalendar(null);
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText(TabsTracker.get().today());

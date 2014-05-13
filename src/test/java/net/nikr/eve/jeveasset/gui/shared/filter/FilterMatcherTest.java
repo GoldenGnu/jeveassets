@@ -31,8 +31,12 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.AllColumn;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Percent;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 public class FilterMatcherTest {
@@ -111,11 +115,11 @@ public class FilterMatcherTest {
 	private static final String TEXT_PART = "Tex";
 	private static final String TEXT_NOT = "Not";
 
-	private static final String DATE = "01-01-2005";
-	private static final String DATE_BEFORE = "01-01-2010";
-	private static final String DATE_AFTER = "01-01-2000";
+	private static final String DATE = "2005-01-01";
+	private static final String DATE_BEFORE = "2010-01-01";
+	private static final String DATE_AFTER = "2000-01-01";
 	private static final String DATE_PART = "2005";
-	private static final String DATE_NOT = "05-05-2005";
+	private static final String DATE_NOT = "2005-05-05";
 
 	private static final double NUMBER_DOUBLE = 222.0d;
 	private static final float NUMBER_FLOAT = 222.0f;
