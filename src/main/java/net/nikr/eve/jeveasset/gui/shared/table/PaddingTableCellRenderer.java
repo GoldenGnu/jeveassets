@@ -22,6 +22,8 @@
 package net.nikr.eve.jeveasset.gui.shared.table;
 
 import java.awt.Component;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -32,14 +34,33 @@ import javax.swing.table.TableCellRenderer;
 
 public final class PaddingTableCellRenderer implements TableCellRenderer {
 
-	/*
-	private int top;
-	private int left;
-	private int bottom;
-	private int right;
-	 */
-	private TableCellRenderer renderer;
-	private Border border;
+	private enum BorderState {
+		SELECTED_AND_FOCUSED(true, true),
+		SELECTED_AND_NOT_FOCUSED(true, false),
+		NOT_SELECTED_AND_FOCUSED(false, true),
+		NOT_SELECTED_AND_NOT_FOCUSED(false, false);
+ 
+		private final boolean selected;
+		private final boolean focused;
+
+		private BorderState(boolean selected, boolean focused) {
+			this.selected = selected;
+			this.focused = focused;
+		}
+
+		public static BorderState getState(final boolean isSelected, final boolean hasFocus) {
+			for (BorderState borderState : values()) {
+				if (borderState.selected == isSelected && borderState.focused == hasFocus) {
+					return borderState;
+				}
+			}
+			return BorderState.NOT_SELECTED_AND_NOT_FOCUSED;
+		}
+	}
+
+	private final TableCellRenderer renderer;
+	private final Border border;
+	private final Map<BorderState, Border> borders = new EnumMap<BorderState, Border>(BorderState.class);
 
 	public static void install(final JTable jTable, final int padding) {
 		install(jTable, padding, padding, padding, padding);
@@ -71,7 +92,13 @@ public final class PaddingTableCellRenderer implements TableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 		JComponent jComponent  = (JComponent) renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		jComponent.setBorder(BorderFactory.createCompoundBorder(jComponent.getBorder(), border));
+		BorderState state = BorderState.getState(isSelected, hasFocus);
+		Border compoundBorder = borders.get(state);
+		if (compoundBorder == null) {
+			compoundBorder = BorderFactory.createCompoundBorder(jComponent.getBorder(), border);
+			borders.put(state, compoundBorder);
+		}
+		jComponent.setBorder(compoundBorder);
 		return jComponent;
 	}
 
