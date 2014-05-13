@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset;
 
 import apple.dts.samplecode.osxadapter.OSXAdapter;
 import ca.odell.glazedlists.EventList;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
-import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
+import net.nikr.eve.jeveasset.io.online.Updater;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +132,7 @@ public class Program implements ActionListener {
 	private TreeTab treeTab;
 
 	//Misc
-	private ProgramUpdateChecker programUpdateChecker;
+	private Updater updater;
 	private Timer timer;
 	private Updatable updatable;
 
@@ -145,6 +144,8 @@ public class Program implements ActionListener {
 	private final PriceDataGetter priceDataGetter;
 
 	public Program() {
+		updater = new Updater();
+		updater.update();
 		if (debug) {
 			LOG.debug("Force Update: {} Force No Update: {}", forceUpdate, forceNoUpdate);
 		}
@@ -164,7 +165,6 @@ public class Program implements ActionListener {
 		//Can not update profile data now - list needs to be empty doing creation...
 		priceDataGetter = new PriceDataGetter(profileData);
 		priceDataGetter.load();
-		programUpdateChecker = new ProgramUpdateChecker(this);
 	//Timer
 		timer = new Timer(15000, this); //Once a minute
 		timer.setActionCommand(ProgramAction.TIMER.name());
@@ -264,8 +264,6 @@ public class Program implements ActionListener {
 			LOG.info("Show Debug Warning");
 			JOptionPane.showMessageDialog(mainWindow.getFrame(), "WARNING: Debug is enabled", "Debug", JOptionPane.WARNING_MESSAGE);
 		}
-		programUpdateChecker.showDevBuildMessage();
-		programUpdateChecker.showMessages();
 		if (profileManager.getAccounts().isEmpty()) {
 			LOG.info("Show Account Manager");
 			accountManagerDialog.setVisible(true);
@@ -386,12 +384,8 @@ public class Program implements ActionListener {
 		settingsDialog.setVisible(true);
 	}
 
-	public void checkForProgramUpdates(final Window parent) {
-		programUpdateChecker.showMessages(parent, true);
-	}
-
 	public String getProgramDataVersion() {
-		return programUpdateChecker.getProgramDataVersion();
+		return updater.getLocalData();
 	}
 
 	private void macOsxCode() {

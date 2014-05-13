@@ -68,11 +68,6 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void checkForProgramUpdates(final Window parent) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public void exit() {
 		throw new UnsupportedOperationException("Not implemented");
 	}

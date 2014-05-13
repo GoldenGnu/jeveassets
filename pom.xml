@@ -107,9 +107,12 @@
 								<mkdir dir="${project.build.directory}/data"/>
 								<copy todir="${project.build.directory}/data">
 									<fileset dir="data" includes="*.xml"/>
+									<fileset dir="data" includes="*.dat"/>
 								</copy>
 								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
+									<fileset dir="tools" includes="jmemory.jar"/>
++									<fileset dir="tools" includes="jupdate.jar"/>
 								</copy>
 							</target>
 						</configuration>
@@ -131,7 +134,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<excludeArtifactIds>junit,logkit,servlet-api,avalon-framework,icu4j,jdom,xalan,xercesImpl,xml-apis,xmlParserAPIs,xom</excludeArtifactIds>
+							<excludeArtifactIds>junit,logkit,servlet-api,avalon-framework,icu4j,jdom,xalan,xercesImpl,xml-apis,xmlParserAPIs,xom,commons-logging</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>

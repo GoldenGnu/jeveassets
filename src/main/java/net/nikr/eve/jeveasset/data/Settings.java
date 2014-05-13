@@ -59,7 +59,7 @@ public class Settings {
 	private static final String PATH_JUMPS = "data" + File.separator + "jumps.xml";
 	private static final String PATH_LOCATIONS = "data" + File.separator + "locations.xml";
 	private static final String PATH_FLAGS = "data" + File.separator + "flags.xml";
-	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.xml";
+	private static final String PATH_DATA_VERSION = "data" + File.separator + "data.dat";
 	private static final String PATH_PRICE_DATA = "data" + File.separator + "pricedata.dat";
 	private static final String PATH_ASSETS = "data" + File.separator + "assets.xml";
 	private static final String PATH_CONQUERABLE_STATIONS = "data" + File.separator + "conquerable_stations.xml";
@@ -67,6 +67,8 @@ public class Settings {
 	private static final String PATH_LICENSE = "license.txt";
 	private static final String PATH_CREDITS = "credits.txt";
 	private static final String PATH_CHANGELOG = "changelog.txt";
+	private static final String PATH_UPDATE = "jupdate.jar";
+	private static final String PATH_JAR = "jeveassets.jar";
 	private static final String PATH_PROFILES = "profiles";
 	private static final String PATH_DATA = "data";
 
@@ -79,8 +81,6 @@ public class Settings {
 		FLAG_INCLUDE_SELL_CONTRACTS,
 		FLAG_INCLUDE_BUY_CONTRACTS,
 		FLAG_HIGHLIGHT_SELECTED_ROWS,
-		FLAG_AUTO_UPDATE,
-		FLAG_UPDATE_DEV,
 		FLAG_STOCKPILE_FOCUS_TAB,
 		FLAG_STOCKPILE_HALF_COLORS,
 		FLAG_BLUEPRINT_BASE_PRICE_TECH_1,
@@ -192,8 +192,6 @@ public class Settings {
 		//Settings
 		flags.put(SettingFlag.FLAG_FILTER_ON_ENTER, false); //Cached
 		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, true); //Cached
-		flags.put(SettingFlag.FLAG_AUTO_UPDATE, true);
-		flags.put(SettingFlag.FLAG_UPDATE_DEV, false);
 		flags.put(SettingFlag.FLAG_REPROCESS_COLORS, false); //Cached
 		flags.put(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS, true);
 		flags.put(SettingFlag.FLAG_STOCKPILE_FOCUS_TAB, true);
@@ -531,19 +529,6 @@ public class Settings {
 		flags.put(SettingFlag.FLAG_HIGHLIGHT_SELECTED_ROWS, highlightSelectedRows);
 		this.highlightSelectedRows = highlightSelectedRows;
 	}
-
-	public boolean isAutoUpdate() {
-		return flags.get(SettingFlag.FLAG_AUTO_UPDATE);
-	}
-	public void setAutoUpdate(final boolean updateStable) {
-		flags.put(SettingFlag.FLAG_AUTO_UPDATE, updateStable);
-	}
-	public boolean isUpdateDev() {
-		return flags.get(SettingFlag.FLAG_UPDATE_DEV);
-	}
-	public void setUpdateDev(final boolean updateDev) {
-		flags.put(SettingFlag.FLAG_UPDATE_DEV, updateDev);
-	}
 	public boolean isIgnoreSecureContainers() {
 		return flags.get(SettingFlag.FLAG_IGNORE_SECURE_CONTAINERS);
 	}
@@ -726,6 +711,12 @@ public class Settings {
 	}
 	public static String getPathChangeLog() {
 		return getLocalFile(Settings.PATH_CHANGELOG, false);
+	}
+	public static String getPathRunUpdate() {
+		return getLocalFile(Settings.PATH_UPDATE, false);
+	}
+	public static String getPathRunJar() {
+		return getLocalFile(Settings.PATH_JAR, false);
 	}
 
 	public static String getUserDirectory() {

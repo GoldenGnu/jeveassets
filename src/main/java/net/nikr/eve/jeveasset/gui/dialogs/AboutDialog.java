@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 public class AboutDialog extends JDialogCentered {
 
 	private enum AboutAction {
-		CLOSE, UPDATE
+		CLOSE
 	}
 
 	private JButton jClose;
@@ -112,10 +112,6 @@ public class AboutDialog extends JDialogCentered {
 		jClose.setActionCommand(AboutAction.CLOSE.name());
 		jClose.addActionListener(listener);
 
-		JButton jCheckUpdates = new JButton(DialoguesAbout.get().updates());
-		jCheckUpdates.setActionCommand(AboutAction.UPDATE.name());
-		jCheckUpdates.addActionListener(listener);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
@@ -131,7 +127,6 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jExternal)
 				)
 				.addComponent(jThanks)
-				.addComponent(jCheckUpdates)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -144,10 +139,7 @@ public class AboutDialog extends JDialogCentered {
 					.addComponent(jExternal)
 				)
 				.addComponent(jThanks)
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCheckUpdates, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
+				.addComponent(jClose, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
 	}
 
@@ -194,17 +186,7 @@ public class AboutDialog extends JDialogCentered {
 			if (AboutAction.CLOSE.name().equals(e.getActionCommand())) {
 				setVisible(false);
 			}
-			if (AboutAction.UPDATE.name().equals(e.getActionCommand())) {
-				jLockWindow.show(new CheckProgramUpdate(), DialoguesAbout.get().updatesInProgress());
-			}
 		}
 	}
 
-	private class CheckProgramUpdate implements Runnable {
-
-		@Override
-		public void run() {
-			program.checkForProgramUpdates(getDialog());
-		}
-	}
 }
