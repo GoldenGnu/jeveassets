@@ -12980,77 +12980,77 @@
     <row r="J7HZ-F" ri="10000017" s="HD3-JK I - Academy of Aggressive Behaviour" se="0.0" si="60014854" sy="HD3-JK" syi="30001482"/>
     <row r="Sinq Laison" ri="10000032" s="Crielere I - Ishukone Corporation Research Center" se="0.4" si="60014857" sy="Crielere" syi="30002691"/>
     <row r="Sinq Laison" ri="10000032" s="Crielere I - Duvolle Laboratories Research Center" se="0.4" si="60014860" sy="Crielere" syi="30002691"/>
-    <row r="Vale of the Silent" ri="10000003" s="JZV-F4 V - Moon 1 - Manufacturing Outpost" se="0.0" si="60014861" sy="JZV-F4" syi="30000325"/>
-    <row r="Detorid" ri="10000005" s="0-G8NO VIII - Moon 1 - Manufacturing Outpost" se="0.0" si="60014862" sy="0-G8NO" syi="30000480"/>
-    <row r="Wicked Creek" ri="10000006" s="4-EFLU VII - Moon 3 - Manufacturing Outpost" se="0.0" si="60014863" sy="4-EFLU" syi="30000576"/>
-    <row r="Cache" ri="10000007" s="P7-45V IV - Moon 3 - Manufacturing Outpost" se="0.0" si="60014864" sy="P7-45V" syi="30000638"/>
-    <row r="Scalding Pass" ri="10000008" s="28Y9-P V - Moon 1 - Manufacturing Outpost" se="0.0" si="60014865" sy="28Y9-P" syi="30000714"/>
-    <row r="Insmother" ri="10000009" s="N7-BIY IV - Moon 1 - Manufacturing Outpost" se="0.0" si="60014866" sy="N7-BIY" syi="30000811"/>
-    <row r="Tribute" ri="10000010" s="IMK-K1 IX - Moon 1 - Manufacturing Outpost" se="0.0" si="60014867" sy="IMK-K1" syi="30000895"/>
-    <row r="Catch" ri="10000014" s="FAT-6P VIII - Moon 1 - gdsfgsdfgdsfg" se="0.0" si="60014868" sy="FAT-6P" syi="30001256"/>
-    <row r="Immensea" ri="10000025" s="Z-H2MA IV - Moon 1 - Manufacturing Outpost" se="0.0" si="60014869" sy="Z-H2MA" syi="30002141"/>
-    <row r="Impass" ri="10000031" s="Z-N9IP VII - Moon 2 - Manufacturing Outpost" se="0.0" si="60014870" sy="Z-N9IP" syi="30002617"/>
-    <row r="Deklein" ri="10000035" s="CZDJ-1 X - Moon 4 - Manufacturing Outpost" se="0.0" si="60014871" sy="CZDJ-1" syi="30002953"/>
-    <row r="Esoteria" ri="10000039" s="BZ-0GW V - Moon 1 - Manufacturing Outpost" se="0.0" si="60014872" sy="BZ-0GW" syi="30003121"/>
-    <row r="Tenal" ri="10000045" s="V7-MID IX - Moon 1 - Manufacturing Outpost" se="0.0" si="60014873" sy="V7-MID" syi="30003666"/>
-    <row r="Fade" ri="10000046" s="I-UUI5 IV - Moon 1 - Manufacturing Outpost" se="0.0" si="60014874" sy="I-UUI5" syi="30003701"/>
-    <row r="Querious" ri="10000050" s="H74-B0 III - Moon 4 - Manufacturing Outpost" se="0.0" si="60014875" sy="H74-B0" syi="30004034"/>
-    <row r="Cloud Ring" ri="10000051" s="XZH-4X VI - Moon 3 - Manufacturing Outpost" se="0.0" si="60014876" sy="XZH-4X" syi="30004062"/>
-    <row r="Branch" ri="10000055" s="D4R-H7 VII - Moon 2 - Manufacturing Outpost" se="0.0" si="60014877" sy="D4R-H7" syi="30004386"/>
-    <row r="Feythabolis" ri="10000056" s="2-RSC7 VI - Moon 2 - Manufacturing Outpost" se="0.0" si="60014878" sy="2-RSC7" syi="30004492"/>
-    <row r="Paragon Soul" ri="10000059" s="MP5-KR VI - Moon 1 - Manufacturing Outpost" se="0.0" si="60014879" sy="MP5-KR" syi="30004702"/>
-    <row r="Delve" ri="10000060" s="MO-GZ5 VIII - Moon 2 - Manufacturing Outpost" se="0.0" si="60014880" sy="MO-GZ5" syi="30004765"/>
-    <row r="Tenerifis" ri="10000061" s="JV1V-O IV - Moon 1 - Manufacturing Outpost" se="0.0" si="60014881" sy="JV1V-O" syi="30004883"/>
-    <row r="Omist" ri="10000062" s="Z-7OK1 III - Moon 2 - Manufacturing Outpost" se="0.0" si="60014882" sy="Z-7OK1" syi="30004921"/>
-    <row r="Period Basis" ri="10000063" s="G-Q5JU VII - Moon 1 - Manufacturing Outpost" se="0.0" si="60014883" sy="G-Q5JU" syi="30004962"/>
-    <row r="Vale of the Silent" ri="10000003" s="LS-JEP IX - Moon 1 - Refining Outpost" se="0.0" si="60014884" sy="LS-JEP" syi="30000319"/>
-    <row r="Detorid" ri="10000005" s="0-W778 VII - Moon 2 - Refining Outpost" se="0.0" si="60014885" sy="0-W778" syi="30000440"/>
-    <row r="Wicked Creek" ri="10000006" s="F-EM4Q V - Moon 5 - Refining Outpost" se="0.0" si="60014886" sy="F-EM4Q" syi="30000578"/>
-    <row r="Cache" ri="10000007" s="M53-1V VI - Moon 4 - Refining Outpost" se="0.0" si="60014887" sy="M53-1V" syi="30000633"/>
-    <row r="Scalding Pass" ri="10000008" s="JLO-Z3 IX - Moon 4 - Refining Outpost" se="0.0" si="60014888" sy="JLO-Z3" syi="30000708"/>
-    <row r="Insmother" ri="10000009" s="F2A-GX IV - Moon 4 - Refining Outpost" se="0.0" si="60014889" sy="F2A-GX" syi="30000804"/>
-    <row r="Tribute" ri="10000010" s="D7-ZAC VIII - Moon 1 - Matt's Testing Station" se="0.0" si="60014890" sy="D7-ZAC" syi="30000867"/>
-    <row r="Catch" ri="10000014" s="5-N2EY VIII - Moon 5 - Refining Outpost" se="0.0" si="60014891" sy="5-N2EY" syi="30001241"/>
-    <row r="Immensea" ri="10000025" s="E8-YS9 VI - Moon 4 - Refining Outpost" se="0.0" si="60014892" sy="E8-YS9" syi="30002163"/>
-    <row r="Impass" ri="10000031" s="FR-B1H VII - Moon 1 - Refining Outpost" se="0.0" si="60014893" sy="FR-B1H" syi="30002630"/>
-    <row r="Deklein" ri="10000035" s="3JN9-Q XII - Moon 3 - Refining Outpost" se="0.0" si="60014894" sy="3JN9-Q" syi="30002937"/>
-    <row r="Esoteria" ri="10000039" s="111-F1 VIII - Moon 3 - Refining Outpost" se="0.0" si="60014895" sy="111-F1" syi="30003147"/>
-    <row r="Tenal" ri="10000045" s="6OYQ-Z II - Moon 1 - Refining Outpost" se="0.0" si="60014896" sy="6OYQ-Z" syi="30003648"/>
-    <row r="Fade" ri="10000046" s="C4C-Z4 VIII - Moon 3 - Refining Outpost" se="0.0" si="60014897" sy="C4C-Z4" syi="30003697"/>
-    <row r="Querious" ri="10000050" s="3BK-O7 VIII - Moon 1 - Refining Outpost" se="0.0" si="60014898" sy="3BK-O7" syi="30004000"/>
-    <row r="Cloud Ring" ri="10000051" s="G8AD-C XI - Moon 2 - Refining Outpost" se="0.0" si="60014899" sy="G8AD-C" syi="30004061"/>
-    <row r="Branch" ri="10000055" s="BKG-Q2 VIII - Moon 1 - Refining Outpost" se="0.0" si="60014900" sy="BKG-Q2" syi="30004333"/>
-    <row r="Feythabolis" ri="10000056" s="UB5Z-3 II - Moon 1 - Refining Outpost" se="0.0" si="60014901" sy="UB5Z-3" syi="30004463"/>
-    <row r="Paragon Soul" ri="10000059" s="GQ2S-8 III - Moon 3 - Refining Outpost" se="0.0" si="60014902" sy="GQ2S-8" syi="30004694"/>
-    <row r="Delve" ri="10000060" s="5-6QW7 VII - Moon 3 - Refining Outpost" se="0.0" si="60014903" sy="5-6QW7" syi="30004789"/>
-    <row r="Tenerifis" ri="10000061" s="NZW-ZO VII - Moon 1 - Refining Outpost" se="0.0" si="60014904" sy="NZW-ZO" syi="30004863"/>
-    <row r="Omist" ri="10000062" s="D2EZ-X VI - Moon 3 - Refining Outpost" se="0.0" si="60014905" sy="D2EZ-X" syi="30004902"/>
-    <row r="Period Basis" ri="10000063" s="TPAR-G IX - Moon 3 - Refining Outpost" se="0.0" si="60014906" sy="TPAR-G" syi="30004935"/>
-    <row r="Vale of the Silent" ri="10000003" s="ZLZ-1Z IV - Moon 3 - Cloning Outpost" se="0.0" si="60014907" sy="ZLZ-1Z" syi="30000296"/>
-    <row r="Detorid" ri="10000005" s="DG-8VJ IV - Moon 3 - Cloning Outpost" se="0.0" si="60014908" sy="DG-8VJ" syi="30000441"/>
-    <row r="Wicked Creek" ri="10000006" s="Q-GQHN VIII - Moon 3 - Cloning Outpost" se="0.0" si="60014909" sy="Q-GQHN" syi="30000586"/>
-    <row r="Cache" ri="10000007" s="995-3G V - Moon 5 - Cloning Outpost" se="0.0" si="60014910" sy="995-3G" syi="30000616"/>
-    <row r="Scalding Pass" ri="10000008" s="1V-LI2 III - Moon 2 - Cloning Outpost" se="0.0" si="60014911" sy="1V-LI2" syi="30000680"/>
-    <row r="Insmother" ri="10000009" s="C-J6MT IV - Moon 1 - Cloning Outpost" se="0.0" si="60014912" sy="C-J6MT" syi="30000772"/>
-    <row r="Tribute" ri="10000010" s="H-W9TY XII - Moon 2 - Cloning Outpost" se="0.0" si="60014913" sy="H-W9TY" syi="30000865"/>
-    <row r="Catch" ri="10000014" s="V2-VC2 II - Moon 5 - Cloning Outpost" se="0.0" si="60014914" sy="V2-VC2" syi="30001222"/>
-    <row r="Immensea" ri="10000025" s="2O-EEW IV - Moon 3 - The French bistro" se="0.0" si="60014915" sy="2O-EEW" syi="30002175"/>
-    <row r="Impass" ri="10000031" s="68FT-6 VI - Moon 1 - Cloning Outpost" se="0.0" si="60014916" sy="68FT-6" syi="30002593"/>
-    <row r="Deklein" ri="10000035" s="VFK-IV VI - Moon 1 - Cloning Outpost" se="0.0" si="60014917" sy="VFK-IV" syi="30002904"/>
-    <row r="Esoteria" ri="10000039" s="C9N-CC I - Moon 2 - Cloning Outpost" se="0.0" si="60014918" sy="C9N-CC" syi="30003109"/>
-    <row r="Tenal" ri="10000045" s="S-EVIQ III - Moon 1 - Cloning Outpost" se="0.0" si="60014919" sy="S-EVIQ" syi="30003611"/>
-    <row r="Fade" ri="10000046" s="L-C3O7 VII - Moon 5 - Allah Ackhbar" se="0.0" si="60014920" sy="L-C3O7" syi="30003689"/>
-    <row r="Querious" ri="10000050" s="9CG6-H VIII - Moon 4 - Cloning Outpost" se="0.0" si="60014921" sy="9CG6-H" syi="30003979"/>
-    <row r="Cloud Ring" ri="10000051" s="9-4RP2 IV - Moon 2 - Cloning Outpost" se="0.0" si="60014922" sy="9-4RP2" syi="30004059"/>
-    <row r="Branch" ri="10000055" s="K-8SQS VI - Moon 2 - Cloning Outpost" se="0.0" si="60014923" sy="K-8SQS" syi="30004379"/>
-    <row r="Feythabolis" ri="10000056" s="VNGJ-U V - Moon 1 - Colins Palace of Love" se="0.0" si="60014924" sy="VNGJ-U" syi="30004453"/>
-    <row r="Paragon Soul" ri="10000059" s="H8-ZTO VI - Moon 5 - Cloning Outpost" se="0.0" si="60014925" sy="H8-ZTO" syi="30004678"/>
-    <row r="Delve" ri="10000060" s="NOL-M9 VI - Moon 2 - TIS MINE BIATCHES" se="0.0" si="60014926" sy="NOL-M9" syi="30004712"/>
-    <row r="Tenerifis" ri="10000061" s="DZ6-I5 IV - Moon 1 - Cloning Outpost" se="0.0" si="60014927" sy="DZ6-I5" syi="30004852"/>
-    <row r="Omist" ri="10000062" s="6T3I-L VII - Moon 5 - Cloning Outpost" se="0.0" si="60014928" sy="6T3I-L" syi="30004908"/>
-    <row r="UUA-F4" ri="10000004" s="Polaris VI - Manufacturing Outpost" se="0.0" si="60014929" sy="Polaris" syi="30000380"/>
-    <row r="UUA-F4" ri="10000004" s="Polaris VII - Refining Outpost" se="0.0" si="60014930" sy="Polaris" syi="30000380"/>
-    <row r="UUA-F4" ri="10000004" s="Polaris VIII - Cloning Outpost" se="0.0" si="60014931" sy="Polaris" syi="30000380"/>
+    <row r="Vale of the Silent" ri="10000003" s="JZV-F4 V - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014861" sy="JZV-F4" syi="30000325"/>
+    <row r="Detorid" ri="10000005" s="0-G8NO VIII - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014862" sy="0-G8NO" syi="30000480"/>
+    <row r="Wicked Creek" ri="10000006" s="4-EFLU VII - Moon 3 - Serpentis Corporation Manufacturing" se="0.0" si="60014863" sy="4-EFLU" syi="30000576"/>
+    <row r="Cache" ri="10000007" s="P7-45V IV - Moon 3 - Serpentis Corporation Manufacturing" se="0.0" si="60014864" sy="P7-45V" syi="30000638"/>
+    <row r="Scalding Pass" ri="10000008" s="28Y9-P V - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014865" sy="28Y9-P" syi="30000714"/>
+    <row r="Insmother" ri="10000009" s="N7-BIY IV - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014866" sy="N7-BIY" syi="30000811"/>
+    <row r="Tribute" ri="10000010" s="IMK-K1 IX - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014867" sy="IMK-K1" syi="30000895"/>
+    <row r="Catch" ri="10000014" s="FAT-6P VIII - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014868" sy="FAT-6P" syi="30001256"/>
+    <row r="Immensea" ri="10000025" s="Z-H2MA IV - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014869" sy="Z-H2MA" syi="30002141"/>
+    <row r="Impass" ri="10000031" s="Z-N9IP VII - Moon 2 - Serpentis Corporation Manufacturing" se="0.0" si="60014870" sy="Z-N9IP" syi="30002617"/>
+    <row r="Deklein" ri="10000035" s="CZDJ-1 X - Moon 4 - Serpentis Corporation Manufacturing" se="0.0" si="60014871" sy="CZDJ-1" syi="30002953"/>
+    <row r="Esoteria" ri="10000039" s="BZ-0GW V - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014872" sy="BZ-0GW" syi="30003121"/>
+    <row r="Tenal" ri="10000045" s="V7-MID IX - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014873" sy="V7-MID" syi="30003666"/>
+    <row r="Fade" ri="10000046" s="I-UUI5 IV - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014874" sy="I-UUI5" syi="30003701"/>
+    <row r="Querious" ri="10000050" s="H74-B0 III - Moon 4 - Serpentis Corporation Manufacturing" se="0.0" si="60014875" sy="H74-B0" syi="30004034"/>
+    <row r="Cloud Ring" ri="10000051" s="XZH-4X VI - Moon 3 - Serpentis Corporation Manufacturing" se="0.0" si="60014876" sy="XZH-4X" syi="30004062"/>
+    <row r="Branch" ri="10000055" s="D4R-H7 VII - Moon 2 - Serpentis Corporation Manufacturing" se="0.0" si="60014877" sy="D4R-H7" syi="30004386"/>
+    <row r="Feythabolis" ri="10000056" s="2-RSC7 VI - Moon 2 - Serpentis Corporation Manufacturing" se="0.0" si="60014878" sy="2-RSC7" syi="30004492"/>
+    <row r="Paragon Soul" ri="10000059" s="MP5-KR VI - Moon 1 - Republic Military School Manufacturing" se="0.0" si="60014879" sy="MP5-KR" syi="30004702"/>
+    <row r="Delve" ri="10000060" s="MO-GZ5 VIII - Moon 2 - Serpentis Corporation Manufacturing" se="0.0" si="60014880" sy="MO-GZ5" syi="30004765"/>
+    <row r="Tenerifis" ri="10000061" s="JV1V-O IV - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014881" sy="JV1V-O" syi="30004883"/>
+    <row r="Omist" ri="10000062" s="Z-7OK1 III - Moon 2 - Serpentis Corporation Manufacturing" se="0.0" si="60014882" sy="Z-7OK1" syi="30004921"/>
+    <row r="Period Basis" ri="10000063" s="G-Q5JU VII - Moon 1 - Serpentis Corporation Manufacturing" se="0.0" si="60014883" sy="G-Q5JU" syi="30004962"/>
+    <row r="Vale of the Silent" ri="10000003" s="LS-JEP IX - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014884" sy="LS-JEP" syi="30000319"/>
+    <row r="Detorid" ri="10000005" s="0-W778 VII - Moon 2 - Serpentis Corporation Refining" se="0.0" si="60014885" sy="0-W778" syi="30000440"/>
+    <row r="Wicked Creek" ri="10000006" s="F-EM4Q V - Moon 5 - Serpentis Corporation Refining" se="0.0" si="60014886" sy="F-EM4Q" syi="30000578"/>
+    <row r="Cache" ri="10000007" s="M53-1V VI - Moon 4 - Serpentis Corporation Refining" se="0.0" si="60014887" sy="M53-1V" syi="30000633"/>
+    <row r="Scalding Pass" ri="10000008" s="JLO-Z3 IX - Moon 4 - Serpentis Corporation Refining" se="0.0" si="60014888" sy="JLO-Z3" syi="30000708"/>
+    <row r="Insmother" ri="10000009" s="F2A-GX IV - Moon 4 - Serpentis Corporation Refining" se="0.0" si="60014889" sy="F2A-GX" syi="30000804"/>
+    <row r="Tribute" ri="10000010" s="D7-ZAC VIII - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014890" sy="D7-ZAC" syi="30000867"/>
+    <row r="Catch" ri="10000014" s="5-N2EY VIII - Moon 5 - Republic Military School Refining" se="0.0" si="60014891" sy="5-N2EY" syi="30001241"/>
+    <row r="Immensea" ri="10000025" s="E8-YS9 VI - Moon 4 - Serpentis Corporation Refining" se="0.0" si="60014892" sy="E8-YS9" syi="30002163"/>
+    <row r="Impass" ri="10000031" s="FR-B1H VII - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014893" sy="FR-B1H" syi="30002630"/>
+    <row r="Deklein" ri="10000035" s="3JN9-Q XII - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014894" sy="3JN9-Q" syi="30002937"/>
+    <row r="Esoteria" ri="10000039" s="111-F1 VIII - Moon 3 - Republic Military School Refining" se="0.0" si="60014895" sy="111-F1" syi="30003147"/>
+    <row r="Tenal" ri="10000045" s="6OYQ-Z II - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014896" sy="6OYQ-Z" syi="30003648"/>
+    <row r="Fade" ri="10000046" s="C4C-Z4 VIII - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014897" sy="C4C-Z4" syi="30003697"/>
+    <row r="Querious" ri="10000050" s="3BK-O7 VIII - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014898" sy="3BK-O7" syi="30004000"/>
+    <row r="Cloud Ring" ri="10000051" s="G8AD-C XI - Moon 2 - Serpentis Corporation Refining" se="0.0" si="60014899" sy="G8AD-C" syi="30004061"/>
+    <row r="Branch" ri="10000055" s="BKG-Q2 VIII - Moon 1 - Secure Commerce Commission Refining" se="0.0" si="60014900" sy="BKG-Q2" syi="30004333"/>
+    <row r="Feythabolis" ri="10000056" s="UB5Z-3 II - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014901" sy="UB5Z-3" syi="30004463"/>
+    <row r="Paragon Soul" ri="10000059" s="GQ2S-8 III - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014902" sy="GQ2S-8" syi="30004694"/>
+    <row r="Delve" ri="10000060" s="5-6QW7 VII - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014903" sy="5-6QW7" syi="30004789"/>
+    <row r="Tenerifis" ri="10000061" s="NZW-ZO VII - Moon 1 - Serpentis Corporation Refining" se="0.0" si="60014904" sy="NZW-ZO" syi="30004863"/>
+    <row r="Omist" ri="10000062" s="D2EZ-X VI - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014905" sy="D2EZ-X" syi="30004902"/>
+    <row r="Period Basis" ri="10000063" s="TPAR-G IX - Moon 3 - Serpentis Corporation Refining" se="0.0" si="60014906" sy="TPAR-G" syi="30004935"/>
+    <row r="Vale of the Silent" ri="10000003" s="ZLZ-1Z IV - Moon 3 - Serpentis Corporation Cloning" se="0.0" si="60014907" sy="ZLZ-1Z" syi="30000296"/>
+    <row r="Detorid" ri="10000005" s="DG-8VJ IV - Moon 3 - Serpentis Corporation Cloning" se="0.0" si="60014908" sy="DG-8VJ" syi="30000441"/>
+    <row r="Wicked Creek" ri="10000006" s="Q-GQHN VIII - Moon 3 - Serpentis Corporation Cloning" se="0.0" si="60014909" sy="Q-GQHN" syi="30000586"/>
+    <row r="Cache" ri="10000007" s="995-3G V - Moon 5 - Serpentis Corporation Cloning" se="0.0" si="60014910" sy="995-3G" syi="30000616"/>
+    <row r="Scalding Pass" ri="10000008" s="1V-LI2 III - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014911" sy="1V-LI2" syi="30000680"/>
+    <row r="Insmother" ri="10000009" s="C-J6MT IV - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014912" sy="C-J6MT" syi="30000772"/>
+    <row r="Tribute" ri="10000010" s="H-W9TY XII - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014913" sy="H-W9TY" syi="30000865"/>
+    <row r="Catch" ri="10000014" s="V2-VC2 II - Moon 5 - Serpentis Corporation Cloning" se="0.0" si="60014914" sy="V2-VC2" syi="30001222"/>
+    <row r="Immensea" ri="10000025" s="2O-EEW IV - Moon 3 - Serpentis Corporation Cloning" se="0.0" si="60014915" sy="2O-EEW" syi="30002175"/>
+    <row r="Impass" ri="10000031" s="68FT-6 VI - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014916" sy="68FT-6" syi="30002593"/>
+    <row r="Deklein" ri="10000035" s="VFK-IV VI - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014917" sy="VFK-IV" syi="30002904"/>
+    <row r="Esoteria" ri="10000039" s="C9N-CC I - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014918" sy="C9N-CC" syi="30003109"/>
+    <row r="Tenal" ri="10000045" s="S-EVIQ III - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014919" sy="S-EVIQ" syi="30003611"/>
+    <row r="Fade" ri="10000046" s="L-C3O7 VII - Moon 5 - Serpentis Corporation Cloning" se="0.0" si="60014920" sy="L-C3O7" syi="30003689"/>
+    <row r="Querious" ri="10000050" s="9CG6-H VIII - Moon 4 - Serpentis Corporation Cloning" se="0.0" si="60014921" sy="9CG6-H" syi="30003979"/>
+    <row r="Cloud Ring" ri="10000051" s="9-4RP2 IV - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014922" sy="9-4RP2" syi="30004059"/>
+    <row r="Branch" ri="10000055" s="K-8SQS VI - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014923" sy="K-8SQS" syi="30004379"/>
+    <row r="Feythabolis" ri="10000056" s="VNGJ-U V - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014924" sy="VNGJ-U" syi="30004453"/>
+    <row r="Paragon Soul" ri="10000059" s="H8-ZTO VI - Moon 5 - Serpentis Corporation Cloning" se="0.0" si="60014925" sy="H8-ZTO" syi="30004678"/>
+    <row r="Delve" ri="10000060" s="NOL-M9 VI - Moon 2 - Serpentis Corporation Cloning" se="0.0" si="60014926" sy="NOL-M9" syi="30004712"/>
+    <row r="Tenerifis" ri="10000061" s="DZ6-I5 IV - Moon 1 - Serpentis Corporation Cloning" se="0.0" si="60014927" sy="DZ6-I5" syi="30004852"/>
+    <row r="Omist" ri="10000062" s="6T3I-L VII - Moon 5 - Serpentis Corporation Cloning" se="0.0" si="60014928" sy="6T3I-L" syi="30004908"/>
+    <row r="UUA-F4" ri="10000004" s="Polaris VI - Serpentis Corporation Manufacturing" se="0.0" si="60014929" sy="Polaris" syi="30000380"/>
+    <row r="UUA-F4" ri="10000004" s="Polaris VII - Serpentis Corporation Refining" se="0.0" si="60014930" sy="Polaris" syi="30000380"/>
+    <row r="UUA-F4" ri="10000004" s="Polaris VIII - Serpentis Corporation Cloning" se="0.0" si="60014931" sy="Polaris" syi="30000380"/>
     <row r="The Forge" ri="10000002" s="New Caldari II (Matias) - Kaalakiota Corporation Factory" se="1.0" si="60014935" sy="New Caldari" syi="30000145"/>
     <row r="Delve" ri="10000060" s="UHKL-N V - Moon 1 - Blood Raiders Testing Facilities" se="0.0" si="60014940" sy="UHKL-N" syi="30004706"/>
     <row r="Delve" ri="10000060" s="Z3V-1W VII - Blood Raiders Assembly Plant" se="0.0" si="60014941" sy="Z3V-1W" syi="30004707"/>
@@ -13212,12 +13212,4 @@
     <row r="Placid" ri="10000048" s="Orvolle VII - Federal Defense Union Logistic Support" se="0.7" si="60015145" sy="Orvolle" syi="30003830"/>
     <row r="The Citadel" ri="10000033" s="Tintoh VIII - Caldari Navy Testing Facilities" se="0.8" si="60015146" sy="Tintoh" syi="30002784"/>
     <row r="Black Rise" ri="10000069" s="Ichoriya V - Caldari Navy Logistic Support" se="0.6" si="60015147" sy="Ichoriya" syi="30045329"/>
-    <row r="UUA-F4" ri="10000004" s="DB1R-4 II - duperTum Corp Minmatar Service Outpost" se="0.0" si="61000001" sy="RU-97T" syi="30000377"/>
-    <row r="Feythabolis" ri="10000056" s="ZS-2LT XI - duperTum Corp Minmatar Service Outpost" se="0.0" si="61000002" sy="5P-AIP" syi="30004477"/>
-    <row r="Esoteria" ri="10000039" s="JZL-VB VIII - duperTum Corp Minmatar Service Outpost" se="0.0" si="61000003" sy="16P-PX" syi="30003122"/>
-    <row r="Paragon Soul" ri="10000059" s="C-PEWN I - T3ch Skunkworks Caldari Research Outpost" se="0.0" si="61000004" sy="LX5K-W" syi="30004705"/>
-    <row r="Deklein" ri="10000035" s="WT-2J9 I - T3ch Skunkworks Amarr Factory Outpost" se="0.0" si="61000005" sy="JU-OWQ" syi="30002911"/>
-    <row r="Feythabolis" ri="10000056" s="KZFV-4 II - imtesting stuffleaveme Corp Amarr Factory Outpost" se="0.0" si="61000006" sy="AZN-D2" syi="30004450"/>
-    <row r="Fountain" ri="10000058" s="57-KJB III - Alina Riraille Corporation Minmatar Service Outpost" se="0.0" si="61000007" sy="57-KJB" syi="30004643"/>
-    <row r="Pure Blind" ri="10000023" s="EC-P8R I - Ytterbium II Corporation Minmata" se="0.0" si="61000008" sy="EC-P8R" syi="30001984"/>
 </rows>
